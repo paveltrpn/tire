@@ -1,22 +1,13 @@
-CC       := g++
-FLAGS    := -Wall -std=c++17 
-LIBS 	 := -lstdc++ -lSDL2 -ljpeg
-RM       := rm -f
-
-SRCS := main.cpp mainApp.cpp image.cpp
+SRCS := image.cpp mainApp.cpp test.cpp
 OBJS := $(SRCS:.cpp=.o)
 
-$(info COMMON MAKEFILE)
+compile: image.o mainApp.o test.o
 
-all: compile link 
+image.o: image.cpp
+	$(CC) $(CFLAGS) -c image.cpp
 
-compile:
-	$(CC) $(FLAGS) -c $(SRCS)
+mainApp.o: mainApp.cpp
+	$(CC) $(CFLAGS) -c mainApp.cpp 
 
-link:
-	$(CC) $(OBJS) -o main $(LIBS)
-
-clean:
-	$(RM) *.o
-	$(RM) main
-
+test.o: test.cpp
+	$(CC) $(CFLAGS) -c test.cpp
