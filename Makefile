@@ -33,11 +33,12 @@ WIN_OPENGL_INIT_OBJS = win_opengl_init/win_opengl_init.o\
 						$(ALGEBRA2_CPP)\qtnn.o\
 						$(ALGEBRA2_CPP)\plane.o
 
-IMG_OBJS = 	img/image.o\
-			img/mainApp.o\
-			img/test.o
+WIN_SDL2_INIT_OBJS = img/bmp.o\
+					 img/tga.o\
+					 img/jpeg.o\
+					 win_SDL2_init/win_SDL2_init.o
 
-PRJ_LIST = img timer nix_opengl_init win_opengl_init
+PRJ_LIST = img timer nix_opengl_init win_opengl_init win_SDL2_init
 
 $(info $(CC_VERSION))
 
@@ -50,9 +51,10 @@ win_opengl_init:
 	cd win_opengl_init ; make -f win_opengl_init.mk compile
 	$(CC) -L$(LIBDIR) $(WIN_OPENGL_INIT_OBJS) -o $@ -lstdc++ -lglfw3 -lopengl32 -lglu32 -lgdi32
 
-img:
+win_SDL2_init:
 	cd img ; make -f img.mk compile
-	$(CC) -L$(LIBDIR) $(IMG_OBJS) -Wl,-Bstatic -o $@ -lstdc++ $(SDL2LIBS)
+	cd win_SDL2_init; make -f win_SDL2_init.mk win_SDL2_init.o
+	$(CC) -L$(LIBDIR) $(WIN_SDL2_INIT_OBJS) -o $@ -lstdc++ $(SDL2LIBS)
 
 clean:
 	rm -f *.exe

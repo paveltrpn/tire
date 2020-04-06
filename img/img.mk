@@ -1,14 +1,14 @@
-SRCS := image.cpp mainApp.cpp test.cpp
+SRCS := bmp.cpp tga.cpp jpeg.cpp
 OBJS := $(SRCS:.cpp=.o)
 
 
-compile: image.o mainApp.o test.o
+compile: bmp.o tga.o jpeg.o
 
-image.o: image.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) -c image.cpp
+bmp.o: bmp.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) -c bmp.cpp
 
-mainApp.o: mainApp.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) -c mainApp.cpp 
+tga.o: tga.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) -c tga.cpp
 
-test.o: test.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) -c test.cpp
+jpeg.o: jpeg.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) -c jpeg.cpp

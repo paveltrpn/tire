@@ -1,12 +1,18 @@
 
+
 #include <iostream>
 #include <fstream>
 #include <cstdio>
 #include <string>
 #include <SDL2/SDL.h>
 
-#include "mainApp.h"
-#include "image.h"
+#include <iostream>
+#include <SDL2/SDL.h>
+
+#include "win_SDL2_init.h"
+#include "../img/bmp.h"
+#include "../img/tga.h"
+#include "../img/jpeg.h"
 
 using namespace std;
 
@@ -86,4 +92,19 @@ void mainApp_c::looper() {
 
 void mainApp_c::render() {
 
+}
+
+int WinMain() {
+	mainApp_c app;
+
+	app.init_app();
+
+	app.looper();
+
+	return 0;
+}
+
+int main(int argc, char* argv[]) 
+{
+    return WinMain();
 }

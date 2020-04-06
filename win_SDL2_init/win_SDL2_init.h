@@ -5,7 +5,9 @@
 #include <string>
 #include <SDL2/SDL.h>
 
-#include "image.h"
+#include "../img/bmp.h"
+#include "../img/tga.h"
+#include "../img/jpeg.h"
 
 class mainApp_c {
 	private:
