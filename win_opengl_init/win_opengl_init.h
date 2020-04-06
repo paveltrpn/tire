@@ -15,11 +15,12 @@
 
 using namespace std;
 
+
 class box_c {
     public:
         box_c() {};
         ~box_c() {};
-
+		
         void append(const vec3_t &pos, const mtrx3_t &spd);
         void show();
 

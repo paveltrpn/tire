@@ -5,13 +5,23 @@
 #OBJS		= $(SRCS:.cpp=.o)
 
 #Windows specific
-DEVHOME		= D:/Engineering
+DEVHOME			:= D:/Engineering
+DEVTOOLS		:= D:/Devtools
+ALGEBRA_CPP 	:= $(DEVHOME)/algebra_cpp
+BOOSTDIR		:= $(DEVTOOLS)/boost_1_72_0
+BOOSTLIBDIR		:= $(DEVHOME)/boost_1_72_0/lib64-msvc-14.2
+INCDIR			:= $(DEVTOOLS)\\MinGW-17.1\\include
+LIBDIR 			+= $(DEVTOOLS)\\MinGW-17.1\\lib 
+ALGEBRA2_CPP 	:= $(DEVHOME)/algebra2_cpp
+SDL2LIBS		:= -lSDL2 -ljpeg -lgdi32 -limm32 -lole32 -loleaut32 -lVersion -lSetupapi -lsecur32 -lwinmm -ldmoguids -lwmcodecdspuuid -lmsdmo -lStrmiids
 
-CC			= g++
-CC_VERSION 	= $(shell g++ --version | grep g++)
-CFLAGS		= -Wall -std=c++17
-LIB_DIR 	+= D:\Devtools\MinGW-17.1\lib 
-ALGEBRA2_CPP = $(DEVHOME)/algebra2_cpp
+CC_VERSION = $(shell g++ --version | grep g++)
+CC		= g++
+CFLAGS	= -Wall -O2 -std=c++17
+
+export CC
+export CFLAGS
+export INCDIR
 
 WIN_OPENGL_INIT_OBJS = win_opengl_init/win_opengl_init.o\
 						$(ALGEBRA2_CPP)\mtrx2.o\
@@ -21,12 +31,11 @@ WIN_OPENGL_INIT_OBJS = win_opengl_init/win_opengl_init.o\
 						$(ALGEBRA2_CPP)\vec3.o\
 						$(ALGEBRA2_CPP)\vec4.o\
 						$(ALGEBRA2_CPP)\qtnn.o\
-						$(ALGEBRA2_CPP)\plane.o\
+						$(ALGEBRA2_CPP)\plane.o
 
-
-
-export CC
-export CFLAGS
+IMG_OBJS = 	img/image.o\
+			img/mainApp.o\
+			img/test.o
 
 PRJ_LIST = img timer nix_opengl_init win_opengl_init
 
@@ -39,11 +48,11 @@ all: $(PRJ_LIST)
 win_opengl_init:
 	cd $(ALGEBRA2_CPP) ; make -f algebra2.mk compile
 	cd win_opengl_init ; make -f win_opengl_init.mk compile
-	$(CC) -L$(LIB_DIR) $(WIN_OPENGL_INIT_OBJS) -o $@ -lstdc++ -lglfw3 -lopengl32 -lglu32 -lgdi32
+	$(CC) -L$(LIBDIR) $(WIN_OPENGL_INIT_OBJS) -o $@ -lstdc++ -lglfw3 -lopengl32 -lglu32 -lgdi32
 
 img:
-	cd img ; make compile
-	$(CC) ip_test/ip_test.o -o $@ -lstdc++ 
+	cd img ; make -f img.mk compile
+	$(CC) -L$(LIBDIR) $(IMG_OBJS) -Wl,-Bstatic -o $@ -lstdc++ $(SDL2LIBS)
 
 clean:
 	rm -f *.exe

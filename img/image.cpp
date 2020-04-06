@@ -3,7 +3,6 @@
 #include <fstream>
 #include <cstdio>
 #include <string>
-#include <SDL2/SDL.h>
 #include <jpeglib.h>    
 #include <jerror.h>
 
@@ -42,9 +41,9 @@ bmp_img_c::~bmp_img_c() {
 }
 
 bool bmp_img_c::from_file(string fname) {
-	std::ifstream fileStream(fileName, std::ifstream::binary);
+	std::ifstream fileStream(fname, std::ifstream::binary);
     if (!fileStream) {
-        std::cout << "Error opening file '" << fileName << "'." << std::endl;
+        std::cout << "Error opening file '" << fname << "'." << std::endl;
         return 0;
     }
  
@@ -57,7 +56,7 @@ bool bmp_img_c::from_file(string fname) {
     read(fileStream, fileHeader.bfOffBits, sizeof(fileHeader.bfOffBits));
  
     if (fileHeader.bfType != 0x4D42) {
-        std::cout << "Error: '" << fileName << "' is not BMP file." << std::endl;
+        std::cout << "Error: '" << fname << "' is not BMP file." << std::endl;
         return 0;
     }
  
