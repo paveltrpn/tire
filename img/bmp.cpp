@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <fstream>
 #include <cstdio>
@@ -40,7 +41,7 @@ bmp_img_c::~bmp_img_c() {
 bool bmp_img_c::from_file(string fname) {
 	std::ifstream fileStream(fname, std::ifstream::binary);
     if (!fileStream) {
-        std::cout << "Error opening file '" << fname << "'." << std::endl;
+        std::cout << "Error opening file '" << fname << "." << std::endl;
         return 0;
     }
  

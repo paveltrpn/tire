@@ -1,7 +1,6 @@
 SRCS := bmp.cpp tga.cpp jpeg.cpp
 OBJS := $(SRCS:.cpp=.o)
 
-
 compile: bmp.o tga.o jpeg.o
 
 bmp.o: bmp.cpp

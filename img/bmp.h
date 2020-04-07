@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef __bmp_h_
+#define __bmp_h_
 
 #include <iostream>
 #include <string>
@@ -57,7 +59,7 @@ typedef struct {
     unsigned int   biProfileSize;
     unsigned int   biReserved;
 } BITMAPINFOHEADER;
- 
+
 // rgb quad
 typedef struct {
     unsigned char  rgbBlue;
@@ -70,24 +72,23 @@ template <typename Type>
 void read(std::ifstream &fp, Type &result, std::size_t size) {
     fp.read(reinterpret_cast<char*>(&result), size);
 }
- 
-// bit extract
+
 unsigned char bitextract(const unsigned int byte, const unsigned int mask);
 
 class bmp_img_c {
 	private:
-		uint8_t *data;
-
 		void load_dummy();
 	
 	public:
 		int img_width, img_height;
 		int img_channels;
+        uint8_t *data;
 
 		bmp_img_c();
 		~bmp_img_c();
 
 		bool from_file(string fname);
 		void show_img_stats();
-		unsigned char * get_data();
 };
+
+#endif

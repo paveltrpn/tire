@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef __win_SDL2_init_h__
+#define __win_SDL2_init_h__
 
 #include <iostream>
 #include <string>
@@ -18,7 +19,7 @@ class mainApp_c {
 		SDL_Surface *screen;
 		SDL_Surface *my_canvas;
 		
-		jpeg_img_c background;
+		bmp_img_c background;
 		
 		bool is_run;
 
@@ -31,3 +32,5 @@ class mainApp_c {
 		void init_app();
 		void looper();
 };
+
+#endif
