@@ -33,6 +33,12 @@ void mainApp_c::init_app() {
 		exit(1);
 	}
 
+	background.from_file("test.bmp");
+	background.show_img_stats();
+
+	wnd_width = background.img_width;
+	wnd_height = background.img_height;
+
 	window = SDL_CreateWindow("Cube", wnd_posx, wnd_posy, 
 							wnd_width, wnd_height, 
 							SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
@@ -42,17 +48,15 @@ void mainApp_c::init_app() {
 		exit(1);
 	}
 	
-	background.from_file("test.bmp");
-	//background.show_img_stats();
-	
 	// В этом месте просто заливка красным цветом
 	/*
 	my_canvas = SDL_CreateRGBSurface(0,wnd_width,wnd_height,32,0,0,0,0);
 	SDL_FillRect(my_canvas, NULL, SDL_MapRGB(my_canvas->format,255,0,0));
 	*/
-	my_canvas = SDL_CreateRGBSurfaceFrom((void*)background.data,wnd_width,wnd_height,
-										background.img_channels*8,
-										background.img_channels*background.img_width,0,0,0,0);
+	my_canvas = SDL_CreateRGBSurfaceFrom(background.data,wnd_width,wnd_height,
+										 background.img_channels*8,
+										 background.img_channels*background.img_width,
+										 0,0,0,0);
 	
 	screen = SDL_GetWindowSurface(window);
 	SDL_BlitSurface(my_canvas, NULL, screen, NULL);

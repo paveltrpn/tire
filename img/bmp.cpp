@@ -13,10 +13,9 @@ unsigned char bitextract(const unsigned int byte, const unsigned int mask) {
         return 0;
     }
  
-    // определение количества нулевых бит`	 справа от маски
-    int
-        maskBufer = mask,
-        maskPadding = 0;
+    // определение количества нулевых бит справа от маски
+    unsigned int maskBufer = mask,
+                 maskPadding = 0;
  
     while (!(maskBufer & 1)) {
         maskBufer >>= 1;
@@ -147,22 +146,30 @@ bool bmp_img_c::from_file(string fname) {
         std::cout << "Error: Unsupported BMP compression." << std::endl;
         return 0;
     }
+    
+    img_width = fileInfoHeader.biWidth;
+	img_height = fileInfoHeader.biHeight;
+	img_channels = fileInfoHeader.biBitCount / 8;
+
+    // определение размера отступа в конце каждой строки
+    int linePadding = ((fileInfoHeader.biWidth * (fileInfoHeader.biBitCount / 8)) % 4) & 3;
  
+    uint32_t bufer;
+    size_t i,j;
+
+    /*  **rgbInfo массив структур RGBQUAD для хранения распакованного файла
+        сейчас вместо неё поле uint8_t *data
     // rgb info
     RGBQUAD **rgbInfo = new RGBQUAD*[fileInfoHeader.biHeight];
  
     for (unsigned int i = 0; i < fileInfoHeader.biHeight; i++) {
         rgbInfo[i] = new RGBQUAD[fileInfoHeader.biWidth];
     }
- 
-    // определение размера отступа в конце каждой строки
-    int linePadding = ((fileInfoHeader.biWidth * (fileInfoHeader.biBitCount / 8)) % 4) & 3;
- 
-    // чтение
-    unsigned int bufer;
- 
-    for (unsigned int i = 0; i < fileInfoHeader.biHeight; i++) {
-        for (unsigned int j = 0; j < fileInfoHeader.biWidth; j++) {
+    */
+    
+    /* Чтение файла в массив RGBQUAD **rgbInfo
+    for (i = 0; i < fileInfoHeader.biHeight; i++) {
+        for (j = 0; j < fileInfoHeader.biWidth; j++) {
             read(fileStream, bufer, fileInfoHeader.biBitCount / 8);
  
             rgbInfo[i][j].rgbRed = bitextract(bufer, fileInfoHeader.biRedMask);
@@ -172,6 +179,31 @@ bool bmp_img_c::from_file(string fname) {
         }
         fileStream.seekg(linePadding, std::ios_base::cur);
     }
-	
+	*/
+
+    /*  Чтение файла в массив uint8_t *data */
+    data = new uint8_t[fileInfoHeader.biHeight*fileInfoHeader.biWidth*4];
+
+    for (i = 0; i < fileInfoHeader.biHeight; i++) {
+        for (j = 0; j < fileInfoHeader.biWidth; j++) {
+            read(fileStream, bufer, fileInfoHeader.biBitCount / 8);
+ 
+            data[(i*fileInfoHeader.biHeight + j) + 0] = bitextract(bufer, fileInfoHeader.biRedMask);
+            data[(i*fileInfoHeader.biHeight + j) + 1] = bitextract(bufer, fileInfoHeader.biGreenMask);
+            data[(i*fileInfoHeader.biHeight + j) + 2] = bitextract(bufer, fileInfoHeader.biBlueMask);
+            data[(i*fileInfoHeader.biHeight + j) + 3] = bitextract(bufer, fileInfoHeader.biAlphaMask);
+        }
+        fileStream.seekg(linePadding, std::ios_base::cur);
+    }
+
 	return false;
+}
+
+void bmp_img_c::show_img_stats() {
+    if (data != NULL)	{
+		std::cout << "BMP stats for file" << std::endl; 
+		std::cout << "width - " << img_width << "\n" <<
+					"height - " << img_height << "\n" <<
+					"channels - " << img_channels << std::endl;
+	} else std::cout << "File is empty!" << std::endl;
 }
