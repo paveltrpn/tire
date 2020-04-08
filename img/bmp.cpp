@@ -188,10 +188,10 @@ bool bmp_img_c::from_file(string fname) {
         for (j = 0; j < fileInfoHeader.biWidth; j++) {
             read(fileStream, bufer, fileInfoHeader.biBitCount / 8);
  
-            data[(i*fileInfoHeader.biHeight + j) + 0] = bitextract(bufer, fileInfoHeader.biRedMask);
-            data[(i*fileInfoHeader.biHeight + j) + 1] = bitextract(bufer, fileInfoHeader.biGreenMask);
-            data[(i*fileInfoHeader.biHeight + j) + 2] = bitextract(bufer, fileInfoHeader.biBlueMask);
-            data[(i*fileInfoHeader.biHeight + j) + 3] = bitextract(bufer, fileInfoHeader.biAlphaMask);
+            data[((i*4)*fileInfoHeader.biHeight + j*4) + 2] = bitextract(bufer, fileInfoHeader.biRedMask);
+            data[((i*4)*fileInfoHeader.biHeight + j*4) + 1] = bitextract(bufer, fileInfoHeader.biGreenMask);
+            data[((i*4)*fileInfoHeader.biHeight + j*4) + 0] = bitextract(bufer, fileInfoHeader.biBlueMask);
+            data[((i*4)*fileInfoHeader.biHeight + j*4) + 3] = bitextract(bufer, fileInfoHeader.biAlphaMask);
         }
         fileStream.seekg(linePadding, std::ios_base::cur);
     }
