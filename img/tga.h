@@ -28,24 +28,18 @@ typedef struct STGAHeader
 } STGAHeader;
 #pragma pack(pop)
 
-/*
-uint8_t *LoadTGAFromFile(const char *file_name,int32_t &width,int32_t &height);
-uint8_t *LoadTGAFromResource(HMODULE hModule,int32_t id,int32_t &width,int32_t &height);
-bool SaveTGA(const char *file_name,int32_t width,int32_t height,uint8_t *image);
-*/
 class tga_img_c {
 	private:
 		void load_dummy();
 	
 	public:
-		int img_width, img_height;
+		size_t img_width, img_height;
 		int img_channels;
 		uint8_t *data;
 
 		tga_img_c();
 		~tga_img_c();
 
-		bool __from_file(string fname); 
 		bool from_file(string name);
 		void show_img_stats();
 };

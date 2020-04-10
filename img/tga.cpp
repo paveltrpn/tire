@@ -28,6 +28,9 @@ tga_img_c::~tga_img_c() {
 bool tga_img_c::from_file(string fname) {
     STGAHeader sTGAHeader;
     ifstream fileStream;
+    unsigned char BlockInfo, isPacked, R, G, B, A;
+    unsigned int NumPixels;
+    size_t i, k;
 
     fileStream.open(fname, std::ifstream::binary);
     if (!fileStream) {
@@ -41,11 +44,94 @@ bool tga_img_c::from_file(string fname) {
     img_height = sTGAHeader.height;
     img_channels = sTGAHeader.bits/8;
 
+    data = new uint8_t[img_width*img_height*img_channels];
+
+    // Non RLE
+    if (sTGAHeader.imageType == 2) {
+        for (i = 0; i < img_width * img_height; i++)
+        {
+            fileStream.read(reinterpret_cast<char*>(&R), 1);
+            fileStream.read(reinterpret_cast<char*>(&G), 1);
+            fileStream.read(reinterpret_cast<char*>(&B), 1);
+            
+            if (img_channels == 4) {
+                fileStream.read(reinterpret_cast<char*>(&A), 1);
+            }
+
+            data[i * img_channels + 0] = B;
+            data[i * img_channels + 1] = G;
+            data[i * img_channels + 2] = R;
+            if (img_channels == 4) {
+                data[i * img_channels + 3] = A;
+            }
+        }
+    } 
+
+    //RLE
+    if (sTGAHeader.imageType == 10) { 
+        for (i = 0; i < img_width * img_height;) {
+            fileStream.read(reinterpret_cast<char*>(&BlockInfo), 1);
+
+            isPacked = BlockInfo & 128;
+            NumPixels = BlockInfo & 127;
+
+            //Если запакованные данные
+            if (isPacked) {
+                fileStream.read(reinterpret_cast<char*>(&R), 1);
+                fileStream.read(reinterpret_cast<char*>(&G), 1);
+                fileStream.read(reinterpret_cast<char*>(&B), 1);
+                if(img_channels == 4) {
+                    fileStream.read(reinterpret_cast<char*>(&A), 1);
+                }
+
+                for(k = 0; k < NumPixels + 1; k++) {
+                    data[i * img_channels + 0] = B;
+                    data[i * img_channels + 1] = G;
+                    data[i * img_channels + 2] = R;
+
+                    if(img_channels == 4) {
+                        data[i * img_channels + 3] = A;
+                    }
+                    i++;
+                }
+
+            } else { //Если незапакованные
+                for (k = 0; k < NumPixels + 1; k++) {
+                    fileStream.read(reinterpret_cast<char*>(&R), 1);
+                    fileStream.read(reinterpret_cast<char*>(&G), 1);
+                    fileStream.read(reinterpret_cast<char*>(&B), 1);
+                    if (img_channels == 4) {
+                        fileStream.read(reinterpret_cast<char*>(&A), 1);
+                    }
+                    data[i * img_channels + 0] = B;
+                    data[i * img_channels + 1] = G;
+                    data[i * img_channels + 2] = R;
+                    if (img_channels == 4) {
+                        data[i * img_channels + 3] = A;
+                    }
+                    i++;
+                }
+            }
+        }
+    }
 
     fileStream.close();
 
     return false;
 }
+
+void tga_img_c::show_img_stats() {
+    if (data != nullptr) {
+		std::cout << "TGA stats for file" << std::endl; 
+		std::cout << "width - " << img_width << "\n" <<
+					"height - " << img_height << "\n" <<
+					"channels - " << img_channels << std::endl;
+	} else std::cout << "File is empty!" << std::endl;
+}
+
+/*
+    Взято из репозитория https://github.com/da-nie/SoftwareGraphicsLibrary/
+	Статья на хабре - https://habr.com/ru/post/495664/
 
 bool tga_img_c::__from_file(string fname) {
     std::ifstream fileStream(fname, std::ifstream::binary);
@@ -54,22 +140,22 @@ bool tga_img_c::__from_file(string fname) {
         return 0;
     }
 
-    /*  определяем размер файла */
+    // определяем размер файла 
     fileStream.seekg(0,std::ios_base::end);
     uint32_t file_size = static_cast<uint32_t>(fileStream.tellg());
     fileStream.seekg(0,std::ios_base::beg);
 
     uint8_t *data_ptr = new uint8_t[file_size+1];
 
-    /*  читаем весь файл разом в временною переменную uint8_t *data_ptr */
+    //  читаем весь файл разом в временною переменную uint8_t *data_ptr 
     fileStream.read(reinterpret_cast<char*>(data_ptr), sizeof(uint8_t)*file_size);
 
     fileStream.close();
 
     STGAHeader sTGAHeader;
  
-    /*  если размер считанного файла меньше
-        размера заголовка tga */
+    // если размер считанного файла меньше
+    // размера заголовка tga 
     if (file_size < sizeof(STGAHeader)) {
         return false;
     }
@@ -235,254 +321,4 @@ bool tga_img_c::__from_file(string fname) {
 
     return true;
 }
-
-void tga_img_c::show_img_stats() {
-    if (data != nullptr) {
-		std::cout << "TGA stats for file" << std::endl; 
-		std::cout << "width - " << img_width << "\n" <<
-					"height - " << img_height << "\n" <<
-					"channels - " << img_channels << std::endl;
-	} else std::cout << "File is empty!" << std::endl;
-}
-
-/*
-    Взято из репозитория https://github.com/da-nie/SoftwareGraphicsLibrary/
-	Статья на хабре - https://habr.com/ru/post/495664/
-
-static uint8_t *GetTGAImage(uint8_t *data_ptr,uint32_t length,int32_t &width,int32_t &height)
-{
-    STGAHeader sTGAHeader;
- 
-    if (length < sizeof(STGAHeader)) return(NULL);
-    memcpy(&sTGAHeader,data_ptr,sizeof(STGAHeader));
-    
-    if (sTGAHeader.imageType&TGA_IMAGE_TYPE_RLE_MASK) return(NULL);//RLE
-    if ((sTGAHeader.imageType&TGA_IMAGE_TYPE_MASK)==TGA_IMAGE_TYPE_NO_IMAGE || (sTGAHeader.imageType&TGA_IMAGE_TYPE_MASK)==TGA_IMAGE_TYPE_GRAYSCALE) return(NULL);//ãðàäàöèè ñåðîãî è îòñóòñòâèå èçîáðàæåíèÿ íå ïîääåðæèâàåì
-    
-    width=sTGAHeader.width;
-    height=sTGAHeader.height;
-    int32_t line_length=sTGAHeader.width*sizeof(uint32_t);
-    
-    int32_t image_length=sTGAHeader.width*sTGAHeader.height*sTGAHeader.bits/8;
-    
-    uint32_t image_offset=sizeof(struct STGAHeader)+sTGAHeader.colorMapStart+sTGAHeader.colorMapLength*sTGAHeader.colorMapBits/8+sTGAHeader.identsize;
-    if (image_offset+image_length>length) return(NULL);
-    
-    if (sTGAHeader.bits==24) { //BGR
-        uint8_t *out_image=new uint8_t[sTGAHeader.width*sTGAHeader.height*sizeof(uint32_t)];
-        int32_t y,x;
-        if (sTGAHeader.descriptor==TGA_DESCRIPTOR_FORWARD) {
-            uint8_t *oi_ptr=out_image;
-            uint8_t *i_ptr=data_ptr+image_offset;
-            for(y=0;y<sTGAHeader.height;y++,i_ptr+=sTGAHeader.width*3) {
-                uint8_t *i_ptrc=i_ptr;
-                for(x=0;x<sTGAHeader.width;x++) {
-                    uint8_t b=*(i_ptrc);i_ptrc++;
-                    uint8_t g=*(i_ptrc);i_ptrc++;
-                    uint8_t r=*(i_ptrc);i_ptrc++;
-                    uint8_t a=1;
-                    *oi_ptr=b;oi_ptr++;
-                    *oi_ptr=g;oi_ptr++;
-                    *oi_ptr=r;oi_ptr++;
-                    *oi_ptr=a;oi_ptr++;
-                }
-            }
-        }
-
-        if (sTGAHeader.descriptor==TGA_DESCRIPTOR_REVERSE) {
-            uint8_t *oi_ptr=out_image;
-            uint8_t *i_ptr=data_ptr+image_offset+sTGAHeader.width*sTGAHeader.height*3-1;
-
-            for(y=sTGAHeader.height-1;y>=0;y--,i_ptr-=sTGAHeader.width*3) {
-                uint8_t *i_ptrc=i_ptr;
-
-                for(x=0;x<sTGAHeader.width;x++) {
-                    uint8_t b=*(i_ptrc);i_ptrc++;
-                    uint8_t g=*(i_ptrc);i_ptrc++;
-                    uint8_t r=*(i_ptrc);i_ptrc++;
-                    uint8_t a=1;
-                    *oi_ptr=b;oi_ptr++;
-                    *oi_ptr=g;oi_ptr++;
-                    *oi_ptr=r;oi_ptr++;
-                    *oi_ptr=a;oi_ptr++;
-                }
-            }
-        }
-
-        return(out_image);
-    }
-
-    if (sTGAHeader.bits==32) {
-        uint8_t *out_image=new uint8_t[sTGAHeader.width*sTGAHeader.height*sizeof(uint32_t)];
-        int32_t y,x;
-
-        if (sTGAHeader.descriptor==TGA_DESCRIPTOR_FORWARD) {
-            uint8_t *oi_ptr=out_image;
-            uint8_t *i_ptr=data_ptr+image_offset;
-
-            for(y=0;y<sTGAHeader.height;y++,i_ptr+=sTGAHeader.width*sizeof(uint32_t)) {
-                uint8_t *i_ptrc=i_ptr;
-
-                for(x=0;x<sTGAHeader.width;x++) {
-                    uint8_t b=*(i_ptrc);i_ptrc++;
-                    uint8_t g=*(i_ptrc);i_ptrc++;
-                    uint8_t r=*(i_ptrc);i_ptrc++;
-                    uint8_t a=*(i_ptrc);i_ptrc++;
-                    *oi_ptr=b;oi_ptr++;
-                    *oi_ptr=g;oi_ptr++;
-                    *oi_ptr=r;oi_ptr++;
-                    *oi_ptr=a;oi_ptr++;
-                }
-            }
-        }
-
-        if (sTGAHeader.descriptor==TGA_DESCRIPTOR_REVERSE) {
-            uint8_t *oi_ptr=out_image;
-            uint8_t *i_ptr=data_ptr+image_offset+sTGAHeader.width*sTGAHeader.height*3-1;
-
-            for(y=sTGAHeader.height-1;y>=0;y--,i_ptr-=sTGAHeader.width*sizeof(uint32_t)) {
-                uint8_t *i_ptrc=i_ptr;
-
-                for(x=0;x<sTGAHeader.width;x++) {
-                    uint8_t b=*(i_ptrc);i_ptrc++;
-                    uint8_t g=*(i_ptrc);i_ptrc++;
-                    uint8_t r=*(i_ptrc);i_ptrc++;
-                    uint8_t a=*(i_ptrc);i_ptrc++;
-                    *oi_ptr=b;oi_ptr++;
-                    *oi_ptr=g;oi_ptr++;
-                    *oi_ptr=r;oi_ptr++;
-                    *oi_ptr=a;oi_ptr++;
-                }
-            }
-        }
-
-        return(out_image);
-    }
-
-    if (sTGAHeader.colorMapType==TGA_COLOR_MAP_PALETTE && sTGAHeader.colorMapBits/8==3) {
-        uint32_t palette_offset=sizeof(STGAHeader)+sTGAHeader.colorMapStart+sTGAHeader.identsize;
-
-        if (palette_offset+sTGAHeader.colorMapLength*3>length) return(NULL);
-
-        uint8_t *color_map=data_ptr+palette_offset;
-        
-        uint8_t *out_image=new uint8_t[sTGAHeader.width*sTGAHeader.height*sizeof(uint32_t)];
-        int32_t y,x;
-
-        if (sTGAHeader.descriptor==TGA_DESCRIPTOR_FORWARD) {
-            uint8_t *oi_ptr=out_image;
-            uint8_t *i_ptr=data_ptr+image_offset;
-
-            for(y=0;y<sTGAHeader.height;y++,i_ptr+=sTGAHeader.width) {
-                uint8_t *i_ptrc=i_ptr;
-
-                for(x=0;x<sTGAHeader.width;x++,i_ptrc++) {
-                    int32_t index=(*i_ptrc)*3;
-                    uint8_t b=color_map[index];
-                    uint8_t g=color_map[index+1];
-                    uint8_t r=color_map[index+2];
-                    uint8_t a=1;
-                    *oi_ptr=b;oi_ptr++;
-                    *oi_ptr=g;oi_ptr++;
-                    *oi_ptr=r;oi_ptr++;
-                    *oi_ptr=a;oi_ptr++;
-                }
-            }
-        }
-
-        if (sTGAHeader.descriptor==TGA_DESCRIPTOR_REVERSE) {
-            uint8_t *oi_ptr=out_image;
-            uint8_t *i_ptr=data_ptr+image_offset+sTGAHeader.width*(sTGAHeader.height-1);
-
-            for(y=sTGAHeader.height-1;y>=0;y--,i_ptr-=sTGAHeader.width) {
-                uint8_t *i_ptrc=i_ptr;
-
-                for(x=0;x<sTGAHeader.width;x++,i_ptrc++) {
-                    int32_t index=(*i_ptrc)*3;
-                    uint8_t b=color_map[index];
-                    uint8_t g=color_map[index+1];
-                    uint8_t r=color_map[index+2];
-                    uint8_t a=1;
-                    *oi_ptr=b;oi_ptr++;
-                    *oi_ptr=g;oi_ptr++;
-                    *oi_ptr=r;oi_ptr++;
-                    *oi_ptr=a;oi_ptr++;
-                }
-            }
-        }
-
-        return(out_image);
-    }
-    
-    return(NULL);
-}
-
-/*
-//----------------------------------------------------------------------------------------------------
-//çàãðóçèòü tga-ôàéë
-//----------------------------------------------------------------------------------------------------
-uint8_t *LoadTGAFromFile(const char *file_name,int32_t &width,int32_t &height)
-{
-    CRAIIFileIn cRAIIFileIn(file_name,std::ios_base::in|std::ios_base::binary);
-    {
-        if (cRAIIFileIn.IsOpened()==false) return(NULL);
-        //óçíàåì ðàçìåð ôàéëà
-        cRAIIFileIn.GetHandle().seekg(0,std::ios_base::end);
-        uint32_t file_size=static_cast<uint32_t>(cRAIIFileIn.GetHandle().tellg());
-        cRAIIFileIn.GetHandle().seekg(0,std::ios_base::beg);
-        //÷èòàåì ôàéë
-        uint8_t *data_ptr=new uint8_t[file_size+1];
-
-        if (cRAIIFileIn.GetHandle().read(reinterpret_cast<char*>(data_ptr),sizeof(uint8_t)*file_size).fail()==false) {
-            uint8_t *ret=GetTGAImage(data_ptr,file_size,width,height);
-            delete[](data_ptr);
-            return(ret);
-        }
-
-        delete[](data_ptr);
-    }
-
-    return(NULL);
-}
-
-/*
-//----------------------------------------------------------------------------------------------------
-//çàãðóçèòü tga-ôàéë èç ðåñóðñîâ
-//----------------------------------------------------------------------------------------------------
-uint8_t *LoadTGAFromResource(HMODULE hModule,int32_t id,int32_t &width,int32_t &height)
-{
- HRSRC hRSRC=FindResource(hModule,(LPSTR)id,RT_RCDATA);
- if (hRSRC==NULL) return(NULL);
- HGLOBAL hGlobal=LoadResource(hModule,hRSRC);
- if (hGlobal==NULL) return(NULL);
- uint8_t *data_ptr=(uint8_t*)LockResource(hGlobal);
- uint32_t data_size=SizeofResource(hModule,hRSRC);
- //÷èòàåì äàííûå
- uint8_t *ret=GetTGAImage(data_ptr,data_size,width,height);
- GlobalUnlock(hGlobal);
- return(ret);
-}
-//----------------------------------------------------------------------------------------------------
-//ñîõðàíèòü êàðòèíêó â tga-ôàéë
-//----------------------------------------------------------------------------------------------------
-bool SaveTGA(const char *file_name,int32_t width,int32_t height,uint8_t *image)
-{
- struct STGAHeader sTGAHeader;
- sTGAHeader.identsize=0;
- sTGAHeader.colorMapType=0;
- sTGAHeader.imageType=2;
- sTGAHeader.colorMapStart=0;
- sTGAHeader.colorMapLength=0;
- sTGAHeader.colorMapBits=24;
- sTGAHeader.xstart=0;
- sTGAHeader.ystart=0;
- sTGAHeader.width=static_cast<uint16_t>(width);
- sTGAHeader.height=static_cast<uint16_t>(height);
- sTGAHeader.bits=32;
- sTGAHeader.descriptor=32;
- CRAIIFileOut cRAIIFileOut(file_name,std::ios_base::out|std::ios_base::binary);
- if (cRAIIFileOut.IsOpened()==false) return(false);
- if (cRAIIFileOut.GetHandle().write(reinterpret_cast<char*>(&sTGAHeader),sizeof(STGAHeader)).fail()==true) return(false);
- if (cRAIIFileOut.GetHandle().write(reinterpret_cast<char*>(image),sizeof(uint8_t)*width*height*4).fail()==true) return(false);
- return(true);
-}*/
+*/
