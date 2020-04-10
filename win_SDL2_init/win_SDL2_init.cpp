@@ -29,11 +29,11 @@ mainApp_c::~mainApp_c() {
 
 void mainApp_c::init_app() {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-		std::cout << "Error: Unable to init SDL; " << SDL_GetError() << std::endl;
+		std::cout << "mainApp_c::init_app(): Error - Unable to init SDL; " << SDL_GetError() << std::endl;
 		exit(1);
 	}
 
-	background.from_file("test.bmp");
+	background.from_file("test.tga");
 	background.show_img_stats();
 
 	wnd_width = background.img_width;
@@ -44,7 +44,7 @@ void mainApp_c::init_app() {
 							SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 
 	if(window == NULL) {
-		std::cout << "Error: Unable to creaate window!" << std::endl;
+		std::cout << "mainApp_c::init_app(): Error - Unable to creaate window!" << std::endl;
 		exit(1);
 	}
 	

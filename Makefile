@@ -18,7 +18,7 @@ SDL2LIBS		:= -lSDL2 -ljpeg -lgdi32 -limm32 -lole32 -loleaut32 -lVersion -lSetupa
 
 CC_VERSION = $(shell g++ --version | grep g++)
 CC		= g++
-CFLAGS	= -Wall -std=c++17
+CFLAGS	= -g -Wall -std=c++17
 
 export CC
 export CFLAGS

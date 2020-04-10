@@ -200,7 +200,7 @@ bool bmp_img_c::from_file(string fname) {
 }
 
 void bmp_img_c::show_img_stats() {
-    if (data != NULL)	{
+    if (data != NULL) {
 		std::cout << "BMP stats for file" << std::endl; 
 		std::cout << "width - " << img_width << "\n" <<
 					"height - " << img_height << "\n" <<
