@@ -9,17 +9,22 @@ using namespace std;
 
 class jpeg_img_c {
 	private:
-		void load_dummy();
+		// В конце функции from_file() вызывается jpeg_destroy_decompress(&info)
+		// которая, видимо, очищает поля структуры и поэтому не совсем
+		// корректно брать инфу о файле из неё. Лучше добавить в класс отдельные поля
+		// для хранения информации о изображении.
+		struct jpeg_decompress_struct info;		//for our jpeg info
+
+		uint8_t* decompressed;
 	
 	public:
-		int img_width, img_height;
-		int img_channels;
-		uint8_t *data;
-
 		jpeg_img_c();
 		~jpeg_img_c();
 
 		bool from_file(string name);
-		void show_img_stats();
-		unsigned char * get_data();
+
+		size_t      get_widht();
+        size_t      get_height();
+        size_t      get_chanels_count();
+        uint8_t*    get_data();
 };

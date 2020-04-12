@@ -60,14 +60,6 @@ typedef struct {
     unsigned int   biReserved;
 } BITMAPINFOHEADER;
 
-// rgb quad
-typedef struct {
-    unsigned char  rgbBlue;
-    unsigned char  rgbGreen;
-    unsigned char  rgbRed;
-    unsigned char  rgbReserved;
-} RGBQUAD;
-
 template <typename Type>
 void read(std::ifstream &fp, Type &result, std::size_t size) {
     fp.read(reinterpret_cast<char*>(&result), size);
@@ -77,18 +69,21 @@ unsigned char bitextract(const unsigned int byte, const unsigned int mask);
 
 class bmp_img_c {
 	private:
-		void load_dummy();
-	
-	public:
-		int img_width, img_height;
-		int img_channels;
-        uint8_t *data;
+        BITMAPFILEHEADER file_header;
+        BITMAPINFOHEADER info_header;
 
+        uint8_t *decompressed;
+        
+	public:
 		bmp_img_c();
 		~bmp_img_c();
 
 		bool from_file(string fname);
-		void show_img_stats();
+
+        size_t      get_widht();
+        size_t      get_height();
+        size_t      get_chanels_count();
+        uint8_t*    get_data();
 };
 
 #endif

@@ -10,6 +10,10 @@
 
 using namespace std;
 
+// GCC 9.2.0 выравнивает эту структуру
+// и поэтому sizeof(STGAHeader) = 20.
+// Если использовать #pragma pack(push, 1)
+// то sizeof(STGAHeader) = 18.
 #pragma pack(push, 1)
 typedef struct STGAHeader
 {
@@ -30,18 +34,20 @@ typedef struct STGAHeader
 
 class tga_img_c {
 	private:
-		void load_dummy();
+		STGAHeader sTGAHeader;
+
+		uint8_t* decompressed;
 	
 	public:
-		size_t img_width, img_height;
-		int img_channels;
-		uint8_t *data;
-
 		tga_img_c();
 		~tga_img_c();
 
 		bool from_file(string name);
-		void show_img_stats();
+
+		size_t      get_widht();
+        size_t      get_height();
+        size_t      get_chanels_count();
+        uint8_t*    get_data();
 };
 
 #endif

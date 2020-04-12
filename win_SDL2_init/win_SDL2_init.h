@@ -19,7 +19,7 @@ class mainApp_c {
 		SDL_Surface *screen;
 		SDL_Surface *my_canvas;
 		
-		tga_img_c background;
+		jpeg_img_c background;
 		
 		bool is_run;
 

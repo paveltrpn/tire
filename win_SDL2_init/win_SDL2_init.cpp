@@ -33,11 +33,11 @@ void mainApp_c::init_app() {
 		exit(1);
 	}
 
-	background.from_file("test.tga");
-	background.show_img_stats();
+	background.from_file("test.jpg");
+	cout << background.get_widht() << " " << background.get_height() << " " << background.get_chanels_count() << "\n";
 
-	wnd_width = background.img_width;
-	wnd_height = background.img_height;
+	wnd_width = background.get_widht();
+	wnd_height = background.get_height();
 
 	window = SDL_CreateWindow("Cube", wnd_posx, wnd_posy, 
 							wnd_width, wnd_height, 
@@ -53,9 +53,9 @@ void mainApp_c::init_app() {
 	my_canvas = SDL_CreateRGBSurface(0,wnd_width,wnd_height,32,0,0,0,0);
 	SDL_FillRect(my_canvas, NULL, SDL_MapRGB(my_canvas->format,255,0,0));
 	*/
-	my_canvas = SDL_CreateRGBSurfaceFrom(background.data,wnd_width,wnd_height,
-										 background.img_channels*8,
-										 background.img_channels*background.img_width,
+	my_canvas = SDL_CreateRGBSurfaceFrom(background.get_data(),wnd_width,wnd_height,
+										 background.get_chanels_count()*8,
+										 background.get_chanels_count()*background.get_widht(),
 										 0,0,0,0);
 	
 	screen = SDL_GetWindowSurface(window);

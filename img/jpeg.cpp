@@ -11,28 +11,24 @@
 using namespace std;
 
 jpeg_img_c::jpeg_img_c() {
-	img_width = img_height = img_channels = 0;
-	data = nullptr;
+	decompressed = nullptr;
 }
 
 jpeg_img_c::~jpeg_img_c() {
-	if (data != nullptr) {
-		delete[] data;
+	if (decompressed != nullptr) {
+		delete[] decompressed;
 	}
 }
 
 bool jpeg_img_c::from_file(string fname) {
-	struct jpeg_decompress_struct info;		//for our jpeg info
 	struct jpeg_error_mgr err;				//the error handler
 	unsigned char * rowptr[1];				//pointer to an array
 	FILE *fin;
 	
 	fin = fopen(fname.c_str(), "rb");
 	if (!fin) {
-		std::cout << "ERROR! Unable to open file - " << fname << std::endl;
-		std::cout << "Dummy image will be loaded!" << std::endl;
-		load_dummy();
-		return 1;
+		std::cout << "jpeg_img_c::from_file(): ERROR! Unable to open file - " << fname << std::endl;
+		return false;
 	}
 	
 	info.err = jpeg_std_error(&err);
@@ -43,13 +39,10 @@ bool jpeg_img_c::from_file(string fname) {
 	
 	jpeg_start_decompress(&info);
 
-	img_width = info.output_width;
-	img_height = info.output_height;
-	img_channels = info.num_components;
-	
-	data = new uint8_t [img_width * img_height * img_channels];
+	decompressed = new uint8_t [info.output_width * info.output_height * info.num_components];
+
 	while (info.output_scanline < info.output_height) {
-		rowptr[0] = (unsigned char *)data + img_channels * info.output_width * info.output_scanline; 
+		rowptr[0] = (unsigned char *)decompressed + info.num_components * info.output_width * info.output_scanline; 
 		jpeg_read_scanlines(&info, rowptr, 1);
 	}
 	
@@ -62,25 +55,28 @@ bool jpeg_img_c::from_file(string fname) {
 	return 0;
 }
 
-void jpeg_img_c::show_img_stats() {
-	if (data != NULL)	{
-		std::cout << "Jpeg stats for file" << std::endl; 
-		std::cout << "width - " << img_width << "\n" <<
-					"height - " << img_height << "\n" <<
-					"channels - " << img_channels << std::endl;
-	} else std::cout << "File is empty!" << std::endl;
-
+size_t jpeg_img_c::get_widht() {
+    return info.output_width;
 }
 
-unsigned char * jpeg_img_c::get_data() {
-	if (data != NULL) {
-		return data;
+size_t jpeg_img_c::get_height() {
+    return info.output_height;
+}
+
+size_t jpeg_img_c::get_chanels_count() {
+    return info.num_components;
+}
+
+uint8_t * jpeg_img_c::get_data() {
+	if (decompressed != nullptr) {
+		return decompressed;
 	} else {
 		std::cout << "File is empty!" << std::endl;
-		return NULL;
+		return nullptr;
 	}
 }
 
+/*
 void jpeg_img_c::load_dummy() {
 	img_width = 512;
 	img_height = 512;
@@ -92,3 +88,4 @@ void jpeg_img_c::load_dummy() {
 		data[i] = i % 255;
 	}
 }
+*/
