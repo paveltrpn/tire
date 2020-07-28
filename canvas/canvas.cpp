@@ -21,19 +21,18 @@ void canvas_c::put_pixel(int32_t x, int32_t y) {
     data[((x*bpp)*cnvs_height + y*bpp) + 2] = pen_color_b;
 }
 
-void canvas_c::put_pixel_depth(int32_t x, int32_t y, float intence) {
+void canvas_c::put_pixel_br(int32_t x, int32_t y, float br) {
     if ((x < 0) || (y < 0) || (x >= cnvs_width) || (y >= cnvs_width)) return;
 
-    data[((x*bpp)*cnvs_height + y*bpp) + 0] = uint8_t(std::ceil(pen_color_r * intence));
-    data[((x*bpp)*cnvs_height + y*bpp) + 1] = uint8_t(std::ceil(pen_color_g * intence));
-    data[((x*bpp)*cnvs_height + y*bpp) + 2] = uint8_t(std::ceil(pen_color_b * intence));
+    data[((x*bpp)*cnvs_height + y*bpp) + 0] = uint8_t(std::ceil(pen_color_r * br));
+    data[((x*bpp)*cnvs_height + y*bpp) + 1] = uint8_t(std::ceil(pen_color_g * br));
+    data[((x*bpp)*cnvs_height + y*bpp) + 2] = uint8_t(std::ceil(pen_color_b * br));
 }
 
 void canvas_c::brasenham_line(std::pair<int32_t, int32_t> start, std::pair<int32_t, int32_t> end) {
     int32_t dX = abs(end.first - start.first);
     int32_t dY = abs(end.second - start.second);
-    int32_t signX;
-    int32_t signY;
+    int32_t signX, signY;
     int32_t err2, err = dX - dY;
     std::pair<int32_t, int32_t> now_point = start;
 
@@ -69,7 +68,7 @@ void canvas_c::brasenham_line(std::pair<int32_t, int32_t> start, std::pair<int32
 }
 
 int32_t ipart(float a) {
-    float rt;
+    float rt = 0;
 
     std::modf(a, &rt);
 
@@ -77,40 +76,72 @@ int32_t ipart(float a) {
 }
 
 float fpart(float a) {
-    float tmp;
+    float tmp = 0;
     return std::modf(a, &tmp);
 }
 
 void canvas_c::wu_line(std::pair<int32_t, int32_t> start, std::pair<int32_t, int32_t> end) {
-    if (end.first < start.first) {
-        std::swap(start, end);
-    }
+    float dx = end.first - start.first;
+    float dy = end.second - start.second;
+    float gradient, xend, yend, xgap, ygap, interx, intery;
+    int32_t xpxl1, ypxl1, xpxl2, ypxl2, i;
 
-    int32_t dx = end.first - start.first;
-    int32_t dy = end.second - start.second;
-    float gradient = dx/dy;
+    if (fabs(dx) > fabs(dy)) {
+        if (end.first < start.first) {
+            std::swap(start, end);
+        }
 
-    int32_t xend = std::round(start.first);
-    int32_t yend = start.second + gradient * (xend - start.first);
-    float xgap = 1 - fpart(start.first + 0.5f);
-    int32_t xpxl1 = xend;  // будет использоваться в основном цикле
-    int32_t ypxl1 = ipart(yend);
-    put_pixel_depth(xpxl1, ypxl1, (1 - fpart(yend)) * xgap);
-    put_pixel_depth(xpxl1, ypxl1 + 1, fpart(yend) * xgap);
-    int32_t intery = yend + gradient; // первое y-пересечение для цикла
+        gradient = dy/dx;
+        xend = std::round(start.first);
+        yend = start.second + gradient * (xend - start.first);
+        xgap = 1 - fpart(start.first + 0.5f);
+        xpxl1 = xend;  
+        ypxl1 = ipart(yend);
+        put_pixel_br(xpxl1, ypxl1, (1.0f - fpart(yend)) * xgap);
+        put_pixel_br(xpxl1, ypxl1 + 1, fpart(yend) * xgap);
+        intery = yend + gradient;
 
-    xend = std::round(end.first);
-    yend = end.second + gradient * (xend - end.first);
-    xgap = fpart(end.first + 0.5);
-    int32_t xpxl2 = xend;  // будет использоваться в основном цикле
-    int32_t ypxl2 = ipart(yend);
-    put_pixel_depth(xpxl2, ypxl2, (1 - fpart(yend)) * xgap);
-    put_pixel_depth(xpxl2, ypxl2 + 1, fpart(yend) * xgap);
+        xend = std::round(end.first);
+        yend = end.second + gradient * (xend - end.first);
+        xgap = fpart(end.first + 0.5f);
+        xpxl2 = xend;
+        ypxl2 = ipart(yend);
+        put_pixel_br(xpxl2, ypxl2, (1.0f - fpart(yend)) * xgap);
+        put_pixel_br(xpxl2, ypxl2 + 1, fpart(yend) * xgap);
 
-    for (int32_t i = xpxl1 + 1; i < xpxl2 - 1; i++) {
-        put_pixel_depth(i, ipart(intery), 1 - fpart(intery));
-        put_pixel_depth(i, ipart(intery) + 1, fpart(intery));
-        intery = intery + gradient;
+        for (i = xpxl1 + 1; i < xpxl2 - 1; i++) {
+            put_pixel_br(i, ipart(intery), 1.0f - fpart(intery));
+            put_pixel_br(i, ipart(intery) + 1, fpart(intery));
+            intery = intery + gradient;
+        }
+    } else {
+        if (end.second < start.second) {
+            std::swap(start, end);
+        }
+
+        gradient = dx/dy;
+        yend = std::round(start.second);
+        xend = start.first + gradient*(yend - start.second);
+        ygap = fpart(start.second + 0.5f);
+        ypxl1 = yend;
+        xpxl1 = ipart(xend);
+        put_pixel_br(xpxl1, ypxl1, 1.0f - fpart(xend)*ygap);
+        put_pixel_br(xpxl1 + 1, ypxl1, fpart(xend)*ygap);
+        interx = xend + gradient;
+    
+        yend = std::round(end.second);
+        xend = end.first + gradient*(yend - end.second);
+        ygap = fpart(end.second+0.5);
+        ypxl2 = yend;
+        xpxl2 = ipart(xend);
+        put_pixel_br(xpxl2, ypxl2, 1.0f - fpart(xend) * ygap);
+        put_pixel_br(xpxl2 + 1, ypxl2, fpart(xend) * ygap);
+
+        for(i = ypxl1 + 1; i < ypxl2; i++) {
+            put_pixel_br(ipart(interx), i, 1.0f - fpart(interx));
+            put_pixel_br(ipart(interx) + 1, i, fpart(interx));
+            interx += gradient;
+        }
     }
 }
 

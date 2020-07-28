@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
     anvas.brasenham_circle({128, 128}, 50);
 
     anvas.set_pen_color(255,255,255);
-    anvas.wu_line({10,56}, {240,200});
+    anvas.wu_line({50,10}, {140,200});
     
     anvas.write_jpeg("out.jpeg");
 
