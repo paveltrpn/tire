@@ -35,7 +35,7 @@ class canvas_c {
             data = new uint8_t[cnvs_width*cnvs_height*bpp]; 
 
             // цвет холста по умолчанию
-            std::fill(data, data + cnvs_width*cnvs_height*bpp, 0x00);
+            std::fill(data, data + cnvs_width*cnvs_height*bpp, 255);
             //std::memset(data, 128, cnvs_height*cnvs_width*bpp);
         }
 
@@ -57,6 +57,7 @@ class canvas_c {
                   std::pair<int32_t, int32_t> dr);
                   
         int write_jpeg(std::string fname);
+        int write_tga(std::string fname);
 };
 
 #endif

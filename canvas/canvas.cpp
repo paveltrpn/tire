@@ -1,7 +1,8 @@
 
 #include "canvas.h"
 #include <stdio.h>
-#include "jpeglib.h"
+#include <jpeglib.h>
+#include <tga.h>
 
 void canvas_c::set_pen_size(int32_t size) {
     pen_size = size;
@@ -83,7 +84,7 @@ float fpart(float a) {
 void canvas_c::wu_line(std::pair<int32_t, int32_t> start, std::pair<int32_t, int32_t> end) {
     float dx = end.first - start.first;
     float dy = end.second - start.second;
-    float gradient, xend, yend, xgap, ygap, interx, intery;
+    float gradient, xend, yend, gap, inter;
     int32_t xpxl1, ypxl1, xpxl2, ypxl2, i;
 
     if (fabs(dx) > fabs(dy)) {
@@ -94,25 +95,25 @@ void canvas_c::wu_line(std::pair<int32_t, int32_t> start, std::pair<int32_t, int
         gradient = dy/dx;
         xend = std::round(start.first);
         yend = start.second + gradient * (xend - start.first);
-        xgap = 1 - fpart(start.first + 0.5f);
+        gap = 1 - fpart(start.first + 0.5f);
         xpxl1 = xend;  
         ypxl1 = ipart(yend);
-        put_pixel_br(xpxl1, ypxl1, (1.0f - fpart(yend)) * xgap);
-        put_pixel_br(xpxl1, ypxl1 + 1, fpart(yend) * xgap);
-        intery = yend + gradient;
+        put_pixel_br(xpxl1, ypxl1, (1.0f - fpart(yend)) * gap);
+        put_pixel_br(xpxl1, ypxl1 + 1, fpart(yend) * gap);
+        inter = yend + gradient;
 
         xend = std::round(end.first);
         yend = end.second + gradient * (xend - end.first);
-        xgap = fpart(end.first + 0.5f);
+        gap = fpart(end.first + 0.5f);
         xpxl2 = xend;
         ypxl2 = ipart(yend);
-        put_pixel_br(xpxl2, ypxl2, (1.0f - fpart(yend)) * xgap);
-        put_pixel_br(xpxl2, ypxl2 + 1, fpart(yend) * xgap);
+        put_pixel_br(xpxl2, ypxl2, (1.0f - fpart(yend)) * gap);
+        put_pixel_br(xpxl2, ypxl2 + 1, fpart(yend) * gap);
 
         for (i = xpxl1 + 1; i < xpxl2 - 1; i++) {
-            put_pixel_br(i, ipart(intery), 1.0f - fpart(intery));
-            put_pixel_br(i, ipart(intery) + 1, fpart(intery));
-            intery = intery + gradient;
+            put_pixel_br(i, ipart(inter), 1.0f - fpart(inter));
+            put_pixel_br(i, ipart(inter) + 1, fpart(inter));
+            inter = inter + gradient;
         }
     } else {
         if (end.second < start.second) {
@@ -122,25 +123,25 @@ void canvas_c::wu_line(std::pair<int32_t, int32_t> start, std::pair<int32_t, int
         gradient = dx/dy;
         yend = std::round(start.second);
         xend = start.first + gradient*(yend - start.second);
-        ygap = fpart(start.second + 0.5f);
+        gap = fpart(start.second + 0.5f);
         ypxl1 = yend;
         xpxl1 = ipart(xend);
-        put_pixel_br(xpxl1, ypxl1, 1.0f - fpart(xend)*ygap);
-        put_pixel_br(xpxl1 + 1, ypxl1, fpart(xend)*ygap);
-        interx = xend + gradient;
+        put_pixel_br(xpxl1, ypxl1, 1.0f - fpart(xend)*gap);
+        put_pixel_br(xpxl1 + 1, ypxl1, fpart(xend)*gap);
+        inter = xend + gradient;
     
         yend = std::round(end.second);
         xend = end.first + gradient*(yend - end.second);
-        ygap = fpart(end.second+0.5);
+        gap = fpart(end.second+0.5);
         ypxl2 = yend;
         xpxl2 = ipart(xend);
-        put_pixel_br(xpxl2, ypxl2, 1.0f - fpart(xend) * ygap);
-        put_pixel_br(xpxl2 + 1, ypxl2, fpart(xend) * ygap);
+        put_pixel_br(xpxl2, ypxl2, 1.0f - fpart(xend) * gap);
+        put_pixel_br(xpxl2 + 1, ypxl2, fpart(xend) * gap);
 
         for(i = ypxl1 + 1; i < ypxl2; i++) {
-            put_pixel_br(ipart(interx), i, 1.0f - fpart(interx));
-            put_pixel_br(ipart(interx) + 1, i, fpart(interx));
-            interx += gradient;
+            put_pixel_br(ipart(inter), i, 1.0f - fpart(inter));
+            put_pixel_br(ipart(inter) + 1, i, fpart(inter));
+            inter += gradient;
         }
     }
 }
@@ -227,7 +228,7 @@ int canvas_c::write_jpeg(std::string fname) {
     * requires it in order to write binary files.
     */
     if ((outfile = fopen(fname.c_str(), "wb")) == NULL) {
-        fprintf(stderr, "can't open %s\n", fname.c_str());
+        std::cout << "canvas_c::write_jpeg(): can't open %s " << fname.c_str() << "\n";
         return 1;
     }
     jpeg_stdio_dest(&cinfo, outfile);
@@ -275,7 +276,7 @@ int canvas_c::write_jpeg(std::string fname) {
         * Here the array is only one element long, but you could pass
         * more than one scanline at a time if that's more convenient.
         */
-        row_pointer[0] = & data[cinfo.next_scanline * row_stride];
+        row_pointer[0] = &data[cinfo.next_scanline * row_stride];
         (void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
     }
 
@@ -292,5 +293,59 @@ int canvas_c::write_jpeg(std::string fname) {
 
     /* And we're done! */
 
+    return 0;
+}
+
+int canvas_c::write_tga(std::string fname) {
+    TGA *tga_out;
+	TGAData tga_data;
+
+    std::memset(&tga_data, 0, sizeof(TGAData));
+
+    // Подготовливаем файл для записи библиотечной функцией.
+    // Она открывает файл на диске, и хранит его дискриптор в структуре TGA
+    tga_out = TGAOpen(fname.c_str(), "wb");
+
+    // Сообщаем параметры записываемого массива
+    tga_out->hdr.depth = bpp*8;
+    tga_out->hdr.width = cnvs_width;
+    tga_out->hdr.height = cnvs_height;
+
+    // В этом поле не должно быть 0, или TGAWriteScanlines() вернёт TGA_OK 
+    // и не будет ничего писать в файл кроме заголовка
+    // значения этого поля из документации на libtga такие:
+    // 0 = no image data included
+    // 1 = color mapped
+    // 2 = grayscale
+    // 3 = true-color (RGB or RGBA)
+    // 9 = RLE encoded color mapped
+    // 10 = RLE encoded grayscale
+    // 11 = RLE encoded true-color
+    // но нормально записывается только при tga_out->hdr.img_t = 10,
+    // при других значениях файл не читался. Это поле, по видимому, зависит 
+    // от наличия флага TGA_RLE_ENCODE в структуре TGAData
+    tga_out->hdr.img_t = 10; 
+
+    tga_data.img_data = data;
+
+    // Устанавливаем опции с которыми будет производиться запись массива на диск.
+    tga_data.flags = TGA_IMAGE_DATA | TGA_RLE_ENCODE | TGA_IMAGE_ID | TGA_RGB;
+
+    // Записываем массив на диск с установленными опциями.
+    // TGAWriteImage() вызывает все необходимые действия - пишет заголовок и т.д.
+	if (TGAWriteImage(tga_out, &tga_data) != TGA_OK) {
+        std::cout << "canvas_c::write_jpeg(): TGAWriteImage() return error" << "\n";
+    }
+
+    // записываем только заголовок и массив рисунка
+    // TGAWriteImage() кроме этого вызывает ещё несколько функций
+    // TGAWriteHeader(tga_out);
+    // 
+    // if (TGAWriteScanlines(tga_out, &tga_data) != TGA_OK) {
+        // std::cout << "canvas_c::write_jpeg(): TGAWriteScanlines() return error" << "\n";
+    // }
+
+    TGAClose(tga_out);
+	
     return 0;
 }
