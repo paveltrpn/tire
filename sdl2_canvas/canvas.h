@@ -59,6 +59,22 @@ class canvas_c {
                   std::pair<int32_t, int32_t> dl,
                   std::pair<int32_t, int32_t> dr);
                   
+        int32_t get_width() {
+            return cnvs_width;
+        }
+
+        int32_t get_height() {
+            return cnvs_height;
+        }
+
+        int32_t get_bpp() {
+            return bpp;
+        }
+
+        uint8_t * get_data() {
+            return data;
+        }
+
         int write_jpeg(std::string fname);
         int write_tga(std::string fname);
 };

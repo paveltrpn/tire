@@ -2,7 +2,7 @@
 Сборник простых графических программ. 
 
 Библиотеки, необходимые для сборки:    
-- SDL2 ($ sudo apt-get install libsdl2-dev, libsdl-dev)           
+- SDL2 ($ sudo apt-get install libsdl2-dev)           
 - FreeGLUT ($ sudo apt-get install freeglut3-dev)   
 - GLFW ($ sudo apt-get install libglfw3, libglfw3-dev)
 - GLEW ($ sudo apt-get install linglew2.0, libglew-dev)

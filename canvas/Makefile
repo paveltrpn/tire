@@ -1,6 +1,6 @@
 
 CC       := clang++-10
-CFLAGS   := --std=c++17 --debug
+CFLAGS   := --std=c++17
 LIBS 	 := 
 RM       := rm -f
 
