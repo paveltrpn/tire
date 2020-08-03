@@ -51,11 +51,9 @@ void mainApp_c::init_app() {
         sin_i = sin(deg_to_rad(angl));
         cos_i = cos(deg_to_rad(angl));
 
-        background.wu_line({ int32_t(sin_i*CIRCLE_SIZE)+CANVAS_ZERO, int32_t(cos_i*CIRCLE_SIZE)+CANVAS_ZERO}, 
-                           {-int32_t(sin_i*CIRCLE_SIZE)+CANVAS_ZERO,-int32_t(cos_i*CIRCLE_SIZE)+CANVAS_ZERO});
+        background.brasenham_line({ int32_t(sin_i*CIRCLE_SIZE)+CANVAS_ZERO, int32_t(cos_i*CIRCLE_SIZE)+CANVAS_ZERO}, 
+                           		  {-int32_t(sin_i*CIRCLE_SIZE)+CANVAS_ZERO,-int32_t(cos_i*CIRCLE_SIZE)+CANVAS_ZERO});
     }
-
-	cout << background.get_width() << " " << background.get_height() << " " << background.get_bpp() << "\n";
 
 	wnd_width = background.get_width();
 	wnd_height = background.get_height();
