@@ -3,17 +3,14 @@
 #include "timer.h"
 
 int main(int argc, char **argv) {
-    timer_c timer(2000);
+    timer_c timer;
 
-    timer.show_uptime(SECONDS);
+    timer.show_timer_stats();
 
     while (1) {
-        timer.update();
+        sleep(2);
 
-        if (timer.get_click()) {
-            std::cout << "click!!! \n";
-            timer.show_uptime(SECONDS);
-        }
+        std::cout << timer.get_delta_millisec() << "\n";
     }
 
     return 0;

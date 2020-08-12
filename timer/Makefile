@@ -1,4 +1,3 @@
-
 CC     :=  g++
 CFLAGS := -Wall -std=c++11 
 LIBS   := -lstdc++ -lc 
