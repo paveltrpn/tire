@@ -2,6 +2,7 @@
 #include "mainApp.h"
 #include "algebra2.h"
 #include "mesh.h"
+#include "timer.h"
 
 void mainApp_c::get_gl_properties() {
 	gl_render = gl_render + "GL_RENDER - " + (const char*)glGetString(GL_RENDERER);
@@ -32,7 +33,7 @@ void mainApp_c::setup() {
 
 	glColorMaterial(GL_FRONT, GL_DIFFUSE);
 	glEnable(GL_COLOR_MATERIAL);
-
+	
 	box.append(vec3_t(4.0, 0.0, 5.0), mtrx3_t(   0.1,  0.0,   0.1));
 	box.append(vec3_t(-4.0, 0.0, 0.0), mtrx3_t(  0.1, -0.2,   0.2));
 	box.append(vec3_t(0.0, 3.0, 6.0), mtrx3_t(  -0.1,  0.15,  0.0));
@@ -368,6 +369,9 @@ void mainApp_glfw_c::init_app(int argc, char* argv[]) {
 	    exit(1);
 	};
 
+	// Выключаем вертикальную синхронизацию (VSYNC)
+	glfwSwapInterval(0);
+
 	get_gl_properties();
 	print_gl_properties();
 
@@ -380,6 +384,12 @@ void mainApp_glfw_c::looper() {
    		    	
 		frame();
 
+		frames++;
+		if (timer.watch_millisec(2000)) {
+			std::cout << frames/2 << " fps\n";
+			frames = 0;
+		}
+		
     	glfwSwapBuffers(window);
 	}
 }

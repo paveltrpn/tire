@@ -9,7 +9,7 @@ LIBDIR 	:=
 algebra_cpp	:=
 
 LFLAGS += -lGL -lGLU -lGLX  -lglut -lX11 -lGLEW -lglfw
-INCDIR += -I $(HOME)/code/algebra2_cpp/ 
+INCDIR += -I $(HOME)/code/algebra2_cpp/
 algebra2_cpp += $(HOME)/code/algebra2_cpp/
 
 

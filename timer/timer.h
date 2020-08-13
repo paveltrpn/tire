@@ -42,6 +42,7 @@ enum time_units {MINUTES, SECONDS, MILSEC};
 
 class timer_c {
     private:
+        timespec    watch_time;
         timespec    now_time;
         timespec    prev_time;
 
@@ -76,6 +77,8 @@ class timer_c {
         // Возвращает время в миллисикундах с последнего вызова этой фйнкции или от 
         // момента создания экземпляра класса
         uint64_t get_delta_millisec();
+
+        bool watch_millisec(uint32_t delta);
 };
 
 timer_c::timer_c() {
@@ -94,7 +97,7 @@ timer_c::timer_c() {
     clock_gettime(CLOCK_MONOTONIC,&clk_start_MONOTONIC);
 
     clock_gettime(clock_id,&tmp);
-    now_time = prev_time = tmp;
+    now_time = prev_time = watch_time = tmp;
 };
 
 void timer_c::show_timer_stats() {
@@ -222,6 +225,19 @@ uint64_t timer_c::get_delta_millisec() {
     prev_time = now_time;
 
     return rt;
+}
+
+bool timer_c::watch_millisec(uint32_t delta) {
+    timespec watch_now;
+
+    clock_gettime(clock_id,&watch_now);
+
+    if (timespec_to_millisec(watch_now) - timespec_to_millisec(watch_time) > delta) {
+        watch_time = watch_now;
+        return true;
+    }
+
+    return false;
 }
 
 timer_c::~timer_c() {

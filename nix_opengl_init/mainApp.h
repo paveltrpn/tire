@@ -20,6 +20,7 @@
 #include <X11/keysymdef.h>
 
 #include <algebra2.h>
+#include "timer.h"
 #include "mesh.h"
 
 class mainApp_c {
@@ -31,6 +32,9 @@ class mainApp_c {
 		std::string gl_render, gl_version, glsl_version;
 		box_c box;
 		
+		uint32_t frames = 0;
+		timer_c timer;
+
 		virtual void get_gl_properties();
 		virtual void print_gl_properties();
 		virtual void setup();
