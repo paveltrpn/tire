@@ -4,6 +4,8 @@
 
 #include <time.h>
 #include <unistd.h>
+#include <utility>
+#include <tuple>
 #include <signal.h>
 
 // 
@@ -57,6 +59,9 @@ class timer_c {
         uint64_t timespec_to_minutes(const struct timespec &time);
         uint64_t timespec_to_hours(const struct timespec &time);
         uint64_t timespec_to_days(const struct timespec &time);
+
+        //  timespec в человекочетаемом формате (ЧЧ:ММ:СС)
+        std::tuple<uint32_t, uint32_t, uint32_t> timespec_to_hr(const struct timespec &time);
 
     public:
         timer_c();
@@ -139,6 +144,8 @@ void timer_c::show_timer_stats() {
                     timespec_to_minutes(clk_start_REALTIME) << " min; " <<
                     timespec_to_hours(clk_start_REALTIME) << " hrs; " <<
                     timespec_to_days(clk_start_REALTIME) << " days;\n";
+    auto clk_start_REALTIME_hr = timespec_to_hr(clk_start_REALTIME);
+    std::cout << std::get<0>(clk_start_REALTIME_hr) << ":" << std::get<1>(clk_start_REALTIME_hr) << ":" << std::get<2>(clk_start_REALTIME_hr) << "\n";
 
     std::cout << "timer_c::clk_start_MONOTONIC = " << 
                     timespec_to_nanosec(clk_start_MONOTONIC) << " ns; " <<
@@ -148,6 +155,8 @@ void timer_c::show_timer_stats() {
                     timespec_to_minutes(clk_start_MONOTONIC) << " min; " <<
                     timespec_to_hours(clk_start_MONOTONIC) << " hrs; " <<
                     timespec_to_days(clk_start_MONOTONIC) << " days;\n";
+    auto clk_start_MONOTONIC_hr = timespec_to_hr(clk_start_MONOTONIC);
+    std::cout << std::get<0>(clk_start_MONOTONIC_hr) << ":" << std::get<1>(clk_start_MONOTONIC_hr) << ":" << std::get<2>(clk_start_MONOTONIC_hr) << "\n";
 }
 
 void timer_c::set_clock_id(clockid_t clk) {
@@ -183,6 +192,16 @@ uint64_t timer_c::timespec_to_hours(const struct timespec &time) {
 
 uint64_t timer_c::timespec_to_days(const struct timespec &time) {
     return time.tv_sec/(3600*24);
+}
+
+std::tuple<uint32_t, uint32_t, uint32_t> timer_c::timespec_to_hr(const struct timespec &time) {
+    uint64_t total_sec = timespec_to_seconds(time);
+
+    uint32_t hours = total_sec / 3600;
+    uint32_t minutes = total_sec / 60 - hours*60;
+    uint32_t seconds = total_sec - hours*3600 - minutes*60;
+
+    return {hours, minutes, seconds};
 }
 
 uint64_t timer_c::get_time_millisec() {
