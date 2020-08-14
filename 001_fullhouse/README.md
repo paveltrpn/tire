@@ -7,8 +7,7 @@ OpenGL через шрифт в текстурном атласе.
 Библиотеки, необходимые для сборки:    
 - GLFW ($ sudo apt-get install libglfw3 libglfw3-dev)   
 - GLEW ($ sudo apt-get install libglew2.0 libglew-dev)    
-- libjpeg ($ sudo apt-get install libjpeg-dev)
-
+- libjpeg ($ sudo apt-get install libjpeg-dev)    
 - libtga ($git clone git://github.com/madebr/libtga)    
   сборка libtga:    
   $ cd libtga   

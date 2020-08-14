@@ -1,7 +1,7 @@
 
 CC       := clang++-10
-CFLAGS   := -Wall -std=c++17 -I/usr/include/SDL2/
-LFLAGS 	 := -lstdc++ -lGL -lGLU -lGLEW -lglfw
+CFLAGS   := -Wall -std=c++17 
+LFLAGS 	 := -lstdc++ -lGL -lGLU -lGLEW -lglfw -ljpeg -ltga
 
 SRCS := src/main.cpp \
 		src/mainApp.cpp \
@@ -13,7 +13,8 @@ SRCS := src/main.cpp \
 		src/vec3.cpp \
 		src/vec4.cpp \
 		src/qtnn.cpp \
-		src/plane.cpp
+		src/plane.cpp \
+		src/bitmap.cpp
 
 OBJS := main.o \
 		mainApp.o \
@@ -25,7 +26,8 @@ OBJS := main.o \
 		vec3.o \
 		vec4.o \
 		qtnn.o \
-		plane.o
+		plane.o \
+		bitmap.o
 
 #OBJS := $(SRCS:.cpp=.o)
 
@@ -65,6 +67,9 @@ qtnn.o: src/qtnn.cpp
 
 plane.o: src/plane.cpp
 	$(CC) $(CFLAGS) $(INCDIR) -c src/plane.cpp
+
+bitmap.o: src/bitmap.cpp
+	$(CC) $(CFLAGS) $(INCDIR) -c src/bitmap.cpp
 
 main: 
 	$(CC) $(OBJS) $(LIBDIR) -o main $(LFLAGS)
