@@ -385,8 +385,9 @@ void mainApp_glfw_c::looper() {
 		frame();
 
 		frames++;
-		if (timer.watch_millisec(2000)) {
-			std::cout << frames/2 << " fps\n";
+		auto [watch, cdelta] = timer.watch_millisec(2000);
+		if (watch) {
+			std::cout << (float)frames/cdelta*1000 << " fps\n";
 			frames = 0;
 		}
 		
