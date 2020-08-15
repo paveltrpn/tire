@@ -15,6 +15,7 @@
 #include "algebra2.h"
 #include "timer.h"
 #include "mesh.h"
+#include "bitmap_text.h"
 
 class mainApp_glfw_c {
 	private:
@@ -26,15 +27,19 @@ class mainApp_glfw_c {
 		const char* appName; /* const что бы избежать "ISO C++ forbids converting a string constant to ‘char*’" */ 
 		float aspect;
 		std::string gl_render, gl_version, glsl_version;
+
+		GLuint texture;
 		box_c box;
 		
+		bitmap_text_c text;
+
 		uint32_t frames = 0;
 		timer_c timer;
+		float fps = 0.0;
 
 		void get_gl_properties();
 		void print_gl_properties();
 		void setup();
-		void frame();
 
 	public:
 		mainApp_glfw_c() {
@@ -44,6 +49,8 @@ class mainApp_glfw_c {
 			y_res = 600;
 			appName = "app";
 
+			fps = 0.0f;
+			
 			std::cout << "main(): Using glfw init!" << std::endl;
 		};
 

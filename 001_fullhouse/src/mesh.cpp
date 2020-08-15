@@ -34,7 +34,7 @@ void draw_decart(float scale) {
 }
 
 void box_c::append(const vec3_t &pos, const mtrx3_t &spd) {
-	orientation.push_back(tuple{pos, spd, mtrx3_t()});
+	orientation.push_back({pos, spd, mtrx3_t()});
 }
 
 void box_c::show() {
@@ -62,45 +62,45 @@ void box_c::show() {
 
 		glColor3f(0.1f, 0.6f, 0.1f);
 		glNormal3fv(&clone_normal[0][0]);
-		glVertex3fv(&clone[0][0]);
-		glVertex3fv(&clone[1][0]);
-		glVertex3fv(&clone[2][0]);
-		glVertex3fv(&clone[3][0]);
+		glTexCoord2f(0.0f, 0.0f); glVertex3fv(&clone[0][0]);
+		glTexCoord2f(1.0f, 0.0f); glVertex3fv(&clone[1][0]);
+		glTexCoord2f(1.0f, 1.0f); glVertex3fv(&clone[2][0]);
+		glTexCoord2f(0.0f, 1.0f); glVertex3fv(&clone[3][0]);
 
 		glColor3f(0.8f, 0.9f, 0.1f);
 		glNormal3fv(&clone_normal[1][0]);
-		glVertex3fv(&clone[4][0]);
-		glVertex3fv(&clone[5][0]);
-		glVertex3fv(&clone[6][0]);
-		glVertex3fv(&clone[7][0]);
+		glTexCoord2f(0.0f, 0.0f); glVertex3fv(&clone[4][0]);
+		glTexCoord2f(1.0f, 0.0f); glVertex3fv(&clone[5][0]);
+		glTexCoord2f(1.0f, 1.0f); glVertex3fv(&clone[6][0]);
+		glTexCoord2f(0.0f, 1.0f); glVertex3fv(&clone[7][0]);
 
 		glColor3f(0.0f, 1.0f, 1.0f);
 		glNormal3fv(&clone_normal[2][0]);
-		glVertex3fv(&clone[0][0]);
-		glVertex3fv(&clone[1][0]);
-		glVertex3fv(&clone[5][0]);
-		glVertex3fv(&clone[4][0]);
+		glTexCoord2f(0.0f, 0.0f); glVertex3fv(&clone[0][0]);
+		glTexCoord2f(1.0f, 0.0f); glVertex3fv(&clone[1][0]);
+		glTexCoord2f(1.0f, 1.0f); glVertex3fv(&clone[5][0]);
+		glTexCoord2f(0.0f, 1.0f); glVertex3fv(&clone[4][0]);
 
 		glColor3f(0.93f, 0.11f, 0.23f);
 		glNormal3fv(&clone_normal[3][0]);
-		glVertex3fv(&clone[2][0]);
-		glVertex3fv(&clone[3][0]);
-		glVertex3fv(&clone[7][0]);
-		glVertex3fv(&clone[6][0]);
+		glTexCoord2f(0.0f, 0.0f); glVertex3fv(&clone[2][0]);
+		glTexCoord2f(1.0f, 0.0f); glVertex3fv(&clone[3][0]);
+		glTexCoord2f(1.0f, 1.0f); glVertex3fv(&clone[7][0]);
+		glTexCoord2f(0.0f, 1.0f); glVertex3fv(&clone[6][0]);
 
 		glColor3f(0.1f, 0.15f, 0.75f);
 		glNormal3fv(&clone_normal[4][0]);
-		glVertex3fv(&clone[0][0]);
-		glVertex3fv(&clone[4][0]);
-		glVertex3fv(&clone[7][0]);
-		glVertex3fv(&clone[3][0]);
+		glTexCoord2f(0.0f, 0.0f);glVertex3fv(&clone[0][0]);
+		glTexCoord2f(1.0f, 0.0f);glVertex3fv(&clone[4][0]);
+		glTexCoord2f(1.0f, 1.0f);glVertex3fv(&clone[7][0]);
+		glTexCoord2f(0.0f, 1.0f);glVertex3fv(&clone[3][0]);
 
 		glColor3f(0.8f, 0.2f, 0.98f);
 		glNormal3fv(&clone_normal[5][0]);
-		glVertex3fv(&clone[1][0]);
-		glVertex3fv(&clone[5][0]);
-		glVertex3fv(&clone[6][0]);
-		glVertex3fv(&clone[2][0]);
+		glTexCoord2f(0.0f, 0.0f); glVertex3fv(&clone[1][0]);
+		glTexCoord2f(1.0f, 0.0f); glVertex3fv(&clone[5][0]);
+		glTexCoord2f(1.0f, 1.0f); glVertex3fv(&clone[6][0]);
+		glTexCoord2f(0.0f, 1.0f); glVertex3fv(&clone[2][0]);
 
 		glEnd();
 	}

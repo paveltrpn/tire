@@ -1,6 +1,6 @@
 
 CC       := clang++-10
-CFLAGS   := -Wall -std=c++17 
+CFLAGS   := -Wall -std=c++17 -g
 LFLAGS 	 := -lstdc++ -lGL -lGLU -lGLEW -lglfw -ljpeg -ltga
 
 SRCS := src/main.cpp \
@@ -14,7 +14,8 @@ SRCS := src/main.cpp \
 		src/vec4.cpp \
 		src/qtnn.cpp \
 		src/plane.cpp \
-		src/bitmap.cpp
+		src/bitmap.cpp \
+		src/bitmap_text.cpp
 
 OBJS := main.o \
 		mainApp.o \
@@ -27,7 +28,8 @@ OBJS := main.o \
 		vec4.o \
 		qtnn.o \
 		plane.o \
-		bitmap.o
+		bitmap.o \
+		bitmap_text.o
 
 #OBJS := $(SRCS:.cpp=.o)
 
@@ -38,7 +40,7 @@ all: $(OBJS) main
 main.o: src/main.cpp
 	$(CC) $(CFLAGS) $(INCDIR) -c src/main.cpp
 
-mainApp.o: src/mainApp.cpp
+mainApp.o: src/mainApp.cpp src/mainApp.h
 	$(CC) $(CFLAGS) $(INCDIR) -c src/mainApp.cpp
 
 mesh.o: src/mesh.cpp
@@ -68,10 +70,13 @@ qtnn.o: src/qtnn.cpp
 plane.o: src/plane.cpp
 	$(CC) $(CFLAGS) $(INCDIR) -c src/plane.cpp
 
-bitmap.o: src/bitmap.cpp
+bitmap.o: src/bitmap.cpp src/bitmap.h
 	$(CC) $(CFLAGS) $(INCDIR) -c src/bitmap.cpp
 
-main: 
+bitmap_text.o: src/bitmap_text.cpp src/bitmap_text.h
+	$(CC) $(CFLAGS) $(INCDIR) -c src/bitmap_text.cpp
+
+main: $(OBJS)
 	$(CC) $(OBJS) $(LIBDIR) -o main $(LFLAGS)
 
 clean:

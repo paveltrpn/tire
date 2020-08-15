@@ -18,11 +18,13 @@ class jpeg_img_c {
 
 		uint8_t* decompressed;
 	
+		std::string fname;
         uint32_t img_width;
         uint32_t img_height;
         uint32_t img_bpp;
         
 	public:
+	
 		jpeg_img_c();
 		~jpeg_img_c();
 
@@ -32,12 +34,15 @@ class jpeg_img_c {
         size_t      get_height();
         size_t      get_chanels_count();
         uint8_t*    get_data();
+
+		void show_img_stats();
 };
 
 class tga_img_c {
 	private:
 		uint8_t* decompressed;
 
+		std::string fname;
         uint32_t img_width;
         uint32_t img_height;
         uint32_t img_bpp;
@@ -52,4 +57,6 @@ class tga_img_c {
         size_t      get_height();
         size_t      get_chanels_count();
         uint8_t*    get_data();
+
+		void show_img_stats();
 };

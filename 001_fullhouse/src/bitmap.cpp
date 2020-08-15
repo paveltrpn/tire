@@ -21,14 +21,14 @@ jpeg_img_c::~jpeg_img_c() {
 	}
 }
 
-bool jpeg_img_c::from_file(string fname) {
+bool jpeg_img_c::from_file(string name) {
 	struct jpeg_error_mgr err;				//the error handler
 	unsigned char * rowptr[1];				//pointer to an array
 	FILE *fin;
 	
-	fin = fopen(fname.c_str(), "rb");
+	fin = fopen(name.c_str(), "rb");
 	if (!fin) {
-		std::cout << "jpeg_img_c::from_file(): ERROR! Unable to open file - " << fname << std::endl;
+		std::cout << "jpeg_img_c::from_file(): ERROR! Unable to open file - " << name << std::endl;
 		return false;
 	}
 	
@@ -40,6 +40,7 @@ bool jpeg_img_c::from_file(string fname) {
 	
 	jpeg_start_decompress(&info);
 
+	fname = name;
     img_width = info.output_width;
     img_height = info.output_height;
     img_bpp = info.num_components*8;
@@ -76,9 +77,14 @@ uint8_t * jpeg_img_c::get_data() {
 	if (decompressed != nullptr) {
 		return decompressed;
 	} else {
-		std::cout << "File is empty!" << std::endl;
+		std::cout << "jpeg_img_c::get_data(): - File is empty!" << std::endl;
 		return nullptr;
 	}
+}
+
+void jpeg_img_c::show_img_stats() {
+	std::cout << "jpeg_img_c::show_img_stats(): file name - " << fname << "; img_width - " << img_width <<
+				"; img_height - " << img_height << "; img_bpp - " << img_bpp << ";\n";
 }
 
 /*
@@ -114,6 +120,7 @@ bool tga_img_c::from_file(std::string name) {
 
 	TGAReadImage(in, &in_data);
 	
+	fname = name;
     img_width = in->hdr.width;
     img_height = in->hdr.height;
     img_bpp = in->hdr.depth;
@@ -141,5 +148,15 @@ size_t tga_img_c::get_chanels_count() {
 }
 
 uint8_t* tga_img_c::get_data() {
-    return decompressed;
+    if (decompressed != nullptr) {
+		return decompressed;
+	} else {
+		std::cout << "tga_img_c::get_data(): - File is empty!" << std::endl;
+		return nullptr;
+	}
+}
+
+void tga_img_c::show_img_stats() {
+	std::cout << "tga_img_c::show_img_stats(): file name - " << fname << "; img_width - " << img_width <<
+				"; img_height - " << img_height << "; img_bpp - " << img_bpp << "\n";
 }
