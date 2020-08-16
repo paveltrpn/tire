@@ -9,33 +9,37 @@
 #include "algebra2.h"
 
 struct glyph_quad_s {
-    vec2_t a,b,c,d;
-    vec2_t ta,tb,tc,td;
+    vec2_t lu, ru, rd, ld;
+    vec2_t tclu,tcru,tcrd,tcld;
 };
 
 class bitmap_text_c {
     private:
-        float   glyph_quad_wdt = 2.0f;
-        float   glyph_quad_hgt = 2.0f;
-        float   glyph_quad_gap = -0.5f;
+        float   glyph_quad_wdt = 0.5f;
+        float   glyph_quad_hgt = 1.0f;
+        float   glyph_quad_gap = 0.0f;
 
         float   text_pos_x = 0.0f;
         float   text_pos_y = 0.0f;
 
-        // Формат шрифта - изображение TGA с началом сверху слева.
-        // Разрешение - 2048х512, размер ячейки с символом 64х64.
-        // 32 символа в строке на 8 строк символов.
-        float   font_xres = 2048.0f;
-        float   font_yres = 512.0f;
-        float   font_cell_xsize = 64.0f;
-        float   font_cell_ysize = 64.0f;
+        // Формат шрифта - изображение TGA с началом сверху слева,
+        // 32 столбца на 8 строк символов.
+        // Размер ячейки с символом получается делением горизонтального и вертикального 
+        // размера изображения на количество столбцов и строк соответственно.
+        const int32_t font_column = 32;
+        const int32_t font_row = 8;
+
+        float   font_xres;
+        float   font_yres;
+        float   font_cell_xsize;
+        float   font_cell_ysize;
 
     public:
         GLuint  font;
 
-        bitmap_text_c();
+        bitmap_text_c() {};
         ~bitmap_text_c();
-
+        
         void load_font(std::string fname);
         
         void set_glyph_width(float size);

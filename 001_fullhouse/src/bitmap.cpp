@@ -11,21 +11,86 @@
 
 using namespace std;
 
-jpeg_img_c::jpeg_img_c() {
+bitmap_c::bitmap_c() {
 	decompressed = nullptr;
 }
 
-jpeg_img_c::~jpeg_img_c() {
+bitmap_c::bitmap_c(const bitmap_c &other) {
+    // На случай попытки копирования неинициализорованного класса
+    if (other.decompressed == nullptr) {
+        decompressed = nullptr;
+        return;
+	};
+
+	fname = other.fname;
+	img_width = other.img_width;
+	img_height = other.img_height;
+	img_bpp = other.img_bpp;
+
+	decompressed = new uint8_t [img_width*img_height*(img_bpp/8)];
+
+    std::memcpy(reinterpret_cast<uint8_t*>(decompressed), 
+                reinterpret_cast<uint8_t*>(other.decompressed), 
+                img_width*img_height*(img_bpp/8)*sizeof(uint8_t));
+}
+
+bitmap_c::~bitmap_c() {
 	if (decompressed != nullptr) {
 		delete[] decompressed;
 	}
 }
 
-bool jpeg_img_c::from_file(string name) {
+//  Оператор присваивания копированием
+bitmap_c& bitmap_c::operator=(const bitmap_c &other) {
+    if (other.decompressed == nullptr) {
+        decompressed = nullptr;
+        return *this;
+	};
+
+	fname = other.fname;
+	img_width = other.img_width;
+	img_height = other.img_height;
+	img_bpp = other.img_bpp;
+
+	decompressed = new uint8_t [img_width*img_height*(img_bpp/8)];
+
+    std::memcpy(reinterpret_cast<uint8_t*>(decompressed), 
+                reinterpret_cast<uint8_t*>(other.decompressed), 
+                img_width*img_height*(img_bpp/8)*sizeof(uint8_t));     
+    // Возвращаем текущий объект, чтобы иметь возможность связать в цепочку выполнение нескольких операций присваивания
+    return *this;
+};
+
+bool bitmap_c::load_tga(std::string name) {
+    TGA *in = TGAOpen(name.c_str(), "rb");
+	TGAData in_data;
+
+	std::memset(&in_data, 0, sizeof(TGAData));
+	in_data.flags = TGA_IMAGE_ID | TGA_IMAGE_DATA | TGA_RGB;
+
+	TGAReadImage(in, &in_data);
+	
+	fname = name;
+    img_width = in->hdr.width;
+    img_height = in->hdr.height;
+    img_bpp = in->hdr.depth;
+
+    decompressed = new uint8_t [img_width*img_height*(img_bpp/8)];
+
+    std::memcpy(decompressed, static_cast<uint8_t*>(in_data.img_data), img_width*img_height*(img_bpp/8));
+
+	TGAFreeTGAData(&in_data);
+	TGAClose(in);
+
+	return 0;
+}
+
+bool bitmap_c::load_jpg(string name) {
 	struct jpeg_error_mgr err;				//the error handler
 	unsigned char * rowptr[1];				//pointer to an array
 	FILE *fin;
-	
+	struct jpeg_decompress_struct info;		//for our jpeg info
+
 	fin = fopen(name.c_str(), "rb");
 	if (!fin) {
 		std::cout << "jpeg_img_c::from_file(): ERROR! Unable to open file - " << name << std::endl;
@@ -61,93 +126,31 @@ bool jpeg_img_c::from_file(string name) {
 	return 0;
 }
 
-size_t jpeg_img_c::get_widht() {
-    return img_width;
-}
-
-size_t jpeg_img_c::get_height() {
-    return img_height;
-}
-
-size_t jpeg_img_c::get_chanels_count() {
-    return img_bpp;
-}
-
-uint8_t * jpeg_img_c::get_data() {
-	if (decompressed != nullptr) {
-		return decompressed;
-	} else {
-		std::cout << "jpeg_img_c::get_data(): - File is empty!" << std::endl;
-		return nullptr;
-	}
-}
-
-void jpeg_img_c::show_img_stats() {
-	std::cout << "jpeg_img_c::show_img_stats(): file name - " << fname << "; img_width - " << img_width <<
-				"; img_height - " << img_height << "; img_bpp - " << img_bpp << ";\n";
-}
-
-/*
-void jpeg_img_c::load_dummy() {
+void bitmap_c::load_dummy() {
 	img_width = 512;
 	img_height = 512;
-	img_channels = 3;
+	img_bpp = 24;
 	
-	data = new unsigned char [img_width * img_height * img_channels];
+	decompressed = new uint8_t [img_width * img_height * (img_bpp/8)];
 	
-	for (int i = 0; i < img_width * img_height * img_channels; i++) {
-		data[i] = i % 255;
-	}
-}
-*/
-
-tga_img_c::tga_img_c() {
-	decompressed = nullptr;
-}
-
-tga_img_c::~tga_img_c() {
-	if (decompressed != nullptr) {
-		delete[] decompressed;
+	for (int i = 0; i < img_width * img_height * (img_bpp/8); i++) {
+		decompressed[i] = i % 255;
 	}
 }
 
-bool tga_img_c::from_file(std::string name) {
-    TGA *in = TGAOpen(name.c_str(), "rb");
-	TGAData in_data;
-
-	std::memset(&in_data, 0, sizeof(TGAData));
-	in_data.flags = TGA_IMAGE_ID | TGA_IMAGE_DATA | TGA_RGB;
-
-	TGAReadImage(in, &in_data);
-	
-	fname = name;
-    img_width = in->hdr.width;
-    img_height = in->hdr.height;
-    img_bpp = in->hdr.depth;
-
-    decompressed = new uint8_t [img_width*img_height*(img_bpp/8)];
-
-    std::memcpy(decompressed, static_cast<uint8_t*>(in_data.img_data), img_width*img_height*(img_bpp/8));
-
-	TGAFreeTGAData(&in_data);
-	TGAClose(in);
-
-	return 0;
-}
-
-size_t tga_img_c::get_widht() {
+size_t bitmap_c::get_widht() {
     return img_width;
 }
 
-size_t tga_img_c::get_height() {
+size_t bitmap_c::get_height() {
     return img_height;
 }
 
-size_t tga_img_c::get_chanels_count() {
+size_t bitmap_c::get_chanels_count() {
     return img_bpp / 8;
 }
 
-uint8_t* tga_img_c::get_data() {
+uint8_t* bitmap_c::get_data_ptr() {
     if (decompressed != nullptr) {
 		return decompressed;
 	} else {
@@ -156,7 +159,7 @@ uint8_t* tga_img_c::get_data() {
 	}
 }
 
-void tga_img_c::show_img_stats() {
-	std::cout << "tga_img_c::show_img_stats(): file name - " << fname << "; img_width - " << img_width <<
+void bitmap_c::show_info() {
+	std::cout << "bitmap_c::show_info(): file name - " << fname << "; img_width - " << img_width <<
 				"; img_height - " << img_height << "; img_bpp - " << img_bpp << "\n";
 }
