@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>WebGL canvas</title>
+        <meta charset="utf-8">
+        <script src="gl-matrix.js"></script>
+    </head>
+    <body style=
+    "background-color: gray">
+
+        <div class="blank_page" style=
+        "width: 1200px;
+         display: block;
+         background-color: white;
+         margin: 0 auto; /* отступы слева и справа */
+         margin-top: 10px;
+         margin-bottom: 10px; 
+         box-shadow: 0 0 15px rgba(0,0,0,0.8);
+         position: relative;
+         min-height: 90vh;">
+
+        <!-- отрисовка куба -->
+        <canvas id="glcanvas" style=
+        "width: 800px;
+        height: 600px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.8);
+        position: absolute;
+        bottom: 20%;
+        right: 25%">
+
+            <script src="webgl_cube.js"></script>
+        </canvas>
+
+        </div>
+    </body>
+</html>

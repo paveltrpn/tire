@@ -128,7 +128,7 @@ void mainApp_glfw_c::init_app(int argc, char* argv[]) {
 
 	// Выключаем вертикальную синхронизацию (VSYNC)
 	glfwSwapInterval(0);
-
+	
 	get_gl_properties();
 	print_gl_properties();
 

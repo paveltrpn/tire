@@ -8,7 +8,7 @@
 using namespace std;
 
 class vec2_t {
-	public:
+	public:	
 		float operator[](const int32_t id) const {
 			return data[id];
 		};

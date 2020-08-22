@@ -16,14 +16,10 @@ bitmap_text_c::~bitmap_text_c() {
 }
 
 void bitmap_text_c::load_font(std::string fname) {
-    bitmap_c first_image;
-    first_image.load_tga(fname);
-    first_image.show_info();
+    bitmap_c image;
 
-    bitmap_c image(first_image);
-
-    //image.load_tga(fname);
-    //image.show_info();
+    image.load_tga(fname);
+    image.show_info();
 
     font_xres = (float)image.get_widht();
     font_yres = (float)image.get_height();
@@ -62,25 +58,24 @@ void bitmap_text_c::set_text_position(float x, float y) {
 }
 
 void bitmap_text_c::draw_string(std::string string) {
-    size_t i;
-    float offset;
-    int32_t glyph_x; 
-    int32_t glyph_y;
-    float tc_gap_x = 1.0f / font_column;
-    float tc_gap_y = 1.0f / font_row;
+    float offset; // Смещение квада с i-ым символом, зависит от ширины квадов и зазора между ними
+    int32_t glyph_x; // Столбец, в котором находится символ 
+    int32_t glyph_y; // Строка, в котором находится символ 
+    float tc_gap_x = 1.0f / font_column; // Размер ячейки с символом в долях текстурных координат по горизонтали
+    float tc_gap_y = 1.0f / font_row;    // Размер ячейки с символом в долях текстурных координат по вертикали
 
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
 	glBindTexture(GL_TEXTURE_2D, font);
 
-    for (i = 0; i < string.length(); i++) {
+    for (size_t i = 0; i < string.length(); i++) {
         offset = (glyph_quad_wdt+glyph_quad_gap)*i;
 
         glyph_x = string[i]%font_column;
         glyph_y = (string[i]/font_column)-1;
 
-        // Текстурные координаты (или шаг, размер ячейки в долях текстурных координат) 
+        // Текстурные координаты (или ша, размер ячейки в долях текстурных координат) 
         // рассчитываются как соотношение размера ячейки с символом к размеру изображения
         // tc_gap_x = font_cell_xsize / font_xres;
         // tc_gap_y = font_cell_ysize / font_yres;

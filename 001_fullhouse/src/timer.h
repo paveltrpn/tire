@@ -95,6 +95,9 @@ class timer_c {
             return {hours, minutes, seconds};
         };
 
+        timer_c(timer_c& other) = delete;
+        timer_c& operator=(timer_c& other) = delete;
+        
     public:
         timer_c() {
             struct timespec tmp;

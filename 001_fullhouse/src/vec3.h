@@ -9,6 +9,9 @@ using namespace std;
 
 class vec3_t {
 	public:
+		//vec3_t(const vec3_t &&v) = delete;
+		//vec3_t &operator=(const vec3_t &&v) = delete;
+
 		float operator[](const int32_t id) const {
 			return data[id];
 		};

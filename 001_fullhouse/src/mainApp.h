@@ -41,6 +41,9 @@ class mainApp_glfw_c {
 		void print_gl_properties();
 		void setup();
 
+		mainApp_glfw_c(mainApp_glfw_c &other) = delete;
+		mainApp_glfw_c& operator=(mainApp_glfw_c &other) = delete;
+
 	public:
 		mainApp_glfw_c() {
 			x_pos = (int)1980 / 2;
