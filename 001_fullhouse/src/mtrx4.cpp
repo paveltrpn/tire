@@ -57,7 +57,7 @@ mtrx4_t::mtrx4_t(const vec3_t &ax, float phi) {
 
 	data[4]  = (1.0-cosphi)*vxvy + sinphi*vz;
 	data[5]  = cosphi + (1.0-cosphi)*vy*vy;
-	data[6]  = (1.0-cosphi)*vyvz - sinphi*vz;
+	data[6]  = (1.0-cosphi)*vyvz - sinphi*vx;
 	data[7]  = 0.0f;
 
 	data[8]  = (1.0-cosphi)*vxvz - sinphi*vy;
@@ -259,7 +259,7 @@ tuple<mtrx4_t, vec4_t> mtrx4_ldlt(mtrx4_t m) {
 	return {lm, dv};
 }
 
-mtrx4_t mtrx3_transpose(mtrx4_t m) {
+mtrx4_t mtrx4_transpose(mtrx4_t m) {
 	constexpr int mrange = 3;
 	int i, j;
 	float tmp;
