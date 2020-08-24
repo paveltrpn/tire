@@ -1,11 +1,13 @@
 
 CC       := tsc
-CFLAGS   :=
+CFLAGS   := -t ES2016 --removeComments
 
 SRCS := src/test.ts \
-		src/mtrx4.ts
+		src/mtrx4.ts \
+		src/vec3.ts \
+		src/common.ts
 		
-OBJS := test.js mtrx4.js
+OBJS := test.js test2.js
 		
 #OBJS := $(SRCS:.ts=.js)
 
@@ -13,11 +15,11 @@ OBJS := test.js mtrx4.js
 
 all: $(OBJS)
 
-mtrx4.js: src/mtrx4.ts
-	$(CC) $(CFLAGS) --outFile mtrx4.js src/mtrx4.ts
+test.js: $(SRCS)
+	$(CC) $(CFLAGS) --outFile test.js src/test.ts src/mtrx4.ts src/vec3.ts src/common.ts
 
-test.js: src/test.ts
-	$(CC) $(CFLAGS) --outFile test.js src/test.ts
+test2.js: $(SRCS)
+	$(CC) $(CFLAGS) --outFile test2.js src/test2.ts src/mtrx4.ts src/vec3.ts src/common.ts
 
 clean:
 	rm -f *.js

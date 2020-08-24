@@ -1,4 +1,13 @@
+#002_webgl
+Простая программа для получения контекста WebGL и отрисовки куба с одним источником света на        
+элементе canvas в html. Почти целиком калька с примера на MDN.      
+Выяснилась особенность - ширину и высоту элемнта канвас нужно задавать      
+так - <canvas id="name" width="800" height="600">, иначе, при задании свойств через style="..."
+<canvas id="name" style="width: 800; height: 600"> рендиринг идёт на всё площадь элемента, но
+как будто, с уменьшеным разрешением.        
+
+test.ts - написано в императивном стиле, калька с туториала на MDN.     
+test2.ts - написано в ООП стиле.
 
 Зависимости:        
-$ sudo apt-get install libxrandr-dev libxinerama-dev libxcursor-dev libfreeimage-dev libglew-dev libxi-dev      
-$ sudo npm install -g --unsafe-perm=true --allow-root glfw-raub
+
