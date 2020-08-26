@@ -294,7 +294,7 @@ function mtrx4_set_axisangl(axis: vec3_t, phi: number): mtrx4_t {
     return rt;
 }
 
-function mtrx4_mult_axisangl(a, rad, axis): mtrx4_t {
+function mtrx4_mult_axisangl(a: any, rad: any, axis: any): mtrx4_t {
     let rt: mtrx4_t = new Float32Array(16);
     let x = axis[0], y = axis[1], z = axis[2];
     let len = Math.sqrt(x*x + y*y + z*z);
@@ -368,7 +368,7 @@ function mtrx4_mult_axisangl(a, rad, axis): mtrx4_t {
     return rt;
 }
 
-function mtrx4_mult_translate(a, v): mtrx4_t {
+function mtrx4_mult_translate(a: any, v: any): mtrx4_t {
     let rt: mtrx4_t = new Float32Array(16);;
     let x = v[0], y = v[1], z = v[2];
     let a00, a01, a02, a03;

@@ -305,7 +305,7 @@ function main() {
 
     app.setup();
 
-    function render(now) {
+    function render(now: any) {
         now *= 0.001;  // convert to seconds
         const deltaTime = now - then;
         then = now;

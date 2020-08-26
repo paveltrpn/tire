@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    //"sourceMap": true,
+    "outFile": "../cube.js",
+    },
+    "files": ["test2.ts", "mtrx4.ts", "vec3.ts", "common.ts"]
+}
