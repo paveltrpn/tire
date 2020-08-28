@@ -194,7 +194,8 @@ function mtrx4_invert(m: mtrx4_t): mtrx4_t {
 
 function mtrx4_set_perspective(fovy: number, aspect: number, near: number, far: number): mtrx4_t {
     let rt: mtrx4_t = new Float32Array(16);
-    let f = 1.0 / Math.tan(fovy / 2), nf;
+    let f = 1.0 / Math.tan(fovy / 2)
+    let nf: number;
 
     rt[0] = f / aspect;
     rt[1] = 0;

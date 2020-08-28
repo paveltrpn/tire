@@ -148,13 +148,24 @@ class cube_c{
               normalMatrix:     this.gl.getUniformLocation(this.gl_shader, 'uNormalMatrix'),
             },
           };
+        
+        console.log(this.gl.getParameter(this.gl.VERSION));
+        console.log(this.gl.getParameter(this.gl.SHADING_LANGUAGE_VERSION));
+        console.log(this.gl.getParameter(this.gl.VENDOR));
+        let gl_ext = this.gl.getSupportedExtensions();
+
+        for (let i = 0; i < gl_ext.length; i++) {
+            console.log(gl_ext[i]);
+        }
+
+        console.log("Message");
 
         this.initBuffers();
     }
 
     render(deltaTime: any): void {
         this.gl.viewport(0, 0, this.wnd_width, this.wnd_height);
-        this.gl.clearColor(1.0, 1.0, 1.0, 1.0);  
+        this.gl.clearColor(0.1, 0.1, 0.1, 1.0);  
         this.gl.clearDepth(1.0);                 
         this.gl.enable(this.gl.DEPTH_TEST);           
         this.gl.depthFunc(this.gl.LEQUAL);            
