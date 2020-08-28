@@ -4,7 +4,7 @@
     "removeComments": true,
     "preserveConstEnums": true,
     // "sourceMap": true,
-    "outFile": "../cube.js",
+    "outFile": "./cube.js",
     },
-    "files": ["test2.ts", "mtrx4.ts", "vec3.ts", "common.ts"]
+    "files": ["src/test2.ts", "src/mtrx4.ts", "src/vec3.ts", "src/common.ts"]
 }
