@@ -13,7 +13,7 @@ using namespace std;
 // GCC 9.2.0 выравнивает эту структуру
 // и поэтому sizeof(STGAHeader) = 20.
 // Если использовать #pragma pack(push, 1)
-// то sizeof(STGAHeader) = 18.
+// то sizeof(STGAHeader) = 18, как и должно
 #pragma pack(push, 1)
 typedef struct STGAHeader
 {
