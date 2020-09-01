@@ -67,7 +67,7 @@ void mainApp_glfw_c::setup() {
 	glEnable(GL_TEXTURE_2D);
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	 glTexImage2D(GL_TEXTURE_2D, 0, 3, tex_image.get_widht(), tex_image.get_height(), 0, GL_RGB, GL_UNSIGNED_BYTE, tex_image.get_data_ptr());
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, tex_image.get_widht(), tex_image.get_height(), 0, GL_RGB, GL_UNSIGNED_BYTE, tex_image.get_data_ptr());
 	// gluBuild2DMipmaps(GL_TEXTURE_2D, 3, tex_image.get_widht(), tex_image.get_height(), GL_RGB, GL_UNSIGNED_BYTE, tex_image.get_data());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);

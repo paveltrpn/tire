@@ -5,36 +5,9 @@ import (
 	"math"
 )
 
-type mtrx3_t [9]float32
+type mtrx3 [9]float32
 
-/* func proto
-
-func mtrx3_idtt() (rt mtrx3_t)
-func mtrx3_set(m [9]float32) (rt mtrx3_t)
-func mtrx3_set_float(a00, a01, a02,
-					 a10, a11, a12,
-					 a20, a21, a22 float32) (rt mtrx3_t)
-func mtrx3_set_euler(yaw, pitch, roll float32) (rt mtrx3_t)
-func mtrx3_set_axisangl(ax vec3_t, phi float32) (rt mtrx3_t)
-func mtrx3_set_yaw(angl float32) (rt mtrx3_t)
-func mtrx3_set_pitch(angl float32) (rt mtrx3_t)
-func mtrx3_set_roll(angl float32) (rt mtrx3_t)
-func mtrx3_show(m mtrx3_t)
-func mtrx3_det(m mtrx3_t) (rt float32)
-func mtrx3_det_lu(m mtrx3_t) (rt float32)
-func mtrx3_mult(a, b mtrx3_t) (rt mtrx3_t)
-func mtrx3_mult_vec3(m mtrx3_t, v vec3_t) (rt vec3_t)
-func mtrx3_lu(m mtrx3_t) (lm, um mtrx3_t)
-func mtrx3_ldlt(m mtrx3_t) (lm mtrx3_t, dv vec3_t)
-func mtrx3_transpose(m mtrx3_t) (rt mtrx3_t)
-func mtrx3_invert(m mtrx3_t) (rt mtrx3_t)
-func mtrx3_solve_gauss(m mtrx3_t, v vec3_t) (rt vec3_t)
-func mtrx3_insert_cmn(m mtrx3_t, v vec3_t, cmn int32) (rt mtrx3_t)
-func mtrx3_solve_kramer(m mtrx3_t, v vec3_t) (rt vec3_t)
-
-*/
-
-func mtrx3Idtt() (rt mtrx3_t) {
+func mtrx3Idtt() (rt mtrx3) {
 	var (
 		i, j   int32
 		mrange int32 = 3
@@ -53,7 +26,7 @@ func mtrx3Idtt() (rt mtrx3_t) {
 	return rt
 }
 
-func mtrx3Set(m [9]float32) (rt mtrx3_t) {
+func mtrx3Set(m [9]float32) (rt mtrx3) {
 	var (
 		i, j   int32
 		mrange int32 = 3
@@ -70,7 +43,7 @@ func mtrx3Set(m [9]float32) (rt mtrx3_t) {
 
 func mtrx3SetFloat(a00, a01, a02,
 	a10, a11, a12,
-	a20, a21, a22 float32) (rt mtrx3_t) {
+	a20, a21, a22 float32) (rt mtrx3) {
 
 	rt[0] = a00
 	rt[1] = a01
@@ -87,7 +60,7 @@ func mtrx3SetFloat(a00, a01, a02,
 	return rt
 }
 
-func mtrx3SetEuler(yaw, pitch, roll float32) (rt mtrx3_t) {
+func mtrx3SetEuler(yaw, pitch, roll float32) (rt mtrx3) {
 	var (
 		cosy, siny, cosp, sinp, cosr, sinr float32
 	)
@@ -114,16 +87,19 @@ func mtrx3SetEuler(yaw, pitch, roll float32) (rt mtrx3_t) {
 	return rt
 }
 
-func mtrx3SetAxisAngl(ax vec3_t, phi float32) (rt mtrx3_t) {
+func mtrx3SetAxisAngl(ax vec3, phi float32) (rt mtrx3) {
 	var (
 		cosphi, sinphi, vxvy, vxvz, vyvz, vx, vy, vz float32
+		axis                                         vec3
 	)
+
+	axis = vec3Normalize(ax)
 
 	cosphi = cosf(phi)
 	sinphi = sinf(phi)
-	vxvy = ax[_XC] * ax[_YC]
-	vxvz = ax[_XC] * ax[_ZC]
-	vyvz = ax[_YC] * ax[_ZC]
+	vxvy = axis[_XC] * axis[_YC]
+	vxvz = axis[_XC] * axis[_ZC]
+	vyvz = axis[_YC] * axis[_ZC]
 	vx = ax[_XC]
 	vy = ax[_YC]
 	vz = ax[_ZC]
@@ -134,7 +110,7 @@ func mtrx3SetAxisAngl(ax vec3_t, phi float32) (rt mtrx3_t) {
 
 	rt[3] = (1.0-cosphi)*vxvy + sinphi*vz
 	rt[4] = cosphi + (1.0-cosphi)*vy*vy
-	rt[5] = (1.0-cosphi)*vyvz - sinphi*vz
+	rt[5] = (1.0-cosphi)*vyvz - sinphi*vx
 
 	rt[6] = (1.0-cosphi)*vxvz - sinphi*vy
 	rt[7] = (1.0-cosphi)*vyvz + sinphi*vx
@@ -143,13 +119,13 @@ func mtrx3SetAxisAngl(ax vec3_t, phi float32) (rt mtrx3_t) {
 	return rt
 }
 
-func mtrx3SetYaw(angl float32) (rt mtrx3_t) {
+func mtrx3SetYaw(angl float32) (rt mtrx3) {
 	var (
 		sa, ca float32
 	)
 
-	sa = sinf(deg_to_rad(angl))
-	ca = cosf(deg_to_rad(angl))
+	sa = sinf(degToRad(angl))
+	ca = cosf(degToRad(angl))
 
 	rt[0] = ca
 	rt[1] = -sa
@@ -166,13 +142,13 @@ func mtrx3SetYaw(angl float32) (rt mtrx3_t) {
 	return rt
 }
 
-func mtrx3SetPitch(angl float32) (rt mtrx3_t) {
+func mtrx3SetPitch(angl float32) (rt mtrx3) {
 	var (
 		sa, ca float32
 	)
 
-	sa = sinf(deg_to_rad(angl))
-	ca = cosf(deg_to_rad(angl))
+	sa = sinf(degToRad(angl))
+	ca = cosf(degToRad(angl))
 
 	rt[0] = 1.0
 	rt[1] = 0.0
@@ -189,13 +165,13 @@ func mtrx3SetPitch(angl float32) (rt mtrx3_t) {
 	return rt
 }
 
-func mtrx3SetRoll(angl float32) (rt mtrx3_t) {
+func mtrx3SetRoll(angl float32) (rt mtrx3) {
 	var (
 		sa, ca float32
 	)
 
-	sa = sinf(deg_to_rad(angl))
-	ca = cosf(deg_to_rad(angl))
+	sa = sinf(degToRad(angl))
+	ca = cosf(degToRad(angl))
 
 	rt[0] = ca
 	rt[1] = 0.0
@@ -210,13 +186,13 @@ func mtrx3SetRoll(angl float32) (rt mtrx3_t) {
 	return rt
 }
 
-func mtrx3Show(m mtrx3_t) {
+func mtrx3Show(m mtrx3) {
 	fmt.Printf("%5.2f %5.2f %5.2f\n", m[0], m[1], m[2])
 	fmt.Printf("%5.2f %5.2f %5.2f\n", m[3], m[4], m[5])
 	fmt.Printf("%5.2f %5.2f %5.2f\n", m[6], m[7], m[8])
 }
 
-func mtrx3Det(m mtrx3_t) float32 {
+func mtrx3Det(m mtrx3) float32 {
 	return m[0]*m[4]*m[8] +
 		m[6]*m[1]*m[5] +
 		m[2]*m[3]*m[7] -
@@ -224,31 +200,31 @@ func mtrx3Det(m mtrx3_t) float32 {
 		m[8]*m[3]*m[1]
 }
 
-func mtrx3DetLU(m mtrx3_t) (rt float32) {
+func mtrx3Detlu(m mtrx3) (rt float32) {
 	const (
 		mrange int32 = 3
 	)
 
 	var (
-		i            int32
-		l, u         mtrx3_t
-		l_det, u_det float32
+		i          int32
+		l, u       mtrx3
+		lDet, uDet float32
 	)
 
-	l, u = mtrx3LU(m)
+	l, u = mtrx3lu(m)
 
-	l_det = l[0]
-	u_det = u[0]
+	lDet = l[0]
+	uDet = u[0]
 
 	for i = 1; i < mrange; i++ {
-		l_det *= l[idRw(i, i, mrange)]
-		u_det *= u[idRw(i, i, mrange)]
+		lDet *= l[idRw(i, i, mrange)]
+		uDet *= u[idRw(i, i, mrange)]
 	}
 
-	return l_det * u_det
+	return lDet * uDet
 }
 
-func mtrx3Mult(a, b mtrx3_t) (rt mtrx3_t) {
+func mtrx3Mult(a, b mtrx3) (rt mtrx3) {
 	const (
 		mrange int32 = 3
 	)
@@ -271,7 +247,7 @@ func mtrx3Mult(a, b mtrx3_t) (rt mtrx3_t) {
 	return rt
 }
 
-func mtrx3MultVec(m mtrx3_t, v vec3_t) (rt vec3_t) {
+func mtrx3MultVec(m mtrx3, v vec3) (rt vec3) {
 	const (
 		mrange int32 = 3
 	)
@@ -297,10 +273,10 @@ func mtrx3MultVec(m mtrx3_t, v vec3_t) (rt vec3_t) {
 	ничего не вышло и взял код из сети
 */
 /*
-func mtrx3LU(m mtrx3_t) (l, u mtrx3_t) {
+func mtrx3LU(m mtrx3) (l, u mtrx3) {
 	var (
 		i, j, k int32
-		lm, um  mtrx3_t
+		lm, um  mtrx3
 		sum     float32
 	)
 
@@ -343,7 +319,7 @@ func mtrx3LU(m mtrx3_t) (l, u mtrx3_t) {
 /*
 	Нижнетреугольная (L, lm) матрица имеет единицы по диагонали
 */
-func mtrx3LU(m mtrx3_t) (lm, um mtrx3_t) {
+func mtrx3lu(m mtrx3) (lm, um mtrx3) {
 	const (
 		mrange int32 = 3
 	)
@@ -378,7 +354,7 @@ func mtrx3LU(m mtrx3_t) (lm, um mtrx3_t) {
 	return lm, um
 }
 
-func mtrx3LDLT(m mtrx3_t) (lm mtrx3_t, dv vec3_t) {
+func mtrx3ldlt(m mtrx3) (lm mtrx3, dv vec3) {
 	const (
 		mrange int32 = 3
 	)
@@ -395,7 +371,7 @@ func mtrx3LDLT(m mtrx3_t) (lm mtrx3_t, dv vec3_t) {
 				sum = sum - lm[idRw(i, k, mrange)]*dv[k]*lm[idRw(j, k, mrange)]
 				if i == j {
 					if sum <= 0 {
-						fmt.Println("mtrx3_ldlt(): mtrx is not positive deﬁnite")
+						fmt.Println("mtrx3ldlt(): mtrx is not positive deﬁnite")
 						return mtrx3Idtt(), vec3Set(0.0, 0.0, 0.0)
 					}
 					dv[i] = sum
@@ -410,7 +386,7 @@ func mtrx3LDLT(m mtrx3_t) (lm mtrx3_t, dv vec3_t) {
 	return lm, dv
 }
 
-func mtrx3Transpose(m mtrx3_t) (rt mtrx3_t) {
+func mtrx3Transpose(m mtrx3) (rt mtrx3) {
 	const (
 		mrange int32 = 3
 	)
@@ -433,9 +409,9 @@ func mtrx3Transpose(m mtrx3_t) (rt mtrx3_t) {
 	return rt
 }
 
-func mtrx3Invert(m mtrx3_t) (rt mtrx3_t) {
+func mtrx3Invert(m mtrx3) (rt mtrx3) {
 	var (
-		inverse     mtrx3_t
+		inverse     mtrx3
 		det, invDet float32
 	)
 
@@ -475,7 +451,7 @@ func mtrx3Invert(m mtrx3_t) (rt mtrx3_t) {
 	return rt
 }
 
-func mtrx3SolveGauss(m mtrx3_t, v vec3_t) (rt vec3_t) {
+func mtrx3SolveGauss(m mtrx3, v vec3) (rt vec3) {
 	const (
 		mrange int32 = 3
 	)
@@ -527,7 +503,7 @@ func mtrx3SolveGauss(m mtrx3_t, v vec3_t) (rt vec3_t) {
 	return rt
 }
 
-func mtrx3InsertCmn(m mtrx3_t, v vec3_t, cmn int32) (rt mtrx3_t) {
+func mtrx3InsertCmn(m mtrx3, v vec3, cmn int32) (rt mtrx3) {
 	const (
 		mrange int32 = 3
 	)
@@ -547,15 +523,15 @@ func mtrx3InsertCmn(m mtrx3_t, v vec3_t, cmn int32) (rt mtrx3_t) {
 	return rt
 }
 
-func mtrx3SolveKramer(m mtrx3_t, v vec3_t) (rt vec3_t) {
+func mtrx3SolveKramer(m mtrx3, v vec3) (rt vec3) {
 	const (
 		mrange int32 = 3
 	)
 
 	var (
-		i       int32
-		det     float32
-		kr_mtrx mtrx3_t
+		i      int32
+		det    float32
+		mtrxKr mtrx3
 	)
 
 	det = mtrx3Det(m)
@@ -566,8 +542,8 @@ func mtrx3SolveKramer(m mtrx3_t, v vec3_t) (rt vec3_t) {
 	}
 
 	for i = 0; i < mrange; i++ {
-		kr_mtrx = mtrx3InsertCmn(m, v, i)
-		rt[i] = mtrx3Det(kr_mtrx) / det
+		mtrxKr = mtrx3InsertCmn(m, v, i)
+		rt[i] = mtrx3Det(mtrxKr) / det
 	}
 
 	return rt

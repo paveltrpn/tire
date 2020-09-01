@@ -66,7 +66,7 @@ func fabs(x float32) float32 {
 	}
 }
 
-func deg_to_rad(deg float32) float32 {
+func degToRad(deg float32) float32 {
 	return deg * M_PI / 180.0
 }
 

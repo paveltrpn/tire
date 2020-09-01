@@ -5,30 +5,9 @@ import (
 	"math"
 )
 
-type mtrx2_t [4]float32
+type mtrx2 [4]float32
 
-/* func proto
-
-func mtrx2_idtt() (rt mtrx2_t)
-func mtrx2_set(m [9]float32) (rt mtrx2_t)
-func mtrx2_set_float(a00, a01, a10, a11 float32) (rt mtrx2_t)
-func mtrx2_set_rtn(phi float32)
-func mtrx2_show(m mtrx2_t)
-func mtrx2_det(m mtrx2_t) (rt float32)
-func mtrx2_det_lu(m mtrx2_t) (rt float32)
-func mtrx2_mult(a, b mtrx2_t) (rt mtrx2_t)
-func mtrx2_mult_vec3(m mtrx2_t, v vec3_t) (rt vec3_t)
-func mtrx2_lu(m mtrx2_t) (lm, um mtrx2_t)
-func mtrx2_ldlt(m mtrx2_t) (lm mtrx2_t, dv vec3_t)
-func mtrx2_transpose(m mtrx2_t) (rt mtrx2_t)
-func mtrx2_invert(m mtrx2_t) (rt mtrx2_t)
-func mtrx2_solve_gauss(m mtrx2_t, v vec3_t) (rt vec3_t)
-func mtrx2_insert_cmn(m mtrx2_t, v vec3_t, cmn int32) (rt mtrx2_t)
-func mtrx2_solve_kramer(m mtrx2_t, v vec3_t) (rt vec3_t)
-
-*/
-
-func mtrx2Idtt() (rt mtrx2_t) {
+func mtrx2Idtt() (rt mtrx2) {
 	const (
 		mrange int32 = 2
 	)
@@ -50,7 +29,7 @@ func mtrx2Idtt() (rt mtrx2_t) {
 	return rt
 }
 
-func mtrx2Set(m [4]float32) (rt mtrx2_t) {
+func mtrx2Set(m [4]float32) (rt mtrx2) {
 	const (
 		mrange int32 = 2
 	)
@@ -68,7 +47,7 @@ func mtrx2Set(m [4]float32) (rt mtrx2_t) {
 	return rt
 }
 
-func mtrx2SetFloat(a00, a01, a10, a11 float32) (rt mtrx2_t) {
+func mtrx2SetFloat(a00, a01, a10, a11 float32) (rt mtrx2) {
 	rt[0] = a00
 	rt[1] = a01
 	rt[2] = a10
@@ -77,7 +56,7 @@ func mtrx2SetFloat(a00, a01, a10, a11 float32) (rt mtrx2_t) {
 	return rt
 }
 
-func mtrx2Rtn(phi float32) (rt mtrx2_t) {
+func mtrx2Rtn(phi float32) (rt mtrx2) {
 	var (
 		cosphi, sinphi float32
 	)
@@ -93,40 +72,40 @@ func mtrx2Rtn(phi float32) (rt mtrx2_t) {
 	return rt
 }
 
-func mtrx2Show(m mtrx2_t) {
+func mtrx2Show(m mtrx2) {
 	fmt.Printf("%5.2f %5.2f\n", m[0], m[1])
 	fmt.Printf("%5.2f %5.2f\n", m[2], m[3])
 }
 
-func mtrx2Det(m mtrx2_t) float32 {
+func mtrx2Det(m mtrx2) float32 {
 	return m[0]*m[3] - m[1]*m[2]
 }
 
-func mtrx2DetLU(m mtrx2_t) (rt float32) {
+func mtrx2Detlu(m mtrx2) (rt float32) {
 	const (
 		mrange int32 = 2
 	)
 
 	var (
-		i            int32
-		l, u         mtrx2_t
-		l_det, u_det float32
+		i          int32
+		l, u       mtrx2
+		lDet, uDet float32
 	)
 
-	l, u = mtrx2LU(m)
+	l, u = mtrx2lu(m)
 
-	l_det = l[0]
-	u_det = u[0]
+	lDet = l[0]
+	uDet = u[0]
 
 	for i = 1; i < mrange; i++ {
-		l_det *= l[idRw(i, i, mrange)]
-		u_det *= u[idRw(i, i, mrange)]
+		lDet *= l[idRw(i, i, mrange)]
+		uDet *= u[idRw(i, i, mrange)]
 	}
 
-	return l_det * u_det
+	return lDet * uDet
 }
 
-func mtrx2Mult(a, b mtrx2_t) (rt mtrx2_t) {
+func mtrx2Mult(a, b mtrx2) (rt mtrx2) {
 	const (
 		mrange int32 = 2
 	)
@@ -149,7 +128,7 @@ func mtrx2Mult(a, b mtrx2_t) (rt mtrx2_t) {
 	return rt
 }
 
-func mtrx2MultVec(m mtrx2_t, v vec2_t) (rt vec2_t) {
+func mtrx2MultVec(m mtrx2, v vec2) (rt vec2) {
 	const (
 		mrange int32 = 2
 	)
@@ -174,7 +153,7 @@ func mtrx2MultVec(m mtrx2_t, v vec2_t) (rt vec2_t) {
 	Нижнетреугольная (L, lm) матрица имеет единицы по диагонали
 */
 
-func mtrx2LU(m mtrx2_t) (lm, um mtrx2_t) {
+func mtrx2lu(m mtrx2) (lm, um mtrx2) {
 	const (
 		mrange int32 = 2
 	)
@@ -209,7 +188,7 @@ func mtrx2LU(m mtrx2_t) (lm, um mtrx2_t) {
 	return lm, um
 }
 
-func mtrx2LDLT(m mtrx2_t) (lm mtrx2_t, dv vec2_t) {
+func mtrx2ldlt(m mtrx2) (lm mtrx2, dv vec2) {
 	const (
 		mrange int32 = 2
 	)
@@ -226,7 +205,7 @@ func mtrx2LDLT(m mtrx2_t) (lm mtrx2_t, dv vec2_t) {
 				sum = sum - lm[idRw(i, k, mrange)]*dv[k]*lm[idRw(j, k, mrange)]
 				if i == j {
 					if sum <= 0 {
-						fmt.Println("A is not positive deﬁnite")
+						fmt.Println("mtrx2ldlt(): mtrx is not positive deﬁnite")
 						return mtrx2Idtt(), vec2Set(0.0, 0.0)
 					}
 					dv[i] = sum
@@ -241,7 +220,7 @@ func mtrx2LDLT(m mtrx2_t) (lm mtrx2_t, dv vec2_t) {
 	return lm, dv
 }
 
-func mtrx2Transpose(m mtrx2_t) (rt mtrx2_t) {
+func mtrx2Transpose(m mtrx2) (rt mtrx2) {
 	const (
 		mrange int32 = 2
 	)
@@ -264,7 +243,7 @@ func mtrx2Transpose(m mtrx2_t) (rt mtrx2_t) {
 	return rt
 }
 
-func mtrx2Invert(m mtrx2_t) mtrx2_t {
+func mtrx2Invert(m mtrx2) mtrx2 {
 	var (
 		det float32
 	)
@@ -272,14 +251,14 @@ func mtrx2Invert(m mtrx2_t) mtrx2_t {
 	det = mtrx2Det(m)
 
 	if fabs(det) < f_eps {
-		fmt.Println("mtrx_invert(): determinant is a zero!")
+		fmt.Println("mtrx2invert(): determinant is a zero!")
 		return mtrx2Idtt()
 	}
 
 	return mtrx2SetFloat(m[3], -m[1]/det, -m[2]/det, m[0]/det)
 }
 
-func mtrx2SolveGauss(m mtrx2_t, v vec3_t) (rt vec3_t) {
+func mtrx2SolveGauss(m mtrx2, v vec3) (rt vec3) {
 	const (
 		mrange int32 = 2
 	)
@@ -331,7 +310,7 @@ func mtrx2SolveGauss(m mtrx2_t, v vec3_t) (rt vec3_t) {
 	return rt
 }
 
-func mtrx2InsertCmn(m mtrx2_t, v vec3_t, cmn int32) (rt mtrx2_t) {
+func mtrx2InsertCmn(m mtrx2, v vec3, cmn int32) (rt mtrx2) {
 	const (
 		mrange int32 = 2
 	)
@@ -351,27 +330,27 @@ func mtrx2InsertCmn(m mtrx2_t, v vec3_t, cmn int32) (rt mtrx2_t) {
 	return rt
 }
 
-func mtrx2SolveKramer(m mtrx2_t, v vec3_t) (rt vec2_t) {
+func mtrx2SolveKramer(m mtrx2, v vec3) (rt vec2) {
 	const (
 		mrange int32 = 2
 	)
 
 	var (
-		i       int32
-		det     float32
-		kr_mtrx mtrx2_t
+		i      int32
+		det    float32
+		mtrxKr mtrx2
 	)
 
 	det = mtrx2Det(m)
 
 	if fabs(det) < f_eps {
-		fmt.Println("mtrx_solve_kramer(): system has no solve")
+		fmt.Println("mtrx2SolveKramer(): system has no solve")
 		return vec2Set(0.0, 0.0)
 	}
 
 	for i = 0; i < mrange; i++ {
-		kr_mtrx = mtrx2InsertCmn(m, v, i)
-		rt[i] = mtrx2Det(kr_mtrx) / det
+		mtrxKr = mtrx2InsertCmn(m, v, i)
+		rt[i] = mtrx2Det(mtrxKr) / det
 	}
 
 	return rt

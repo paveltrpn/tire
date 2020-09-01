@@ -15,11 +15,9 @@ import (
 )
 
 var (
-	texture   uint32
-	rotationX float32
-	rotationY float32
+	texture uint32
 
-	geometry = [8]vec3_t{
+	base = [8]vec3{
 		{1.0, 1.0, 1.0},
 		{-1.0, 1.0, 1.0},
 		{-1.0, -1.0, 1.0},
@@ -29,50 +27,85 @@ var (
 		{-1.0, -1.0, -1.0},
 		{1.0, -1.0, -1.0}}
 
-	x_ax          = vec3_t{1.0, 0.0, 0.0}
-	y_ax          = vec3_t{0.0, 1.0, 0.0}
-	z_ax          = vec3_t{0.0, 0.0, 1.0}
-	m_rtn mtrx3_t = mtrx3SetAxisAngl(x_ax, 0.01)
+	baseNormal = [6]vec3{
+		{0.0, 0.0, 1.0},
+		{0.0, 0.0, -1.0},
+		{0.0, 1.0, 0.0},
+		{0.0, -1.0, 0.0},
+		{1.0, 0.0, 0.0},
+		{-1.0, 0.0, 0.0}}
+
+	mRtn mtrx3 = mtrx3SetAxisAngl(vec3Set(1, 0.5, 0.1), 0.04)
 )
 
 func showBox() {
 	gl.Begin(gl.QUADS) // Рисуем куб
 
 	gl.Color3f(0.1, 0.6, 0.1)
-	gl.Vertex3fv(&geometry[0][0])
-	gl.Vertex3fv(&geometry[1][0])
-	gl.Vertex3fv(&geometry[2][0])
-	gl.Vertex3fv(&geometry[3][0])
+	gl.Normal3fv(&baseNormal[0][0])
+	gl.TexCoord2f(0.0, 0.0)
+	gl.Vertex3fv(&base[0][0])
+	gl.TexCoord2f(1.0, 0.0)
+	gl.Vertex3fv(&base[1][0])
+	gl.TexCoord2f(1.0, 1.0)
+	gl.Vertex3fv(&base[2][0])
+	gl.TexCoord2f(0.0, 1.0)
+	gl.Vertex3fv(&base[3][0])
 
 	gl.Color3f(0.8, 0.9, 0.1)
-	gl.Vertex3fv(&geometry[4][0])
-	gl.Vertex3fv(&geometry[5][0])
-	gl.Vertex3fv(&geometry[6][0])
-	gl.Vertex3fv(&geometry[7][0])
+	gl.Normal3fv(&baseNormal[1][0])
+	gl.TexCoord2f(0.0, 0.0)
+	gl.Vertex3fv(&base[4][0])
+	gl.TexCoord2f(1.0, 0.0)
+	gl.Vertex3fv(&base[5][0])
+	gl.TexCoord2f(1.0, 1.0)
+	gl.Vertex3fv(&base[6][0])
+	gl.TexCoord2f(0.0, 1.0)
+	gl.Vertex3fv(&base[7][0])
 
 	gl.Color3f(0.0, 1.0, 1.0)
-	gl.Vertex3fv(&geometry[0][0])
-	gl.Vertex3fv(&geometry[1][0])
-	gl.Vertex3fv(&geometry[5][0])
-	gl.Vertex3fv(&geometry[4][0])
+	gl.Normal3fv(&baseNormal[2][0])
+	gl.TexCoord2f(0.0, 0.0)
+	gl.Vertex3fv(&base[0][0])
+	gl.TexCoord2f(1.0, 0.0)
+	gl.Vertex3fv(&base[1][0])
+	gl.TexCoord2f(1.0, 1.0)
+	gl.Vertex3fv(&base[5][0])
+	gl.TexCoord2f(0.0, 1.0)
+	gl.Vertex3fv(&base[4][0])
 
 	gl.Color3f(0.93, 0.11, 0.23)
-	gl.Vertex3fv(&geometry[2][0])
-	gl.Vertex3fv(&geometry[3][0])
-	gl.Vertex3fv(&geometry[7][0])
-	gl.Vertex3fv(&geometry[6][0])
+	gl.Normal3fv(&baseNormal[3][0])
+	gl.TexCoord2f(0.0, 0.0)
+	gl.Vertex3fv(&base[2][0])
+	gl.TexCoord2f(1.0, 0.0)
+	gl.Vertex3fv(&base[3][0])
+	gl.TexCoord2f(1.0, 1.0)
+	gl.Vertex3fv(&base[7][0])
+	gl.TexCoord2f(0.0, 1.0)
+	gl.Vertex3fv(&base[6][0])
 
 	gl.Color3f(0.1, 0.15, 0.75)
-	gl.Vertex3fv(&geometry[0][0])
-	gl.Vertex3fv(&geometry[4][0])
-	gl.Vertex3fv(&geometry[7][0])
-	gl.Vertex3fv(&geometry[3][0])
+	gl.Normal3fv(&baseNormal[4][0])
+	gl.TexCoord2f(0.0, 0.0)
+	gl.Vertex3fv(&base[0][0])
+	gl.TexCoord2f(1.0, 0.0)
+	gl.Vertex3fv(&base[4][0])
+	gl.TexCoord2f(1.0, 1.0)
+	gl.Vertex3fv(&base[7][0])
+	gl.TexCoord2f(0.0, 1.0)
+	gl.Vertex3fv(&base[3][0])
 
 	gl.Color3f(0.8, 0.2, 0.98)
-	gl.Vertex3fv(&geometry[1][0])
-	gl.Vertex3fv(&geometry[5][0])
-	gl.Vertex3fv(&geometry[6][0])
-	gl.Vertex3fv(&geometry[2][0])
+	gl.Normal3fv(&baseNormal[5][0])
+	gl.TexCoord2f(0.0, 0.0)
+	gl.Vertex3fv(&base[1][0])
+	gl.TexCoord2f(1.0, 0.0)
+	gl.Vertex3fv(&base[5][0])
+	gl.TexCoord2f(1.0, 1.0)
+	gl.Vertex3fv(&base[6][0])
+	gl.TexCoord2f(0.0, 1.0)
+	gl.Vertex3fv(&base[2][0])
 
 	gl.End()
 }
@@ -83,8 +116,11 @@ func updBox() {
 	)
 
 	for i = 0; i < 8; i++ {
-		geometry[i] = mtrx3MultVec(m_rtn, geometry[i])
-		//geometry[i] = qtnn_transform_vec3(q_rtn, geometry[i]);
+		base[i] = mtrx3MultVec(mRtn, base[i])
+	}
+
+	for i = 0; i < 6; i++ {
+		baseNormal[i] = mtrx3MultVec(mRtn, baseNormal[i])
 	}
 }
 
@@ -94,6 +130,8 @@ func init() {
 }
 
 func main() {
+	loadFromTGA("assets/Consolas-1024-512-32-64.tga")
+
 	if err := glfw.Init(); err != nil {
 		log.Fatalln("failed to initialize glfw:", err)
 	}
@@ -108,9 +146,16 @@ func main() {
 	}
 	window.MakeContextCurrent()
 
+	// Включили VSync
+	glfw.SwapInterval(1)
+
 	if err := gl.Init(); err != nil {
 		panic(err)
 	}
+
+	println(gl.GoStr(gl.GetString(gl.RENDERER)))
+	println(gl.GoStr(gl.GetString(gl.VERSION)))
+	println(gl.GoStr(gl.GetString(gl.SHADING_LANGUAGE_VERSION)))
 
 	setupScene()
 
@@ -119,9 +164,14 @@ func main() {
 		window.SwapBuffers()
 		glfw.PollEvents()
 	}
+
 }
 
 func setupScene() {
+	var (
+		bmp bitmapType
+	)
+
 	gl.Enable(gl.DEPTH_TEST)
 	gl.Enable(gl.LIGHTING)
 
@@ -142,6 +192,26 @@ func setupScene() {
 	gl.Frustum(-1, 1, -1, 1, 1.0, 10.0)
 	gl.MatrixMode(gl.MODELVIEW)
 	gl.LoadIdentity()
+
+	bmp.loadBitmap("assets/texture.jpg")
+	gl.Enable(gl.TEXTURE_2D)
+	gl.GenTextures(1, &texture)
+	gl.ActiveTexture(gl.TEXTURE0)
+	gl.BindTexture(gl.TEXTURE_2D, texture)
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+	gl.TexImage2D(
+		gl.TEXTURE_2D,
+		0,
+		gl.RGBA,
+		bmp.width,
+		bmp.height,
+		0,
+		gl.RGBA,
+		gl.UNSIGNED_BYTE,
+		gl.Ptr(bmp.data))
 }
 
 func destroyScene() {
@@ -153,13 +223,11 @@ func frame() {
 
 	gl.MatrixMode(gl.MODELVIEW)
 	gl.LoadIdentity()
-	gl.Translatef(0, 0, -3.0)
-	gl.Rotatef(rotationX, 1, 0, 0)
-	gl.Rotatef(rotationY, 0, 1, 0)
+	gl.Translatef(0, 0, -5.0)
 
-	rotationX += 0.5
-	rotationY += 0.5
-
+	gl.Enable(gl.TEXTURE_2D)
+	gl.BindTexture(gl.TEXTURE_2D, texture)
 	showBox()
+
 	updBox()
 }
