@@ -224,6 +224,30 @@ function mtrx4_set_perspective(fovy: number, aspect: number, near: number, far: 
     return rt;
 }
 
+function mtrx4_set_ortho(left: number, right: number, bottom: number, top: number, near: number, far: number) {
+    let out = new Float32Array(16);
+    let lr = 1 / (left - right);
+    let bt = 1 / (bottom - top);
+    let nf = 1 / (near - far);
+    out[0] = -2 * lr;
+    out[1] = 0;
+    out[2] = 0;
+    out[3] = 0;
+    out[4] = 0;
+    out[5] = -2 * bt;
+    out[6] = 0;
+    out[7] = 0;
+    out[8] = 0;
+    out[9] = 0;
+    out[10] = 2 * nf;
+    out[11] = 0;
+    out[12] = (left + right) * lr;
+    out[13] = (top + bottom) * bt;
+    out[14] = (far + near) * nf;
+    out[15] = 1;
+    return out;
+}
+
 function mtrx4_set_euler(yaw: number, pitch: number, roll: number): mtrx4_t {
     let rt: mtrx4_t = new Float32Array(16);
 	let cosy, siny, cosp, sinp, cosr, sinr: number;

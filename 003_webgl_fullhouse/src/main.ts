@@ -172,19 +172,24 @@ class cube_c {
 
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-        let projectionMatrix = mtrx4_set_perspective(deg_to_rad(45), this.aspect, 0.1,  100.0);
-        let modelViewMatrix = mtrx4_set_idtt();
+        let projectionMatrix: mtrx4 = new mtrx4(); 
+        projectionMatrix.set_perspective(deg_to_rad(45), this.aspect, 0.1,  100.0);
+
+        let modelViewMatrix = new mtrx4();
 
         // Now move the drawing position a bit to where we want to
         // start drawing the square.
-        modelViewMatrix = mtrx4_mult_translate(modelViewMatrix, [0.0, 0.0, -7.0]);
+        modelViewMatrix.mult_translate(modelViewMatrix, [0.0, 0.0, -7.0]);
 
-        let rot: mtrx4_t = mtrx4_set_axisangl(vec3_set(0.1, 0.4, 0.3), this.squareRotation);
+        let rot = new mtrx4();
+        rot.set_axisangl(vec3_set(0.1, 0.4, 0.3), this.squareRotation);
         // let rot: mtrx4_t = mtrx4_set_euler(squareRotation, 0, squareRotation );
-        modelViewMatrix = mtrx4_mult(modelViewMatrix, rot);
 
-        let normalMatrix = mtrx4_invert(modelViewMatrix);
-        normalMatrix = mtrx4_transpose(normalMatrix);
+        modelViewMatrix.mult(rot);
+
+        let normalMatrix = new mtrx4(); 
+        normalMatrix.from(modelViewMatrix);
+        normalMatrix.transpose();
 
         // Буфер вершин
         {
@@ -246,15 +251,15 @@ class cube_c {
         this.gl.uniformMatrix4fv(
                 this.gl_programinfo.uniformLocations.projectionMatrix,
                 false,
-                projectionMatrix);
+                projectionMatrix.data);
         this.gl.uniformMatrix4fv(
                 this.gl_programinfo.uniformLocations.modelViewMatrix,
                 false,
-                modelViewMatrix);
+                modelViewMatrix.data);
         this.gl.uniformMatrix4fv(
                 this.gl_programinfo.uniformLocations.normalMatrix,
                 false,
-                normalMatrix);
+                normalMatrix.data);
 
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 36);
 

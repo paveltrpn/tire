@@ -6,5 +6,5 @@
     // "sourceMap": true,
     "outFile": "./cube.js",
     },
-    "files": ["src/test2.ts", "src/mtrx4.ts", "src/vec3.ts", "src/common.ts"]
+    "files": ["src/main.ts", "src/mtrx4.ts", "src/vec2.ts", "src/vec3.ts", "src/common.ts"]
 }

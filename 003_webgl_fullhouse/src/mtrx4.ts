@@ -1,22 +1,6 @@
 
 type mtrx4_t = Array<Float32Array>[16];
 
-function mtrx4_set_idtt(): mtrx4_t {
-    let rt: mtrx4_t = new Float32Array(16);
-    let i, j: number;
-
-	for (i = 0; i < 16; i++) {
-		for (j = 0; j < 16; j++) {
-			if (i == j) {
-				rt[id_rw(i, j, 4)] = 1.0;
-			} else {
-				rt[id_rw(i, j, 4)] = 0.0;
-			}
-		}
-    }
-        
-    return rt;
-}
 
 /*
 function mtrx4_transpose(m: mtrx4_t): mtrx4_t {
@@ -37,192 +21,6 @@ function mtrx4_transpose(m: mtrx4_t): mtrx4_t {
 	return rt;
 }
 */
-
-function mtrx4_transpose(a: mtrx4_t): mtrx4_t {
-    let rt: mtrx4_t = new Float32Array(16);
-
-    rt[0] = a[0];
-    rt[1] = a[4];
-    rt[2] = a[8];
-    rt[3] = a[12];
-    rt[4] = a[1];
-    rt[5] = a[5];
-    rt[6] = a[9];
-    rt[7] = a[13];
-    rt[8] = a[2];
-    rt[9] = a[6];
-    rt[10] = a[10];
-    rt[11] = a[14];
-    rt[12] = a[3];
-    rt[13] = a[7];
-    rt[14] = a[11];
-    rt[15] = a[15];
-    
-  
-    return rt;
-}
-
-function mtrx4_invert(m: mtrx4_t): mtrx4_t {
-    let inv: mtrx4_t = new Float32Array(16);
-    let rt: mtrx4_t = new Float32Array(16);
-    let i, det: number;
-
-    inv[0] = m[5]  * m[10] * m[15] - 
-             m[5]  * m[11] * m[14] - 
-             m[9]  * m[6]  * m[15] + 
-             m[9]  * m[7]  * m[14] +
-             m[13] * m[6]  * m[11] - 
-             m[13] * m[7]  * m[10];
-
-    inv[4] = -m[4]  * m[10] * m[15] + 
-              m[4]  * m[11] * m[14] + 
-              m[8]  * m[6]  * m[15] - 
-              m[8]  * m[7]  * m[14] - 
-              m[12] * m[6]  * m[11] + 
-              m[12] * m[7]  * m[10];
-
-    inv[8] = m[4]  * m[9] * m[15] - 
-             m[4]  * m[11] * m[13] - 
-             m[8]  * m[5] * m[15] + 
-             m[8]  * m[7] * m[13] + 
-             m[12] * m[5] * m[11] - 
-             m[12] * m[7] * m[9];
-
-    inv[12] = -m[4]  * m[9] * m[14] + 
-               m[4]  * m[10] * m[13] +
-               m[8]  * m[5] * m[14] - 
-               m[8]  * m[6] * m[13] - 
-               m[12] * m[5] * m[10] + 
-               m[12] * m[6] * m[9];
-
-    inv[1] = -m[1]  * m[10] * m[15] + 
-              m[1]  * m[11] * m[14] + 
-              m[9]  * m[2] * m[15] - 
-              m[9]  * m[3] * m[14] - 
-              m[13] * m[2] * m[11] + 
-              m[13] * m[3] * m[10];
-
-    inv[5] = m[0]  * m[10] * m[15] - 
-             m[0]  * m[11] * m[14] - 
-             m[8]  * m[2] * m[15] + 
-             m[8]  * m[3] * m[14] + 
-             m[12] * m[2] * m[11] - 
-             m[12] * m[3] * m[10];
-
-    inv[9] = -m[0]  * m[9] * m[15] + 
-              m[0]  * m[11] * m[13] + 
-              m[8]  * m[1] * m[15] - 
-              m[8]  * m[3] * m[13] - 
-              m[12] * m[1] * m[11] + 
-              m[12] * m[3] * m[9];
-
-    inv[13] = m[0]  * m[9] * m[14] - 
-              m[0]  * m[10] * m[13] - 
-              m[8]  * m[1] * m[14] + 
-              m[8]  * m[2] * m[13] + 
-              m[12] * m[1] * m[10] - 
-              m[12] * m[2] * m[9];
-
-    inv[2] = m[1]  * m[6] * m[15] - 
-             m[1]  * m[7] * m[14] - 
-             m[5]  * m[2] * m[15] + 
-             m[5]  * m[3] * m[14] + 
-             m[13] * m[2] * m[7] - 
-             m[13] * m[3] * m[6];
-
-    inv[6] = -m[0]  * m[6] * m[15] + 
-              m[0]  * m[7] * m[14] + 
-              m[4]  * m[2] * m[15] - 
-              m[4]  * m[3] * m[14] - 
-              m[12] * m[2] * m[7] + 
-              m[12] * m[3] * m[6];
-
-    inv[10] = m[0]  * m[5] * m[15] - 
-              m[0]  * m[7] * m[13] - 
-              m[4]  * m[1] * m[15] + 
-              m[4]  * m[3] * m[13] + 
-              m[12] * m[1] * m[7] - 
-              m[12] * m[3] * m[5];
-
-    inv[14] = -m[0]  * m[5] * m[14] + 
-               m[0]  * m[6] * m[13] + 
-               m[4]  * m[1] * m[14] - 
-               m[4]  * m[2] * m[13] - 
-               m[12] * m[1] * m[6] + 
-               m[12] * m[2] * m[5];
-
-    inv[3] = -m[1] * m[6] * m[11] + 
-              m[1] * m[7] * m[10] + 
-              m[5] * m[2] * m[11] - 
-              m[5] * m[3] * m[10] - 
-              m[9] * m[2] * m[7] + 
-              m[9] * m[3] * m[6];
-
-    inv[7] = m[0] * m[6] * m[11] - 
-             m[0] * m[7] * m[10] - 
-             m[4] * m[2] * m[11] + 
-             m[4] * m[3] * m[10] + 
-             m[8] * m[2] * m[7] - 
-             m[8] * m[3] * m[6];
-
-    inv[11] = -m[0] * m[5] * m[11] + 
-               m[0] * m[7] * m[9] + 
-               m[4] * m[1] * m[11] - 
-               m[4] * m[3] * m[9] - 
-               m[8] * m[1] * m[7] + 
-               m[8] * m[3] * m[5];
-
-    inv[15] = m[0] * m[5] * m[10] - 
-              m[0] * m[6] * m[9] - 
-              m[4] * m[1] * m[10] + 
-              m[4] * m[2] * m[9] + 
-              m[8] * m[1] * m[6] - 
-              m[8] * m[2] * m[5];
-
-    det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
-
-    if (det == 0)
-        return mtrx4_set_idtt();
-
-    det = 1.0 / det;
-
-    for (i = 0; i < 16; i++)
-        rt[i] = inv[i] * det;
-
-    return rt;
-}
-
-function mtrx4_set_perspective(fovy: number, aspect: number, near: number, far: number): mtrx4_t {
-    let rt: mtrx4_t = new Float32Array(16);
-    let f = 1.0 / Math.tan(fovy / 2)
-    let nf: number;
-
-    rt[0] = f / aspect;
-    rt[1] = 0;
-    rt[2] = 0;
-    rt[3] = 0;
-    rt[4] = 0;
-    rt[5] = f;
-    rt[6] = 0;
-    rt[7] = 0;
-    rt[8] = 0;
-    rt[9] = 0;
-    rt[11] = -1;
-    rt[12] = 0;
-    rt[13] = 0;
-    rt[15] = 0;
-
-    if (far != null && far !== Infinity) {
-        nf = 1 / (near - far);
-        rt[10] = (far + near) * nf;
-        rt[14] = 2 * far * near * nf;
-    } else {
-        rt[10] = -1;
-        rt[14] = -2 * near;
-    }
-
-    return rt;
-}
 
 function mtrx4_set_euler(yaw: number, pitch: number, roll: number): mtrx4_t {
     let rt: mtrx4_t = new Float32Array(16);
@@ -248,43 +46,6 @@ function mtrx4_set_euler(yaw: number, pitch: number, roll: number): mtrx4_t {
 	rt[8]  = sinp * sinr;
 	rt[9]  = sinp * cosr;
 	rt[10] = cosp;
-	rt[11] = 0.0;
-
-	rt[12] = 0.0;
-	rt[13] = 0.0;
-	rt[14] = 0.0;
-    rt[15] = 1.0;
-    
-    return rt;
-}
-
-function mtrx4_set_axisangl(axis: vec3_t, phi: number): mtrx4_t {
-    let rt: mtrx4_t = new Float32Array(16);
-    let cosphi, sinphi, vxvy, vxvz, vyvz, vx, vy, vz: number;
-    let ax: vec3_t = vec3_normalize(axis);
-
-    cosphi = Math.cos(phi);
-	sinphi = Math.sin(phi);
-	vxvy = ax[0] * ax[1];
-	vxvz = ax[0] * ax[2];
-	vyvz = ax[1] * ax[2];
-	vx = ax[0];
-	vy = ax[1];
-	vz = ax[2];
-
-	rt[0]  = cosphi + (1.0-cosphi)*vx*vx;
-	rt[1]  = (1.0-cosphi)*vxvy - sinphi*vz;
-	rt[2]  = (1.0-cosphi)*vxvz + sinphi*vy;
-	rt[3]  = 0.0;
-
-	rt[4]  = (1.0-cosphi)*vxvy + sinphi*vz;
-	rt[5]  = cosphi + (1.0-cosphi)*vy*vy;
-	rt[6]  = (1.0-cosphi)*vyvz - sinphi*vx;
-	rt[7]  = 0.0;
-
-	rt[8]  = (1.0-cosphi)*vxvz - sinphi*vy;
-	rt[9]  = (1.0-cosphi)*vyvz + sinphi*vx;
-	rt[10] = cosphi + (1.0-cosphi)*vz*vz;
 	rt[11] = 0.0;
 
 	rt[12] = 0.0;
@@ -369,54 +130,6 @@ function mtrx4_mult_axisangl(a: any, rad: any, axis: any): mtrx4_t {
     return rt;
 }
 
-function mtrx4_mult_translate(a: any, v: any): mtrx4_t {
-    let rt: mtrx4_t = new Float32Array(16);;
-    let x = v[0], y = v[1], z = v[2];
-    let a00, a01, a02, a03;
-    let a10, a11, a12, a13;
-    let a20, a21, a22, a23;
-
-    if (a === rt) {
-        rt[12] = a[0] * x + a[4] * y + a[8] * z + a[12];
-        rt[13] = a[1] * x + a[5] * y + a[9] * z + a[13];
-        rt[14] = a[2] * x + a[6] * y + a[10] * z + a[14];
-        rt[15] = a[3] * x + a[7] * y + a[11] * z + a[15];
-    } else {
-        a00 = a[0];
-        a01 = a[1];
-        a02 = a[2];
-        a03 = a[3];
-        a10 = a[4];
-        a11 = a[5];
-        a12 = a[6];
-        a13 = a[7];
-        a20 = a[8];
-        a21 = a[9];
-        a22 = a[10];
-        a23 = a[11];
-
-        rt[0] = a00;
-        rt[1] = a01;
-        rt[2] = a02;
-        rt[3] = a03;
-        rt[4] = a10;
-        rt[5] = a11;
-        rt[6] = a12;
-        rt[7] = a13;
-        rt[8] = a20;
-        rt[9] = a21;
-        rt[10] = a22;
-        rt[11] = a23;
-
-        rt[12] = a00 * x + a10 * y + a20 * z + a[12];
-        rt[13] = a01 * x + a11 * y + a21 * z + a[13];
-        rt[14] = a02 * x + a12 * y + a22 * z + a[14];
-        rt[15] = a03 * x + a13 * y + a23 * z + a[15];
-    }
-
-    return rt;
-}
-
 function mtrx4_mult(a: mtrx4_t, b: mtrx4_t): mtrx4_t {
     const mrange = 4;
 	let i, j, k, tmp: number;
@@ -435,4 +148,330 @@ function mtrx4_mult(a: mtrx4_t, b: mtrx4_t): mtrx4_t {
 	}
 
 	return rt;
+}
+
+//////////////////////////////////////////////////
+
+//////////////////////////////////////////////////
+
+class mtrx4 {
+    data: Float32Array;
+    private readonly order: number = 4;
+
+    constructor() {
+        let i, j: number;
+
+        this.data = new Float32Array(16);
+
+	    for (i = 0; i < this.order; i++) {
+	    	for (j = 0; j < this.order; j++) {
+	    		if (i == j) {
+	    			this.data[id_rw(i, j, this.order)] = 1.0;
+	    		} else {
+	    			this.data[id_rw(i, j, this.order)] = 0.0;
+	    		}
+	    	}
+	    }
+    }
+
+    set_idtt() {
+        let i, j: number;
+
+        for (i = 0; i < this.order; i++) {
+	    	for (j = 0; j < this.order; j++) {
+	    		if (i == j) {
+	    			this.data[id_rw(i, j, this.order)] = 1.0;
+	    		} else {
+	    			this.data[id_rw(i, j, this.order)] = 0.0;
+	    		}
+	    	}
+	    }
+    }
+
+    from(src: mtrx4) {
+        for (let i = 0; i < 16; i++) {
+            this.data[i] = src.data[i];
+        }
+    }
+
+    mult(a: mtrx4) {
+        let i, j, k, tmp: number;
+        let rt: mtrx4 = new mtrx4();
+        
+        for (i = 0; i < this.order; i++) {
+            for (j = 0; j < this.order; j++) {
+                tmp = 0.0;
+                
+                for (k = 0; k < this.order; k++) {
+                    tmp = tmp + this.data[(id_rw(k, j, this.order))] * a.data[(id_rw(i, k, this.order))];
+                }
+                
+                rt.data[(id_rw(i, j, this.order))] = tmp;
+            }
+        }
+    
+        this.from(rt);
+    }
+
+    set_perspective(fovy: number, aspect: number, near: number, far: number) {
+        let f = 1.0 / Math.tan(fovy / 2)
+        let nf: number;
+    
+        this.data[0] = f / aspect;
+        this.data[1] = 0;
+        this.data[2] = 0;
+        this.data[3] = 0;
+        this.data[4] = 0;
+        this.data[5] = f;
+        this.data[6] = 0;
+        this.data[7] = 0;
+        this.data[8] = 0;
+        this.data[9] = 0;
+        this.data[11] = -1;
+        this.data[12] = 0;
+        this.data[13] = 0;
+        this.data[15] = 0;
+    
+        if (far != null && far !== Infinity) {
+            nf = 1 / (near - far);
+            this.data[10] = (far + near) * nf;
+            this.data[14] = 2 * far * near * nf;
+        } else {
+            this.data[10] = -1;
+            this.data[14] = -2 * near;
+        }
+    }
+
+    invert() {
+        let inv: mtrx4 = new mtrx4();
+        let i, det: number;
+    
+        inv.data[0] = this.data[5]  * this.data[10] * this.data[15] - 
+                 this.data[5]  * this.data[11] * this.data[14] - 
+                 this.data[9]  * this.data[6]  * this.data[15] + 
+                 this.data[9]  * this.data[7]  * this.data[14] +
+                 this.data[13] * this.data[6]  * this.data[11] - 
+                 this.data[13] * this.data[7]  * this.data[10];
+    
+        inv.data[4] = -this.data[4]  * this.data[10] * this.data[15] + 
+                  this.data[4]  * this.data[11] * this.data[14] + 
+                  this.data[8]  * this.data[6]  * this.data[15] - 
+                  this.data[8]  * this.data[7]  * this.data[14] - 
+                  this.data[12] * this.data[6]  * this.data[11] + 
+                  this.data[12] * this.data[7]  * this.data[10];
+    
+        inv.data[8] = this.data[4]  * this.data[9] * this.data[15] - 
+                 this.data[4]  * this.data[11] * this.data[13] - 
+                 this.data[8]  * this.data[5] * this.data[15] + 
+                 this.data[8]  * this.data[7] * this.data[13] + 
+                 this.data[12] * this.data[5] * this.data[11] - 
+                 this.data[12] * this.data[7] * this.data[9];
+    
+        inv.data[12] = -this.data[4]  * this.data[9] * this.data[14] + 
+                   this.data[4]  * this.data[10] * this.data[13] +
+                   this.data[8]  * this.data[5] * this.data[14] - 
+                   this.data[8]  * this.data[6] * this.data[13] - 
+                   this.data[12] * this.data[5] * this.data[10] + 
+                   this.data[12] * this.data[6] * this.data[9];
+    
+        inv.data[1] = -this.data[1]  * this.data[10] * this.data[15] + 
+                  this.data[1]  * this.data[11] * this.data[14] + 
+                  this.data[9]  * this.data[2] * this.data[15] - 
+                  this.data[9]  * this.data[3] * this.data[14] - 
+                  this.data[13] * this.data[2] * this.data[11] + 
+                  this.data[13] * this.data[3] * this.data[10];
+    
+        inv.data[5] = this.data[0]  * this.data[10] * this.data[15] - 
+                 this.data[0]  * this.data[11] * this.data[14] - 
+                 this.data[8]  * this.data[2] * this.data[15] + 
+                 this.data[8]  * this.data[3] * this.data[14] + 
+                 this.data[12] * this.data[2] * this.data[11] - 
+                 this.data[12] * this.data[3] * this.data[10];
+    
+        inv.data[9] = -this.data[0]  * this.data[9] * this.data[15] + 
+                  this.data[0]  * this.data[11] * this.data[13] + 
+                  this.data[8]  * this.data[1] * this.data[15] - 
+                  this.data[8]  * this.data[3] * this.data[13] - 
+                  this.data[12] * this.data[1] * this.data[11] + 
+                  this.data[12] * this.data[3] * this.data[9];
+    
+        inv.data[13] = this.data[0]  * this.data[9] * this.data[14] - 
+                  this.data[0]  * this.data[10] * this.data[13] - 
+                  this.data[8]  * this.data[1] * this.data[14] + 
+                  this.data[8]  * this.data[2] * this.data[13] + 
+                  this.data[12] * this.data[1] * this.data[10] - 
+                  this.data[12] * this.data[2] * this.data[9];
+    
+        inv.data[2] = this.data[1]  * this.data[6] * this.data[15] - 
+                 this.data[1]  * this.data[7] * this.data[14] - 
+                 this.data[5]  * this.data[2] * this.data[15] + 
+                 this.data[5]  * this.data[3] * this.data[14] + 
+                 this.data[13] * this.data[2] * this.data[7] - 
+                 this.data[13] * this.data[3] * this.data[6];
+    
+        inv.data[6] = -this.data[0]  * this.data[6] * this.data[15] + 
+                  this.data[0]  * this.data[7] * this.data[14] + 
+                  this.data[4]  * this.data[2] * this.data[15] - 
+                  this.data[4]  * this.data[3] * this.data[14] - 
+                  this.data[12] * this.data[2] * this.data[7] + 
+                  this.data[12] * this.data[3] * this.data[6];
+    
+        inv.data[10] = this.data[0]  * this.data[5] * this.data[15] - 
+                  this.data[0]  * this.data[7] * this.data[13] - 
+                  this.data[4]  * this.data[1] * this.data[15] + 
+                  this.data[4]  * this.data[3] * this.data[13] + 
+                  this.data[12] * this.data[1] * this.data[7] - 
+                  this.data[12] * this.data[3] * this.data[5];
+    
+        inv.data[14] = -this.data[0]  * this.data[5] * this.data[14] + 
+                   this.data[0]  * this.data[6] * this.data[13] + 
+                   this.data[4]  * this.data[1] * this.data[14] - 
+                   this.data[4]  * this.data[2] * this.data[13] - 
+                   this.data[12] * this.data[1] * this.data[6] + 
+                   this.data[12] * this.data[2] * this.data[5];
+    
+        inv.data[3] = -this.data[1] * this.data[6] * this.data[11] + 
+                  this.data[1] * this.data[7] * this.data[10] + 
+                  this.data[5] * this.data[2] * this.data[11] - 
+                  this.data[5] * this.data[3] * this.data[10] - 
+                  this.data[9] * this.data[2] * this.data[7] + 
+                  this.data[9] * this.data[3] * this.data[6];
+    
+        inv.data[7] = this.data[0] * this.data[6] * this.data[11] - 
+                 this.data[0] * this.data[7] * this.data[10] - 
+                 this.data[4] * this.data[2] * this.data[11] + 
+                 this.data[4] * this.data[3] * this.data[10] + 
+                 this.data[8] * this.data[2] * this.data[7] - 
+                 this.data[8] * this.data[3] * this.data[6];
+    
+        inv.data[11] = -this.data[0] * this.data[5] * this.data[11] + 
+                   this.data[0] * this.data[7] * this.data[9] + 
+                   this.data[4] * this.data[1] * this.data[11] - 
+                   this.data[4] * this.data[3] * this.data[9] - 
+                   this.data[8] * this.data[1] * this.data[7] + 
+                   this.data[8] * this.data[3] * this.data[5];
+    
+        inv.data[15] = this.data[0] * this.data[5] * this.data[10] - 
+                  this.data[0] * this.data[6] * this.data[9] - 
+                  this.data[4] * this.data[1] * this.data[10] + 
+                  this.data[4] * this.data[2] * this.data[9] + 
+                  this.data[8] * this.data[1] * this.data[6] - 
+                  this.data[8] * this.data[2] * this.data[5];
+    
+        det = this.data[0] * inv.data[0] + this.data[1] * inv.data[4] + this.data[2] * inv.data[8] + this.data[3] * inv.data[12];
+    
+        if (det == 0) {
+            this.set_idtt();
+            return;
+        }
+    
+        det = 1.0 / det;
+    
+        for (i = 0; i < 16; i++)
+            this.data[i] = inv.data[i] * det;
+    }
+
+    transpose() {
+        let tmp = new mtrx4;
+
+        tmp.data[0] = this.data[0];
+        tmp.data[1] = this.data[4];
+        tmp.data[2] = this.data[8];
+        tmp.data[3] = this.data[12];
+        tmp.data[4] = this.data[1];
+        tmp.data[5] = this.data[5];
+        tmp.data[6] = this.data[9];
+        tmp.data[7] = this.data[13];
+        tmp.data[8] = this.data[2];
+        tmp.data[9] = this.data[6];
+        tmp.data[10] = this.data[10];
+        tmp.data[11] = this.data[14];
+        tmp.data[12] = this.data[3];
+        tmp.data[13] = this.data[7];
+        tmp.data[14] = this.data[11];
+        tmp.data[15] = this.data[15];
+
+        for (let i = 0; i < 16; i++) {
+            this.data[i] = tmp.data[i];
+        }
+    }
+
+    set_axisangl(axis: vec3_t, phi: number) {
+        let cosphi, sinphi, vxvy, vxvz, vyvz, vx, vy, vz: number;
+        let ax: vec3_t = vec3_normalize(axis);
+    
+        cosphi = Math.cos(phi);
+        sinphi = Math.sin(phi);
+        vxvy = ax[0] * ax[1];
+        vxvz = ax[0] * ax[2];
+        vyvz = ax[1] * ax[2];
+        vx = ax[0];
+        vy = ax[1];
+        vz = ax[2];
+    
+        this.data[0]  = cosphi + (1.0-cosphi)*vx*vx;
+        this.data[1]  = (1.0-cosphi)*vxvy - sinphi*vz;
+        this.data[2]  = (1.0-cosphi)*vxvz + sinphi*vy;
+        this.data[3]  = 0.0;
+    
+        this.data[4]  = (1.0-cosphi)*vxvy + sinphi*vz;
+        this.data[5]  = cosphi + (1.0-cosphi)*vy*vy;
+        this.data[6]  = (1.0-cosphi)*vyvz - sinphi*vx;
+        this.data[7]  = 0.0;
+    
+        this.data[8]  = (1.0-cosphi)*vxvz - sinphi*vy;
+        this.data[9]  = (1.0-cosphi)*vyvz + sinphi*vx;
+        this.data[10] = cosphi + (1.0-cosphi)*vz*vz;
+        this.data[11] = 0.0;
+    
+        this.data[12] = 0.0;
+        this.data[13] = 0.0;
+        this.data[14] = 0.0;
+        this.data[15] = 1.0;
+    }
+
+    mult_translate(a: mtrx4, v: any) {
+        let x = v[0], y = v[1], z = v[2];
+        let a00, a01, a02, a03;
+        let a10, a11, a12, a13;
+        let a20, a21, a22, a23;
+    
+        if (a.data === this.data) {
+            this.data[12] = a.data[0] * x + a.data[4] * y + a.data[8] * z + a.data[12];
+            this.data[13] = a.data[1] * x + a.data[5] * y + a.data[9] * z + a.data[13];
+            this.data[14] = a.data[2] * x + a.data[6] * y + a.data[10] * z + a.data[14];
+            this.data[15] = a.data[3] * x + a.data[7] * y + a.data[11] * z + a.data[15];
+        } else {
+            a00 = a.data[0];
+            a01 = a.data[1];
+            a02 = a.data[2];
+            a03 = a.data[3];
+            a10 = a.data[4];
+            a11 = a.data[5];
+            a12 = a.data[6];
+            a13 = a.data[7];
+            a20 = a.data[8];
+            a21 = a.data[9];
+            a22 = a.data[10];
+            a23 = a.data[11];
+    
+            this.data[0] = a00;
+            this.data[1] = a01;
+            this.data[2] = a02;
+            this.data[3] = a03;
+            this.data[4] = a10;
+            this.data[5] = a11;
+            this.data[6] = a12;
+            this.data[7] = a13;
+            this.data[8] = a20;
+            this.data[9] = a21;
+            this.data[10] = a22;
+            this.data[11] = a23;
+    
+            this.data[12] = a00 * x + a10 * y + a20 * z + a.data[12];
+            this.data[13] = a01 * x + a11 * y + a21 * z + a.data[13];
+            this.data[14] = a02 * x + a12 * y + a22 * z + a.data[14];
+            this.data[15] = a03 * x + a13 * y + a23 * z + a.data[15];
+        }
+    }
 }

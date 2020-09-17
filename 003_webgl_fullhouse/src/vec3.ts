@@ -1,4 +1,24 @@
 
+class vec3 {
+	data: Float32Array;
+
+	constructor () {
+		this.data = new Float32Array(3);
+
+		this.data[0] = 0.0;
+		this.data[1] = 0.0;
+		this.data[2] = 0.0;
+	}
+
+	at(i: number): number {
+        return this.data[i];
+	}
+	
+	set_at(i: number, n: number) {
+        this.data[i] = n;
+    }
+}
+
 type vec3_t = Array<Float32Array>[3];
 
 function vec3_set(x: number, y: number, z: number): vec3_t {

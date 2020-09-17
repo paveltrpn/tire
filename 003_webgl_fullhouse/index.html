@@ -3,33 +3,52 @@
     <head>
         <title>002_webgl</title>
         <meta charset="utf-8">
+        <style type="text/css">
+            body {
+                background-color: gray
+            }
+
+            .blank_page {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                
+                background-color: grey;
+            }
+
+            .out_wnd {
+                border: 2px solid lightgray;
+            }
+
+            .text_field {
+                display: block;
+                width: 800px;
+                height: 200px;
+                border: 2px solid lightgray;
+
+                margin: 32px 32px;
+            }
+
+            .plain {
+                font-family: 'Roboto Mono', monospace;
+                font-size: 14;
+                margin: 10px 10px;
+            }
+
+        </style>
         <script src="cube.js" defer></script>
     </head>
-    <body style=
-    "background-color: gray">
+    <body>
 
-        <div class="blank_page" style="
-        display: block;
-        background-color: grey;
-        margin: 0 auto; /* отступы слева и справа */
-        position: relative;
-        min-height: 90vh;
-        ">
+        <div class="blank_page">
 
-            <canvas id="glcanvas" width="800px" height="600px" style="
-            border: 2px solid lightgray;
-            ">
-            </canvas>
+        <canvas class="out_wnd" id="glcanvas" width="800px" height="600px"></canvas>
 
-            <div class="text_field" style="
-            display: block;
-            width: 800px;
-            height: 200px;
-            border: 2px solid lightgray;
-            ">
+        <div class="text_field">
             <p class="plain">Text field</p>
-            </div>
+        </div>
 
         </div>
+
     </body>
 </html>

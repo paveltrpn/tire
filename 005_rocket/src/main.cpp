@@ -8,6 +8,8 @@
 #include <GL/glu.h>
 
 #include "algebra2.h"
+#include "bitmap_text.h"
+#include "bitmap.h"
 
 GLenum check_gl_error(const char *file, int line)
 {
@@ -38,18 +40,20 @@ void glfw_error_callback(int, const char* err_str){
 class app_c {
 	public:
 
-		int32_t wnd_width = 800;
-		int32_t wnd_height = 600;
+		int32_t wnd_width = 1024;
+		int32_t wnd_height = 768;
 		float aspect;
 
 		GLFWwindow* window;
 		bool glewExperimental;
-		std::string gl_render, gl_version, glsl_version;
+		std::string gl_render, gl_version, glsl_version, glfw_version;
 
 		const char* appName = "005_rocket"; /* const что бы избежать "ISO C++ forbids converting a string constant to ‘char*’" */ 
 
+		bitmap_text_c text;
+
 		void start_window() {
-			std::cout << "app_c::start_window():\n";
+			std::cout << "app_c::start_window()\n";
 
 			if (glfwInit() != GLFW_TRUE) {
 				std::cout << "app_c::start_window(): glfwInit() return - GLFW_FALSE!" << "\n";
@@ -84,15 +88,26 @@ class app_c {
 			gl_render = gl_render + "GL_RENDER - " + (const char*)glGetString(GL_RENDERER);
 			gl_version = gl_version + "GL_VERSION - " + (const char*)glGetString(GL_VERSION);
 			glsl_version = glsl_version + "GLSL_VERSION - " + (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+			glfw_version = glfw_version + "GLFW_VERSION - " + (const char*)glfwGetVersionString();
 
-			show_opengl_info();
-			
+			std::cout << gl_render << std::endl 
+					  << gl_version << std::endl 
+					  << glsl_version << std::endl
+					  << glfw_version << std::endl;
+
 			// Выключаем вертикальную синхронизацию (VSYNC)
 			glfwSwapInterval(0);
 		};
 
 		void setup_scene() {
-			std::cout << "app_c::setup_scene():\n";
+			std::cout << "app_c::setup_scene()\n";
+
+			text.load_font("assets/RobotoMono-2048-1024-64-128.tga");
+
+			// Тест libjpeg-cmake
+			bitmap_c jpeg;
+			jpeg.load_jpg("assets/texture.jpg");
+			jpeg.show_info();
 		};
 
 		void looper() {
@@ -114,17 +129,21 @@ class app_c {
 			glfwTerminate();
 		};
 
-		app_c(const app_c &app) = delete;
-		app_c &operator=(const app_c &app) = delete;
-
 	private:
 
-		void show_opengl_info() {
-			std::cout << gl_render << std::endl << gl_version << std::endl << glsl_version << std::endl;
-		};
+		app_c(const app_c& app) = delete;
+		app_c(const app_c&& app) = delete;
+		app_c& operator=(const app_c& app) = delete;
+		app_c& operator=(const app_c&& app) = delete;
 
 		void frame() {
-
+			// ----------------
+			// Отрисовка текста
+			// ----------------
+			glDisable(GL_LIGHTING);
+			glDisable(GL_DEPTH_TEST);  
+			text.set_text_position(-10.0f, 8.0f);
+			text.draw_string("Test text string!");
 		};
 };
 

@@ -1,9 +1,9 @@
 ################################
 # Windows-специфичный Makefile #
 ################################
-CC       := g++
-CFLAGS   := -Wall -std=c++17 
-LFLAGS 	 := -lstdc++ -lopengl32 -lglfw3 -lgdi32 -lglew32
+CC       := clang++
+CFLAGS   := -Wall -std=c++17 -target x86_64-pc-windows-gnu
+LFLAGS 	 := -lstdc++ -lopengl32 -lglfw3 -lgdi32 -lglew32 -ltga -llibjpeg
 
 SRCS := src/main.cpp \
 		src/mtrx2.cpp \
@@ -13,7 +13,9 @@ SRCS := src/main.cpp \
 		src/vec3.cpp \
 		src/vec4.cpp \
 		src/qtnn.cpp \
-		src/plane.cpp 
+		src/plane.cpp \
+		src/bitmap.cpp \
+		src/bitmap_text.cpp
 		
 
 OBJS := main.o \
@@ -24,7 +26,9 @@ OBJS := main.o \
 		vec3.o \
 		vec4.o \
 		qtnn.o \
-		plane.o 
+		plane.o \
+		bitmap.o \
+		bitmap_text.o
 
 #OBJS := $(SRCS:.cpp=.o)
 
@@ -59,8 +63,14 @@ qtnn.o: src/qtnn.cpp
 plane.o: src/plane.cpp
 	$(CC) $(CFLAGS) $(INCDIR) -c src/plane.cpp
 
+bitmap.o: src/bitmap.cpp
+	$(CC) $(CFLAGS) $(INCDIR) -c src/bitmap.cpp
+
+bitmap_text.o: src/bitmap_text.cpp
+	$(CC) $(CFLAGS) $(INCDIR) -c src/bitmap_text.cpp
+
 main: $(OBJS)
-	$(CC) $(OBJS) $(LIBDIR) -o main $(LFLAGS)
+	g++ $(OBJS) $(LIBDIR) -o main $(LFLAGS)
 
 clean:
 	rm -f *.o main
