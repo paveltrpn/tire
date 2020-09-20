@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"os"
 )
@@ -88,6 +89,24 @@ type TGA struct {
 	// last int       /* last error code */
 	hdr TGAHeader /* image header */
 	// error TGAErrorProc /* user-defined error proc */
+}
+
+func loadFromTGA(fname string) {
+	var (
+		tga    TGA
+		inData TGAData
+	)
+
+	tga = tgaOpen(fname)
+	defer tgaClose(&tga)
+
+	inData.flags = tgaImageID | tgaImageData | tgaRGB
+
+	tgaReadHeader(&tga)
+
+	fmt.Println(tga.hdr.width)
+	fmt.Println(tga.hdr.height)
+	fmt.Println(tga.hdr.depth)
 }
 
 func ftell(file *os.File) int64 {

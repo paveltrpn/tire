@@ -58,7 +58,46 @@ class qtnn {
 		this.data[0] = -this.data[0];
 		this.data[1] = -this.data[1];
         this.data[2] = -this.data[2];
-        this.data[3] = -this.data[3];
+        this.data[3] =  this.data[3];
+	}
+
+	setRotX(phi: number) {
+		let halfPhi: number = phi/2.0;
+
+		this.data[3] = Math.cos(halfPhi);
+		this.data[0] = Math.sin(halfPhi);
+		this.data[1] = 0.0;
+		this.data[2] = 0.0;
+	}
+
+	setRotY(phi: number) {
+		let halfPhi: number = phi/2.0;
+
+		this.data[3] = Math.cos(halfPhi);
+		this.data[0] = 0.0;
+		this.data[1] = Math.sin(halfPhi);
+		this.data[2] = 0.0;
+	}
+
+	setRotZ(phi: number) {
+		let halfPhi: number = phi/2.0;
+
+		this.data[3] = Math.cos(halfPhi);
+		this.data[0] = 0.0;
+		this.data[1] = 0.0;
+		this.data[2] = Math.sin(halfPhi);
+	}
+
+	setAxisAngl(axis: vec3, phi: number) {
+		let halfPhiSin: number = Math.sin(phi/2.0);
+		let ax: vec3 = new vec3();
+
+		ax = vec3Normalize(axis);
+		
+		this.data[3] = Math.cos(phi/2.0);
+		this.data[0] = ax.data[0] * halfPhiSin;
+		this.data[1] = ax.data[1] * halfPhiSin;
+		this.data[2] = ax.data[2] * halfPhiSin;
 	}
 }
 
@@ -80,14 +119,39 @@ function qtnnMult(a: qtnn, b: qtnn): qtnn {
 	return rt;
 }
 
-// Не работает пока что
-function qtnnMultVec3(a: qtnn, b: vec3): qtnn {
-	let rt = new qtnn;
+function qtnnSlerp(from: qtnn, to: qtnn, t:number): qtnn {
+	let rt: qtnn;
+	let p1: number[];
+	let omega, cosom, sinom, scale0, scale1: number;
 
-	rt.data[3] = -a.data[3]*b.data[0] - a.data[1]*b.data[1] - a.data[2]*b.data[2];
-	rt.data[0] =  a.data[3]*b.data[0] + a.data[1]*b.data[2] - a.data[2]*b.data[1];
-	rt.data[1] =  a.data[3]*b.data[1] - a.data[0]*b.data[2] + a.data[2]*b.data[0];
-	rt.data[2] =  a.data[3]*b.data[2] + a.data[0]*b.data[1] - a.data[1]*b.data[0];
+	// косинус угла
+	cosom = qtnnDot(from, to);	
 
+	if ( cosom <0.0 ) { 
+	  cosom = -cosom;
+	  p1[0] = -to.data[0];  p1[1] = -to.data[1];
+	  p1[2] = -to.data[2];  p1[3] = -to.data[3];
+	} else {
+	  p1[0] = to.data[0];    p1[1] = to.data[1];
+	  p1[2] = to.data[2];    p1[3] = to.data[3];
+	}
+
+	if ( (1.0 - cosom) > fEPS )	{
+	  // стандартный случай (slerp)
+	  omega  = Math.acos(cosom);
+	  sinom  = Math.sin(omega);
+	  scale0 = Math.sin((1.0 - t) * omega) / sinom;
+	  scale1 = Math.sin(t * omega) / sinom;
+	} else {        
+	  // если маленький угол - линейная интерполяция
+	  scale0 = 1.0 - t;
+	  scale1 = t;
+	}
+
+	rt.data[0] = scale0 * from.data[0] + scale1 * p1[0];
+	rt.data[1] = scale0 * from.data[1] + scale1 * p1[1];
+	rt.data[2] = scale0 * from.data[2] + scale1 * p1[2];
+	rt.data[3] = scale0 * from.data[3] + scale1 * p1[3];
+	  
 	return rt;
 }

@@ -130,8 +130,6 @@ func init() {
 }
 
 func main() {
-	loadFromTGA("assets/Consolas-1024-512-32-64.tga")
-
 	if err := glfw.Init(); err != nil {
 		log.Fatalln("failed to initialize glfw:", err)
 	}
@@ -193,7 +191,7 @@ func setupScene() {
 	gl.MatrixMode(gl.MODELVIEW)
 	gl.LoadIdentity()
 
-	bmp.loadBitmap("assets/texture.jpg")
+	bmp.loadFromJpeg("assets/texture.jpg")
 	gl.Enable(gl.TEXTURE_2D)
 	gl.GenTextures(1, &texture)
 	gl.ActiveTexture(gl.TEXTURE0)

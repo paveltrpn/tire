@@ -177,12 +177,14 @@ class cube_c {
 
         let modelViewMatrix = new mtrx4();
 
-        // Now move the drawing position a bit to where we want to
-        // start drawing the square.
-        modelViewMatrix.multTranslate(modelViewMatrix, [0.0, 0.0, -7.0]);
+        let transMtrx = new mtrx4;
+        transMtrx.setTranslate(new vec3(0.0, 0.0, -7.0));
+        modelViewMatrix.mult(transMtrx);
 
+        let fooQtnn = new qtnn();
+        fooQtnn.setAxisAngl(new vec3(0.1, 0.4, 0.3), this.squareRotation);
         let rot = new mtrx4();
-        rot.setAxisAngl(new vec3(0.1, 0.4, 0.3), this.squareRotation);
+        rot.fromQtnn(fooQtnn);
 
         modelViewMatrix.mult(rot);
 

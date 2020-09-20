@@ -56,6 +56,23 @@ class mtrx4 {
         }
     }
 
+    fromQtnn(src: qtnn) {
+        let wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2: number;
+
+        x2 = src.data[0] + src.data[0];
+        y2 = src.data[1] + src.data[1];
+        z2 = src.data[2] + src.data[2];
+        xx = src.data[0] * x2;   xy = src.data[0] * y2;   xz = src.data[0] * z2;
+        yy = src.data[1] * y2;   yz = src.data[1] * z2;   zz = src.data[2] * z2;
+        wx = src.data[3] * x2;   wy = src.data[3] * y2;   wz = src.data[3] * z2;
+
+        this.data[0]=1.0-(yy+zz);  this.data[1]=xy-wz;        this.data[ 2]=xz+wy;       this.data[ 3] = 0.0;
+        this.data[4]=xy+wz;        this.data[5]=1.0-(xx+zz);  this.data[ 6]=yz-wx;       this.data[ 7] = 0.0;
+        this.data[8]=xz-wy;        this.data[9]=yz+wx;        this.data[10]=1.0-(xx+yy); this.data[11] = 0.0;
+
+        this.data[12] = 0.0; this.data[13] = 0.0; this.data[14] = 0.0; this.data[15] = 1.0;
+    }
+
     mult(a: mtrx4) {
         let i, j, k, tmp: number;
         let rt: mtrx4 = new mtrx4();
@@ -102,6 +119,14 @@ class mtrx4 {
             this.data[10] = -1;
             this.data[14] = -2 * near;
         }
+    }
+
+    setTranslate(vec: vec3) {
+        this.setIdtt();
+
+        this.data[12] = vec.data[0];
+        this.data[13] = vec.data[1];
+        this.data[14] = vec.data[2];
     }
 
     invert() {
