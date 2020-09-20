@@ -1,105 +1,136 @@
 
 class vec3 {
 	data: Float32Array;
+	private readonly order: number = 3;
 
-	constructor () {
-		this.data = new Float32Array(3);
+	constructor();
+	constructor(x: vec3);
+	constructor(x: number, y: number, z: number)
+	constructor(x?: number | vec3, y?: number, z?: number) {
+		if (x instanceof vec3) {
+			this.data = new Float32Array(3);
+			this.fromVec3(x);
+		} else {
+			this.data = new Float32Array(3);
 
-		this.data[0] = 0.0;
-		this.data[1] = 0.0;
-		this.data[2] = 0.0;
+			this.data[0] = x || 0.0;
+			this.data[1] = y || 0.0;
+			this.data[2] = z || 0.0;
+		}
 	}
 
-	at(i: number): number {
-        return this.data[i];
+	fromVec3(src: vec3) {
+		this.data[0] = src.data[0];
+		this.data[1] = src.data[1];
+		this.data[2] = src.data[2];
 	}
+
+	lenght(): number {
+		return Math.sqrt(this.data[0]*this.data[0] + 
+						 this.data[1]*this.data[1] + 
+						 this.data[2]*this.data[2]);
+	}
+
+	normalize() {
+		let len: number;
 	
-	set_at(i: number, n: number) {
-        this.data[i] = n;
-    }
+		len = this.lenght();
+
+		if (len != 0.0) {
+			this.data[0] = this.data[0] / len;
+			this.data[1] = this.data[1] / len;
+			this.data[2] = this.data[2] / len;
+		}
+	}
+
+	scale(scale: number) {
+		this.data[0] = this.data[0] * scale;
+		this.data[1] = this.data[1] * scale;
+		this.data[2] = this.data[2] * scale;
+	}
+
+	invert() {
+		this.data[0] = -this.data[0];
+		this.data[1] = -this.data[1];
+		this.data[2] = -this.data[2];
+	}
 }
 
-type vec3_t = Array<Float32Array>[3];
+function vec3Set(x: number, y: number, z:number): vec3 {
+	let rt = new vec3;
 
-function vec3_set(x: number, y: number, z: number): vec3_t {
-    let rt: vec3_t = new Float32Array(3);
+	rt.data[0] = x;
+	rt.data[1] = y;
+	rt.data[2] = z;
 
-    rt[0] = x;
-    rt[1] = y;
-    rt[2] = z;
-
-    return rt;
+	return rt;
 }
 
-function vec3_lenght(v: vec3_t ): number {
-	return Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+function vec3Cross(a: vec3, b: vec3): vec3 {
+    let rt: vec3 = new vec3();
+
+	rt.data[0] = a.data[1]*b.data[2] - a.data[2]*b.data[1];
+	rt.data[1] = a.data[2]*b.data[0] - a.data[0]*b.data[2];
+	rt.data[2] = a.data[0]*b.data[1] - a.data[1]*b.data[0];
+
+	return rt;
 }
 
-function vec3_normalize(v: vec3_t): vec3_t {
-	let rt: vec3_t = new Float32Array(3);
+function vec3Normalize(v: vec3): vec3 {
+	let rt = new vec3();
 	let len: number;
+	
+	len = v.lenght();
 
-	len = vec3_lenght(v);
-
-	if (len > 0.000001) {
-		rt[0] = v[0] / len;
-		rt[1] = v[1] / len;
-		rt[2] = v[2] / len;
+	if (len > fEPS) {
+		rt.data[0] = v.data[0] / len;
+		rt.data[1] = v.data[1] / len;
+		rt.data[2] = v.data[2] / len;
 	}
 
 	return rt;
 }
 
-function vec3_scale(v: vec3_t, scale: number): vec3_t {
-    let rt: vec3_t = new Float32Array(3);
+function vec3Scale(v: vec3, scale: number): vec3 {
+    let rt: vec3 = new vec3();
 
-	rt[0] = v[0] * scale;
-	rt[1] = v[1] * scale;
-	rt[2] = v[2] * scale;
-
-	return rt;
-}
-
-function vec3_invert(v: vec3_t): vec3_t {
-    let rt: vec3_t = new Float32Array(3);
-
-	rt[0] = -v[0];
-	rt[1] = -v[1];
-	rt[2] = -v[2];
+	rt.data[0] = v.data[0] * scale;
+	rt.data[1] = v.data[1] * scale;
+	rt.data[2] = v.data[2] * scale;
 
 	return rt;
 }
 
-function vec3_dot(a : vec3_t, b: vec3_t): number {
-	return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
-}
+function vec3Invert(v: vec3): vec3 {
+    let rt: vec3 = new vec3;
 
-function vec3_sum(a: vec3_t, b: vec3_t): vec3_t {
-    let rt: vec3_t = new Float32Array(3);
-
-	rt[0] = a[0] + b[0];
-	rt[1] = a[1] + b[1];
-	rt[2] = a[2] + b[2];
+	rt.data[0] = -v.data[0];
+	rt.data[1] = -v.data[1];
+	rt.data[2] = -v.data[2];
 
 	return rt;
 }
 
-function vec3_sub(a: vec3_t, b: vec3_t): vec3_t {
-    let rt: vec3_t = new Float32Array(3);
+function vec3Dot(a : vec3, b: vec3): number {
+	return a.data[0]*b.data[0] + a.data[1]*b.data[1] + a.data[2]*b.data[2];
+}
 
-	rt[0] = a[0] - b[0];
-	rt[1] = a[1] - b[1];
-	rt[2] = a[2] - b[2];
+function vec3Sum(a: vec3, b: vec3): vec3 {
+    let rt: vec3 = new vec3;
+
+	rt.data[0] = a.data[0] + b.data[0];
+	rt.data[1] = a.data[1] + b.data[1];
+	rt.data[2] = a.data[2] + b.data[2];
 
 	return rt;
 }
 
-function vec3_cross(a: vec3_t, b: vec3_t): vec3_t {
-    let rt: vec3_t = new Float32Array(3);
+function vec3Sub(a: vec3, b: vec3): vec3 {
+    let rt: vec3 = new vec3;
 
-	rt[0] = a[1]*b[2] - a[2]*b[1];
-	rt[1] = a[2]*b[0] - a[0]*b[2];
-	rt[2] = a[0]*b[1] - a[1]*b[0];
+	rt.data[0] = a.data[0] - b.data[0];
+	rt.data[1] = a.data[1] - b.data[1];
+	rt.data[2] = a.data[2] - b.data[2];
 
 	return rt;
 }

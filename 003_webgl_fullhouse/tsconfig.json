@@ -1,10 +1,12 @@
 {
     "compilerOptions": {
+    // "strict": true,
+    "target": "ES2020",
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
     // "sourceMap": true,
     "outFile": "./cube.js",
     },
-    "files": ["src/main.ts", "src/mtrx4.ts", "src/vec2.ts", "src/vec3.ts", "src/common.ts"]
+    "files": ["src/main.ts", "src/mtrx4.ts", "src/vec2.ts", "src/vec3.ts", "src/qtnn.ts", "src/common.ts"]
 }

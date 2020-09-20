@@ -173,22 +173,20 @@ class cube_c {
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
         let projectionMatrix: mtrx4 = new mtrx4(); 
-        projectionMatrix.set_perspective(deg_to_rad(45), this.aspect, 0.1,  100.0);
+        projectionMatrix.setPerspective(degToRad(45), this.aspect, 0.1,  100.0);
 
         let modelViewMatrix = new mtrx4();
 
         // Now move the drawing position a bit to where we want to
         // start drawing the square.
-        modelViewMatrix.mult_translate(modelViewMatrix, [0.0, 0.0, -7.0]);
+        modelViewMatrix.multTranslate(modelViewMatrix, [0.0, 0.0, -7.0]);
 
         let rot = new mtrx4();
-        rot.set_axisangl(vec3_set(0.1, 0.4, 0.3), this.squareRotation);
-        // let rot: mtrx4_t = mtrx4_set_euler(squareRotation, 0, squareRotation );
+        rot.setAxisAngl(new vec3(0.1, 0.4, 0.3), this.squareRotation);
 
         modelViewMatrix.mult(rot);
 
-        let normalMatrix = new mtrx4(); 
-        normalMatrix.from(modelViewMatrix);
+        let normalMatrix = new mtrx4(modelViewMatrix); 
         normalMatrix.transpose();
 
         // Буфер вершин
