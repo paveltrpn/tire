@@ -3,22 +3,22 @@
 
 #include "plane.h"
 
-plane_t::plane_t(const vec3_t &v, float d) {
+plane_t::plane_t(const vec3 &v, float d) {
 
 }
 
-plane_t::plane_t(const vec3_t &v1, const vec3_t &v2, const vec3_t &v3) {
+plane_t::plane_t(const vec3 &v1, const vec3 &v2, const vec3 &v3) {
 
 }
 
-vec3_t plane_ray_insct(const vec3_t &rs, const vec3_t &re) {
-	return vec3_t();
+vec3 plane_ray_insct(const vec3 &rs, const vec3 &re) {
+	return vec3();
 }
 
-bool point_in_trngl(const vec3_t &v1, 
-					   const vec3_t &v2, 
-					   const vec3_t &v3,
-					   const vec3_t &point) {
+bool point_in_trngl(const vec3 &v1, 
+					   const vec3 &v2, 
+					   const vec3 &v3,
+					   const vec3 &point) {
 	return false;
 }
 

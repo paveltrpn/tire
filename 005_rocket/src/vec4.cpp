@@ -6,12 +6,12 @@
 
 using namespace std;
 
-void vec4_show(vec4_t &v) {
+void vec4_show(vec4 &v) {
 	printf("%5.2f %5.2f %5.2f %5.2f\n", v[_XC], v[_YC], v[_ZC], v[_WC]);
 }
 
-vec4_t vec4_copy(vec4_t &v) {
-    vec4_t rt;
+vec4 vec4_copy(vec4 &v) {
+    vec4 rt;
 
 	rt[0] = v[0];
 	rt[1] = v[1];
@@ -21,8 +21,8 @@ vec4_t vec4_copy(vec4_t &v) {
 	return rt;
 }
 
-vec4_t vec4_set(float x, float y, float z, float w) {
-    vec4_t rt;
+vec4 vec4_set(float x, float y, float z, float w) {
+    vec4 rt;
 
 	rt[0] = x;
 	rt[1] = y;
@@ -32,15 +32,15 @@ vec4_t vec4_set(float x, float y, float z, float w) {
 	return rt;
 }
 
-float vec4_lenght(vec4_t &v) {
+float vec4_lenght(vec4 &v) {
 	return sqrtf(v[_XC]*v[_XC] +
 		v[_YC]*v[_YC] +
 		v[_ZC]*v[_ZC] +
 		v[_WC]*v[_WC]);
 }
 
-vec4_t vec4_normalize(vec4_t &v) {
-	vec4_t rt;
+vec4 vec4_normalize(vec4 &v) {
+	vec4 rt;
 	float len;
 
 	len = vec4_lenght(v);
@@ -55,8 +55,8 @@ vec4_t vec4_normalize(vec4_t &v) {
 	return rt;
 }
 
-vec4_t vec4_scale(vec4_t &v, float scale) {
-    vec4_t rt;
+vec4 vec4_scale(vec4 &v, float scale) {
+    vec4 rt;
 
 	rt[0] = v[0] * scale;
 	rt[1] = v[1] * scale;
@@ -66,8 +66,8 @@ vec4_t vec4_scale(vec4_t &v, float scale) {
 	return rt;
 }
 
-vec4_t vec4_invert(vec4_t &v) {
-    vec4_t rt;
+vec4 vec4_invert(vec4 &v) {
+    vec4 rt;
 
 	rt[_XC] = -v[_XC];
 	rt[_YC] = -v[_YC];
@@ -77,12 +77,12 @@ vec4_t vec4_invert(vec4_t &v) {
 	return rt;
 }
 
-float vec4_dot(vec4_t &a, vec4_t &b) {
+float vec4_dot(vec4 &a, vec4 &b) {
 	return a[0]*b[0] + a[1]*b[1] + a[2]*b[2] + a[3]*b[3];
 }
 
-vec4_t vec4_sum(vec4_t a, vec4_t b) {
-    vec4_t rt;
+vec4 vec4_sum(vec4 a, vec4 b) {
+    vec4 rt;
 
 	rt[0] = a[0] + b[0];
 	rt[1] = a[1] + b[1];
@@ -92,8 +92,8 @@ vec4_t vec4_sum(vec4_t a, vec4_t b) {
 	return rt;
 }
 
-vec4_t vec4Sub(vec4_t &a, vec4_t &b) {
-    vec4_t rt;
+vec4 vec4Sub(vec4 &a, vec4 &b) {
+    vec4 rt;
 
 	rt[0] = a[0] - b[0];
 	rt[1] = a[1] - b[1];

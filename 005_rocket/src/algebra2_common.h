@@ -24,10 +24,10 @@ constexpr float deg_to_rad(float deg) {
 	(1	3)
 */
 
-constexpr int32_t id_rw(int32_t i, int32_t j, int32_t n) {
+constexpr int32_t idRw(int32_t i, int32_t j, int32_t n) {
 	return (i*n + j);
 };
 
-constexpr int32_t id_cw(int32_t i, int32_t j, int32_t n) {
+constexpr int32_t idCw(int32_t i, int32_t j, int32_t n) {
 	return (j*n + i);
 };

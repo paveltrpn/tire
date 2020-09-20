@@ -33,16 +33,16 @@ class plane_t {
 		plane_t(const float x, const float y, const float z, const float w): 
 			data{x, y, z, w} {};
 
-		plane_t(const vec3_t &v, float d); /*empty*/
+		plane_t(const vec3 &v, float d); /*empty*/
 
-		plane_t(const vec3_t &v1, const vec3_t &v2, const vec3_t &v3); /*empty*/
+		plane_t(const vec3 &v1, const vec3 &v2, const vec3 &v3); /*empty*/
 
 	private:
 		float data[4];
 };
 
-vec3_t 	plane_ray_insct(const vec3_t &rs, const vec3_t &re); /*empty*/
-bool	point_in_trngl(const vec3_t &v1, 
-					   const vec3_t &v2, 
-					   const vec3_t &v3,
-					   const vec3_t &point);
+vec3 	plane_ray_insct(const vec3 &rs, const vec3 &re); /*empty*/
+bool	point_in_trngl(const vec3 &v1, 
+					   const vec3 &v2, 
+					   const vec3 &v3,
+					   const vec3 &point);

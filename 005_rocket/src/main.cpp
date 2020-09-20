@@ -52,7 +52,7 @@ class app_c {
 
 		bitmap_text_c text;
 
-		void start_window() {
+		void startWindow() {
 			std::cout << "app_c::start_window()\n";
 
 			if (glfwInit() != GLFW_TRUE) {
@@ -99,7 +99,7 @@ class app_c {
 			glfwSwapInterval(0);
 		};
 
-		void setup_scene() {
+		void setupScene() {
 			std::cout << "app_c::setup_scene()\n";
 
 			text.load_font("assets/RobotoMono-2048-1024-64-128.tga");
@@ -150,9 +150,9 @@ class app_c {
 int main(int argc, char* argv[]) {
 	app_c app;
 
-	app.start_window();
+	app.startWindow();
 
-	app.setup_scene();
+	app.setupScene();
 
 	app.looper();
 

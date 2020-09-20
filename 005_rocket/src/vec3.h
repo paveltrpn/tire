@@ -7,10 +7,10 @@
 
 using namespace std;
 
-class vec3_t {
+class vec3 {
 	public:
-		//vec3_t(const vec3_t &&v) = delete;
-		//vec3_t &operator=(const vec3_t &&v) = delete;
+		//vec3(const vec3 &&v) = delete;
+		//vec3 &operator=(const vec3 &&v) = delete;
 
 		float operator[](const int32_t id) const {
 			return data[id];
@@ -20,7 +20,7 @@ class vec3_t {
 			return data[id];
 		};
 
-		vec3_t &operator=(const vec3_t &v) {
+		vec3 &operator=(const vec3 &v) {
 			data[_XC] = v[_XC];
 			data[_YC] = v[_YC];
 			data[_ZC] = v[_ZC];
@@ -28,29 +28,29 @@ class vec3_t {
 			return (*this);
 		};
 
-		vec3_t(): 
+		vec3(): 
 			data{0.0, 0.0, 0.0} {};
 		
-		vec3_t(const float x, const float y, const float z): 
+		vec3(const float x, const float y, const float z): 
 			data{x, y, z} {};
 		
-		vec3_t(const vec3_t &v): 
+		vec3(const vec3 &v): 
 			data{v[_XC], v[_YC], v[_ZC]} {};
 
-		~vec3_t() {};
+		~vec3() {};
 	
 	private:
 		float data[3];
 };
 
-void   vec3_show(vec3_t &v);
-vec3_t vec3_copy(vec3_t &v);
-vec3_t vec3_set(float x, float y, float z);
-float  vec3_lenght(vec3_t &v);
-vec3_t vec3_normalize(vec3_t &v);
-vec3_t vec3_scale(vec3_t &v, float scale);
-vec3_t vec3_invert(vec3_t &v);
-float  vec3_dot(vec3_t &a, vec3_t &b);
-vec3_t vec3_sum(vec3_t &a, vec3_t &b);
-vec3_t vec3_sub(vec3_t &a, vec3_t &b);
-vec3_t vec3_cross(vec3_t &a, vec3_t &b);
+void   vec3_show(vec3 &v);
+vec3 vec3_copy(vec3 &v);
+vec3 vec3_set(float x, float y, float z);
+float  vec3_lenght(vec3 &v);
+vec3 vec3_normalize(vec3 &v);
+vec3 vec3_scale(vec3 &v, float scale);
+vec3 vec3_invert(vec3 &v);
+float  vec3_dot(vec3 &a, vec3 &b);
+vec3 vec3_sum(vec3 &a, vec3 &b);
+vec3 vec3_sub(vec3 &a, vec3 &b);
+vec3 vec3_cross(vec3 &a, vec3 &b);

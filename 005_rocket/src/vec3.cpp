@@ -6,12 +6,12 @@
 
 using namespace std;
 
-void vec3_show(vec3_t &v) {
+void vec3_show(vec3 &v) {
 	printf("%5.2f %5.2f %5.2f\n", v[0], v[1], v[2]);
 }
 
-vec3_t vec3_copy(vec3_t &v) {
-    vec3_t rt;
+vec3 vec3_copy(vec3 &v) {
+    vec3 rt;
 
 	rt[0] = v[0];
 	rt[1] = v[1];
@@ -20,8 +20,8 @@ vec3_t vec3_copy(vec3_t &v) {
 	return rt;
 }
 
-vec3_t vec3_set(float x, float y, float z) {
-    vec3_t rt;
+vec3 vec3_set(float x, float y, float z) {
+    vec3 rt;
 
 	rt[0] = x;
 	rt[1] = y;
@@ -30,15 +30,15 @@ vec3_t vec3_set(float x, float y, float z) {
 	return rt;
 }
 
-float vec3_lenght(vec3_t &v) {
+float vec3_lenght(vec3 &v) {
 	return sqrtf(v[_XC]*v[_XC] +
 				 v[_YC]*v[_YC] +
 				 v[_ZC]*v[_ZC]);
 
 }
 
-vec3_t vec3_normalize(vec3_t &v) {
-	vec3_t rt;
+vec3 vec3_normalize(vec3 &v) {
+	vec3 rt;
 	float len;
 
 	len = vec3_lenght(v);
@@ -52,8 +52,8 @@ vec3_t vec3_normalize(vec3_t &v) {
 	return rt;
 }
 
-vec3_t vec3_scale(vec3_t &v, float scale) {
-    vec3_t rt;
+vec3 vec3_scale(vec3 &v, float scale) {
+    vec3 rt;
 
 	rt[0] = v[0] * scale;
 	rt[1] = v[1] * scale;
@@ -62,8 +62,8 @@ vec3_t vec3_scale(vec3_t &v, float scale) {
 	return rt;
 }
 
-vec3_t vec3_invert(vec3_t &v) {
-    vec3_t rt;
+vec3 vec3_invert(vec3 &v) {
+    vec3 rt;
 
 	rt[_XC] = -v[_XC];
 	rt[_YC] = -v[_YC];
@@ -72,12 +72,12 @@ vec3_t vec3_invert(vec3_t &v) {
 	return rt;
 }
 
-float vec3_dot(vec3_t &a, vec3_t &b) {
+float vec3_dot(vec3 &a, vec3 &b) {
 	return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
 }
 
-vec3_t vec3_sum(vec3_t &a, vec3_t &b) {
-    vec3_t rt;
+vec3 vec3_sum(vec3 &a, vec3 &b) {
+    vec3 rt;
 
 	rt[0] = a[0] + b[0];
 	rt[1] = a[1] + b[1];
@@ -86,8 +86,8 @@ vec3_t vec3_sum(vec3_t &a, vec3_t &b) {
 	return rt;
 }
 
-vec3_t vec3_sub(vec3_t &a, vec3_t &b) {
-    vec3_t rt;
+vec3 vec3_sub(vec3 &a, vec3 &b) {
+    vec3 rt;
 
 	rt[0] = a[0] - b[0];
 	rt[1] = a[1] - b[1];
@@ -96,8 +96,8 @@ vec3_t vec3_sub(vec3_t &a, vec3_t &b) {
 	return rt;
 }
 
-vec3_t vec3_cross(vec3_t &a, vec3_t &b) {
-    vec3_t rt;
+vec3 vec3_cross(vec3 &a, vec3 &b) {
+    vec3 rt;
 
 	rt[0] = a[_YC]*b[_ZC] - a[_ZC]*b[_YC];
 	rt[1] = a[_ZC]*b[_XC] - a[_XC]*b[_ZC];

@@ -8,11 +8,6 @@
 
 #include "algebra2.h"
 
-struct glyph_quad_s {
-    vec2_t lu, ru, rd, ld;
-    vec2_t tclu,tcru,tcrd,tcld;
-};
-
 class bitmap_text_c {
     private:
         float   glyph_quad_wdt = 0.5f;
