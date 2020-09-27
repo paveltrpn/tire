@@ -1,6 +1,9 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
+#include <fstream>
+
 // Подключать GL именно в таком порядке!
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -10,6 +13,71 @@
 #include "algebra2.h"
 #include "bitmap_text.h"
 #include "bitmap.h"
+
+using namespace std;
+
+float positions[108] = {
+    // top
+     1.0,  1.0,  1.0, -1.0,  1.0,  1.0,  1.0,  1.0, -1.0,
+    -1.0,  1.0,  1.0,  1.0,  1.0, -1.0, -1.0,  1.0, -1.0,
+    // bottom
+     1.0, -1.0,  1.0, -1.0, -1.0,  1.0,  1.0, -1.0, -1.0,
+    -1.0, -1.0,  1.0,  1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
+    // front
+    -1.0,  1.0,  1.0,  1.0,  1.0,  1.0, -1.0, -1.0,  1.0,
+     1.0,  1.0,  1.0,  1.0, -1.0,  1.0, -1.0, -1.0,  1.0,
+    // back
+    -1.0,  1.0, -1.0,  1.0,  1.0, -1.0, -1.0, -1.0, -1.0,
+     1.0,  1.0, -1.0,  1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
+    // left
+    -1.0,  1.0, -1.0, -1.0,  1.0,  1.0, -1.0, -1.0,  1.0,
+    -1.0, -1.0,  1.0, -1.0, -1.0, -1.0, -1.0,  1.0, -1.0,
+    // right
+     1.0,  1.0, -1.0,  1.0,  1.0,  1.0,  1.0, -1.0,  1.0,
+     1.0, -1.0,  1.0,  1.0, -1.0, -1.0,  1.0,  1.0, -1.0
+};
+
+float normals[108] = {
+    // top
+    0.0,  1.0,  0.0,  0.0,  1.0,  0.0,  0.0,  1.0,  0.0,
+    0.0,  1.0,  0.0,  0.0,  1.0,  0.0,  0.0,  1.0,  0.0,
+    // bottom
+    0.0, -1.0,  0.0,  0.0, -1.0,  0.0,  0.0, -1.0,  0.0,
+    0.0, -1.0,  0.0,  0.0, -1.0,  0.0,  0.0, -1.0,  0.0,
+    // front
+    0.0,  0.0,  1.0,  0.0,  0.0,  1.0,  0.0,  0.0,  1.0,
+    0.0,  0.0,  1.0,  0.0,  0.0,  1.0,  0.0,  0.0,  1.0,
+    // back
+    0.0,  0.0, -1.0,  0.0,  0.0, -1.0,  0.0,  0.0, -1.0,
+    0.0,  0.0, -1.0,  0.0,  0.0, -1.0,  0.0,  0.0, -1.0,
+    // left
+   -1.0,  0.0,  0.0, -1.0,  0.0,  0.0, -1.0,  0.0,  0.0,
+   -1.0,  0.0,  0.0, -1.0,  0.0,  0.0, -1.0,  0.0,  0.0,
+    // right
+    1.0,  0.0,  0.0,  1.0,  0.0,  0.0,  1.0,  0.0,  0.0,
+    1.0,  0.0,  0.0,  1.0,  0.0,  0.0,  1.0,  0.0,  0.0
+};
+
+float colors[108] = {
+    // top (light green)
+    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
+    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
+    // bottom (dark green)
+    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
+    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
+    // front (light red)
+    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
+    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
+    // back  (dark red)
+    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
+    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
+    // left (light blue)
+    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
+    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
+    // right (dark blue)
+    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
+    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
+};
 
 GLenum check_gl_error(const char *file, int line)
 {
@@ -37,6 +105,62 @@ void glfw_error_callback(int, const char* err_str){
 	std::cout << "GLFW Error: " << err_str << std::endl;
 }
 
+string loadShaderSource(string fname) {
+	string rt;
+	ifstream inFile;
+	string curString;
+
+	inFile.open(fname);
+
+	if (!inFile) {
+		cout << "loadShaderSource(): error! can't open file - " << fname << "\n";
+		return rt;
+	}
+
+    for (;getline(inFile,curString);) {
+        rt = rt + curString;
+    }
+
+    inFile.close();
+
+	return rt;
+}
+
+GLuint compileShader(GLuint type, string src) {
+	GLuint shader = glCreateShader(type);
+	GLchar const* files[] = {src.c_str()};
+	GLint lengths[]       = {static_cast<GLint>(src.size())};
+
+    glShaderSource(shader, 1, files, lengths);
+    glCompileShader(shader);
+
+	GLint success = 0;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+
+    if(success == GL_FALSE) {
+		GLint maxLength = 0;
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);	
+
+		// The maxLength includes the NULL character
+		std::vector<GLchar> errorLog(maxLength);
+		glGetShaderInfoLog(shader, maxLength, &maxLength, &errorLog[0]);	
+
+		// Provide the infolog in whatever manor you deem best.
+		// Exit with failure.
+
+		cout << "compileShader(): can't compile shader! error log: \n";
+
+		for (const auto &out: errorLog) {
+			cout << out;
+		}
+
+		glDeleteShader(shader); // Don't leak the shader.
+		return 0;
+	}
+
+    return shader;
+}
+
 class app_c {
 	public:
 
@@ -51,6 +175,10 @@ class app_c {
 		const char* appName = "005_rocket"; /* const что бы избежать "ISO C++ forbids converting a string constant to ‘char*’" */ 
 
 		bitmap_text_c text;
+
+		GLuint gl_vertBuf;
+    	GLuint gl_normalBuf;
+    	GLuint gl_colorBuf;
 
 		void startWindow() {
 			std::cout << "app_c::start_window()\n";
@@ -108,6 +236,25 @@ class app_c {
 			bitmap_c jpeg;
 			jpeg.load_jpg("assets/texture.jpg");
 			jpeg.show_info();
+
+			glCreateBuffers(1, &gl_vertBuf);
+        	glBindBuffer(GL_ARRAY_BUFFER, gl_vertBuf);
+        	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+
+        	// Normal buffer
+        	glCreateBuffers(1, &gl_normalBuf);
+        	glBindBuffer(GL_ARRAY_BUFFER, gl_normalBuf);
+        	glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
+
+        	// Now set up the colors for the vertices
+        	glCreateBuffers(1, &gl_colorBuf);
+        	glBindBuffer(GL_ARRAY_BUFFER, gl_colorBuf);
+        	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+
+			auto vShader = loadShaderSource("assets/vsSource.glsl");
+			auto fShader = loadShaderSource("assets/fsSource.glsl");
+
+			auto vs = compileShader(GL_FRAGMENT_SHADER, fShader);
 		};
 
 		void looper() {
@@ -137,6 +284,22 @@ class app_c {
 		app_c& operator=(const app_c&& app) = delete;
 
 		void frame() {
+
+			// Буфер вершин
+            glBindBuffer(GL_ARRAY_BUFFER, gl_vertBuf);
+            glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+            glEnableVertexAttribArray(0);
+
+        	// Буфер нормалей вершин
+            glBindBuffer(GL_ARRAY_BUFFER, gl_normalBuf);
+            glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0);
+            glEnableVertexAttribArray(1); // programInfo.attribLocations.vertexNormal
+	
+	        // Буфер цвета вершин
+            glBindBuffer(GL_ARRAY_BUFFER, gl_colorBuf);
+            glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
+            glEnableVertexAttribArray(2);
+
 			// ----------------
 			// Отрисовка текста
 			// ----------------

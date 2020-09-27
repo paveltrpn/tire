@@ -8,7 +8,7 @@
 
 using namespace std;
 
-class qtnn_t {
+class qtnn {
 	public:
 		float operator[](const int32_t id) const {
 			return data[id];
@@ -18,7 +18,7 @@ class qtnn_t {
 			return data[id];
 		};
 
-		qtnn_t &operator=(const qtnn_t &q) {
+		qtnn &operator=(const qtnn &q) {
 			data[_XC] = q[_XC];
 			data[_YC] = q[_YC];
 			data[_ZC] = q[_ZC];
@@ -27,36 +27,98 @@ class qtnn_t {
 			return (*this);
 		};
 
-		qtnn_t(): 
+		qtnn(): 
 			data{0.0, 0.0, 0.0, 0.0} {};
 		
-		qtnn_t(const float x, const float y, const float z, const float w): 
+		qtnn(const float x, const float y, const float z, const float w): 
 			data{x, y, z, w} {};
 
-		qtnn_t(const vec3 &v):
+		qtnn(const vec3 &v):
 			data{v[_XC], v[_YC], v[_ZC], 0.0} {};
 		
-		qtnn_t(const qtnn_t &q): 
+		qtnn(const qtnn &q): 
 			data{q[_XC], q[_YC], q[_ZC], q[_WC]} {};
 
-		qtnn_t(float yaw, float pitch, float roll);
-		qtnn_t(const vec3 &ax, float phi);
+		qtnn(const vec3 &ax, float phi) {
+    		float sinhalfphi;
+
+			sinhalfphi = sinf(phi * 0.5f);
+
+			data[_WC] = cosf(phi * 0.5f);
+			data[_XC] = ax[_XC] * sinhalfphi;
+			data[_YC] = ax[_YC] * sinhalfphi;
+			data[_ZC] = ax[_ZC] * sinhalfphi;
+
+		};		
+
+		qtnn(float yaw, float pitch, float roll);
 		
-		~qtnn_t () {};
+		~qtnn () {};
 	
+		float lenght() {
+			return sqrtf(data[_XC]*data[_XC] +
+				 		 data[_YC]*data[_YC] +
+				 		 data[_ZC]*data[_ZC] +
+				 		 data[_WC]*data[_WC]);
+		};
+
+		void normalize() {
+			qtnn rt;
+			float len;
+
+			len = lenght();
+
+			if (len > f_eps) {
+				rt[_WC] = data[_WC] / len;
+				rt[_XC] = data[_XC] / len;
+				rt[_YC] = data[_YC] / len;
+				rt[_ZC] = data[_ZC] / len;
+			} else {
+				printf("qtnn::normalize(): quaternion is too short!");
+			}
+		};
+
+		void invert() {
+			data[_WC] =  data[_WC];
+			data[_XC] = -data[_XC];
+			data[_YC] = -data[_YC];
+			data[_ZC] = -data[_ZC];
+		};
+		
+		void setRotX(float phi) {
+			float halfPhi = phi/2.0;
+
+			data[3] = cosf(halfPhi);
+			data[0] = sinf(halfPhi);
+			data[1] = 0.0;
+			data[2] = 0.0;
+		}
+
+		void setRotY(float phi) {
+			float halfPhi = phi/2.0;
+
+			data[3] = cosf(halfPhi);
+			data[0] = 0.0;
+			data[1] = sinf(halfPhi);
+			data[2] = 0.0;
+		}
+
+		void setRotZ(float phi) {
+			float halfPhi = phi/2.0;
+
+			data[3] = cosf(halfPhi);
+			data[0] = 0.0;
+			data[1] = 0.0;
+			data[2] = sinf(halfPhi);
+		}
+
 	private:
 		float data[4];
 };
 
-void 	qtnn_show(const qtnn_t &q); 
-float	qtnn_lenght(const qtnn_t &q);
-qtnn_t	qtnn_normalize(const qtnn_t &q);
-qtnn_t	qtnn_invert(const qtnn_t &q);
-qtnn_t	qtnn_scale(const qtnn_t &q, float scale);
-qtnn_t	qtnn_sum(const qtnn_t &a, const qtnn_t &b);
-qtnn_t 	qtnn_sub(const qtnn_t &a, const qtnn_t &b);
-float   qtnn_dot(const qtnn_t &a, const qtnn_t &b);
-qtnn_t  qtnn_mult(const qtnn_t &a, const qtnn_t &b); 
-qtnn_t  qtnn_mult_vec3(const qtnn_t a, const qtnn_t &b);
-vec3  qtnn_to_vec3(const qtnn_t &q);
-vec3  qtnn_transform_vec3(const qtnn_t &a, const vec3 &b);
+qtnn	qtnnScale(const qtnn &q, float scale);
+qtnn	qtnnSum(const qtnn &a, const qtnn &b);
+qtnn 	qtnnSub(const qtnn &a, const qtnn &b);
+float   qtnnDot(const qtnn &a, const qtnn &b);
+qtnn  	qtnnMult(const qtnn &a, const qtnn &b);
+qtnn 	qtnnSlerp(qtnn from, qtnn to, float t);

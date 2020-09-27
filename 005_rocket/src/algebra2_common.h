@@ -10,7 +10,7 @@ enum mtrx_type {MTRX_IDTT, MTRX_ZERO};
 #define M_PI 3.14159265358979323846
 
 constexpr float f_eps = 5.96e-08;
-constexpr float deg_to_rad(float deg) {
+constexpr float degToRad(float deg) {
 	return deg * M_PI/180.0f;
 }
 

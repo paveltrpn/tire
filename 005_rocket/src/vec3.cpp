@@ -6,42 +6,12 @@
 
 using namespace std;
 
-void vec3_show(vec3 &v) {
-	printf("%5.2f %5.2f %5.2f\n", v[0], v[1], v[2]);
-}
-
-vec3 vec3_copy(vec3 &v) {
-    vec3 rt;
-
-	rt[0] = v[0];
-	rt[1] = v[1];
-	rt[2] = v[2];
-
-	return rt;
-}
-
-vec3 vec3_set(float x, float y, float z) {
-    vec3 rt;
-
-	rt[0] = x;
-	rt[1] = y;
-	rt[2] = z;
-
-	return rt;
-}
-
-float vec3_lenght(vec3 &v) {
-	return sqrtf(v[_XC]*v[_XC] +
-				 v[_YC]*v[_YC] +
-				 v[_ZC]*v[_ZC]);
-
-}
 
 vec3 vec3_normalize(vec3 &v) {
 	vec3 rt;
 	float len;
 
-	len = vec3_lenght(v);
+	len = v.length();
 
 	if (len != 0.0) {
 		rt[_ZC] = v[_ZC] / len;
@@ -52,7 +22,7 @@ vec3 vec3_normalize(vec3 &v) {
 	return rt;
 }
 
-vec3 vec3_scale(vec3 &v, float scale) {
+vec3 vec3Scale(vec3 &v, float scale) {
     vec3 rt;
 
 	rt[0] = v[0] * scale;
@@ -62,7 +32,7 @@ vec3 vec3_scale(vec3 &v, float scale) {
 	return rt;
 }
 
-vec3 vec3_invert(vec3 &v) {
+vec3 vec3Invert(vec3 &v) {
     vec3 rt;
 
 	rt[_XC] = -v[_XC];
@@ -72,11 +42,11 @@ vec3 vec3_invert(vec3 &v) {
 	return rt;
 }
 
-float vec3_dot(vec3 &a, vec3 &b) {
+float vec3Dot(vec3 &a, vec3 &b) {
 	return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
 }
 
-vec3 vec3_sum(vec3 &a, vec3 &b) {
+vec3 vec3Sum(vec3 &a, vec3 &b) {
     vec3 rt;
 
 	rt[0] = a[0] + b[0];
@@ -86,7 +56,7 @@ vec3 vec3_sum(vec3 &a, vec3 &b) {
 	return rt;
 }
 
-vec3 vec3_sub(vec3 &a, vec3 &b) {
+vec3 vec3Sub(vec3 &a, vec3 &b) {
     vec3 rt;
 
 	rt[0] = a[0] - b[0];
@@ -96,7 +66,7 @@ vec3 vec3_sub(vec3 &a, vec3 &b) {
 	return rt;
 }
 
-vec3 vec3_cross(vec3 &a, vec3 &b) {
+vec3 vec3Cross(vec3 &a, vec3 &b) {
     vec3 rt;
 
 	rt[0] = a[_YC]*b[_ZC] - a[_ZC]*b[_YC];

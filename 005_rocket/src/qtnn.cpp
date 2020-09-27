@@ -4,49 +4,30 @@
 
 #include "qtnn.h"
 
-void qtnn_show(const qtnn_t &q) {
-	printf("%5.2f %5.2f %5.2f %5.2f\n", q[_XC], q[_YC], q[_ZC], q[_WC]);
-}
+qtnn::qtnn(float yaw, float pitch, float roll) {
+    		qtnn qyaw, qpitch, qroll, rt;
+			vec3 vyaw, vpitch, vroll;
 
-float qtnn_lenght(const qtnn_t &q) {
-	return sqrtf(q[_XC]*q[_XC] +
-				 q[_YC]*q[_YC] +
-				 q[_ZC]*q[_ZC] +
-				 q[_WC]*q[_WC]);
-}
+			vyaw   = vec3(1.0, 0.0, 0.0);
+			vpitch = vec3(0.0, 1.0, 0.0);
+			vroll  = vec3(0.0, 0.0, 1.0);
 
-qtnn_t qtnn_normalize(const qtnn_t &q) {
-	qtnn_t rt;
-	float len;
+			qyaw   = qtnn(vyaw, yaw);
+			qpitch = qtnn(vpitch, pitch);
+			qroll  = qtnn(vroll, roll);
 
-	len = qtnn_lenght(q);
+			rt = qtnnMult(qyaw, qpitch);
 
-	if (len > f_eps) {
-		rt[_WC] = q[_WC] / len;
-		rt[_XC] = q[_XC] / len;
-		rt[_YC] = q[_YC] / len;
-		rt[_ZC] = q[_ZC] / len;
-	} else {
-		printf("qtnn_normalize(): quaternion is too short!");
-		return qtnn_t();
-	}
+			rt = qtnnMult(rt, qroll);
 
-	return rt;
-}
+			data[_WC] = rt[_WC]; 
+			data[_XC] = rt[_XC];
+			data[_YC] = rt[_YC];
+			data[_ZC] = rt[_ZC];
+		}
 
-qtnn_t qtnn_invert(const qtnn_t &q) {
-	qtnn_t rt;
-
-	rt[_WC] =  q[_WC];
-	rt[_XC] = -q[_XC];
-	rt[_YC] = -q[_YC];
-	rt[_ZC] = -q[_ZC];
-
-	return rt;
-}
-
-qtnn_t qtnn_scale(const qtnn_t &q, float scale) {
-	qtnn_t rt;
+qtnn qtnnScale(const qtnn &q, float scale) {
+	qtnn rt;
 
 	rt[_WC] = q[_WC] * scale;
 	rt[_XC] = q[_XC] * scale;
@@ -56,8 +37,8 @@ qtnn_t qtnn_scale(const qtnn_t &q, float scale) {
 	return rt;
 }
 
-qtnn_t qtnn_sum(const qtnn_t &a, const qtnn_t &b) {
-	qtnn_t rt;
+qtnn qtnnSum(const qtnn &a, const qtnn &b) {
+	qtnn rt;
 
 	rt[0] = a[0] + b[0];
 	rt[1] = a[1] + b[1];
@@ -67,8 +48,8 @@ qtnn_t qtnn_sum(const qtnn_t &a, const qtnn_t &b) {
 	return rt;
 }
 
-qtnn_t qtnn_sub(const qtnn_t &a, const qtnn_t &b) {
-	qtnn_t rt;
+qtnn qtnnSub(const qtnn &a, const qtnn &b) {
+	qtnn rt;
 
 	rt[0] = a[0] - b[0];
 	rt[1] = a[1] - b[1];
@@ -78,12 +59,12 @@ qtnn_t qtnn_sub(const qtnn_t &a, const qtnn_t &b) {
 	return rt;
 }
 
-float qtnn_dot(const qtnn_t &a, const qtnn_t &b) {
+float qtnnDot(const qtnn &a, const qtnn &b) {
 	return a[0]*b[0] + a[1]*b[1] + a[2]*b[2] + a[3]*b[3];
 }
 
-qtnn_t qtnn_mult(const qtnn_t &a, const qtnn_t &b) {
-	qtnn_t rt;
+qtnn qtnnMult(const qtnn &a, const qtnn &b) {
+	qtnn rt;
 
 	rt[_WC] = a[_WC]*b[_WC] - a[_XC]*b[_XC] - a[_YC]*b[_YC] - a[_ZC]*b[_ZC];
 	rt[_XC] = a[_WC]*b[_XC] + a[_XC]*b[_WC] + a[_YC]*b[_ZC] - a[_ZC]*b[_YC];
@@ -93,64 +74,39 @@ qtnn_t qtnn_mult(const qtnn_t &a, const qtnn_t &b) {
 	return rt;
 }
 
-/* function is broken */
-qtnn_t qtnn_mult_vec3(const qtnn_t &a, const vec3 &b) {
-	qtnn_t rt;
+qtnn qtnnSlerp(qtnn from, qtnn to, float t) {
+	qtnn rt;
+	float p1[4];
+	float omega, cosom, sinom, scale0, scale1;
 
-	rt[_WC] = -a[_WC]*b[_XC] - a[_YC]*b[_YC] - a[_ZC]*b[_ZC];
-	rt[_XC] =  a[_WC]*b[_XC] + a[_YC]*b[_ZC] - a[_ZC]*b[_YC];
-	rt[_YC] =  a[_WC]*b[_YC] - a[_XC]*b[_ZC] + a[_ZC]*b[_XC];
-	rt[_ZC] =  a[_WC]*b[_ZC] + a[_XC]*b[_YC] - a[_YC]*b[_XC];
+	// косинус угла
+	cosom = qtnnDot(from, to);	
 
-	return rt;
-}
+	if ( cosom <0.0 ) { 
+	  cosom = -cosom;
+	  p1[0] = -to[0];  p1[1] = -to[1];
+	  p1[2] = -to[2];  p1[3] = -to[3];
+	} else {
+	  p1[0] = to[0];    p1[1] = to[1];
+	  p1[2] = to[2];    p1[3] = to[3];
+	}
 
-qtnn_t::qtnn_t(const vec3 &ax, float phi) {
-    float sinhalfphi;
+	if ( (1.0 - cosom) > f_eps )	{
+	  // стандартный случай (slerp)
+	  omega  = acos(cosom);
+	  sinom  = sinf(omega);
+	  scale0 = sinf((1.0 - t) * omega) / sinom;
+	  scale1 = sinf(t * omega) / sinom;
+	} else {        
+	  // если маленький угол - линейная интерполяция
+	  scale0 = 1.0 - t;
+	  scale1 = t;
+	}
 
-	sinhalfphi = sinf(deg_to_rad(phi * 0.5f));
-
-	data[_WC] = cosf(deg_to_rad(phi * 0.5f));
-	data[_XC] = ax[_XC] * sinhalfphi;
-	data[_YC] = ax[_YC] * sinhalfphi;
-	data[_ZC] = ax[_ZC] * sinhalfphi;
-
-}
-
-qtnn_t::qtnn_t(float yaw, float pitch, float roll) {
-    qtnn_t	qyaw, qpitch, qroll, rt;
-	vec3  vyaw, vpitch, vroll;
-
-	vyaw   = vec3(1.0, 0.0, 0.0);
-	vpitch = vec3(0.0, 1.0, 0.0);
-	vroll  = vec3(0.0, 0.0, 1.0);
-
-	qyaw   = qtnn_t(vyaw, yaw);
-	qpitch = qtnn_t(vpitch, pitch);
-	qroll  = qtnn_t(vroll, roll);
-
-	rt = qtnn_mult(qyaw, qpitch);
-
-	rt = qtnn_mult(rt, qroll);
-
-	data[_WC] = rt[_WC]; 
-	data[_XC] = rt[_XC];
-	data[_YC] = rt[_YC];
-	data[_ZC] = rt[_ZC];
-}
-
-vec3 qtnn_to_vec3(const qtnn_t &q) {
-	return vec3(q[_XC], q[_YC], q[_ZC]);;
-}
-
-vec3 qtnn_transform_vec3(const qtnn_t &a, const vec3 &b) {
-	vec3 rt;
-	qtnn_t	vq, tmp, ia;
-
-	vq = qtnn_t(b);
-    tmp = qtnn_mult(a, vq);
-	ia = qtnn_invert(a);
-	rt = qtnn_to_vec3(qtnn_mult(tmp, ia));
-
+	rt[0] = scale0 * from[0] + scale1 * p1[0];
+	rt[1] = scale0 * from[1] + scale1 * p1[1];
+	rt[2] = scale0 * from[2] + scale1 * p1[2];
+	rt[3] = scale0 * from[3] + scale1 * p1[3];
+	  
 	return rt;
 }

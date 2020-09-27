@@ -39,18 +39,29 @@ class vec3 {
 
 		~vec3() {};
 	
+		float length() {
+			return sqrtf(data[_XC]*data[_XC] +
+				 		 data[_YC]*data[_YC] +
+				 		 data[_ZC]*data[_ZC]);
+		};
+
+		void normalize() {
+			float len = length();
+
+			if (len > f_eps) {
+				data[_ZC] = data[_ZC] / len;
+				data[_XC] = data[_XC] / len;
+				data[_YC] = data[_YC] / len;
+			}
+		}
+
 	private:
 		float data[3];
 };
 
-void   vec3_show(vec3 &v);
-vec3 vec3_copy(vec3 &v);
-vec3 vec3_set(float x, float y, float z);
-float  vec3_lenght(vec3 &v);
-vec3 vec3_normalize(vec3 &v);
-vec3 vec3_scale(vec3 &v, float scale);
-vec3 vec3_invert(vec3 &v);
-float  vec3_dot(vec3 &a, vec3 &b);
-vec3 vec3_sum(vec3 &a, vec3 &b);
-vec3 vec3_sub(vec3 &a, vec3 &b);
-vec3 vec3_cross(vec3 &a, vec3 &b);
+vec3  vec3Scale(vec3 &v, float scale);
+vec3  vec3Invert(vec3 &v);
+float vec3Dot(vec3 &a, vec3 &b);
+vec3  vec3Sum(vec3 &a, vec3 &b);
+vec3  vec3Sub(vec3 &a, vec3 &b);
+vec3  vec3Cross(vec3 &a, vec3 &b);

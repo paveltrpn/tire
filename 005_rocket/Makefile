@@ -1,11 +1,11 @@
 ################################
 # Windows-специфичный Makefile #
 ################################
-CC       := clang++
-CFLAGS   := -Wall -std=c++17 -target x86_64-pc-windows-gnu
-LFLAGS 	 := -lstdc++ -lopengl32 -lglfw3 -lgdi32 -lglew32 -ltga -llibjpeg
+CC       = clang++
+CFLAGS   = -Wall -std=c++17 -target x86_64-pc-windows-gnu
+LFLAGS 	 = -lstdc++ -lopengl32 -lglfw3 -lgdi32 -lglew32 -ltga -llibjpeg
 
-SRCS := src/main.cpp \
+SRCS = src/main.cpp \
 		src/mtrx4.cpp \
 		src/vec3.cpp \
 		src/vec4.cpp \
@@ -15,7 +15,7 @@ SRCS := src/main.cpp \
 		src/bitmap_text.cpp
 		
 
-OBJS := main.o \
+OBJS = main.o \
 		mtrx4.o \
 		vec3.o \
 		vec4.o \

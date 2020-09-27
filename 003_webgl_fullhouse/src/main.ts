@@ -1,104 +1,4 @@
 
-const vsSource: string = `
-attribute vec4 aVertexPosition;
-attribute vec3 aVertexNormal;
-attribute vec4 aVertexColor;
-
-uniform mat4 uNormalMatrix;
-uniform mat4 uModelViewMatrix;
-uniform mat4 uProjectionMatrix;
-
-varying highp vec3 vLighting;
-varying lowp vec4 vColor;
-
-void main(void) {
-    gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-    vColor = aVertexColor;
-
-    highp vec3 ambientLight = vec3(0.3, 0.3, 0.3);
-    highp vec3 directionalLightColor = vec3(1, 1, 1);
-    highp vec3 directionalVector = normalize(vec3(0, 0, 1));
-
-    highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
-
-    highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
-    vLighting = ambientLight + (directionalLightColor * directional);
-    //vLighting = vec3(0.5, 0.5, 0.5);
-}
-`;
-
-const fsSource: string = `
-varying highp vec3 vLighting;
-varying lowp vec4 vColor;
-
-void main(void) {
-    gl_FragColor = vec4(vColor.rgb * vLighting, 1.0);
-}
-`;
-
-const positions: number[] = [
-    // top
-     1.0,  1.0,  1.0, -1.0,  1.0,  1.0,  1.0,  1.0, -1.0,
-    -1.0,  1.0,  1.0,  1.0,  1.0, -1.0, -1.0,  1.0, -1.0,
-    // bottom
-     1.0, -1.0,  1.0, -1.0, -1.0,  1.0,  1.0, -1.0, -1.0,
-    -1.0, -1.0,  1.0,  1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
-    // front
-    -1.0,  1.0,  1.0,  1.0,  1.0,  1.0, -1.0, -1.0,  1.0,
-     1.0,  1.0,  1.0,  1.0, -1.0,  1.0, -1.0, -1.0,  1.0,
-    // back
-    -1.0,  1.0, -1.0,  1.0,  1.0, -1.0, -1.0, -1.0, -1.0,
-     1.0,  1.0, -1.0,  1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
-    // left
-    -1.0,  1.0, -1.0, -1.0,  1.0,  1.0, -1.0, -1.0,  1.0,
-    -1.0, -1.0,  1.0, -1.0, -1.0, -1.0, -1.0,  1.0, -1.0,
-    // right
-     1.0,  1.0, -1.0,  1.0,  1.0,  1.0,  1.0, -1.0,  1.0,
-     1.0, -1.0,  1.0,  1.0, -1.0, -1.0,  1.0,  1.0, -1.0
-];
-
-const normals: number[] = [
-    // top
-    0.0,  1.0,  0.0,  0.0,  1.0,  0.0,  0.0,  1.0,  0.0,
-    0.0,  1.0,  0.0,  0.0,  1.0,  0.0,  0.0,  1.0,  0.0,
-    // bottom
-    0.0, -1.0,  0.0,  0.0, -1.0,  0.0,  0.0, -1.0,  0.0,
-    0.0, -1.0,  0.0,  0.0, -1.0,  0.0,  0.0, -1.0,  0.0,
-    // front
-    0.0,  0.0,  1.0,  0.0,  0.0,  1.0,  0.0,  0.0,  1.0,
-    0.0,  0.0,  1.0,  0.0,  0.0,  1.0,  0.0,  0.0,  1.0,
-    // back
-    0.0,  0.0, -1.0,  0.0,  0.0, -1.0,  0.0,  0.0, -1.0,
-    0.0,  0.0, -1.0,  0.0,  0.0, -1.0,  0.0,  0.0, -1.0,
-    // left
-   -1.0,  0.0,  0.0, -1.0,  0.0,  0.0, -1.0,  0.0,  0.0,
-   -1.0,  0.0,  0.0, -1.0,  0.0,  0.0, -1.0,  0.0,  0.0,
-    // right
-    1.0,  0.0,  0.0,  1.0,  0.0,  0.0,  1.0,  0.0,  0.0,
-    1.0,  0.0,  0.0,  1.0,  0.0,  0.0,  1.0,  0.0,  0.0
-];
-
-const colors: number[] = [
-    // top (light green)
-    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
-    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
-    // bottom (dark green)
-    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
-    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
-    // front (light red)
-    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
-    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
-    // back  (dark red)
-    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
-    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
-    // left (light blue)
-    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
-    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
-    // right (dark blue)
-    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
-    0.5,  0.5,  0.5, 0.5,  0.5,  0.5, 0.5,  0.5,  0.5,
-];
-
 class cube_c {
     html_canvas: HTMLCanvasElement;
     gl: WebGLRenderingContext;
@@ -121,7 +21,7 @@ class cube_c {
 
     setup(): void {
         this.html_canvas = document.querySelector('#glcanvas');
-        this.gl = this.html_canvas.getContext('webgl',{antialias: true,
+        this.gl = this.html_canvas.getContext('webgl2',{antialias: true,
                                                        depth: true});
         
         this.wnd_width = this.gl.drawingBufferWidth;
@@ -315,7 +215,21 @@ class cube_c {
     }
 }
 
+// function loadShaderSource() {
+//     let text = fetch('http://localhost:8080/', {
+//         mode: "no-cors",
+//         method: "GET",
+//         })
+//     .then(response => response.text())
+//     .then(data => {return data.length})
+//     .catch(error => console.error(error));
+
+//     console.log(text);
+// }
+
 function main() {
+    // loadShaderSource();
+
     let app: cube_c = new cube_c();
     let then: number = 0.0;
 
