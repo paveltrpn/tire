@@ -2,7 +2,7 @@
 # Windows-специфичный Makefile #
 ################################
 CC       = clang++
-CFLAGS   = -Wall -std=c++17 -target x86_64-pc-windows-gnu
+CFLAGS   = -Wall -std=c++20 -target x86_64-pc-windows-gnu
 LFLAGS 	 = -lstdc++ -lopengl32 -lglfw3 -lgdi32 -lglew32 -ltga -llibjpeg
 
 SRCS = src/main.cpp \

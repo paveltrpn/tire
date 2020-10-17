@@ -6,23 +6,7 @@
 
 using namespace std;
 
-
-vec3 vec3_normalize(vec3 &v) {
-	vec3 rt;
-	float len;
-
-	len = v.length();
-
-	if (len != 0.0) {
-		rt[_ZC] = v[_ZC] / len;
-		rt[_XC] = v[_XC] / len;
-		rt[_YC] = v[_YC] / len;
-	}
-
-	return rt;
-}
-
-vec3 vec3Scale(vec3 &v, float scale) {
+vec3 vec3Scale(const vec3 &v, float scale) {
     vec3 rt;
 
 	rt[0] = v[0] * scale;
@@ -32,7 +16,7 @@ vec3 vec3Scale(vec3 &v, float scale) {
 	return rt;
 }
 
-vec3 vec3Invert(vec3 &v) {
+vec3 vec3Invert(const vec3 &v) {
     vec3 rt;
 
 	rt[_XC] = -v[_XC];
@@ -42,11 +26,11 @@ vec3 vec3Invert(vec3 &v) {
 	return rt;
 }
 
-float vec3Dot(vec3 &a, vec3 &b) {
+float vec3Dot(const vec3 &a, const vec3 &b) {
 	return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
 }
 
-vec3 vec3Sum(vec3 &a, vec3 &b) {
+vec3 vec3Sum(const vec3 &a, const vec3 &b) {
     vec3 rt;
 
 	rt[0] = a[0] + b[0];
@@ -56,7 +40,7 @@ vec3 vec3Sum(vec3 &a, vec3 &b) {
 	return rt;
 }
 
-vec3 vec3Sub(vec3 &a, vec3 &b) {
+vec3 vec3Sub(const vec3 &a, const vec3 &b) {
     vec3 rt;
 
 	rt[0] = a[0] - b[0];
@@ -66,7 +50,7 @@ vec3 vec3Sub(vec3 &a, vec3 &b) {
 	return rt;
 }
 
-vec3 vec3Cross(vec3 &a, vec3 &b) {
+vec3 vec3Cross(const vec3 &a, const vec3 &b) {
     vec3 rt;
 
 	rt[0] = a[_YC]*b[_ZC] - a[_ZC]*b[_YC];

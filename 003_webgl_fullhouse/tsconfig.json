@@ -8,5 +8,12 @@
     // "sourceMap": true,
     "outFile": "./cube.js",
     },
-    "files": ["src/main.ts", "src/mtrx4.ts", "src/vec2.ts", "src/vec3.ts", "src/qtnn.ts", "src/common.ts"]
+    "files": ["src/shaders.ts",
+              "src/geometry.ts",
+              "src/main.ts", 
+              "src/mtrx4.ts",
+              "src/vec2.ts",
+              "src/vec3.ts",
+              "src/qtnn.ts",
+              "src/common.ts"]
 }

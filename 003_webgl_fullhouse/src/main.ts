@@ -1,8 +1,8 @@
 
-class cube_c {
-    html_canvas: HTMLCanvasElement;
-    gl: WebGLRenderingContext;
+// Глобальный WebGL контекст
+let gl: WebGL2RenderingContext;
 
+class cube_c {
     wnd_width: number;
     wnd_height: number;
     
@@ -19,17 +19,16 @@ class cube_c {
     
     constructor() {}
 
-    setup(): void {
-        this.html_canvas = document.querySelector('#glcanvas');
-        this.gl = this.html_canvas.getContext('webgl2',{antialias: true,
-                                                       depth: true});
+    setup(canvas: string, text_field: string): void {
+        let html_canvas: HTMLCanvasElement = document.querySelector(canvas);
+        gl = html_canvas.getContext('webgl2',{antialias: true, depth: true});
         
-        this.wnd_width = this.gl.drawingBufferWidth;
-        this.wnd_height = this.gl.drawingBufferHeight;
+        this.wnd_width = gl.drawingBufferWidth;
+        this.wnd_height = gl.drawingBufferHeight;
         this.aspect = this.wnd_width / this.wnd_height;
 
-        if (!this.gl) {
-            alert('Unable to initialize WebGL. Your browser or machine may not support it.');
+        if (!gl) {
+            alert('cube_c::setup(): Unable to initialize WebGL. Your browser or machine may not support it.');
             return;
         }
 
@@ -38,39 +37,39 @@ class cube_c {
         this.gl_programinfo = {
             program: this.gl_shader,
             attribLocations: {
-              vertexPosition: this.gl.getAttribLocation(this.gl_shader, 'aVertexPosition'),
-              vertexNormal:   this.gl.getAttribLocation(this.gl_shader, 'aVertexNormal'),
-              vertexColor:    this.gl.getAttribLocation(this.gl_shader, 'aVertexColor'),
+              vertexPosition: gl.getAttribLocation(this.gl_shader, 'aVertexPosition'),
+              vertexNormal:   gl.getAttribLocation(this.gl_shader, 'aVertexNormal'),
+              vertexColor:    gl.getAttribLocation(this.gl_shader, 'aVertexColor'),
             },
             uniformLocations: {
-              projectionMatrix: this.gl.getUniformLocation(this.gl_shader, 'uProjectionMatrix'),
-              modelViewMatrix:  this.gl.getUniformLocation(this.gl_shader, 'uModelViewMatrix'),
-              normalMatrix:     this.gl.getUniformLocation(this.gl_shader, 'uNormalMatrix'),
+              projectionMatrix: gl.getUniformLocation(this.gl_shader, 'uProjectionMatrix'),
+              modelViewMatrix:  gl.getUniformLocation(this.gl_shader, 'uModelViewMatrix'),
+              normalMatrix:     gl.getUniformLocation(this.gl_shader, 'uNormalMatrix'),
             },
           };
         
-        console.log(this.gl.getParameter(this.gl.VERSION));
-        console.log(this.gl.getParameter(this.gl.SHADING_LANGUAGE_VERSION));
-        console.log(this.gl.getParameter(this.gl.VENDOR));
-        let gl_ext = this.gl.getSupportedExtensions();
+        let log_out = document.getElementById(text_field);
+        log_out.innerText = gl.getParameter(gl.VERSION) + "; " + 
+                            gl.getParameter(gl.SHADING_LANGUAGE_VERSION) + "; " +  
+                            gl.getParameter(gl.VENDOR);
+
+        let gl_ext = gl.getSupportedExtensions();
 
         for (let i = 0; i < gl_ext.length; i++) {
-            console.log(gl_ext[i]);
+            log_out.innerText = log_out.innerText + (gl_ext[i]) + " ;";
         }
-
-        console.log("Message");
 
         this.initBuffers();
     }
 
     render(deltaTime: any): void {
-        this.gl.viewport(0, 0, this.wnd_width, this.wnd_height);
-        this.gl.clearColor(0.1, 0.1, 0.1, 1.0);  
-        this.gl.clearDepth(1.0);                 
-        this.gl.enable(this.gl.DEPTH_TEST);           
-        this.gl.depthFunc(this.gl.LEQUAL);            
+        gl.viewport(0, 0, this.wnd_width, this.wnd_height);
+        gl.clearColor(0.1, 0.1, 0.1, 1.0);  
+        gl.clearDepth(1.0);                 
+        gl.enable(gl.DEPTH_TEST);           
+        gl.depthFunc(gl.LEQUAL);            
 
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         let projectionMatrix: mtrx4 = new mtrx4(); 
         projectionMatrix.setPerspective(degToRad(45), this.aspect, 0.1,  100.0);
@@ -94,105 +93,105 @@ class cube_c {
         // Буфер вершин
         {
             const numComponents = 3;
-            const type = this.gl.FLOAT;
+            const type = gl.FLOAT;
             const normalize = false;
             const stride = 0;
             const offset = 0;
-            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.gl_vert_buf);
-            this.gl.vertexAttribPointer(
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_vert_buf);
+            gl.vertexAttribPointer(
                 this.gl_programinfo.attribLocations.vertexPosition,
                 numComponents,
                 type,
                 normalize,
                 stride,
                 offset);
-                this.gl.enableVertexAttribArray(
+                gl.enableVertexAttribArray(
                     this.gl_programinfo.attribLocations.vertexPosition);
         }
         // Буфер нормалей вершин
         {
             const numComponents = 3;
-            const type = this.gl.FLOAT;
+            const type = gl.FLOAT;
             const normalize = false;
             const stride = 0;
             const offset = 0;
-            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.gl_normal_buf);
-            this.gl.vertexAttribPointer(
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_normal_buf);
+            gl.vertexAttribPointer(
                 1, // programInfo.attribLocations.vertexNormal
                 numComponents,
                 type,
                 normalize,
                 stride,
                 offset);
-                this.gl.enableVertexAttribArray(
+                gl.enableVertexAttribArray(
                 1); // programInfo.attribLocations.vertexNormal
         }
         // Буфер цвета вершин
         {
             const numComponents = 3;
-            const type = this.gl.FLOAT;
+            const type = gl.FLOAT;
             const normalize = false;
             const stride = 0;
             const offset = 0;
-            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.gl_color_buf);
-            this.gl.vertexAttribPointer(
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_color_buf);
+            gl.vertexAttribPointer(
                 this.gl_programinfo.attribLocations.vertexColor,
                 numComponents,
                 type,
                 normalize,
                 stride,
                 offset);
-                this.gl.enableVertexAttribArray(
+                gl.enableVertexAttribArray(
                 this.gl_programinfo.attribLocations.vertexColor);
         }   
 
-        this.gl.useProgram(this.gl_programinfo.program);
+        gl.useProgram(this.gl_programinfo.program);
 
-        this.gl.uniformMatrix4fv(
+        gl.uniformMatrix4fv(
                 this.gl_programinfo.uniformLocations.projectionMatrix,
                 false,
                 projectionMatrix.data);
-        this.gl.uniformMatrix4fv(
+        gl.uniformMatrix4fv(
                 this.gl_programinfo.uniformLocations.modelViewMatrix,
                 false,
                 modelViewMatrix.data);
-        this.gl.uniformMatrix4fv(
+        gl.uniformMatrix4fv(
                 this.gl_programinfo.uniformLocations.normalMatrix,
                 false,
                 normalMatrix.data);
 
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, 36);
+        gl.drawArrays(gl.TRIANGLES, 0, 36);
 
         this.squareRotation += deltaTime;
     }
 
     private initBuffers(): void {
-        this.gl_vert_buf = this.gl.createBuffer();
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.gl_vert_buf);
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(positions), this.gl.STATIC_DRAW);
+        this.gl_vert_buf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_vert_buf);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
         // Normal buffer
-        this.gl_normal_buf = this.gl.createBuffer();
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.gl_normal_buf);
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(normals), this.gl.STATIC_DRAW);
+        this.gl_normal_buf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_normal_buf);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
 
         // Now set up the colors for the vertices
-        this.gl_color_buf = this.gl.createBuffer();
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.gl_color_buf);
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(colors), this.gl.STATIC_DRAW);
+        this.gl_color_buf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_color_buf);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
     }
 
     private initShaderProgram(vsSource: string, fsSource: string): any {
-        const vertexShader = this.loadShader(this.gl.VERTEX_SHADER, vsSource);
-        const fragmentShader = this.loadShader(this.gl.FRAGMENT_SHADER, fsSource);
+        const vertexShader = this.loadShader(gl.VERTEX_SHADER, vsSource);
+        const fragmentShader = this.loadShader(gl.FRAGMENT_SHADER, fsSource);
 
-        const shaderProgram = this.gl.createProgram();
-        this.gl.attachShader(shaderProgram, vertexShader);
-        this.gl.attachShader(shaderProgram, fragmentShader);
-        this.gl.linkProgram(shaderProgram);
+        const shaderProgram = gl.createProgram();
+        gl.attachShader(shaderProgram, vertexShader);
+        gl.attachShader(shaderProgram, fragmentShader);
+        gl.linkProgram(shaderProgram);
 
-        if (!this.gl.getProgramParameter(shaderProgram, this.gl.LINK_STATUS)) {
-            alert('Unable to initialize the shader program: ' + this.gl.getProgramInfoLog(shaderProgram));
+        if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+            alert('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram));
             return null;
         }
 
@@ -200,14 +199,14 @@ class cube_c {
     }
 
     private loadShader(type: any, source: string): any {
-        const shader = this.gl.createShader(type);
+        const shader = gl.createShader(type);
 
-        this.gl.shaderSource(shader, source);
-        this.gl.compileShader(shader);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
 
-        if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
-          alert('An error occurred compiling the shaders: ' + this.gl.getShaderInfoLog(shader));
-          this.gl.deleteShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+          alert('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
+          gl.deleteShader(shader);
           return null;
         }
 
@@ -215,25 +214,11 @@ class cube_c {
     }
 }
 
-// function loadShaderSource() {
-//     let text = fetch('http://localhost:8080/', {
-//         mode: "no-cors",
-//         method: "GET",
-//         })
-//     .then(response => response.text())
-//     .then(data => {return data.length})
-//     .catch(error => console.error(error));
-
-//     console.log(text);
-// }
-
 function main() {
-    // loadShaderSource();
-
     let app: cube_c = new cube_c();
     let then: number = 0.0;
 
-    app.setup();
+    app.setup("#glcanvas", "log_out");
 
     function render(now: any) {
         now *= 0.001;  // convert to seconds

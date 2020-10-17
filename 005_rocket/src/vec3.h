@@ -59,9 +59,9 @@ class vec3 {
 		float data[3];
 };
 
-vec3  vec3Scale(vec3 &v, float scale);
-vec3  vec3Invert(vec3 &v);
-float vec3Dot(vec3 &a, vec3 &b);
-vec3  vec3Sum(vec3 &a, vec3 &b);
-vec3  vec3Sub(vec3 &a, vec3 &b);
-vec3  vec3Cross(vec3 &a, vec3 &b);
+vec3  vec3Scale(const vec3 &v, float scale);
+vec3  vec3Invert(const vec3 &v);
+float vec3Dot(const vec3 &a, const vec3 &b);
+vec3  vec3Sum(const vec3 &a, const vec3 &b);
+vec3  vec3Sub(const vec3 &a, const vec3 &b);
+vec3  vec3Cross(const vec3 &a, const vec3 &b);
