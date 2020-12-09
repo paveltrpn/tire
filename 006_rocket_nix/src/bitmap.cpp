@@ -162,5 +162,5 @@ void bitmap_c::show_info() {
 			  << "file name - " << fname << "\n"
 			  << "img_width - " << img_width << "\n"
 			  << "img_height - " << img_height << "\n"
-			  << "img_bpp - " << img_bpp << "\n";
+			  << "img_bpp - " << img_bpp << "\n\n";
 }

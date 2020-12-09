@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <tuple>
 
 // Подключать GL именно в таком порядке!
 #include <GL/glew.h>
@@ -105,28 +106,37 @@ void glfw_error_callback(int, const char* err_str){
 	std::cout << "GLFW Error: " << err_str << std::endl;
 }
 
-string loadShaderSource(string fname) {
-	string rt;
-	ifstream inFile;
-	string curString;
+GLuint compileShader(GLuint type, string fname) {
+	auto [is_load,src] = [] (string fname) -> tuple<bool,string> {
+		ifstream inFile;
+		string curString, rt;
 
-	inFile.open(fname);
+		inFile.open(fname);
 
-	if (!inFile) {
-		cout << "loadShaderSource(): error! can't open file - " << fname << "\n";
-		return rt;
+		if (!inFile) {
+			cout << "compileShader(): error! can't open file - " << fname << "\n";
+			return tuple(false,"");
+		}
+
+		// Читаем построчно добавляя перенос строки, т.к. cin.getline()
+		// удаляет символ переноса строки
+    	for (;getline(inFile,curString);) {
+    	    rt = rt + curString + "\n";
+    	}
+
+		// Можно читать и вот так:
+		// rt = string{std::istreambuf_iterator<char>{inFile}, {}};
+
+    	inFile.close();
+
+		return tuple(true,rt);
+	} (fname);
+	
+	if (!is_load) {
+		cout << "compileShader(): return NULL shader instead of - " << fname << "\n\n";
+		return 0;
 	}
 
-    for (;getline(inFile,curString);) {
-        rt = rt + curString;
-    }
-
-    inFile.close();
-
-	return rt;
-}
-
-GLuint compileShader(GLuint type, string src) {
 	GLuint shader = glCreateShader(type);
 	GLchar const* files[] = {src.c_str()};
 	GLint lengths[]       = {static_cast<GLint>(src.size())};
@@ -141,22 +151,26 @@ GLuint compileShader(GLuint type, string src) {
 		GLint maxLength = 0;
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);	
 
-		// The maxLength includes the NULL character
+		// maxLength включает NULL символ
 		std::vector<GLchar> errorLog(maxLength);
 		glGetShaderInfoLog(shader, maxLength, &maxLength, &errorLog[0]);	
 
 		// Provide the infolog in whatever manor you deem best.
 		// Exit with failure.
 
-		cout << "compileShader(): can't compile shader! error log: \n";
+		cout << "compileShader(): can't compile shader - " << fname << " error log: \n";
 
 		for (const auto &out: errorLog) {
 			cout << out;
 		}
+		cout << "\n";
 
-		glDeleteShader(shader); // Don't leak the shader.
+		glDeleteShader(shader);
+
 		return 0;
 	}
+
+	cout << "compileShader(): shader - " << fname << " compile success!\n\n";
 
     return shader;
 }
@@ -181,23 +195,26 @@ class app_c {
     	GLuint gl_colorBuf;
 
 		void startWindow() {
-			std::cout << "app_c::start_window()\n";
+			std::cout << "app_c::start_window()\n\n";
 
 			if (glfwInit() != GLFW_TRUE) {
-				std::cout << "app_c::start_window(): glfwInit() return - GLFW_FALSE!" << "\n";
+				std::cout << "app_c::start_window(): glfwInit() return - GLFW_FALSE!" << "\n\n";
 				exit(1);
 			}
 
 			glfwSetErrorCallback(glfw_error_callback);
 
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+			// Так включаем OpenGL 4.1 Core Profile
+			// для VMWare Workstation 16 Player
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+
 			glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
 			glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 			window = glfwCreateWindow(wnd_width, wnd_height, appName, nullptr, nullptr);
 			if (window == nullptr) {
-				std::cout << "app_c::start_window(): glfwCreateWindow(): Failed to create GLFW window" << std::endl;
+				std::cout << "app_c::start_window(): glfwCreateWindow(): Failed to create GLFW window\n\n" << std::endl;
 				glfwTerminate();
 				exit(1);
 			}
@@ -209,7 +226,7 @@ class app_c {
 			glewExperimental = GL_TRUE;
 	
 			if (glewInit() != GLEW_OK) {
-	    		std::cout << "app_c::start_window(): glewInit(): Failed to initialize GLEW" << std::endl;
+	    		std::cout << "app_c::start_window(): glewInit(): Failed to initialize GLEW\n\n" << std::endl;
 	    		exit(1);
 			}
 
@@ -221,14 +238,14 @@ class app_c {
 			std::cout << gl_render << std::endl 
 					  << gl_version << std::endl 
 					  << glsl_version << std::endl
-					  << glfw_version << std::endl;
+					  << glfw_version << std::endl << std::endl;
 
 			// Выключаем вертикальную синхронизацию (VSYNC)
 			glfwSwapInterval(0);
 		};
 
 		void setupScene() {
-			std::cout << "app_c::setup_scene()\n";
+			std::cout << "app_c::setup_scene()\n\n";
 
 			text.load_font("assets/RobotoMono-2048-1024-64-128.tga");
 
@@ -237,26 +254,25 @@ class app_c {
 			jpeg.load_jpg("assets/texture.jpg");
 			jpeg.show_info();
 
-			glCreateBuffers(1, &gl_vertBuf);
+			glGenBuffers(1, &gl_vertBuf);
         	glBindBuffer(GL_ARRAY_BUFFER, gl_vertBuf);
         	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
 
         	// Normal buffer
-        	glCreateBuffers(1, &gl_normalBuf);
+        	glGenBuffers(1, &gl_normalBuf);
         	glBindBuffer(GL_ARRAY_BUFFER, gl_normalBuf);
         	glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
 
         	// Now set up the colors for the vertices
-        	glCreateBuffers(1, &gl_colorBuf);
+        	glGenBuffers(1, &gl_colorBuf);
         	glBindBuffer(GL_ARRAY_BUFFER, gl_colorBuf);
         	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
 
-			auto vShader = loadShaderSource("assets/vsSource.glsl");
-			auto fShader = loadShaderSource("assets/fsSource.glsl");
-
-			auto vs = compileShader(GL_FRAGMENT_SHADER, fShader);
+			auto vs = compileShader(GL_VERTEX_SHADER, 	"assets/vsSourсe.glsl");
+			auto fs = compileShader(GL_FRAGMENT_SHADER, "assets/fsSource.glsl");
 		};
 
+		/* ==================================================================================================== */
 		void looper() {
 			while(!glfwWindowShouldClose(window)) {
     			glfwPollEvents();
@@ -266,6 +282,7 @@ class app_c {
 				glfwSwapBuffers(window);
 			}
 		};
+		/* ==================================================================================================== */
 
 		app_c() {
 
@@ -284,7 +301,6 @@ class app_c {
 		app_c& operator=(const app_c&& app) = delete;
 
 		void frame() {
-
 			// Буфер вершин
             glBindBuffer(GL_ARRAY_BUFFER, gl_vertBuf);
             glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);

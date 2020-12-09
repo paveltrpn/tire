@@ -214,11 +214,35 @@ class cube_c {
     }
 }
 
+function onLoad(rq: string) {
+    console.log("Nice load")
+}
+
+function loadWorld() {
+    var request = new XMLHttpRequest();
+    request.open("GET", "README.md");
+    request.onreadystatechange = function() {
+      if (request.readyState == 4) {
+        onLoad(request.responseText);
+      }
+    }
+    request.send();
+  }
+
+function loadWorldFetch() {
+    fetch('../README.md', {mode: 'no-cors'})
+    .then(response => response.text())
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
+}
+
 function main() {
     let app: cube_c = new cube_c();
     let then: number = 0.0;
 
     app.setup("#glcanvas", "log_out");
+
+    loadWorldFetch()
 
     function render(now: any) {
         now *= 0.001;  // convert to seconds

@@ -341,7 +341,7 @@ class mtrx4 {
 
 	private:
 		float data[16];
-		const int32_t order = 4;
+		const size_t order = 4;
 };
 
 float mtrx4DetLU(mtrx4 m);

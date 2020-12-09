@@ -61,7 +61,7 @@ class qtnn {
         this.data[3] =  this.data[3];
 	}
 
-	setRotX(phi: number) {
+	setRtnX(phi: number) {
 		let halfPhi: number = phi/2.0;
 
 		this.data[3] = Math.cos(halfPhi);
@@ -70,7 +70,7 @@ class qtnn {
 		this.data[2] = 0.0;
 	}
 
-	setRotY(phi: number) {
+	setRtnY(phi: number) {
 		let halfPhi: number = phi/2.0;
 
 		this.data[3] = Math.cos(halfPhi);
@@ -79,7 +79,7 @@ class qtnn {
 		this.data[2] = 0.0;
 	}
 
-	setRotZ(phi: number) {
+	setRtnZ(phi: number) {
 		let halfPhi: number = phi/2.0;
 
 		this.data[3] = Math.cos(halfPhi);

@@ -1,4 +1,5 @@
-#version 460
+#version 410
+
 vec3 vLighting;
 vec4 vColor;
 
