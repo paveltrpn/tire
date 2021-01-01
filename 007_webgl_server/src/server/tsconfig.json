@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+    // "strict": true,
+    "target": "ES2020",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    // "sourceMap": true,
+    "outFile": "./js/http_server.js",
+    },
+    "files": ["src/http_server.ts"]
+}

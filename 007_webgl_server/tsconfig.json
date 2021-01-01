@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+    // "strict": true,
+    "target": "ES2020",
+    "module": "es6",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    // "sourceMap": true,
+    "outDir": "./js/",
+    },
+    "files": ["src/main.ts", "src/vec3.ts"]
+}
