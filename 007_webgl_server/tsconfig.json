@@ -9,5 +9,5 @@
     // "sourceMap": true,
     "outDir": "./js/",
     },
-    "files": ["src/main.ts", "src/vec3.ts"]
+    "files": ["src/http_server.ts", "src/main.ts", "src/vec3.ts"]
 }

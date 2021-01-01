@@ -1,6 +1,6 @@
 
-import "vec3";
-import { vec3, vec3Set } from "vec3";
+import "./vec3.js";
+import { vec3, vec3Set } from "./vec3.js";
 
 async function main() {
     let bar: vec3 = new vec3(0, 0, 0);
