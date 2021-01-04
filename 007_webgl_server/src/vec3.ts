@@ -91,7 +91,7 @@ export function vec3Normalize(v: vec3): vec3 {
 	return rt;
 }
 
-function vec3Scale(v: vec3, scale: number): vec3 {
+export function vec3Scale(v: vec3, scale: number): vec3 {
     let rt: vec3 = new vec3();
 
 	rt.data[0] = v.data[0] * scale;
@@ -101,7 +101,7 @@ function vec3Scale(v: vec3, scale: number): vec3 {
 	return rt;
 }
 
-function vec3Invert(v: vec3): vec3 {
+export function vec3Invert(v: vec3): vec3 {
     let rt: vec3 = new vec3;
 
 	rt.data[0] = -v.data[0];
@@ -111,11 +111,11 @@ function vec3Invert(v: vec3): vec3 {
 	return rt;
 }
 
-function vec3Dot(a : vec3, b: vec3): number {
+export function vec3Dot(a : vec3, b: vec3): number {
 	return a.data[0]*b.data[0] + a.data[1]*b.data[1] + a.data[2]*b.data[2];
 }
 
-function vec3Sum(a: vec3, b: vec3): vec3 {
+export function vec3Sum(a: vec3, b: vec3): vec3 {
     let rt: vec3 = new vec3;
 
 	rt.data[0] = a.data[0] + b.data[0];
@@ -125,7 +125,7 @@ function vec3Sum(a: vec3, b: vec3): vec3 {
 	return rt;
 }
 
-function vec3Sub(a: vec3, b: vec3): vec3 {
+export function vec3Sub(a: vec3, b: vec3): vec3 {
     let rt: vec3 = new vec3;
 
 	rt.data[0] = a.data[0] - b.data[0];
