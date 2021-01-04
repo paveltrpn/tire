@@ -83,6 +83,7 @@ float colors[108] = {
 GLenum check_gl_error(const char *file, int line)
 {
     GLenum errorCode;
+	
     while ((errorCode = glGetError()) != GL_NO_ERROR)
     {
         std::string error;
@@ -268,7 +269,7 @@ class app_c {
         	glBindBuffer(GL_ARRAY_BUFFER, gl_colorBuf);
         	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
 
-			auto vs = compileShader(GL_VERTEX_SHADER, 	"assets/vsSourсe.glsl");
+			auto vs = compileShader(GL_VERTEX_SHADER, 	"assets/vsSource.glsl");
 			auto fs = compileShader(GL_FRAGMENT_SHADER, "assets/fsSource.glsl");
 		};
 
