@@ -11,7 +11,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "algebra2.h"
+#include "algebra/algebra2.h"
 #include "bitmap_text.h"
 #include "bitmap.h"
 
