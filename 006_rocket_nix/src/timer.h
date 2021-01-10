@@ -2,6 +2,7 @@
 #ifndef __timer_h_
 #define __timer_h_
 
+#include <iostream>
 #include <time.h>
 #include <unistd.h>
 #include <utility>

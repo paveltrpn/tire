@@ -1,10 +1,10 @@
 ################################
 # Linux-специфичный Makefile #
 ################################
-CC       = g++
-CFLAGS   = -Wall -std=c++17 
+CC       = g++-10
+CFLAGS   = -Wall -std=c++20 
 LFLAGS 	 = -lstdc++ -lGL -lGLU -lGLEW -lglfw -ljpeg -ltga
-SOURCE_PREFIX = . src src/algebra
+SOURCE_PREFIX = src src/algebra
 BUILD_PREFIX = build
 
 VPATH := $(SOURCE_PREFIX)
@@ -14,6 +14,7 @@ SRCS = main.cpp \
 	   vec3.cpp \
 	   vec4.cpp \
 	   qtnn.cpp \
+	   cmplx.cpp \
 	   plane.cpp \
 	   bitmap.cpp \
 	   bitmap_text.cpp
@@ -25,7 +26,7 @@ OBJS := $(patsubst %.cpp,$(BUILD_PREFIX)/%.o,$(SRCS))
 all: main
 
 $(BUILD_PREFIX)/%.o: %.cpp
-	$(CC) $(CFLAGS) $(addprefix -I,$(source_dirs)) -c $< -o $@
+	$(CC) $(CFLAGS) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
 main: $(OBJS)
 	$(CC) $^ $(LIBDIR) -o $@ $(LFLAGS)

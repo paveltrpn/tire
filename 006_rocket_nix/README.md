@@ -5,7 +5,7 @@
 
 Зависимости:  
 
-- GLFW ($ sudo apt-get install libglfw3 libglfw3-dev)
+- GLFW ($ sudo apt-get install libglfw3-dev)
 
 - GLEW ($ sudo apt-get install libglew-dev)
 
