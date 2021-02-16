@@ -6,6 +6,8 @@
 
 using namespace std;
 
+enum {_XC, _YC, _ZC, _WC};
+
 vec3 vec3Scale(const vec3 &v, float scale) {
     vec3 rt;
 
