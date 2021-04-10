@@ -2,6 +2,7 @@
 #pragma once
 
 #include <cmath>
+#include <cstdint>
 #include <tuple>
 
 enum {_XC, _YC, _ZC, _WC};

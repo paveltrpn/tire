@@ -7,7 +7,7 @@
 
 - MinGW-W64 (gcc 8.1.0) Скачиваем <http://mingw-w64.org/doku.php/download>
 
-- GLFW 3.3. Скачиваем <https://www.glfw.org/download.html>. Либы копирум в %installdir%\mingw64\x86_64-w64-mingw32\lib,  
+- GLFW 3.3. Скачиваем <https://www.glfw.org/download.html>. Либы копируем в %installdir%\mingw64\x86_64-w64-mingw32\lib,  
 заголовки в %installdir%\mingw64\x86_64-w64-mingw32\include, копируем всю папку GLFW. Так же GLFW легко собирается cmake-ом  
 из репозитория - <https://github.com/glfw/glf>. Сборка - cmake -G "MinGW Makefiles" ../
 
