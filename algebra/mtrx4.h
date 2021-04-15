@@ -164,14 +164,14 @@ class mtrx4 {
         	data[13] = 0;
         	data[15] = 0;
 	
-        	if (far != 0.0f) {
-        	    nf = 1 / (near - far);
-        	    data[10] = (far + near) * nf;
-        	    data[14] = 2.0f * far * near * nf;
-        	} else {
-        	    data[10] = -1.0f;
-        	    data[14] = -2.0f * near;
-        	}
+        	// if (far != 0.0f) {
+        	    // nf = 1 / (near - far);
+        	    // data[10] = (far + near) * nf;
+        	    // data[14] = 2.0f * far * near * nf;
+        	// } else {
+        	    // data[10] = -1.0f;
+        	    // data[14] = -2.0f * near;
+        	// }
     	};
 
 		void setTranslate(vec3 src) {

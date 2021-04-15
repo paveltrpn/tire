@@ -1,35 +1,29 @@
+CC       = g++
+INCDIR	 := E:/devtools/usr/local/include
+LIBDIR	 := E:/devtools/usr/local/lib
+CFLAGS   = -Wall -std=c++17
+LFLAGS 	 = -lstdc++ -lopengl32 -lglu32 -lglfw3 -lgdi32 -lglew32 -ltga -llibjpeg
 
-CC       := g++-10
-CFLAGS   := -Wall -std=c++17 -g
-LFLAGS 	 := -lstdc++ -lGL -lGLU -lGLEW -lglfw -ljpeg -ltga
+SOURCE_PREFIX = src ../algebra ../img ../timer
+BUILD_PREFIX = build
 
-SRCS := src/main.cpp \
-		src/mainApp.cpp \
-		src/mesh.cpp \
-		src/mtrx2.cpp \
-		src/mtrx3.cpp \
-		src/mtrx4.cpp \
-		src/vec2.cpp \
-		src/vec3.cpp \
-		src/vec4.cpp \
-		src/qtnn.cpp \
-		src/plane.cpp \
-		src/bitmap.cpp \
-		src/bitmap_text.cpp
+VPATH := $(SOURCE_PREFIX)
 
-OBJS := main.o \
-		mainApp.o \
-		mesh.o \
-		mtrx2.o \
-		mtrx3.o \
-		mtrx4.o \
-		vec2.o \
-		vec3.o \
-		vec4.o \
-		qtnn.o \
-		plane.o \
-		bitmap.o \
-		bitmap_text.o
+SRCS := main.cpp \
+		mainApp.cpp \
+		mesh.cpp \
+		mtrx2.cpp \
+		mtrx3.cpp \
+		mtrx4.cpp \
+		vec2.cpp \
+		vec3.cpp \
+		vec4.cpp \
+		qtnn.cpp \
+		plane.cpp \
+		bitmap.cpp \
+		bitmap_text.cpp
+
+OBJS := $(patsubst %.cpp,$(BUILD_PREFIX)/%.o,$(SRCS))
 
 #OBJS := $(SRCS:.cpp=.o)
 
@@ -37,47 +31,47 @@ OBJS := main.o \
 
 all: $(OBJS) main
 
-main.o: src/main.cpp
-	$(CC) $(CFLAGS) $(INCDIR) -c src/main.cpp
+$(BUILD_PREFIX)/main.o: main.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
-mainApp.o: src/mainApp.cpp src/mainApp.h
-	$(CC) $(CFLAGS) $(INCDIR) -c src/mainApp.cpp
+$(BUILD_PREFIX)/mainApp.o: mainApp.cpp mainApp.h
+	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
-mesh.o: src/mesh.cpp
-	$(CC) $(CFLAGS) $(INCDIR) -c src/mesh.cpp
+$(BUILD_PREFIX)/mesh.o: mesh.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
-mtrx2.o: src/mtrx2.cpp
-	$(CC) $(CFLAGS) $(INCDIR) -c src/mtrx2.cpp
+$(BUILD_PREFIX)/mtrx2.o: mtrx2.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
-mtrx3.o: src/mtrx3.cpp
-	$(CC) $(CFLAGS) $(INCDIR) -c src/mtrx3.cpp
+$(BUILD_PREFIX)/mtrx3.o: mtrx3.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
-mtrx4.o: src/mtrx4.cpp
-	$(CC) $(CFLAGS) $(INCDIR) -c src/mtrx4.cpp
+$(BUILD_PREFIX)/mtrx4.o: mtrx4.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
-vec2.o: src/vec2.cpp
-	$(CC) $(CFLAGS) $(INCDIR) -c src/vec2.cpp
+$(BUILD_PREFIX)/vec2.o: vec2.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
-vec3.o: src/vec3.cpp
-	$(CC) $(CFLAGS) $(INCDIR) -c src/vec3.cpp
+$(BUILD_PREFIX)/vec3.o: vec3.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
-vec4.o: src/vec4.cpp
-	$(CC) $(CFLAGS) $(INCDIR) -c src/vec4.cpp
+$(BUILD_PREFIX)/vec4.o: vec4.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
-qtnn.o: src/qtnn.cpp
-	$(CC) $(CFLAGS) $(INCDIR) -c src/qtnn.cpp
+$(BUILD_PREFIX)/qtnn.o: qtnn.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
-plane.o: src/plane.cpp
-	$(CC) $(CFLAGS) $(INCDIR) -c src/plane.cpp
+$(BUILD_PREFIX)/plane.o: plane.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
-bitmap.o: src/bitmap.cpp src/bitmap.h
-	$(CC) $(CFLAGS) $(INCDIR) -c src/bitmap.cpp
+$(BUILD_PREFIX)/bitmap.o: bitmap.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
-bitmap_text.o: src/bitmap_text.cpp src/bitmap_text.h
-	$(CC) $(CFLAGS) $(INCDIR) -c src/bitmap_text.cpp
+$(BUILD_PREFIX)/bitmap_text.o: bitmap_text.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
 main: $(OBJS)
-	$(CC) $(OBJS) $(LIBDIR) -o main $(LFLAGS)
+	$(CC) $(OBJS) -L$(LIBDIR) -o main $(LFLAGS)
 
 clean:
-	rm -f *.o main
+	rm -f build/*.o main

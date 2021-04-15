@@ -7,7 +7,7 @@ LIBDIR	 = E:/devtools/usr/local/lib
 CFLAGS   = -Wall -std=c++20
 LFLAGS 	 = -lstdc++ -lopengl32 -lglfw3 -lgdi32 -lglew32 -ltga -llibjpeg
 
-SOURCE_PREFIX = src src/algebra
+SOURCE_PREFIX = src ../algebra ../img
 BUILD_PREFIX = build
 
 VPATH := $(SOURCE_PREFIX)

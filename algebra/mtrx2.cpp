@@ -3,19 +3,96 @@
 #include <tuple>
 #include <cmath>
 
-#include "mtrx4.h"
-#include "vec4.h"
+#include "mtrx2.h"
 
 using namespace std;
 
-float mtrx4DetLU(mtrx4 m) {
-	constexpr int mrange = 4;
+mtrx2::mtrx2(float phi) {
+	float sinphi = sinf(degToRad(phi));
+	float cosphi = cosf(degToRad(phi));
+
+	data[0] = cosphi;
+	data[1] = -sinphi;
+	data[2] = -sinphi;
+	data[3] = cosphi;
+}
+
+mtrx2 mtrx2_idtt() {
+	mtrx2 rt;
+    constexpr int mrange = 2;
+	int i, j;
+
+	for (i = 0; i < mrange; i++) {
+		for (j = 0; j < mrange; j++) {
+			if (i == j) {
+				rt[idRw(i, j, mrange)] = 1.0f;
+			} else {
+				rt[idRw(i, j, mrange)] = 0.0f;
+			}
+		}
+	}
+
+	return rt;
+}
+
+mtrx2 mtrx2_set(float m[4]) {
+    mtrx2 rt;
+	constexpr int mrange = 2;
+	int	i, j;
+
+	for (i = 0; i < mrange; i++) {
+		for (j = 0; j < mrange; j++) {
+			rt[idRw(i, j, mrange)] = m[idRw(i, j, mrange)];
+		}
+	}
+
+	return rt;
+}
+
+mtrx2 mtrx2_set_float(float a00, float a01, float a10, float a11) {
+    mtrx2 rt;
+
+	rt[0] = a00;
+	rt[1] = a01;
+	rt[2] = a10;
+	rt[3] = a11;
+
+	return rt;
+}
+
+mtrx2 mtrx2_rtn(float phi) {
+	mtrx2 rt;
+
+	float cosphi, sinphi;
+	
+	sinphi = sinf(phi);
+	cosphi = cosf(phi);
+
+	rt[0] = cosphi;
+	rt[1] = -sinphi;
+	rt[2] = -sinphi;
+	rt[3] = cosphi;
+
+	return rt;
+}
+
+void mtrx2_show(mtrx2 m) {
+	printf("%5.2f %5.2f\n", m[0], m[1]);
+	printf("%5.2f %5.2f\n", m[2], m[3]);
+}
+
+float mtrx2_det(mtrx2 m) {
+	return m[0]*m[3] - m[1]*m[2];
+}
+
+float mtrx2_det_lu(mtrx2 m) {
+	constexpr int mrange = 2;
 	int		i;         
-	mtrx4 l, u;
-	tuple<mtrx4, mtrx4> lu;
+	mtrx2 l, u;
+	tuple<mtrx2, mtrx2> lu;
 	float 	l_det, u_det;
 	
-	lu = mtrx4LU(m);
+	lu = mtrx2_lu(m);
 
 	l_det = get<0>(lu)[0];
 	u_det = get<1>(lu)[0];
@@ -28,11 +105,11 @@ float mtrx4DetLU(mtrx4 m) {
 	return l_det * u_det;
 }
 
-mtrx4 mtrx4Mult(mtrx4 a, mtrx4 b) {
-	constexpr int mrange = 4;
+mtrx2 mtrx2_mult(mtrx2 a, mtrx2 b) {
+	constexpr int mrange = 2;
 	int i, j, k;
 	float tmp;
-    mtrx4 rt;
+	mtrx2 rt;
 
 	for (i = 0; i < mrange; i++) {
 		for (j = 0; j < mrange; j++) {
@@ -47,11 +124,12 @@ mtrx4 mtrx4Mult(mtrx4 a, mtrx4 b) {
 	return rt;
 }
 
-vec4 mtrx4MultVec(mtrx4 m, vec3 v) {
-	constexpr int mrange = 4;
+vec2 mtrx2_mult_vec(mtrx2 m, vec2 v) {
+	constexpr int mrange = 2;
+	vec2 rt;
+
 	int		i, j;
 	float	tmp;
-	vec4 rt;
 
 	for (i = 0; i < mrange; i++) {
 		tmp = 0;
@@ -68,9 +146,9 @@ vec4 mtrx4MultVec(mtrx4 m, vec3 v) {
 	Нижнетреугольная (L, lm) матрица имеет единицы по диагонали
 */
 
-tuple<mtrx4, mtrx4> mtrx4LU(mtrx4 m) {
-	constexpr int mrange = 4;
-	mtrx4 lm, um; 
+tuple<mtrx2, mtrx2> mtrx2_lu(mtrx2 m) {
+	constexpr int mrange = 2;
+	mtrx2 lm, um; 
 	int i, j, k;
 	float sum;    
 
@@ -99,10 +177,10 @@ tuple<mtrx4, mtrx4> mtrx4LU(mtrx4 m) {
 	return {lm, um};
 }
 
-tuple<mtrx4, vec4> mtrx4LDLT(mtrx4 m) {
-	constexpr int mrange = 4;
-	mtrx4 lm;
-	vec4 dv;
+tuple<mtrx2, vec2> mtrx2_ldlt(mtrx2 m) {
+	constexpr int mrange = 2;
+	mtrx2 lm;
+	vec2 dv;
 	int i, j, k;
 	float sum;   
 
@@ -113,8 +191,8 @@ tuple<mtrx4, vec4> mtrx4LDLT(mtrx4 m) {
 				sum = sum - lm[idRw(i, k, mrange)]*dv[k]*lm[idRw(j, k, mrange)];
 				if (i == j) {
 					if (sum <= 0) {
-						printf("mtrx4LDLT(): matrix is not positive deﬁnite");
-						return {mtrx4(), vec4(0.0, 0.0, 0.0, 0.0)};
+						printf("mtrx2_ldlt(): matrix is not positive deﬁnite");
+						return {mtrx2_idtt(), vec2(0.0, 0.0)};
 					}
 					dv[i] = sum;
 					lm[idRw(i, i, mrange)] = 1.0;
@@ -128,11 +206,11 @@ tuple<mtrx4, vec4> mtrx4LDLT(mtrx4 m) {
 	return {lm, dv};
 }
 
-mtrx4 mtrx4Transpose(mtrx4 m) {
-	constexpr int mrange = 4;
+mtrx2 mtrx2_transpose(mtrx2 m) {
+	constexpr int mrange = 2;
 	int i, j;
 	float tmp;
-	mtrx4 rt;
+	mtrx2 rt;
 
 	rt = m;
 
@@ -147,11 +225,25 @@ mtrx4 mtrx4Transpose(mtrx4 m) {
 	return rt;
 }
 
-vec4 mtrx4SolveGauss(mtrx4 m, vec4 v) {
-	constexpr int mrange = 4;
+mtrx2 mtrx2_invert(mtrx2 m) {
+	mtrx2 rt;
+	float det;
+	
+	det = mtrx2_det(m);
+
+	if (fabs(det) < f_eps) {
+		printf("mtrx2_invert(): determinant is a zero!");
+		return mtrx2_idtt();
+	}
+
+	return mtrx2(m[3], -m[1]/det, -m[2]/det, m[0]/det);
+}
+
+vec2 mtrx2_solve_gauss(mtrx2 m, vec2 v) {
+	constexpr int mrange = 2;
 	int i, j, k;
 	float a[mrange][mrange + 1], t;
-    vec4 rt;
+	vec2 rt;
 
 	for (i = 0; i < mrange; i++) { //было ++i
 		for (j = 0; j < mrange; j++) { //было ++j
@@ -194,10 +286,10 @@ vec4 mtrx4SolveGauss(mtrx4 m, vec4 v) {
 	return rt;
 }
 
-mtrx4 mtrx4InsertCmn(mtrx4 m, vec4 v, int cmn) {
-	constexpr int mrange = 4;
+mtrx2 mtrx2_insert_cmn(mtrx2 m, vec2 v, int cmn) {
+	constexpr int mrange = 2;
 	int i, j = 0;
-	mtrx4 rt;
+	mtrx2 rt;
 
 	rt = m;
 
@@ -209,23 +301,23 @@ mtrx4 mtrx4InsertCmn(mtrx4 m, vec4 v, int cmn) {
 	return rt;
 }
 
-vec4 mtrx4SolveKramer(mtrx4 m, vec4 v) {
-	constexpr int mrange = 3;
+vec2 mtrx2_solve_kramer(mtrx2 m, vec2 v) {
+	constexpr int mrange = 2;
 	int i;
 	float det;
-	mtrx4 kr_mtrx;
-    vec4 rt;
+	mtrx2 kr_mtrx;
+	vec2 rt;
 
-	det = mtrx4DetLU(m);
+	det = mtrx2_det(m);
 
 	if (fabs(det) < f_eps) {
-		printf("mtrx4SolveKramer(): system has no solve");
-		return vec4(0.0, 0.0, 0.0, 0.0);
+		printf("mtrx2_solve_kramer(): system has no solve");
+		return vec2(0.0, 0.0);
 	}
 
 	for (i = 0; i < mrange; i++) {
-		kr_mtrx = mtrx4InsertCmn(m, v, i);
-		rt[i] = mtrx4DetLU(kr_mtrx) / det;
+		kr_mtrx = mtrx2_insert_cmn(m, v, i);
+		rt[i] = mtrx2_det(kr_mtrx) / det;
 	}
 
 	return rt;

@@ -42,9 +42,9 @@ void mainApp_glfw_c::print_gl_properties() {
 }
 
 void mainApp_glfw_c::setup() {
-	vec4_t ambient = vec4_t{0.5, 0.5, 0.5, 1};
-	vec4_t diffuse = vec4_t{2, 2, 2, 2};
-	vec4_t lightPosition = vec4_t{0, 0, 10, 1};
+	vec4 ambient = vec4{0.5, 0.5, 0.5, 1};
+	vec4 diffuse = vec4{2, 2, 2, 2};
+	vec4 lightPosition = vec4{0, 0, 10, 1};
 	bitmap_c tex_image;
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); 
@@ -77,14 +77,14 @@ void mainApp_glfw_c::setup() {
 
 	text.load_font("assets/RobotoMono-2048-1024-64-128.tga");
 
-	box.append(vec3_t(4.0, 0.0, 5.0), mtrx3_t(   0.1,  0.0,   0.1));
-	box.append(vec3_t(-4.0, 0.0, 0.0), mtrx3_t(  0.1, -0.2,   0.2));
-	box.append(vec3_t(0.0, 3.0, 6.0), mtrx3_t(  -0.1,  0.15,  0.0));
-	box.append(vec3_t(3.0, 6.0, 0.0), mtrx3_t(   0.1, -0.1,   0.3));
-	box.append(vec3_t(-4.0, -6.0, 4.0), mtrx3_t( 0.1,  0.2,  -0.1));
-	box.append(vec3_t(-7.0, -5.0, 2.0), mtrx3_t( 0.2,  0.15, 0.1));
-	box.append(vec3_t(7.0, 5.0, 3.0), mtrx3_t(  -0.2, -0.1,  -0.2));
-	box.append(vec3_t(-8.0, 6.0, 0.0), mtrx3_t( -0.2,  0.1,  0.1));
+	box.append(vec3(4.0, 0.0, 5.0), mtrx3(   0.1,  0.0,   0.1));
+	box.append(vec3(-4.0, 0.0, 0.0), mtrx3(  0.1, -0.2,   0.2));
+	box.append(vec3(0.0, 3.0, 6.0), mtrx3(  -0.1,  0.15,  0.0));
+	box.append(vec3(3.0, 6.0, 0.0), mtrx3(   0.1, -0.1,   0.3));
+	box.append(vec3(-4.0, -6.0, 4.0), mtrx3( 0.1,  0.2,  -0.1));
+	box.append(vec3(-7.0, -5.0, 2.0), mtrx3( 0.2,  0.15, 0.1));
+	box.append(vec3(7.0, 5.0, 3.0), mtrx3(  -0.2, -0.1,  -0.2));
+	box.append(vec3(-8.0, 6.0, 0.0), mtrx3( -0.2,  0.1,  0.1));
 }
 
 void glfw_error_callback(int, const char* err_str)

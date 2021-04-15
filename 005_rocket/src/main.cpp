@@ -4,7 +4,6 @@
 #include <vector>
 #include <fstream>
 
-// Подключать GL именно в таком порядке!
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>

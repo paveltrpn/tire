@@ -8,15 +8,15 @@
 using namespace std;
 
 /* DEBUG !!!! */
-mtrx3_t::mtrx3_t(float yaw, float pitch, float roll) {
+mtrx3::mtrx3(float yaw, float pitch, float roll) {
 	float cosy, siny, cosp, sinp, cosr, sinr;
 	
-	cosy = cosf(deg_to_rad(yaw));
-	siny = sinf(deg_to_rad(yaw));
-	cosp = cosf(deg_to_rad(pitch));
-	sinp = sinf(deg_to_rad(pitch));
-	cosr = cosf(deg_to_rad(roll));
-	sinr = sinf(deg_to_rad(roll));
+	cosy = cosf(degToRad(yaw));
+	siny = sinf(degToRad(yaw));
+	cosp = cosf(degToRad(pitch));
+	sinp = sinf(degToRad(pitch));
+	cosr = cosf(degToRad(roll));
+	sinr = sinf(degToRad(roll));
 
 	data[0] = cosy*cosr - siny*cosp*sinr;
 	data[1] = -cosy*sinr - siny*cosp*cosr;
@@ -32,11 +32,11 @@ mtrx3_t::mtrx3_t(float yaw, float pitch, float roll) {
 }
 
 /* DEBUG !!!! */
-mtrx3_t::mtrx3_t(const vec3_t &ax, float phi) {
+mtrx3::mtrx3(const vec3 &ax, float phi) {
 	float cosphi, sinphi, vxvy, vxvz, vyvz, vx, vy, vz;
 
-	cosphi = cosf(deg_to_rad(phi));
-	sinphi = sinf(deg_to_rad(phi));
+	cosphi = cosf(degToRad(phi));
+	sinphi = sinf(degToRad(phi));
 	vxvy = ax[_XC] * ax[_YC];
 	vxvz = ax[_XC] * ax[_ZC];
 	vyvz = ax[_YC] * ax[_ZC];
@@ -57,17 +57,17 @@ mtrx3_t::mtrx3_t(const vec3_t &ax, float phi) {
 	data[8] = cosphi + (1.0f-cosphi)*vz*vz;
 }
 
-mtrx3_t mtrx3_idtt() {
-	mtrx3_t rt;
+mtrx3 mtrx3_idtt() {
+	mtrx3 rt;
     constexpr int mrange = 3;
 	int i, j;
 
 	for (i = 0; i < mrange; i++) {
 		for (j = 0; j < mrange; j++) {
 			if (i == j) {
-				rt[id_rw(i, j, mrange)] = 1.0f;
+				rt[idRw(i, j, mrange)] = 1.0f;
 			} else {
-				rt[id_rw(i, j, mrange)] = 0.0f;
+				rt[idRw(i, j, mrange)] = 0.0f;
 			}
 		}
 	}
@@ -75,24 +75,24 @@ mtrx3_t mtrx3_idtt() {
 	return rt;
 }
 
-mtrx3_t mtrx3_set(float m[9]) {
-    mtrx3_t rt;
+mtrx3 mtrx3_set(float m[9]) {
+    mtrx3 rt;
 	constexpr int mrange = 3;
 	int	i, j;
 
 	for (i = 0; i < mrange; i++) {
 		for (j = 0; j < mrange; j++) {
-			rt[id_rw(i, j, mrange)] = m[id_rw(i, j, mrange)];
+			rt[idRw(i, j, mrange)] = m[idRw(i, j, mrange)];
 		}
 	}
 
 	return rt;
 }
 
-mtrx3_t mtrx3_set_float(float a00, float a01, float a02,
+mtrx3 mtrx3_set_float(float a00, float a01, float a02,
 	                    float a10, float a11, float a12,
 	                    float a20, float a21, float a22) {
-    mtrx3_t rt;
+    mtrx3 rt;
 
 	rt[0] = a00;
 	rt[1] = a01;
@@ -109,12 +109,12 @@ mtrx3_t mtrx3_set_float(float a00, float a01, float a02,
 	return rt;
 }
 
-mtrx3_t mtrx3_set_yaw(float angl) {
+mtrx3 mtrx3_set_yaw(float angl) {
 	float sa, ca;
-	mtrx3_t rt;
+	mtrx3 rt;
 
-	sa = sinf(deg_to_rad(angl));
-	ca = cosf(deg_to_rad(angl));
+	sa = sinf(degToRad(angl));
+	ca = cosf(degToRad(angl));
 
 	rt[0] = ca;   rt[1] = -sa;  rt[2] = 0.0f;
 	rt[3] = sa;   rt[4] =  ca;  rt[5] = 0.0f;
@@ -123,12 +123,12 @@ mtrx3_t mtrx3_set_yaw(float angl) {
 	return rt;
 }
 
-mtrx3_t mtrx3_set_pitch(float angl) {
+mtrx3 mtrx3_set_pitch(float angl) {
 	float sa, ca;
-	mtrx3_t rt;
+	mtrx3 rt;
 
-	sa = sinf(deg_to_rad(angl));
-	ca = cosf(deg_to_rad(angl));
+	sa = sinf(degToRad(angl));
+	ca = cosf(degToRad(angl));
 
 	rt[0] = 1.0f; rt[1] = 0.0f; rt[2] = 0.0f;
 	rt[3] = 0.0f; rt[4] = ca;   rt[5] = -sa;
@@ -137,13 +137,13 @@ mtrx3_t mtrx3_set_pitch(float angl) {
 	return rt;
 }
 
-mtrx3_t mtrx3_set_roll(float angl)
+mtrx3 mtrx3_set_roll(float angl)
 {
 	float sa, ca;
-	mtrx3_t rt;
+	mtrx3 rt;
 
-	sa = sinf(deg_to_rad(angl));
-	ca = cosf(deg_to_rad(angl));
+	sa = sinf(degToRad(angl));
+	ca = cosf(degToRad(angl));
 
 	rt[0] = ca;   rt[1] = 0.0f; rt[2] = sa;
 	rt[3] = 0.0f; rt[4] = 1.0f; rt[5] = 0.0f;
@@ -152,13 +152,13 @@ mtrx3_t mtrx3_set_roll(float angl)
 	return rt;
 }
 
-void mtrx3_show(mtrx3_t m) {
+void mtrx3_show(mtrx3 m) {
 	printf("%5.2f %5.2f %5.2f\n", m[0], m[1], m[2]);
 	printf("%5.2f %5.2f %5.2f\n", m[3], m[4], m[5]);
     printf("%5.2f %5.2f %5.2f\n", m[6], m[7], m[8]);
 }
 
-float mtrx3_det(mtrx3_t m) {
+float mtrx3_det(mtrx3 m) {
 	return m[0]*m[4]*m[8] +
 		   m[6]*m[1]*m[5] +
 		   m[2]*m[3]*m[7] -
@@ -166,11 +166,11 @@ float mtrx3_det(mtrx3_t m) {
 		   m[8]*m[3]*m[1];
 }
 
-float mtrx3_det_lu(mtrx3_t m) {
+float mtrx3_det_lu(mtrx3 m) {
 	constexpr int mrange = 3;
 	int		i;         
-	mtrx3_t l, u;
-	tuple<mtrx3_t, mtrx3_t> lu;
+	mtrx3 l, u;
+	tuple<mtrx3, mtrx3> lu;
 	float 	l_det, u_det;
 	
 	lu = mtrx3_lu(m);
@@ -179,42 +179,42 @@ float mtrx3_det_lu(mtrx3_t m) {
 	u_det = get<1>(lu)[0];
 
 	for (i = 1; i < mrange; i++) {
-		l_det *= l[id_rw(i, i, mrange)];
-		u_det *= u[id_rw(i, i, mrange)];
+		l_det *= l[idRw(i, i, mrange)];
+		u_det *= u[idRw(i, i, mrange)];
 	}
 
 	return l_det * u_det;
 }
 
-mtrx3_t mtrx3_mult(mtrx3_t a, mtrx3_t b) {
+mtrx3 mtrx3_mult(mtrx3 a, mtrx3 b) {
 	constexpr int mrange = 3;
 	int i, j, k;
 	float tmp;
-    mtrx3_t rt;
+    mtrx3 rt;
 
 	for (i = 0; i < mrange; i++) {
 		for (j = 0; j < mrange; j++) {
 			tmp = 0.0;
 			for (k = 0; k < mrange; k++) {
-				tmp = tmp + a[id_rw(k, j, mrange)]*b[id_rw(i, k, mrange)];
+				tmp = tmp + a[idRw(k, j, mrange)]*b[idRw(i, k, mrange)];
 			}
-			rt[id_rw(i, j, mrange)] = tmp;
+			rt[idRw(i, j, mrange)] = tmp;
 		}
 	}
 
 	return rt;
 }
 
-vec3_t mtrx3_mult_vec(mtrx3_t m, vec3_t v) {
+vec3 mtrx3_mult_vec(mtrx3 m, vec3 v) {
 	constexpr int mrange = 3;
 	int		i, j;
 	float	tmp;
-	vec3_t	rt;
+	vec3	rt;
 
 	for (i = 0; i < mrange; i++) {
 		tmp = 0;
 		for (j = 0; j < mrange; j++) {
-			tmp = tmp + m[id_rw(i, j, mrange)]*v[j];
+			tmp = tmp + m[idRw(i, j, mrange)]*v[j];
 		}
 		rt[i] = tmp;
 	}
@@ -226,9 +226,9 @@ vec3_t mtrx3_mult_vec(mtrx3_t m, vec3_t v) {
 	Нижнетреугольная (L, lm) матрица имеет единицы по диагонали
 */
 
-tuple<mtrx3_t, mtrx3_t> mtrx3_lu(mtrx3_t m) {
+tuple<mtrx3, mtrx3> mtrx3_lu(mtrx3 m) {
 	constexpr int mrange = 3;
-	mtrx3_t lm, um; 
+	mtrx3 lm, um; 
 	int i, j, k;
 	float sum;    
 
@@ -236,20 +236,20 @@ tuple<mtrx3_t, mtrx3_t> mtrx3_lu(mtrx3_t m) {
 		for (k = i; k < mrange; k++) {
 			sum = 0;
 			for (j = 0; j < i; j++) {
-				sum += (lm[id_rw(i, j, mrange)] * um[id_rw(j, k, mrange)]);
+				sum += (lm[idRw(i, j, mrange)] * um[idRw(j, k, mrange)]);
 			}
-			um[id_rw(i, k, mrange)] = m[id_rw(i, k, mrange)] - sum;
+			um[idRw(i, k, mrange)] = m[idRw(i, k, mrange)] - sum;
 		}
 
 		for (k = i; k < mrange; k++) {
 			if (i == k) {
-				lm[id_rw(i, i, mrange)] = 1.0;
+				lm[idRw(i, i, mrange)] = 1.0;
 			} else {
 				sum = 0;
 				for (j = 0; j < i; j++) {
-					sum += lm[id_rw(k, j, mrange)] * um[id_rw(j, i, mrange)];
+					sum += lm[idRw(k, j, mrange)] * um[idRw(j, i, mrange)];
 				}
-				lm[id_rw(k, i, mrange)] = (m[id_rw(k, i, mrange)] - sum) / um[id_rw(i, i, mrange)];
+				lm[idRw(k, i, mrange)] = (m[idRw(k, i, mrange)] - sum) / um[idRw(i, i, mrange)];
 			}
 		}
 	}
@@ -257,27 +257,27 @@ tuple<mtrx3_t, mtrx3_t> mtrx3_lu(mtrx3_t m) {
 	return {lm, um};
 }
 
-tuple<mtrx3_t, vec3_t> mtrx3_ldlt(mtrx3_t m) {
+tuple<mtrx3, vec3> mtrx3_ldlt(mtrx3 m) {
 	constexpr int mrange = 3;
-	mtrx3_t lm;
-	vec3_t dv;
+	mtrx3 lm;
+	vec3 dv;
 	int i, j, k;
 	float sum;   
 
 	for (i = 0; i < mrange; i++) {
 		for (j = i; j < mrange; j++) {
-			sum = m[id_rw(j, i, mrange)];
+			sum = m[idRw(j, i, mrange)];
 			for (k = 0; k < i; k++) {
-				sum = sum - lm[id_rw(i, k, mrange)]*dv[k]*lm[id_rw(j, k, mrange)];
+				sum = sum - lm[idRw(i, k, mrange)]*dv[k]*lm[idRw(j, k, mrange)];
 				if (i == j) {
 					if (sum <= 0) {
 						printf("mtrx3_ldlt(): matrix is not positive deﬁnite");
-						return {mtrx3_idtt(), vec3_t(0.0f, 0.0f, 0.0f)};
+						return {mtrx3_idtt(), vec3(0.0f, 0.0f, 0.0f)};
 					}
 					dv[i] = sum;
-					lm[id_rw(i, i, mrange)] = 1.0;
+					lm[idRw(i, i, mrange)] = 1.0;
 				} else {
-					lm[id_rw(j, i, mrange)] = sum / dv[i];
+					lm[idRw(j, i, mrange)] = sum / dv[i];
 				}
 			}
 		}
@@ -286,27 +286,27 @@ tuple<mtrx3_t, vec3_t> mtrx3_ldlt(mtrx3_t m) {
 	return {lm, dv};
 }
 
-mtrx3_t mtrx3_transpose(mtrx3_t m) {
+mtrx3 mtrx3_transpose(mtrx3 m) {
 	constexpr int mrange = 3;
 	int i, j;
 	float tmp;
-	mtrx3_t rt;
+	mtrx3 rt;
 
 	rt = m;
 
 	for (i = 0; i < mrange; i++) {
 		for (j = 0; j < i; j++) {
-			tmp = rt[id_rw(i, i, mrange)];
-			rt[id_rw(i, j, mrange)] = rt[id_rw(j, i, mrange)];
-			rt[id_rw(j, i, mrange)] = tmp;
+			tmp = rt[idRw(i, i, mrange)];
+			rt[idRw(i, j, mrange)] = rt[idRw(j, i, mrange)];
+			rt[idRw(j, i, mrange)] = tmp;
 		}
 	}
 
 	return rt;
 }
 
-mtrx3_t mtrx3_invert(mtrx3_t m) {
-	mtrx3_t inverse, rt;
+mtrx3 mtrx3_invert(mtrx3 m) {
+	mtrx3 inverse, rt;
 	float det, invDet;
 
 	inverse[0] = m[4]*m[8] - m[5]*m[7];
@@ -318,7 +318,7 @@ mtrx3_t mtrx3_invert(mtrx3_t m) {
 
 	if (fabs(det) < f_eps) {
 		printf("mtrx3_invert(): determinant is a zero!");
-		return mtrx3_t();
+		return mtrx3();
 	}
 
 	invDet = 1.0 / det;
@@ -345,15 +345,15 @@ mtrx3_t mtrx3_invert(mtrx3_t m) {
 	return rt;
 }
 
-vec3_t mtrx3_solve_gauss(mtrx3_t m, vec3_t v) {
+vec3 mtrx3_solve_gauss(mtrx3 m, vec3 v) {
 	constexpr int mrange = 3;
 	int i, j, k;
 	float a[mrange][mrange + 1], t;
-	vec3_t rt;
+	vec3 rt;
 
 	for (i = 0; i < mrange; i++) { //было ++i
 		for (j = 0; j < mrange; j++) { //было ++j
-			a[i][j] = m[id_rw(i, j, mrange)];
+			a[i][j] = m[idRw(i, j, mrange)];
 			a[i][mrange] = v[i];
 		}
 	}
@@ -392,10 +392,10 @@ vec3_t mtrx3_solve_gauss(mtrx3_t m, vec3_t v) {
 	return rt;
 }
 
-mtrx3_t mtrx3_insert_cmn(mtrx3_t m, vec3_t v, int cmn) {
+mtrx3 mtrx3_insert_cmn(mtrx3 m, vec3 v, int cmn) {
 	constexpr int mrange = 3;
 	int i, j= 0;
-	mtrx3_t rt;
+	mtrx3 rt;
 
 	rt = m;
 
@@ -407,18 +407,18 @@ mtrx3_t mtrx3_insert_cmn(mtrx3_t m, vec3_t v, int cmn) {
 	return rt;
 }
 
-vec3_t mtrx3_solve_kramer(mtrx3_t m, vec3_t v) {
+vec3 mtrx3_solve_kramer(mtrx3 m, vec3 v) {
 	constexpr int mrange = 3;
 	int i;
 	float det;
-	mtrx3_t kr_mtrx;
-	vec3_t rt;
+	mtrx3 kr_mtrx;
+	vec3 rt;
 
 	det = mtrx3_det(m);
 
 	if (fabs(det) < f_eps) {
 		printf("mtrx3_solve_kramer(): system has no solve");
-		return vec3_t(0.0, 0.0, 0.0);
+		return vec3(0.0, 0.0, 0.0);
 	}
 
 	for (i = 0; i < mrange; i++) {

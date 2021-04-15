@@ -4,7 +4,7 @@
 CC       = g++-10
 CFLAGS   = -Wall -std=c++20 
 LFLAGS 	 = -lstdc++ -lGL -lGLU -lGLEW -lglfw -ljpeg -ltga
-SOURCE_PREFIX = src src/algebra
+SOURCE_PREFIX = src ../algebra ../img ../timer
 BUILD_PREFIX = build
 
 VPATH := $(SOURCE_PREFIX)

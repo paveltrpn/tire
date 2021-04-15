@@ -5,11 +5,11 @@
 
 using namespace std;
 
-vec3_t x_ax = vec3_t(1.0f, 0.0f, 0.0f);
-vec3_t y_ax = vec3_t(0.0f, 1.0f, 0.0f);
-vec3_t z_ax = vec3_t(0.0f, 0.0f, 1.0f);
-mtrx3_t m_rtn;
-qtnn_t q_rtn; 
+vec3 x_ax = vec3(1.0f, 0.0f, 0.0f);
+vec3 y_ax = vec3(0.0f, 1.0f, 0.0f);
+vec3 z_ax = vec3(0.0f, 0.0f, 1.0f);
+mtrx3 m_rtn;
+qtnn q_rtn; 
 
 void draw_decart(float scale) {
 	
@@ -33,8 +33,8 @@ void draw_decart(float scale) {
 	
 }
 
-void box_c::append(const vec3_t &pos, const mtrx3_t &spd) {
-	orientation.push_back({pos, spd, mtrx3_t()});
+void box_c::append(const vec3 &pos, const mtrx3 &spd) {
+	orientation.push_back({pos, spd, mtrx3()});
 }
 
 void box_c::show() {
@@ -46,7 +46,7 @@ void box_c::show() {
 			/* поворачиваем, умножая вершину на матрицу положения */
 			clone[j] = mtrx3_mult_vec(get<2>(it), base[j]);
 			/* переносим, склалдывая вершину с вектором смещения */ 
-			clone[j] = vec3_sum(get<0>(it), clone[j]);
+			clone[j] = vec3Sum(get<0>(it), clone[j]);
 		}
 
 		for (j = 0; j < 6; j++) {
