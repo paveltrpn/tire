@@ -6,9 +6,9 @@
 #include <SDL2/SDL.h>
 
 #include "win_SDL2_init.h"
-#include "../img/bmp.h"
-#include "../img/tga.h"
-#include "../img/jpeg.h"
+#include "bmp.h"
+#include "tga.h"
+#include "jpeg.h"
 
 using namespace std;
 

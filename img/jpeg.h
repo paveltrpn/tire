@@ -2,8 +2,8 @@
 
 #include <iostream>
 #include <string>
-#include <jpeglib.h>    
-#include <jerror.h>
+#include <jpeg/jpeglib.h>    
+#include <jpeg/jerror.h>
 
 using namespace std;
 

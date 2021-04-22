@@ -6,9 +6,9 @@
 #include <string>
 #include <SDL2/SDL.h>
 
-#include "../img/bmp.h"
-#include "../img/tga.h"
-#include "../img/jpeg.h"
+#include "bmp.h"
+#include "tga.h"
+#include "jpeg.h"
 
 class mainApp_c {
 	private:

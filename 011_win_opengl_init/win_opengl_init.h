@@ -21,7 +21,7 @@ class box_c {
         box_c() {};
         ~box_c() {};
 		
-        void append(const vec3_t &pos, const mtrx3_t &spd);
+        void append(const vec3 &pos, const mtrx3 &spd);
         void show();
 
     private:
@@ -30,8 +30,8 @@ class box_c {
             СКОРОСТЬ ПОВОРОТА (1)
             ПОЛОЖЕНИЕ (2) */
 		
-        vector<tuple<vec3_t, mtrx3_t, mtrx3_t>> orientation;
-        const vec3_t base[8] = {{ 1.0, 1.0, 1.0},
+        vector<tuple<vec3, mtrx3, mtrx3>> orientation;
+        const vec3 base[8] = {{ 1.0, 1.0, 1.0},
 	                            {-1.0, 1.0, 1.0},
 	                            {-1.0,-1.0, 1.0},
 	                            { 1.0,-1.0, 1.0},
@@ -39,14 +39,14 @@ class box_c {
 	                            {-1.0, 1.0,-1.0},
 	                            {-1.0,-1.0,-1.0},
 	                            { 1.0,-1.0,-1.0}};
-        const vec3_t base_normal[6] = {{ 0.0, 0.0, 1.0},
+        const vec3 base_normal[6] = {{ 0.0, 0.0, 1.0},
 	                                   { 0.0, 0.0,-1.0},
 	                                   { 0.0, 1.0, 0.0},
 	                                   { 0.0,-1.0, 0.0},
 	                                   { 1.0, 0.0, 0.0},
 	                                   {-1.0, 0.0, 0.0}}; 
-        vec3_t clone[8];
-        vec3_t clone_normal[6];
+        vec3 clone[8];
+        vec3 clone_normal[6];
 };
 
 class app_glfw_c {

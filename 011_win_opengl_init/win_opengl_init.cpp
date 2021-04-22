@@ -12,11 +12,11 @@
 
 using namespace std;
 
-vec3_t x_ax = vec3_t(1.0f, 0.0f, 0.0f);
-vec3_t y_ax = vec3_t(0.0f, 1.0f, 0.0f);
-vec3_t z_ax = vec3_t(0.0f, 0.0f, 1.0f);
-mtrx3_t m_rtn;
-qtnn_t q_rtn; 
+vec3 x_ax = vec3(1.0f, 0.0f, 0.0f);
+vec3 y_ax = vec3(0.0f, 1.0f, 0.0f);
+vec3 z_ax = vec3(0.0f, 0.0f, 1.0f);
+mtrx3 m_rtn;
+qtnn q_rtn; 
 
 void draw_decart(float scale) {
 	
@@ -44,8 +44,8 @@ void draw_decart(float scale) {
 /* 				box_c				*/
 /*================================= */
 
-void box_c::append(const vec3_t &pos, const mtrx3_t &spd) {
-	orientation.push_back(tuple{pos, spd, mtrx3_t()});
+void box_c::append(const vec3 &pos, const mtrx3 &spd) {
+	orientation.push_back(tuple{pos, spd, mtrx3()});
 }
 
 void box_c::show() {
@@ -57,7 +57,7 @@ void box_c::show() {
 			/* поворачиваем, умножая вершину на матрицу положения */
 			clone[j] = mtrx3_mult_vec(get<2>(it), base[j]);
 			/* переносим, склалдывая вершину с вектором смещения */ 
-			clone[j] = vec3_sum(get<0>(it), clone[j]);
+			clone[j] = vec3Sum(get<0>(it), clone[j]);
 		}
 
 		for (j = 0; j < 6; j++) {
@@ -132,9 +132,9 @@ void app_glfw_c::print_gl_properties() {
 }
 
 void app_glfw_c::setup() {
-	vec4_t ambient = vec4_t{0.5, 0.5, 0.5, 1};
-	vec4_t diffuse = vec4_t{1, 1, 1, 1};
-	vec4_t lightPosition = vec4_t{0, 0, 10, 1};
+	vec4 ambient = vec4{0.5, 0.5, 0.5, 1};
+	vec4 diffuse = vec4{1, 1, 1, 1};
+	vec4 lightPosition = vec4{0, 0, 10, 1};
 	
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); 
 	glClearDepth(1.0);
@@ -151,14 +151,14 @@ void app_glfw_c::setup() {
 	glColorMaterial(GL_FRONT, GL_DIFFUSE);
 	glEnable(GL_COLOR_MATERIAL);
 
-	box.append(vec3_t(4.0, 0.0, 5.0), mtrx3_t(   0.1,  0.0,   0.1));
-	box.append(vec3_t(-4.0, 0.0, 0.0), mtrx3_t(  0.1, -0.2,   0.2));
-	box.append(vec3_t(0.0, 3.0, 6.0), mtrx3_t(  -0.1,  0.15,  0.0));
-	box.append(vec3_t(3.0, 6.0, 0.0), mtrx3_t(   0.1, -0.1,   0.3));
-	box.append(vec3_t(-4.0, -6.0, 4.0), mtrx3_t( 0.1,  0.2,  -0.1));
-	box.append(vec3_t(-7.0, -5.0, 2.0), mtrx3_t( 0.2,  0.15, 0.1));
-	box.append(vec3_t(7.0, 5.0, 3.0), mtrx3_t(  -0.2, -0.1,  -0.2));
-	box.append(vec3_t(-8.0, 6.0, 0.0), mtrx3_t( -0.2,  0.1,  0.1));
+	box.append(vec3(4.0, 0.0, 5.0), mtrx3(   0.1,  0.0,   0.1));
+	box.append(vec3(-4.0, 0.0, 0.0), mtrx3(  0.1, -0.2,   0.2));
+	box.append(vec3(0.0, 3.0, 6.0), mtrx3(  -0.1,  0.15,  0.0));
+	box.append(vec3(3.0, 6.0, 0.0), mtrx3(   0.1, -0.1,   0.3));
+	box.append(vec3(-4.0, -6.0, 4.0), mtrx3( 0.1,  0.2,  -0.1));
+	box.append(vec3(-7.0, -5.0, 2.0), mtrx3( 0.2,  0.15, 0.1));
+	box.append(vec3(7.0, 5.0, 3.0), mtrx3(  -0.2, -0.1,  -0.2));
+	box.append(vec3(-8.0, 6.0, 0.0), mtrx3( -0.2,  0.1,  0.1));
 }
 
 void app_glfw_c::frame() {
