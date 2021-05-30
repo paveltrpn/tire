@@ -4,7 +4,7 @@
 #include <cmath>
 #include <tuple>
 
-#include "algebra2_common.h"
+#include "algebra2.h"
 #include "vec3.h"
 
 using namespace std;
@@ -53,23 +53,22 @@ class mtrx3 {
 		float data[9];
 };
 
-mtrx3 mtrx3_idtt();
-mtrx3 mtrx3_set(float m[4]);
-mtrx3 mtrx3_set_float(float a00, float a01, float a02,
+mtrx3 mtrx3Idtt();
+mtrx3 mtrx3Set(float m[4]);
+mtrx3 mtrx3SetFloat(float a00, float a01, float a02,
 	                    float a10, float a11, float a12,
 	                    float a20, float a21, float a22);
-mtrx3 mtrx3_set_yaw(float angl);
-mtrx3 mtrx3_set_pitch(float angl);
-mtrx3 mtrx3_set_roll(float angl);
-void  mtrx3_show(mtrx3 m);
-float mtrx3_det(mtrx3 m);
-float mtrx3_det_lu(mtrx3 m); 
-mtrx3 mtrx3_mult(mtrx3 a, mtrx3 b);
-vec3  mtrx3_mult_vec(mtrx3 m, vec3 v);
-tuple<mtrx3, mtrx3> mtrx3_lu(mtrx3 m);
-tuple<mtrx3, vec3> mtrx3_ldlt(mtrx3 m);
+mtrx3 mtrx3SetYaw(float angl);
+mtrx3 mtrx3SetPitch(float angl);
+mtrx3 mtrx3SetRoll(float angl);
+float mtrx3Det(mtrx3 m);
+float mtrx3DetLU(mtrx3 m); 
+mtrx3 mtrx3Mult(mtrx3 a, mtrx3 b);
+vec3  mtrx3MultVec(mtrx3 m, vec3 v);
+tuple<mtrx3, mtrx3> mtrx3LU(mtrx3 m);
+tuple<mtrx3, vec3> mtrx3LDLT(mtrx3 m);
 mtrx3 mtrx3Transpose(mtrx3 m);
-mtrx3 mtrx3_invert(mtrx3 m);
-vec3  mtrx3_solve_gauss(mtrx3 m, vec3 v);
-mtrx3 mtrx3_insert_cmn(mtrx3 m, vec3 v, int cmn);
-vec3  mtrx3_solve_kramer(mtrx3 m, vec3 v);
+mtrx3 mtrx3Invert(mtrx3 m);
+vec3  mtrx3SolveGauss(mtrx3 m, vec3 v);
+mtrx3 mtrx3InsertCmn(mtrx3 m, vec3 v, int cmn);
+vec3  mtrx3SolveKramer(mtrx3 m, vec3 v);

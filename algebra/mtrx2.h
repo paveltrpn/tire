@@ -4,11 +4,9 @@
 #include <cmath>
 #include <tuple>
 
-#include "algebra2_common.h"
+#include "algebra2.h"
 #include "vec2.h"
 #include "vec3.h"
-
-using namespace std;
 
 class mtrx2 {
 	public:
@@ -49,19 +47,18 @@ class mtrx2 {
 		float data[4];
 };
 
-mtrx2 mtrx2_idtt();
-mtrx2 mtrx2_set(float m[4]);
-mtrx2 mtrx2_set_float(float a00, float a01, float a10, float a11);
-mtrx2 mtrx2_rtn(float phi);
-void 	mtrx2_show(mtrx2 m);
-float 	mtrx2_det(mtrx2 m); 
-float   mtrx2_det_lu(mtrx2 m);
-mtrx2 mtrx2_mult(mtrx2 a, mtrx2 b);
-vec2  mtrx2_mult_vec(mtrx2 m, vec2 v);
-tuple<mtrx2, mtrx2> mtrx2_lu(mtrx2 m);
-tuple<mtrx2, vec2> mtrx2_ldlt(mtrx2 m);
+mtrx2 mtrx2Idtt();
+mtrx2 mtrx2Set(float m[4]);
+mtrx2 mtrx2SetFloat(float a00, float a01, float a10, float a11);
+mtrx2 mtrx2Rtn(float phi);
+float 	mtrx2Det(mtrx2 m); 
+float   mtrx2DetLU(mtrx2 m);
+mtrx2 mtrx2Mult(mtrx2 a, mtrx2 b);
+vec2  mtrx2MultVec(mtrx2 m, vec2 v);
+std::tuple<mtrx2, mtrx2> mtrx2LU(mtrx2 m);
+std::tuple<mtrx2, vec2> mtrx2LDLT(mtrx2 m);
 mtrx2 mtrx2Transpose(mtrx2 m);
 mtrx2 mtrx2Invert(mtrx2 m);
-vec2  mtrx2_solve_gauss(mtrx2 m, vec2 v);
-mtrx2 mtrx2_insert_cmn(mtrx2 m, vec3 v, int cmn);
-vec2  mtrx2_solve_kramer(mtrx2 m, vec3 v);
+vec2  mtrx2SolveGauss(mtrx2 m, vec2 v);
+mtrx2 mtrx2InsertCmn(mtrx2 m, vec3 v, int cmn);
+vec2  mtrx2SolveKramer(mtrx2 m, vec3 v);

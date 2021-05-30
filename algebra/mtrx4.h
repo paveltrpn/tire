@@ -4,7 +4,7 @@
 #include <cmath>
 #include <tuple>
 
-#include "algebra2_common.h"
+#include "algebra2.h"
 #include "vec3.h"
 #include "vec4.h"
 #include "qtnn.h"
@@ -165,7 +165,7 @@ class mtrx4 {
         	data[15] = 0;
 	
         	// if (far != 0.0f) {
-        	    // nf = 1 / (near - far);
+        	    // nf = 1.0f / (near - far);
         	    // data[10] = (far + near) * nf;
         	    // data[14] = 2.0f * far * near * nf;
         	// } else {
@@ -177,9 +177,9 @@ class mtrx4 {
 		void setTranslate(vec3 src) {
         	setIdtt();
 
-        	data[12] = src[0];
-        	data[13] = src[1];
-        	data[14] = src[2];
+        	data[3] = src[0];
+        	data[7] = src[1];
+        	data[11] = src[2];
     	}
 
 		void invert() {
@@ -341,12 +341,13 @@ class mtrx4 {
 
 	private:
 		float data[16];
-		const int32_t order = 4;
+		const size_t order = 4;
 };
 
 float mtrx4DetLU(mtrx4 m);
 mtrx4 mtrx4Mult(mtrx4 a, mtrx4 b);
 vec4 mtrx4MultVec(mtrx4 m, vec3 v);
+vec3 mtrx4MultVec3(mtrx4 m, vec3 v);
 tuple<mtrx4, mtrx4> mtrx4LU(mtrx4 m);
 tuple<mtrx4, vec4> mtrx4LDLT(mtrx4 m);
 mtrx4 mtrx4Transpose(mtrx4 m);

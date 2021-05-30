@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-#include "algebra2_common.h"
+#include "algebra2.h"
 
 using namespace std;
 
@@ -41,13 +41,13 @@ class vec4 {
 		float data[4];
 };
 
-void   vec4_show(vec4 &v);
-vec4 vec4_copy(vec4 &v);
-vec4 vec4_set(float x, float y, float z, float w);
-float  vec4_lenght(vec4 &v);
-vec4 vec4_normalize(vec4 &v);
-vec4 vec4_scale(vec4 &v, float scale);
-vec4 vec4_invert(vec4 &v);
-float  vec4_dot(vec4 &a, vec4 &b);
-vec4 vec4_sum(vec4 a, vec4 b); 
+void vec4Show(vec4 &v);
+vec4 vec4Copy(vec4 &v);
+vec4 vec4Set(float x, float y, float z, float w);
+float  vec4Lenght(vec4 &v);
+vec4 vec4Normalize(vec4 &v);
+vec4 vec4Scale(vec4 &v, float scale);
+vec4 vec4Invert(vec4 &v);
+float  vec4Dot(vec4 &a, vec4 &b);
+vec4 vec4Sum(vec4 a, vec4 b); 
 vec4 vec4Sub(vec4 &a, vec4 &b);

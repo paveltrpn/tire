@@ -4,13 +4,7 @@
 
 #include "vec4.h"
 
-using namespace std;
-
-void vec4_show(vec4 &v) {
-	printf("%5.2f %5.2f %5.2f %5.2f\n", v[_XC], v[_YC], v[_ZC], v[_WC]);
-}
-
-vec4 vec4_copy(vec4 &v) {
+vec4 vec4Copy(vec4 &v) {
     vec4 rt;
 
 	rt[0] = v[0];
@@ -21,7 +15,7 @@ vec4 vec4_copy(vec4 &v) {
 	return rt;
 }
 
-vec4 vec4_set(float x, float y, float z, float w) {
+vec4 vec4Set(float x, float y, float z, float w) {
     vec4 rt;
 
 	rt[0] = x;
@@ -32,18 +26,18 @@ vec4 vec4_set(float x, float y, float z, float w) {
 	return rt;
 }
 
-float vec4_lenght(vec4 &v) {
+float vec4Lenght(vec4 &v) {
 	return sqrtf(v[_XC]*v[_XC] +
 		v[_YC]*v[_YC] +
 		v[_ZC]*v[_ZC] +
 		v[_WC]*v[_WC]);
 }
 
-vec4 vec4_normalize(vec4 &v) {
+vec4 vec4Normalize(vec4 &v) {
 	vec4 rt;
 	float len;
 
-	len = vec4_lenght(v);
+	len = vec4Lenght(v);
 
 	if (len != 0.0f) {
 		rt[_XC] = v[_XC] / len;
@@ -55,7 +49,7 @@ vec4 vec4_normalize(vec4 &v) {
 	return rt;
 }
 
-vec4 vec4_scale(vec4 &v, float scale) {
+vec4 vec4Scale(vec4 &v, float scale) {
     vec4 rt;
 
 	rt[0] = v[0] * scale;
@@ -66,7 +60,7 @@ vec4 vec4_scale(vec4 &v, float scale) {
 	return rt;
 }
 
-vec4 vec4_invert(vec4 &v) {
+vec4 vec4Invert(vec4 &v) {
     vec4 rt;
 
 	rt[_XC] = -v[_XC];
@@ -77,11 +71,11 @@ vec4 vec4_invert(vec4 &v) {
 	return rt;
 }
 
-float vec4_dot(vec4 &a, vec4 &b) {
+float vec4Dot(vec4 &a, vec4 &b) {
 	return a[0]*b[0] + a[1]*b[1] + a[2]*b[2] + a[3]*b[3];
 }
 
-vec4 vec4_sum(vec4 a, vec4 b) {
+vec4 vec4Sum(vec4 a, vec4 b) {
     vec4 rt;
 
 	rt[0] = a[0] + b[0];

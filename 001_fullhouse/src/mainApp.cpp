@@ -1,9 +1,9 @@
 
 #include "mainApp.h"
-#include "algebra2.h"
 #include "mesh.h"
 #include "timer.h"
 #include "bitmap.h"
+#include "vec4.h"
 
 GLenum check_gl_error(const char *file, int line)
 {
@@ -77,14 +77,18 @@ void mainApp_glfw_c::setup() {
 
 	text.load_font("assets/RobotoMono-2048-1024-64-128.tga");
 
-	box.append(vec3(4.0, 0.0, 5.0), mtrx3(   0.1,  0.0,   0.1));
-	box.append(vec3(-4.0, 0.0, 0.0), mtrx3(  0.1, -0.2,   0.2));
-	box.append(vec3(0.0, 3.0, 6.0), mtrx3(  -0.1,  0.15,  0.0));
-	box.append(vec3(3.0, 6.0, 0.0), mtrx3(   0.1, -0.1,   0.3));
-	box.append(vec3(-4.0, -6.0, 4.0), mtrx3( 0.1,  0.2,  -0.1));
-	box.append(vec3(-7.0, -5.0, 2.0), mtrx3( 0.2,  0.15, 0.1));
-	box.append(vec3(7.0, 5.0, 3.0), mtrx3(  -0.2, -0.1,  -0.2));
-	box.append(vec3(-8.0, 6.0, 0.0), mtrx3( -0.2,  0.1,  0.1));
+	box.append(vec3(4.0, 0.0, 5.0), mtrx3(   0.01,  0.00,   0.01));
+	box.append(vec3(-4.0, 0.0, 0.0), mtrx3(  0.01, -0.02,   0.02));
+	box.append(vec3(0.0, 3.0, 6.0), mtrx3(  -0.01,  0.015,  0.00));
+	box.append(vec3(3.0, 6.0, 0.0), mtrx3(   0.01, -0.01,   0.03));
+	box.append(vec3(-4.0, -6.0, 4.0), mtrx3( 0.01,  0.02,  -0.01));
+	box.append(vec3(-7.0, -5.0, 2.0), mtrx3( 0.02,  0.015, 0.01));
+	box.append(vec3(7.0, 5.0, 3.0), mtrx3(  -0.02, -0.01,  -0.02));
+	box.append(vec3(-8.0, 6.0, 0.0), mtrx3( -0.02,  0.01,  0.01));
+
+	BodyList.push_back(Body(Body::PRISM,		vec3( 3.0f, -3.0f, 2.0f), vec3(0.0f, 0.0f, 0.0f)));
+	BodyList.push_back(Body(Body::BOX , 		vec3(-3.0f, -3.0f, 2.0f), vec3(0.0f, 0.0f, 0.0f)));
+	BodyList.push_back(Body(Body::ICOSAHEDRON, 	vec3( 2.0f,  0.0f, 2.0f), vec3(0.0f, 0.0f, 0.0f)));
 }
 
 void glfw_error_callback(int, const char* err_str)
@@ -135,6 +139,8 @@ void mainApp_glfw_c::init_app(int argc, char* argv[]) {
 	setup();
 }
 
+vec3 orn = {};
+
 void mainApp_glfw_c::looper() {
 	while(!glfwWindowShouldClose(window)) {
     	glfwPollEvents();
@@ -161,6 +167,16 @@ void mainApp_glfw_c::looper() {
 		glDisable(GL_BLEND);
 		glBindTexture(GL_TEXTURE_2D, texture);
 		box.show();
+		// ---------------
+
+		// ---------------
+		// Отрисовка тел из BodyList
+		// ---------------
+		orn = vec3Sum(orn, vec3(0.01f, 0.02f, 0.001f));
+		for (auto &bdy: BodyList) {
+			bdy.setOrientation(orn[0], orn[1], orn[2]);
+			bdy.updateAndDraw();
+		}
 		// ---------------
 
 		// ----------------

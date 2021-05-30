@@ -5,8 +5,6 @@
 
 #include "mtrx2.h"
 
-using namespace std;
-
 mtrx2::mtrx2(float phi) {
 	float sinphi = sinf(degToRad(phi));
 	float cosphi = cosf(degToRad(phi));
@@ -17,10 +15,10 @@ mtrx2::mtrx2(float phi) {
 	data[3] = cosphi;
 }
 
-mtrx2 mtrx2_idtt() {
+mtrx2 mtrx2Idtt() {
 	mtrx2 rt;
     constexpr int mrange = 2;
-	int i, j;
+	size_t i, j;
 
 	for (i = 0; i < mrange; i++) {
 		for (j = 0; j < mrange; j++) {
@@ -35,10 +33,10 @@ mtrx2 mtrx2_idtt() {
 	return rt;
 }
 
-mtrx2 mtrx2_set(float m[4]) {
+mtrx2 mtrx2Set(float m[4]) {
     mtrx2 rt;
 	constexpr int mrange = 2;
-	int	i, j;
+	size_t	i, j;
 
 	for (i = 0; i < mrange; i++) {
 		for (j = 0; j < mrange; j++) {
@@ -49,7 +47,7 @@ mtrx2 mtrx2_set(float m[4]) {
 	return rt;
 }
 
-mtrx2 mtrx2_set_float(float a00, float a01, float a10, float a11) {
+mtrx2 mtrx2SetFloat(float a00, float a01, float a10, float a11) {
     mtrx2 rt;
 
 	rt[0] = a00;
@@ -60,7 +58,7 @@ mtrx2 mtrx2_set_float(float a00, float a01, float a10, float a11) {
 	return rt;
 }
 
-mtrx2 mtrx2_rtn(float phi) {
+mtrx2 mtrx2Rtn(float phi) {
 	mtrx2 rt;
 
 	float cosphi, sinphi;
@@ -76,26 +74,21 @@ mtrx2 mtrx2_rtn(float phi) {
 	return rt;
 }
 
-void mtrx2_show(mtrx2 m) {
-	printf("%5.2f %5.2f\n", m[0], m[1]);
-	printf("%5.2f %5.2f\n", m[2], m[3]);
-}
-
-float mtrx2_det(mtrx2 m) {
+float mtrx2Det(mtrx2 m) {
 	return m[0]*m[3] - m[1]*m[2];
 }
 
 float mtrx2_det_lu(mtrx2 m) {
 	constexpr int mrange = 2;
-	int		i;         
+	size_t i;         
 	mtrx2 l, u;
-	tuple<mtrx2, mtrx2> lu;
+	std::tuple<mtrx2, mtrx2> lu;
 	float 	l_det, u_det;
 	
-	lu = mtrx2_lu(m);
+	lu = mtrx2LU(m);
 
-	l_det = get<0>(lu)[0];
-	u_det = get<1>(lu)[0];
+	l_det = std::get<0>(lu)[0];
+	u_det = std::get<1>(lu)[0];
 
 	for (i = 1; i < mrange; i++) {
 		l_det *= l[idRw(i, i, mrange)];
@@ -105,9 +98,9 @@ float mtrx2_det_lu(mtrx2 m) {
 	return l_det * u_det;
 }
 
-mtrx2 mtrx2_mult(mtrx2 a, mtrx2 b) {
+mtrx2 mtrx2Mult(mtrx2 a, mtrx2 b) {
 	constexpr int mrange = 2;
-	int i, j, k;
+	size_t i, j, k;
 	float tmp;
 	mtrx2 rt;
 
@@ -124,11 +117,11 @@ mtrx2 mtrx2_mult(mtrx2 a, mtrx2 b) {
 	return rt;
 }
 
-vec2 mtrx2_mult_vec(mtrx2 m, vec2 v) {
+vec2 mtrx2MultVec(mtrx2 m, vec2 v) {
 	constexpr int mrange = 2;
 	vec2 rt;
 
-	int		i, j;
+	size_t	i, j;
 	float	tmp;
 
 	for (i = 0; i < mrange; i++) {
@@ -146,10 +139,10 @@ vec2 mtrx2_mult_vec(mtrx2 m, vec2 v) {
 	Нижнетреугольная (L, lm) матрица имеет единицы по диагонали
 */
 
-tuple<mtrx2, mtrx2> mtrx2_lu(mtrx2 m) {
+std::tuple<mtrx2, mtrx2> mtrx2LU(mtrx2 m) {
 	constexpr int mrange = 2;
 	mtrx2 lm, um; 
-	int i, j, k;
+	size_t i, j, k;
 	float sum;    
 
 	for (i = 0; i < mrange; i++) {
@@ -177,7 +170,7 @@ tuple<mtrx2, mtrx2> mtrx2_lu(mtrx2 m) {
 	return {lm, um};
 }
 
-tuple<mtrx2, vec2> mtrx2_ldlt(mtrx2 m) {
+std::tuple<mtrx2, vec2> mtrx2LDLT(mtrx2 m) {
 	constexpr int mrange = 2;
 	mtrx2 lm;
 	vec2 dv;
@@ -191,8 +184,8 @@ tuple<mtrx2, vec2> mtrx2_ldlt(mtrx2 m) {
 				sum = sum - lm[idRw(i, k, mrange)]*dv[k]*lm[idRw(j, k, mrange)];
 				if (i == j) {
 					if (sum <= 0) {
-						printf("mtrx2_ldlt(): matrix is not positive deﬁnite");
-						return {mtrx2_idtt(), vec2(0.0, 0.0)};
+						std::cout << "mtrx2_ldlt(): matrix is not positive deﬁnite\n";
+						return {mtrx2Idtt(), vec2(0.0, 0.0)};
 					}
 					dv[i] = sum;
 					lm[idRw(i, i, mrange)] = 1.0;
@@ -206,7 +199,7 @@ tuple<mtrx2, vec2> mtrx2_ldlt(mtrx2 m) {
 	return {lm, dv};
 }
 
-mtrx2 mtrx2_transpose(mtrx2 m) {
+mtrx2 mtrx2Transpose(mtrx2 m) {
 	constexpr int mrange = 2;
 	int i, j;
 	float tmp;
@@ -225,23 +218,23 @@ mtrx2 mtrx2_transpose(mtrx2 m) {
 	return rt;
 }
 
-mtrx2 mtrx2_invert(mtrx2 m) {
+mtrx2 mtrx2Invert(mtrx2 m) {
 	mtrx2 rt;
 	float det;
 	
-	det = mtrx2_det(m);
+	det = mtrx2Det(m);
 
 	if (fabs(det) < f_eps) {
-		printf("mtrx2_invert(): determinant is a zero!");
-		return mtrx2_idtt();
+		std::cout << "mtrx2_invert(): determinant is a zero!\n";
+		return mtrx2Idtt();
 	}
 
 	return mtrx2(m[3], -m[1]/det, -m[2]/det, m[0]/det);
 }
 
-vec2 mtrx2_solve_gauss(mtrx2 m, vec2 v) {
+vec2 mtrx2SolveGauss(mtrx2 m, vec2 v) {
 	constexpr int mrange = 2;
-	int i, j, k;
+	size_t i, j, k;
 	float a[mrange][mrange + 1], t;
 	vec2 rt;
 
@@ -286,7 +279,7 @@ vec2 mtrx2_solve_gauss(mtrx2 m, vec2 v) {
 	return rt;
 }
 
-mtrx2 mtrx2_insert_cmn(mtrx2 m, vec2 v, int cmn) {
+mtrx2 mtrx2InsertCmn(mtrx2 m, vec2 v, int cmn) {
 	constexpr int mrange = 2;
 	int i, j = 0;
 	mtrx2 rt;
@@ -301,23 +294,23 @@ mtrx2 mtrx2_insert_cmn(mtrx2 m, vec2 v, int cmn) {
 	return rt;
 }
 
-vec2 mtrx2_solve_kramer(mtrx2 m, vec2 v) {
+vec2 mtrx2SolveKramer(mtrx2 m, vec2 v) {
 	constexpr int mrange = 2;
 	int i;
 	float det;
 	mtrx2 kr_mtrx;
 	vec2 rt;
 
-	det = mtrx2_det(m);
+	det = mtrx2Det(m);
 
 	if (fabs(det) < f_eps) {
-		printf("mtrx2_solve_kramer(): system has no solve");
+		std::cout << "mtrx2_solve_kramer(): system has no solve\n";
 		return vec2(0.0, 0.0);
 	}
 
 	for (i = 0; i < mrange; i++) {
-		kr_mtrx = mtrx2_insert_cmn(m, v, i);
-		rt[i] = mtrx2_det(kr_mtrx) / det;
+		kr_mtrx = mtrx2InsertCmn(m, v, i);
+		rt[i] = mtrx2Det(kr_mtrx) / det;
 	}
 
 	return rt;

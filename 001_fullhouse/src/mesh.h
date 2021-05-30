@@ -9,7 +9,9 @@
 	
 #include <GL/gl.h>
 
-#include "algebra2.h"
+#include "vec3.h"
+#include "mtrx3.h"
+#include "mtrx4.h"
 
 using namespace std;
 
@@ -43,6 +45,33 @@ class box_c {
 	                                   {-1.0, 0.0, 0.0}}; 
         vec3 clone[8];
         vec3 clone_normal[6];
+};
+
+class Body {
+    public:
+        enum {BOX, PRISM, ICOSAHEDRON};
+
+        Body(int type, vec3 offst, vec3 orn);
+
+        ~Body();
+
+        // Body(const Body& in) = delete;
+        // Body& operator=(const Body& in) = delete;
+        // Body(Body&& in) = delete;
+        // Body&& operator=(Body&& in) = delete;
+
+        void setOrientation(float yaw, float pitch, float roll);
+        void setOffset(float dx, float dy, float dz);
+
+        void updateAndDraw();
+
+    private:
+        std::vector<vec3> BodyTriangles;
+        std::vector<vec3> BodyNormals;
+
+        vec3 BodyOrientation;
+        vec3 BodyOffset;
+        vec3 bodyScale;
 };
 
 void draw_decart(float scale);

@@ -3,9 +3,7 @@
 
 #include <cmath>
 
-#include "algebra2_common.h"
-
-using namespace std;
+#include "algebra2.h"
 
 class vec3 {
 	public:
@@ -59,7 +57,7 @@ class vec3 {
 		float data[3];
 };
 
-vec3  vec3Scale(const vec3 &v, float scale);
+vec3 vec3Scale(const vec3 &v, float scale);
 vec3  vec3Invert(const vec3 &v);
 float vec3Dot(const vec3 &a, const vec3 &b);
 vec3  vec3Sum(const vec3 &a, const vec3 &b);

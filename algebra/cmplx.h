@@ -3,11 +3,11 @@
 
 #include <cmath>
 
-#include "algebra2_common.h"
+#include "algebra2.h"
 
 using namespace std;
 
-class cmplx_t {
+class cmplx {
 	public:
 		float operator[](const int32_t id) const {
 			return data[id];
@@ -17,30 +17,30 @@ class cmplx_t {
 			return data[id];
 		};
 
-		cmplx_t &operator=(const cmplx_t &v) {
+		cmplx &operator=(const cmplx &v) {
 			data[_XC] = v[_XC];
 			data[_YC] = v[_YC];
 
 			return (*this);
 		};
 
-		cmplx_t(): 
+		cmplx(): 
 			data{0.0, 0.0} {};
 		
-		cmplx_t(const float x, const float y): 
+		cmplx(const float x, const float y): 
 			data{x, y} {};
 		
-		cmplx_t(const cmplx_t &v): 
+		cmplx(const cmplx &v): 
 			data{v[_XC], v[_YC]} {};
 
-		~cmplx_t() {};
+		~cmplx() {};
 	
 	private:
 		float data[2];
 };
 
-cmplx_t cmplx_sum(cmplx_t a, cmplx_t b);
-cmplx_t cmplx_sub(cmplx_t a, cmplx_t b);
-cmplx_t cmplx_mult(cmplx_t a, cmplx_t b);
-cmplx_t cmplx_div(cmplx_t a, cmplx_t b); 
-cmplx_t cmplx_scale(cmplx_t a, float k);
+cmplx cmplxSum(cmplx a, cmplx b);
+cmplx cmplxSub(cmplx a, cmplx b);
+cmplx cmplxMult(cmplx a, cmplx b);
+cmplx cmplxDiv(cmplx a, cmplx b); 
+cmplx cmplxScale(cmplx a, float k);

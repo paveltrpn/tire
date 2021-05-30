@@ -10,8 +10,6 @@
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
 
-
-#include "algebra2.h"
 #include "timer.h"
 #include "mesh.h"
 #include "bitmap_text.h"
@@ -30,6 +28,8 @@ class mainApp_glfw_c {
 		GLuint texture;
 		box_c box;
 		
+		std::vector<Body> BodyList;
+
 		bitmap_text_c text;
 
 		uint32_t frames = 0;

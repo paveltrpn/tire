@@ -9,7 +9,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "algebra2.h"
+#include <fmt/format.h>
 #include "bitmap_text.h"
 #include "bitmap.h"
 
@@ -147,7 +147,7 @@ GLuint compileShader(GLuint type, string src) {
 		// Provide the infolog in whatever manor you deem best.
 		// Exit with failure.
 
-		cout << "compileShader(): can't compile shader! error log: \n";
+		std::cout << "compileShader(): can't compile shader! error log: \n";
 
 		for (const auto &out: errorLog) {
 			cout << out;
@@ -171,7 +171,7 @@ class app_c {
 		bool glewExperimental;
 		std::string gl_render, gl_version, glsl_version, glfw_version;
 
-		const char* appName = "005_rocket"; /* const что бы избежать "ISO C++ forbids converting a string constant to ‘char*’" */ 
+		std::string appName = "005_rocket";
 
 		bitmap_text_c text;
 
@@ -180,7 +180,7 @@ class app_c {
     	GLuint gl_colorBuf;
 
 		void startWindow() {
-			std::cout << "app_c::start_window()\n";
+			std::cout << fmt::format("app_c::start_window()\n");
 
 			if (glfwInit() != GLFW_TRUE) {
 				std::cout << "app_c::start_window(): glfwInit() return - GLFW_FALSE!" << "\n";
@@ -190,13 +190,13 @@ class app_c {
 			glfwSetErrorCallback(glfw_error_callback);
 
 			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 			glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
 			glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-			window = glfwCreateWindow(wnd_width, wnd_height, appName, nullptr, nullptr);
+			window = glfwCreateWindow(wnd_width, wnd_height, appName.c_str(), nullptr, nullptr);
 			if (window == nullptr) {
-				std::cout << "app_c::start_window(): glfwCreateWindow(): Failed to create GLFW window" << std::endl;
+				std::cout << fmt::format("app_c::start_window(): glfwCreateWindow(): Failed to create GLFW window\n");
 				glfwTerminate();
 				exit(1);
 			}
@@ -208,7 +208,7 @@ class app_c {
 			glewExperimental = GL_TRUE;
 	
 			if (glewInit() != GLEW_OK) {
-	    		std::cout << "app_c::start_window(): glewInit(): Failed to initialize GLEW" << std::endl;
+	    		std::cout << fmt::format("app_c::start_window(): glewInit(): Failed to initialize GLEW\n");
 	    		exit(1);
 			}
 
@@ -216,18 +216,15 @@ class app_c {
 			gl_version = gl_version + "GL_VERSION - " + (const char*)glGetString(GL_VERSION);
 			glsl_version = glsl_version + "GLSL_VERSION - " + (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
 			glfw_version = glfw_version + "GLFW_VERSION - " + (const char*)glfwGetVersionString();
-
-			std::cout << gl_render << std::endl 
-					  << gl_version << std::endl 
-					  << glsl_version << std::endl
-					  << glfw_version << std::endl;
+			
+			std::cout << fmt::format("GL_RENDER - {}\nGL_VERSION - {}\nGLSL_VERSION - {}\nGLFW_VERSION - []", gl_render, gl_version, glsl_version, glfw_version);
 
 			// Выключаем вертикальную синхронизацию (VSYNC)
 			glfwSwapInterval(0);
 		};
 
 		void setupScene() {
-			std::cout << "app_c::setup_scene()\n";
+			std::cout << fmt::format("app_c::setup_scene()\n");
 
 			text.load_font("assets/RobotoMono-2048-1024-64-128.tga");
 
@@ -253,7 +250,7 @@ class app_c {
 			auto vShader = loadShaderSource("assets/vsSource.glsl");
 			auto fShader = loadShaderSource("assets/fsSource.glsl");
 
-			auto vs = compileShader(GL_FRAGMENT_SHADER, fShader);
+			// auto vs = compileShader(GL_FRAGMENT_SHADER, fShader);
 		};
 
 		void looper() {

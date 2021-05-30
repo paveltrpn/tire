@@ -47,7 +47,7 @@ mtrx4 mtrx4Mult(mtrx4 a, mtrx4 b) {
 	return rt;
 }
 
-vec4 mtrx4MultVec(mtrx4 m, vec3 v) {
+vec4 mtrx4MultVec(mtrx4 m, vec4 v) {
 	constexpr int mrange = 4;
 	int		i, j;
 	float	tmp;
@@ -62,6 +62,15 @@ vec4 mtrx4MultVec(mtrx4 m, vec3 v) {
 	}
 
 	return rt;
+}
+
+vec3 mtrx4MultVec3(mtrx4 m, vec3 v) {
+	vec3 rt;
+	vec4 tmp, mv = {v[0], v[1], v[2], 1.0f};
+
+	tmp = mtrx4MultVec(m, mv);
+	
+	return vec3(tmp[0], tmp[1], tmp[2]);
 }
 
 /*

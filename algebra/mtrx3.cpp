@@ -57,10 +57,10 @@ mtrx3::mtrx3(const vec3 &ax, float phi) {
 	data[8] = cosphi + (1.0f-cosphi)*vz*vz;
 }
 
-mtrx3 mtrx3_idtt() {
+mtrx3 mtrx3Idtt() {
 	mtrx3 rt;
     constexpr int mrange = 3;
-	int i, j;
+	size_t i, j;
 
 	for (i = 0; i < mrange; i++) {
 		for (j = 0; j < mrange; j++) {
@@ -75,10 +75,10 @@ mtrx3 mtrx3_idtt() {
 	return rt;
 }
 
-mtrx3 mtrx3_set(float m[9]) {
+mtrx3 mtrx3Set(float m[9]) {
     mtrx3 rt;
 	constexpr int mrange = 3;
-	int	i, j;
+	size_t	i, j;
 
 	for (i = 0; i < mrange; i++) {
 		for (j = 0; j < mrange; j++) {
@@ -89,7 +89,7 @@ mtrx3 mtrx3_set(float m[9]) {
 	return rt;
 }
 
-mtrx3 mtrx3_set_float(float a00, float a01, float a02,
+mtrx3 mtrx3SetFloat(float a00, float a01, float a02,
 	                    float a10, float a11, float a12,
 	                    float a20, float a21, float a22) {
     mtrx3 rt;
@@ -109,7 +109,7 @@ mtrx3 mtrx3_set_float(float a00, float a01, float a02,
 	return rt;
 }
 
-mtrx3 mtrx3_set_yaw(float angl) {
+mtrx3 mtrx3SetYaw(float angl) {
 	float sa, ca;
 	mtrx3 rt;
 
@@ -123,7 +123,7 @@ mtrx3 mtrx3_set_yaw(float angl) {
 	return rt;
 }
 
-mtrx3 mtrx3_set_pitch(float angl) {
+mtrx3 mtrx3SetPitch(float angl) {
 	float sa, ca;
 	mtrx3 rt;
 
@@ -137,7 +137,7 @@ mtrx3 mtrx3_set_pitch(float angl) {
 	return rt;
 }
 
-mtrx3 mtrx3_set_roll(float angl)
+mtrx3 mtrx3SetRoll(float angl)
 {
 	float sa, ca;
 	mtrx3 rt;
@@ -152,13 +152,7 @@ mtrx3 mtrx3_set_roll(float angl)
 	return rt;
 }
 
-void mtrx3_show(mtrx3 m) {
-	printf("%5.2f %5.2f %5.2f\n", m[0], m[1], m[2]);
-	printf("%5.2f %5.2f %5.2f\n", m[3], m[4], m[5]);
-    printf("%5.2f %5.2f %5.2f\n", m[6], m[7], m[8]);
-}
-
-float mtrx3_det(mtrx3 m) {
+float mtrx3Det(mtrx3 m) {
 	return m[0]*m[4]*m[8] +
 		   m[6]*m[1]*m[5] +
 		   m[2]*m[3]*m[7] -
@@ -173,7 +167,7 @@ float mtrx3_det_lu(mtrx3 m) {
 	tuple<mtrx3, mtrx3> lu;
 	float 	l_det, u_det;
 	
-	lu = mtrx3_lu(m);
+	lu = mtrx3LU(m);
 
 	l_det = get<0>(lu)[0];
 	u_det = get<1>(lu)[0];
@@ -186,7 +180,7 @@ float mtrx3_det_lu(mtrx3 m) {
 	return l_det * u_det;
 }
 
-mtrx3 mtrx3_mult(mtrx3 a, mtrx3 b) {
+mtrx3 mtrx3Mult(mtrx3 a, mtrx3 b) {
 	constexpr int mrange = 3;
 	int i, j, k;
 	float tmp;
@@ -205,7 +199,7 @@ mtrx3 mtrx3_mult(mtrx3 a, mtrx3 b) {
 	return rt;
 }
 
-vec3 mtrx3_mult_vec(mtrx3 m, vec3 v) {
+vec3 mtrx3MultVec(mtrx3 m, vec3 v) {
 	constexpr int mrange = 3;
 	int		i, j;
 	float	tmp;
@@ -226,7 +220,7 @@ vec3 mtrx3_mult_vec(mtrx3 m, vec3 v) {
 	Нижнетреугольная (L, lm) матрица имеет единицы по диагонали
 */
 
-tuple<mtrx3, mtrx3> mtrx3_lu(mtrx3 m) {
+tuple<mtrx3, mtrx3> mtrx3LU(mtrx3 m) {
 	constexpr int mrange = 3;
 	mtrx3 lm, um; 
 	int i, j, k;
@@ -257,7 +251,7 @@ tuple<mtrx3, mtrx3> mtrx3_lu(mtrx3 m) {
 	return {lm, um};
 }
 
-tuple<mtrx3, vec3> mtrx3_ldlt(mtrx3 m) {
+tuple<mtrx3, vec3> mtrx3LDLT(mtrx3 m) {
 	constexpr int mrange = 3;
 	mtrx3 lm;
 	vec3 dv;
@@ -271,8 +265,8 @@ tuple<mtrx3, vec3> mtrx3_ldlt(mtrx3 m) {
 				sum = sum - lm[idRw(i, k, mrange)]*dv[k]*lm[idRw(j, k, mrange)];
 				if (i == j) {
 					if (sum <= 0) {
-						printf("mtrx3_ldlt(): matrix is not positive deﬁnite");
-						return {mtrx3_idtt(), vec3(0.0f, 0.0f, 0.0f)};
+						std::cout << "mtrx3_ldlt(): matrix is not positive deﬁnite\n";
+						return {mtrx3Idtt(), vec3(0.0f, 0.0f, 0.0f)};
 					}
 					dv[i] = sum;
 					lm[idRw(i, i, mrange)] = 1.0;
@@ -286,7 +280,7 @@ tuple<mtrx3, vec3> mtrx3_ldlt(mtrx3 m) {
 	return {lm, dv};
 }
 
-mtrx3 mtrx3_transpose(mtrx3 m) {
+mtrx3 mtrx3Transpose(mtrx3 m) {
 	constexpr int mrange = 3;
 	int i, j;
 	float tmp;
@@ -305,7 +299,7 @@ mtrx3 mtrx3_transpose(mtrx3 m) {
 	return rt;
 }
 
-mtrx3 mtrx3_invert(mtrx3 m) {
+mtrx3 mtrx3Invert(mtrx3 m) {
 	mtrx3 inverse, rt;
 	float det, invDet;
 
@@ -317,11 +311,11 @@ mtrx3 mtrx3_invert(mtrx3 m) {
 		m[2]*inverse[6];
 
 	if (fabs(det) < f_eps) {
-		printf("mtrx3_invert(): determinant is a zero!");
+		std::cout << "mtrx3_invert(): determinant is a zero!\n";
 		return mtrx3();
 	}
 
-	invDet = 1.0 / det;
+	invDet = 1.0f / det;
 
 	inverse[1] = m[2]*m[7] - m[1]*m[8];
 	inverse[2] = m[1]*m[5] - m[2]*m[4];
@@ -345,7 +339,7 @@ mtrx3 mtrx3_invert(mtrx3 m) {
 	return rt;
 }
 
-vec3 mtrx3_solve_gauss(mtrx3 m, vec3 v) {
+vec3 mtrx3SolveGauss(mtrx3 m, vec3 v) {
 	constexpr int mrange = 3;
 	int i, j, k;
 	float a[mrange][mrange + 1], t;
@@ -392,7 +386,7 @@ vec3 mtrx3_solve_gauss(mtrx3 m, vec3 v) {
 	return rt;
 }
 
-mtrx3 mtrx3_insert_cmn(mtrx3 m, vec3 v, int cmn) {
+mtrx3 mtrx3InsertCmn(mtrx3 m, vec3 v, int cmn) {
 	constexpr int mrange = 3;
 	int i, j= 0;
 	mtrx3 rt;
@@ -407,14 +401,14 @@ mtrx3 mtrx3_insert_cmn(mtrx3 m, vec3 v, int cmn) {
 	return rt;
 }
 
-vec3 mtrx3_solve_kramer(mtrx3 m, vec3 v) {
+vec3 mtrx3SolveKramer(mtrx3 m, vec3 v) {
 	constexpr int mrange = 3;
 	int i;
 	float det;
 	mtrx3 kr_mtrx;
 	vec3 rt;
 
-	det = mtrx3_det(m);
+	det = mtrx3Det(m);
 
 	if (fabs(det) < f_eps) {
 		printf("mtrx3_solve_kramer(): system has no solve");
@@ -422,8 +416,8 @@ vec3 mtrx3_solve_kramer(mtrx3 m, vec3 v) {
 	}
 
 	for (i = 0; i < mrange; i++) {
-		kr_mtrx = mtrx3_insert_cmn(m, v, i);
-		rt[i] = mtrx3_det(kr_mtrx) / det;
+		kr_mtrx = mtrx3InsertCmn(m, v, i);
+		rt[i] = mtrx3Det(kr_mtrx) / det;
 	}
 
 	return rt;
