@@ -2,8 +2,9 @@
 #pragma once
 
 #include <cmath>
+#include <array>
 
-#include "algebra2.h"
+#include "common.h"
 
 class vec2 {
 	public:	
@@ -34,7 +35,7 @@ class vec2 {
 		~vec2() {};
 	
 	private:
-		float data[2];
+		std::array<float, 2> data;
 };
 
 float  vec2Lenght(const vec2 &v);

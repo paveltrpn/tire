@@ -1,9 +1,11 @@
 
 #pragma once
 
+#include <iostream>
 #include <cmath>
+#include <array>
 
-#include "algebra2.h"
+#include "common.h"
 #include "vec3.h"
 
 using namespace std;
@@ -74,7 +76,7 @@ class qtnn {
 				rt[_YC] = data[_YC] / len;
 				rt[_ZC] = data[_ZC] / len;
 			} else {
-				printf("qtnn::normalize(): quaternion is too short!");
+				std::cout << "qtnn::normalize(): quaternion is too short!";
 			}
 		};
 
@@ -113,7 +115,7 @@ class qtnn {
 		}
 
 	private:
-		float data[4];
+		std::array<float, 4> data;
 };
 
 qtnn	qtnnScale(const qtnn &q, float scale);

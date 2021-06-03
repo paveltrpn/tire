@@ -5,7 +5,7 @@
 #include <GL/gl.h>
 
 #include "bitmap_text.h"
-#include "algebra2.h"
+#include "common.h"
 #include "bitmap.h"
 
 bitmap_text_c::~bitmap_text_c() {

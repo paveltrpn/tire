@@ -13,15 +13,16 @@
 #include "timer.h"
 #include "mesh.h"
 #include "bitmap_text.h"
+#include "mtrx4.h"
+#include "camera.h"
 
 class mainApp_glfw_c {
 	private:
 		GLFWwindow* window;
 		bool glewExperimental;
 		
-		// bool is_run;
 		uint32_t x_pos, y_pos, x_res, y_res;
-		const char* appName; /* const что бы избежать "ISO C++ forbids converting a string constant to ‘char*’" */ 
+		std::string appName;
 		float aspect;
 		std::string gl_render, gl_version, glsl_version;
 
@@ -31,13 +32,15 @@ class mainApp_glfw_c {
 		std::vector<Body> BodyList;
 
 		bitmap_text_c text;
+		Camera camera;
 
 		uint32_t frames = 0;
 		timer_c timer;
 		float fps = 0.0;
+		double glfwTime;
 
-		void get_gl_properties();
-		void print_gl_properties();
+		double curPositionX, curPositionY;
+
 		void setup();
 
 		mainApp_glfw_c(mainApp_glfw_c &other) = delete;
@@ -52,6 +55,8 @@ class mainApp_glfw_c {
 			appName = "app";
 
 			fps = 0.0f;
+			
+			camera = Camera();
 			
 			std::cout << "main(): Using glfw init!" << std::endl;
 		};

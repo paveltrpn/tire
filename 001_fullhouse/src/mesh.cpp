@@ -108,9 +108,6 @@ void box_c::show() {
 	}
 }
 
-// Массив содержащий координаты вершин и нормали тел.
-// представляет собой массив<пара<массив<{x,y,z},{x,y,z}>,{x,y,z}> массив<{x,y,z}>>>
-
 std::tuple<std::array<vec3, 3>, vec3> bodyBases = { {{{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}}}, {0.0f, 0.0f, 0.0f} };
 
 std::vector<vec3> boxTris = 	{{1.0f, 1.0f, 1.0f},  {-1.0f, 1.0f, 1.0f},  {-1.0f, -1.0f, 1.0f},
@@ -207,9 +204,10 @@ std::vector<vec3> icosahedrNrmls = {{0.187597f, -0.577354f, -0.794651},
  									{-0.187597f, 0.577354f, 0.794651f},
  									{0.491122f, 0.356829f, 0.794652f}};
 
-Body::Body(int type, vec3 offst, vec3 orn) {
+Body::Body(int type, vec3 offst, vec3 orn, vec3 scl) {
 	BodyOrientation = orn;
     BodyOffset = offst;
+	BodyScale = scl;
 
 	switch (type) {
 		case Body::ICOSAHEDRON:
@@ -237,13 +235,16 @@ void Body::updateAndDraw() {
 	vec3 cur_tri[3];
 	vec3 cur_nrml;
 	
-	mtrx4 mRotate = mtrx4(BodyOrientation[0], BodyOrientation[1], BodyOrientation[2]);
-	mtrx4 mOffset;
-	mOffset.setTranslate(BodyOffset);
+	mtrx4 mRotate = mtrx4FromEuler(BodyOrientation[0], BodyOrientation[1], BodyOrientation[2]);
+	mtrx4 mOffset = mtrx4FromOffset(BodyOffset);
+	mtrx4 mScale = mtrx4FromScale(BodyScale);
 
-	mtrx4 mAffine = mtrx4Mult(mRotate, mOffset);
+	// mtrx4 tmp = mtrx4Mult(mScale, mRotate);
+	// mtrx4 mAffine = mtrx4Mult(tmp, mOffset);
 
-	for (auto i = 0; i < BodyTriangles.size()/3; i++ ) {
+	mtrx4 mAffine = mScale * mRotate * mOffset;
+
+	for (size_t i = 0; i < BodyTriangles.size()/3; i++ ) {
 		cur_tri[0] = mtrx4MultVec3(mAffine, BodyTriangles[i*3+0]);
 		cur_tri[1] = mtrx4MultVec3(mAffine, BodyTriangles[i*3+1]);
 		cur_tri[2] = mtrx4MultVec3(mAffine, BodyTriangles[i*3+2]);

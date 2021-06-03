@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "algebra2.h"
+#include "common.h"
 
 class bitmap_text_c {
     private:

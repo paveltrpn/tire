@@ -2,8 +2,9 @@
 #pragma once
 
 #include <cmath>
+#include <array>
 
-#include "algebra2.h"
+#include "common.h"
 #include "vec3.h"
 
 using namespace std;
@@ -38,7 +39,7 @@ class plane_t {
 		plane_t(const vec3 &v1, const vec3 &v2, const vec3 &v3); /*empty*/
 
 	private:
-		float data[4];
+		std::array<float, 4> data;
 };
 
 vec3 	planeRayInsct(const vec3 &rs, const vec3 &re); /*empty*/

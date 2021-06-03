@@ -2,8 +2,9 @@
 #pragma once
 
 #include <cmath>
+#include <array>
 
-#include "algebra2.h"
+#include "common.h"
 
 using namespace std;
 
@@ -36,11 +37,11 @@ class cmplx {
 		~cmplx() {};
 	
 	private:
-		float data[2];
+		std::array<float, 2> data;
 };
 
-cmplx cmplxSum(cmplx a, cmplx b);
-cmplx cmplxSub(cmplx a, cmplx b);
-cmplx cmplxMult(cmplx a, cmplx b);
-cmplx cmplxDiv(cmplx a, cmplx b); 
-cmplx cmplxScale(cmplx a, float k);
+cmplx cmplxSum(const cmplx &a, const cmplx &b);
+cmplx cmplxSub(const cmplx &a, const cmplx &b);
+cmplx cmplxMult(const cmplx &a, const cmplx &b);
+cmplx cmplxDiv(const cmplx &a, const cmplx &b); 
+cmplx cmplxScale(const cmplx &a, float k);

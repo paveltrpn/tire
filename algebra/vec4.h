@@ -2,8 +2,9 @@
 #pragma once
 
 #include <cmath>
+#include <array>
 
-#include "algebra2.h"
+#include "common.h"
 
 using namespace std;
 
@@ -38,10 +39,9 @@ class vec4 {
 		~vec4() {};
 	
 	private:
-		float data[4];
+		std::array<float, 4> data;
 };
 
-void vec4Show(vec4 &v);
 vec4 vec4Copy(vec4 &v);
 vec4 vec4Set(float x, float y, float z, float w);
 float  vec4Lenght(vec4 &v);

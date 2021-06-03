@@ -5,19 +5,19 @@
 
 using namespace std;
 
-cmplx cmplxSum(cmplx a, cmplx b) {
+cmplx cmplxSum(const cmplx &a, const cmplx &b) {
     return cmplx(a[0] + b[0], a[1] + b[1]);
 }
 
-cmplx cmplxSub(cmplx a, cmplx b) {
+cmplx cmplxSub(const cmplx &a, const cmplx &b) {
     return cmplx(a[0] - b[0], a[1] - b[1]);
 }
 
-cmplx cmplxMult(cmplx a, cmplx b) {
+cmplx cmplxMult(const cmplx &a, const cmplx &b) {
     return cmplx(a[0]*b[0] - a[1]*b[1], a[0]*b[1] + a[1]*b[0]);
 }
 
-cmplx cmplxDiv(cmplx a, cmplx b)  {
+cmplx cmplxDiv(const cmplx &a, const cmplx &b)  {
     cmplx rt;
 
     rt[0] = (a[0]*b[0] + a[1]*b[1]) / (b[0]*b[0] + b[1]*b[1]);
@@ -26,6 +26,6 @@ cmplx cmplxDiv(cmplx a, cmplx b)  {
     return rt;
 }
 
-cmplx cmplxScale(cmplx a, float k) {
+cmplx cmplxScale(const cmplx &a, float k) {
     return cmplx(a[0]*k, a[1]*k);
 }

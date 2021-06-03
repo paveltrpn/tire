@@ -4,6 +4,7 @@
 #include "timer.h"
 #include "bitmap.h"
 #include "vec4.h"
+#include <fmt/format.h>
 
 GLenum check_gl_error(const char *file, int line)
 {
@@ -30,16 +31,6 @@ GLenum check_gl_error(const char *file, int line)
 /* ========================================= */
 /* ============ mainApp_glfw_c ============== */
 /* ========================================= */
-
-void mainApp_glfw_c::get_gl_properties() {
-	gl_render = gl_render + "GL_RENDER - " + (const char*)glGetString(GL_RENDERER);
-	gl_version = gl_version + "GL_VERSION - " + (const char*)glGetString(GL_VERSION);
-	glsl_version = glsl_version + "GLSL_VERSION - " + (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
-}
-
-void mainApp_glfw_c::print_gl_properties() {
-	std::cout << gl_render << std::endl << gl_version << std::endl << glsl_version << std::endl;
-}
 
 void mainApp_glfw_c::setup() {
 	vec4 ambient = vec4{0.5, 0.5, 0.5, 1};
@@ -77,23 +68,19 @@ void mainApp_glfw_c::setup() {
 
 	text.load_font("assets/RobotoMono-2048-1024-64-128.tga");
 
-	box.append(vec3(4.0, 0.0, 5.0), mtrx3(   0.01,  0.00,   0.01));
-	box.append(vec3(-4.0, 0.0, 0.0), mtrx3(  0.01, -0.02,   0.02));
-	box.append(vec3(0.0, 3.0, 6.0), mtrx3(  -0.01,  0.015,  0.00));
-	box.append(vec3(3.0, 6.0, 0.0), mtrx3(   0.01, -0.01,   0.03));
-	box.append(vec3(-4.0, -6.0, 4.0), mtrx3( 0.01,  0.02,  -0.01));
-	box.append(vec3(-7.0, -5.0, 2.0), mtrx3( 0.02,  0.015, 0.01));
-	box.append(vec3(7.0, 5.0, 3.0), mtrx3(  -0.02, -0.01,  -0.02));
-	box.append(vec3(-8.0, 6.0, 0.0), mtrx3( -0.02,  0.01,  0.01));
+	box.append(vec3(-4.0, 0.0, 0.0), mtrx3FromEuler(  0.01, -0.02,   0.02));
+	box.append(vec3(3.0, 6.0, 0.0), mtrx3FromEuler(   0.01, -0.01,   0.03));
+	box.append(vec3(-4.0, -6.0, 4.0), mtrx3FromEuler( 0.01,  0.02,  -0.01));
+	box.append(vec3(-7.0, -5.0, 2.0), mtrx3FromEuler( 0.02,  0.015, 0.01));
+	box.append(vec3(7.0, 5.0, 3.0), mtrx3FromEuler(  -0.02, -0.01,  -0.02));
+	box.append(vec3(-8.0, 6.0, 0.0), mtrx3FromEuler( -0.02,  0.01,  0.01));
 
-	BodyList.push_back(Body(Body::PRISM,		vec3( 3.0f, -3.0f, 2.0f), vec3(0.0f, 0.0f, 0.0f)));
-	BodyList.push_back(Body(Body::BOX , 		vec3(-3.0f, -3.0f, 2.0f), vec3(0.0f, 0.0f, 0.0f)));
-	BodyList.push_back(Body(Body::ICOSAHEDRON, 	vec3( 2.0f,  0.0f, 2.0f), vec3(0.0f, 0.0f, 0.0f)));
-}
-
-void glfw_error_callback(int, const char* err_str)
-{
-    std::cout << "GLFW Error: " << err_str << std::endl;
+	BodyList.push_back(Body(Body::PRISM,		vec3( 6.0f, -4.5f, -2.0f), vec3(0.0f, 0.0f, 0.0f), vec3(3.5f, 4.0f, 2.0f)));
+	BodyList.push_back(Body(Body::BOX , 		vec3(-6.0f,  3.0f, -2.0f), vec3(0.0f, 0.0f, 0.0f), vec3(3.0f, 2.5f, 0.2f)));
+	BodyList.push_back(Body(Body::ICOSAHEDRON, 	vec3( 2.0f,  0.0f, -2.0f), vec3(0.0f, 0.0f, 0.0f), vec3(4.0f, 4.0f, 4.0f)));
+	
+	camera.setCameraPosition(vec3(0.0f, 0.0f, -20.0f));
+	camera.updatePosition();
 }
 
 void mainApp_glfw_c::init_app(int argc, char* argv[]) {
@@ -102,7 +89,10 @@ void mainApp_glfw_c::init_app(int argc, char* argv[]) {
 		exit(1);
 	}
 
-	glfwSetErrorCallback(glfw_error_callback);
+	auto errorCallback = [] (int, const char* err_str) {
+		std::cout << "GLFW Error: " << err_str << std::endl;
+	};
+	glfwSetErrorCallback(errorCallback);
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
@@ -112,14 +102,14 @@ void mainApp_glfw_c::init_app(int argc, char* argv[]) {
 	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	window = glfwCreateWindow(x_res, y_res, appName, nullptr, nullptr);
+	window = glfwCreateWindow(x_res, y_res, appName.c_str(), nullptr, nullptr);
 	if (window == nullptr) {
 		std::cout << "mainApp_glfw_c::init_app(): Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 		exit(1);
 	};
 
-	aspect = (float) x_res / (float) y_res;
+	aspect = static_cast<float>(x_res) / static_cast<float>(y_res);
 
 	glfwMakeContextCurrent(window);
 
@@ -133,8 +123,24 @@ void mainApp_glfw_c::init_app(int argc, char* argv[]) {
 	// Выключаем вертикальную синхронизацию (VSYNC)
 	glfwSwapInterval(0);
 	
-	get_gl_properties();
-	print_gl_properties();
+	auto keyCallback = [] (GLFWwindow* window, int key, int scancode, int action, int mods) {
+		if (key == GLFW_KEY_ESCAPE) {
+			glfwSetWindowShouldClose(window, GLFW_TRUE);
+		}
+
+		if (key == GLFW_KEY_E && GLFW_PRESS) {
+			std::cout << fmt::format("Key E pressed\n");
+		}
+	};
+	glfwSetKeyCallback(window, keyCallback);
+
+	glfwSetTime(110.0);
+
+	gl_render = (const char*)glGetString(GL_RENDERER);
+	gl_version = (const char*)glGetString(GL_VERSION);
+	glsl_version = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+	
+	std::cout << fmt::format("GL_RENDER - {}\nGL_VERSION - {}\nGLSL_VERSION - {}\n", gl_render, gl_version, glsl_version);
 
 	setup();
 }
@@ -143,14 +149,18 @@ vec3 orn = {};
 
 void mainApp_glfw_c::looper() {
 	while(!glfwWindowShouldClose(window)) {
+		glfwGetCursorPos(window, &curPositionX, &curPositionY);
+
     	glfwPollEvents();
    		    	
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
+
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective(45.0f, aspect, 0.1f, 100.0f); 
-		glTranslatef(0.0f, 0.0f, -20.0f);
+		// gluPerspective(45.0f, aspect, 0.1f, 100.0f);
+		
+		glLoadMatrixf(camera.getCmrMatrixPointer());
+		// glTranslatef(0.0f, 0.0f, -20.0f);
 
 		glMatrixMode(GL_MODELVIEW); 
 		glLoadIdentity();
@@ -185,10 +195,13 @@ void mainApp_glfw_c::looper() {
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);  
 		text.set_text_position(-10.0f, 8.0f);
-		text.draw_string("Test text string!");
+		text.draw_string(fmt::format("cursor X = {}, cursor Y = {}", curPositionX, curPositionY));
 
 		text.set_text_position(-10.0f, 7.0f);
-		text.draw_string("fps = " + std::to_string(fps));
+		text.draw_string(fmt::format("fps = {}", fps));
+
+		text.set_text_position(-10.0f, 6.0f);
+		text.draw_string(fmt::format("glfwGetTime = {}", glfwGetTime()));
 		// ---------------
 
 		frames++;

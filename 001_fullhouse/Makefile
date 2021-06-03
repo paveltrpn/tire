@@ -1,8 +1,8 @@
 CC       = g++
 INCDIR	 := E:/devtools/usr/local/include
 LIBDIR	 := E:/devtools/usr/local/lib
-CFLAGS   = -Wall -std=c++17
-LFLAGS 	 = -lstdc++ -lopengl32 -lglu32 -lglfw3 -lgdi32 -lglew32 -ltga -llibjpeg
+CFLAGS   = -Wall -std=c++17 -O2
+LFLAGS 	 = -lstdc++ -lopengl32 -lglu32 -lglfw3 -lgdi32 -lglew32 -ltga -llibjpeg -lfmt
 
 SOURCE_PREFIX = src ../algebra ../img ../timer
 BUILD_PREFIX = build
@@ -21,7 +21,8 @@ SRCS := main.cpp \
 		qtnn.cpp \
 		plane.cpp \
 		bitmap.cpp \
-		bitmap_text.cpp
+		bitmap_text.cpp \
+		camera.cpp
 
 OBJS := $(patsubst %.cpp,$(BUILD_PREFIX)/%.o,$(SRCS))
 
@@ -68,6 +69,9 @@ $(BUILD_PREFIX)/bitmap.o: bitmap.cpp
 	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
 $(BUILD_PREFIX)/bitmap_text.o: bitmap_text.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
+
+$(BUILD_PREFIX)/camera.o: camera.cpp
 	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
 main: $(OBJS)

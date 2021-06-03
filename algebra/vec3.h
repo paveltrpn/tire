@@ -2,14 +2,12 @@
 #pragma once
 
 #include <cmath>
+#include <array>
 
-#include "algebra2.h"
+#include "common.h"
 
 class vec3 {
 	public:
-		//vec3(const vec3 &&v) = delete;
-		//vec3 &operator=(const vec3 &&v) = delete;
-
 		float operator[](const int32_t id) const {
 			return data[id];
 		};
@@ -19,15 +17,13 @@ class vec3 {
 		};
 
 		vec3 &operator=(const vec3 &v) {
-			data[_XC] = v[_XC];
-			data[_YC] = v[_YC];
-			data[_ZC] = v[_ZC];
-
+			data = v.data;
+			
 			return (*this);
 		};
 
 		vec3(): 
-			data{0.0, 0.0, 0.0} {};
+			data{0.0f, 0.0f, 0.0f} {};
 		
 		vec3(const float x, const float y, const float z): 
 			data{x, y, z} {};
@@ -54,7 +50,7 @@ class vec3 {
 		}
 
 	private:
-		float data[3];
+		std::array<float, 3> data;
 };
 
 vec3 vec3Scale(const vec3 &v, float scale);

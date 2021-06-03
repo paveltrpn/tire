@@ -5,23 +5,13 @@
 
 #include "mtrx2.h"
 
-mtrx2::mtrx2(float phi) {
-	float sinphi = sinf(degToRad(phi));
-	float cosphi = cosf(degToRad(phi));
-
-	data[0] = cosphi;
-	data[1] = -sinphi;
-	data[2] = -sinphi;
-	data[3] = cosphi;
-}
+constexpr size_t mrange = 2;
 
 mtrx2 mtrx2Idtt() {
 	mtrx2 rt;
-    constexpr int mrange = 2;
-	size_t i, j;
 
-	for (i = 0; i < mrange; i++) {
-		for (j = 0; j < mrange; j++) {
+	for (size_t i = 0; i < mrange; i++) {
+		for (size_t j = 0; j < mrange; j++) {
 			if (i == j) {
 				rt[idRw(i, j, mrange)] = 1.0f;
 			} else {
@@ -35,11 +25,9 @@ mtrx2 mtrx2Idtt() {
 
 mtrx2 mtrx2Set(float m[4]) {
     mtrx2 rt;
-	constexpr int mrange = 2;
-	size_t	i, j;
 
-	for (i = 0; i < mrange; i++) {
-		for (j = 0; j < mrange; j++) {
+	for (size_t i = 0; i < mrange; i++) {
+		for (size_t j = 0; j < mrange; j++) {
 			rt[idRw(i, j, mrange)] = m[idRw(i, j, mrange)];
 		}
 	}
@@ -79,8 +67,6 @@ float mtrx2Det(mtrx2 m) {
 }
 
 float mtrx2_det_lu(mtrx2 m) {
-	constexpr int mrange = 2;
-	size_t i;         
 	mtrx2 l, u;
 	std::tuple<mtrx2, mtrx2> lu;
 	float 	l_det, u_det;
@@ -90,7 +76,7 @@ float mtrx2_det_lu(mtrx2 m) {
 	l_det = std::get<0>(lu)[0];
 	u_det = std::get<1>(lu)[0];
 
-	for (i = 1; i < mrange; i++) {
+	for (size_t i = 1; i < mrange; i++) {
 		l_det *= l[idRw(i, i, mrange)];
 		u_det *= u[idRw(i, i, mrange)];
 	}
@@ -99,18 +85,13 @@ float mtrx2_det_lu(mtrx2 m) {
 }
 
 mtrx2 mtrx2Mult(mtrx2 a, mtrx2 b) {
-	constexpr int mrange = 2;
-	size_t i, j, k;
-	float tmp;
-	mtrx2 rt;
+	mtrx2 rt = {0.0f};
 
-	for (i = 0; i < mrange; i++) {
-		for (j = 0; j < mrange; j++) {
-			tmp = 0.0;
-			for (k = 0; k < mrange; k++) {
-				tmp = tmp + a[idRw(k, j, mrange)]*b[idRw(i, k, mrange)];
+	for (size_t i = 0; i < mrange; i++) {
+		for (size_t j = 0; j < mrange; j++) {
+			for (size_t k = 0; k < mrange; k++) {
+				rt[idRw(i, j, mrange)] += a[idRw(k, j, mrange)]*b[idRw(i, k, mrange)];
 			}
-			rt[idRw(i, j, mrange)] = tmp;
 		}
 	}
 
@@ -118,18 +99,12 @@ mtrx2 mtrx2Mult(mtrx2 a, mtrx2 b) {
 }
 
 vec2 mtrx2MultVec(mtrx2 m, vec2 v) {
-	constexpr int mrange = 2;
 	vec2 rt;
 
-	size_t	i, j;
-	float	tmp;
-
-	for (i = 0; i < mrange; i++) {
-		tmp = 0;
-		for (j = 0; j < mrange; j++) {
-			tmp = tmp + m[idRw(i, j, mrange)]*v[j];
+	for (size_t i = 0; i < mrange; i++) {
+		for (size_t j = 0; j < mrange; j++) {
+			rt[i] += m[idRw(i, j, mrange)]*v[j];
 		}
-		rt[i] = tmp;
 	}
 
 	return rt;
@@ -140,7 +115,6 @@ vec2 mtrx2MultVec(mtrx2 m, vec2 v) {
 */
 
 std::tuple<mtrx2, mtrx2> mtrx2LU(mtrx2 m) {
-	constexpr int mrange = 2;
 	mtrx2 lm, um; 
 	size_t i, j, k;
 	float sum;    
@@ -171,10 +145,9 @@ std::tuple<mtrx2, mtrx2> mtrx2LU(mtrx2 m) {
 }
 
 std::tuple<mtrx2, vec2> mtrx2LDLT(mtrx2 m) {
-	constexpr int mrange = 2;
 	mtrx2 lm;
 	vec2 dv;
-	int i, j, k;
+	size_t i, j, k;
 	float sum;   
 
 	for (i = 0; i < mrange; i++) {
@@ -200,15 +173,13 @@ std::tuple<mtrx2, vec2> mtrx2LDLT(mtrx2 m) {
 }
 
 mtrx2 mtrx2Transpose(mtrx2 m) {
-	constexpr int mrange = 2;
-	int i, j;
 	float tmp;
 	mtrx2 rt;
 
 	rt = m;
 
-	for (i = 0; i < mrange; i++) {
-		for (j = 0; j < i; j++) {
+	for (size_t i = 0; i < mrange; i++) {
+		for (size_t j = 0; j < i; j++) {
 			tmp = rt[idRw(i, i, mrange)];
 			rt[idRw(i, j, mrange)] = rt[idRw(j, i, mrange)];
 			rt[idRw(j, i, mrange)] = tmp;
@@ -233,7 +204,6 @@ mtrx2 mtrx2Invert(mtrx2 m) {
 }
 
 vec2 mtrx2SolveGauss(mtrx2 m, vec2 v) {
-	constexpr int mrange = 2;
 	size_t i, j, k;
 	float a[mrange][mrange + 1], t;
 	vec2 rt;
@@ -280,8 +250,7 @@ vec2 mtrx2SolveGauss(mtrx2 m, vec2 v) {
 }
 
 mtrx2 mtrx2InsertCmn(mtrx2 m, vec2 v, int cmn) {
-	constexpr int mrange = 2;
-	int i, j = 0;
+	size_t i, j = 0;
 	mtrx2 rt;
 
 	rt = m;
@@ -295,8 +264,6 @@ mtrx2 mtrx2InsertCmn(mtrx2 m, vec2 v, int cmn) {
 }
 
 vec2 mtrx2SolveKramer(mtrx2 m, vec2 v) {
-	constexpr int mrange = 2;
-	int i;
 	float det;
 	mtrx2 kr_mtrx;
 	vec2 rt;
@@ -308,7 +275,7 @@ vec2 mtrx2SolveKramer(mtrx2 m, vec2 v) {
 		return vec2(0.0, 0.0);
 	}
 
-	for (i = 0; i < mrange; i++) {
+	for (size_t i = 0; i < mrange; i++) {
 		kr_mtrx = mtrx2InsertCmn(m, v, i);
 		rt[i] = mtrx2Det(kr_mtrx) / det;
 	}

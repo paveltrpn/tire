@@ -4,66 +4,31 @@
 #include <cmath>
 
 #include "mtrx3.h"
+#include "vec2.h"
 
 using namespace std;
 
-/* DEBUG !!!! */
-mtrx3::mtrx3(float yaw, float pitch, float roll) {
-	float cosy, siny, cosp, sinp, cosr, sinr;
-	
-	cosy = cosf(degToRad(yaw));
-	siny = sinf(degToRad(yaw));
-	cosp = cosf(degToRad(pitch));
-	sinp = sinf(degToRad(pitch));
-	cosr = cosf(degToRad(roll));
-	sinr = sinf(degToRad(roll));
+constexpr size_t mrange = 3;
 
-	data[0] = cosy*cosr - siny*cosp*sinr;
-	data[1] = -cosy*sinr - siny*cosp*cosr;
-	data[2] = siny * sinp;
+mtrx3 mtrx3::operator*(mtrx3 &arg) {
+   	mtrx3 rt = {0.0f};
 
-	data[3] = siny*cosr + cosy*cosp*sinr;
-	data[4] = -siny*sinr + cosy*cosp*cosr;
-	data[5] = -cosy * sinp;
+	for (size_t i = 0; i < mrange; i++) {
+		for (size_t  j = 0; j < mrange; j++) {
+			for (size_t  k = 0; k < mrange; k++) {
+				rt[idRw(i, j, mrange)] += (*this)[idRw(k, j, mrange)]*arg[idRw(i, k, mrange)];
+			}
+		}
+	}
 
-	data[6] = sinp * sinr;
-	data[7] = sinp * cosr;
-	data[8] = cosp;
-}
+	return rt;
+};
 
-/* DEBUG !!!! */
-mtrx3::mtrx3(const vec3 &ax, float phi) {
-	float cosphi, sinphi, vxvy, vxvz, vyvz, vx, vy, vz;
-
-	cosphi = cosf(degToRad(phi));
-	sinphi = sinf(degToRad(phi));
-	vxvy = ax[_XC] * ax[_YC];
-	vxvz = ax[_XC] * ax[_ZC];
-	vyvz = ax[_YC] * ax[_ZC];
-	vx = ax[_XC];
-	vy = ax[_YC];
-	vz = ax[_ZC];
-
-	data[0] = cosphi + (1.0f-cosphi)*vx*vx;
-	data[1] = (1.0f-cosphi)*vxvy - sinphi*vz;
-	data[2] = (1.0f-cosphi)*vxvz + sinphi*vy;
-
-	data[3] = (1.0f-cosphi)*vxvy + sinphi*vz;
-	data[4] = cosphi + (1.0f-cosphi)*vy*vy;
-	data[5] = (1.0f-cosphi)*vyvz - sinphi*vz;
-
-	data[6] = (1.0f-cosphi)*vxvz - sinphi*vy;
-	data[7] = (1.0f-cosphi)*vyvz + sinphi*vx;
-	data[8] = cosphi + (1.0f-cosphi)*vz*vz;
-}
-
-mtrx3 mtrx3Idtt() {
+mtrx3 mtrx3FromIdtt() {
 	mtrx3 rt;
-    constexpr int mrange = 3;
-	size_t i, j;
 
-	for (i = 0; i < mrange; i++) {
-		for (j = 0; j < mrange; j++) {
+	for (size_t i = 0; i < mrange; i++) {
+		for (size_t j = 0; j < mrange; j++) {
 			if (i == j) {
 				rt[idRw(i, j, mrange)] = 1.0f;
 			} else {
@@ -75,38 +40,96 @@ mtrx3 mtrx3Idtt() {
 	return rt;
 }
 
-mtrx3 mtrx3Set(float m[9]) {
-    mtrx3 rt;
-	constexpr int mrange = 3;
-	size_t	i, j;
+mtrx3 mtrx3FromEuler(float yaw, float pitch, float roll) {
+	float cosy, siny, cosp, sinp, cosr, sinr;
+	mtrx3 rt;
 
-	for (i = 0; i < mrange; i++) {
-		for (j = 0; j < mrange; j++) {
-			rt[idRw(i, j, mrange)] = m[idRw(i, j, mrange)];
-		}
-	}
+	cosy = cosf(degToRad(yaw));
+	siny = sinf(degToRad(yaw));
+	cosp = cosf(degToRad(pitch));
+	sinp = sinf(degToRad(pitch));
+	cosr = cosf(degToRad(roll));
+	sinr = sinf(degToRad(roll));
+	
+	rt[0]  = cosy*cosr - siny*cosp*sinr;
+	rt[1]  = -cosy*sinr - siny*cosp*cosr;
+	rt[2]  = siny * sinp;
+
+	rt[3]  = siny*cosr + cosy*cosp*sinr;
+	rt[4]  = -siny*sinr + cosy*cosp*cosr;
+	rt[5]  = -cosy * sinp;
+
+	rt[6]  = sinp * sinr;
+	rt[7]  = sinp * cosr;
+	rt[8]  = cosp;
 
 	return rt;
 }
 
-mtrx3 mtrx3SetFloat(float a00, float a01, float a02,
-	                    float a10, float a11, float a12,
-	                    float a20, float a21, float a22) {
-    mtrx3 rt;
+mtrx3 mtrx3FromAxisAngl(const vec3 &ax, float phi) {
+	float cosphi, sinphi, vxvy, vxvz, vyvz, vx, vy, vz;
+	mtrx3 rt;
 
-	rt[0] = a00;
-	rt[1] = a01;
-	rt[2] = a02;
+	cosphi = cosf(degToRad(phi));
+	sinphi = sinf(degToRad(phi));
+	vxvy = ax[_XC] * ax[_YC];
+	vxvz = ax[_XC] * ax[_ZC];
+	vyvz = ax[_YC] * ax[_ZC];
+	vx = ax[_XC];
+	vy = ax[_YC];
+	vz = ax[_ZC];
 
-	rt[3] = a10;
-	rt[4] = a11;
-	rt[5] = a12;
+	rt[0]  = cosphi + (1.0-cosphi)*vx*vx;
+	rt[1]  = (1.0-cosphi)*vxvy - sinphi*vz;
+	rt[2]  = (1.0-cosphi)*vxvz + sinphi*vy;
 
-	rt[6] = a20;
-	rt[7] = a21;
-	rt[8] = a22;
+	rt[3]  = (1.0-cosphi)*vxvy + sinphi*vz;
+	rt[4]  = cosphi + (1.0-cosphi)*vy*vy;
+	rt[5]  = (1.0-cosphi)*vyvz - sinphi*vx;
+
+	rt[6]  = (1.0-cosphi)*vxvz - sinphi*vy;
+	rt[7]  = (1.0-cosphi)*vyvz + sinphi*vx;
+	rt[8]  = cosphi + (1.0-cosphi)*vz*vz;
 
 	return rt;
+}
+
+mtrx3 mtrx3FromOffset(const vec2 &src) {
+	mtrx3 rt;
+
+	rt[2]  = src[0];
+    rt[5]  = src[1];
+    rt[8]  = 1.0f;
+
+	return rt;
+}
+
+mtrx3 mtrx3FromScale(const vec2 &src) {
+	mtrx3 rt;
+
+	rt[0]  = src[0];
+    rt[4]  = src[1];
+    rt[8]  = 1.0f;
+
+	return rt;
+}
+
+mtrx3 mtrx3FromQtnn(const qtnn &src) {
+	mtrx3 rt;
+	float wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2;
+
+    x2 = src[0] + src[0];
+    y2 = src[1] + src[1];
+    z2 = src[2] + src[2];
+    xx = src[0] * x2;   xy = src[0] * y2;   xz = src[0] * z2;
+    yy = src[1] * y2;   yz = src[1] * z2;   zz = src[2] * z2;
+    wx = src[3] * x2;   wy = src[3] * y2;   wz = src[3] * z2;
+
+    rt[0]=1.0-(yy+zz);  rt[1]=xy-wz;        rt[ 2]=xz+wy;       
+    rt[3]=xy+wz;        rt[4]=1.0-(xx+zz);  rt[ 5]=yz-wx;       
+    rt[6]=xz-wy;        rt[7]=yz+wx;        rt[ 8]=1.0-(xx+yy); 
+
+    return rt;
 }
 
 mtrx3 mtrx3SetYaw(float angl) {
@@ -161,8 +184,6 @@ float mtrx3Det(mtrx3 m) {
 }
 
 float mtrx3_det_lu(mtrx3 m) {
-	constexpr int mrange = 3;
-	int		i;         
 	mtrx3 l, u;
 	tuple<mtrx3, mtrx3> lu;
 	float 	l_det, u_det;
@@ -172,7 +193,7 @@ float mtrx3_det_lu(mtrx3 m) {
 	l_det = get<0>(lu)[0];
 	u_det = get<1>(lu)[0];
 
-	for (i = 1; i < mrange; i++) {
+	for (size_t i = 1; i < mrange; i++) {
 		l_det *= l[idRw(i, i, mrange)];
 		u_det *= u[idRw(i, i, mrange)];
 	}
@@ -181,18 +202,13 @@ float mtrx3_det_lu(mtrx3 m) {
 }
 
 mtrx3 mtrx3Mult(mtrx3 a, mtrx3 b) {
-	constexpr int mrange = 3;
-	int i, j, k;
-	float tmp;
-    mtrx3 rt;
+    mtrx3 rt = {0.0f};
 
-	for (i = 0; i < mrange; i++) {
-		for (j = 0; j < mrange; j++) {
-			tmp = 0.0;
-			for (k = 0; k < mrange; k++) {
-				tmp = tmp + a[idRw(k, j, mrange)]*b[idRw(i, k, mrange)];
+	for (size_t i = 0; i < mrange; i++) {
+		for (size_t j = 0; j < mrange; j++) {
+			for (size_t k = 0; k < mrange; k++) {
+				rt[idRw(i, j, mrange)] += a[idRw(k, j, mrange)]*b[idRw(i, k, mrange)];
 			}
-			rt[idRw(i, j, mrange)] = tmp;
 		}
 	}
 
@@ -200,17 +216,12 @@ mtrx3 mtrx3Mult(mtrx3 a, mtrx3 b) {
 }
 
 vec3 mtrx3MultVec(mtrx3 m, vec3 v) {
-	constexpr int mrange = 3;
-	int		i, j;
-	float	tmp;
 	vec3	rt;
 
-	for (i = 0; i < mrange; i++) {
-		tmp = 0;
-		for (j = 0; j < mrange; j++) {
-			tmp = tmp + m[idRw(i, j, mrange)]*v[j];
+	for (size_t i = 0; i < mrange; i++) {
+		for (size_t  j = 0; j < mrange; j++) {
+			rt[i] += m[idRw(i, j, mrange)]*v[j];
 		}
-		rt[i] = tmp;
 	}
 
 	return rt;
@@ -221,9 +232,8 @@ vec3 mtrx3MultVec(mtrx3 m, vec3 v) {
 */
 
 tuple<mtrx3, mtrx3> mtrx3LU(mtrx3 m) {
-	constexpr int mrange = 3;
 	mtrx3 lm, um; 
-	int i, j, k;
+	size_t i, j, k;
 	float sum;    
 
 	for (i = 0; i < mrange; i++) {
@@ -252,10 +262,9 @@ tuple<mtrx3, mtrx3> mtrx3LU(mtrx3 m) {
 }
 
 tuple<mtrx3, vec3> mtrx3LDLT(mtrx3 m) {
-	constexpr int mrange = 3;
 	mtrx3 lm;
 	vec3 dv;
-	int i, j, k;
+	size_t i, j, k;
 	float sum;   
 
 	for (i = 0; i < mrange; i++) {
@@ -266,7 +275,7 @@ tuple<mtrx3, vec3> mtrx3LDLT(mtrx3 m) {
 				if (i == j) {
 					if (sum <= 0) {
 						std::cout << "mtrx3_ldlt(): matrix is not positive deﬁnite\n";
-						return {mtrx3Idtt(), vec3(0.0f, 0.0f, 0.0f)};
+						return {mtrx3FromIdtt(), vec3(0.0f, 0.0f, 0.0f)};
 					}
 					dv[i] = sum;
 					lm[idRw(i, i, mrange)] = 1.0;
@@ -280,16 +289,14 @@ tuple<mtrx3, vec3> mtrx3LDLT(mtrx3 m) {
 	return {lm, dv};
 }
 
-mtrx3 mtrx3Transpose(mtrx3 m) {
-	constexpr int mrange = 3;
-	int i, j;
+mtrx3 mtrx3GetTranspose(mtrx3 m) {
 	float tmp;
 	mtrx3 rt;
 
 	rt = m;
 
-	for (i = 0; i < mrange; i++) {
-		for (j = 0; j < i; j++) {
+	for (size_t i = 0; i < mrange; i++) {
+		for (size_t j = 0; j < i; j++) {
 			tmp = rt[idRw(i, i, mrange)];
 			rt[idRw(i, j, mrange)] = rt[idRw(j, i, mrange)];
 			rt[idRw(j, i, mrange)] = tmp;
@@ -299,7 +306,7 @@ mtrx3 mtrx3Transpose(mtrx3 m) {
 	return rt;
 }
 
-mtrx3 mtrx3Invert(mtrx3 m) {
+mtrx3 mtrx3GetInvert(mtrx3 m) {
 	mtrx3 inverse, rt;
 	float det, invDet;
 
@@ -340,8 +347,7 @@ mtrx3 mtrx3Invert(mtrx3 m) {
 }
 
 vec3 mtrx3SolveGauss(mtrx3 m, vec3 v) {
-	constexpr int mrange = 3;
-	int i, j, k;
+	size_t i, j, k;
 	float a[mrange][mrange + 1], t;
 	vec3 rt;
 
@@ -387,8 +393,7 @@ vec3 mtrx3SolveGauss(mtrx3 m, vec3 v) {
 }
 
 mtrx3 mtrx3InsertCmn(mtrx3 m, vec3 v, int cmn) {
-	constexpr int mrange = 3;
-	int i, j= 0;
+	size_t i, j = 0;
 	mtrx3 rt;
 
 	rt = m;
@@ -402,8 +407,6 @@ mtrx3 mtrx3InsertCmn(mtrx3 m, vec3 v, int cmn) {
 }
 
 vec3 mtrx3SolveKramer(mtrx3 m, vec3 v) {
-	constexpr int mrange = 3;
-	int i;
 	float det;
 	mtrx3 kr_mtrx;
 	vec3 rt;
@@ -415,7 +418,7 @@ vec3 mtrx3SolveKramer(mtrx3 m, vec3 v) {
 		return vec3(0.0, 0.0, 0.0);
 	}
 
-	for (i = 0; i < mrange; i++) {
+	for (size_t i = 0; i < mrange; i++) {
 		kr_mtrx = mtrx3InsertCmn(m, v, i);
 		rt[i] = mtrx3Det(kr_mtrx) / det;
 	}

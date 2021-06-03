@@ -3,8 +3,9 @@
 
 #include <cmath>
 #include <tuple>
+#include <array>
 
-#include "algebra2.h"
+#include "common.h"
 #include "vec2.h"
 #include "vec3.h"
 
@@ -39,17 +40,20 @@ class mtrx2 {
 			data{m[0], m[1],
 				 m[2], m[3]} {};
 		
-		mtrx2(float phi);
+		mtrx2(float arg) {
+			for (auto &elem: data){
+				elem = arg;
+			}
+		};
 		
 		~mtrx2() {};
 	
 	private:
-		float data[4];
+		std::array<float, 4> data;
 };
 
-mtrx2 mtrx2Idtt();
-mtrx2 mtrx2Set(float m[4]);
-mtrx2 mtrx2SetFloat(float a00, float a01, float a10, float a11);
+mtrx2 mtrx2FromIdtt();
+
 mtrx2 mtrx2Rtn(float phi);
 float 	mtrx2Det(mtrx2 m); 
 float   mtrx2DetLU(mtrx2 m);

@@ -51,7 +51,7 @@ class Body {
     public:
         enum {BOX, PRISM, ICOSAHEDRON};
 
-        Body(int type, vec3 offst, vec3 orn);
+        Body(int type, vec3 offst, vec3 orn, vec3 scl);
 
         ~Body();
 
@@ -71,7 +71,7 @@ class Body {
 
         vec3 BodyOrientation;
         vec3 BodyOffset;
-        vec3 bodyScale;
+        vec3 BodyScale;
 };
 
 void draw_decart(float scale);
