@@ -2,6 +2,7 @@
 #include <iostream>
 #include <tuple>
 #include <cmath>
+#include <array>
 
 #include "mtrx2.h"
 
@@ -205,7 +206,9 @@ mtrx2 mtrx2Invert(mtrx2 m) {
 
 vec2 mtrx2SolveGauss(mtrx2 m, vec2 v) {
 	size_t i, j, k;
-	float a[mrange][mrange + 1], t;
+	// float a[mrange][mrange + 1];
+	float t;
+	std::array<std::array<float, mrange+1>, mrange> a;
 	vec2 rt;
 
 	for (i = 0; i < mrange; i++) { //было ++i
@@ -239,7 +242,7 @@ vec2 mtrx2SolveGauss(mtrx2 m, vec2 v) {
 	}
 
 	/* обратный ход */
-	for (i = mrange - 1; i >= 0; i--) {
+	for (i = mrange - 1; i > 0; i--) {
 		rt[i] = a[i][mrange] / a[i][i];
 		for (j = mrange - 1; j > i; j--) {
 			rt[i] = rt[i] - a[i][j]*rt[j]/a[i][i];

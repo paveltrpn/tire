@@ -151,7 +151,7 @@ mtrx4 mtrx4fromQtnn(const qtnn &src) {
 
 mtrx4 mtrx4FromPerspective(float fovy, float aspect, float near, float far) {
 	mtrx4 rt;
-    float f = 1.0f / tanf(fovy / 1.41421356237309504880f); //constant = sqrt(2.0f)
+    float f = 1.0f / tanf(fovy / std::numbers::sqrt2_v<float>);
     float nf;
 	
     rt[0] = f / aspect;
@@ -316,7 +316,9 @@ mtrx4 mtrx4GetTranspose(const mtrx4 &m) {
 
 vec4 mtrx4SolveGauss(const mtrx4 &m, const vec4 &v) {
 	size_t i, j, k;
-	float a[mrange][mrange + 1], t;
+	// float a[mrange][mrange + 1];
+	float t;
+	std::array<std::array<float, mrange+1>, mrange> a;
     vec4 rt;
 
 	for (i = 0; i < mrange; i++) { //было ++i
@@ -350,7 +352,7 @@ vec4 mtrx4SolveGauss(const mtrx4 &m, const vec4 &v) {
 	}
 
 	/* обратный ход */
-	for (i = mrange - 1; i >= 0; i--) {
+	for (i = mrange - 1; i > 0; i--) {
 		rt[i] = a[i][mrange] / a[i][i];
 		for (j = mrange - 1; j > i; j--) {
 			rt[i] = rt[i] - a[i][j]*rt[j]/a[i][i];

@@ -348,7 +348,9 @@ mtrx3 mtrx3GetInvert(mtrx3 m) {
 
 vec3 mtrx3SolveGauss(mtrx3 m, vec3 v) {
 	size_t i, j, k;
-	float a[mrange][mrange + 1], t;
+	// float a[mrange][mrange + 1];
+	float t;
+	std::array<std::array<float, mrange+1>, mrange> a;
 	vec3 rt;
 
 	for (i = 0; i < mrange; i++) { //было ++i
@@ -382,7 +384,7 @@ vec3 mtrx3SolveGauss(mtrx3 m, vec3 v) {
 	}
 
 	/* обратный ход */
-	for (i = mrange - 1; i >= 0; i--) {
+	for (i = mrange - 1; i > 0; i--) {
 		rt[i] = a[i][mrange] / a[i][i];
 		for (j = mrange - 1; j > i; j--) {
 			rt[i] = rt[i] - a[i][j]*rt[j]/a[i][i];

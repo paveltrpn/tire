@@ -4,15 +4,12 @@ LIBDIR	 := E:/devtools/usr/local/lib
 CFLAGS   = -Wall -Wextra -Wpedantic -Wno-unused-parameter -std=c++20 -O2
 LFLAGS 	 = -lstdc++ -lopengl32 -lglu32 -lglfw3 -lgdi32 -lglew32 -ltga -llibjpeg -lfmt
 
-SOURCE_PREFIX = src ../algebra ../img ../timer
+SOURCE_PREFIX = src ../algebra ../img
 BUILD_PREFIX = build
 
 VPATH := $(SOURCE_PREFIX)
 
-SRCS := main.cpp \
-		mainApp.cpp \
-		mesh.cpp \
-		mtrx2.cpp \
+SRCS := mtrx2.cpp \
 		mtrx3.cpp \
 		mtrx4.cpp \
 		vec2.cpp \
@@ -20,8 +17,8 @@ SRCS := main.cpp \
 		vec4.cpp \
 		qtnn.cpp \
 		plane.cpp \
-		bitmap.cpp \
-		bitmap_text.cpp \
+		main.cpp \
+		mesh.cpp \
 		camera.cpp
 
 OBJS := $(patsubst %.cpp,$(BUILD_PREFIX)/%.o,$(SRCS))
@@ -31,15 +28,6 @@ OBJS := $(patsubst %.cpp,$(BUILD_PREFIX)/%.o,$(SRCS))
 .PHONY: clean all
 
 all: $(OBJS) main
-
-$(BUILD_PREFIX)/main.o: main.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
-
-$(BUILD_PREFIX)/mainApp.o: mainApp.cpp mainApp.h
-	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
-
-$(BUILD_PREFIX)/mesh.o: mesh.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
 $(BUILD_PREFIX)/mtrx2.o: mtrx2.cpp
 	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
@@ -65,10 +53,10 @@ $(BUILD_PREFIX)/qtnn.o: qtnn.cpp
 $(BUILD_PREFIX)/plane.o: plane.cpp
 	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
-$(BUILD_PREFIX)/bitmap.o: bitmap.cpp
+$(BUILD_PREFIX)/main.o: main.cpp
 	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
-$(BUILD_PREFIX)/bitmap_text.o: bitmap_text.cpp
+$(BUILD_PREFIX)/mesh.o: mesh.cpp
 	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
 $(BUILD_PREFIX)/camera.o: camera.cpp
