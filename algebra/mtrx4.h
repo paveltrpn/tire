@@ -226,6 +226,7 @@ mtrx4 mtrx4FromOffset(const vec3 &src);
 mtrx4 mtrx4FromScale(const vec3 &src);
 mtrx4 mtrx4FromQtnn(const qtnn &src);
 mtrx4 mtrx4FromPerspective(float fovy, float aspect, float near, float far);
+mtrx4 mtrx4FromOrthographic(float left, float right, float bottom, float top, float near, float far);
 
 float mtrx4DetLU(const mtrx4 &m);
 mtrx4 mtrx4Mult(const mtrx4 &a, const mtrx4 &b);

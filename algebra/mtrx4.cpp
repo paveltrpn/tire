@@ -181,6 +181,33 @@ mtrx4 mtrx4FromPerspective(float fovy, float aspect, float near, float far) {
 	return rt;
 };
 
+mtrx4 mtrx4FromOrthographic(float left, float right, float bottom, float top, float near, float far) { 
+	mtrx4 rt;
+
+    rt[0] = 2.0f / (right - left); 
+    rt[1] = 0; 
+    rt[2] = 0; 
+    rt[3] = 0; 
+ 
+    rt[4] = 0; 
+    rt[5] = 2.0f / (top - bottom); 
+    rt[6] = 0; 
+    rt[7] = 0; 
+ 
+    rt[8] = 0; 
+    rt[9] = 0; 
+    rt[10] = -2.0f / (far - near); 
+    rt[11] = 0; 
+ 
+    rt[12] = -(right + left) / (right - left); 
+    rt[13] = -(top + bottom) / (top - bottom); 
+    rt[14] = -(far + near)   / (far - near); 
+    rt[15] = 1.0f; 
+
+	return rt;
+} 
+
+
 float mtrx4DetLU(const mtrx4 &m) {
 	mtrx4 l, u;
 	tuple<mtrx4, mtrx4> lu;
@@ -227,11 +254,27 @@ vec4 mtrx4MultVec(const mtrx4 &m, const vec4 &v) {
 
 vec3 mtrx4MultVec3(const mtrx4 &m, const vec3 &v) {
 	vec3 rt;
-	vec4 tmp, mv = {v[0], v[1], v[2], 1.0f};
+	float w;
 
-	tmp = mtrx4MultVec(m, mv);
-	
-	return vec3(tmp[0], tmp[1], tmp[2]);
+	// vec4 tmp, mv = {v[0], v[1], v[2], 1.0f};
+
+	// tmp = mtrx4MultVec(m, mv);
+	// 
+	// return vec3(tmp[0], tmp[1], tmp[2]);
+
+	rt[0]   = v[0] * m[0]  + v[1] * m[1]  + v[2] * m[2]  + m[3]; 
+    rt[1]   = v[0] * m[4]  + v[1] * m[5]  + v[2] * m[6]  + m[7]; 
+    rt[2]   = v[0] * m[8]  + v[1] * m[9]  + v[2] * m[10] + m[11]; 
+    w 		= v[0] * m[12] + v[1] * m[13] + v[2] * m[14] + m[15]; 
+ 
+    // normalize if w is different than 1 (convert from homogeneous to Cartesian coordinates)
+    if (w != 1.0f) { 
+        rt[0] /= w; 
+        rt[1] /= w; 
+        rt[2] /= w; 
+    }
+
+	return rt;
 }
 
 /*

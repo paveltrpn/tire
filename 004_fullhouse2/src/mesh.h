@@ -9,6 +9,7 @@
 
 #include <GL/gl.h>
 
+#include "tiny_gltf.h"
 #include "vec3.h"
 #include "mtrx3.h"
 #include "mtrx4.h"
@@ -20,6 +21,7 @@ class BasicBody {
     public:
         enum {BOX, PRISM, ICOSAHEDRON};
 
+        BasicBody() {};
         BasicBody(int type, vec3 offst, vec3 orn, vec3 scl);
 
         ~BasicBody();
