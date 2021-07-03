@@ -21,7 +21,8 @@ SRCS := mtrx2.cpp \
 		apputils.cpp \
 		mesh.cpp \
 		camera.cpp \
-		timing.cpp
+		timing.cpp \
+		screen_text.cpp
 
 OBJS := $(patsubst %.cpp,$(BUILD_PREFIX)/%.o,$(SRCS))
 
@@ -68,6 +69,9 @@ $(BUILD_PREFIX)/camera.o: camera.cpp
 	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
 $(BUILD_PREFIX)/timing.o: timing.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
+
+$(BUILD_PREFIX)/screen_text.o: screen_text.cpp
 	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
 main: $(OBJS)

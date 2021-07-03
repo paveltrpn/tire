@@ -1,40 +1,44 @@
 
 #include "camera.h"
 
-void Camera::updateRotation() {
-    cmrViewMatrix = cmrViewMatrix * cmrRotateMatrix;
+void CPerspCamera::setCameraAngles(float yaw, float pitch, float roll) {
+    cmrYaw      = yaw;
+    cmrPitch    = pitch;
+    cmrRoll     = roll;
 }
 
-void Camera::updatePosition() {
-    cmrViewMatrix = cmrViewMatrix * cmrOffsetMatrix;
-}
-
-void Camera::setCameraPosition(const vec3 &pos) {
+void CPerspCamera::setCameraPosition(const vec3 &pos) {
     cmrPosition = pos;
-
-    cmrOffsetMatrix = mtrx4FromOffset(cmrPosition);
-    cmrOffsetMatrix.transposeSelf();
 }
 
-void Camera::setCameraAngles(float yaw, float pitch, float roll) {
-    cmrYaw = yaw;
-    cmrPitch = pitch;
-    cmrRoll = roll;
-
-    cmrRotateMatrix = mtrx4FromEuler(cmrYaw, cmrPitch, cmrRoll);
+void CPerspCamera::moveCamera(const vec3 &offset) {
+    cmrPosition = vec3Sum(cmrPosition, offset); 
 }
 
-float* Camera::getCmrMatrixPointer() {
+void CPerspCamera::rotateCamera(float yaw, float pitch, float roll) {
+    cmrYaw      += yaw;
+    cmrPitch    += pitch;
+    cmrRoll     += roll;
+}
+
+float* CPerspCamera::getCmrMatrixPointer() {
     return cmrViewMatrix.getData();
 }
 
-void CameraPersp::setViewParameters(float fov, float aspect, float near, float far) {
+void CPerspCamera::setViewParameters(float fov, float aspect, float near, float far) {
     cmrFov = fov;
     cmrAspect = aspect;
     cmrNear = near;
     cmrFar = far;
 }
 
-void CameraPersp::updateViewMatrix() {
-    cmrViewMatrix = mtrx4FromPerspective(cmrFov, cmrAspect, cmrNear, cmrFar);
+void CPerspCamera::updateViewMatrix() {
+    mtrx4 defaultViewMatrix = mtrx4FromPerspective(cmrFov, cmrAspect, cmrNear, cmrFar);
+    
+    mtrx4 offsetMatrix = mtrx4FromOffset(cmrPosition);
+    offsetMatrix.transposeSelf();
+
+    mtrx4 orientationMatrix = mtrx4FromEuler(cmrYaw, cmrPitch, cmrRoll);
+
+    cmrViewMatrix = defaultViewMatrix  * orientationMatrix * offsetMatrix;
 }
