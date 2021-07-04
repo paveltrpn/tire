@@ -53,10 +53,10 @@ void CPerspLookAtCamera::calculateMoveVectors() {
     vec3 eyeDir = vec3Sub(cmrEye, cmrTarget);
     
     cmrLeftVec = vec3Cross(cmrUp, eyeDir);
-    cmrLeftVec.normalize();
+    cmrLeftVec.normalizeSelf();
 
     cmrForwardVec = vec3Cross(cmrUp, cmrLeftVec);
-    cmrForwardVec.normalize();
+    cmrForwardVec.normalizeSelf();
 }
 
 void CPerspLookAtCamera::setViewParameters(float fov, float aspect, float near, float far) {

@@ -29,23 +29,23 @@ class vec3 {
 			data{x, y, z} {};
 		
 		vec3(const vec3 &v): 
-			data{v[_XC], v[_YC], v[_ZC]} {};
+			data{v[0], v[1], v[2]} {};
 
 		~vec3() {};
 	
 		float length() {
-			return sqrtf(data[_XC]*data[_XC] +
-				 		 data[_YC]*data[_YC] +
-				 		 data[_ZC]*data[_ZC]);
+			return sqrtf(data[0]*data[0] +
+				 		 data[1]*data[1] +
+				 		 data[2]*data[2]);
 		};
 
-		void normalize() {
+		void normalizeSelf() {
 			float len = length();
 
 			if (len > f_eps) {
-				data[_ZC] = data[_ZC] / len;
-				data[_XC] = data[_XC] / len;
-				data[_YC] = data[_YC] / len;
+				data[2] = data[2] / len;
+				data[0] = data[0] / len;
+				data[1] = data[1] / len;
 			}
 		}
 

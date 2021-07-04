@@ -125,12 +125,12 @@ mtrx4 mtrx4FromAxisAngl(const vec3 &ax, float phi) {
 
 	cosphi = cosf(degToRad(phi));
 	sinphi = sinf(degToRad(phi));
-	vxvy = ax[_XC] * ax[_YC];
-	vxvz = ax[_XC] * ax[_ZC];
-	vyvz = ax[_YC] * ax[_ZC];
-	vx = ax[_XC];
-	vy = ax[_YC];
-	vz = ax[_ZC];
+	vxvy = ax[0] * ax[1];
+	vxvz = ax[0] * ax[2];
+	vyvz = ax[1] * ax[2];
+	vx = ax[0];
+	vy = ax[1];
+	vz = ax[2];
 
 	rt[0]  = cosphi + (1.0-cosphi)*vx*vx;
 	rt[1]  = (1.0-cosphi)*vxvy - sinphi*vz;
@@ -228,35 +228,26 @@ mtrx4 mtrx4FromPerspective(float fovy, float aspect, float near, float far) {
 };
 
 mtrx4 mtrx4FromLookAt(vec3 eye, vec3 center, vec3 up) {
-	float eyex = eye[0];
-	float eyey = eye[1];
-	float eyez = eye[2];
-	float upx = up[0];
-	float upy = up[1];
-	float upz = up[2];
-	float centerx = center[0];
-	float centery = center[1];
-	float centerz = center[2];
 	mtrx4 out = mtrx4FromIdtt();
+	vec3 eyeDir;
 
 	constexpr float floatEps = std::numeric_limits<float>::epsilon();
-
-	if (std::fabs(eyex-centerx) < floatEps && std::fabs(eyey-centery) < floatEps && std::fabs(eyez-centerz) < floatEps) {
+	if (std::fabs(eye[0]-center[0]) < floatEps && std::fabs(eye[1]-center[1]) < floatEps && std::fabs(eye[2]-center[2]) < floatEps) {
 		return out;
 	}
 
-	float z0 = eyex - centerx;
-	float z1 = eyey - centery;
-	float z2 = eyez - centerz;
+	float z0 = eye[0] - center[0];
+	float z1 = eye[1] - center[1];
+	float z2 = eye[2] - center[2];
 
 	float len = 1.0f / std::hypot(z0, z1, z2); //??? было просто hypot
 	z0 *= len;
 	z1 *= len;
 	z2 *= len;
 
-	float x0 = upy*z2 - upz*z1;
-	float x1 = upz*z0 - upx*z2;
-	float x2 = upx*z1 - upy*z0;
+	float x0 = up[1]*z2 - up[2]*z1;
+	float x1 = up[2]*z0 - up[0]*z2;
+	float x2 = up[0]*z1 - up[1]*z0;
 	len = std::hypot(x0, x1, x2);
 	if (len == 0.0f) {
 		x0 = 0;
@@ -297,9 +288,9 @@ mtrx4 mtrx4FromLookAt(vec3 eye, vec3 center, vec3 up) {
 	out[9] = y2;
 	out[10] = z2;
 	out[11] = 0.0f;
-	out[12] = -(x0*eyex + x1*eyey + x2*eyez);
-	out[13] = -(y0*eyex + y1*eyey + y2*eyez);
-	out[14] = -(z0*eyex + z1*eyey + z2*eyez);
+	out[12] = -(x0*eye[0] + x1*eye[1] + x2*eye[2]);
+	out[13] = -(y0*eye[0] + y1*eye[1] + y2*eye[2]);
+	out[14] = -(z0*eye[0] + z1*eye[1] + z2*eye[2]);
 	out[15] = 1.0f;
 
 	return out;

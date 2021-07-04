@@ -4,19 +4,19 @@
 
 #include "vec2.h"
 
-float vec2_lenght(const vec2 &v) {
+float vec2Lenght(const vec2 &v) {
 	return sqrt(vec2Dot(v,v));
 }
 
-vec2 vec2_normalize(const vec2 &v) {
+vec2 vec2Normalize(const vec2 &v) {
 	vec2 rt;
 	float len;
 	
-	len = vec2_lenght(v);
+	len = vec2Lenght(v);
 
 	if (len != 0.0f) {
-		rt[_XC] = v[_XC] / len;
-		rt[_YC] = v[_YC] / len;
+		rt[0] = v[0] / len;
+		rt[1] = v[1] / len;
 	}
 
 	return rt;

@@ -27,10 +27,10 @@ vec4 vec4Set(float x, float y, float z, float w) {
 }
 
 float vec4Lenght(vec4 &v) {
-	return sqrtf(v[_XC]*v[_XC] +
-		v[_YC]*v[_YC] +
-		v[_ZC]*v[_ZC] +
-		v[_WC]*v[_WC]);
+	return sqrtf(v[0]*v[0] +
+		v[1]*v[1] +
+		v[2]*v[2] +
+		v[3]*v[3]);
 }
 
 vec4 vec4Normalize(vec4 &v) {
@@ -40,10 +40,10 @@ vec4 vec4Normalize(vec4 &v) {
 	len = vec4Lenght(v);
 
 	if (len != 0.0f) {
-		rt[_XC] = v[_XC] / len;
-		rt[_YC] = v[_YC] / len;
-		rt[_ZC] = v[_ZC] / len;
-		rt[_WC] = v[_WC] / len;
+		rt[0] = v[0] / len;
+		rt[1] = v[1] / len;
+		rt[2] = v[2] / len;
+		rt[3] = v[3] / len;
 	}
 
 	return rt;
@@ -63,10 +63,10 @@ vec4 vec4Scale(vec4 &v, float scale) {
 vec4 vec4Invert(vec4 &v) {
     vec4 rt;
 
-	rt[_XC] = -v[_XC];
-	rt[_YC] = -v[_YC];
-	rt[_ZC] = -v[_ZC];
-	rt[_WC] = -v[_WC];
+	rt[0] = -v[0];
+	rt[1] = -v[1];
+	rt[2] = -v[2];
+	rt[3] = -v[3];
 
 	return rt;
 }

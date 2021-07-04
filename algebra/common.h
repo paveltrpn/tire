@@ -3,9 +3,7 @@
 #include <cmath>
 #include <cstdint>
 #include <tuple>
-
-enum {_XC, _YC, _ZC, _WC};
-enum mtrx_type {MTRX_IDTT, MTRX_ZERO};
+#include <numbers>
 
 #define M_PI 3.14159265358979323846
 

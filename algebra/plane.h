@@ -20,10 +20,10 @@ class plane_t {
 		};
 
 		plane_t &operator=(const plane_t &p) {
-			data[_XC] = p[_XC];
-			data[_YC] = p[_YC];
-			data[_ZC] = p[_ZC];
-			data[_WC] = p[_WC];
+			data[0] = p[0];
+			data[1] = p[1];
+			data[2] = p[2];
+			data[3] = p[3];
 
 			return (*this);
 		};

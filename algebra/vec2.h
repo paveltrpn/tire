@@ -17,8 +17,8 @@ class vec2 {
 		};
 
 		vec2 &operator=(const vec2 &v) {
-			data[_XC] = v[_XC];
-			data[_YC] = v[_YC];
+			data[0] = v[0];
+			data[1] = v[1];
 
 			return (*this);
 		};
@@ -30,7 +30,7 @@ class vec2 {
 			data{x, y} {};
 		
 		vec2(const vec2 &v): 
-			data{v[_XC], v[_YC]} {};
+			data{v[0], v[1]} {};
 
 		~vec2() {};
 	

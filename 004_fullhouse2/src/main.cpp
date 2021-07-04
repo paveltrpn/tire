@@ -3,6 +3,7 @@
 #include <string>
 #include <fmt/format.h>
 #include <thread>
+#include <array>
 
 #include <GL/glew.h>
 #include <GL/glu.h>
@@ -69,8 +70,9 @@ void windowInit() {
 	    exit(1);
 	};
 
-	// Выключаем вертикальную синхронизацию (VSYNC)
-	// glfwSwapInterval(0);
+	// ВКЛ-ВЫКЛ вертикальную синхронизацию (VSYNC)
+	// Лок на 60 фпс
+	glfwSwapInterval(true);
 	
 	oglRenderString = glGetString(GL_RENDERER);
 	oglVersionString = glGetString(GL_VERSION);
@@ -138,20 +140,23 @@ void appSetup() {
 	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 	glEnable(GL_COLOR_MATERIAL);
 
-	vec4 ambient = vec4{0.0f, 0.0f, 0.0f, 1.0f};
-	vec4 diffuse = vec4{1.0f, 1.0f, 1.0f, 1.0f};
-	vec4 lightPosition = vec4{3.0f, 10.0f, 5.0f, 1.0f};
+	std::vector<vec4> ambient =			{{0.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 0.0f, 1.0f}};
+	std::vector<vec4> diffuse =			{{1.0f, 1.0f, 1.0f, 1.0f}, {0.3f, 0.3f, 0.3f, 1.0f}};
+	std::vector<vec4> lightPosition =	{{5.0f, 10.0f, 5.0f, 1.0f}, {-35.0f, -5.0f, -20.0f, 1.0f}};
 	glEnable(GL_LIGHTING); 
 	glShadeModel(GL_SMOOTH);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, &ambient[0]);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, &diffuse[0]);
-	glLightfv(GL_LIGHT0, GL_POSITION, &lightPosition[0]);
-	glEnable(GL_LIGHT0);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, &ambient[0][0]);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, &diffuse[0][0]);
+	glLightfv(GL_LIGHT0, GL_POSITION, &lightPosition[0][0]);
+
+	glLightfv(GL_LIGHT1, GL_AMBIENT, &ambient[1][0]);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, &diffuse[1][0]);
+	glLightfv(GL_LIGHT1, GL_POSITION, &lightPosition[1][0]);
 
 	g_Timer = CTime();
 
 	//g_Camera = CPerspLookAtCamera();
-	g_Camera.setLookPoints({0.0f, 5.0f, 25.0f}, {0.0f, 0.0f, 0.0f});
+	g_Camera.setLookPoints({0.0f, 12.0f, 20.0f}, {0.0f, 0.0f, 0.0f});
 	g_Camera.updateViewMatrix();
 
 	g_textCamera.setCameraPosition({0.0f, 0.0f, -20.0f});
@@ -159,8 +164,10 @@ void appSetup() {
 
 	g_screenText.loadFont("assets/RobotoMono-2048-1024-64-128.jpg");
 
-	g_BodyList.push_back(BasicBody(BasicBody::PRISM, vec3( 0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(3.0f, 3.0f, 3.0f)));
-	g_BodyList.push_back(BasicBody(BasicBody::BOX, vec3( 0.0f, -3.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(8.0f, 0.1f, 8.0f)));
+	g_BodyList.push_back(BasicBody(BasicBody::PRISM, 		{ 2.0f, 0.0f, 3.2f}, {0.0f, 0.0f, 0.0f}, {3.0f, 3.0f, 3.0f}));
+	g_BodyList.push_back(BasicBody(BasicBody::ICOSAHEDRON,	{ 2.0f, 0.0f,-3.2f}, {0.0f, 0.0f, 0.0f}, {3.0f, 3.0f, 3.0f}));
+	g_BodyList.push_back(BasicBody(BasicBody::BOX,			{-3.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {2.0f, 2.0f, 2.0f}));
+	g_BodyList.push_back(BasicBody(BasicBody::BOX,			{ 0.0f,-2.7f, 0.0f}, {0.0f, 0.0f, 0.0f}, {10.0f, 0.2f, 10.0f}));
 }
 
 void appLoop() {
@@ -174,11 +181,11 @@ void appLoop() {
 		frameCount++;
 
 		if (g_curPositionX < 50) {
-			g_Camera.rotateEyeUp(30.0f);
+			g_Camera.rotateEyeUp(-40.0f);
 		}
 
 		if (g_curPositionX > 950) {
-			g_Camera.rotateEyeUp(-30.0f);
+			g_Camera.rotateEyeUp(40.0f);
 		}
 
 		if (g_curPositionY < 50) {
@@ -197,6 +204,7 @@ void appLoop() {
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
 
 		glMatrixMode(GL_PROJECTION);
 		g_Camera.updateViewMatrix();
@@ -206,7 +214,9 @@ void appLoop() {
 		glLoadIdentity();
 
 		glDisable(GL_TEXTURE_2D);
-		glEnable(GL_LIGHTING); 
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+		glEnable(GL_LIGHT1);
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		for (auto &bdy: g_BodyList) {

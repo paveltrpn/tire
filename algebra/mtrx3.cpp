@@ -72,12 +72,12 @@ mtrx3 mtrx3FromAxisAngl(const vec3 &ax, float phi) {
 
 	cosphi = cosf(degToRad(phi));
 	sinphi = sinf(degToRad(phi));
-	vxvy = ax[_XC] * ax[_YC];
-	vxvz = ax[_XC] * ax[_ZC];
-	vyvz = ax[_YC] * ax[_ZC];
-	vx = ax[_XC];
-	vy = ax[_YC];
-	vz = ax[_ZC];
+	vxvy = ax[0] * ax[1];
+	vxvz = ax[0] * ax[2];
+	vyvz = ax[1] * ax[2];
+	vx = ax[0];
+	vy = ax[1];
+	vz = ax[2];
 
 	rt[0]  = cosphi + (1.0-cosphi)*vx*vx;
 	rt[1]  = (1.0-cosphi)*vxvy - sinphi*vz;

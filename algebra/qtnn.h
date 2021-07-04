@@ -21,10 +21,10 @@ class qtnn {
 		};
 
 		qtnn &operator=(const qtnn &q) {
-			data[_XC] = q[_XC];
-			data[_YC] = q[_YC];
-			data[_ZC] = q[_ZC];
-			data[_WC] = q[_WC];
+			data[0] = q[0];
+			data[1] = q[1];
+			data[2] = q[2];
+			data[3] = q[3];
 
 			return (*this);
 		};
@@ -36,20 +36,20 @@ class qtnn {
 			data{x, y, z, w} {};
 
 		qtnn(const vec3 &v):
-			data{v[_XC], v[_YC], v[_ZC], 0.0} {};
+			data{v[0], v[1], v[2], 0.0} {};
 		
 		qtnn(const qtnn &q): 
-			data{q[_XC], q[_YC], q[_ZC], q[_WC]} {};
+			data{q[0], q[1], q[2], q[3]} {};
 
 		qtnn(const vec3 &ax, float phi) {
     		float sinhalfphi;
 
 			sinhalfphi = sinf(phi * 0.5f);
 
-			data[_WC] = cosf(phi * 0.5f);
-			data[_XC] = ax[_XC] * sinhalfphi;
-			data[_YC] = ax[_YC] * sinhalfphi;
-			data[_ZC] = ax[_ZC] * sinhalfphi;
+			data[3] = cosf(phi * 0.5f);
+			data[0] = ax[0] * sinhalfphi;
+			data[1] = ax[1] * sinhalfphi;
+			data[2] = ax[2] * sinhalfphi;
 
 		};		
 
@@ -58,10 +58,10 @@ class qtnn {
 		~qtnn () {};
 	
 		float lenght() {
-			return sqrtf(data[_XC]*data[_XC] +
-				 		 data[_YC]*data[_YC] +
-				 		 data[_ZC]*data[_ZC] +
-				 		 data[_WC]*data[_WC]);
+			return sqrtf(data[0]*data[0] +
+				 		 data[1]*data[1] +
+				 		 data[2]*data[2] +
+				 		 data[3]*data[3]);
 		};
 
 		void normalize() {
@@ -71,20 +71,20 @@ class qtnn {
 			len = lenght();
 
 			if (len > f_eps) {
-				rt[_WC] = data[_WC] / len;
-				rt[_XC] = data[_XC] / len;
-				rt[_YC] = data[_YC] / len;
-				rt[_ZC] = data[_ZC] / len;
+				rt[3] = data[3] / len;
+				rt[0] = data[0] / len;
+				rt[1] = data[1] / len;
+				rt[2] = data[2] / len;
 			} else {
 				std::cout << "qtnn::normalize(): quaternion is too short!";
 			}
 		};
 
 		void invert() {
-			data[_WC] =  data[_WC];
-			data[_XC] = -data[_XC];
-			data[_YC] = -data[_YC];
-			data[_ZC] = -data[_ZC];
+			data[3] =  data[3];
+			data[0] = -data[0];
+			data[1] = -data[1];
+			data[2] = -data[2];
 		};
 		
 		void setRotX(float phi) {

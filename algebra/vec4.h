@@ -19,10 +19,10 @@ class vec4 {
 		};
 
 		vec4 &operator=(const vec4 &v) {
-			data[_XC] = v[_XC];
-			data[_YC] = v[_YC];
-			data[_ZC] = v[_ZC];
-			data[_WC] = v[_WC];
+			data[0] = v[0];
+			data[1] = v[1];
+			data[2] = v[2];
+			data[3] = v[3];
 
 			return (*this);
 		};
@@ -34,7 +34,7 @@ class vec4 {
 			data{x, y, z, w} {};
 		
 		vec4(const vec4 &v): 
-			data{v[_XC], v[_YC], v[_ZC], v[_WC]} {};
+			data{v[0], v[1], v[2], v[3]} {};
 
 		~vec4() {};
 	

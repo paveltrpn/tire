@@ -20,19 +20,19 @@ qtnn::qtnn(float yaw, float pitch, float roll) {
 
 			rt = qtnnMult(rt, qroll);
 
-			data[_WC] = rt[_WC]; 
-			data[_XC] = rt[_XC];
-			data[_YC] = rt[_YC];
-			data[_ZC] = rt[_ZC];
+			data[3] = rt[3]; 
+			data[0] = rt[0];
+			data[1] = rt[1];
+			data[2] = rt[2];
 		}
 
 qtnn qtnnScale(const qtnn &q, float scale) {
 	qtnn rt;
 
-	rt[_WC] = q[_WC] * scale;
-	rt[_XC] = q[_XC] * scale;
-	rt[_YC] = q[_YC] * scale;
-	rt[_ZC] = q[_ZC] * scale;
+	rt[3] = q[3] * scale;
+	rt[0] = q[0] * scale;
+	rt[1] = q[1] * scale;
+	rt[2] = q[2] * scale;
 
 	return rt;
 }
@@ -66,10 +66,10 @@ float qtnnDot(const qtnn &a, const qtnn &b) {
 qtnn qtnnMult(const qtnn &a, const qtnn &b) {
 	qtnn rt;
 
-	rt[_WC] = a[_WC]*b[_WC] - a[_XC]*b[_XC] - a[_YC]*b[_YC] - a[_ZC]*b[_ZC];
-	rt[_XC] = a[_WC]*b[_XC] + a[_XC]*b[_WC] + a[_YC]*b[_ZC] - a[_ZC]*b[_YC];
-	rt[_YC] = a[_WC]*b[_YC] - a[_XC]*b[_ZC] + a[_YC]*b[_WC] + a[_ZC]*b[_XC];
-	rt[_ZC] = a[_WC]*b[_ZC] + a[_XC]*b[_YC] - a[_YC]*b[_XC] + a[_ZC]*b[_WC];
+	rt[3] = a[3]*b[3] - a[0]*b[0] - a[1]*b[1] - a[2]*b[2];
+	rt[0] = a[3]*b[0] + a[0]*b[3] + a[1]*b[2] - a[2]*b[1];
+	rt[1] = a[3]*b[1] - a[0]*b[2] + a[1]*b[3] + a[2]*b[0];
+	rt[2] = a[3]*b[2] + a[0]*b[1] - a[1]*b[0] + a[2]*b[3];
 
 	return rt;
 }
