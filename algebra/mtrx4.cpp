@@ -42,28 +42,74 @@ mtrx4 mtrx4FromIdtt() {
 	return rt;
 }
 
+mtrx4 mtrx4FromRtnYaw(float angl) {
+	mtrx4 rt = mtrx4FromIdtt();
+	float sa, ca;
+	
+	sincosf32(degToRad(angl), &sa, &ca);
+
+	rt[5] = ca;
+	rt[6] = -sa;
+	rt[9] = sa;
+	rt[10]= ca;
+
+	return rt;
+}
+
+mtrx4 mtrx4FromRtnPitch(float angl) {
+	mtrx4 rt = mtrx4FromIdtt();
+	float sa, ca;
+	
+	sincosf32(degToRad(angl), &sa, &ca);
+
+	rt[0] = ca;
+	rt[2] = sa;
+	rt[8] = -sa;
+	rt[10]= ca;
+
+	return rt;
+}
+
+mtrx4 mtrx4FromRtnRoll(float angl) {
+	mtrx4 rt = mtrx4FromIdtt();
+	float sa, ca;
+	
+	sincosf32(degToRad(angl), &sa, &ca);
+
+	rt[0] = ca;
+	rt[1] = -sa;
+	rt[4] = sa;
+	rt[5]=  ca;
+
+	return rt;
+}
+
 mtrx4 mtrx4FromEuler(float yaw, float pitch, float roll){
 	float cosy, siny, cosp, sinp, cosr, sinr;
 	mtrx4 rt;
 
-	cosy = cosf(degToRad(yaw));
-	siny = sinf(degToRad(yaw));
-	cosp = cosf(degToRad(pitch));
-	sinp = sinf(degToRad(pitch));
-	cosr = cosf(degToRad(roll));
-	sinr = sinf(degToRad(roll));
+	// cosy = cosf(degToRad(yaw));
+	// siny = sinf(degToRad(yaw));
+	// cosp = cosf(degToRad(pitch));
+	// sinp = sinf(degToRad(pitch));
+	// cosr = cosf(degToRad(roll));
+	// sinr = sinf(degToRad(roll));
+		
+	sincosf32(degToRad(yaw),   &siny, &cosy);
+	sincosf32(degToRad(pitch), &sinp, &cosp);
+	sincosf32(degToRad(roll),  &sinr, &cosr);
 	
-	rt[0]  = cosy*cosr - siny*cosp*sinr;
+	rt[0]  =  cosy*cosr - siny*cosp*sinr;
 	rt[1]  = -cosy*sinr - siny*cosp*cosr;
-	rt[2]  = siny * sinp;
+	rt[2]  =  siny*sinp;
 	rt[3]  = 0.0f;
-	rt[4]  = siny*cosr + cosy*cosp*sinr;
+	rt[4]  =  siny*cosr + cosy*cosp*sinr;
 	rt[5]  = -siny*sinr + cosy*cosp*cosr;
-	rt[6]  = -cosy * sinp;
+	rt[6]  = -cosy*sinp;
 	rt[7]  = 0.0f;
-	rt[8]  = sinp * sinr;
-	rt[9]  = sinp * cosr;
-	rt[10] = cosp;
+	rt[8]  =  sinp*sinr;
+	rt[9]  =  sinp*cosr;
+	rt[10] =  cosp;
 	rt[11] = 0.0f;
 	rt[12] = 0.0f;
 	rt[13] = 0.0f;
@@ -180,6 +226,85 @@ mtrx4 mtrx4FromPerspective(float fovy, float aspect, float near, float far) {
 
 	return rt;
 };
+
+mtrx4 mtrx4FromLookAt(vec3 eye, vec3 center, vec3 up) {
+	float eyex = eye[0];
+	float eyey = eye[1];
+	float eyez = eye[2];
+	float upx = up[0];
+	float upy = up[1];
+	float upz = up[2];
+	float centerx = center[0];
+	float centery = center[1];
+	float centerz = center[2];
+	mtrx4 out = mtrx4FromIdtt();
+
+	constexpr float floatEps = std::numeric_limits<float>::epsilon();
+
+	if (std::fabs(eyex-centerx) < floatEps && std::fabs(eyey-centery) < floatEps && std::fabs(eyez-centerz) < floatEps) {
+		return out;
+	}
+
+	float z0 = eyex - centerx;
+	float z1 = eyey - centery;
+	float z2 = eyez - centerz;
+
+	float len = 1.0f / std::hypot(z0, z1, z2); //??? было просто hypot
+	z0 *= len;
+	z1 *= len;
+	z2 *= len;
+
+	float x0 = upy*z2 - upz*z1;
+	float x1 = upz*z0 - upx*z2;
+	float x2 = upx*z1 - upy*z0;
+	len = std::hypot(x0, x1, x2);
+	if (len == 0.0f) {
+		x0 = 0;
+		x1 = 0;
+		x2 = 0;
+	} else {
+		len = 1.0f / len;
+		x0 *= len;
+		x1 *= len;
+		x2 *= len;
+	}
+
+	float y0 = z1*x2 - z2*x1;
+	float y1 = z2*x0 - z0*x2;
+	float y2 = z0*x1 - z1*x0;
+
+	len = std::hypot(y0, y1, y2);
+	if (len == 0.0f) {
+		y0 = 0;
+		y1 = 0;
+		y2 = 0;
+	} else {
+		len = 1.0f / len;
+		y0 *= len;
+		y1 *= len;
+		y2 *= len;
+	}
+
+	out[0] = x0;
+	out[1] = y0;
+	out[2] = z0;
+	out[3] = 0.0f;
+	out[4] = x1;
+	out[5] = y1;
+	out[6] = z1;
+	out[7] = 0.0f;
+	out[8] = x2;
+	out[9] = y2;
+	out[10] = z2;
+	out[11] = 0.0f;
+	out[12] = -(x0*eyex + x1*eyey + x2*eyez);
+	out[13] = -(y0*eyex + y1*eyey + y2*eyez);
+	out[14] = -(z0*eyex + z1*eyey + z2*eyez);
+	out[15] = 1.0f;
+
+	return out;
+}
+
 
 mtrx4 mtrx4FromOrthographic(float left, float right, float bottom, float top, float near, float far) { 
 	mtrx4 rt;

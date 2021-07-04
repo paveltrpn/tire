@@ -40,4 +40,47 @@ class CPerspCamera {
         float cmrYaw, cmrPitch, cmrRoll;
 };
 
+class CPerspLookAtCamera {
+    public:
+        CPerspLookAtCamera() {
+            cmrFov = 45.0f;
+            cmrAspect = 4.0f / 3.0f;
+            cmrNear = 0.1;
+            cmrFar = 100.0f;
+
+            cmrEye = vec3(0.0f, 0.0f, 5.0f);
+            cmrTarget = vec3(0.0f, 0.0f, 0.0f);
+
+            cmrUp = vec3(0.0f, 1.0f, 0.0f);
+
+            calculateMoveVectors();
+            
+            mtrx4 perspMatrix = mtrx4FromPerspective(cmrFov, cmrAspect, cmrNear, cmrFar);
+            mtrx4 lookAtMatrix = mtrx4FromLookAt(cmrEye, cmrTarget, cmrUp);
+
+            cmrViewMatrix = perspMatrix * lookAtMatrix;
+        };
+
+        ~CPerspLookAtCamera() {};
+
+        void    calculateMoveVectors();
+
+        void    setViewParameters(float fov, float aspect, float near, float far);
+        void    updateViewMatrix();
+        void    setLookPoints(vec3 eye, vec3 target);
+        void    setUpVec(vec3 up);
+        void    moveViewPointsSideway(float spd);
+        void    moveViewPointsForward(float spd);
+
+        float*  getCmrMatrixPointer();
+
+    private:
+        mtrx4 cmrViewMatrix;
+
+        vec3 cmrEye, cmrTarget, cmrUp;
+        vec3 cmrForwardVec, cmrLeftVec;
+
+        float cmrFov, cmrAspect, cmrNear, cmrFar;
+};
+
 #endif

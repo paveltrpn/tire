@@ -220,12 +220,16 @@ class mtrx4 {
 };
 
 mtrx4 mtrx4FromIdtt();
+mtrx4 mtrx4FromRtnYaw(float angl);
+mtrx4 mtrx4FromRtnPitch(float angl);
+mtrx4 mtrx4FromRtnRoll(float angl);
 mtrx4 mtrx4FromEuler(float yaw, float pitch, float roll);
 mtrx4 mtrx4FromAxisAngl(const vec3 &ax, float phi);
 mtrx4 mtrx4FromOffset(const vec3 &src);
 mtrx4 mtrx4FromScale(const vec3 &src);
 mtrx4 mtrx4FromQtnn(const qtnn &src);
 mtrx4 mtrx4FromPerspective(float fovy, float aspect, float near, float far);
+mtrx4 mtrx4FromLookAt(vec3 eye, vec3 center, vec3 up);
 mtrx4 mtrx4FromOrthographic(float left, float right, float bottom, float top, float near, float far);
 
 float mtrx4DetLU(const mtrx4 &m);

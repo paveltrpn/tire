@@ -18,19 +18,18 @@
 #include "timing.h"
 
 GLFWwindow 		*g_appWindow;
+GLFWmonitor		*g_appMonitor;
 
 const GLubyte *oglRenderString;
 const GLubyte *oglVersionString;
 const GLubyte *oglslVersionString;
 
 CAppState		g_AppState;
-CPerspCamera	g_Camera, g_textCamera;
+CPerspCamera	g_textCamera;
+CPerspLookAtCamera g_Camera;
 CScreenText		g_screenText;
-BasicBody 		g_BodyList;
+std::vector<BasicBody>	g_BodyList;
 CTime			g_Timer;
-
-double g_cameraOffsetYaw {};
-double g_cameraOffsetRoll {};
 
 double g_curPositionX {};
 double g_curPositionY {};
@@ -87,13 +86,17 @@ void registerGLFWCallbacks() {
 		if (key == GLFW_KEY_ESCAPE) {
 			glfwSetWindowShouldClose(window, GLFW_TRUE);
 		}
-
-		if (key == GLFW_KEY_W && GLFW_PRESS) {
-			g_Camera.moveCamera(vec3(0.0f, 0.0f, 0.1f));
+		
+		if (key == GLFW_KEY_Y && GLFW_PRESS) {
+			g_Camera.setUpVec(vec3(0.0f, 1.0f, 0.0f));
 		}
 
-		if (key == GLFW_KEY_S && GLFW_PRESS) {
-			g_Camera.moveCamera(vec3(0.0f, 0.0f, -0.1f));
+		if (key == GLFW_KEY_Z && GLFW_PRESS) {
+			g_Camera.setUpVec(vec3(0.0f, 0.0f, 1.0f));
+		}
+
+		if (key == GLFW_KEY_X && GLFW_PRESS) {
+			g_Camera.setUpVec(vec3(1.0f, 0.0f, 0.0f));
 		}
 	};
 	glfwSetKeyCallback(g_appWindow, keyCallback);
@@ -102,11 +105,21 @@ void registerGLFWCallbacks() {
 		g_curPositionX = posX;
 		g_curPositionY = posY;
 
-		g_cameraOffsetYaw = g_curPositionX - g_curPositionEnteredX;
-		g_curPositionEnteredX = g_curPositionX;
+		if (posX < 50) {
+			g_Camera.moveViewPointsSideway(-0.2f);
+		}
 
-		g_cameraOffsetRoll = g_curPositionY - g_curPositionEnteredY;
-		g_curPositionEnteredY = g_curPositionY;
+		if (posX > 950) {
+			g_Camera.moveViewPointsSideway(0.2f);
+		}
+
+		if (posY < 50) {
+			g_Camera.moveViewPointsForward(0.2f);
+		}
+
+		if (posY > 700) {
+			g_Camera.moveViewPointsForward(-0.2f);
+		}
 	};
 	glfwSetCursorPosCallback(g_appWindow, cursorPosCallback);
 
@@ -128,13 +141,25 @@ void appSetup() {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); 
 	glClearDepth(1.0);
 	glDepthFunc(GL_LESS);
+	glEnable(GL_DEPTH_TEST);
 
-	glColorMaterial(GL_FRONT, GL_DIFFUSE);
+	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 	glEnable(GL_COLOR_MATERIAL);
+
+	vec4 ambient = vec4{0.7f, 0.7f, 0.7f, 1.0f};
+	vec4 diffuse = vec4{1.0f, 1.0f, 1.0f, 1.0f};
+	vec4 lightPosition = vec4{3.0f, 10.0f, -5.0f, 1.0f};
+	glEnable(GL_LIGHTING); 
+	glShadeModel(GL_SMOOTH);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, &ambient[0]);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, &diffuse[0]);
+	glLightfv(GL_LIGHT0, GL_POSITION, &lightPosition[0]);
+	glEnable(GL_LIGHT0);
 
 	g_Timer = CTime();
 
-	g_Camera.setCameraPosition({0.0f, 0.0f, -15.0f});
+	//g_Camera = CPerspLookAtCamera();
+	g_Camera.setLookPoints({0.0f, 5.0f, 25.0f}, {0.0f, 0.0f, 0.0f});
 	g_Camera.updateViewMatrix();
 
 	g_textCamera.setCameraPosition({0.0f, 0.0f, -20.0f});
@@ -142,7 +167,8 @@ void appSetup() {
 
 	g_screenText.loadFont("assets/RobotoMono-2048-1024-64-128.jpg");
 
-	g_BodyList = BasicBody(BasicBody::ICOSAHEDRON, vec3( 0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(3.0f, 3.0f, 3.0f));
+	g_BodyList.push_back(BasicBody(BasicBody::ICOSAHEDRON, vec3( 0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 45.0f), vec3(3.0f, 3.0f, 3.0f)));
+	g_BodyList.push_back(BasicBody(BasicBody::BOX, vec3( 0.0f, -3.0f, 0.0f), vec3(0.0f, 0.0f, 45.0f), vec3(8.0f, 0.1f, 8.0f)));
 }
 
 void appLoop() {
@@ -162,11 +188,9 @@ void appLoop() {
 		// -----------------------------------------------------------
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glDepthFunc(GL_LESS);
 		glEnable(GL_DEPTH_TEST);
 
 		glMatrixMode(GL_PROJECTION);
-		g_Camera.rotateCamera(0.0f, 0.0f, 0.1f);
 		g_Camera.updateViewMatrix();
 		glLoadMatrixf(g_Camera.getCmrMatrixPointer());
 
@@ -174,8 +198,13 @@ void appLoop() {
 		glLoadIdentity();
 
 		glDisable(GL_TEXTURE_2D);
+		glEnable(GL_LIGHTING); 
+		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-		g_BodyList.updateAndDraw();
+		for (auto &bdy: g_BodyList) {
+			//bdy.setOrientation(orn[0], orn[1], orn[2]);
+			bdy.updateAndDraw();
+		};
 
 		// -----------------------------------------------------------
 		// Отрисовка текста
@@ -183,7 +212,7 @@ void appLoop() {
 
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);  
-
+		// glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(g_textCamera.getCmrMatrixPointer());
 
@@ -194,7 +223,7 @@ void appLoop() {
 		g_screenText.drawString(fmt::format("frames per second = {}", fps));
 
 		g_screenText.setTextPosition(-10.5f, 6.2f);
-		g_screenText.drawString(fmt::format("cursorX = {}, cursorY = {}", g_cameraOffsetYaw, g_cameraOffsetRoll));
+		g_screenText.drawString(fmt::format("cursorX = {}, cursorY = {}", g_curPositionX, g_curPositionY));
 
 		// -----------------------------------------------------------
 

@@ -130,7 +130,8 @@ void BasicBody::updateAndDraw() {
 	vec3 cur_tri[3];
 	vec3 cur_nrml;
 	
-	mtrx4 mRotate = mtrx4FromEuler(BodyOrientation[0], BodyOrientation[1], BodyOrientation[2]);
+	mtrx4 mRotate = mtrx4();//mtrx4FromEuler(BodyOrientation[0], BodyOrientation[1], BodyOrientation[2]);
+
 	mtrx4 mOffset = mtrx4FromOffset(BodyOffset);
 	mtrx4 mScale = mtrx4FromScale(BodyScale);
 
@@ -140,9 +141,9 @@ void BasicBody::updateAndDraw() {
 	mtrx4 mAffine = mScale * mRotate * mOffset;
 
 	for (size_t i = 0; i < BodyTriangles.size()/3; i++ ) {
-		cur_tri[0] = mtrx4MultVec3(mAffine, BodyTriangles[i*3+0]);
+		cur_tri[2] = mtrx4MultVec3(mAffine, BodyTriangles[i*3+0]);
 		cur_tri[1] = mtrx4MultVec3(mAffine, BodyTriangles[i*3+1]);
-		cur_tri[2] = mtrx4MultVec3(mAffine, BodyTriangles[i*3+2]);
+		cur_tri[0] = mtrx4MultVec3(mAffine, BodyTriangles[i*3+2]);
 		
 		cur_nrml = mtrx4MultVec3(mRotate, BodyNormals[i]);
 		
