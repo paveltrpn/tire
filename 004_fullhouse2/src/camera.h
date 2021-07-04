@@ -54,7 +54,7 @@ class CPerspLookAtCamera {
             cmrUp = vec3(0.0f, 1.0f, 0.0f);
 
             calculateMoveVectors();
-            
+
             mtrx4 perspMatrix = mtrx4FromPerspective(cmrFov, cmrAspect, cmrNear, cmrFar);
             mtrx4 lookAtMatrix = mtrx4FromLookAt(cmrEye, cmrTarget, cmrUp);
 
@@ -68,10 +68,11 @@ class CPerspLookAtCamera {
         void    setViewParameters(float fov, float aspect, float near, float far);
         void    updateViewMatrix();
         void    setLookPoints(vec3 eye, vec3 target);
-        void    setUpVec(vec3 up);
+        void    setUpVec(const vec3& up);
         void    moveViewPointsSideway(float spd);
         void    moveViewPointsForward(float spd);
-
+        void    rotateEyeUp(float angl);
+        
         float*  getCmrMatrixPointer();
 
     private:

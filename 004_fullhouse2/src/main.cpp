@@ -33,8 +33,6 @@ CTime			g_Timer;
 
 double g_curPositionX {};
 double g_curPositionY {};
-double g_curPositionEnteredX {};
-double g_curPositionEnteredY {};
 
 void windowInit() {
 	g_AppState = CAppState();
@@ -101,32 +99,26 @@ void registerGLFWCallbacks() {
 	};
 	glfwSetKeyCallback(g_appWindow, keyCallback);
 
+	auto mouseButtonCallback = [] (GLFWwindow* window, int button, int action, int mods) {
+		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+
+		}
+
+		if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+
+		}
+	};
+	glfwSetMouseButtonCallback(g_appWindow, mouseButtonCallback);
+
 	auto cursorPosCallback = [] (GLFWwindow* window, double posX, double posY) {
 		g_curPositionX = posX;
 		g_curPositionY = posY;
-
-		if (posX < 50) {
-			g_Camera.moveViewPointsSideway(-0.2f);
-		}
-
-		if (posX > 950) {
-			g_Camera.moveViewPointsSideway(0.2f);
-		}
-
-		if (posY < 50) {
-			g_Camera.moveViewPointsForward(0.2f);
-		}
-
-		if (posY > 700) {
-			g_Camera.moveViewPointsForward(-0.2f);
-		}
 	};
 	glfwSetCursorPosCallback(g_appWindow, cursorPosCallback);
 
 	auto cursorEnterCallback = [] (GLFWwindow* window, int entered) {
 		if (entered) {
         	// The cursor entered the content area of the window
-			glfwGetCursorPos(window, &g_curPositionEnteredX, &g_curPositionEnteredY);
     	} else {
         	// The cursor left the content area of the window
     	}
@@ -146,9 +138,9 @@ void appSetup() {
 	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 	glEnable(GL_COLOR_MATERIAL);
 
-	vec4 ambient = vec4{0.7f, 0.7f, 0.7f, 1.0f};
+	vec4 ambient = vec4{0.0f, 0.0f, 0.0f, 1.0f};
 	vec4 diffuse = vec4{1.0f, 1.0f, 1.0f, 1.0f};
-	vec4 lightPosition = vec4{3.0f, 10.0f, -5.0f, 1.0f};
+	vec4 lightPosition = vec4{3.0f, 10.0f, 5.0f, 1.0f};
 	glEnable(GL_LIGHTING); 
 	glShadeModel(GL_SMOOTH);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, &ambient[0]);
@@ -167,8 +159,8 @@ void appSetup() {
 
 	g_screenText.loadFont("assets/RobotoMono-2048-1024-64-128.jpg");
 
-	g_BodyList.push_back(BasicBody(BasicBody::ICOSAHEDRON, vec3( 0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 45.0f), vec3(3.0f, 3.0f, 3.0f)));
-	g_BodyList.push_back(BasicBody(BasicBody::BOX, vec3( 0.0f, -3.0f, 0.0f), vec3(0.0f, 0.0f, 45.0f), vec3(8.0f, 0.1f, 8.0f)));
+	g_BodyList.push_back(BasicBody(BasicBody::PRISM, vec3( 0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(3.0f, 3.0f, 3.0f)));
+	g_BodyList.push_back(BasicBody(BasicBody::BOX, vec3( 0.0f, -3.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(8.0f, 0.1f, 8.0f)));
 }
 
 void appLoop() {
@@ -180,6 +172,22 @@ void appLoop() {
 	while(!glfwWindowShouldClose(g_appWindow)) {
 		frameBeginTime = g_Timer.getMs();
 		frameCount++;
+
+		if (g_curPositionX < 50) {
+			g_Camera.rotateEyeUp(30.0f);
+		}
+
+		if (g_curPositionX > 950) {
+			g_Camera.rotateEyeUp(-30.0f);
+		}
+
+		if (g_curPositionY < 50) {
+			g_Camera.moveViewPointsForward(0.2f);
+		}
+
+		if (g_curPositionY > 700) {
+			g_Camera.moveViewPointsForward(-0.2f);
+		}
 
 		glfwPollEvents();
 		

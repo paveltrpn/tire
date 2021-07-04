@@ -80,7 +80,7 @@ void CPerspLookAtCamera::setLookPoints(vec3 eye, vec3 target) {
     calculateMoveVectors();
 }
 
-void CPerspLookAtCamera::setUpVec(vec3 up) {
+void CPerspLookAtCamera::setUpVec(const vec3& up) {
     cmrUp = up;
 
     calculateMoveVectors();
@@ -96,6 +96,15 @@ void CPerspLookAtCamera::moveViewPointsForward(float spd) {
     cmrEye    = vec3Sum(cmrEye,    {cmrForwardVec[0]*spd, cmrForwardVec[1]*spd, cmrForwardVec[2]*spd});
 };
 
+void CPerspLookAtCamera::rotateEyeUp(float angl) {
+    mtrx4 rtnMatrix = mtrx4FromAxisAngl(cmrUp, degToRad(angl));
+    vec3 defaultEye = vec3Sub(cmrEye, cmrTarget);
+    vec3 newEye = mtrx4MultVec3(rtnMatrix, defaultEye);
+
+    cmrEye = vec3Sum(newEye, cmrTarget);
+
+    calculateMoveVectors();
+}
 
 float* CPerspLookAtCamera::getCmrMatrixPointer() {
     return cmrViewMatrix.getData();
