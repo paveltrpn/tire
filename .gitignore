@@ -1,3 +1,5 @@
 *.o
 main
 main.exe
+/3d_party/*
+!/3d_party/.gitkeep
