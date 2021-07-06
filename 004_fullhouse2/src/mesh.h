@@ -9,7 +9,6 @@
 
 #include <GL/gl.h>
 
-#include "tiny_gltf.h"
 #include "vec3.h"
 #include "mtrx3.h"
 #include "mtrx4.h"
