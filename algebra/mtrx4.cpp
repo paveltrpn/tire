@@ -84,6 +84,7 @@ mtrx4 mtrx4FromRtnRoll(float angl) {
 	return rt;
 }
 
+/* Почему-то работает не проавильно, вращает вокруг yaw так-же как и вокруг roll
 mtrx4 mtrx4FromEuler(float yaw, float pitch, float roll){
 	float cosy, siny, cosp, sinp, cosr, sinr;
 	mtrx4 rt;
@@ -117,6 +118,17 @@ mtrx4 mtrx4FromEuler(float yaw, float pitch, float roll){
 	rt[15] = 1.0f;
 
 	return rt;
+}
+*/
+
+mtrx4 mtrx4FromEuler(float yaw, float pitch, float roll){
+	mtrx4 yawMtrx, pitchMtrx, rollMtrx;
+
+	yawMtrx = mtrx4FromRtnYaw(yaw);
+	pitchMtrx = mtrx4FromRtnPitch(pitch);
+	rollMtrx = mtrx4FromRtnRoll(roll);
+	
+	return yawMtrx * pitchMtrx * rollMtrx;
 }
 
 mtrx4 mtrx4FromAxisAngl(const vec3 &ax, float phi) {

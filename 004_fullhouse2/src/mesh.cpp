@@ -99,10 +99,9 @@ std::vector<vec3> icosahedrNrmls = {{0.187597f, -0.577354f, -0.794651},
  									{-0.187597f, 0.577354f, 0.794651f},
  									{0.491122f, 0.356829f, 0.794652f}};
 
-BasicBody::BasicBody(int type, vec3 offst, vec3 orn, vec3 scl) {
-	BodyOrientation = orn;
-    BodyOffset = offst;
-	BodyScale = scl;
+BasicBody::BasicBody(int type) {
+	m_bodyYaw = m_bodyPitch = m_bodyRoll = 0.0f;
+    m_bodyOffset = vec3();
 
 	switch (type) {
 		case BasicBody::ICOSAHEDRON:
@@ -122,23 +121,45 @@ BasicBody::BasicBody(int type, vec3 offst, vec3 orn, vec3 scl) {
 	}
 }
 
-BasicBody::~BasicBody() {
+BasicBody::BasicBody(int type, vec3 scl) {
+	m_bodyYaw = m_bodyPitch = m_bodyRoll = 0.0f;
+    m_bodyOffset = vec3();
 
+	switch (type) {
+		case BasicBody::ICOSAHEDRON:
+			BodyTriangles = icosahedrTris;
+			BodyNormals = icosahedrNrmls;
+			break;
+
+		case BasicBody::BOX:
+			BodyTriangles = boxTris;
+			BodyNormals = boxNrmls;
+			break;
+
+		case BasicBody::PRISM:
+			BodyTriangles = prismTris;
+			BodyNormals = prismNrmls;
+			break;
+	}
+
+	mtrx4 scaleMtrx = mtrx4FromScale(scl);
+	for (auto &vert: BodyTriangles) {
+		vert = mtrx4MultVec3(scaleMtrx, vert);
+	}
 }
 
 void BasicBody::updateAndDraw() {
 	vec3 cur_tri[3];
 	vec3 cur_nrml;
 	
-	mtrx4 mRotate = mtrx4();//mtrx4FromEuler(BodyOrientation[0], BodyOrientation[1], BodyOrientation[2]);
+	mtrx4 mRotate = mtrx4FromEuler(m_bodyYaw, m_bodyPitch, m_bodyRoll);
 
-	mtrx4 mOffset = mtrx4FromOffset(BodyOffset);
-	mtrx4 mScale = mtrx4FromScale(BodyScale);
-
+	mtrx4 mOffset = mtrx4FromOffset(m_bodyOffset);
+	
 	// mtrx4 tmp = mtrx4Mult(mScale, mRotate);
 	// mtrx4 mAffine = mtrx4Mult(tmp, mOffset);
 
-	mtrx4 mAffine = mScale * mRotate * mOffset;
+	mtrx4 mAffine = mRotate * mOffset;
 
 	for (size_t i = 0; i < BodyTriangles.size()/3; i++ ) {
 		cur_tri[2] = mtrx4MultVec3(mAffine, BodyTriangles[i*3+0]);
@@ -158,9 +179,21 @@ void BasicBody::updateAndDraw() {
 }
 
 void BasicBody::setOrientation(float yaw, float pitch, float roll) {
-	BodyOrientation = vec3(yaw, pitch, roll);
+	m_bodyYaw = yaw;
+	m_bodyPitch = pitch;
+	m_bodyRoll = roll;
 }
 
-void BasicBody::setOffset(float dx, float dy, float dz){
-	BodyOffset = vec3(dx, dy, dz);
+void BasicBody::setOffset(vec3 offst){
+	m_bodyOffset = offst;
+}
+
+void BasicBody::bodyMove(vec3 offst) {
+	m_bodyOffset = vec3Sum(m_bodyOffset, offst);
+}
+
+void BasicBody::bodyRotate(float yaw, float pitch, float roll) {
+	m_bodyYaw += yaw;
+	m_bodyPitch += pitch;
+	m_bodyRoll += roll;
 }

@@ -4,6 +4,7 @@
 #include <fmt/format.h>
 #include <thread>
 #include <array>
+#include <map>
 
 #include <GL/glew.h>
 #include <GL/glu.h>
@@ -29,7 +30,7 @@ CAppState		g_AppState;
 CPerspCamera	g_textCamera;
 CPerspLookAtCamera g_Camera;
 CScreenText		g_screenText;
-std::vector<BasicBody>	g_BodyList;
+std::map<std::string, BasicBody>	g_BodyList;
 CTime			g_Timer;
 
 double g_curPositionX {};
@@ -164,10 +165,17 @@ void appSetup() {
 
 	g_screenText.loadFont("assets/RobotoMono-2048-1024-64-128.jpg");
 
-	g_BodyList.push_back(BasicBody(BasicBody::PRISM, 		{ 2.0f, 0.0f, 3.2f}, {0.0f, 0.0f, 0.0f}, {3.0f, 3.0f, 3.0f}));
-	g_BodyList.push_back(BasicBody(BasicBody::ICOSAHEDRON,	{ 2.0f, 0.0f,-3.2f}, {0.0f, 0.0f, 0.0f}, {3.0f, 3.0f, 3.0f}));
-	g_BodyList.push_back(BasicBody(BasicBody::BOX,			{-3.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {2.0f, 2.0f, 2.0f}));
-	g_BodyList.push_back(BasicBody(BasicBody::BOX,			{ 0.0f,-2.7f, 0.0f}, {0.0f, 0.0f, 0.0f}, {10.0f, 0.2f, 10.0f}));
+	g_BodyList.insert({"PRISM", BasicBody(BasicBody::PRISM, {3.0f, 3.0f, 3.0f})});
+	g_BodyList.find("PRISM")->second.setOffset({ 2.0f, 0.0f, 3.2f});
+	
+	g_BodyList.insert({"ICOSAHEDRON", BasicBody(BasicBody::ICOSAHEDRON, {3.0f, 3.0f, 3.0f})});
+	g_BodyList.find("ICOSAHEDRON")->second.setOffset({ 2.0f, 0.0f,-3.2f});
+
+	g_BodyList.insert({"BOX", BasicBody(BasicBody::BOX, {2.0f, 2.0f, 2.0f})});
+	g_BodyList.find("BOX")->second.setOffset({-3.0f, 0.0f, 0.0f});
+
+	g_BodyList.insert({"FLOOR", BasicBody(BasicBody::BOX, {10.0f, 0.2f, 10.0f})});
+	g_BodyList.find("FLOOR")->second.setOffset({ 0.0f,-2.7f, 0.0f});
 }
 
 void appLoop() {
@@ -220,8 +228,18 @@ void appLoop() {
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		for (auto &bdy: g_BodyList) {
-			//bdy.setOrientation(orn[0], orn[1], orn[2]);
-			bdy.updateAndDraw();
+			if (bdy.first == "BOX") {
+				bdy.second.bodyRotate(0.5f, 0.0f, 0.0f);
+			}
+
+			if (bdy.first == "ICOSAHEDRON") {
+				bdy.second.bodyRotate(0.0f, 0.5f, 0.0f);
+			}
+
+			if (bdy.first == "PRISM") {
+				bdy.second.bodyRotate(0.0f, 0.0f, 0.5f);
+			}
+			bdy.second.updateAndDraw();
 		};
 
 		// -----------------------------------------------------------

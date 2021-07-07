@@ -21,17 +21,16 @@ class BasicBody {
         enum {BOX, PRISM, ICOSAHEDRON};
 
         BasicBody() {};
-        BasicBody(int type, vec3 offst, vec3 orn, vec3 scl);
+        BasicBody(int type);
+        BasicBody(int type, vec3 scl);
 
-        ~BasicBody();
-
-        // Body(const Body& in) = delete;
-        // Body& operator=(const Body& in) = delete;
-        // Body(Body&& in) = delete;
-        // Body&& operator=(Body&& in) = delete;
+        ~BasicBody() {};
 
         void setOrientation(float yaw, float pitch, float roll);
-        void setOffset(float dx, float dy, float dz);
+        void setOffset(vec3 offst);
+
+        void bodyMove(vec3 offst);
+        void bodyRotate(float yaw, float pitch, float roll);
 
         void updateAndDraw();
 
@@ -39,9 +38,9 @@ class BasicBody {
         std::vector<vec3> BodyTriangles;
         std::vector<vec3> BodyNormals;
 
-        vec3 BodyOrientation;
-        vec3 BodyOffset;
-        vec3 BodyScale;
+        float m_bodyYaw, m_bodyPitch, m_bodyRoll;
+
+        vec3 m_bodyOffset;
 };
 
 #endif
