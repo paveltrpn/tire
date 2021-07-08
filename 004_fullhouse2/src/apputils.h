@@ -19,8 +19,8 @@ class CAppState {
         std::string 	appName;
 
         CAppState() {
-            appWindowWidth      = 1024;
-            appWindowHeight     = 768;
+            appWindowWidth      = 1152;
+            appWindowHeight     = 864;
             appWindowAspect     = static_cast<float>(appWindowWidth) / static_cast<float>(appWindowHeight);
             appName             = "004_fullhouse2";
         };

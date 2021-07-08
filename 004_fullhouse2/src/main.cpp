@@ -33,8 +33,16 @@ CScreenText		g_screenText;
 std::map<std::string, BasicBody>	g_BodyList;
 CTime			g_Timer;
 
+constexpr uint32_t c_moveZoneDst = 32; //На расстоянии Х пикселей от границ окна находятся зоны, в которых курсор двигает
+
+//Скорости вращения и перемещения камеры при 60 fps
+constexpr float c_cmrMoveSpd = 0.4f;
+constexpr float c_cmrRotnSpd = 50.0f;
+
 double g_curPositionX {};
 double g_curPositionY {};
+
+bool g_rightButtonClick {false};
 
 void windowInit() {
 	g_AppState = CAppState();
@@ -103,12 +111,13 @@ void registerGLFWCallbacks() {
 	glfwSetKeyCallback(g_appWindow, keyCallback);
 
 	auto mouseButtonCallback = [] (GLFWwindow* window, int button, int action, int mods) {
-		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+		if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
+			g_rightButtonClick = false;
 
 		}
 
 		if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-
+			g_rightButtonClick = true;
 		}
 	};
 	glfwSetMouseButtonCallback(g_appWindow, mouseButtonCallback);
@@ -156,11 +165,11 @@ void appSetup() {
 
 	g_Timer = CTime();
 
-	//g_Camera = CPerspLookAtCamera();
 	g_Camera.setLookPoints({0.0f, 12.0f, 20.0f}, {0.0f, 0.0f, 0.0f});
-	g_Camera.updateViewMatrix();
+	g_Camera.setViewParameters(45.0f, g_AppState.appWindowAspect, 0.01f, 100.0f);
 
 	g_textCamera.setCameraPosition({0.0f, 0.0f, -20.0f});
+	g_textCamera.setViewParameters(45.0f, g_AppState.appWindowAspect, 0.01f, 100.0f);
 	g_textCamera.updateViewMatrix();
 
 	g_screenText.loadFont("assets/RobotoMono-2048-1024-64-128.jpg");
@@ -188,21 +197,32 @@ void appLoop() {
 		frameBeginTime = g_Timer.getMs();
 		frameCount++;
 
-		if (g_curPositionX < 50) {
-			g_Camera.rotateEyeUp(-40.0f);
+		if (g_rightButtonClick) {
+			if (g_curPositionX < c_moveZoneDst) {
+				g_Camera.rotateEyeUp(-c_cmrRotnSpd);
+			}
+
+			if (g_curPositionX > (g_AppState.appWindowWidth-c_moveZoneDst)) {
+				g_Camera.rotateEyeUp(c_cmrRotnSpd);
+			}
+		} else {
+			if (g_curPositionX < c_moveZoneDst) {
+				g_Camera.moveViewPointsSideway(-c_cmrMoveSpd);
+			}
+
+			if (g_curPositionX > (g_AppState.appWindowWidth-c_moveZoneDst)) {
+				g_Camera.moveViewPointsSideway(c_cmrMoveSpd);
+			}
 		}
 
-		if (g_curPositionX > 950) {
-			g_Camera.rotateEyeUp(40.0f);
+		if (g_curPositionY < c_moveZoneDst) {
+			g_Camera.moveViewPointsForward(c_cmrMoveSpd);
 		}
 
-		if (g_curPositionY < 50) {
-			g_Camera.moveViewPointsForward(0.2f);
+		if (g_curPositionY > (g_AppState.appWindowHeight-c_moveZoneDst)) {
+			g_Camera.moveViewPointsForward(-c_cmrMoveSpd);
 		}
 
-		if (g_curPositionY > 700) {
-			g_Camera.moveViewPointsForward(-0.2f);
-		}
 
 		glfwPollEvents();
 		
@@ -259,8 +279,7 @@ void appLoop() {
 		g_screenText.drawString(fmt::format("frames per second = {}", fps));
 
 		g_screenText.setTextPosition(-10.5f, 6.2f);
-		g_screenText.drawString(fmt::format("cursorX = {}, cursorY = {}", g_curPositionX, g_curPositionY));
-
+		g_screenText.drawString(fmt::format("pos X = {}, pos Y = {}", g_curPositionX, g_curPositionY));
 		// -----------------------------------------------------------
 
 		glfwSwapBuffers(g_appWindow);
