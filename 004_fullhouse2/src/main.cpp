@@ -113,7 +113,6 @@ void registerGLFWCallbacks() {
 	auto mouseButtonCallback = [] (GLFWwindow* window, int button, int action, int mods) {
 		if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
 			g_rightButtonClick = false;
-
 		}
 
 		if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
@@ -123,8 +122,8 @@ void registerGLFWCallbacks() {
 	glfwSetMouseButtonCallback(g_appWindow, mouseButtonCallback);
 
 	auto cursorPosCallback = [] (GLFWwindow* window, double posX, double posY) {
-		g_curPositionX = posX;
-		g_curPositionY = posY;
+		// g_curPositionX = posX;
+		// g_curPositionY = posY;
 	};
 	glfwSetCursorPosCallback(g_appWindow, cursorPosCallback);
 
@@ -197,6 +196,7 @@ void appLoop() {
 		frameBeginTime = g_Timer.getMs();
 		frameCount++;
 
+		glfwGetCursorPos(g_appWindow, &g_curPositionX, &g_curPositionY);
 		if (g_rightButtonClick) {
 			if (g_curPositionX < c_moveZoneDst) {
 				g_Camera.rotateEyeUp(-c_cmrRotnSpd);
@@ -279,7 +279,7 @@ void appLoop() {
 		g_screenText.drawString(fmt::format("frames per second = {}", fps));
 
 		g_screenText.setTextPosition(-10.5f, 6.2f);
-		g_screenText.drawString(fmt::format("pos X = {}, pos Y = {}", g_curPositionX, g_curPositionY));
+		g_screenText.drawString(fmt::format("pos X = {}, pos Y = {}", static_cast<float>(g_curPositionX), g_curPositionY));
 		// -----------------------------------------------------------
 
 		glfwSwapBuffers(g_appWindow);
