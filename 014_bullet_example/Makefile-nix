@@ -1,6 +1,6 @@
-CC       = g++
-INCDIR	 := E:/devtools/usr/local/include
-LIBDIR	 := -LE:/devtools/usr/local/lib -L../3d_party/bullet3/lib
+CC       = g++-11
+INCDIR	 := 
+LIBDIR	 := ../3d_party/bullet3/lib
 CFLAGS   = -Wall -Wextra -Wpedantic -Wno-unused-parameter -std=c++20
 LFLAGS 	 = -lstdc++ -lfmt -lBulletSoftBody -lBulletDynamics -lBulletCollision -lLinearMath
 
@@ -23,7 +23,7 @@ $(BUILD_PREFIX)/main.o: main.cpp
 	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
 main: $(OBJS)
-	$(CC) $(OBJS) $(LIBDIR) $(LFLAGS) -o main 
+	$(CC) $(OBJS) -L$(LIBDIR) $(LFLAGS) -o main 
 
 clean:
 	rm -f build/*.o main

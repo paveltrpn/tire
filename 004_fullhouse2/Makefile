@@ -1,10 +1,10 @@
-CC       = g++-11
-INCDIR	 := 
-LIBDIR	 := 
+CC       = g++
+INCDIR	 := E:/devtools/usr/local/include
+LIBDIR	 := E:/devtools/usr/local/lib
 CFLAGS   = -Wall -Wextra -Wpedantic -Wno-unused-parameter -std=c++20 -O2
-LFLAGS 	 = -lstdc++ -lGL -lGLU -lGLEW -lglfw -ltga -ljpeg -lfmt
+LFLAGS 	 = -lstdc++ -lopengl32 -lglu32 -lglfw3 -lgdi32 -lglew32 -ltga -llibjpeg -lfmt
 
-SOURCE_PREFIX = src ../algebra ../img ../tinygltf
+SOURCE_PREFIX = src ../algebra ../img
 BUILD_PREFIX = build
 
 VPATH := $(SOURCE_PREFIX)
@@ -75,7 +75,7 @@ $(BUILD_PREFIX)/screen_text.o: screen_text.cpp
 	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
 main: $(OBJS)
-	$(CC) $(OBJS) -L$(LIBDIR) $(LFLAGS) -o main 
+	$(CC) $(OBJS) -L$(LIBDIR) -o main $(LFLAGS)
 
 clean:
 	rm -f build/*.o main

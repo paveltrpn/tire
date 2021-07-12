@@ -7,6 +7,8 @@
 #include <cstdint>
 #include <source_location>
 
+#include <GL/glew.h>
+#include <GL/glu.h>
 #include <GL/gl.h>
 
 #include "fmt/format.h"

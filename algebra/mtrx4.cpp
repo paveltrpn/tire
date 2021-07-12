@@ -46,7 +46,7 @@ mtrx4 mtrx4FromRtnYaw(float angl) {
 	mtrx4 rt = mtrx4FromIdtt();
 	float sa, ca;
 	
-	sincosf32(degToRad(angl), &sa, &ca);
+	sincosf(degToRad(angl), &sa, &ca);
 
 	rt[5] = ca;
 	rt[6] = -sa;
@@ -60,7 +60,7 @@ mtrx4 mtrx4FromRtnPitch(float angl) {
 	mtrx4 rt = mtrx4FromIdtt();
 	float sa, ca;
 	
-	sincosf32(degToRad(angl), &sa, &ca);
+	sincosf(degToRad(angl), &sa, &ca);
 
 	rt[0] = ca;
 	rt[2] = sa;
@@ -74,7 +74,7 @@ mtrx4 mtrx4FromRtnRoll(float angl) {
 	mtrx4 rt = mtrx4FromIdtt();
 	float sa, ca;
 	
-	sincosf32(degToRad(angl), &sa, &ca);
+	sincosf(degToRad(angl), &sa, &ca);
 
 	rt[0] = ca;
 	rt[1] = -sa;
