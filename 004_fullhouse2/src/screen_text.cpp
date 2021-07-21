@@ -1,11 +1,21 @@
 
 #include <iostream>
 #include <string>
+#include <array>
+#include <fmt/format.h>
 
 #include "screen_text.h"
-#include "common.h"
 #include "bitmap.h"
-#include <fmt/format.h>
+
+CScreenText::CScreenText() {
+    constexpr float c_fontScale = 0.8;
+
+    glyphQuadWidth = 0.5f * c_fontScale;
+    glyphQuadHeight = 1.0f * c_fontScale;
+    glyphQuadGap = -0.02f;
+    textPosX = 0.0f;
+    textPosY = 0.0f;
+}
 
 CScreenText::~CScreenText() {
     glDeleteTextures(1, &font);
@@ -64,10 +74,16 @@ void CScreenText::drawString(std::string string) {
     float tc_gap_x = 1.0f / fontColumn; // Размер ячейки с символом в долях текстурных координат по горизонтали
     float tc_gap_y = 1.0f / fontRow;    // Размер ячейки с символом в долях текстурных координат по вертикали
 
+    std::array<float, 18> v_vert{};
+    std::array<float, 12> v_tcoords{};
+
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
 	glBindTexture(GL_TEXTURE_2D, font);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     for (size_t i = 0; i < string.length(); i++) {
         offset = (glyphQuadWidth+glyphQuadGap)*i;
@@ -83,16 +99,60 @@ void CScreenText::drawString(std::string string) {
         // tc_gap_x = 1.0f / font_column;
         // tc_gap_y = 1.0f / font_row;
 
-        glColor3f(1.0f, 1.0f, 1.0f);
-        glBegin(GL_QUADS);
         // Левый верхний угол
-        glTexCoord2f((tc_gap_x*glyph_x),          (tc_gap_y*glyph_y)+0.0f);    glVertex2f((offset + 0.0f) + textPosX,           0.0f + textPosY);
+        v_vert[0] = (offset + 0.0f) + textPosX; 
+        v_vert[1] = 0.0f + textPosY; 
+        v_vert[2] = 0.0f;
+
+        v_tcoords[0] = tc_gap_x*glyph_x; 
+        v_tcoords[1] = (tc_gap_y*glyph_y)+0.0f;
+
         // Правый верхний угол
-        glTexCoord2f((tc_gap_x*glyph_x)+tc_gap_x, (tc_gap_y*glyph_y)+0.0f);    glVertex2f((offset + glyphQuadWidth) + textPosX, 0.0f + textPosY);
-        // Правый гижний угол
-        glTexCoord2f((tc_gap_x*glyph_x)+tc_gap_x, (tc_gap_y*glyph_y)+tc_gap_y); glVertex2f((offset + glyphQuadWidth) + textPosX, -glyphQuadHeight + textPosY);
+        v_vert[3] = (offset + glyphQuadWidth) + textPosX; 
+        v_vert[4] = 0.0f + textPosY; 
+        v_vert[5] = 0.0f;
+
+        v_tcoords[2] = (tc_gap_x*glyph_x)+tc_gap_x; 
+        v_tcoords[3] = (tc_gap_y*glyph_y)+0.0f;
+
+        // Правый нижний угол
+        v_vert[6] = (offset + glyphQuadWidth) + textPosX; 
+        v_vert[7] = -glyphQuadHeight + textPosY; 
+        v_vert[8] = 0.0f;
+
+        v_tcoords[4] = (tc_gap_x*glyph_x)+tc_gap_x; 
+        v_tcoords[5] = (tc_gap_y*glyph_y)+tc_gap_y;
+
         // Левый нижний угол
-        glTexCoord2f((tc_gap_x*glyph_x),          (tc_gap_y*glyph_y)+tc_gap_y); glVertex2f((offset + 0.0f) + textPosX,           -glyphQuadHeight + textPosY);
-        glEnd();
+        v_vert[9] = (offset + 0.0f) + textPosX; 
+        v_vert[10] = -glyphQuadHeight + textPosY; 
+        v_vert[11] = 0.0f;
+
+        v_tcoords[6] = tc_gap_x*glyph_x; 
+        v_tcoords[7] = (tc_gap_y*glyph_y)+tc_gap_y;
+
+        // Опять левый верхний
+        v_vert[12] = v_vert[0]; 
+        v_vert[13] = v_vert[1]; 
+        v_vert[14] = v_vert[2];
+
+        v_tcoords[8] = v_tcoords[0]; 
+        v_tcoords[9] = v_tcoords[1];
+
+        // Опять правый нижний
+        v_vert[15] = v_vert[6]; 
+        v_vert[16] = v_vert[7]; 
+        v_vert[17] = v_vert[8];
+
+        v_tcoords[10] = v_tcoords[4]; 
+        v_tcoords[11] = v_tcoords[5];
+        
+        glColor3f(1.0f, 1.0f, 1.0f);
+	    glVertexPointer(3, GL_FLOAT, 0, &v_vert[0]);
+	    glTexCoordPointer(2, GL_FLOAT, 0, &v_tcoords[0]);
+	    glDrawArrays(GL_TRIANGLES, 0, 6);
     }
+    
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
 }

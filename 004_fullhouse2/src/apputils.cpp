@@ -10,7 +10,7 @@ void CAppState::showCurrentAppState() {
     std::cout << "\n";
 }
 
-GLenum checkOpenGLError(const std::source_location lctn=std::source_location::current()) {
+GLenum checkOpenGLError(const std::source_location lctn) {
     GLenum errorCode;
     while ((errorCode = glGetError()) != GL_NO_ERROR) {
         std::string error;

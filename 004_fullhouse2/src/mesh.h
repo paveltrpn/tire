@@ -7,6 +7,8 @@
 #include <utility>
 #include <tuple>
 
+#include <GL/glew.h>
+#include <GL/glu.h>
 #include <GL/gl.h>
 
 #include "vec3.h"
@@ -24,7 +26,7 @@ class BasicBody {
         BasicBody(int type);
         BasicBody(int type, vec3 scl);
 
-        ~BasicBody() {};
+        ~BasicBody();
 
         void setOrientation(float yaw, float pitch, float roll);
         void setOffset(vec3 offst);
@@ -41,6 +43,8 @@ class BasicBody {
         float m_bodyYaw, m_bodyPitch, m_bodyRoll;
 
         vec3 m_bodyOffset;
+
+        GLuint m_oglBuffer;
 };
 
 #endif

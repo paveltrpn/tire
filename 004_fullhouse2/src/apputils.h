@@ -40,6 +40,6 @@ class CAppState {
 
 };
 
-GLenum checkOpenGLError(const std::source_location lctn);
+GLenum checkOpenGLError(const std::source_location lctn=std::source_location::current());
 
 #endif

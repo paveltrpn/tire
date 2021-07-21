@@ -1,26 +1,25 @@
 
-#ifndef __bitmap_text_h__
-#define __bitmap_text_h__
+#ifndef __screen_text_h__
+#define __screen_text_h__
 
 #include <iostream>
 #include <string>
 #include <vector>
 
 #include <GL/glew.h>
+#include <GL/glu.h>
 #include <GL/gl.h>
-
-#include "common.h"
 
 class CScreenText {
     private:
-        float   glyphQuadWidth = 0.5f;
-        float   glyphQuadHeight = 1.0f;
-        float   glyphQuadGap = 0.0f;
+        float   glyphQuadWidth;
+        float   glyphQuadHeight;
+        float   glyphQuadGap;
 
-        float   textPosX = 0.0f;
-        float   textPosY = 0.0f;
+        float   textPosX;
+        float   textPosY;
 
-        // Формат шрифта - изображение TGA с началом сверху слева,
+        // Формат шрифта - изображение с началом сверху слева,
         // 32 столбца на 8 строк символов, первый символ - 32 ("пробел").
         // Размер ячейки с символом получается делением горизонтального и вертикального 
         // размера изображения на количество столбцов и строк соответственно.
@@ -41,7 +40,7 @@ class CScreenText {
     public:
         GLuint  font;
 
-        CScreenText() {};
+        CScreenText();
         // Инициализирующий конструктор лучше не использовать т.к. он может быть вызван до создания 
         // контекста OpenGL и это приведёт к segmentation fault в функции создания текстур (gluBuild2DMipmaps() или
         // glGenerateMipmap()). Лучшая стратегия здесь - это запретить конструктор и оператор копирования и перемещения,

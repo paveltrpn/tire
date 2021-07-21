@@ -33,7 +33,8 @@ CScreenText		g_screenText;
 std::map<std::string, BasicBody>	g_BodyList;
 CTime			g_Timer;
 
-constexpr uint32_t c_moveZoneDst = 32; //На расстоянии Х пикселей от границ окна находятся зоны, в которых курсор двигает
+//На расстоянии Х пикселей от границ окна находятся зоны, в которых курсор двигает
+constexpr uint32_t c_moveZoneDst = 32; 
 
 //Скорости вращения и перемещения камеры при 60 fps
 constexpr float c_cmrMoveSpd = 0.4f;
@@ -272,13 +273,13 @@ void appLoop() {
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(g_textCamera.getCmrMatrixPointer());
 
-		g_screenText.setTextPosition(-10.5f, 8.0f);
+		g_screenText.setTextPosition(-11.0f, 8.0f);
 		g_screenText.drawString(fmt::format("frame time = {}", frameTime));
 
-		g_screenText.setTextPosition(-10.5f, 7.1f);
+		g_screenText.setTextPosition(-11.0f, 7.3f);
 		g_screenText.drawString(fmt::format("frames per second = {}", fps));
 
-		g_screenText.setTextPosition(-10.5f, 6.2f);
+		g_screenText.setTextPosition(-11.0f, 6.6f);
 		g_screenText.drawString(fmt::format("pos X = {}, pos Y = {}", static_cast<float>(g_curPositionX), g_curPositionY));
 		// -----------------------------------------------------------
 
