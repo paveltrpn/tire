@@ -19,6 +19,8 @@
 #include "mesh.h"
 #include "timing.h"
 
+#include "font_string.h"
+
 GLFWwindow 		*g_appWindow;
 GLFWmonitor		*g_appMonitor;
 
@@ -172,7 +174,8 @@ void appSetup() {
 	g_textCamera.setViewParameters(45.0f, g_AppState.appWindowAspect, 0.01f, 100.0f);
 	g_textCamera.updateViewMatrix();
 
-	g_screenText.loadFont("assets/RobotoMono-2048-1024-64-128.jpg");
+	// g_screenText.loadFromJpegFile("assets/RobotoMono-2048-1024-64-128.jpg");
+	g_screenText.LoadFromJpegBase64(base64FontString);
 
 	g_BodyList.insert({"PRISM", BasicBody(BasicBody::PRISM, {3.0f, 3.0f, 3.0f})});
 	g_BodyList.find("PRISM")->second.setOffset({ 2.0f, 0.0f, 3.2f});

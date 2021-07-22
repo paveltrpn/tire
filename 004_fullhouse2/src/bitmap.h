@@ -9,8 +9,9 @@
 
 #include <jpeg/jpeglib.h>    
 #include <jpeg/jerror.h>
-
 #include <fmt/format.h>
+
+#include "base64.h"
 
 class CJpegBitmap {
 	private:
@@ -32,6 +33,7 @@ class CJpegBitmap {
         };
 
 		bool readFromFile(const std::string& fname);
+        bool readFromBase64(const::std::string& base64String);
 		bool writeToFile(const std::string& fname);
 
 		size_t      getWidht();
@@ -75,6 +77,42 @@ bool CJpegBitmap::readFromFile(const std::string& fname) {
 	jpeg_destroy_decompress(&info);
 	
 	fclose(fin);
+	
+	return true;
+}
+
+bool CJpegBitmap::readFromBase64(const std::string& base64String) {
+    struct jpeg_decompress_struct info;
+	struct jpeg_error_mgr err;				//the error handler
+	unsigned char * rowptr[1];				//pointer to an array
+    // Декодирование строки из base64 кода, т.е. `base64String` - это "бинарный файл" на диске, а
+    // `decodedStr` - "считанный файл".
+    std::string decodedStr = base64_decode(base64String);
+		
+	info.err = jpeg_std_error(&err);
+	jpeg_create_decompress(&info); 
+	
+    // Тут происходит дич в виде каста `const char *` в `unsigned char *` и
+    // чтение jpeg файла из буфера в памяти. Этот буфер представляет из себя строку,
+    // полученую из другой строки, закодированной как base64. 
+    jpeg_mem_src(&info, reinterpret_cast<unsigned char*>(const_cast<char*>(decodedStr.c_str())), decodedStr.length());
+	jpeg_read_header(&info, TRUE);
+	
+	jpeg_start_decompress(&info);
+
+	bitmapWidth = info.output_width;
+	bitmapHeight = info.output_height;
+	bitmapDepth = info.num_components;
+	decompressed = new uint8_t [info.output_width * info.output_height * info.num_components];
+
+	while (info.output_scanline < info.output_height) {
+		rowptr[0] = (unsigned char *)decompressed + info.num_components * info.output_width * info.output_scanline; 
+		jpeg_read_scanlines(&info, rowptr, 1);
+	}
+	
+	jpeg_finish_decompress(&info);
+	
+	jpeg_destroy_decompress(&info);
 	
 	return true;
 }

@@ -51,8 +51,9 @@ class CScreenText {
         // CScreenText(string fname);
         ~CScreenText();
         
-        void loadFont(const std::string& fname);
-        
+        void loadFromJpegFile(const std::string& fname);
+        void LoadFromJpegBase64(const std::string& base64String);
+
         void setGlyphWidth(float size);
         void setGlyphHeight(float size);
         void setGlyphGap(float size);

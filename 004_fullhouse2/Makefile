@@ -17,6 +17,7 @@ SRCS := mtrx2.cpp \
 		vec4.cpp \
 		qtnn.cpp \
 		plane.cpp \
+		base64.cpp \
 		main.cpp \
 		apputils.cpp \
 		mesh.cpp \
@@ -54,6 +55,9 @@ $(BUILD_PREFIX)/qtnn.o: qtnn.cpp
 	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
 $(BUILD_PREFIX)/plane.o: plane.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
+
+$(BUILD_PREFIX)/base64.o: base64.cpp
 	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
 $(BUILD_PREFIX)/main.o: main.cpp
