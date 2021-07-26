@@ -79,7 +79,7 @@ void windowInit() {
 	
 	if (glewInit() != GLEW_OK) {
 	    std::cout << "windowInit(): Failed to initialize GLEW" << std::endl;
-	    exit(1);
+	    std::exit(1);
 	};
 
 	// ВКЛ-ВЫКЛ вертикальную синхронизацию (VSYNC)
@@ -174,8 +174,7 @@ void appSetup() {
 	g_textCamera.setViewParameters(45.0f, g_AppState.appWindowAspect, 0.01f, 100.0f);
 	g_textCamera.updateViewMatrix();
 
-	// g_screenText.loadFromJpegFile("assets/RobotoMono-2048-1024-64-128.jpg");
-	g_screenText.LoadFromJpegBase64(base64FontString);
+	g_screenText.loadFromFile("assets/RobotoMono-2048-1024-64-128.jpg");
 
 	g_BodyList.insert({"PRISM", BasicBody(BasicBody::PRISM, {3.0f, 3.0f, 3.0f})});
 	g_BodyList.find("PRISM")->second.setOffset({ 2.0f, 0.0f, 3.2f});
@@ -191,9 +190,9 @@ void appSetup() {
 }
 
 void appLoop() {
-	uint64_t frameBeginTime;
-	float frameTime;
-	uint32_t frameCount = 0, fps;
+	uint64_t frameBeginTime{};
+	float v_frameTime{};
+	uint32_t frameCount{}, v_fps{};
 	CTimeDelay oneSecondDelay(1000);
 
 	while(!glfwWindowShouldClose(g_appWindow)) {
@@ -277,10 +276,10 @@ void appLoop() {
 		glLoadMatrixf(g_textCamera.getCmrMatrixPointer());
 
 		g_screenText.setTextPosition(-11.0f, 8.0f);
-		g_screenText.drawString(fmt::format("frame time = {}", frameTime));
+		g_screenText.drawString(fmt::format("frame time = {}", v_frameTime));
 
 		g_screenText.setTextPosition(-11.0f, 7.3f);
-		g_screenText.drawString(fmt::format("frames per second = {}", fps));
+		g_screenText.drawString(fmt::format("frames per second = {}", v_fps));
 
 		g_screenText.setTextPosition(-11.0f, 6.6f);
 		g_screenText.drawString(fmt::format("pos X = {}, pos Y = {}", static_cast<float>(g_curPositionX), g_curPositionY));
@@ -289,12 +288,12 @@ void appLoop() {
 		glfwSwapBuffers(g_appWindow);
 
 		if (oneSecondDelay.isPassed()) {
-			fps = frameCount;
+			v_fps = frameCount;
 			frameCount = 0;
 			oneSecondDelay.reset();
 		}
 
-		frameTime = static_cast<float>(g_Timer.getMs() - frameBeginTime) / 1000.0f;
+		v_frameTime = static_cast<float>(g_Timer.getMs() - frameBeginTime) / 1000.0f;
 		frameBeginTime = 0;
 	}
 }

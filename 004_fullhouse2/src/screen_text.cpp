@@ -21,39 +21,15 @@ CScreenText::~CScreenText() {
     glDeleteTextures(1, &font);
 }
 
-void CScreenText::loadFromJpegFile(const std::string& fname) {
-    CJpegBitmap fontImage;
+void CScreenText::loadFromFile(const std::string& fname) {
+    CBitmap fontImage;
 
     if (fontImage.readFromFile(fname)) {
         std::cout << "CScreenText::loadFont(): load font - " << fname << "\n";
-        std::cout << fmt::format("  Font parameters: Width - {}, Height - {}\n", fontImage.getWidht(), fontImage.getHeight());
     } else {
         std::cout << "CScreenText::loadFont(): can't load font from file - " << fname << "\n!";
         return;
     }
-
-    fontXRes = static_cast<float>(fontImage.getWidht());
-    fontYRes = static_cast<float>(fontImage.getHeight());
-    // Размер ячейки с символом получается делением горизонтального и вертикального 
-    // размера изображения на количество столбцов и строк соответственно.
-    fontCellXSize = fontXRes/fontColumn;
-    fontCellYSize = fontYRes/fontRow;
-
-    glEnable(GL_TEXTURE_2D);
-	glGenTextures(1, &font);
-	glBindTexture(GL_TEXTURE_2D, font);
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, fontImage.getWidht(), fontImage.getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, fontImage.getDataPtr());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glGenerateMipmap(GL_TEXTURE_2D);
-}
-
-void CScreenText::LoadFromJpegBase64(const std::string& base64String) {
-    CJpegBitmap fontImage;
-
-    fontImage.readFromBase64(base64String);
 
     fontXRes = static_cast<float>(fontImage.getWidht());
     fontYRes = static_cast<float>(fontImage.getHeight());
