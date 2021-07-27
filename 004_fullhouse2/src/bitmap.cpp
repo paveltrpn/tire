@@ -244,7 +244,7 @@ bool CBitmap::readFromFile(const std::string& fname) {
 
     if (!fs::exists(fname)) {
         std::cout << "CBitmap::readFromFile(): ERROR! file - " << fname << " does not exist!" << std::endl;
-        loadDummy();
+        loadDummyCheckerPattern();
         std::cout << "CBitmap::readFromFile(): dummy image is loaded instead of - " << fname << std::endl;
         return false;
     }
@@ -269,6 +269,7 @@ bool CBitmap::readFromFile(const std::string& fname) {
     }
 
     std::cout << "CBitmap::readFromFile(): ERROR! unknown file format - " << fname << std::endl;
+    loadDummyCheckerPattern();
     std::cout << "CBitmap::readFromFile(): dummy image is loaded instead of - " << fname << std::endl;
     
 	return false;
@@ -452,14 +453,26 @@ uint8_t * CBitmap::getDataPtr() {
 	}
 }
 
-void CBitmap::loadDummy() {
-	bitmapWidth = 512;
-	bitmapHeight = 512;
-	bitmapChannels = 3;
-	
+void CBitmap::loadDummyCheckerPattern() {
+    constexpr uint32_t dummySize = 512;
+    constexpr uint32_t dummyChannels = 3;
+    constexpr int32_t checkerSquareSizePx = 8;
+
+	bitmapWidth = bitmapHeight = dummySize;
+	bitmapChannels = dummyChannels;
+
+	int32_t value;
+
 	decompressed = new uint8_t [bitmapWidth * bitmapHeight * bitmapChannels];
 	
-	for (size_t i = 0; i < bitmapWidth * bitmapHeight * bitmapChannels; i++) {
-		decompressed[i] = i % 255;
+	for (size_t i = 0; i < bitmapHeight; i++) 
+        for (size_t j = 0; j < bitmapWidth; j++) {
+            value = (((i & checkerSquareSizePx) == 0) ^ ((j & checkerSquareSizePx) == 0)) * 255;
+		    decompressed[((i*bitmapChannels)*bitmapHeight + j*bitmapChannels) + 0]     = value;
+            decompressed[((i*bitmapChannels)*bitmapHeight + j*bitmapChannels) + 1]     = value;
+            decompressed[((i*bitmapChannels)*bitmapHeight + j*bitmapChannels) + 2]     = value;
+            if (bitmapChannels == 4) {
+                decompressed[((i*bitmapChannels)*bitmapHeight + j*bitmapChannels) + 3] = value;
+            }
 	}
 }

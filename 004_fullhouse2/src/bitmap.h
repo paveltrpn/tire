@@ -89,7 +89,7 @@ class CBitmap {
         bool readFromJpegFile(const std::string& fname);
 		bool readFromBmpFile(const std::string& fname);
 
-        void loadDummy();
+        void loadDummyCheckerPattern();
 
 	public:
 		CBitmap() {

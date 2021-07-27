@@ -28,7 +28,6 @@ void CScreenText::loadFromFile(const std::string& fname) {
         std::cout << "CScreenText::loadFont(): load font - " << fname << "\n";
     } else {
         std::cout << "CScreenText::loadFont(): can't load font from file - " << fname << "\n!";
-        return;
     }
 
     fontXRes = static_cast<float>(fontImage.getWidht());
