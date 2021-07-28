@@ -21,6 +21,7 @@ SRCS := mtrx2.cpp \
 		apputils.cpp \
 		bitmap.cpp \
 		mesh.cpp \
+		matbase.cpp \
 		camera.cpp \
 		timing.cpp \
 		screen_text.cpp
@@ -67,6 +68,9 @@ $(BUILD_PREFIX)/bitmap.o: bitmap.cpp
 	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
 $(BUILD_PREFIX)/mesh.o: mesh.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
+
+$(BUILD_PREFIX)/matbase.o: matbase.cpp
 	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
 $(BUILD_PREFIX)/camera.o: camera.cpp

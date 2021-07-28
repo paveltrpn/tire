@@ -46,52 +46,129 @@ std::vector<vec2> boxTexCoords = {{0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f},
 								  {0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f},
 								  {0.0f, 0.0f}, {1.0f, 1.0f}, {1.0f, 0.0f}};
 
-BasicBody::BasicBody() {
-	m_bodyYaw = m_bodyPitch = m_bodyRoll = 0.0f;
-    m_bodyOffset = vec3();
-		
-	BodyTriangles = boxTris;
-	BodyNormals = boxNrmls;
-	BodyTexCoords = boxTexCoords;
+
+CBodyBase::CBodyBase() {
+
 }
 
-BasicBody::BasicBody(vec3 scl) {
-	m_bodyYaw = m_bodyPitch = m_bodyRoll = 0.0f;
-    m_bodyOffset = vec3();
+CBodyBase::~CBodyBase() {
 
-	BodyTriangles = boxTris;
-	BodyNormals = boxNrmls;
-	BodyTexCoords = boxTexCoords;
+}
+
+void CBodyBase::appendNewBody(const std::string& bName) {
+	SBodyStruct tmp;
+
+	tmp.bodyYaw = tmp.bodyPitch = tmp.bodyRoll = 0.0f;
+	tmp.bodyYawVel = tmp.bodyPitchVel = tmp.bodyRollVel = 0.0f;
+    tmp.bodyPos = vec3();
+		
+	tmp.bodyTriangles = boxTris;
+	tmp.bodyNormals   = boxNrmls;
+	tmp.bodyTexCoords = boxTexCoords;
+
+	bodyList.insert({bName, tmp});
+}
+
+void CBodyBase::appendNewBody(const std::string& bName, const vec3& scl) {
+	SBodyStruct tmp;
+
+	tmp.bodyYaw = tmp.bodyPitch = tmp.bodyRoll = 0.0f;
+	tmp.bodyYawVel = tmp.bodyPitchVel = tmp.bodyRollVel = 0.0f;
+    tmp.bodyPos = vec3();
+		
+	tmp.bodyTriangles = boxTris;
+	tmp.bodyNormals   = boxNrmls;
+	tmp.bodyTexCoords = boxTexCoords;
 
 	mtrx4 scaleMtrx = mtrx4FromScale(scl);
-	for (auto &vert: BodyTriangles) {
+	for (auto &vert: tmp.bodyTriangles) {
 		vert = mtrx4MultVec3(scaleMtrx, vert);
 	}
 
-	// glGenBuffers(1, &m_oglBuffer);
-	// glBindBuffer(GL_ARRAY_BUFFER, m_oglBuffer);
-	// glBufferData(GL_ARRAY_BUFFER, BodyTriangles.size()*3, 0, GL_STATIC_DRAW); // reserve space
+	bodyList.insert({bName, tmp});
 }
 
-BasicBody::~BasicBody() {
-	// glDeleteBuffers(1, &m_oglBuffer);
+void CBodyBase::setBodyParameters(const std::string& bName, const vec3& offst) {
+	auto bdy = bodyList.find(bName);
+
+	if (bdy != bodyList.end()) {
+		bdy->second.bodyPos = offst;
+	} else {
+		std::cout << "CBodyBase::setBodyParameters(): ERROR! Can't find body - " << bName << std::endl;
+	}
 }
 
-void BasicBody::updateAndDraw() {
-	mtrx4 mRotate = mtrx4FromEuler(m_bodyYaw, m_bodyPitch, m_bodyRoll);
-	mtrx4 mOffset = mtrx4FromOffset(m_bodyOffset);
+void CBodyBase::setBodyParameters(const std::string& bName, float yaw, float pitch, float roll) {
+	auto bdy = bodyList.find(bName);
+
+	if (bdy != bodyList.end()) {
+		bdy->second.bodyYaw   = yaw;
+		bdy->second.bodyPitch = pitch;
+		bdy->second.bodyRoll  = roll;
+	} else {
+		std::cout << "CBodyBase::setBodyParameters(): ERROR! Can't find body - " << bName << std::endl;
+	}
+}
+
+void CBodyBase::setBodyParameters(const std::string& bName, float yaw, float pitch, float roll, const vec3& offst) {
+	auto bdy = bodyList.find(bName);
+
+	if (bdy != bodyList.end()) {
+		bdy->second.bodyPos   = offst;
+		bdy->second.bodyYaw   = yaw;
+		bdy->second.bodyPitch = pitch;
+		bdy->second.bodyRoll  = roll;
+	} else {
+		std::cout << "CBodyBase::setBodyParameters(): ERROR! Can't find body - " << bName << std::endl;
+	}
+}
+
+void CBodyBase::setBodyTranform(const std::string& bName, float yaw, float pitch, float roll) {
+	auto bdy = bodyList.find(bName);
+
+	if (bdy != bodyList.end()) {
+		bdy->second.bodyYawVel   = yaw;
+		bdy->second.bodyPitchVel = pitch;
+		bdy->second.bodyRollVel  = roll;
+	} else {
+		std::cout << "CBodyBase::setBodyTranform(): ERROR! Can't find body - " << bName << std::endl;
+	}
+}
+
+void CBodyBase::updateBody(const std::string& bName, float dt) {
+	auto bdy = bodyList.find(bName);
+
+	if (bdy != bodyList.end()) {
+		vec3 offst = vec3Scale(bdy->second.bodyVel, dt);
+		bdy->second.bodyPos = vec3Sum(bdy->second.bodyPos, offst);
+		bdy->second.bodyYaw   += bdy->second.bodyYawVel   *dt;
+		bdy->second.bodyPitch += bdy->second.bodyPitchVel *dt;
+		bdy->second.bodyRoll  += bdy->second.bodyRollVel  *dt;
+	} else {
+		std::cout << "CBodyBase::updateBody(): ERROR! Can't find body - " << bName << std::endl;
+	}
+}
+
+void CBodyBase::renderBody(const std::string& bName) {
+	auto bdy = bodyList.find(bName);
+
+	if (bdy != bodyList.end()) {
+	mtrx4 mRotate = mtrx4FromEuler(bdy->second.bodyYaw, 
+								   bdy->second.bodyPitch, 
+								   bdy->second.bodyRoll);
+	mtrx4 mOffset = mtrx4FromOffset(bdy->second.bodyPos);
 	
 	mtrx4 mAffine = mRotate * mOffset;
 
 	// Прямая транформация в нужное место и с нужным поворотом
-	for (size_t i = 0; i < BodyTriangles.size()/3; i++ ) {
-		BodyTriangles[i*3+0] = mtrx4MultVec3(mAffine, BodyTriangles[i*3+0]);
-		BodyTriangles[i*3+1] = mtrx4MultVec3(mAffine, BodyTriangles[i*3+1]);
-		BodyTriangles[i*3+2] = mtrx4MultVec3(mAffine, BodyTriangles[i*3+2]);
+	for (size_t i = 0; i < bdy->second.bodyTriangles.size()/3; i++ ) {
+		bdy->second.bodyTriangles[i*3+0] = mtrx4MultVec3(mAffine, bdy->second.bodyTriangles[i*3+0]);
+		bdy->second.bodyTriangles[i*3+1] = mtrx4MultVec3(mAffine, bdy->second.bodyTriangles[i*3+1]);
+		bdy->second.bodyTriangles[i*3+2] = mtrx4MultVec3(mAffine, bdy->second.bodyTriangles[i*3+2]);
 		
-		BodyNormals[i*3+0] = mtrx4MultVec3(mRotate, BodyNormals[i*3+0]);
-		BodyNormals[i*3+1] = mtrx4MultVec3(mRotate, BodyNormals[i*3+1]);
-		BodyNormals[i*3+2] = mtrx4MultVec3(mRotate, BodyNormals[i*3+2]);
+		bdy->second.bodyNormals[i*3+0] = mtrx4MultVec3(mRotate, bdy->second.bodyNormals[i*3+0]);
+		bdy->second.bodyNormals[i*3+1] = mtrx4MultVec3(mRotate, bdy->second.bodyNormals[i*3+1]);
+		bdy->second.bodyNormals[i*3+2] = mtrx4MultVec3(mRotate, bdy->second.bodyNormals[i*3+2]);
 	}
 
 	// glColor3f(0.3f, 0.6f, 1.0f);
@@ -99,11 +176,11 @@ void BasicBody::updateAndDraw() {
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	glVertexPointer(3, GL_FLOAT, 0, 	&BodyTriangles[0]);
-	glNormalPointer(GL_FLOAT, 0, 		BodyNormals.data());
-	glTexCoordPointer(2, GL_FLOAT, 0, 	&BodyTexCoords[0]);
+	glVertexPointer(3, GL_FLOAT, 0, 	&bdy->second.bodyTriangles[0]);
+	glNormalPointer(GL_FLOAT, 0, 		 bdy->second.bodyNormals.data());
+	glTexCoordPointer(2, GL_FLOAT, 0, 	&bdy->second.bodyTexCoords[0]);
 
-	glDrawArrays(GL_TRIANGLES, 0, BodyTriangles.size());
+	glDrawArrays(GL_TRIANGLES, 0, bdy->second.bodyTriangles.size());
 	
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
@@ -113,33 +190,27 @@ void BasicBody::updateAndDraw() {
 	mRotate.invertSelf();
 
 	// Обратная трансформация
-	for (size_t i = 0; i < BodyTriangles.size()/3; i++ ) {
-		BodyTriangles[i*3+0] = mtrx4MultVec3(mAffine, BodyTriangles[i*3+0]);
-		BodyTriangles[i*3+1] = mtrx4MultVec3(mAffine, BodyTriangles[i*3+1]);
-		BodyTriangles[i*3+2] = mtrx4MultVec3(mAffine, BodyTriangles[i*3+2]);
+	for (size_t i = 0; i < bdy->second.bodyTriangles.size()/3; i++ ) {
+		bdy->second.bodyTriangles[i*3+0] = mtrx4MultVec3(mAffine, bdy->second.bodyTriangles[i*3+0]);
+		bdy->second.bodyTriangles[i*3+1] = mtrx4MultVec3(mAffine, bdy->second.bodyTriangles[i*3+1]);
+		bdy->second.bodyTriangles[i*3+2] = mtrx4MultVec3(mAffine, bdy->second.bodyTriangles[i*3+2]);
 		
-		BodyNormals[i*3+0] = mtrx4MultVec3(mRotate, BodyNormals[i*3+0]);
-		BodyNormals[i*3+1] = mtrx4MultVec3(mRotate, BodyNormals[i*3+1]);
-		BodyNormals[i*3+2] = mtrx4MultVec3(mRotate, BodyNormals[i*3+2]);
+		bdy->second.bodyNormals[i*3+0] = mtrx4MultVec3(mRotate, bdy->second.bodyNormals[i*3+0]);
+		bdy->second.bodyNormals[i*3+1] = mtrx4MultVec3(mRotate, bdy->second.bodyNormals[i*3+1]);
+		bdy->second.bodyNormals[i*3+2] = mtrx4MultVec3(mRotate, bdy->second.bodyNormals[i*3+2]);
+	}
+
+	} else {
+		std::cout << "CBodyBase::renderBody(): ERROR! Can't find body - " << bName << std::endl;
 	}
 }
 
-void BasicBody::setOrientation(float yaw, float pitch, float roll) {
-	m_bodyYaw = yaw;
-	m_bodyPitch = pitch;
-	m_bodyRoll = roll;
-}
+std::vector<std::string> CBodyBase::getEntireBodyQueue() {
+	std::vector<std::string> rt;
 
-void BasicBody::setOffset(vec3 offst){
-	m_bodyOffset = offst;
-}
+	for (const auto& bdy: bodyList) {
+		rt.push_back(bdy.first);
+	}
 
-void BasicBody::bodyMove(vec3 offst) {
-	m_bodyOffset = vec3Sum(m_bodyOffset, offst);
-}
-
-void BasicBody::bodyRotate(float yaw, float pitch, float roll) {
-	m_bodyYaw += yaw;
-	m_bodyPitch += pitch;
-	m_bodyRoll += roll;
+	return rt;
 }

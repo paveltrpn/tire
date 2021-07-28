@@ -31,8 +31,8 @@ CAppState		g_AppState;
 CPerspCamera	g_textCamera;
 CPerspLookAtCamera g_Camera;
 CScreenText		g_screenText;
-std::map<std::string, BasicBody>	g_BodyList;
 CTime			g_Timer;
+CBodyBase g_bodyBase;
 
 //На расстоянии Х пикселей от границ окна находятся зоны, в которых курсор двигает
 constexpr uint32_t c_moveZoneDst = 32; 
@@ -177,25 +177,30 @@ void appSetup() {
 
 	g_screenText.loadFromFile("assets/RobotoMono-2048-1024-64-128.jpg");
 
-	g_BodyList.insert({"BOX", BasicBody({3.0f, 3.0f, 3.0f})});
-	g_BodyList.find("BOX")->second.setOffset({-1.0f, 3.0f,-1.0f});
+	g_bodyBase.appendNewBody("BOX", {3.0f, 3.0f, 3.0f});
+	g_bodyBase.setBodyParameters("BOX", {-1.0f, 3.0f,-1.0f});
+	g_bodyBase.setBodyTranform("BOX", 0.5f, 0.3f, 0.2f);
 
-	g_BodyList.insert({"FLOOR", BasicBody({10.0f, 0.5f, 10.0f})});
-	g_BodyList.find("FLOOR")->second.setOffset({ 0.0f,-2.7f, 0.0f});
+	g_bodyBase.appendNewBody("FLOOR",{10.0f, 0.5f, 10.0f});
+	g_bodyBase.setBodyParameters("FLOOR", { 0.0f,-2.7f, 0.0f});
 
-	g_BodyList.insert({"WALL_BACK", BasicBody({10.0f, 5.0f, 0.5f})});
-	g_BodyList.find("WALL_BACK")->second.setOffset({ 0.0f, 2.5f, -10.0f});
+	g_bodyBase.appendNewBody("WALL_BACK",{10.0f, 5.0f, 0.5f});
+	g_bodyBase.setBodyParameters("WALL_BACK", { 0.0f, 2.5f, -10.0f});
 
-	g_BodyList.insert({"WALL_LEFT", BasicBody({0.5f, 5.0f, 10.0f})});
-	g_BodyList.find("WALL_LEFT")->second.setOffset({-10.0f, 2.5f, 0.0f});
+	g_bodyBase.appendNewBody("WALL_LEFT",{0.5f, 5.0f, 10.0f});
+	g_bodyBase.setBodyParameters("WALL_LEFT", {-10.0f, 2.5f, 0.0f});
 
-	CBitmap boxTexture;
-	boxTexture.readFromFile("assets/rock.jpg");
+	for (auto& bodyName: g_bodyBase.getEntireBodyQueue()) {
+		std::cout << fmt::format("{}\n", bodyName);
+	}
+
+	CBitmap boxTextureBitmap;
+	boxTextureBitmap.readFromFile("assets/rock.jpg");
 
 	glEnable(GL_TEXTURE_2D);
 	glGenTextures(1, &g_box_texture);
 	glBindTexture(GL_TEXTURE_2D, g_box_texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, boxTexture.getWidht(), boxTexture.getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, boxTexture.getDataPtr());
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, boxTextureBitmap.getWidht(), boxTextureBitmap.getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, boxTextureBitmap.getDataPtr());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -263,18 +268,21 @@ void appLoop() {
 		glEnable(GL_LIGHT0);
 		glEnable(GL_LIGHT1);
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, g_box_texture);
+		g_bodyBase.updateBody("BOX", 1.0f);
+		g_bodyBase.renderBody("BOX");
+		glDisable(GL_TEXTURE_2D);
 
-		for (auto &bdy: g_BodyList) {
-			if (bdy.first == "BOX") {
-				glEnable(GL_TEXTURE_2D);
-				glBindTexture(GL_TEXTURE_2D, g_box_texture);
-				bdy.second.bodyRotate(0.5f, 0.2f, 0.3f);
-				bdy.second.updateAndDraw();
-				glDisable(GL_TEXTURE_2D);
-				continue;
-			}
-			bdy.second.updateAndDraw();
-		};
+		g_bodyBase.updateBody("FLOOR", 1.0f);
+		g_bodyBase.renderBody("FLOOR");
+
+		g_bodyBase.updateBody("WALL_BACK", 1.0f);
+		g_bodyBase.renderBody("WALL_BACK");
+
+		g_bodyBase.updateBody("WALL_LEFT", 1.0f);
+		g_bodyBase.renderBody("WALL_LEFT");
 
 		// -----------------------------------------------------------
 		// Отрисовка текста

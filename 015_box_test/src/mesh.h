@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include <tuple>
+#include <map>
 
 #include <GL/glew.h>
 #include <GL/glu.h>
@@ -15,34 +15,38 @@
 #include "mtrx3.h"
 #include "mtrx4.h"
 
-// 
-// BasicBody need to be drawn by itself ?????
-// 
-class BasicBody {
-    public:
-        BasicBody();
-        BasicBody(vec3 scl);
+struct SBodyStruct {
+    std::vector<vec3> bodyTriangles;
+    std::vector<vec3> bodyNormals;
+    std::vector<vec2> bodyTexCoords;
 
-        ~BasicBody();
+    float bodyYaw, bodyPitch, bodyRoll;
+    float bodyYawVel, bodyPitchVel, bodyRollVel;
 
-        void setOrientation(float yaw, float pitch, float roll);
-        void setOffset(vec3 offst);
+    vec3 bodyPos;
+    vec3 bodyVel;
+};
 
-        void bodyMove(vec3 offst);
-        void bodyRotate(float yaw, float pitch, float roll);
-
-        void updateAndDraw();
-
+class CBodyBase {
     private:
-        std::vector<vec3> BodyTriangles;
-        std::vector<vec3> BodyNormals;
-        std::vector<vec2> BodyTexCoords;
+        std::map<std::string, SBodyStruct> bodyList;
 
-        float m_bodyYaw, m_bodyPitch, m_bodyRoll;
+    public:
+        CBodyBase();
+        ~CBodyBase();
 
-        vec3 m_bodyOffset;
+        void appendNewBody(const std::string& bName);
+        void appendNewBody(const std::string& bName, const vec3& scl);
+        void setBodyParameters(const std::string& bName, const vec3& offst);
+        void setBodyParameters(const std::string& bName, float yaw, float pitch, float roll);
+        void setBodyParameters(const std::string& bName, float yaw, float pitch, float roll, const vec3& offst);
 
-        GLuint m_oglBuffer;
+        void setBodyTranform(const std::string& bName, float yaw, float pitch, float roll);
+
+        void updateBody(const std::string& bName, float dt);
+        void renderBody(const std::string& bName);
+
+        std::vector<std::string> getEntireBodyQueue();
 };
 
 #endif

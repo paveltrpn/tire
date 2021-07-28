@@ -153,4 +153,7 @@ void CScreenText::drawString(std::string string) {
     
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
+
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
 }
