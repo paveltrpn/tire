@@ -25,6 +25,8 @@ struct SBodyStruct {
 
     vec3 bodyPos;
     vec3 bodyVel;
+
+    std::string mtrlName;
 };
 
 class CBodyBase {
@@ -35,8 +37,8 @@ class CBodyBase {
         CBodyBase();
         ~CBodyBase();
 
-        void appendNewBody(const std::string& bName);
-        void appendNewBody(const std::string& bName, const vec3& scl);
+        void appendNewBody(const std::string& bName, const std::string& mtrlName);
+        void appendNewBody(const std::string& bName, const std::string& mtrlName, const vec3& scl);
         void setBodyParameters(const std::string& bName, const vec3& offst);
         void setBodyParameters(const std::string& bName, float yaw, float pitch, float roll);
         void setBodyParameters(const std::string& bName, float yaw, float pitch, float roll, const vec3& offst);
@@ -45,6 +47,8 @@ class CBodyBase {
 
         void updateBody(const std::string& bName, float dt);
         void renderBody(const std::string& bName);
+
+        std::string getMtrlName(const std::string& bName);
 
         std::vector<std::string> getEntireBodyQueue();
 };

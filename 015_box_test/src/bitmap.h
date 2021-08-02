@@ -87,8 +87,6 @@ class CBitmap {
         bool readFromJpegFile(const std::string& fname);
 		bool readFromBmpFile(const std::string& fname);
 
-        void loadDummyCheckerPattern();
-
 	public:
 		CBitmap() {
             decompressed = nullptr;
@@ -100,6 +98,8 @@ class CBitmap {
             }
         };
 
+        void loadDummyCheckerPattern(uint32_t texSize=512, uint32_t channelsCount=3, uint32_t checkerSquareSizePx=64);
+        
 		bool readFromFile(const std::string& fname);
 		bool writeToJpegFile(const std::string& fname);
 

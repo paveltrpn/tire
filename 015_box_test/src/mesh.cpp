@@ -55,7 +55,7 @@ CBodyBase::~CBodyBase() {
 
 }
 
-void CBodyBase::appendNewBody(const std::string& bName) {
+void CBodyBase::appendNewBody(const std::string& bName, const std::string& mtrlName) {
 	SBodyStruct tmp;
 
 	tmp.bodyYaw = tmp.bodyPitch = tmp.bodyRoll = 0.0f;
@@ -65,11 +65,13 @@ void CBodyBase::appendNewBody(const std::string& bName) {
 	tmp.bodyTriangles = boxTris;
 	tmp.bodyNormals   = boxNrmls;
 	tmp.bodyTexCoords = boxTexCoords;
+
+	tmp.mtrlName = mtrlName;
 
 	bodyList.insert({bName, tmp});
 }
 
-void CBodyBase::appendNewBody(const std::string& bName, const vec3& scl) {
+void CBodyBase::appendNewBody(const std::string& bName, const std::string& mtrlName,const vec3& scl) {
 	SBodyStruct tmp;
 
 	tmp.bodyYaw = tmp.bodyPitch = tmp.bodyRoll = 0.0f;
@@ -79,6 +81,8 @@ void CBodyBase::appendNewBody(const std::string& bName, const vec3& scl) {
 	tmp.bodyTriangles = boxTris;
 	tmp.bodyNormals   = boxNrmls;
 	tmp.bodyTexCoords = boxTexCoords;
+
+	tmp.mtrlName = mtrlName;
 
 	mtrx4 scaleMtrx = mtrx4FromScale(scl);
 	for (auto &vert: tmp.bodyTriangles) {
@@ -153,56 +157,61 @@ void CBodyBase::renderBody(const std::string& bName) {
 	auto bdy = bodyList.find(bName);
 
 	if (bdy != bodyList.end()) {
-	mtrx4 mRotate = mtrx4FromEuler(bdy->second.bodyYaw, 
-								   bdy->second.bodyPitch, 
-								   bdy->second.bodyRoll);
-	mtrx4 mOffset = mtrx4FromOffset(bdy->second.bodyPos);
+		mtrx4 mRotate = mtrx4FromEuler(bdy->second.bodyYaw, 
+									   bdy->second.bodyPitch, 
+									   bdy->second.bodyRoll);
+		mtrx4 mOffset = mtrx4FromOffset(bdy->second.bodyPos);
+
+		mtrx4 mAffine = mRotate * mOffset;
+
+		// Прямая транформация в нужное место и с нужным поворотом
+		for (size_t i = 0; i < bdy->second.bodyTriangles.size()/3; i++ ) {
+			bdy->second.bodyTriangles[i*3+0] = mtrx4MultVec3(mAffine, bdy->second.bodyTriangles[i*3+0]);
+			bdy->second.bodyTriangles[i*3+1] = mtrx4MultVec3(mAffine, bdy->second.bodyTriangles[i*3+1]);
+			bdy->second.bodyTriangles[i*3+2] = mtrx4MultVec3(mAffine, bdy->second.bodyTriangles[i*3+2]);
+
+			bdy->second.bodyNormals[i*3+0] = mtrx4MultVec3(mRotate, bdy->second.bodyNormals[i*3+0]);
+			bdy->second.bodyNormals[i*3+1] = mtrx4MultVec3(mRotate, bdy->second.bodyNormals[i*3+1]);
+			bdy->second.bodyNormals[i*3+2] = mtrx4MultVec3(mRotate, bdy->second.bodyNormals[i*3+2]);
+		}
+
+		// glColor3f(0.3f, 0.6f, 1.0f);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+		glVertexPointer(3, GL_FLOAT, 0, 	&bdy->second.bodyTriangles[0]);
+		glNormalPointer(GL_FLOAT, 0, 		 bdy->second.bodyNormals.data());
+		glTexCoordPointer(2, GL_FLOAT, 0, 	&bdy->second.bodyTexCoords[0]);
+
+		glDrawArrays(GL_TRIANGLES, 0, bdy->second.bodyTriangles.size());
+
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
 	
-	mtrx4 mAffine = mRotate * mOffset;
+		mAffine.invertSelf();
+		mRotate.invertSelf();
 
-	// Прямая транформация в нужное место и с нужным поворотом
-	for (size_t i = 0; i < bdy->second.bodyTriangles.size()/3; i++ ) {
-		bdy->second.bodyTriangles[i*3+0] = mtrx4MultVec3(mAffine, bdy->second.bodyTriangles[i*3+0]);
-		bdy->second.bodyTriangles[i*3+1] = mtrx4MultVec3(mAffine, bdy->second.bodyTriangles[i*3+1]);
-		bdy->second.bodyTriangles[i*3+2] = mtrx4MultVec3(mAffine, bdy->second.bodyTriangles[i*3+2]);
-		
-		bdy->second.bodyNormals[i*3+0] = mtrx4MultVec3(mRotate, bdy->second.bodyNormals[i*3+0]);
-		bdy->second.bodyNormals[i*3+1] = mtrx4MultVec3(mRotate, bdy->second.bodyNormals[i*3+1]);
-		bdy->second.bodyNormals[i*3+2] = mtrx4MultVec3(mRotate, bdy->second.bodyNormals[i*3+2]);
-	}
+		// Обратная трансформация
+		for (size_t i = 0; i < bdy->second.bodyTriangles.size()/3; i++ ) {
+			bdy->second.bodyTriangles[i*3+0] = mtrx4MultVec3(mAffine, bdy->second.bodyTriangles[i*3+0]);
+			bdy->second.bodyTriangles[i*3+1] = mtrx4MultVec3(mAffine, bdy->second.bodyTriangles[i*3+1]);
+			bdy->second.bodyTriangles[i*3+2] = mtrx4MultVec3(mAffine, bdy->second.bodyTriangles[i*3+2]);
 
-	// glColor3f(0.3f, 0.6f, 1.0f);
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	glVertexPointer(3, GL_FLOAT, 0, 	&bdy->second.bodyTriangles[0]);
-	glNormalPointer(GL_FLOAT, 0, 		 bdy->second.bodyNormals.data());
-	glTexCoordPointer(2, GL_FLOAT, 0, 	&bdy->second.bodyTexCoords[0]);
-
-	glDrawArrays(GL_TRIANGLES, 0, bdy->second.bodyTriangles.size());
-	
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	
-	mAffine.invertSelf();
-	mRotate.invertSelf();
-
-	// Обратная трансформация
-	for (size_t i = 0; i < bdy->second.bodyTriangles.size()/3; i++ ) {
-		bdy->second.bodyTriangles[i*3+0] = mtrx4MultVec3(mAffine, bdy->second.bodyTriangles[i*3+0]);
-		bdy->second.bodyTriangles[i*3+1] = mtrx4MultVec3(mAffine, bdy->second.bodyTriangles[i*3+1]);
-		bdy->second.bodyTriangles[i*3+2] = mtrx4MultVec3(mAffine, bdy->second.bodyTriangles[i*3+2]);
-		
-		bdy->second.bodyNormals[i*3+0] = mtrx4MultVec3(mRotate, bdy->second.bodyNormals[i*3+0]);
-		bdy->second.bodyNormals[i*3+1] = mtrx4MultVec3(mRotate, bdy->second.bodyNormals[i*3+1]);
-		bdy->second.bodyNormals[i*3+2] = mtrx4MultVec3(mRotate, bdy->second.bodyNormals[i*3+2]);
-	}
-
+			bdy->second.bodyNormals[i*3+0] = mtrx4MultVec3(mRotate, bdy->second.bodyNormals[i*3+0]);
+			bdy->second.bodyNormals[i*3+1] = mtrx4MultVec3(mRotate, bdy->second.bodyNormals[i*3+1]);
+			bdy->second.bodyNormals[i*3+2] = mtrx4MultVec3(mRotate, bdy->second.bodyNormals[i*3+2]);
+		}
 	} else {
 		std::cout << "CBodyBase::renderBody(): ERROR! Can't find body - " << bName << std::endl;
 	}
+}
+
+std::string CBodyBase::getMtrlName(const std::string& bName) {
+	auto bdy = bodyList.find(bName);
+
+	return bdy->second.mtrlName; 
 }
 
 std::vector<std::string> CBodyBase::getEntireBodyQueue() {

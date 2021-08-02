@@ -417,13 +417,9 @@ uint8_t * CBitmap::getDataPtr() {
 	}
 }
 
-void CBitmap::loadDummyCheckerPattern() {
-    constexpr uint32_t dummySize = 512;
-    constexpr uint32_t dummyChannels = 3;
-    constexpr int32_t checkerSquareSizePx = 8;
-
-	bitmapWidth = bitmapHeight = dummySize;
-	bitmapChannels = dummyChannels;
+void CBitmap::loadDummyCheckerPattern(uint32_t texSize, uint32_t channelsCount, uint32_t checkerSquareSizePx) {
+	bitmapWidth = bitmapHeight = texSize;
+	bitmapChannels = channelsCount;
 
 	int32_t value;
 

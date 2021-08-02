@@ -19,6 +19,7 @@
 #include "mesh.h"
 #include "timing.h"
 #include "bitmap.h"
+#include "matbase.h"
 
 GLFWwindow 		*g_appWindow;
 GLFWmonitor		*g_appMonitor;
@@ -27,12 +28,13 @@ const GLubyte *oglRenderString;
 const GLubyte *oglVersionString;
 const GLubyte *oglslVersionString;
 
-CAppState		g_AppState;
-CPerspCamera	g_textCamera;
-CPerspLookAtCamera g_Camera;
-CScreenText		g_screenText;
-CTime			g_Timer;
-CBodyBase g_bodyBase;
+CAppState			g_AppState;
+CPerspCamera		g_textCamera;
+CPerspLookAtCamera 	g_Camera;
+CScreenText			g_screenText;
+CTime				g_Timer;
+CBodyBase 			g_bodyBase;
+CMtrlBase			g_mtrlBase;
 
 //На расстоянии Х пикселей от границ окна находятся зоны, в которых курсор двигает
 constexpr uint32_t c_moveZoneDst = 32; 
@@ -45,8 +47,6 @@ double g_curPositionX {};
 double g_curPositionY {};
 
 bool g_rightButtonClick {false};
-
-GLuint g_box_texture;
 
 void windowInit() {
 	g_AppState = CAppState();
@@ -154,7 +154,7 @@ void appSetup() {
 	glEnable(GL_COLOR_MATERIAL);
 
 	std::vector<vec4> ambient =			{{0.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 0.0f, 1.0f}};
-	std::vector<vec4> diffuse =			{{1.0f, 1.0f, 1.0f, 1.0f}, {0.3f, 0.3f, 0.3f, 1.0f}};
+	std::vector<vec4> diffuse =			{{1.5f, 1.5f, 1.5f, 1.0f}, {0.7f, 0.7f, 0.7f, 1.0f}};
 	std::vector<vec4> lightPosition =	{{5.0f, 10.0f, 5.0f, 1.0f}, {-35.0f, -5.0f, -20.0f, 1.0f}};
 	glEnable(GL_LIGHTING); 
 	glShadeModel(GL_SMOOTH);
@@ -177,36 +177,27 @@ void appSetup() {
 
 	g_screenText.loadFromFile("assets/RobotoMono-2048-1024-64-128.jpg");
 
-	g_bodyBase.appendNewBody("BOX", {3.0f, 3.0f, 3.0f});
+	g_mtrlBase.appendMaterial("BOX_MTRL", "assets/rock.jpg");
+	g_mtrlBase.appendMaterial("WALL_MTRL", "assets/wall.jpg");
+	g_mtrlBase.appendMaterial("FLOOR_MTRL", "assets/floor.jpg");
+	g_mtrlBase.appendMaterial("DUMMY", "assets/floor.jpg");
+
+	g_bodyBase.appendNewBody("BOX", "DUMMY", {3.0f, 3.0f, 3.0f});
 	g_bodyBase.setBodyParameters("BOX", {-1.0f, 3.0f,-1.0f});
 	g_bodyBase.setBodyTranform("BOX", 0.5f, 0.3f, 0.2f);
 
-	g_bodyBase.appendNewBody("FLOOR",{10.0f, 0.5f, 10.0f});
+	g_bodyBase.appendNewBody("FLOOR", "FLOOR_MTRL",{10.0f, 0.5f, 10.0f});
 	g_bodyBase.setBodyParameters("FLOOR", { 0.0f,-2.7f, 0.0f});
 
-	g_bodyBase.appendNewBody("WALL_BACK",{10.0f, 5.0f, 0.5f});
+	g_bodyBase.appendNewBody("WALL_BACK", "WALL_MTRL", {10.0f, 5.0f, 0.5f});
 	g_bodyBase.setBodyParameters("WALL_BACK", { 0.0f, 2.5f, -10.0f});
 
-	g_bodyBase.appendNewBody("WALL_LEFT",{0.5f, 5.0f, 10.0f});
+	g_bodyBase.appendNewBody("WALL_LEFT", "WALL_MTRL",{0.5f, 5.0f, 10.0f});
 	g_bodyBase.setBodyParameters("WALL_LEFT", {-10.0f, 2.5f, 0.0f});
 
 	for (auto& bodyName: g_bodyBase.getEntireBodyQueue()) {
 		std::cout << fmt::format("{}\n", bodyName);
 	}
-
-	CBitmap boxTextureBitmap;
-	boxTextureBitmap.readFromFile("assets/rock.jpg");
-
-	glEnable(GL_TEXTURE_2D);
-	glGenTextures(1, &g_box_texture);
-	glBindTexture(GL_TEXTURE_2D, g_box_texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, boxTextureBitmap.getWidht(), boxTextureBitmap.getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, boxTextureBitmap.getDataPtr());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	// checkOpenGLError();
 }
 
 void appLoop() {
@@ -246,7 +237,6 @@ void appLoop() {
 			g_Camera.moveViewPointsForward(-c_cmrMoveSpd);
 		}
 
-
 		glfwPollEvents();
 		
 		// -----------------------------------------------------------
@@ -269,20 +259,13 @@ void appLoop() {
 		glEnable(GL_LIGHT1);
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, g_box_texture);
-		g_bodyBase.updateBody("BOX", 1.0f);
-		g_bodyBase.renderBody("BOX");
-		glDisable(GL_TEXTURE_2D);
-
-		g_bodyBase.updateBody("FLOOR", 1.0f);
-		g_bodyBase.renderBody("FLOOR");
-
-		g_bodyBase.updateBody("WALL_BACK", 1.0f);
-		g_bodyBase.renderBody("WALL_BACK");
-
-		g_bodyBase.updateBody("WALL_LEFT", 1.0f);
-		g_bodyBase.renderBody("WALL_LEFT");
+		auto bdyQueue = g_bodyBase.getEntireBodyQueue();
+		for (auto bdy: bdyQueue) {
+			g_mtrlBase.bindMaterial(g_bodyBase.getMtrlName(bdy));
+			g_bodyBase.updateBody(bdy, 1.0f);
+			g_bodyBase.renderBody(bdy);
+			g_mtrlBase.unbindAll();
+		}
 
 		// -----------------------------------------------------------
 		// Отрисовка текста
