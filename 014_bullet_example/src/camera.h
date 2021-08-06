@@ -18,7 +18,7 @@ class CPerspCamera {
 
             cmrYaw = cmrPitch = cmrRoll = 0.0f;
 
-            cmrPosition = glm::vec3();
+            cmrPosition = glm::vec3(0.0f);
 
             cmrViewMatrix = glm::perspective(cmrFov, cmrAspect, cmrNear, cmrFar);
         };

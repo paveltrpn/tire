@@ -1,6 +1,6 @@
 CC       = g++
 INCDIR	 := E:/devtools/usr/local/include
-LIBDIR	 := -LE:/devtools/usr/local/lib -L../3d_party/bullet3/lib -LE:/devtools/usr/local/lib
+LIBDIR	 := -LE:/devtools/usr/local/lib -L../3d_party/bullet3/lib
 CFLAGS   = -Wall -Wextra -Wpedantic -Wno-unused-parameter -std=c++20
 LFLAGS 	 = -lstdc++ -lopengl32 -lglu32 -lglfw3 -lgdi32 -lglew32 -ltga -llibjpeg -lfmt -lBulletSoftBody -lBulletDynamics -lBulletCollision -lLinearMath
 
@@ -51,7 +51,7 @@ $(BUILD_PREFIX)/screen_text.o: screen_text.cpp
 	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
 
 main: $(OBJS)
-	$(CC) $(OBJS) -L$(LIBDIR) -o main $(LFLAGS)
+	$(CC) $(OBJS) $(LIBDIR) -o main $(LFLAGS)
 
 clean:
 	rm -f build/*.o main

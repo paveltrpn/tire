@@ -19,6 +19,8 @@
 #include "bitmap.h"
 #include "matbase.h"
 
+#include "btBulletDynamicsCommon.h"
+
 GLFWwindow 		*g_appWindow;
 GLFWmonitor		*g_appMonitor;
 
@@ -26,7 +28,7 @@ const GLubyte *oglRenderString;
 const GLubyte *oglVersionString;
 const GLubyte *oglslVersionString;
 
-CAppState			g_AppState;
+CAppState			g_appState;
 CPerspCamera		g_textCamera;
 CPerspLookAtCamera 	g_Camera;
 CScreenText			g_screenText;
@@ -34,21 +36,94 @@ CTime				g_Timer;
 CBodyBase 			g_bodyBase;
 CMtrlBase			g_mtrlBase;
 
-//На расстоянии Х пикселей от границ окна находятся зоны, в которых курсор двигает
-constexpr uint32_t c_moveZoneDst = 32; 
+btDefaultCollisionConfiguration* 		collisionConfiguration;
+btCollisionDispatcher* 					dispatcher;
+btBroadphaseInterface* 					overlappingPairCache;
+btSequentialImpulseConstraintSolver* 	solver;
+btDiscreteDynamicsWorld* 				dynamicsWorld;
 
-//Скорости вращения и перемещения камеры при 60 fps
-constexpr float c_cmrMoveSpd = 0.4f;
-constexpr float c_cmrRotnSpd = 1.0f;
+void initBulletPhysicsWorld() {
+	///-----initialization_start-----
 
-double g_curPositionX {};
-double g_curPositionY {};
+	///collision configuration contains default setup for memory, collision setup. Advanced users can create their own configuration.
+	collisionConfiguration = new btDefaultCollisionConfiguration();
 
-bool g_rightButtonClick {false};
+	///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
+	dispatcher = new btCollisionDispatcher(collisionConfiguration);
+
+	///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
+	overlappingPairCache = new btDbvtBroadphase();
+
+	///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
+	solver = new btSequentialImpulseConstraintSolver;
+
+	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+
+	dynamicsWorld->setGravity(btVector3(0, -10, 0));
+}
+
+void registerCollisionShapes() {
+	{
+		btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(10.0f), btScalar(0.5f), btScalar(10.0f)));
+
+		btTransform groundTransform;
+		groundTransform.setIdentity();
+		groundTransform.setOrigin(btVector3(0.0f, -2.7f, 0.0f));
+
+		btScalar mass(0.);
+
+		//rigidbody is dynamic if and only if mass is non zero, otherwise static
+		bool isDynamic = (mass != 0.f);
+
+		btVector3 localInertia(0, 0, 0);
+		if (isDynamic)
+			groundShape->calculateLocalInertia(mass, localInertia);
+
+		//using motionstate is optional, it provides interpolation capabilities, and only synchronizes 'active' objects
+		btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
+		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
+		btRigidBody* body = new btRigidBody(rbInfo);
+
+		//add the body to the dynamics world
+		dynamicsWorld->addRigidBody(body);
+	}
+
+	{
+		//create a dynamic rigidbody
+
+		//btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
+		btCollisionShape* colShape = new btBoxShape(btVector3(btScalar(3.0f), btScalar(3.0f), btScalar(3.0f)));
+
+		/// Create Dynamic Objects
+		btTransform startTransform;
+		startTransform.setIdentity();
+
+		btScalar mass(1.f);
+
+		//rigidbody is dynamic if and only if mass is non zero, otherwise static
+		bool isDynamic = (mass != 0.f);
+
+		btVector3 localInertia(0, 0, 0);
+		if (isDynamic)
+			colShape->calculateLocalInertia(mass, localInertia);
+
+		startTransform.setOrigin(btVector3(-1.0f, 15.0f, -1.0));
+		btQuaternion quat;
+		quat.setEuler(25.0f, 10.0f, 60.0f);
+		startTransform.setRotation(quat);
+
+		//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
+		btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
+		btRigidBody* body = new btRigidBody(rbInfo);
+
+		dynamicsWorld->addRigidBody(body);
+	}
+}
 
 void windowInit() {
-	g_AppState = CAppState();
-	g_AppState.showCurrentAppState();
+	// g_appState = CAppState();
+	g_appState.showCurrentAppState();
 
 	if (glfwInit() != GLFW_TRUE) {
 		std::cout << "windowInit(): glfwInit() return - GLFW_FALSE!" << "\n";
@@ -65,7 +140,7 @@ void windowInit() {
 	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	g_appWindow = glfwCreateWindow(g_AppState.appWindowWidth, g_AppState.appWindowHeight, g_AppState.appName.c_str(), nullptr, nullptr);
+	g_appWindow = glfwCreateWindow(g_appState.appWindowWidth, g_appState.appWindowHeight, g_appState.appName.c_str(), nullptr, nullptr);
 	if (g_appWindow == nullptr) {
 		std::cout << "windowInit(): Failed to create GLFW window" << std::endl;
 		glfwTerminate();
@@ -114,11 +189,11 @@ void registerGLFWCallbacks() {
 
 	auto mouseButtonCallback = [] (GLFWwindow* window, int button, int action, int mods) {
 		if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
-			g_rightButtonClick = false;
+			g_appState.rightButtonClick = false;
 		}
 
 		if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-			g_rightButtonClick = true;
+			g_appState.rightButtonClick = true;
 		}
 	};
 	glfwSetMouseButtonCallback(g_appWindow, mouseButtonCallback);
@@ -153,7 +228,7 @@ void appSetup() {
 
 	std::vector<glm::vec4> ambient =			{glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),  glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)};
 	std::vector<glm::vec4> diffuse =			{glm::vec4(1.5f, 1.5f, 1.5f, 1.0f),  glm::vec4(0.7f, 0.7f, 0.7f, 1.0f)};
-	std::vector<glm::vec4> lightPosition =		{glm::vec4(5.0f, 10.0f, 5.0f, 1.0f), glm::vec4(-35.0f, -5.0f, -20.0f, 1.0f)};
+	std::vector<glm::vec4> lightPosition =		{glm::vec4(15.0f, 10.0f, 15.0f, 1.0f), glm::vec4(-35.0f, -5.0f, -20.0f, 1.0f)};
 	glEnable(GL_LIGHTING); 
 	glShadeModel(GL_SMOOTH);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, &ambient[0][0]);
@@ -167,10 +242,10 @@ void appSetup() {
 	g_Timer = CTime();
 
 	g_Camera.setLookPoints(glm::vec3(0.0f, 20.0f, 30.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	g_Camera.setViewParameters(45.0f, g_AppState.appWindowAspect, 0.01f, 100.0f);
+	g_Camera.setViewParameters(45.0f, g_appState.appWindowAspect, 0.01f, 100.0f);
 
-	g_textCamera.setCameraPosition(glm::vec3(0.0f, 0.0f, -20.0f));
-	g_textCamera.setViewParameters(45.0f, g_AppState.appWindowAspect, 0.01f, 100.0f);
+	g_textCamera.setCameraPosition(glm::vec3(0.0f, 0.0f, -16.0f));
+	g_textCamera.setViewParameters(45.0f, g_appState.appWindowAspect, 0.01f, 100.0f);
 	g_textCamera.updateViewMatrix();
 
 	g_screenText.loadFromFile("assets/RobotoMono-2048-1024-64-128.jpg");
@@ -181,8 +256,8 @@ void appSetup() {
 	g_mtrlBase.appendMaterial("DUMMY", "assets/floor.jpg");
 
 	g_bodyBase.appendNewBody("BOX", "DUMMY", glm::vec3(3.0f, 3.0f, 3.0f));
-	g_bodyBase.setBodyParameters("BOX", glm::vec3(-1.0f, 3.0f,-1.0f));
-	g_bodyBase.setBodyTranform("BOX", 0.5f, 0.3f, 0.2f);
+	g_bodyBase.setBodyParameters("BOX", glm::vec3(-1.0f, 9.0f,-1.0f));
+	g_bodyBase.setBodyTranform("BOX", 0.0f, 0.0f, 0.0f);
 
 	g_bodyBase.appendNewBody("FLOOR", "FLOOR_MTRL", glm::vec3(10.0f, 0.5f, 10.0f));
 	g_bodyBase.setBodyParameters("FLOOR", glm::vec3(0.0f,-2.7f, 0.0f));
@@ -196,6 +271,9 @@ void appSetup() {
 	for (auto& bodyName: g_bodyBase.getEntireBodyQueue()) {
 		std::cout << fmt::format("{}\n", bodyName);
 	}
+
+	initBulletPhysicsWorld();
+	registerCollisionShapes();
 }
 
 void appLoop() {
@@ -208,30 +286,30 @@ void appLoop() {
 		frameBeginTime = g_Timer.getMs();
 		frameCount++;
 
-		glfwGetCursorPos(g_appWindow, &g_curPositionX, &g_curPositionY);
-		if (g_rightButtonClick) {
-			if (g_curPositionX < c_moveZoneDst) {
+		glfwGetCursorPos(g_appWindow, &g_appState.curPositionX, &g_appState.curPositionY);
+		if (g_appState.rightButtonClick) {
+			if (g_appState.curPositionX < c_moveZoneDst) {
 				g_Camera.rotateEyeUp(-c_cmrRotnSpd);
 			}
 
-			if (g_curPositionX > (g_AppState.appWindowWidth-c_moveZoneDst)) {
+			if (g_appState.curPositionX > (g_appState.appWindowWidth-c_moveZoneDst)) {
 				g_Camera.rotateEyeUp(c_cmrRotnSpd);
 			}
 		} else {
-			if (g_curPositionX < c_moveZoneDst) {
+			if (g_appState.curPositionX < c_moveZoneDst) {
 				g_Camera.moveViewPointsSideway(-c_cmrMoveSpd);
 			}
 
-			if (g_curPositionX > (g_AppState.appWindowWidth-c_moveZoneDst)) {
+			if (g_appState.curPositionX > (g_appState.appWindowWidth-c_moveZoneDst)) {
 				g_Camera.moveViewPointsSideway(c_cmrMoveSpd);
 			}
 		}
 
-		if (g_curPositionY < c_moveZoneDst) {
+		if (g_appState.curPositionY < c_moveZoneDst) {
 			g_Camera.moveViewPointsForward(c_cmrMoveSpd);
 		}
 
-		if (g_curPositionY > (g_AppState.appWindowHeight-c_moveZoneDst)) {
+		if (g_appState.curPositionY > (g_appState.appWindowHeight-c_moveZoneDst)) {
 			g_Camera.moveViewPointsForward(-c_cmrMoveSpd);
 		}
 
@@ -252,11 +330,39 @@ void appLoop() {
 		glMatrixMode(GL_MODELVIEW); 
 		glLoadIdentity();
 
+		glMatrixMode(GL_MODELVIEW); 
+		glLoadIdentity();
+
 		glEnable(GL_LIGHTING);
 		glEnable(GL_LIGHT0);
 		glEnable(GL_LIGHT1);
-		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		
+		dynamicsWorld->stepSimulation(1.f / 60.f, 10);
+
+		// print positions of all objects
+		for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--)
+		{
+			btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[j];
+			btRigidBody* body = btRigidBody::upcast(obj);
+			btTransform trans;
+			if (body && body->getMotionState())
+			{
+				body->getMotionState()->getWorldTransform(trans);
+			}
+			else
+			{
+				trans = obj->getWorldTransform();
+			}
+		}
+
+		btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[1];
+		auto trans = obj->getWorldTransform();
+		glm::vec3 orn = {float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ())};
+		btQuaternion rtn = trans.getRotation();
+
+		g_bodyBase.setBodyParameters("BOX", orn);
+		g_bodyBase.setRotQuat("BOX", {rtn.getX(), rtn.getY(), rtn.getZ(), rtn.getW()});
+
 		auto bdyQueue = g_bodyBase.getEntireBodyQueue();
 		for (auto bdy: bdyQueue) {
 			g_mtrlBase.bindMaterial(g_bodyBase.getMtrlName(bdy));
@@ -271,7 +377,6 @@ void appLoop() {
 
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);  
-		// glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(g_textCamera.getCmrMatrixPointer());
 
@@ -282,7 +387,7 @@ void appLoop() {
 		g_screenText.drawString(fmt::format("frames per second = {}", v_fps));
 
 		g_screenText.setTextPosition(-11.0f, 6.6f);
-		g_screenText.drawString(fmt::format("pos X = {}, pos Y = {}", static_cast<float>(g_curPositionX), g_curPositionY));
+		g_screenText.drawString(fmt::format("pos X = {}, pos Y = {}", static_cast<float>(g_appState.curPositionX), g_appState.curPositionY));
 		// -----------------------------------------------------------
 
 		glfwSwapBuffers(g_appWindow);

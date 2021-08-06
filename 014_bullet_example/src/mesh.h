@@ -13,6 +13,8 @@
 
 #include "glm/glm.hpp"
 #include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 struct SBodyStruct {
     std::vector<glm::vec3> bodyTriangles;
@@ -25,6 +27,8 @@ struct SBodyStruct {
     glm::vec3 bodyPos;
     glm::vec3 bodyVel;
 
+    glm::quat rotQuat;
+
     std::string mtrlName;
 };
 
@@ -36,12 +40,19 @@ class CBodyBase {
         CBodyBase();
         ~CBodyBase();
 
+        CBodyBase(const CBodyBase& cbb) = delete;
+        CBodyBase(const CBodyBase&& cbb) = delete;
+        CBodyBase& operator = (const CBodyBase& cbb) = delete;
+        CBodyBase& operator = (const CBodyBase&& cbb) = delete;
+
         void appendNewBody(const std::string& bName, const std::string& mtrlName);
         void appendNewBody(const std::string& bName, const std::string& mtrlName, const glm::vec3& scl);
         void setBodyParameters(const std::string& bName, const glm::vec3& offst);
         void setBodyParameters(const std::string& bName, float yaw, float pitch, float roll);
         void setBodyParameters(const std::string& bName, float yaw, float pitch, float roll, const glm::vec3& offst);
 
+        void setRotQuat(const std::string& bName, const glm::quat& rot);
+        
         void setBodyTranform(const std::string& bName, float yaw, float pitch, float roll);
 
         void updateBody(const std::string& bName, float dt);

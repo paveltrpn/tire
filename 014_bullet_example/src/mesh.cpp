@@ -12,45 +12,44 @@
 
 // По три нормали на вершину!!!
 
-std::vector<glm::vec3> boxTris 	{glm::vec3(1.0f,  1.0f,  1.0f),  glm::vec3(-1.0f, 1.0f, 1.0f),  glm::vec3(-1.0f, -1.0f, 1.0f),
-									 glm::vec3( 1.0f,  1.0f,  1.0f), glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3( 1.0f, -1.0f, 1.0f),
-									 glm::vec3( 1.0f, -1.0f, -1.0f), glm::vec3( 1.0f, -1.0f,  1.0f), glm::vec3(-1.0f, -1.0f,  1.0f),
-									 glm::vec3( 1.0f, -1.0f, -1.0f), glm::vec3(-1.0f, -1.0f,  1.0f), glm::vec3(-1.0f, -1.0f, -1.0f),
-									 glm::vec3(-1.0f, -1.0,  -1.0f), glm::vec3(-1.0f, -1.0, 1.0), glm::vec3(-1.0f,  1.0, 1.0),
-									 glm::vec3(-1.0f, -1.0f, -1.0), glm::vec3(-1.0f,  1.0f,  1.0), glm::vec3(-1.0f,  1.0f, -1.0),
-									 glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3( 1.0f, 1.0f, -1.0f), glm::vec3( 1.0f,-1.0f, -1.0f),
-									 glm::vec3(-1.0f,  1.0f, -1.0), glm::vec3( 1.0f, -1.0f, -1.0), glm::vec3(-1.0f, -1.0f, -1.0),
-									 glm::vec3(1.0f, 1.0f,-1.0), glm::vec3(1.0f, 1.0f, 1.0), glm::vec3(1.0f,-1.0f, 1.0),
-									 glm::vec3(1.0f,  1.0f, -1.0), glm::vec3(1.0f, -1.0f,  1.0), glm::vec3(1.0f, -1.0f, -1.0),
-									 glm::vec3(-1.0f, 1.0f,-1.0f), glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3( 1.0f, 1.0f, 1.0f),
-									 glm::vec3(-1.0f, 1.0, -1.0f), glm::vec3( 1.0f, 1.0,  1.0f), glm::vec3( 1.0f, 1.0, -1.0f)};
+std::vector<glm::vec3> boxTris = 	{{1.0f, 1.0f, 1.0f},  {-1.0f, 1.0f, 1.0f},  {-1.0f, -1.0f, 1.0f},
+								{ 1.0f,  1.0f, 1.0f}, {-1.0f, -1.0f, 1.0f}, { 1.0f, -1.0f, 1.0f},
+								{ 1.0f, -1.0f, -1.0f}, { 1.0f, -1.0f,  1.0f}, {-1.0f, -1.0f,  1.0f},
+								{ 1.0f, -1.0f, -1.0f}, {-1.0f, -1.0f,  1.0f}, {-1.0f, -1.0f, -1.0f},
+								{-1.0f, -1.0,-1.0}, {-1.0f, -1.0, 1.0}, {-1.0f,  1.0, 1.0},
+								{-1.0f, -1.0f, -1.0}, {-1.0f,  1.0f,  1.0}, {-1.0f,  1.0f, -1.0},
+								{-1.0f, 1.0f, -1.0f}, { 1.0f, 1.0f, -1.0f}, { 1.0f,-1.0f, -1.0f},
+								{-1.0f,  1.0f, -1.0}, { 1.0f, -1.0f, -1.0}, {-1.0f, -1.0f, -1.0},
+								{1.0f, 1.0f,-1.0}, {1.0f, 1.0f, 1.0}, {1.0f,-1.0f, 1.0},
+								{1.0f,  1.0f, -1.0}, {1.0f, -1.0f,  1.0}, {1.0f, -1.0f, -1.0},
+								{-1.0f, 1.0f,-1.0f}, {-1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f, 1.0f},
+								{-1.0f, 1.0, -1.0f}, { 1.0f, 1.0,  1.0f}, { 1.0f, 1.0, -1.0f}};
 
-std::vector<glm::vec3> boxNrmls {glm::vec3(0.0f, 0.0f, 1.0f),glm::vec3(0.0f, 0.0f, 1.0f),glm::vec3(0.0f, 0.0f, 1.0f),
-								glm::vec3(0.0f, 0.0f, 1.0f),glm::vec3(0.0f, 0.0f, 1.0f),glm::vec3(0.0f, 0.0f, 1.0f),
-								glm::vec3(0.0f,-1.0f, 0.0f),glm::vec3(0.0f,-1.0f, 0.0f),glm::vec3(0.0f,-1.0f, 0.0f),
-								glm::vec3(0.0f,-1.0f, 0.0f),glm::vec3(0.0f,-1.0f, 0.0f),glm::vec3(0.0f,-1.0f, 0.0f),
-								glm::vec3(-1.0f,0.0f, 0.0f),glm::vec3(-1.0f,0.0f, 0.0f),glm::vec3(-1.0f,0.0f, 0.0f),
-								glm::vec3(-1.0f,0.0f, 0.0f),glm::vec3(-1.0f,0.0f, 0.0f),glm::vec3(-1.0f,0.0f, 0.0f),
-								glm::vec3(0.0f, 0.0f,-1.0f),glm::vec3(0.0f, 0.0f,-1.0f),glm::vec3(0.0f, 0.0f,-1.0f),
-								glm::vec3(0.0f, 0.0f,-1.0f),glm::vec3(0.0f, 0.0f,-1.0f),glm::vec3(0.0f, 0.0f,-1.0f),
-								glm::vec3(1.0f, 0.0f, 0.0f),glm::vec3(1.0f, 0.0f, 0.0f),glm::vec3(1.0f, 0.0f, 0.0f),
-								glm::vec3(1.0f, 0.0f, 0.0f),glm::vec3(1.0f, 0.0f, 0.0f),glm::vec3(1.0f, 0.0f, 0.0f),
-								glm::vec3(0.0f, 1.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f),
-								glm::vec3(0.0f, 1.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f),glm::vec3(0.0f, 1.0f, 0.0f)};
+std::vector<glm::vec3> boxNrmls = 	{{0.0f, 0.0f, 1.0f},{0.0f, 0.0f, 1.0f},{0.0f, 0.0f, 1.0f},
+								{0.0f, 0.0f, 1.0f},{0.0f, 0.0f, 1.0f},{0.0f, 0.0f, 1.0f},
+								{0.0f,-1.0f, 0.0f},{0.0f,-1.0f, 0.0f},{0.0f,-1.0f, 0.0f},
+								{0.0f,-1.0f, 0.0f},{0.0f,-1.0f, 0.0f},{0.0f,-1.0f, 0.0f},
+								{-1.0f,0.0f, 0.0f},{-1.0f,0.0f, 0.0f},{-1.0f,0.0f, 0.0f},
+								{-1.0f,0.0f, 0.0f},{-1.0f,0.0f, 0.0f},{-1.0f,0.0f, 0.0f},
+								{0.0f, 0.0f,-1.0f},{0.0f, 0.0f,-1.0f},{0.0f, 0.0f,-1.0f},
+								{0.0f, 0.0f,-1.0f},{0.0f, 0.0f,-1.0f},{0.0f, 0.0f,-1.0f},
+								{1.0f, 0.0f, 0.0f},{1.0f, 0.0f, 0.0f},{1.0f, 0.0f, 0.0f},
+								{1.0f, 0.0f, 0.0f},{1.0f, 0.0f, 0.0f},{1.0f, 0.0f, 0.0f},
+								{0.0f, 1.0f, 0.0f},{0.0f, 1.0f, 0.0f},{0.0f, 1.0f, 0.0f},
+								{0.0f, 1.0f, 0.0f},{0.0f, 1.0f, 0.0f},{0.0f, 1.0f, 0.0f}};
 
-std::vector<glm::vec2> boxTexCoords {glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 1.0f), glm::vec2(1.0f, 1.0f),
-								  glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f), glm::vec2(1.0f, 0.0f),
-								  glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 1.0f), glm::vec2(1.0f, 1.0f),
-								  glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f), glm::vec2(1.0f, 0.0f),
-								  glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 1.0f), glm::vec2(1.0f, 1.0f),
-								  glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f), glm::vec2(1.0f, 0.0f),
-								  glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 1.0f), glm::vec2(1.0f, 1.0f),
-								  glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f), glm::vec2(1.0f, 0.0f),
-								  glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 1.0f), glm::vec2(1.0f, 1.0f),
-								  glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f), glm::vec2(1.0f, 0.0f),
-								  glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 1.0f), glm::vec2(1.0f, 1.0f),
-								  glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f), glm::vec2(1.0f, 0.0f)};
-
+std::vector<glm::vec2> boxTexCoords = {{0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f},
+								  {0.0f, 0.0f}, {1.0f, 1.0f}, {1.0f, 0.0f},
+								  {0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f},
+								  {0.0f, 0.0f}, {1.0f, 1.0f}, {1.0f, 0.0f},
+								  {0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f},
+								  {0.0f, 0.0f}, {1.0f, 1.0f}, {1.0f, 0.0f},
+								  {0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f},
+								  {0.0f, 0.0f}, {1.0f, 1.0f}, {1.0f, 0.0f},
+								  {0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f},
+								  {0.0f, 0.0f}, {1.0f, 1.0f}, {1.0f, 0.0f},
+								  {0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f},
+								  {0.0f, 0.0f}, {1.0f, 1.0f}, {1.0f, 0.0f}};
 
 CBodyBase::CBodyBase() {
 
@@ -65,8 +64,10 @@ void CBodyBase::appendNewBody(const std::string& bName, const std::string& mtrlN
 
 	tmp.bodyYaw = tmp.bodyPitch = tmp.bodyRoll = 0.0f;
 	tmp.bodyYawVel = tmp.bodyPitchVel = tmp.bodyRollVel = 0.0f;
-    tmp.bodyPos = glm::vec3();
-		
+    tmp.bodyPos = glm::vec3(0.0f);
+	tmp.bodyVel = glm::vec3(0.0f);
+	tmp.rotQuat = glm::quat(glm::vec3(0.0f));
+
 	tmp.bodyTriangles = boxTris;
 	tmp.bodyNormals   = boxNrmls;
 	tmp.bodyTexCoords = boxTexCoords;
@@ -81,20 +82,20 @@ void CBodyBase::appendNewBody(const std::string& bName, const std::string& mtrlN
 
 	tmp.bodyYaw = tmp.bodyPitch = tmp.bodyRoll = 0.0f;
 	tmp.bodyYawVel = tmp.bodyPitchVel = tmp.bodyRollVel = 0.0f;
-    tmp.bodyPos = glm::vec3();
-		
+    tmp.bodyPos = glm::vec3(0.0f);
+	tmp.bodyVel = glm::vec3(0.0f);
+	tmp.rotQuat = glm::quat(glm::vec3(0.0f));
+
 	tmp.bodyTriangles = boxTris;
 	tmp.bodyNormals   = boxNrmls;
 	tmp.bodyTexCoords = boxTexCoords;
 
 	tmp.mtrlName = mtrlName;
 
-	auto scaleMtrx = glm::scale(glm::mat4(), scl);
+	auto scaleMtrx = glm::scale(glm::mat4(1.0f), scl);
 
 	for (auto &vert: tmp.bodyTriangles) {
-		auto bar = glm::vec4(vert, 1.0f);
-		bar = scaleMtrx * bar;
-		vert = bar.swizzle(glm::X, glm::Y, glm::Z);
+		vert = glm::vec3(scaleMtrx * glm::vec4(vert, 1.0f));
 	}
 
 	bodyList.insert({bName, tmp});
@@ -135,6 +136,16 @@ void CBodyBase::setBodyParameters(const std::string& bName, float yaw, float pit
 	}
 }
 
+void CBodyBase::setRotQuat(const std::string& bName, const glm::quat& rot) {
+	auto bdy = bodyList.find(bName);
+
+	if (bdy != bodyList.end()) {
+		bdy->second.rotQuat = rot;
+	} else {
+		std::cout << "CBodyBase::setRotQuat(): ERROR! Can't find body - " << bName << std::endl;
+	}
+}
+
 void CBodyBase::setBodyTranform(const std::string& bName, float yaw, float pitch, float roll) {
 	auto bdy = bodyList.find(bName);
 
@@ -169,10 +180,11 @@ void CBodyBase::renderBody(const std::string& bName) {
 	auto bdy = bodyList.find(bName);
 
 	if (bdy != bodyList.end()) {
-		glm::mat4 mRotate = glm::eulerAngleYXZ(degToRad(bdy->second.bodyYaw), 
-									   		   degToRad(bdy->second.bodyPitch), 
-									   		   degToRad(bdy->second.bodyRoll));
-		glm::mat4 mOffset = glm::translate(glm::mat4(), bdy->second.bodyPos);
+		// glm::mat4 mRotate = glm::eulerAngleYXZ(degToRad(bdy->second.bodyYaw), 
+									   		//    degToRad(bdy->second.bodyPitch), 
+									   		//    degToRad(bdy->second.bodyRoll));
+		glm::mat4 mRotate = glm::toMat4(bdy->second.rotQuat); 
+		glm::mat4 mOffset = glm::translate(glm::mat4(1.0f), bdy->second.bodyPos);
 
 		glm::mat4 mAffine = mOffset * mRotate;
 
@@ -192,9 +204,9 @@ void CBodyBase::renderBody(const std::string& bName) {
 		glEnableClientState(GL_NORMAL_ARRAY);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-		glVertexPointer(3, GL_FLOAT, 0, 	&bdy->second.bodyTriangles[0]);
-		glNormalPointer(GL_FLOAT, 0, 		 bdy->second.bodyNormals.data());
-		glTexCoordPointer(2, GL_FLOAT, 0, 	&bdy->second.bodyTexCoords[0]);
+		glVertexPointer(3, GL_FLOAT, 0, 	glm::value_ptr(bdy->second.bodyTriangles[0]));
+		glNormalPointer(GL_FLOAT, 0, 		glm::value_ptr(bdy->second.bodyNormals[0]));
+		glTexCoordPointer(2, GL_FLOAT, 0, 	glm::value_ptr(bdy->second.bodyTexCoords[0]));
 
 		glDrawArrays(GL_TRIANGLES, 0, bdy->second.bodyTriangles.size());
 
