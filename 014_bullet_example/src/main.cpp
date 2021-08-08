@@ -177,6 +177,38 @@ void registerCollisionShapes() {
 
 		dynamicsWorld->addRigidBody(body);
 	}
+
+	{
+		//create a dynamic rigidbody
+
+		//btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
+		btCollisionShape* colShape = new btBoxShape(btVector3(btScalar(2.0f), btScalar(2.0f), btScalar(2.0f)));
+
+		/// Create Dynamic Objects
+		btTransform startTransform;
+		startTransform.setIdentity();
+
+		btScalar mass(1.f);
+
+		//rigidbody is dynamic if and only if mass is non zero, otherwise static
+		bool isDynamic = (mass != 0.f);
+
+		btVector3 localInertia(0, 0, 0);
+		if (isDynamic)
+			colShape->calculateLocalInertia(mass, localInertia);
+
+		startTransform.setOrigin(btVector3(-1.0f, 20.0f, -1.0));
+		btQuaternion quat;
+		quat.setEuler(25.0f, 10.0f, 60.0f);
+		startTransform.setRotation(quat);
+
+		//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
+		btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
+		btRigidBody* body = new btRigidBody(rbInfo);
+
+		dynamicsWorld->addRigidBody(body);
+	}
 }
 
 void windowInit() {
@@ -342,6 +374,10 @@ void appSetup() {
 	g_bodyBase.setBodyParameters("BOX", glm::vec3(-1.0f, 9.0f,-1.0f));
 	g_bodyBase.setBodyTranform("BOX", 0.0f, 0.0f, 0.0f);
 
+	g_bodyBase.appendNewBody("BOX2", "BOX_MTRL", glm::vec3(2.0f, 2.0f, 2.0f));
+	g_bodyBase.setBodyParameters("BOX2", glm::vec3(-1.0f, 20.0f,-1.0f));
+	g_bodyBase.setBodyTranform("BOX2", 0.0f, 0.0f, 0.0f);
+
 	g_bodyBase.appendNewBody("FLOOR", "FLOOR_MTRL", glm::vec3(10.0f, 0.5f, 10.0f));
 	g_bodyBase.setBodyParameters("FLOOR", glm::vec3(0.0f,-2.7f, 0.0f));
 
@@ -421,7 +457,7 @@ void appLoop() {
 		glEnable(GL_LIGHT1);
 		
 		dynamicsWorld->stepSimulation(v_frameTime, 0.0001f);
-		dynamicsWorld->debugDrawWorld();
+		// dynamicsWorld->debugDrawWorld();
 
 		// print positions of all objects
 		for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--)
@@ -445,7 +481,15 @@ void appLoop() {
 		btQuaternion rtn = trans.getRotation();
 
 		g_bodyBase.setBodyParameters("BOX", {pos.getX(), pos.getY(), pos.getZ()});
-		g_bodyBase.setRotQuat("BOX", {rtn.getX(), rtn.getY(), rtn.getZ(), rtn.getW()});
+		g_bodyBase.setRotQuat("BOX", {rtn.getW(), rtn.getX(), rtn.getY(), rtn.getZ()});
+
+		obj = dynamicsWorld->getNonStaticRigidBodies()[1];
+		trans = obj->getWorldTransform();
+		pos = trans.getOrigin();
+		rtn = trans.getRotation();
+
+		g_bodyBase.setBodyParameters("BOX2", {pos.getX(), pos.getY(), pos.getZ()});
+		g_bodyBase.setRotQuat("BOX2", {rtn.getW(), rtn.getX(), rtn.getY(), rtn.getZ()});
 
 		auto bdyQueue = g_bodyBase.getEntireBodyQueue();
 		for (auto bdy: bdyQueue) {

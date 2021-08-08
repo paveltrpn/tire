@@ -1,6 +1,11 @@
 
 #include "btDebugDraw.h"
 
+#include <array>
+
+#include "glm/glm.hpp"
+#include <glm/gtc/type_ptr.hpp>
+
 CDebugDraw::CDebugDraw() {
     glLineWidth(5.0f);
 }
