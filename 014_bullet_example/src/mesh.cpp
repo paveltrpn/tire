@@ -183,7 +183,7 @@ void CBodyBase::renderBody(const std::string& bName) {
 		// glm::mat4 mRotate = glm::eulerAngleYXZ(degToRad(bdy->second.bodyYaw), 
 									   		//    degToRad(bdy->second.bodyPitch), 
 									   		//    degToRad(bdy->second.bodyRoll));
-		glm::mat4 mRotate = glm::toMat4(bdy->second.rotQuat); 
+		glm::mat4 mRotate = glm::toMat4(bdy->second.rotQuat);
 		glm::mat4 mOffset = glm::translate(glm::mat4(1.0f), bdy->second.bodyPos);
 
 		glm::mat4 mAffine = mOffset * mRotate;

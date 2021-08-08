@@ -21,6 +21,8 @@
 
 #include "btBulletDynamicsCommon.h"
 
+#include "btDebugDraw.h"
+
 GLFWwindow 		*g_appWindow;
 GLFWmonitor		*g_appMonitor;
 
@@ -41,6 +43,7 @@ btCollisionDispatcher* 					dispatcher;
 btBroadphaseInterface* 					overlappingPairCache;
 btSequentialImpulseConstraintSolver* 	solver;
 btDiscreteDynamicsWorld* 				dynamicsWorld;
+CDebugDraw*								debugDraw;
 
 void initBulletPhysicsWorld() {
 	///-----initialization_start-----
@@ -57,8 +60,13 @@ void initBulletPhysicsWorld() {
 	///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
 	solver = new btSequentialImpulseConstraintSolver;
 
+	debugDraw = new CDebugDraw;
+
 	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
 
+	debugDraw->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
+	dynamicsWorld->setDebugDrawer(debugDraw);
+	
 	dynamicsWorld->setGravity(btVector3(0, -10, 0));
 }
 
@@ -89,10 +97,60 @@ void registerCollisionShapes() {
 	}
 
 	{
+		btCollisionShape* wallLeft = new btBoxShape(btVector3(btScalar(0.5f), btScalar(5.0f), btScalar(10.0f)));
+
+		btTransform groundTransform;
+		groundTransform.setIdentity();
+		groundTransform.setOrigin(btVector3(-10.0f, 2.5f, 0.0f));
+
+		btScalar mass(0.);
+
+		//rigidbody is dynamic if and only if mass is non zero, otherwise static
+		bool isDynamic = (mass != 0.f);
+
+		btVector3 localInertia(0, 0, 0);
+		if (isDynamic)
+			wallLeft->calculateLocalInertia(mass, localInertia);
+
+		//using motionstate is optional, it provides interpolation capabilities, and only synchronizes 'active' objects
+		btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
+		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, wallLeft, localInertia);
+		btRigidBody* body = new btRigidBody(rbInfo);
+
+		//add the body to the dynamics world
+		dynamicsWorld->addRigidBody(body);
+	}
+
+	{
+		btCollisionShape* wallBack = new btBoxShape(btVector3(btScalar(10.0f), btScalar(5.0f), btScalar(0.5f)));
+
+		btTransform groundTransform;
+		groundTransform.setIdentity();
+		groundTransform.setOrigin(btVector3(0.0f, 2.5f, -10.0f));
+
+		btScalar mass(0.);
+
+		//rigidbody is dynamic if and only if mass is non zero, otherwise static
+		bool isDynamic = (mass != 0.f);
+
+		btVector3 localInertia(0, 0, 0);
+		if (isDynamic)
+			wallBack->calculateLocalInertia(mass, localInertia);
+
+		//using motionstate is optional, it provides interpolation capabilities, and only synchronizes 'active' objects
+		btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
+		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, wallBack, localInertia);
+		btRigidBody* body = new btRigidBody(rbInfo);
+
+		//add the body to the dynamics world
+		dynamicsWorld->addRigidBody(body);
+	}
+
+	{
 		//create a dynamic rigidbody
 
 		//btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-		btCollisionShape* colShape = new btBoxShape(btVector3(btScalar(3.0f), btScalar(3.0f), btScalar(3.0f)));
+		btCollisionShape* colShape = new btBoxShape(btVector3(btScalar(2.0f), btScalar(2.0f), btScalar(2.0f)));
 
 		/// Create Dynamic Objects
 		btTransform startTransform;
@@ -184,6 +242,31 @@ void registerGLFWCallbacks() {
 		if (key == GLFW_KEY_X && GLFW_PRESS) {
 			g_Camera.setUpVec(glm::vec3(1.0f, 0.0f, 0.0f));
 		}
+
+		if (key == GLFW_KEY_SPACE && GLFW_PRESS) {
+			auto bar = dynamicsWorld->getNonStaticRigidBodies()[0];
+			bar->applyCentralImpulse(btVector3(0.0f,2.0f,0.0f));
+		}
+
+		if (key == GLFW_KEY_RIGHT && GLFW_PRESS) {
+			auto bar = dynamicsWorld->getNonStaticRigidBodies()[0];
+			bar->applyCentralImpulse(btVector3(2.0f,0.0f,0.0f));
+		}
+
+		if (key == GLFW_KEY_LEFT && GLFW_PRESS) {
+			auto bar = dynamicsWorld->getNonStaticRigidBodies()[0];
+			bar->applyCentralImpulse(btVector3(-2.0f,0.0f,0.0f));
+		}
+
+		if (key == GLFW_KEY_UP && GLFW_PRESS) {
+			auto bar = dynamicsWorld->getNonStaticRigidBodies()[0];
+			bar->applyCentralImpulse(btVector3(0.0f,0.0f,-2.0f));
+		}
+
+		if (key == GLFW_KEY_DOWN && GLFW_PRESS) {
+			auto bar = dynamicsWorld->getNonStaticRigidBodies()[0];
+			bar->applyCentralImpulse(btVector3(0.0f,0.0f,2.0f));
+		}
 	};
 	glfwSetKeyCallback(g_appWindow, keyCallback);
 
@@ -255,7 +338,7 @@ void appSetup() {
 	g_mtrlBase.appendMaterial("FLOOR_MTRL", "assets/floor.jpg");
 	g_mtrlBase.appendMaterial("DUMMY", "assets/floor.jpg");
 
-	g_bodyBase.appendNewBody("BOX", "DUMMY", glm::vec3(3.0f, 3.0f, 3.0f));
+	g_bodyBase.appendNewBody("BOX", "DUMMY", glm::vec3(2.0f, 2.0f, 2.0f));
 	g_bodyBase.setBodyParameters("BOX", glm::vec3(-1.0f, 9.0f,-1.0f));
 	g_bodyBase.setBodyTranform("BOX", 0.0f, 0.0f, 0.0f);
 
@@ -337,7 +420,8 @@ void appLoop() {
 		glEnable(GL_LIGHT0);
 		glEnable(GL_LIGHT1);
 		
-		dynamicsWorld->stepSimulation(1.f / 60.f, 10);
+		dynamicsWorld->stepSimulation(v_frameTime, 0.0001f);
+		dynamicsWorld->debugDrawWorld();
 
 		// print positions of all objects
 		for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--)
@@ -355,12 +439,12 @@ void appLoop() {
 			}
 		}
 
-		btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[1];
+		btCollisionObject* obj = dynamicsWorld->getNonStaticRigidBodies()[0];
 		auto trans = obj->getWorldTransform();
-		glm::vec3 orn = {float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ())};
+		btVector3 pos = trans.getOrigin();
 		btQuaternion rtn = trans.getRotation();
 
-		g_bodyBase.setBodyParameters("BOX", orn);
+		g_bodyBase.setBodyParameters("BOX", {pos.getX(), pos.getY(), pos.getZ()});
 		g_bodyBase.setRotQuat("BOX", {rtn.getX(), rtn.getY(), rtn.getZ(), rtn.getW()});
 
 		auto bdyQueue = g_bodyBase.getEntireBodyQueue();
@@ -383,11 +467,12 @@ void appLoop() {
 		g_screenText.setTextPosition(-11.0f, 8.0f);
 		g_screenText.drawString(fmt::format("frame time = {}", v_frameTime));
 
-		g_screenText.setTextPosition(-11.0f, 7.3f);
-		g_screenText.drawString(fmt::format("frames per second = {}", v_fps));
+		g_screenText.setTextPosition(-11.0f, 7.4f);
+		g_screenText.drawString(fmt::format("fps = {}", v_fps));
 
-		g_screenText.setTextPosition(-11.0f, 6.6f);
-		g_screenText.drawString(fmt::format("pos X = {}, pos Y = {}", static_cast<float>(g_appState.curPositionX), g_appState.curPositionY));
+		g_screenText.setTextPosition(-11.0f, 6.8f);
+		g_screenText.drawString(fmt::format("\"SPACE\" \"LEFT\" \"RIGHT\" for move"));
+		
 		// -----------------------------------------------------------
 
 		glfwSwapBuffers(g_appWindow);

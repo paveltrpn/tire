@@ -16,7 +16,8 @@ SRCS := main.cpp \
 		matbase.cpp \
 		camera.cpp \
 		timing.cpp \
-		screen_text.cpp
+		screen_text.cpp \
+		btDebugDraw.cpp
 
 OBJS := $(patsubst %.cpp,$(BUILD_PREFIX)/%.o,$(SRCS))
 
@@ -49,6 +50,10 @@ $(BUILD_PREFIX)/timing.o: timing.cpp
 
 $(BUILD_PREFIX)/screen_text.o: screen_text.cpp
 	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
+
+$(BUILD_PREFIX)/btDebugDraw.o: btDebugDraw.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
+
 
 main: $(OBJS)
 	$(CC) $(OBJS) $(LIBDIR) -o main $(LFLAGS)

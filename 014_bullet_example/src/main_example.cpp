@@ -162,3 +162,110 @@ int main(int argc, char** argv)
 	//next line is optional: it will be cleared by the destructor when the array goes out of scope
 	collisionShapes.clear();
 }
+
+/* Код из http://protomatic.blogspot.com/2013/01/code-simple-bullet-physics-debug-draw.html
+   сильно помог при написании отладочного вывода bullet */
+   
+#include "cinder/app/AppBasic.h"
+#include "cinder/gl/gl.h"
+#include "cinder/Text.h"
+#include "btBulletDynamicsCommon.h"
+#include "LinearMath/btIDebugDraw.h"
+
+using namespace ci;
+using namespace ci::app;
+using namespace std;
+
+class CibtDebugDraw : public btIDebugDraw
+{
+    int m_debugMode;
+public:
+    CibtDebugDraw();
+    virtual ~CibtDebugDraw();
+    virtual void drawLine(const btVector3& from, const btVector3& to, const btVector3& fromColor, const btVector3& toColor);
+    virtual void drawLine(const btVector3& from, const btVector3& to, const btVector3& color);
+    virtual void drawSphere(const btVector3& p, btScalar radius, const btVector3& color);
+    virtual void drawBox(const btVector3& bbMin, const btVector3& bbMax, const btVector3& color);
+    virtual void drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color);
+    virtual void reportErrorWarning(const char* warningString);
+    virtual void draw3dText(const btVector3& location, const char* textString);
+    virtual void setDebugMode(int debugMode);
+    virtual int getDebugMode() const;
+};
+
+CibtDebugDraw::CibtDebugDraw() : m_debugMode(0)
+{
+}
+
+CibtDebugDraw::~CibtDebugDraw()
+{
+}
+
+void CibtDebugDraw::drawLine(const btVector3& from, const btVector3& to, const btVector3& fromColor, const btVector3& toColor)
+{
+    gl::begin(GL_LINES);
+    gl::color(Color(fromColor.getX(), fromColor.getY(),
+        fromColor.getZ()));
+    gl::vertex(from.getX(),from.getY(),from.getZ());
+    gl::color(Color(toColor.getX(), toColor.getY(), toColor.getZ()));
+    gl::vertex(to.getX(),to.getY(),to.getZ());
+    gl::end();
+}
+
+void CibtDebugDraw::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
+{
+    drawLine(from,to,color,color);
+}
+
+void CibtDebugDraw::drawSphere(const btVector3& p, btScalar radius, const btVector3& color)
+{
+    gl::color(Color(color.getX(), color.getY(), color.getZ()));
+    gl::drawSphere(Vec3f(p.getX(),p.getY(),p.getZ()), radius);
+}
+
+void CibtDebugDraw::drawBox(const btVector3& bbMin, const btVector3& bbMax, const btVector3& color)
+{
+    gl::color(Color(color.getX(), color.getY(), color.getZ()));
+    gl::drawStrokedCube(AxisAlignedBox3f(
+        Vec3f(bbMin.getX(),bbMin.getY(),bbMin.getZ()),
+        Vec3f(bbMax.getX(),bbMax.getY(),bbMax.getZ())));
+}
+
+void CibtDebugDraw::drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color)
+{
+    Vec3f from(PointOnB.getX(), PointOnB.getY(), PointOnB.getZ());
+    Vec3f to(normalOnB.getX(), normalOnB.getY(), normalOnB.getZ());
+    to = from+to*1;
+
+    gl::color(Color(color.getX(),color.getY(),color.getZ()));
+    gl::begin(GL_LINES);
+    gl::vertex(from);
+    gl::vertex(to);
+    gl::end();
+}
+
+void CibtDebugDraw::reportErrorWarning(const char* warningString)
+{
+    console() << warningString << std::endl;
+}
+
+void CibtDebugDraw::draw3dText(const btVector3& location, const char* textString)
+{
+    TextLayout textDraw;
+    textDraw.clear(ColorA(0,0,0,0));
+    textDraw.setColor(Color(1,1,1));
+    textDraw.setFont(Font("Arial", 16));
+    textDraw.addCenteredLine(textString);
+    gl::draw(gl::Texture(textDraw.render()),
+        Vec2f(location.getX(),location.getY()));
+}
+
+void CibtDebugDraw::setDebugMode(int debugMode)
+{
+    m_debugMode = debugMode;
+}
+
+int CibtDebugDraw::getDebugMode() const
+{
+    return m_debugMode;
+}
