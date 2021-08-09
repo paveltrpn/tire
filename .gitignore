@@ -1,4 +1,5 @@
 *.o
+imgui.ini
 main
 main.exe
 /3d_party/*
