@@ -4,7 +4,7 @@ LIBDIR	 := -LE:/devtools/usr/local/lib
 CFLAGS   = -Wall -Wextra -Wpedantic -Wno-unused-parameter -std=c++20
 LFLAGS 	 = -lstdc++ -lopengl32 -lglu32 -lglfw3 -lgdi32 -lglew32 -lfmt 
 
-SOURCE_PREFIX = src ../3d_party/imgui ../3d_party/imgui/backends ../3d_party/ 
+SOURCE_PREFIX = src ../extern/imgui ../extern/imgui/backends ../extern/ 
 BUILD_PREFIX = build
 
 VPATH := $(SOURCE_PREFIX)

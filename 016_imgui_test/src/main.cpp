@@ -32,6 +32,7 @@ CTime				g_Timer;
 
 std::vector<glm::vec3> g_testQuad = {{-1.0f, 1.0f, 0.0f}, {1.0f,  1.0f, 0.0f}, { 1.0f, -1.0f, 0.0f},
 								  	 {-1.0f, 1.0f, 0.0f}, {1.0f, -1.0f, 0.0f}, {-1.0f, -1.0f, 0.0f}};
+									   
 void windowInit() {
 	// g_appState = CAppState();
 	g_appState.showCurrentAppState();

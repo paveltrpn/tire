@@ -1,10 +1,10 @@
 CC       = g++
 INCDIR	 := E:/devtools/usr/local/include
-LIBDIR	 := -LE:/devtools/usr/local/lib -L../3d_party/bullet3/lib
+LIBDIR	 := -LE:/devtools/usr/local/lib -L../extern/bullet3/lib
 CFLAGS   = -Wall -Wextra -Wpedantic -Wno-unused-parameter -std=c++20
 LFLAGS 	 = -lstdc++ -lopengl32 -lglu32 -lglfw3 -lgdi32 -lglew32 -ltga -llibjpeg -lfmt -lBulletSoftBody -lBulletDynamics -lBulletCollision -lLinearMath
 
-SOURCE_PREFIX = src ../3d_party/bullet3/include/bullet/ ../3d_party/
+SOURCE_PREFIX = src ../extern/bullet3/include/bullet/ ../extern/
 BUILD_PREFIX = build
 
 VPATH := $(SOURCE_PREFIX)
