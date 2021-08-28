@@ -3,6 +3,7 @@
 #include <string>
 #include <fmt/format.h>
 #include <thread>
+#include <vector>
 
 #include <GL/glew.h>
 #include <GL/glu.h>

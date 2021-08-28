@@ -1,13 +1,29 @@
 CC       = g++
-INCDIR	 := E:/devtools/usr/local/include
-LIBDIR	 := -LE:/devtools/usr/local/lib -L../extern/bullet3/lib
-CFLAGS   = -Wall -Wextra -Wpedantic -Wno-unused-parameter -std=c++20
-LFLAGS 	 = -lstdc++ -lopengl32 -lglu32 -lglfw3 -lgdi32 -lglew32 -ltga -llibjpeg -lfmt -lBulletSoftBody -lBulletDynamics -lBulletCollision -lLinearMath
 
-SOURCE_PREFIX = src ../extern/bullet3/include/bullet/ ../extern/
+CFLAGS   = -Wall -Wextra -Wpedantic -Wno-unused-parameter -std=c++20
+LFLAGS 	 = -lstdc++ -lfmt -lopengl32 -lglu32 -lglfw3 -lgdi32 -lglew32 -ltga -llibjpeg -lBulletSoftBody -lBulletDynamics -lBulletCollision -lLinearMath
+
+INCDIR	 := ../extern/fmt/include/ \
+			../extern/libtga/include \
+			../extern/libjpeg/include \
+			../extern/glfw/include \
+			../extern/glew/include \
+			../extern/bullet3/include/ \
+			../extern/bullet3/include/bullet \
+			../extern/
+
+LIBDIR	 := ../extern/fmt/lib/ \
+			../extern/glfw/lib \
+			../extern/glew/lib \
+			../extern/libtga/lib \
+			../extern/libjpeg/lib \
+			../extern/bullet3/lib/ \
+			../extern/bullet3/lib/bullet \
+			../extern/
+			
 BUILD_PREFIX = build
 
-VPATH := $(SOURCE_PREFIX)
+VPATH := src
 
 SRCS := main.cpp \
 		apputils.cpp \
@@ -28,35 +44,34 @@ OBJS := $(patsubst %.cpp,$(BUILD_PREFIX)/%.o,$(SRCS))
 all: $(OBJS) main
 
 $(BUILD_PREFIX)/main.o: main.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
+	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
 $(BUILD_PREFIX)/apputils.o: apputils.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
+	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
 $(BUILD_PREFIX)/bitmap.o: bitmap.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
+	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
 $(BUILD_PREFIX)/mesh.o: mesh.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
+	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
 $(BUILD_PREFIX)/matbase.o: matbase.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
+	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
 $(BUILD_PREFIX)/camera.o: camera.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
+	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
 $(BUILD_PREFIX)/timing.o: timing.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
+	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
 $(BUILD_PREFIX)/screen_text.o: screen_text.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
+	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
 $(BUILD_PREFIX)/btDebugDraw.o: btDebugDraw.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) $(addprefix -I,$(SOURCE_PREFIX)) -c $< -o $@
-
+	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
 main: $(OBJS)
-	$(CC) $(OBJS) $(LIBDIR) -o main $(LFLAGS)
+	$(CC) $(OBJS) $(addprefix -L,$(LIBDIR)) -o main $(LFLAGS)
 
 clean:
 	rm -f build/*.o main

@@ -2,26 +2,14 @@
 
 Сборник простых графических программ.  
 
-Библиотеки, необходимые для сборки:  
+Библиотеки, необходимые для сборки, должны лежать в ./extern:  
 
+- **fmt::format V8.0.1** - (git clone git://github.com/fmtlib/fmt) - A modern formatting library 
+- **Bullet physics V3.1** (git clone git://github.com/bulletphysics/bullet3) - real-time collision detection and multi-physics simulation for VR, games, visual effects,
+- **Dear ImGui V1.84.2** (git clone git://github.com/ocornut/imgui) Bloat-free Graphical User interface for C++ with minimal dependencies  
 - **SDL2** (sudo apt-get install libsdl2-dev)  
-- **FreeGLUT** (sudo apt-get install freeglut3-dev)  
-- **GLFW** (sudo apt-get install libglfw3 libglfw3-dev)
-- **GLEW** (sudo apt-get install libglew2.0 libglew-dev)
-- **libjpeg** (sudo apt-get install libjpeg-dev)
-
-- **libtga** (git clone git://github.com/madebr/libtga). Пример сборки через cmake:
-&ensp;cd libtga
-&ensp;mkdir build
-&ensp;cd build
-&ensp;cmake .. (вообще по умолчанию собирает как *.a библиотеку, есть опция для
-&ensp;сборки как shared object, но cmake -DBUILD_SHARED не получается)
-&ensp;make -j 6
-&ensp;make install  
-  
-В папке 3d_party:
-
-- **tinygltf** (git clone git://github.com/syoyo/tinygltf) - TinyGLTF is a header only C++11 glTF 2.0 reader.  
-- **obj-io** (git clone git://github.com/thinks/obj-io) - a single-file, header-only, no-dependencies C++ implementation of the OBJ file format.  
-- **Bullet physics** (git clone git://github.com/bulletphysics/bullet3) -  real-time collision detection and multi-physics simulation for VR, games, visual effects, robotics, machine learning etc. Для установки в произвольную директорию делаем так - cmake -DCMAKE_INSTALL_PREFIX:PATH=~/code/demos/3d_party/bullet3/ . && make install
+- **GLFW** (git clone git://github.com/glfw/glfw)
+- **GLEW** можно скачать с git clone git://github.com/nigels-com/glew или git://github.com/Perlmint/glew-cmake, но, как сказано в issues репозитория git://github.com/nigels-com/glew - "On windows the general advice is to build from the release archive, rather than git repository.". Собственно release archive  лежит в "http://glew.sourceforge.net/", откуда качаем архив и просто собираем make-ом.
+- **libjpeg** (git clone git://github.com/stohrendorf/libjpeg-cmake)
+- **libtga** (git clone git://github.com/madebr/libtga) В ней нужно заменить 4-ре вхождения функции bzero() на memset(ptr, value, size) в *.c файлах  
   

@@ -539,6 +539,8 @@ void appDefer() {
 
 int main(int argc, char *argv[]) {
 
+	std::cout << "Here!\n";
+
     appSetup();
     
     appLoop();
