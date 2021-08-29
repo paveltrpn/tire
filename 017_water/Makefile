@@ -25,7 +25,6 @@ VPATH := src ../extern/imgui ../extern/imgui/backends
 SRCS := main.cpp \
 		apputils.cpp \
 		camera.cpp \
-		timing.cpp \
 		imgui.cpp \
 		imgui_demo.cpp \
 		imgui_draw.cpp \
@@ -49,9 +48,6 @@ $(BUILD_PREFIX)/apputils.o: apputils.cpp
 	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
 $(BUILD_PREFIX)/camera.o: camera.cpp
-	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
-
-$(BUILD_PREFIX)/timing.o: timing.cpp
 	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
 $(BUILD_PREFIX)/imgui.o: imgui.cpp

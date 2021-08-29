@@ -12,7 +12,6 @@
 
 #include "apputils.h"
 #include "camera.h"
-#include "timing.h"
 
 #include <glm/glm.hpp>
 
@@ -29,45 +28,47 @@ const GLubyte *oglslVersionString;
 
 CAppState			g_appState;
 CPerspLookAtCamera 	g_Camera;
-CTime				g_Timer;
-
-std::vector<glm::vec3> g_testQuad = {{-1.0f, 1.0f, 0.0f}, {1.0f,  1.0f, 0.0f}, { 1.0f, -1.0f, 0.0f},
-								  	 {-1.0f, 1.0f, 0.0f}, {1.0f, -1.0f, 0.0f}, {-1.0f, -1.0f, 0.0f}};
 
 float a,b;
 float c_viscosity  = 0.005f;
 float c_waveHgt	   = 0.02f;
+float c_splashHgt  = 5.0f;
+float c_fieldSize = 1.2f;
+constexpr int32_t c_fieldPointDens = 32;
 
-struct vertex
-{
-	float coo[3];
-	float nor[3];
-
-};
+std::vector<glm::vec3> g_fieldPoints;
+std::vector<glm::vec3> g_fieldNormals;
 
 struct field
 {
-	float U[128][128];
+	float U[c_fieldPointDens * c_fieldPointDens];
 };
 
-vertex vertices[128][128];
 field A,B;
 field *p=&A,*n=&B;
+
+constexpr int32_t idRw(int32_t i, int32_t j, int32_t n = c_fieldPointDens) {
+	return (i*n + j);
+};
+
+constexpr int32_t idCw(int32_t i, int32_t j, int32_t n = 2) {
+	return (j*n + i);
+};
 
 void initWater() {
 	int i,j;
 
-	memset(vertices,0,sizeof(vertices));
-	memset(&A,0,sizeof(A));
-	memset(&B,0,sizeof(B));
+	g_fieldPoints.reserve(c_fieldPointDens*c_fieldPointDens);
+	g_fieldNormals.reserve(c_fieldPointDens*c_fieldPointDens);
+	
+	std::memset(&A,0,sizeof(A));
+	std::memset(&B,0,sizeof(B));
 
-	for(i=0;i<128;i++)
-	{
-		for(j=0;j<128;j++)
-		{
-			vertices[i][j].coo[0]=1.0f-2.0f*i/127.0f;
-			vertices[i][j].coo[1]=1.0f-2.0f*j/127.0f;
-			vertices[i][j].nor[2]=-4.0f/127.0f;
+	for(i = 0; i < c_fieldPointDens; i++) {
+		for(j = 0; j < c_fieldPointDens; j++) {
+			g_fieldPoints[idRw(i, j)][0] = c_fieldSize - (2.0f * c_fieldSize) * i / static_cast<float>(c_fieldPointDens-1);
+			g_fieldPoints[idRw(i, j)][1] = c_fieldSize - (2.0f * c_fieldSize) * j / static_cast<float>(c_fieldPointDens-1);
+			g_fieldNormals[idRw(i, j)][2] = -4.0f / static_cast<float>(c_fieldPointDens-1);
 		}
 	}
 };
@@ -75,43 +76,42 @@ void initWater() {
 void waterDoStep() {
 	int i,j,i1,j1;
 
-	i1=rand()%128;
-	j1=rand()%128;
+	i1=std::rand()%c_fieldPointDens;
+	j1=std::rand()%c_fieldPointDens;
 
-    if((rand()&127)==0)
-	for(i=-3;i<4;i++) {
-		for(j=-3;j<4;j++) {
-			float v=6.0f-i*i-j*j;
-			if(v<0.0f)v=0.0f;
-			n->U[i+i1+3][j+j1+3]-=v*c_waveHgt;
+    if((std::rand() & (c_fieldPointDens - 1)) == 0) {
+		for(i = -3; i < 4; i++) {
+			for(j = -3; j < 4; j++) {
+				float v = c_splashHgt - i*i - j*j;
+				if(v < 0.0f) v = 0.0f;
+				n->U[idRw(i+i1+3, j+j1+3)] -= v * c_waveHgt;
+			}
 		}
 	}
 
-	for(i=1;i<127;i++)	{
-		for(j=1;j<127;j++)	{
-			vertices[i][j].coo[2]=n->U[i][j];
-			vertices[i][j].nor[0]=n->U[i-1][j]-n->U[i+1][j];
-			vertices[i][j].nor[1]=n->U[i][j-1]-n->U[i][j+1];
+	for(i = 1; i < c_fieldPointDens - 1; i++)	{
+		for(j = 1; j < c_fieldPointDens - 1; j++)	{
+			g_fieldNormals[idRw(i, j)][0] = n->U[idRw(i-1, j)] - n->U[idRw(i+1, j)];
+			g_fieldNormals[idRw(i, j)][1] = n->U[idRw(i, j-1)] - n->U[idRw(i, j+1)];
+			g_fieldPoints [idRw(i, j)][2] = n->U[idRw(i,j)];
+			
+			float laplas = (n->U[idRw(i-1, j)] +
+				            n->U[idRw(i+1, j)] +
+						    n->U[idRw(i, j+1)] +
+						    n->U[idRw(i, j-1)]) * 0.25f - n->U[idRw(i, j)];
 
-			float laplas=(n->U[i-1][j]+
-				          n->U[i+1][j]+
-						  n->U[i][j+1]+
-						  n->U[i][j-1])*0.25f-n->U[i][j];
-
-			p->U[i][j]=((2.0f-c_viscosity)*n->U[i][j]-p->U[i][j]*(1.0f-c_viscosity)+laplas);
+			p->U[idRw(i, j)] = ((2.0f - c_viscosity) * n->U[idRw(i, j)] - p->U[idRw(i, j)] * (1.0f - c_viscosity) + laplas);
 
 		}
 	}
 
-	for(i=1;i<127;i++) {
+	for(i = 1; i < c_fieldPointDens - 1; i++) {
 		glBegin(GL_TRIANGLE_STRIP);
-		for(j=1;j<127;j++) {
-
-			glNormal3fv(vertices[i][j].nor);
-			glVertex3fv(vertices[i][j].coo);
-			glNormal3fv(vertices[i+1][j].nor);
-			glVertex3fv(vertices[i+1][j].coo);
-
+		for(j = 1; j < c_fieldPointDens - 1; j++) {
+			glNormal3fv(&g_fieldNormals[idRw(i, j)][0]);
+			glVertex3fv(&g_fieldPoints[idRw(i, j)][0]);
+			glNormal3fv(&g_fieldNormals[idRw(i+1, j)][0]);
+			glVertex3fv(&g_fieldPoints[idRw(i+1, j)][0]);
 		}
 		glEnd();
 	}
@@ -216,7 +216,6 @@ void appSetup() {
 
 	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 	glEnable(GL_COLOR_MATERIAL);
-	g_Timer = CTime();
 
 	g_Camera.setLookPoints(glm::vec3(-1.5f, 0.0f, 1.5f), glm::vec3(-0.2f, 0.0f, 0.0f));
 	g_Camera.setViewParameters(45.0f, g_appState.appWindowAspect, 0.01f, 100.0f);
@@ -238,15 +237,10 @@ void appSetup() {
 	initWater();
 
 	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontFromFileTTF("assets/RobotoMono-Medium.ttf", 18);
+	io.Fonts->AddFontFromFileTTF("assets/RobotoMono-Medium.ttf", 16);
 }
 
 void appLoop() {
-	uint64_t frameBeginTime{};
-	float v_frameTime{};
-	uint32_t frameCount{}, v_fps{};
-	CTimeDelay oneSecondDelay(1000);
-
     bool set_wireframe = true;
 
 	while(!glfwWindowShouldClose(g_appWindow)) {
@@ -282,15 +276,21 @@ void appLoop() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         {
-            ImGui::Begin("014_Water");                          // Create a window called "Hello, world!" and append into it.
+            ImGui::Begin("014_Water");                          
 
-            ImGui::Text("Water modeling demo");               // Display some text (you can use a format strings too)
+            ImGui::Text("Water modeling demo. Frame time - %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);               
             ImGui::Checkbox("Set wireframe", &set_wireframe);
+
+			if (ImGui::Button("Reset field.")) {                           
+                initWater();
+			}
+
+			ImGui::SliderFloat("Field size", &c_fieldSize, 0.5f, 4.0f);
 
 			ImGui::SliderFloat("Viscosity", &c_viscosity, 0.0001f, 0.05f);
 			ImGui::SliderFloat("Wave height", &c_waveHgt, 0.0001f, 0.05f);
+			ImGui::SliderFloat("Splash height", &c_splashHgt, 0.0f, 15.0f);
 
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
             ImGui::End();
         }
 		// Rendering
@@ -306,18 +306,6 @@ void appLoop() {
 		// -----------------------------------------------------------
 
 		glfwSwapBuffers(g_appWindow);
-
-		frameBeginTime = g_Timer.getMs();
-		frameCount++;
-
-		if (oneSecondDelay.isPassed()) {
-			v_fps = frameCount;
-			frameCount = 0;
-			oneSecondDelay.reset();
-		}
-
-		v_frameTime = static_cast<float>(g_Timer.getMs() - frameBeginTime) / 1000.0f;
-		frameBeginTime = 0;
 	}
 }
 
