@@ -1,4 +1,5 @@
 *.o
+*.dll
 imgui.ini
 main
 main.exe

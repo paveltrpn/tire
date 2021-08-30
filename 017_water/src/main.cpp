@@ -12,6 +12,7 @@
 
 #include "apputils.h"
 #include "camera.h"
+#include "bitmap.h"
 
 #include <glm/glm.hpp>
 
@@ -33,90 +34,87 @@ float a,b;
 float c_viscosity  = 0.005f;
 float c_waveHgt	   = 0.02f;
 float c_splashHgt  = 5.0f;
-float c_fieldSize = 1.2f;
-constexpr int32_t c_fieldPointDens = 32;
+float c_fieldSize = 0.975f;
+int32_t c_fieldPointCount = 64;
+int32_t c_fieldPointCountNew = c_fieldPointCount;
+GLuint g_waterTexId;
 
 std::vector<glm::vec3> g_fieldPoints;
 std::vector<glm::vec3> g_fieldNormals;
 
-struct field
-{
-	float U[c_fieldPointDens * c_fieldPointDens];
-};
+std::vector<float> g_fieldPrev, g_fieldNext;
+auto g_fPrevRef = &g_fieldPrev;
+auto g_fNextRef = &g_fieldNext;
 
-field A,B;
-field *p=&A,*n=&B;
-
-constexpr int32_t idRw(int32_t i, int32_t j, int32_t n = c_fieldPointDens) {
+constexpr int32_t idRw(int32_t i, int32_t j, int32_t n) {
 	return (i*n + j);
 };
 
-constexpr int32_t idCw(int32_t i, int32_t j, int32_t n = 2) {
+constexpr int32_t idCw(int32_t i, int32_t j, int32_t n) {
 	return (j*n + i);
 };
 
 void initWater() {
-	int i,j;
+	g_fieldPoints = std::vector<glm::vec3>(c_fieldPointCount*c_fieldPointCount, glm::vec3(0.0f, 0.0f, 0.0f));
+	g_fieldNormals = std::vector<glm::vec3>(c_fieldPointCount*c_fieldPointCount, glm::vec3(0.0f, 0.0f, 0.0f));
+	g_fieldPrev = std::vector<float>(c_fieldPointCount*c_fieldPointCount, 0.0f);
+	g_fieldNext = std::vector<float>(c_fieldPointCount*c_fieldPointCount, 0.0f);
 
-	g_fieldPoints.reserve(c_fieldPointDens*c_fieldPointDens);
-	g_fieldNormals.reserve(c_fieldPointDens*c_fieldPointDens);
-	
-	std::memset(&A,0,sizeof(A));
-	std::memset(&B,0,sizeof(B));
-
-	for(i = 0; i < c_fieldPointDens; i++) {
-		for(j = 0; j < c_fieldPointDens; j++) {
-			g_fieldPoints[idRw(i, j)][0] = c_fieldSize - (2.0f * c_fieldSize) * i / static_cast<float>(c_fieldPointDens-1);
-			g_fieldPoints[idRw(i, j)][1] = c_fieldSize - (2.0f * c_fieldSize) * j / static_cast<float>(c_fieldPointDens-1);
-			g_fieldNormals[idRw(i, j)][2] = -4.0f / static_cast<float>(c_fieldPointDens-1);
+	for(size_t i = 0; i < c_fieldPointCount; i++) {
+		for(size_t  j = 0; j < c_fieldPointCount; j++) {
+			g_fieldPoints [idRw(i, j, c_fieldPointCount)][0] = c_fieldSize - (2.0f * c_fieldSize) * i / static_cast<float>(c_fieldPointCount-1);
+			g_fieldPoints [idRw(i, j, c_fieldPointCount)][1] = c_fieldSize - (2.0f * c_fieldSize) * j / static_cast<float>(c_fieldPointCount-1);
+			g_fieldNormals[idRw(i, j, c_fieldPointCount)][2] = -4.0f / static_cast<float>(c_fieldPointCount-1);
 		}
 	}
 };
-
+									   
 void waterDoStep() {
 	int i,j,i1,j1;
 
-	i1=std::rand()%c_fieldPointDens;
-	j1=std::rand()%c_fieldPointDens;
+	i1 = std::rand() % c_fieldPointCount;
+	j1 = std::rand() % c_fieldPointCount;
 
-    if((std::rand() & (c_fieldPointDens - 1)) == 0) {
+    if((std::rand() & (c_fieldPointCount - 1)) == 0) {
 		for(i = -3; i < 4; i++) {
 			for(j = -3; j < 4; j++) {
 				float v = c_splashHgt - i*i - j*j;
 				if(v < 0.0f) v = 0.0f;
-				n->U[idRw(i+i1+3, j+j1+3)] -= v * c_waveHgt;
+				(*g_fNextRef)[idRw(i+i1+3, j+j1+3, c_fieldPointCount)] -= v * c_waveHgt;
 			}
 		}
 	}
 
-	for(i = 1; i < c_fieldPointDens - 1; i++)	{
-		for(j = 1; j < c_fieldPointDens - 1; j++)	{
-			g_fieldNormals[idRw(i, j)][0] = n->U[idRw(i-1, j)] - n->U[idRw(i+1, j)];
-			g_fieldNormals[idRw(i, j)][1] = n->U[idRw(i, j-1)] - n->U[idRw(i, j+1)];
-			g_fieldPoints [idRw(i, j)][2] = n->U[idRw(i,j)];
+	for(i = 1; i < c_fieldPointCount - 1; i++)	{
+		for(j = 1; j < c_fieldPointCount - 1; j++)	{
+			g_fieldNormals[idRw(i, j, c_fieldPointCount)][0] = (*g_fNextRef)[idRw(i-1, j, c_fieldPointCount)] - (*g_fNextRef)[idRw(i+1, j, c_fieldPointCount)];
+			g_fieldNormals[idRw(i, j, c_fieldPointCount)][1] = (*g_fNextRef)[idRw(i, j-1, c_fieldPointCount)] - (*g_fNextRef)[idRw(i, j+1, c_fieldPointCount)];
+			g_fieldPoints [idRw(i, j, c_fieldPointCount)][2] = (*g_fNextRef)[idRw(i,j, c_fieldPointCount)];
 			
-			float laplas = (n->U[idRw(i-1, j)] +
-				            n->U[idRw(i+1, j)] +
-						    n->U[idRw(i, j+1)] +
-						    n->U[idRw(i, j-1)]) * 0.25f - n->U[idRw(i, j)];
+			float laplas = ((*g_fNextRef)[idRw(i-1, j, c_fieldPointCount)] +
+				            (*g_fNextRef)[idRw(i+1, j, c_fieldPointCount)] +
+						    (*g_fNextRef)[idRw(i, j+1, c_fieldPointCount)] +
+						    (*g_fNextRef)[idRw(i, j-1, c_fieldPointCount)]) * 0.25f - (*g_fNextRef)[idRw(i, j, c_fieldPointCount)];
 
-			p->U[idRw(i, j)] = ((2.0f - c_viscosity) * n->U[idRw(i, j)] - p->U[idRw(i, j)] * (1.0f - c_viscosity) + laplas);
+			(*g_fPrevRef)[idRw(i, j, c_fieldPointCount)] = ((2.0f - c_viscosity) * 
+												  (*g_fNextRef)[idRw(i, j, c_fieldPointCount)] - 
+												  (*g_fPrevRef)[idRw(i, j, c_fieldPointCount)] * (1.0f - c_viscosity) + laplas);
 
 		}
 	}
 
-	for(i = 1; i < c_fieldPointDens - 1; i++) {
+	for(i = 1; i < c_fieldPointCount - 1; i++) {
 		glBegin(GL_TRIANGLE_STRIP);
-		for(j = 1; j < c_fieldPointDens - 1; j++) {
-			glNormal3fv(&g_fieldNormals[idRw(i, j)][0]);
-			glVertex3fv(&g_fieldPoints[idRw(i, j)][0]);
-			glNormal3fv(&g_fieldNormals[idRw(i+1, j)][0]);
-			glVertex3fv(&g_fieldPoints[idRw(i+1, j)][0]);
+		for(j = 1; j < c_fieldPointCount - 1; j++) {
+			glNormal3fv(&g_fieldNormals[idRw(i, j, c_fieldPointCount)][0]);
+			glVertex3fv(&g_fieldPoints [idRw(i, j, c_fieldPointCount)][0]);
+			glNormal3fv(&g_fieldNormals[idRw(i+1, j, c_fieldPointCount)][0]);
+			glVertex3fv(&g_fieldPoints [idRw(i+1, j, c_fieldPointCount)][0]);
 		}
 		glEnd();
 	}
 
-	field *sw=p;p=n;n=sw;
+	std::swap(g_fPrevRef, g_fNextRef);
 }
 
 void windowInit() {
@@ -221,19 +219,35 @@ void appSetup() {
 	g_Camera.setViewParameters(45.0f, g_appState.appWindowAspect, 0.01f, 100.0f);
 	g_Camera.setUpVec(glm::vec3(0.0f, 0.0f, 1.0f));
 
-	std::vector<glm::vec4> ambient =			{{0.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 0.0f, 1.0f}};
-	std::vector<glm::vec4> diffuse =			{{1.5f, 1.5f, 1.5f, 1.0f}, {0.7f, 0.7f, 0.7f, 1.0f}};
-	std::vector<glm::vec4> lightPosition =	{{2.0f, 2.0f, 3.0f, 1.0f}, {-35.0f, -5.0f, -20.0f, 1.0f}};
-	// glEnable(GL_LIGHTING); 
-	// glShadeModel(GL_SMOOTH);
-	// glLightfv(GL_LIGHT0, GL_AMBIENT, &ambient[0][0]);
-	// glLightfv(GL_LIGHT0, GL_DIFFUSE, &diffuse[0][0]);
-	// glLightfv(GL_LIGHT0, GL_POSITION, &lightPosition[0][0]);
-// 
-	// glLightfv(GL_LIGHT1, GL_AMBIENT, &ambient[1][0]);
-	// glLightfv(GL_LIGHT1, GL_DIFFUSE, &diffuse[1][0]);
-	// glLightfv(GL_LIGHT1, GL_POSITION, &lightPosition[1][0]);
+	std::vector<glm::vec4> ambient =			{{0.2f, 0.2f, 0.2f, 1.0f}, {0.0f, 0.0f, 0.0f, 1.0f}};
+	std::vector<glm::vec4> diffuse =			{{1.0f, 1.0f, 1.0f, 1.0f}, {0.7f, 0.7f, 0.7f, 1.0f}};
+	std::vector<glm::vec4> lightPosition =		{{1.0f, 1.0f,-2.0f, 1.0f}, {-35.0f, -5.0f, -20.0f, 1.0f}};
+	glEnable(GL_LIGHTING); 
+	glShadeModel(GL_SMOOTH);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, &ambient[0][0]);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, &diffuse[0][0]);
+	glLightfv(GL_LIGHT0, GL_POSITION, &lightPosition[0][0]);
 
+	glLightfv(GL_LIGHT1, GL_AMBIENT, &ambient[1][0]);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, &diffuse[1][0]);
+	glLightfv(GL_LIGHT1, GL_POSITION, &lightPosition[1][0]);
+	glEnable(GL_NORMALIZE);
+
+	CBitmap tmpBitmap;
+	tmpBitmap.readFromFile("assets/wall.jpg");
+
+	glEnable(GL_TEXTURE_2D);
+	glGenTextures(1, &g_waterTexId);
+	glBindTexture(GL_TEXTURE_2D, g_waterTexId);
+	glTexImage2D(GL_TEXTURE_2D, 0, tmpBitmap.getChanelsCount(), tmpBitmap.getWidht(), tmpBitmap.getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, tmpBitmap.getDataPtr());
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
+	
 	initWater();
 
 	ImGuiIO& io = ImGui::GetIO();
@@ -241,7 +255,8 @@ void appSetup() {
 }
 
 void appLoop() {
-    bool set_wireframe = true;
+    bool set_wireframe = false;
+	bool set_textured = true;
 
 	while(!glfwWindowShouldClose(g_appWindow)) {
 		glfwPollEvents();
@@ -262,16 +277,29 @@ void appLoop() {
 		}
 
 		glColor3f(0.3f, 0.6f, 1.0f);
-		// glEnable(GL_LIGHTING);
-		// glEnable(GL_LIGHT0);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
 		// glEnable(GL_LIGHT1);
+
+		if (set_textured) {
+			glEnable(GL_TEXTURE_2D);
+			glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+			glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+			glEnable(GL_TEXTURE_GEN_S);
+	    	glEnable(GL_TEXTURE_GEN_T);	
+			glBindTexture(GL_TEXTURE_2D, g_waterTexId);
+		}
+
 		waterDoStep();
 
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_TEXTURE_GEN_S);
+		glDisable(GL_TEXTURE_GEN_T);
+
 		// -----------------------------------------------------------
-		// Отрисовка текста
+		// Отрисовка меню
 		// -----------------------------------------------------------
 
-		// Start the Dear ImGui frame
         ImGui_ImplOpenGL2_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -280,28 +308,24 @@ void appLoop() {
 
             ImGui::Text("Water modeling demo. Frame time - %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);               
             ImGui::Checkbox("Set wireframe", &set_wireframe);
+			ImGui::Checkbox("Enable texture", &set_textured);
 
-			if (ImGui::Button("Reset field.")) {                           
+			if (ImGui::Button("Reset field")) {   
+				c_fieldPointCount = c_fieldPointCountNew;
                 initWater();
 			}
 
 			ImGui::SliderFloat("Field size", &c_fieldSize, 0.5f, 4.0f);
-
+			ImGui::SliderInt("Field points count", &c_fieldPointCountNew, 8, 1024);
 			ImGui::SliderFloat("Viscosity", &c_viscosity, 0.0001f, 0.05f);
 			ImGui::SliderFloat("Wave height", &c_waveHgt, 0.0001f, 0.05f);
 			ImGui::SliderFloat("Splash height", &c_splashHgt, 0.0f, 15.0f);
 
             ImGui::End();
         }
-		// Rendering
+
         ImGui::Render();
-        // If you are using this code with non-legacy OpenGL header/contexts (which you should not, prefer using imgui_impl_opengl3.cpp!!),
-        // you may need to backup/reset/restore other state, e.g. for current shader using the commented lines below.
-        //GLint last_program;
-        //glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
-        //glUseProgram(0);
         ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
-        //glUseProgram(last_program);
 
 		// -----------------------------------------------------------
 
