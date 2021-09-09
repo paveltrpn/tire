@@ -6,6 +6,7 @@
 #include <array>
 #include <map>
 
+#define GLEW_STATIC
 #include <GL/glew.h>
 #include <GL/glu.h>
 #include <GL/gl.h>
@@ -515,7 +516,7 @@ void appLoop() {
 		g_screenText.drawString(fmt::format("fps = {}", v_fps));
 
 		g_screenText.setTextPosition(-11.0f, 6.8f);
-		g_screenText.drawString(fmt::format("\"SPACE\" \"LEFT\" \"RIGHT\" for move"));
+		g_screenText.drawString(fmt::format("Use arrows for controls"));
 		
 		// -----------------------------------------------------------
 

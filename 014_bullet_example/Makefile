@@ -1,7 +1,7 @@
 CC       = g++
 
 CFLAGS   = -Wall -Wextra -Wpedantic -Wno-unused-parameter -std=c++20
-LFLAGS 	 = -lstdc++ -lfmt -lopengl32 -lglu32 -lglfw3 -lgdi32 -lglew32 -ltga -llibjpeg -lBulletSoftBody -lBulletDynamics -lBulletCollision -lLinearMath
+LFLAGS 	 = -lstdc++ -lfmt -lopengl32 -lglu32 -lglfw3 -lgdi32 -ltga -llibjpeg -lBulletSoftBody -lBulletDynamics -lBulletCollision -lLinearMath
 
 INCDIR	 := ../extern/fmt/include/ \
 			../extern/libtga/include \
@@ -14,7 +14,6 @@ INCDIR	 := ../extern/fmt/include/ \
 
 LIBDIR	 := ../extern/fmt/lib/ \
 			../extern/glfw/lib \
-			../extern/glew/lib \
 			../extern/libtga/lib \
 			../extern/libjpeg/lib \
 			../extern/bullet3/lib/ \
@@ -23,9 +22,10 @@ LIBDIR	 := ../extern/fmt/lib/ \
 			
 BUILD_PREFIX = build
 
-VPATH := src
+VPATH := src ../extern/glew/src
 
-SRCS := main.cpp \
+SRCS := glew.cpp \
+		main.cpp \
 		apputils.cpp \
 		bitmap.cpp \
 		mesh.cpp \
@@ -42,6 +42,9 @@ OBJS := $(patsubst %.cpp,$(BUILD_PREFIX)/%.o,$(SRCS))
 .PHONY: clean all
 
 all: $(OBJS) main
+
+$(BUILD_PREFIX)/glew.o: glew.cpp
+	$(CC) -Wno-attributes -Wno-cast-function-type $(addprefix -I,$(INCDIR)) -c $< -o $@
 
 $(BUILD_PREFIX)/main.o: main.cpp
 	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@

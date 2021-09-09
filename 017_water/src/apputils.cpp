@@ -1,4 +1,6 @@
 
+#include <GL/glew.h>
+
 #include "apputils.h"
 
 void CAppState::showCurrentAppState() {

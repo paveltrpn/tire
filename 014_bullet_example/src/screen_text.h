@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+#define GLEW_STATIC
 #include <GL/glew.h>
 #include <GL/glu.h>
 #include <GL/gl.h>

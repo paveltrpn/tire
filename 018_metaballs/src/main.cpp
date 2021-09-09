@@ -324,12 +324,12 @@ void vDrawScene()
 
         if(bSpin)
         {
-                fPitch += 4.0;
-                fYaw   += 2.5;
+                fPitch += 4.0f*0.4f;
+                fYaw   += 2.5f*0.4f;
         }
         if(bMove)
         {
-                fTime  += 0.025;
+                fTime  += 0.0025;
         }
 
         vSetTime(fTime);

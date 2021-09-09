@@ -5,6 +5,7 @@
 #include <thread>
 #include <vector>
 
+#define GLEW_STATIC
 #include <GL/glew.h>
 #include <GL/glu.h>
 #include <GL/gl.h>
@@ -41,10 +42,7 @@ GLuint g_waterTexId;
 
 std::vector<glm::vec3> g_fieldPoints;
 std::vector<glm::vec3> g_fieldNormals;
-
 std::vector<float> g_fieldPrev, g_fieldNext;
-auto g_fPrevRef = &g_fieldPrev;
-auto g_fNextRef = &g_fieldNext;
 
 constexpr int32_t idRw(int32_t i, int32_t j, int32_t n) {
 	return (i*n + j);
@@ -55,13 +53,28 @@ constexpr int32_t idCw(int32_t i, int32_t j, int32_t n) {
 };
 
 void initWater() {
+	// Обнуляем вектор точек
+	// g_fieldPoints.resize(0);
+	// g_fieldPoints.resize(c_fieldPointCount*c_fieldPointCount);
+
+	g_fieldPoints.clear();
+	g_fieldPoints.shrink_to_fit();
 	g_fieldPoints = std::vector<glm::vec3>(c_fieldPointCount*c_fieldPointCount, glm::vec3(0.0f, 0.0f, 0.0f));
+
+	g_fieldNormals.clear();
+	g_fieldNormals.shrink_to_fit();
 	g_fieldNormals = std::vector<glm::vec3>(c_fieldPointCount*c_fieldPointCount, glm::vec3(0.0f, 0.0f, 0.0f));
+
+	g_fieldPrev.clear();
+	g_fieldPrev.shrink_to_fit();
 	g_fieldPrev = std::vector<float>(c_fieldPointCount*c_fieldPointCount, 0.0f);
+
+	g_fieldNext.clear();
+	g_fieldNext.shrink_to_fit();
 	g_fieldNext = std::vector<float>(c_fieldPointCount*c_fieldPointCount, 0.0f);
 
-	for(size_t i = 0; i < c_fieldPointCount; i++) {
-		for(size_t  j = 0; j < c_fieldPointCount; j++) {
+	for(auto i = 0; i < c_fieldPointCount; i++) {
+		for(auto  j = 0; j < c_fieldPointCount; j++) {
 			g_fieldPoints [idRw(i, j, c_fieldPointCount)][0] = c_fieldSize - (2.0f * c_fieldSize) * i / static_cast<float>(c_fieldPointCount-1);
 			g_fieldPoints [idRw(i, j, c_fieldPointCount)][1] = c_fieldSize - (2.0f * c_fieldSize) * j / static_cast<float>(c_fieldPointCount-1);
 			g_fieldNormals[idRw(i, j, c_fieldPointCount)][2] = -4.0f / static_cast<float>(c_fieldPointCount-1);
@@ -80,25 +93,25 @@ void waterDoStep() {
 			for(j = -3; j < 4; j++) {
 				float v = c_splashHgt - i*i - j*j;
 				if(v < 0.0f) v = 0.0f;
-				(*g_fNextRef)[idRw(i+i1+3, j+j1+3, c_fieldPointCount)] -= v * c_waveHgt;
+				g_fieldNext[idRw(i+i1+3, j+j1+3, c_fieldPointCount)] -= v * c_waveHgt;
 			}
 		}
 	}
 
 	for(i = 1; i < c_fieldPointCount - 1; i++)	{
 		for(j = 1; j < c_fieldPointCount - 1; j++)	{
-			g_fieldNormals[idRw(i, j, c_fieldPointCount)][0] = (*g_fNextRef)[idRw(i-1, j, c_fieldPointCount)] - (*g_fNextRef)[idRw(i+1, j, c_fieldPointCount)];
-			g_fieldNormals[idRw(i, j, c_fieldPointCount)][1] = (*g_fNextRef)[idRw(i, j-1, c_fieldPointCount)] - (*g_fNextRef)[idRw(i, j+1, c_fieldPointCount)];
-			g_fieldPoints [idRw(i, j, c_fieldPointCount)][2] = (*g_fNextRef)[idRw(i,j, c_fieldPointCount)];
+			g_fieldNormals[idRw(i, j, c_fieldPointCount)][0] = g_fieldNext[idRw(i-1, j, c_fieldPointCount)] - g_fieldNext[idRw(i+1, j, c_fieldPointCount)];
+			g_fieldNormals[idRw(i, j, c_fieldPointCount)][1] = g_fieldNext[idRw(i, j-1, c_fieldPointCount)] - g_fieldNext[idRw(i, j+1, c_fieldPointCount)];
+			g_fieldPoints [idRw(i, j, c_fieldPointCount)][2] = g_fieldNext[idRw(i,j, c_fieldPointCount)];
 			
-			float laplas = ((*g_fNextRef)[idRw(i-1, j, c_fieldPointCount)] +
-				            (*g_fNextRef)[idRw(i+1, j, c_fieldPointCount)] +
-						    (*g_fNextRef)[idRw(i, j+1, c_fieldPointCount)] +
-						    (*g_fNextRef)[idRw(i, j-1, c_fieldPointCount)]) * 0.25f - (*g_fNextRef)[idRw(i, j, c_fieldPointCount)];
+			float laplas = (g_fieldNext[idRw(i-1, j, c_fieldPointCount)] +
+				            g_fieldNext[idRw(i+1, j, c_fieldPointCount)] +
+						    g_fieldNext[idRw(i, j+1, c_fieldPointCount)] +
+						    g_fieldNext[idRw(i, j-1, c_fieldPointCount)]) * 0.25f - g_fieldNext[idRw(i, j, c_fieldPointCount)];
 
-			(*g_fPrevRef)[idRw(i, j, c_fieldPointCount)] = ((2.0f - c_viscosity) * 
-												  (*g_fNextRef)[idRw(i, j, c_fieldPointCount)] - 
-												  (*g_fPrevRef)[idRw(i, j, c_fieldPointCount)] * (1.0f - c_viscosity) + laplas);
+			g_fieldPrev[idRw(i, j, c_fieldPointCount)] = ((2.0f - c_viscosity) * 
+												  g_fieldNext[idRw(i, j, c_fieldPointCount)] - 
+												  g_fieldPrev[idRw(i, j, c_fieldPointCount)] * (1.0f - c_viscosity) + laplas);
 
 		}
 	}
@@ -114,7 +127,8 @@ void waterDoStep() {
 		glEnd();
 	}
 
-	std::swap(g_fPrevRef, g_fNextRef);
+	//По стандарту std::vector<> гарантирует своп за O(1)
+	std::swap(g_fieldPrev, g_fieldNext);
 }
 
 void windowInit() {

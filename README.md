@@ -9,11 +9,10 @@
 - **Dear ImGui V1.84.2** (git clone git://github.com/ocornut/imgui) Bloat-free Graphical User interface for C++ with minimal dependencies  
 - **SDL2** (sudo apt-get install libsdl2-dev)  
 - **GLFW** (git clone git://github.com/glfw/glfw)
-- **GLEW** можно скачать с git clone git://github.com/nigels-com/glew или git://github.com/Perlmint/glew-cmake, но, как сказано в issues репозитория git://github.com/nigels-com/glew - "On windows the general advice is to build from the release archive, rather than git repository.". Собственно release archive  лежит в "http://glew.sourceforge.net/", откуда качаем архив и просто собираем make-ом.
+- **GLEW** можно скачать с git clone git://github.com/nigels-com/glew или git://github.com/Perlmint/glew-cmake, но, как сказано в issues репозитория git://github.com/nigels-com/glew - "On windows the general advice is to build from the release archive, rather than git repository.". Собственно release archive  лежит в "http://glew.sourceforge.net/", откуда качаем архив и просто собираем make-ом. Можно линковать статически добавив glew.c в проект и #define GLEW_STATIC к каждому включению glew.h
 - **libjpeg** (git clone git://github.com/stohrendorf/libjpeg-cmake)
 - **libtga** (git clone git://github.com/madebr/libtga) В ней нужно заменить 4-ре вхождения функции bzero() на memset(ptr, value, size) в *.c файлах  
   
 017_Water - Демо с моделированием воды, взято с gamedev.ru  
-TODO -  
-ИСПРАВИТЬ! Крашится после нескольких нажатий на кнопку сброса параметров плоскости или длительной работы приложения, есть версия что причина - неуклюжая работа  
-с std::vector<> (контейнеры с точками и нормалями) или указателями на них.  
+TODO - ИСПРАВИТЬ! Крашится после нескольких нажатий на кнопку сброса параметров плоскости или длительной работы приложения, есть версия что причина - неуклюжая работа  
+с std::vector<> (контейнеры с точками и нормалями) или указателями на них. UPD - убрал ссылки на вектора.  
