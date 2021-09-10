@@ -5,6 +5,7 @@
 #include <thread>
 #include <vector>
 
+#define GLEW_STATIC
 #include <GL/glew.h>
 #include <GL/glu.h>
 #include <GL/gl.h>
@@ -27,7 +28,7 @@ const GLubyte *oglRenderString;
 const GLubyte *oglVersionString;
 const GLubyte *oglslVersionString;
 
-CAppState			g_appState;
+CAppState		g_appState;
 CPerspLookAtCamera 	g_Camera;
 
 struct GLvector
@@ -37,77 +38,75 @@ struct GLvector
         GLfloat fZ;     
 };
 
-GLenum    ePolygonMode = GL_FILL;
 GLint     iDataSetSize = 16;
 GLfloat   fStepSize = 1.0/iDataSetSize;
 GLfloat   fTargetValue = 48.0;
 GLfloat   fTime = 0.0;
+float     g_mvSpeed = 0.02f;
 GLvector  sSourcePoint[3];
-GLboolean bSpin = true;
-GLboolean bMove = true;
+bool      bMove = true;
 GLboolean bLight = true;
+bool      set_wireframe = false;
+bool      g_enableLight = true;
+float g_cmrPosX = 1.1f;
+float g_cmrPosY = 0.9f;
+float g_cmrDst  = 1.5f;
 
-void vDrawScene(); 
+GLvoid vPrintHelp();
+GLvoid vSetTime(GLfloat fTime);
+GLfloat fSample1(GLfloat fX, GLfloat fY, GLfloat fZ);
+GLfloat fSample2(GLfloat fX, GLfloat fY, GLfloat fZ);
+GLfloat fSample3(GLfloat fX, GLfloat fY, GLfloat fZ);
+GLfloat (*fSample)(GLfloat fX, GLfloat fY, GLfloat fZ) = fSample1;
+
+GLvoid vMarchingCubes();
+GLvoid vMarchCube1(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale);
+GLvoid vMarchCube2(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale);
+GLvoid (*vMarchCube)(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale) = vMarchCube1;
 
 void windowInit() {
-	// g_appState = CAppState();
-	g_appState.showCurrentAppState();
+    // g_appState = CAppState();
+    g_appState.showCurrentAppState();
 
-	if (glfwInit() != GLFW_TRUE) {
-		std::cout << "windowInit(): glfwInit() return - GLFW_FALSE!" << "\n";
-		std::exit(1);
-	}
+    if (glfwInit() != GLFW_TRUE) {
+    	std::cout << "windowInit(): glfwInit() return - GLFW_FALSE!" << "\n";
+    	std::exit(1);
+    }
 
-	auto errorCallback = [] (int, const char* err_str) {
-		std::cout << "GLFW Error: " << err_str << std::endl;
-	};
-	glfwSetErrorCallback(errorCallback);
+    auto errorCallback = [] (int, const char* err_str) {
+    	std::cout << "GLFW Error: " << err_str << std::endl;
+    };
+    glfwSetErrorCallback(errorCallback);    
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
+    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    g_appWindow = glfwCreateWindow(g_appState.appWindowWidth, g_appState.appWindowHeight, g_appState.appName.c_str(), nullptr, nullptr);
+    if (g_appWindow == nullptr) {
+    	std::cout << "windowInit(): Failed to create GLFW window" << std::endl;
+    	glfwTerminate();
+    	std::exit(1);
+    };
 
-	g_appWindow = glfwCreateWindow(g_appState.appWindowWidth, g_appState.appWindowHeight, g_appState.appName.c_str(), nullptr, nullptr);
-	if (g_appWindow == nullptr) {
-		std::cout << "windowInit(): Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-		std::exit(1);
-	};
+    glfwMakeContextCurrent(g_appWindow);
 
-	glfwMakeContextCurrent(g_appWindow);
-
-	glewExperimental = GL_TRUE;
+    glewExperimental = GL_TRUE;
 	
-	if (glewInit() != GLEW_OK) {
-	    std::cout << "windowInit(): Failed to initialize GLEW" << std::endl;
-	    std::exit(1);
-	};
+    if (glewInit() != GLEW_OK) {
+        std::cout << "windowInit(): Failed to initialize GLEW" << std::endl;
+        std::exit(1);
+    };
 
-	// ВКЛ-ВЫКЛ вертикальную синхронизацию (VSYNC)
-	// Лок на 60 фпс
-	glfwSwapInterval(true);
+    // ВКЛ-ВЫКЛ вертикальную синхронизацию (VSYNC)
+    // Лок на 60 фпс
+    glfwSwapInterval(true);
 	
-	oglRenderString = glGetString(GL_RENDERER);
-	oglVersionString = glGetString(GL_VERSION);
-	oglslVersionString = glGetString(GL_SHADING_LANGUAGE_VERSION);
+    oglRenderString = glGetString(GL_RENDERER);
+    oglVersionString = glGetString(GL_VERSION);
+    oglslVersionString = glGetString(GL_SHADING_LANGUAGE_VERSION);
 	
-	std::cout << fmt::format("windowInit():\n  oglRenderString - {}\n  oglVersionString - {}\n  oglslVersionString - {}\n", oglRenderString, oglVersionString, oglslVersionString);
-
-	// Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    //ImGui::StyleColorsClassic();
-
-    // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(g_appWindow, true);
-    ImGui_ImplOpenGL2_Init();
+    std::cout << fmt::format("windowInit():\n  oglRenderString - {}\n  oglVersionString - {}\n  oglslVersionString - {}\n", oglRenderString, oglVersionString, oglslVersionString);
 }
 
 void registerGLFWCallbacks() {
@@ -136,50 +135,119 @@ void registerGLFWCallbacks() {
 }
 
 void appSetup() {
-	windowInit();
-	registerGLFWCallbacks();
+    windowInit();
+    registerGLFWCallbacks();
 
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); 
-	glClearDepth(1.0);
-	glDepthFunc(GL_LESS);
-	glEnable(GL_DEPTH_TEST);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f); 
+    glClearDepth(1.0);
+    glDepthFunc(GL_LESS);
+    glEnable(GL_DEPTH_TEST);
 
-	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-	glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+    glEnable(GL_COLOR_MATERIAL);
 
-	g_Camera.setLookPoints(glm::vec3(-1.5f, 0.0f, 1.5f), glm::vec3(-0.2f, 0.0f, 0.0f));
-	g_Camera.setViewParameters(45.0f, g_appState.appWindowAspect, 0.01f, 100.0f);
+    g_Camera.setLookPoints(glm::vec3(g_cmrPosX, g_cmrPosY, g_cmrDst), glm::vec3(0.5f, 0.5f, 0.5f));
+    g_Camera.setViewParameters(45.0f, g_appState.appWindowAspect, 0.01f, 100.0f);
 	
-	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontFromFileTTF("assets/RobotoMono-Medium.ttf", 16);
+    std::vector<glm::vec4> ambient =			{{0.2f, 0.2f, 0.2f, 1.0f}, {0.0f, 0.0f, 0.0f, 1.0f}};
+    std::vector<glm::vec4> diffuse =			{{1.0f, 1.0f, 1.0f, 1.0f}, {0.7f, 0.7f, 0.7f, 1.0f}};
+    std::vector<glm::vec4> lightPosition =		{{2.0f, 2.0f, 4.0f, 1.0f}, {-3.0f, 5.0f, -2.0f, 1.0f}};
+    glEnable(GL_LIGHTING); 
+    glShadeModel(GL_SMOOTH);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, &ambient[0][0]);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, &diffuse[0][0]);
+    glLightfv(GL_LIGHT0, GL_POSITION, &lightPosition[0][0]);
+
+    glLightfv(GL_LIGHT1, GL_AMBIENT, &ambient[1][0]);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, &diffuse[1][0]);
+    glLightfv(GL_LIGHT1, GL_POSITION, &lightPosition[1][0]);
+    glEnable(GL_NORMALIZE);
+
+    glLineWidth(2.0f);
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+    //ImGui::StyleColorsClassic();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(g_appWindow, true);
+    ImGui_ImplOpenGL2_Init();
+
+    io.Fonts->AddFontFromFileTTF("assets/RobotoMono-Medium.ttf", 16);
+}
+
+void drawDecart(float scale) {
+	
+	glBegin(GL_LINES);
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(scale, 0.0f, 0.0f);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, scale, 0.0f);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glColor3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, 0.0f, scale);
+	glEnd();
+	
 }
 
 void appLoop() {
-    bool set_wireframe = false;
+       
+    while(!glfwWindowShouldClose(g_appWindow)) {
+    	glfwPollEvents();
+    
+    	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+    	glMatrixMode(GL_PROJECTION);
+        g_Camera.setLookPoints(glm::vec3(g_cmrPosX, g_cmrPosY, g_cmrDst), glm::vec3(0.5f, 0.5f, 0.5f));
+    	g_Camera.updateViewMatrix();
+    	glLoadMatrixf(g_Camera.getCmrMatrixPointer());
 
-	while(!glfwWindowShouldClose(g_appWindow)) {
-		glfwPollEvents();
-		
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
-		// glMatrixMode(GL_PROJECTION);
-		// g_Camera.updateViewMatrix();
-		// glLoadMatrixf(g_Camera.getCmrMatrixPointer());
-// 
-		// glMatrixMode(GL_MODELVIEW); 
-		// glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW); 
+	glLoadIdentity();
 
-		if (set_wireframe) {
-			glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-		} else {
-			glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-		}
+	if (set_wireframe) {
+	    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+	} else {
+	    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+	}
+	
+        if(bMove) {
+            fTime  += g_mvSpeed;
+        }
 
-		vDrawScene();
+        vSetTime(fTime);
 
-		// -----------------------------------------------------------
-		// Отрисовка меню
-		// -----------------------------------------------------------
+        if (g_enableLight) {
+            glEnable(GL_LIGHTING);
+	    glEnable(GL_LIGHT0);
+	    glEnable(GL_LIGHT1);
+        }
+
+        glBegin(GL_TRIANGLES);
+            vMarchingCubes();
+        glEnd();
+
+        glDisable(GL_LIGHTING);
+        drawDecart(1.0f);
+
+	// -----------------------------------------------------------
+	// Отрисовка меню
+	// -----------------------------------------------------------
 
         ImGui_ImplOpenGL2_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -189,12 +257,18 @@ void appLoop() {
 
             ImGui::Text("Metaballs. Frame time - %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);               
             ImGui::Checkbox("Set wireframe", &set_wireframe);
+            ImGui::Checkbox("Enable light", &g_enableLight);
 
-			if (ImGui::Button("Reset")) {   
-				fStepSize = 1.0/iDataSetSize;
-			}
+	    if (ImGui::Button("Reset")) {   
+	        fStepSize = 1.0/iDataSetSize;
+	    }
+            ImGui::SliderFloat("Cmr pos X", &g_cmrPosX, -0.5f, 1.5f);
+            ImGui::SliderFloat("Cmr pos Y", &g_cmrPosY, -0.5f, 1.5f);
+            ImGui::SliderFloat("Cmr dist",  &g_cmrDst,  1.5f, 5.0f);
 
-			ImGui::SliderInt("Density", &iDataSetSize, 1, 128);
+            ImGui::SliderFloat("Move speed", &g_mvSpeed, 0.0f, 0.1f);
+	    ImGui::SliderInt("Density", &iDataSetSize, 1, 128);
+            ImGui::SliderFloat("Target value", &fTargetValue, 1, 128);
 
             ImGui::End();
         }
@@ -202,10 +276,10 @@ void appLoop() {
         ImGui::Render();
         ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
 
-		// -----------------------------------------------------------
+	// -----------------------------------------------------------
 
-		glfwSwapBuffers(g_appWindow);
-	}
+	glfwSwapBuffers(g_appWindow);
+    }
 }
 
 void appDefer() {
@@ -286,18 +360,6 @@ static const GLfloat afSpecularRed  [] = {1.00, 0.25, 0.25, 1.00};
 static const GLfloat afSpecularGreen[] = {0.25, 1.00, 0.25, 1.00}; 
 static const GLfloat afSpecularBlue [] = {0.25, 0.25, 1.00, 1.00}; 
 
-GLvoid vPrintHelp();
-GLvoid vSetTime(GLfloat fTime);
-GLfloat fSample1(GLfloat fX, GLfloat fY, GLfloat fZ);
-GLfloat fSample2(GLfloat fX, GLfloat fY, GLfloat fZ);
-GLfloat fSample3(GLfloat fX, GLfloat fY, GLfloat fZ);
-GLfloat (*fSample)(GLfloat fX, GLfloat fY, GLfloat fZ) = fSample1;
-
-GLvoid vMarchingCubes();
-GLvoid vMarchCube1(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale);
-GLvoid vMarchCube2(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale);
-GLvoid (*vMarchCube)(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale) = vMarchCube1;
-
 GLvoid vPrintHelp()
 {
         printf("Marching Cubes Example by Cory Bloyd (dejaspaminacan@my-deja.com)\n\n");
@@ -310,50 +372,6 @@ GLvoid vPrintHelp()
         printf("l  toggle lighting / color-by-normal\n");
         printf("Home  spin scene on/off\n");
         printf("End  source point animation on/off\n");
-}
-
-void vDrawScene() 
-{ 
-        static GLfloat fPitch = 0.0;
-        static GLfloat fYaw   = 0.0;
-        static GLfloat fTime = 0.0;
-
-        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); 
-
-        glPushMatrix(); 
-
-        if(bSpin)
-        {
-                fPitch += 4.0f*0.4f;
-                fYaw   += 2.5f*0.4f;
-        }
-        if(bMove)
-        {
-                fTime  += 0.0025;
-        }
-
-        vSetTime(fTime);
-
-        glTranslatef(0.0, 0.0, -1.0);  
-        glRotatef( -fPitch, 1.0, 0.0, 0.0);
-        glRotatef(     0.0, 0.0, 1.0, 0.0);
-        glRotatef(    fYaw, 0.0, 0.0, 1.0);
-
-        glPushAttrib(GL_LIGHTING_BIT);
-                glDisable(GL_LIGHTING);
-                glColor3f(1.0, 1.0, 1.0);
-				//draw scene cube here
-        glPopAttrib(); 
-
-
-        glPushMatrix(); 
-        glTranslatef(-0.5, -0.5, -0.5);
-        glBegin(GL_TRIANGLES);
-                vMarchingCubes();
-        glEnd();
-        glPopMatrix(); 
-
-        glPopMatrix(); 
 }
 
 //fGetOffset finds the approximate point of intersection of the surface
@@ -404,7 +422,6 @@ GLvoid vNormalizeVector(GLvector &rfVectorResult, GLvector &rfVectorSource)
                 rfVectorResult.fZ = rfVectorSource.fZ*fScale;
         }
 }
-
 
 //Generate a sample data set.  fSample1(), fSample2() and fSample3() define three scalar fields whose
 // values vary by the X,Y and Z coordinates and by the fTime value set by vSetTime()
