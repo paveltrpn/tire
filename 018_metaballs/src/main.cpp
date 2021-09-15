@@ -4,6 +4,7 @@
 #include <fmt/format.h>
 #include <thread>
 #include <vector>
+#include <functional>
 
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -33,9 +34,9 @@ CPerspLookAtCamera 	g_Camera;
 
 struct GLvector
 {
-        GLfloat fX;
-        GLfloat fY;
-        GLfloat fZ;     
+    GLfloat fX;
+    GLfloat fY;
+    GLfloat fZ;     
 };
 
 GLint     iDataSetSize = 16;
@@ -62,7 +63,7 @@ GLfloat (*fSample)(GLfloat fX, GLfloat fY, GLfloat fZ) = fSample1;
 GLvoid vMarchingCubes();
 GLvoid vMarchCube1(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale);
 GLvoid vMarchCube2(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale);
-GLvoid (*vMarchCube)(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale) = vMarchCube1;
+std::function<GLvoid(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale)> vMarchCube = vMarchCube1;
 
 void windowInit() {
     // g_appState = CAppState();
@@ -110,28 +111,28 @@ void windowInit() {
 }
 
 void registerGLFWCallbacks() {
-	auto keyCallback = [] (GLFWwindow* window, int key, int scancode, int action, int mods) {
-		if (key == GLFW_KEY_ESCAPE) {
-			glfwSetWindowShouldClose(window, GLFW_TRUE);
-		}
-	};
-	glfwSetKeyCallback(g_appWindow, keyCallback);
+    auto keyCallback = [] (GLFWwindow* window, int key, int scancode, int action, int mods) {
+    	if (key == GLFW_KEY_ESCAPE) {
+    		glfwSetWindowShouldClose(window, GLFW_TRUE);
+    	}
+    };
+    glfwSetKeyCallback(g_appWindow, keyCallback);
 
-	auto mouseButtonCallback = [] (GLFWwindow* window, int button, int action, int mods) {
-		
-	};
-	glfwSetMouseButtonCallback(g_appWindow, mouseButtonCallback);
+    auto mouseButtonCallback = [] (GLFWwindow* window, int button, int action, int mods) {
+    	
+    };
+    glfwSetMouseButtonCallback(g_appWindow, mouseButtonCallback);
 
-	auto cursorPosCallback = [] (GLFWwindow* window, double posX, double posY) {
-		// g_curPositionX = posX;
-		// g_curPositionY = posY;
-	};
-	glfwSetCursorPosCallback(g_appWindow, cursorPosCallback);
+    auto cursorPosCallback = [] (GLFWwindow* window, double posX, double posY) {
+    	// g_curPositionX = posX;
+    	// g_curPositionY = posY;
+    };
+    glfwSetCursorPosCallback(g_appWindow, cursorPosCallback);
 
-	auto cursorEnterCallback = [] (GLFWwindow* window, int entered) {
-		
-	};
-	glfwSetCursorEnterCallback(g_appWindow, cursorEnterCallback);
+    auto cursorEnterCallback = [] (GLFWwindow* window, int entered) {
+    	
+    };
+    glfwSetCursorEnterCallback(g_appWindow, cursorEnterCallback);
 }
 
 void appSetup() {
@@ -185,24 +186,23 @@ void appSetup() {
 
 void drawDecart(float scale) {
 	
-	glBegin(GL_LINES);
-	glColor3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f);
-	glVertex3f(scale, 0.0f, 0.0f);
-	glEnd();
+    glBegin(GL_LINES);
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(scale, 0.0f, 0.0f);
+    glEnd();
 
-	glBegin(GL_LINES);
-	glColor3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f);
-	glVertex3f(0.0f, scale, 0.0f);
-	glEnd();
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 1.0f, 0.0f);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(0.0f, scale, 0.0f);
+    glEnd();
 
-	glBegin(GL_LINES);
-	glColor3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f);
-	glVertex3f(0.0f, 0.0f, scale);
-	glEnd();
-	
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 1.0f);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(0.0f, 0.0f, scale);
+    glEnd();	
 }
 
 void appLoop() {
