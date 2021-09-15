@@ -10,16 +10,17 @@ def keyCallback(window, key, scancode, action, mods):
     	if (key == glfw.KEY_ESCAPE): 
     		glfw.set_window_should_close(window, glfw.TRUE)
 
-def main():
+def initWindow():
     if not glfw.init():
         return
 
-    glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
-    glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
+    glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 4)
+    glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 6)
     glfw.window_hint(glfw.DOUBLEBUFFER, glfw.TRUE)
     glfw.window_hint(glfw.RESIZABLE,    glfw.FALSE)
     
-    window = glfw.create_window(640, 480, "Hello World", None, None)
+    global window
+    window = glfw.create_window(1152, 864, "Hello World", None, None)
     if not window:
         glfw.terminate()
         return
@@ -31,18 +32,23 @@ def main():
 
     glfw.set_key_callback(window, keyCallback)
 
+    imgui.create_context()
+    global impl
+    impl = GlfwRenderer(window)
+    imgui.style_colors_dark()
+
+    io = imgui.get_io()
+    io.fonts.add_font_from_file_ttf("assets/RobotoMono-Medium.ttf", 16)
+
+    gl.glClearColor(0.0, 0.0, 0.0, 1.0)
+
+    return 
+
+def loop():
     oglRenderString = gl.glGetString(gl.GL_RENDERER)
     oglVersionString = gl.glGetString(gl.GL_VERSION)
     oglslVersionString = gl.glGetString(gl.GL_SHADING_LANGUAGE_VERSION)
 
-    # print(oglRenderString, oglVersionString)
-
-    imgui.create_context()
-    impl = GlfwRenderer(window)
-    imgui.style_colors_dark()
-
-    gl.glClearColor(0.0, 0.0, 0.0, 1.0)
-    
     while not glfw.window_should_close(window):
         glfw.poll_events()
         glfw.swap_buffers(window)
@@ -50,8 +56,9 @@ def main():
         impl.process_inputs()
 
         imgui.new_frame()
-        imgui.begin("014_Water")                         
-        imgui.text("Water modeling demo. Frame time ")         
+        imgui.begin("019_pytho_OpenGL")                         
+        imgui.text("OpenGL GL_RENDERER - " + str(oglRenderString))
+        imgui.text("OpenGL GL_VERSION - " + str(oglVersionString)) 
         imgui.end()
         imgui.end_frame()
 
@@ -60,8 +67,16 @@ def main():
         imgui.render()
         impl.render(imgui.get_draw_data())
 
+def shutdown():
     impl.shutdown()
     glfw.terminate()
+
+def main():
+    initWindow()
+    
+    loop()
+
+    shutdown()
 
 if __name__ == "__main__":
     main()
