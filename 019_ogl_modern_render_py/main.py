@@ -3,14 +3,13 @@ import glfw
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
 
-import imgui
-from imgui.integrations.glfw import GlfwRenderer
+import imgui as imgui
+import imgui.integrations.glfw as imguiIntgr
 
-def keyCallback(window, key, scancode, action, mods):
-    	if (key == glfw.KEY_ESCAPE): 
-    		glfw.set_window_should_close(window, glfw.TRUE)
+def initGlfwWindow():
+    global g_window
+    global g_glfwVersion
 
-def initWindow():
     if not glfw.init():
         return
 
@@ -19,61 +18,93 @@ def initWindow():
     glfw.window_hint(glfw.DOUBLEBUFFER, glfw.TRUE)
     glfw.window_hint(glfw.RESIZABLE,    glfw.FALSE)
     
-    global window
-    window = glfw.create_window(1152, 864, "Hello World", None, None)
-    if not window:
+    g_window = glfw.create_window(1152, 864, "Hello World", None, None)
+    if not g_window:
         glfw.terminate()
         return
-
-    glfw.make_context_current(window)
+    
+    glfw.make_context_current(g_window)
     
     [ver_min, ver_max, ver] = glfw.get_version()
-    print(ver_min, ver_max, ver)
+    g_glfwVersion = str(ver_min) + "." + str(ver_max) + "." + str(ver)
 
-    glfw.set_key_callback(window, keyCallback)
+def registerGlfwCallbacks():
+    def keyCallback(window, key, scancode, action, mods):
+        if (key == glfw.KEY_ESCAPE): 
+            glfw.set_window_should_close(window, glfw.TRUE)
 
-    imgui.create_context()
-    global impl
-    impl = GlfwRenderer(window)
-    imgui.style_colors_dark()
+        if (key == glfw.KEY_Q): 
+            print("Q is pressed!")
 
-    io = imgui.get_io()
-    io.fonts.add_font_from_file_ttf("assets/RobotoMono-Medium.ttf", 16)
+    glfw.set_key_callback(g_window, keyCallback)
+
+def setOglDefaults():
+    global g_glRenderStr
+    global g_glVersionStr
+    global g_glslVersionStr
+
+    g_glRenderStr = str(gl.glGetString(gl.GL_RENDERER), "utf-8")
+    g_glVersionStr = str(gl.glGetString(gl.GL_VERSION), "utf-8")
+    g_glslVersionStr = str(gl.glGetString(gl.GL_SHADING_LANGUAGE_VERSION), "utf-8")
 
     gl.glClearColor(0.0, 0.0, 0.0, 1.0)
 
-    return 
+def initImgui():
+    global g_imguiImpl
+    global g_imguiVersion
+
+    imgui.create_context()
+
+    g_imguiVersion = str(imgui.get_version())
+
+    g_imguiImpl = imguiIntgr.GlfwRenderer(g_window)
+    imgui.style_colors_dark()
+    
+    io = imgui.get_io()
+    global roboto
+    roboto = io.fonts.add_font_from_file_ttf("assets/RobotoMono-Medium.ttf", 16)
+    imgui.font(roboto)
+    g_imguiImpl.refresh_font_texture()
+
 
 def loop():
-    oglRenderString = gl.glGetString(gl.GL_RENDERER)
-    oglVersionString = gl.glGetString(gl.GL_VERSION)
-    oglslVersionString = gl.glGetString(gl.GL_SHADING_LANGUAGE_VERSION)
-
-    while not glfw.window_should_close(window):
+    while not glfw.window_should_close(g_window):
         glfw.poll_events()
-        glfw.swap_buffers(window)
-        
-        impl.process_inputs()
-
-        imgui.new_frame()
-        imgui.begin("019_pytho_OpenGL")                         
-        imgui.text("OpenGL GL_RENDERER - " + str(oglRenderString))
-        imgui.text("OpenGL GL_VERSION - " + str(oglVersionString)) 
-        imgui.end()
-        imgui.end_frame()
 
         gl.glClear(gl.GL_COLOR_BUFFER_BIT)
 
+        #============GUI draw section================
+        g_imguiImpl.process_inputs()
+        imgui.new_frame()
+
+        with imgui.font(roboto):
+            imgui.begin("019_python_OpenGL")
+            imgui.text("OpenGL GL_RENDERER - " + g_glRenderStr)
+            imgui.text("OpenGL GL_VERSION - " + g_glVersionStr)
+            imgui.text("Glfw version - " + g_glfwVersion)
+            imgui.text("Imgui version - " + g_imguiVersion)
+            imgui.end()
+    
+        imgui.end_frame()
         imgui.render()
-        impl.render(imgui.get_draw_data())
+        g_imguiImpl.render(imgui.get_draw_data())
+        #===========================================
+
+        glfw.swap_buffers(g_window)
 
 def shutdown():
-    impl.shutdown()
+    g_imguiImpl.shutdown()
     glfw.terminate()
 
 def main():
-    initWindow()
-    
+    initGlfwWindow()
+
+    setOglDefaults()
+
+    initImgui()
+
+    registerGlfwCallbacks()
+
     loop()
 
     shutdown()
