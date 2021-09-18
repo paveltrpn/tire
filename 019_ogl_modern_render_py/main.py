@@ -1,24 +1,44 @@
 
 import glfw
-import OpenGL.GL as gl
-import OpenGL.GLU as glu
+
+# Отключает проверку ошибок OpenGL
+# import OpenGL
+# OpenGL.ERROR_CHECKING = False
+
+from OpenGL.GL import *
+import OpenGL.GL.shaders
 
 import imgui as imgui
 import imgui.integrations.glfw as imguiIntgr
+import glm as glm
+
+import mesh
+import ogl_utils
 
 def initGlfwWindow():
     global g_window
     global g_glfwVersion
+    global g_wndWidth
+    global g_wndHeight
+    global g_appName
+
+    g_wndWidth = 1152
+    g_wndHeight = 864
+    g_appName = "019"
 
     if not glfw.init():
         return
+    
+    # Если в хинтах выставить версию то скрипт падает на ошибке OpenGL (если проверка включена, см. вверху)
+    # на вызовых glDrawArrays() glDrawElements() и т.д. c GL_INVALID_OPERATION
+    # 
+    # glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 4)
+    # glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 6)
 
-    glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 4)
-    glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 6)
     glfw.window_hint(glfw.DOUBLEBUFFER, glfw.TRUE)
     glfw.window_hint(glfw.RESIZABLE,    glfw.FALSE)
     
-    g_window = glfw.create_window(1152, 864, "Hello World", None, None)
+    g_window = glfw.create_window(g_wndWidth, g_wndHeight, g_appName, None, None)
     if not g_window:
         glfw.terminate()
         return
@@ -31,7 +51,6 @@ def initGlfwWindow():
     #  ВКЛ-ВЫКЛ вертикальную синхронизацию (VSYNC)
 	#  Лок на 60 фпс
     glfw.swap_interval(glfw.TRUE)
-
 
 def registerGlfwCallbacks():
     def keyCallback(window, key, scancode, action, mods):
@@ -48,11 +67,38 @@ def setOglDefaults():
     global g_glVersionStr
     global g_glslVersionStr
 
-    g_glRenderStr = str(gl.glGetString(gl.GL_RENDERER), "utf-8")
-    g_glVersionStr = str(gl.glGetString(gl.GL_VERSION), "utf-8")
-    g_glslVersionStr = str(gl.glGetString(gl.GL_SHADING_LANGUAGE_VERSION), "utf-8")
+    g_glRenderStr = str(glGetString(GL_RENDERER), "utf-8")
+    g_glVersionStr = str(glGetString(GL_VERSION), "utf-8")
+    g_glslVersionStr = str(glGetString(GL_SHADING_LANGUAGE_VERSION), "utf-8")
 
-    gl.glClearColor(0.0, 0.0, 0.0, 1.0)
+    glViewport(0, 0, g_wndWidth, g_wndHeight)
+    glClearColor(0.0, 0.0, 0.0, 0.0)
+
+    global g_glProg
+    g_glProg = ogl_utils.setupShaders()
+
+    # g_glProg = OpenGL.GL.shaders.compileProgram(OpenGL.GL.shaders.compileShader(ogl_utils.g_VS, GL_VERTEX_SHADER),
+                                            #   OpenGL.GL.shaders.compileShader(ogl_utils.g_FS, GL_FRAGMENT_SHADER))
+
+    triangle = glm.array(glm.vec3(-0.5, -0.5, 0.0), glm.vec3(1.0, 0.0, 0.0),
+                         glm.vec3( 0.5, -0.5, 0.0), glm.vec3(0.0, 1.0, 0.0),
+                         glm.vec3( 0.0,  0.5, 0.0), glm.vec3(0.0, 0.0, 1.0))
+
+    # triangle = np.array(triangle, dtype = np.float32)
+
+    VBO = glGenBuffers(1)
+    glBindBuffer(GL_ARRAY_BUFFER, VBO)
+    glBufferData(GL_ARRAY_BUFFER, 72, triangle.ptr, GL_STATIC_DRAW)
+
+    position = glGetAttribLocation(g_glProg, "position")
+    glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(0))
+    glEnableVertexAttribArray(position)
+
+    color = glGetAttribLocation(g_glProg, "color")
+    glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(12))
+    glEnableVertexAttribArray(color)
+
+    glUseProgram(g_glProg)
 
 def initImgui():
     global g_imguiImpl
@@ -76,7 +122,8 @@ def loop():
     while not glfw.window_should_close(g_window):
         glfw.poll_events()
 
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glDrawArrays(GL_TRIANGLES, 0, 3)
 
         #============GUI draw section================
         g_imguiImpl.process_inputs()

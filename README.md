@@ -16,3 +16,10 @@
 017_Water - Демо с моделированием воды, взято с gamedev.ru  
 TODO - ИСПРАВИТЬ! Крашится после нескольких нажатий на кнопку сброса параметров плоскости или длительной работы приложения, есть версия что причина - неуклюжая работа  
 с std::vector<> (контейнеры с точками и нормалями) или указателями на них. UPD - убрал ссылки на вектора.  
+  
+Для запуска python кода нужен Microsoft Built Tools. Зависимости для Python:
+  
+- **PyOpenGL** - (pip install PyOpenGL PyOpenGL_accelerate)  
+- **PyImgui** - (pip install imgui[glfw])
+- **GLFW** - (pip install glfw)
+- **PyGLM** - (pip install PyGLM)
