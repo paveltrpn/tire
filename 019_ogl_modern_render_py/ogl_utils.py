@@ -1,5 +1,6 @@
 
 from OpenGL.GL import *
+from collections import namedtuple
 
 g_VS = """
 #version 330 core
@@ -25,39 +26,41 @@ void main()
 }
 """
 
-def setupShaders():
- 
-    v = glCreateShader(GL_VERTEX_SHADER)
-    f = glCreateShader(GL_FRAGMENT_SHADER)
- 
-    glShaderSource(v,  g_VS)
-    glShaderSource(f, g_FS)
- 
-    glCompileShader(v)
-    glCompileShader(f)
- 
-    printShaderInfoLog(v)
-    printShaderInfoLog(f)
- 
-    p = glCreateProgram()
-    glAttachShader(p,v)
-    glAttachShader(p,f)
- 
-    glBindFragDataLocation(p, 0, "outputF")
-    glLinkProgram(p)
-    printProgramInfoLog(p)
- 
-    vertexLoc = glGetAttribLocation(p,"position")
-    colorLoc = glGetAttribLocation(p, "color")
- 
-    projMatrixLoc = glGetUniformLocation(p, "projMatrix")
-    viewMatrixLoc = glGetUniformLocation(p, "viewMatrix")
- 
-    return p
+oglShader = namedtuple("oglShader", ["name", "type", "shaderObj"])
+oglProgram = namedtuple("oglProgram", ["name", "type", "progObj"])
+
+class COglProgramMngr:
+    def __init__(self):
+        self.shaderList = []
+        self.programList = []
+
+    def appendShader(self, name: str, type, src: str):
+        shaderObj = glCreateShader(type)
+                
+        glShaderSource(shaderObj,  src)
+        glCompileShader(shaderObj)
+        printShaderInfoLog(shaderObj)
+
+        self.shaderList.append(oglShader(name, type, shaderObj))
+
+        # names - лист строк, имён шейдеров из shaderList
+    def appendProgram(self, name: str, names: list[str]):
+        prog = glCreateProgram()
+
+        for sh_name in names:
+            for sh in self.shaderList:
+                if sh.name == sh_name:
+                    glAttachShader(prog, sh.shaderObj)
+            
+        glLinkProgram(prog)
+        printProgramInfoLog(prog)
+
+        self.programList.append(oglProgram(name, 0, prog))
+
+    def getProgObj(self, name: str):
+        pass
 
 def printOglError() -> int:
-    # Returns 1 if an OpenGL error occurred, 0 otherwise.
- 
     err = glGetError()
 
     retCode = 0
@@ -90,9 +93,8 @@ def printShaderInfoLog(obj: GLuint) -> None:
         infoLog = glGetShaderInfoLog(obj, infologLength)
         print(infoLog)
 
-def printProgramInfoLog(obj):
+def printProgramInfoLog(obj: GLuint) -> None:
     infologLength = 0
-    charsWritten  = 0
  
     infologLength = glGetProgramiv(obj, GL_INFO_LOG_LENGTH)
  

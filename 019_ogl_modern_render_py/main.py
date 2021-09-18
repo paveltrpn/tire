@@ -1,7 +1,6 @@
 
 import glfw
 
-# Отключает проверку ошибок OpenGL
 # import OpenGL
 # OpenGL.ERROR_CHECKING = False
 
@@ -34,6 +33,7 @@ def initGlfwWindow():
     # 
     # glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 4)
     # glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 6)
+    # glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
 
     glfw.window_hint(glfw.DOUBLEBUFFER, glfw.TRUE)
     glfw.window_hint(glfw.RESIZABLE,    glfw.FALSE)
@@ -44,7 +44,7 @@ def initGlfwWindow():
         return
     
     glfw.make_context_current(g_window)
-    
+
     [ver_min, ver_max, ver] = glfw.get_version()
     g_glfwVersion = str(ver_min) + "." + str(ver_max) + "." + str(ver)
 
@@ -74,11 +74,10 @@ def setOglDefaults():
     glViewport(0, 0, g_wndWidth, g_wndHeight)
     glClearColor(0.0, 0.0, 0.0, 0.0)
 
-    global g_glProg
-    g_glProg = ogl_utils.setupShaders()
-
-    # g_glProg = OpenGL.GL.shaders.compileProgram(OpenGL.GL.shaders.compileShader(ogl_utils.g_VS, GL_VERTEX_SHADER),
-                                            #   OpenGL.GL.shaders.compileShader(ogl_utils.g_FS, GL_FRAGMENT_SHADER))
+    g_progMngr = ogl_utils.COglProgramMngr()
+    g_progMngr.appendShader("VS", GL_VERTEX_SHADER, ogl_utils.g_VS)
+    g_progMngr.appendShader("FS", GL_FRAGMENT_SHADER, ogl_utils.g_FS)
+    g_progMngr.appendProgram("main_prog", ["VS", "FS"])
 
     triangle = glm.array(glm.vec3(-0.5, -0.5, 0.0), glm.vec3(1.0, 0.0, 0.0),
                          glm.vec3( 0.5, -0.5, 0.0), glm.vec3(0.0, 1.0, 0.0),
@@ -90,15 +89,15 @@ def setOglDefaults():
     glBindBuffer(GL_ARRAY_BUFFER, VBO)
     glBufferData(GL_ARRAY_BUFFER, 72, triangle.ptr, GL_STATIC_DRAW)
 
-    position = glGetAttribLocation(g_glProg, "position")
+    position = glGetAttribLocation(g_progMngr.programList[0].progObj, "position")
     glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(0))
     glEnableVertexAttribArray(position)
 
-    color = glGetAttribLocation(g_glProg, "color")
+    color = glGetAttribLocation(g_progMngr.programList[0].progObj, "color")
     glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(12))
     glEnableVertexAttribArray(color)
 
-    glUseProgram(g_glProg)
+    glUseProgram(g_progMngr.programList[0].progObj)
 
 def initImgui():
     global g_imguiImpl
