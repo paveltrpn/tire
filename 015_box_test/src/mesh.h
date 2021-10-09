@@ -7,6 +7,7 @@
 #include <utility>
 #include <map>
 
+#define GLEW_STATIC
 #include <GL/glew.h>
 #include <GL/glu.h>
 #include <GL/gl.h>

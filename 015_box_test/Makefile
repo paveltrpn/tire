@@ -1,7 +1,7 @@
 CC       = g++
 
 CFLAGS   = -Wall -Wextra -Wpedantic -Wno-unused-parameter -std=c++20
-LFLAGS 	 = -lstdc++ -lfmt -lopengl32 -lglu32 -lglfw3 -lgdi32 -lglew32 -ltga -llibjpeg
+LFLAGS 	 = -lstdc++ -lfmt -lopengl32 -lglu32 -lglfw3 -lgdi32 -ltga -llibjpeg
 
 INCDIR	 := ../extern/fmt/include/ \
 			../extern/libtga/include \
@@ -18,11 +18,12 @@ LIBDIR	 := ../extern/fmt/lib/ \
 			../extern/libjpeg/lib \
 			../extern/
 			
-BUILD_PREFIX = build
+BUILD_PREFIX = build/
 
-VPATH := src ../algebra
+VPATH := src ../algebra ../extern/glew/src
 
-SRCS := mtrx2.cpp \
+SRCS := glew.cpp \
+		mtrx2.cpp \
 		mtrx3.cpp \
 		mtrx4.cpp \
 		vec2.cpp \
@@ -46,6 +47,9 @@ OBJS := $(patsubst %.cpp,$(BUILD_PREFIX)/%.o,$(SRCS))
 .PHONY: clean all
 
 all: $(OBJS) main
+
+$(BUILD_PREFIX)/glew.o: glew.cpp
+	$(CC) -Wno-attributes -Wno-cast-function-type $(addprefix -I,$(INCDIR)) -c $< -o $@
 
 $(BUILD_PREFIX)/mtrx2.o: mtrx2.cpp
 	$(CC) $(CFLAGS)  $(addprefix -I,$(INCDIR)) -c $< -o $@
