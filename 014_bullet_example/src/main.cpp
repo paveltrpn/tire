@@ -322,9 +322,9 @@ void registerGLFWCallbacks() {
 
 	auto cursorEnterCallback = [] (GLFWwindow* window, int entered) {
 		if (entered) {
-        	// The cursor entered the content area of the window
+        	// cursor entered the content area of the window
     	} else {
-        	// The cursor left the content area of the window
+        	// cursor left the content area of the window
     	}
 	};
 	glfwSetCursorEnterCallback(g_appWindow, cursorEnterCallback);
