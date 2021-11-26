@@ -3,7 +3,7 @@
 #include "fmt/format.h"
 #include "service.h"
 
-void initGlfwWindow(SAppState & appState) {
+void initGlfwWindow(SAppState &appState) {
 	if (glfwInit() != GLFW_TRUE) {
 		std::cout << fmt::format("initWindow(): glfwInit() return - GLFW_FALSE!\n");
 		std::exit(1);

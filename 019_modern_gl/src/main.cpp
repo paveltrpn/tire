@@ -3,9 +3,10 @@
 #include <fmt/format.h>
 
 #include "service.h"
+#include "shader.h"
 
-void setup(const SAppState &appSatete) {
-    glViewport(0, 0, appSatete.wndWidth, appSatete.wndHeight);
+void setup(const SAppState &appState) {
+    glViewport(0, 0, appState.wndWidth, appState.wndHeight);
 
 	glClearColor(0.0f, 0.1f, 0.0f, 0.0f); 
 	glClearDepth(1.0);
@@ -29,6 +30,11 @@ int main(int argc, char** argv) {
     registerGlfwCallbacks(appSate);
 
     setup(appSate);
+
+    COglProgram foo;
+
+    foo.appendShader({{GL_VERTEX_SHADER, "assets/vs.glsl"}, {GL_FRAGMENT_SHADER, "assets/fs.glsl"}});
+    foo.linkProgram();
 
     while(!glfwWindowShouldClose(appSate.glfwWndPtr)) {
 		glfwPollEvents();

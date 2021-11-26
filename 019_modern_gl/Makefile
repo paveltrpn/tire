@@ -25,7 +25,8 @@ VPATH := src $(PKG_GLEW_SRCDIR)
 
 SRCS := glew.cpp \
 		main.cpp \
-		service.cpp
+		service.cpp \
+		shader.cpp
 
 OBJS := $(patsubst %.cpp,$(BUILD_PREFIX)/%.o,$(SRCS))
 
@@ -42,6 +43,9 @@ $(BUILD_PREFIX)/main.o: main.cpp
 	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
 $(BUILD_PREFIX)/service.o: service.cpp
+	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
+
+$(BUILD_PREFIX)/shader.o: shader.cpp
 	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
 main: $(OBJS)
