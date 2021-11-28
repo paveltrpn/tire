@@ -3,7 +3,8 @@
 #include <fstream>
 #include <cstdio>
 #include <string>
-#include <SDL2/SDL.h>
+
+#include "SDL.h"
 
 #include "win_SDL2_init.h"
 #include "bmp.h"

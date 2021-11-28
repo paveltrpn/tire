@@ -3,8 +3,8 @@
 #include <iostream>
 #include <string>
 #include <cstring>
-#include <jpeg/jpeglib.h>    
-#include <jpeg/jerror.h>
+#include <jpeglib.h>    
+#include <jerror.h>
 #include <tga.h>
 
 using namespace std;

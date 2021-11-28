@@ -7,9 +7,11 @@
 #include <utility>
 #include <tuple>
 
+#define GLEW_STATIC
 #include <GL/glew.h>
 #include <GL/glu.h>
 #include <GL/gl.h>
+#include <GLFW/glfw3.h>
 
 #include "vec3.h"
 #include "mtrx3.h"

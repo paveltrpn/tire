@@ -1,9 +1,11 @@
-#pragma once
+#ifndef __jpeg_h__
+#define __jpeg_h__
 
 #include <iostream>
 #include <string>
-#include <jpeg/jpeglib.h>    
-#include <jpeg/jerror.h>
+
+#include "jpeglib.h"    
+#include "jerror.h"
 
 using namespace std;
 
@@ -28,3 +30,5 @@ class jpeg_img_c {
         size_t      get_chanels_count();
         uint8_t*    get_data();
 };
+
+#endif

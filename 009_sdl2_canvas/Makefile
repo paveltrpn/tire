@@ -1,29 +1,42 @@
+PKG_SDL_INCDIR := ../extern/SDL/include
+PKG_SDL_LIBDIR := ../extern/SDL/build
+
+PKG_LIBJPEG_INCDIR := ../extern/libjpeg-cmake
+PKG_LIBJPEG_LIBDIR := ../extern/libjpeg-cmake/build
+
+PKG_LIBTGA_INCDIR := ../extern/libtga/include
+PKG_LIBTGA_LIBDIR := ../extern/libtga/build/src
 
 CC       := g++
-CFLAGS   := --std=c++17
+CFLAGS   := -Wall -Wextra -Wpedantic -Wno-unused-parameter -std=c++20
+LFLAGS 	 := -lstdc++ -lSDL2 -ltga -llibjpeg
 
-INCDIR	 = E:/devtools/usr/local/include
-LIBDIR	 = E:/devtools/usr/local/lib
+INCDIR	 =	$(PKG_SDL_INCDIR) \
+	    	$(PKG_LIBJPEG_INCDIR) \
+			$(PKG_LIBTGA_INCDIR)
+	
+LIBDIR	 =	$(PKG_SDL_LIBDIR) \
+			$(PKG_LIBJPEG_LIBDIR) \
+			$(PKG_LIBTGA_LIBDIR)
+
+BUILD_PREFIX = build
 
 SRCS := sdl2_canvas.cpp canvas.cpp
-OBJS := $(SRCS:.cpp=.o)
+
+OBJS := $(patsubst %.cpp,$(BUILD_PREFIX)/%.o,$(SRCS))
 
 .PHONY: clean all
 
-$(info COMMON MAKEFILE)
-
-all: compile link
-
-compile: sdl2_canvas.o canvas.o
-
-link: 
-	$(CC) $(OBJS) -L$(LIBDIR) -o main -lstdc++ -llibjpeg -ltga -lSDL2
+all: main
 	
-sdl2_canvas.o: sdl2_canvas.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) -c sdl2_canvas.cpp
+$(BUILD_PREFIX)/sdl2_canvas.o: sdl2_canvas.cpp
+	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
-canvas.o: canvas.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) -c canvas.cpp
+$(BUILD_PREFIX)/canvas.o: canvas.cpp
+	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
+
+main: $(OBJS)
+	$(CC) $(OBJS) $(addprefix -L,$(LIBDIR)) -o main $(LFLAGS)
 
 clean:
-	rm -f *.o main 
+	rm -f $(BUILD_PREFIX)/*.o main.exe

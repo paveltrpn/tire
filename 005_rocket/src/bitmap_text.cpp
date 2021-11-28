@@ -1,8 +1,12 @@
 
 #include <iostream>
 #include <string>
+
+#define GLEW_STATIC
 #include <GL/glew.h>
+#include <GL/glu.h>
 #include <GL/gl.h>
+#include <glfw/glfw3.h>
 
 #include "bitmap_text.h"
 #include "common.h"

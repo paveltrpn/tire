@@ -1,31 +1,37 @@
 
-CC       := g++
-CFLAGS   := --std=c++17
-LIBS 	 := 
-RM       := rm -f
+PKG_LIBJPEG_INCDIR := ../extern/libjpeg-cmake
+PKG_LIBJPEG_LIBDIR := ../extern/libjpeg-cmake/build
 
-INCDIR	 = E:/devtools/usr/local/include
-LIBDIR	 = E:/devtools/usr/local/lib
+PKG_LIBTGA_INCDIR := ../extern/libtga/include
+PKG_LIBTGA_LIBDIR := ../extern/libtga/build/src
+
+CC       = g++
+CFLAGS   = -Wall -Wextra -Wpedantic -Wno-unused-parameter -std=c++20
+LFLAGS 	 := -lstdc++ -ltga -llibjpeg
+
+INCDIR	 =	$(PKG_LIBJPEG_INCDIR) \
+			$(PKG_LIBTGA_INCDIR)
+	
+LIBDIR	 =	$(PKG_LIBJPEG_LIBDIR) \
+			$(PKG_LIBTGA_LIBDIR)
+
+BUILD_PREFIX = build
 
 SRCS := test.cpp canvas.cpp
-OBJS := $(SRCS:.cpp=.o)
+OBJS := $(patsubst %.cpp,$(BUILD_PREFIX)/%.o,$(SRCS))
 
 .PHONY: clean all
 
-$(info COMMON MAKEFILE)
+all: main
 
-all: compile link
+$(BUILD_PREFIX)/test.o: test.cpp
+	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
-compile: test.o canvas.o
+$(BUILD_PREFIX)/canvas.o: canvas.cpp
+	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
-link: 
-	$(CC) $(OBJS) -L$(LIBDIR) -o main -lstdc++ -llibjpeg -ltga
-	
-test.o: test.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) -c test.cpp
-
-canvas.o: canvas.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) -c canvas.cpp
+main: $(OBJS)
+	$(CC) $(OBJS) $(addprefix -L,$(LIBDIR)) -o main $(LFLAGS)
 
 clean:
-	rm -f *.o main *.tga *.jpeg
+	rm -f $(BUILD_PREFIX)/*.o main.exe

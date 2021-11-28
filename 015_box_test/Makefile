@@ -34,7 +34,7 @@ LIBDIR	 := $(PKG_FMT_LIBDIR) \
 			$(PKG_LIBTGA_LIBDIR) \
 			$(PKG_LIBJPEG_LIBDIR)
 			
-BUILD_PREFIX = build/
+BUILD_PREFIX = build
 
 VPATH := src ../algebra $(PKG_GLEW_SRCDIR)
 

@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <string>
 #include <utility>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "sdl2_canvas.h"
 

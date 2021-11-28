@@ -4,10 +4,11 @@
 #include <vector>
 #include <fstream>
 
+#define GLEW_STATIC
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <GL/gl.h>
 #include <GL/glu.h>
+#include <GL/gl.h>
+#include <glfw/glfw3.h>
 
 #include <fmt/format.h>
 #include "bitmap_text.h"

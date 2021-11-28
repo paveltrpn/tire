@@ -3,8 +3,8 @@
 #include <fstream>
 #include <cstdio>
 #include <string>
-#include <jpeg/jpeglib.h>    
-#include <jpeg/jerror.h>
+#include "jpeglib.h"    
+#include "jerror.h"
 
 #include "jpeg.h"
 
