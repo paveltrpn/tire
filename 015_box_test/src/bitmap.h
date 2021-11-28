@@ -7,9 +7,9 @@
 #include <fstream>
 #include <cstdio>
 
-#include <jpeg/jpeglib.h>    
-#include <jpeg/jerror.h>
-#include <tga.h>
+#include "jpeglib.h"    
+#include "jerror.h"
+#include "tga.h"
 
 #include <fmt/format.h>
 

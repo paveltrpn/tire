@@ -10,6 +10,12 @@ PKG_GLEW_SRCDIR := ../extern/glew-2.1.0/src
 PKG_IMGUI_INCDIR := ../extern/imgui
 PKG_IMGUI_SRCDIR := ../extern/imgui ../extern/imgui/backends
 
+PKG_LIBJPEG_INCDIR := ../extern/libjpeg-cmake/include
+PKG_LIBJPEG_LIBDIR := ../extern/libjpeg-cmake/build
+
+PKG_LIBTGA_INCDIR := ../extern/libtga/include
+PKG_LIBTGA_LIBDIR := ../extern/libtga/build/src
+
 CC       = g++
 CFLAGS   = -Wall -Wextra -Wpedantic -Wno-unused-parameter -std=c++20
 LFLAGS 	 = -lstdc++ -lfmt -lopengl32 -lglu32 -lglfw3 -lgdi32
