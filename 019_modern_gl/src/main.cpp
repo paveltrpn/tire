@@ -19,7 +19,7 @@ void setup(const SAppState &appState) {
 
 	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 	glEnable(GL_COLOR_MATERIAL);
-};
+}
 
 int main(int argc, char** argv) {
     SAppState appSate;

@@ -47,7 +47,7 @@ void initGlfwWindow(SAppState &appState) {
 	appState.glRenderStr        = std::string(reinterpret_cast<char const*>(glGetString(GL_RENDERER)));
 	appState.glVersionStr       = std::string(reinterpret_cast<char const*>(glGetString(GL_VERSION)));
 	appState.glslVersionStr     = std::string(reinterpret_cast<char const*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
-};
+}
 
 void registerGlfwCallbacks(SAppState & appState) {
     // Нужно чтобы отправить appState в static storage duration, иначе лямбда не захватыват appState из аргументов

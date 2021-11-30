@@ -8,7 +8,7 @@
 #include <GL/glew.h>
 #include <GL/glu.h>
 #include <GL/gl.h>
-#include <glfw/glfw3.h>
+#include "GLFW/glfw3.h"
 
 struct SAppState {
     int     wndWidth { 1152 };

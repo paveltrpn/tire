@@ -96,7 +96,7 @@ void COglProgram::linkProgram() {
 
 void COglProgram::use() {
     glUseProgram(pHandle);
-};
+}
 
 void COglProgram::getActiveAttributes() {
     GLint i;
