@@ -22,7 +22,7 @@ LFLAGS 	 = -lstdc++ -lfmt -lglfw3
 
 UNAME_S := $(shell uname -s)
 
-ifeq ($(UNAME_S), Linux) #LINUX
+ifeq ($(UNAME_S), Linux)
 	LFLAGS += -lGL -lGLU -lpthread -ldl
 endif
 
@@ -30,19 +30,17 @@ ifeq ($(OS), Windows_NT)
 	LFLAGS += -lopengl32 -lglu32 -lgdi32
 endif
 
-INCDIR	 = $(PKG_FMT_INCDIR) \
+INCDIR	 =  $(PKG_FMT_INCDIR) \
 			$(PKG_GLFW_INCDIR) \
 			$(PKG_GLEW_INCDIR) \
 			$(PKG_IMGUI_INCDIR)
 
-LIBDIR	 = $(PKG_FMT_LIBDIR) \
+LIBDIR	 =  $(PKG_FMT_LIBDIR) \
 			$(PKG_GLFW_LIBDIR)
 			
-BUILD_PREFIX = build
-
 VPATH = src $(PKG_GLEW_SRCDIR) $(PKG_IMGUI_SRCDIR)
 
-SRCS = glew.cpp \
+SRCS =  glew.cpp \
 		main.cpp \
 		service.cpp \
 		shader.cpp \
@@ -53,7 +51,7 @@ SRCS = glew.cpp \
 		imgui_impl_glfw.cpp \
 		imgui_impl_opengl3.cpp
 
-OBJS = $(patsubst %.cpp,$(BUILD_PREFIX)/%.o,$(SRCS))
+OBJS = $(patsubst %.cpp, build/%.o,$(SRCS))
 
 #OBJS := $(SRCS:.cpp=.o)
 
@@ -61,34 +59,34 @@ OBJS = $(patsubst %.cpp,$(BUILD_PREFIX)/%.o,$(SRCS))
 
 all: $(OBJS) main
 
-$(BUILD_PREFIX)/glew.o: glew.c
+build/glew.o: glew.c
 	$(CC) -w $(addprefix -I,$(INCDIR)) -c $< -o $@
 
-$(BUILD_PREFIX)/main.o: main.cpp
+build/main.o: main.cpp
 	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
-$(BUILD_PREFIX)/service.o: service.cpp
+build/service.o: service.cpp
 	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
-$(BUILD_PREFIX)/shader.o: shader.cpp
+build/shader.o: shader.cpp
 	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
-$(BUILD_PREFIX)/imgui.o: imgui.cpp
+build/imgui.o: imgui.cpp
 	$(CC) -w $(addprefix -I,$(INCDIR)) -c $< -o $@
 
-$(BUILD_PREFIX)/imgui_draw.o: imgui_draw.cpp
+build/imgui_draw.o: imgui_draw.cpp
 	$(CC) -w $(addprefix -I,$(INCDIR)) -c $< -o $@
 
-$(BUILD_PREFIX)/imgui_tables.o: imgui_tables.cpp
+build/imgui_tables.o: imgui_tables.cpp
 	$(CC) -w $(addprefix -I,$(INCDIR)) -c $< -o $@
 
-$(BUILD_PREFIX)/imgui_widgets.o: imgui_widgets.cpp
+build/imgui_widgets.o: imgui_widgets.cpp
 	$(CC) -w $(addprefix -I,$(INCDIR)) -c $< -o $@
 
-$(BUILD_PREFIX)/imgui_impl_glfw.o: imgui_impl_glfw.cpp
+build/imgui_impl_glfw.o: imgui_impl_glfw.cpp
 	$(CC) -w $(addprefix -I,$(INCDIR)) -c $< -o $@
 
-$(BUILD_PREFIX)/imgui_impl_opengl3.o: imgui_impl_opengl3.cpp
+build/imgui_impl_opengl3.o: imgui_impl_opengl3.cpp
 	$(CC) -w $(addprefix -I,$(INCDIR)) -c $< -o $@
 
 main: $(OBJS)
