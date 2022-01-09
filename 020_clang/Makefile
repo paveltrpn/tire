@@ -5,7 +5,7 @@ PKG_GLEW_INCDIR = ../extern/glew-2.1.0/include
 PKG_GLEW_SRCDIR = ../extern/glew-2.1.0/src
 
 CC       = gcc
-CFLAGS   = -Wall 
+CFLAGS   = -Wall -std=c2x
 LFLAGS 	 = -lm -lglfw3
 
 UNAME_S := $(shell uname -s)

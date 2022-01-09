@@ -1,7 +1,7 @@
 
 #include "service.h"
 
-void initGlfwWindow(AppState_s *appState) {
+void initGlfwWindow(appState_s *appState) {
 	if (glfwInit() != GLFW_TRUE) {
 		printf("initWindow(): glfwInit() return - GLFW_FALSE!\n");
 		exit(1);
@@ -52,6 +52,6 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
     }
 };
 
-void registerGlfwCallbacks(AppState_s *appState) {
+void registerGlfwCallbacks(appState_s *appState) {
 	glfwSetKeyCallback(appState->glfwWndPtr, keyCallback);
 }

@@ -1,6 +1,5 @@
 
 #include <stdio.h>
-#include <stdbool.h>
 #include <stdlib.h>
 
 #define GLEW_STATIC
@@ -11,7 +10,7 @@
 
 #include "service.h"
 
-void setup(const AppState_s *appState) {
+void setup(const appState_s *appState) {
     glViewport(0, 0, appState->wndWidth, appState->wndHeight);
 
 	glClearColor(0.5f, 0.5f, 0.5f, 0.0f); 
@@ -24,7 +23,7 @@ void setup(const AppState_s *appState) {
 }
 
 int main(int argc, char **argv) {
-    AppState_s appState = {.wndWidth = 1152, .wndHeight = 768, .appName = "020_clang"};
+    appState_s appState = {.wndWidth = 1152, .wndHeight = 768, .appName = "020_clang"};
 
     initGlfwWindow(&appState); 
 

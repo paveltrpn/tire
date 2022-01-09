@@ -4,6 +4,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <math.h>
 
 typedef float vec2[2];
 typedef float vec3[3];
@@ -12,7 +13,7 @@ typedef float mtrx3[9];
 typedef float mtrx4[16];
 typedef float qtnn[4];
 
-#define f_eps 0.000001f
+#define f_eps 1.19209e-07
 
 /*	multidimensional array mapping, array[i][j]
 	row-wise (C, C++):

@@ -12,7 +12,7 @@
 #include <GL/gl.h>
 #include "GLFW/glfw3.h"
 
-typedef struct AppState_s {
+typedef struct appState_s {
     int     wndWidth;
     int     wndHeight;
     
@@ -21,15 +21,15 @@ typedef struct AppState_s {
     GLFWwindow 		*glfwWndPtr;
     GLFWmonitor		*glfwMonitorPtr; 
     
-    // 7 байт для строки в формате Х.Х.Х и нуль-терминатор
-    // где Х - цифра
+    // 7 байт для строки в формате Х.Х.Х и нуль-терминатор,
+    // где Х - один разряд
     char     glfwVersionStr[7];
     char     *glRenderStr;
     char     *glVersionStr;
     char     *glslVersionStr;
-} AppState_s;
+} appState_s;
 
-void initGlfwWindow(AppState_s *appState);
-void registerGlfwCallbacks(AppState_s *appState);
+void initGlfwWindow(appState_s *appState);
+void registerGlfwCallbacks(appState_s *appState);
 
 #endif
