@@ -1,7 +1,7 @@
 
 #include <stdio.h>
 #include <math.h>
-#include "algebra.h"
+#include "algebra_c.h"
 
 void vec3_copy(const vec3 v, vec3 rt) {
 	rt[0] = v[0];

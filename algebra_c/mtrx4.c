@@ -1,7 +1,7 @@
 
 #include <stdio.h>
 #include <math.h>
-#include "algebra.h"
+#include "algebra_c.h"
 
 void mtrx4Copy(const mtrx4 m, mtrx4 rt) {
     int32_t i, j;

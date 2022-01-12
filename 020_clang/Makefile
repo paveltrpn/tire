@@ -25,7 +25,7 @@ LIBDIR	 = $(PKG_GLFW_LIBDIR)
 
 VPATH = src ../algebra_c $(PKG_GLEW_SRCDIR)
 
-SRCS = glew.c common.c vec2.c vec3.c vec4.c mtrx3.c mtrx4.c main.c service.c
+SRCS = glew.c alg_common.c vec2.c vec3.c vec4.c mtrx3.c mtrx4.c main.c service.c
 
 OBJS = $(patsubst %.c, build/%.o,$(SRCS))
 
@@ -38,7 +38,7 @@ all: $(OBJS) main
 build/glew.o: glew.c
 	$(CC) -w $(addprefix -I,$(INCDIR)) -c $< -o $@
 
-build/common.o: common.c
+build/alg_common.o: alg_common.c
 	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
 build/vec2.o: vec2.c

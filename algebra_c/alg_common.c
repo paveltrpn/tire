@@ -1,7 +1,7 @@
 
 #include <stdint.h>
 
-#include "algebra.h"
+#include "algebra_c.h"
 
 /*	multidimensional array mapping, array[i][j]
 	row-wise (C, C++):
