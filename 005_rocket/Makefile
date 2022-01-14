@@ -14,9 +14,19 @@ PKG_LIBTGA_LIBDIR := ../extern/libtga/build/src
 PKG_LIBJPEG_INCDIR := ../extern/libjpeg-cmake
 PKG_LIBJPEG_LIBDIR := ../extern/libjpeg-cmake/build
 
-CC       := g++
-CFLAGS   := -Wall -Wextra -Wpedantic -Wno-unused-parameter -std=c++20
-LFLAGS 	 := -lstdc++ -lopengl32 -lglfw3 -lgdi32 -ltga -llibjpeg -lfmt
+CC       = g++
+CFLAGS   = -Wall -Wextra -Wpedantic -Wno-unused-parameter -std=c++20
+LFLAGS 	 = -lstdc++ -lfmt -lglfw3 -ltga -llibjpeg
+
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S), Linux)
+	LFLAGS += -lGL -lGLU -lpthread -ldl
+endif
+
+ifeq ($(OS), Windows_NT)
+	LFLAGS += -lopengl32 -lglu32 -lgdi32
+endif
 
 INCDIR	 =	$(PKG_FMT_INCDIR) \
 			$(PKG_GLFW_INCDIR) \

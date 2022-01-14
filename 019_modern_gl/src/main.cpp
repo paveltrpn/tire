@@ -9,7 +9,7 @@
 #include "service.h"
 #include "shader.h"
 
-void setup(const SAppState &appState) {
+void setup(const appState_s &appState) {
     glViewport(0, 0, appState.wndWidth, appState.wndHeight);
 
 	glClearColor(0.0f, 0.1f, 0.0f, 0.0f); 
@@ -22,7 +22,7 @@ void setup(const SAppState &appState) {
 }
 
 int main(int argc, char** argv) {
-    SAppState appSate;
+    appState_s appSate;
     
     initGlfwWindow(appSate);
 
@@ -43,7 +43,8 @@ int main(int argc, char** argv) {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGuiIO& io = ImGui::GetIO(); 
+    (void)io;
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 

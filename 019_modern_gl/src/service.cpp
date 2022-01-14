@@ -3,7 +3,7 @@
 #include "fmt/format.h"
 #include "service.h"
 
-void initGlfwWindow(SAppState &appState) {
+void initGlfwWindow(appState_s &appState) {
 	if (glfwInit() != GLFW_TRUE) {
 		std::cout << fmt::format("initWindow(): glfwInit() return - GLFW_FALSE!\n");
 		std::exit(1);
@@ -49,10 +49,10 @@ void initGlfwWindow(SAppState &appState) {
 	appState.glslVersionStr     = std::string(reinterpret_cast<char const*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
 }
 
-void registerGlfwCallbacks(SAppState & appState) {
+void registerGlfwCallbacks(appState_s & appState) {
     // Нужно чтобы отправить appState в static storage duration, иначе лямбда не захватыват appState из аргументов
     // функции, а любое изменение параметров захвата лямбды приводит к тому, что её тип перестаёт совпадать с GLFWkeyfun
-    static SAppState &localAppState = appState; 
+    static appState_s &localAppState = appState; 
 
 	auto keyCallback = [] (GLFWwindow* window, int key, int scancode, int action, int mods) mutable {
 		if (key == GLFW_KEY_ESCAPE && GLFW_PRESS) {

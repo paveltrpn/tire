@@ -8,7 +8,7 @@
 #include <GL/glew.h>
 #include <GL/glu.h>
 #include <GL/gl.h>
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 
 #include <fmt/format.h>
 #include "bitmap_text.h"
@@ -191,7 +191,7 @@ class app_c {
 			glfwSetErrorCallback(glfw_error_callback);
 
 			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 			glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
 			glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 

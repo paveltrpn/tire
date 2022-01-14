@@ -6,7 +6,7 @@
 #include <GL/glew.h>
 #include <GL/glu.h>
 #include <GL/gl.h>
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 
 #include "bitmap_text.h"
 #include "common.h"

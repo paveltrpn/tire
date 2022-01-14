@@ -10,7 +10,7 @@
 #include <GL/gl.h>
 #include "GLFW/glfw3.h"
 
-struct SAppState {
+struct appState_s {
     int     wndWidth { 1152 };
     int     wndHeight { 768 };
     
@@ -26,7 +26,7 @@ struct SAppState {
     bool            KEY_ESCAPE { false };
 };
 
-void initGlfwWindow(SAppState & appState);
-void registerGlfwCallbacks(SAppState & appState);
+void initGlfwWindow(appState_s & appState);
+void registerGlfwCallbacks(appState_s & appState);
 
 #endif
