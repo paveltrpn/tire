@@ -6,4 +6,3 @@ main.exe
 /extern/*
 !/extern/.gitkeep
 !/extern/README.md
-__*__
