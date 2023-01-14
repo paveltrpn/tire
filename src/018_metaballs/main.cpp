@@ -25,9 +25,9 @@
 GLFWwindow 		*g_appWindow;
 GLFWmonitor		*g_appMonitor;
 
-const GLubyte *oglRenderString;
-const GLubyte *oglVersionString;
-const GLubyte *oglslVersionString;
+std::string oglRenderString;
+std::string oglVersionString;
+std::string oglslVersionString;
 
 CAppState		g_appState;
 CPerspLookAtCamera 	g_Camera;
@@ -103,9 +103,9 @@ void windowInit() {
     // Лок на 60 фпс
     glfwSwapInterval(true);
 	
-    oglRenderString = glGetString(GL_RENDERER);
-    oglVersionString = glGetString(GL_VERSION);
-    oglslVersionString = glGetString(GL_SHADING_LANGUAGE_VERSION);
+    oglRenderString =  reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+    oglVersionString = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+    oglslVersionString = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
 	
     std::cout << fmt::format("windowInit():\n  oglRenderString - {}\n  oglVersionString - {}\n  oglslVersionString - {}\n", oglRenderString, oglVersionString, oglslVersionString);
 }
