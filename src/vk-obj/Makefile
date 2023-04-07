@@ -5,8 +5,8 @@ PKG_GLFW_LIBDIR = ../../extern/glfw/build/src
 PKG_FMT_INCDIR = ../../extern/fmt/include
 PKG_FMT_LIBDIR = ../../extern/fmt/build
 
-CC       = g++ --std=c++20
-CFLAGS   = -Wall
+CC       = clang++-15
+CFLAGS   = -Wall --std=c++20
 LFLAGS 	 = -lfmt -lglfw3 -lpthread -ldl -lvulkan \
 		   -lX11 -lXi -lXrandr -lXxf86vm \
 		   -lXinerama -lXcursor -lrt -lm
@@ -15,9 +15,9 @@ INCDIR	 = 	$(PKG_GLFW_INCDIR) $(PKG_FMT_INCDIR)
 
 LIBDIR	 = $(PKG_GLFW_LIBDIR) $(PKG_FMT_LIBDIR)
 
-VPATH = 
+VPATH =  
 
-SRCS = main.cpp
+SRCS = main.cpp instance.cpp devices.cpp
 
 OBJS = $(patsubst %.cpp, %.o,$(SRCS))
 
@@ -28,6 +28,12 @@ OBJS = $(patsubst %.cpp, %.o,$(SRCS))
 all: $(OBJS) main
 
 main.o: main.cpp
+	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
+
+instance.o: instance.cpp
+	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
+
+devices.o: devices.cpp
 	$(CC) $(CFLAGS) $(addprefix -I,$(INCDIR)) -c $< -o $@
 
 main: $(OBJS)

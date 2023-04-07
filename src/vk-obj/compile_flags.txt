@@ -1,4 +1,5 @@
 -xc++
+-std=gnu++2b
 -I../../extern/fmt/include
 -I../../extern/glfw/include
 -I../../extern/glew-2.1.0/include
