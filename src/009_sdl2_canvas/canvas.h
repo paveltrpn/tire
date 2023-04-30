@@ -2,15 +2,16 @@
 #ifndef __CANVAS_H__
 #define __CANVAS_H__
 
-#include <iostream>
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 #include <cstring>
+#include <iostream>
 #include <utility>
 
 // Класс канвы, содержит в себе холст размером cnvs_width*cnvs_height. Глубина цвета только 32 бит,
 // формат R8G8B8. Записывает примитивы на холст согласно их состояниям, типа - текущий размер
-// примитива, текущий цвет примитива и т.д. (примитив - в смысле pen, карандаш или что-то вроде того). 
+// примитива, текущий цвет примитива и т.д. (примитив - в смысле pen, карандаш или что-то вроде
+// того).
 
 class canvas_c {
     private:
@@ -32,15 +33,15 @@ class canvas_c {
             cnvs_height = height;
             cnvs_width = width;
 
-            data = new uint8_t[cnvs_width*cnvs_height*bpp]; 
+            data = new uint8_t[cnvs_width * cnvs_height * bpp];
 
             // цвет холста по умолчанию
-            std::fill(data, data + cnvs_width*cnvs_height*bpp, 0);
-            //std::memset(data, 128, cnvs_height*cnvs_width*bpp);
+            std::fill(data, data + cnvs_width * cnvs_height * bpp, 0);
+            // std::memset(data, 128, cnvs_height*cnvs_width*bpp);
         }
 
         ~canvas_c() {
-            delete [] data;
+            delete[] data;
         }
 
         void set_pen_size(int32_t size);
@@ -51,14 +52,14 @@ class canvas_c {
         void brasenham_line(std::pair<int32_t, int32_t> start, std::pair<int32_t, int32_t> end);
         void wu_line(std::pair<int32_t, int32_t> start, std::pair<int32_t, int32_t> end);
         void dda_line(std::pair<int32_t, int32_t> start, std::pair<int32_t, int32_t> end);
-        
+
         void brasenham_circle(std::pair<int32_t, int32_t> center, int32_t rd);
-        
+
         void rect(std::pair<int32_t, int32_t> ul,
                   std::pair<int32_t, int32_t> ur,
                   std::pair<int32_t, int32_t> dl,
                   std::pair<int32_t, int32_t> dr);
-                  
+
         int32_t get_width() {
             return cnvs_width;
         }
@@ -71,7 +72,7 @@ class canvas_c {
             return bpp;
         }
 
-        uint8_t * get_data() {
+        uint8_t *get_data() {
             return data;
         }
 

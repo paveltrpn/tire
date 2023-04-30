@@ -2,23 +2,23 @@
 #include "camera.h"
 
 void CPerspCamera::setCameraAngles(float yaw, float pitch, float roll) {
-    cmrYaw      = yaw;
-    cmrPitch    = pitch;
-    cmrRoll     = roll;
+    cmrYaw = yaw;
+    cmrPitch = pitch;
+    cmrRoll = roll;
 }
 
-void CPerspCamera::setCameraPosition(const glm::vec3 &pos) {
+void CPerspCamera::setCameraPosition(const glm::vec3& pos) {
     cmrPosition = pos;
 }
 
-void CPerspCamera::moveCamera(const glm::vec3 &offset) {
-    cmrPosition = cmrPosition + offset; 
+void CPerspCamera::moveCamera(const glm::vec3& offset) {
+    cmrPosition = cmrPosition + offset;
 }
 
 void CPerspCamera::rotateCamera(float yaw, float pitch, float roll) {
-    cmrYaw      += yaw;
-    cmrPitch    += pitch;
-    cmrRoll     += roll;
+    cmrYaw += yaw;
+    cmrPitch += pitch;
+    cmrRoll += roll;
 }
 
 float* CPerspCamera::getCmrMatrixPointer() {
@@ -34,12 +34,13 @@ void CPerspCamera::setViewParameters(float fov, float aspect, float near, float 
 
 void CPerspCamera::updateViewMatrix() {
     glm::mat4 defaultViewMatrix = glm::perspective(cmrFov, cmrAspect, cmrNear, cmrFar);
-    
+
     glm::mat4 offsetMatrix = glm::translate(glm::mat4(1.0f), cmrPosition);
     // offsetMatrix = glm::transpose(offsetMatrix);
-    
-    glm::mat4 orientationMatrix = glm::eulerAngleYXZ((cmrYaw), glm::radians(cmrPitch), glm::radians(cmrRoll));
-    
+
+    glm::mat4 orientationMatrix
+      = glm::eulerAngleYXZ((cmrYaw), glm::radians(cmrPitch), glm::radians(cmrRoll));
+
     cmrViewMatrix = defaultViewMatrix * offsetMatrix * orientationMatrix;
 }
 
@@ -47,7 +48,7 @@ void CPerspCamera::updateViewMatrix() {
 
 void CPerspLookAtCamera::calculateMoveVectors() {
     glm::vec3 eyeDir = cmrEye - cmrTarget;
-    
+
     cmrLeftVec = glm::cross(cmrUp, eyeDir);
     cmrLeftVec = glm::normalize(cmrLeftVec);
 
@@ -62,14 +63,14 @@ void CPerspLookAtCamera::setViewParameters(float fov, float aspect, float near, 
     cmrFar = far;
 }
 
-void CPerspLookAtCamera::updateViewMatrix() { 
+void CPerspLookAtCamera::updateViewMatrix() {
     glm::mat4 perspMatrix = glm::perspective(cmrFov, cmrAspect, cmrNear, cmrFar);
     glm::mat4 lookAtMatrix = glm::lookAt(cmrEye, cmrTarget, cmrUp);
 
     cmrViewMatrix = perspMatrix * lookAtMatrix;
 }
 
-void CPerspLookAtCamera::setLookPoints(glm::vec3 eye, glm::vec3 target) { 
+void CPerspLookAtCamera::setLookPoints(glm::vec3 eye, glm::vec3 target) {
     cmrEye = eye;
     cmrTarget = target;
 
@@ -83,13 +84,16 @@ void CPerspLookAtCamera::setUpVec(const glm::vec3& up) {
 };
 
 void CPerspLookAtCamera::moveViewPointsSideway(float spd) {
-    cmrTarget = cmrTarget + glm::vec3(cmrLeftVec[0]*spd, cmrLeftVec[1]*spd, cmrLeftVec[2]*spd);
-    cmrEye    = cmrEye + glm::vec3(cmrLeftVec[0]*spd, cmrLeftVec[1]*spd, cmrLeftVec[2]*spd);
+    cmrTarget
+      = cmrTarget + glm::vec3(cmrLeftVec[0] * spd, cmrLeftVec[1] * spd, cmrLeftVec[2] * spd);
+    cmrEye = cmrEye + glm::vec3(cmrLeftVec[0] * spd, cmrLeftVec[1] * spd, cmrLeftVec[2] * spd);
 };
 
 void CPerspLookAtCamera::moveViewPointsForward(float spd) {
-    cmrTarget = cmrTarget + glm::vec3(cmrForwardVec[0]*spd, cmrForwardVec[1]*spd, cmrForwardVec[2]*spd);
-    cmrEye    = cmrEye + glm::vec3(cmrForwardVec[0]*spd, cmrForwardVec[1]*spd, cmrForwardVec[2]*spd);
+    cmrTarget = cmrTarget
+                + glm::vec3(cmrForwardVec[0] * spd, cmrForwardVec[1] * spd, cmrForwardVec[2] * spd);
+    cmrEye
+      = cmrEye + glm::vec3(cmrForwardVec[0] * spd, cmrForwardVec[1] * spd, cmrForwardVec[2] * spd);
 };
 
 void CPerspLookAtCamera::rotateEyeUp(float angl) {

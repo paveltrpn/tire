@@ -2,18 +2,18 @@
 #ifndef __matbase_h__
 #define __matbase_h__
 
-#include <string>
 #include <map>
+#include <string>
 
 #define GLEW_STATIC
+#include <GL/gl.h>
 #include <GL/glew.h>
 #include <GL/glu.h>
-#include <GL/gl.h>
 
 #include "bitmap.h"
 
 struct SMtrlStruct {
-    GLuint matDiffuseTexId;
+        GLuint matDiffuseTexId;
 };
 
 class CMtrlBase {

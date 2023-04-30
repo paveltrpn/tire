@@ -1,55 +1,45 @@
 #ifndef __mesh_h_
 #define __mesh_h_
 
+#include <GL/gl.h>
 #include <iostream>
 #include <string>
-#include <vector>
-#include <utility>
 #include <tuple>
-	
-#include <GL/gl.h>
+#include <utility>
+#include <vector>
 
-#include "vec3.h"
 #include "mtrx3.h"
 #include "mtrx4.h"
+#include "vec3.h"
 
 using namespace std;
 
 class box_c {
     public:
-        box_c() {};
-        ~box_c() {};
+        box_c(){};
+        ~box_c(){};
 
         void append(const vec3 &pos, const mtrx3 &spd);
         void show();
 
     private:
-        /*  кортеж хранит: 
-            СМЕЩЕНИЕ (0) 
+        /*  кортеж хранит:
+            СМЕЩЕНИЕ (0)
             СКОРОСТЬ ПОВОРОТА (1)
             ПОЛОЖЕНИЕ (2) */
         vector<tuple<vec3, mtrx3, mtrx3>> orientation;
-        const vec3 base[8] = {{ 1.0, 1.0, 1.0},
-	                            {-1.0, 1.0, 1.0},
-	                            {-1.0,-1.0, 1.0},
-	                            { 1.0,-1.0, 1.0},
-	                            { 1.0, 1.0,-1.0},
-	                            {-1.0, 1.0,-1.0},
-	                            {-1.0,-1.0,-1.0},
-	                            { 1.0,-1.0,-1.0}};
-        const vec3 base_normal[6] = {{ 0.0, 0.0, 1.0},
-	                                   { 0.0, 0.0,-1.0},
-	                                   { 0.0, 1.0, 0.0},
-	                                   { 0.0,-1.0, 0.0},
-	                                   { 1.0, 0.0, 0.0},
-	                                   {-1.0, 0.0, 0.0}}; 
+        const vec3 base[8]
+          = { { 1.0, 1.0, 1.0 },  { -1.0, 1.0, 1.0 },  { -1.0, -1.0, 1.0 },  { 1.0, -1.0, 1.0 },
+              { 1.0, 1.0, -1.0 }, { -1.0, 1.0, -1.0 }, { -1.0, -1.0, -1.0 }, { 1.0, -1.0, -1.0 } };
+        const vec3 base_normal[6] = { { 0.0, 0.0, 1.0 },  { 0.0, 0.0, -1.0 }, { 0.0, 1.0, 0.0 },
+                                      { 0.0, -1.0, 0.0 }, { 1.0, 0.0, 0.0 },  { -1.0, 0.0, 0.0 } };
         vec3 clone[8];
         vec3 clone_normal[6];
 };
 
 class Body {
     public:
-        enum {BOX, PRISM, ICOSAHEDRON};
+        enum { BOX, PRISM, ICOSAHEDRON };
 
         Body(int type, vec3 offst, vec3 orn, vec3 scl);
 

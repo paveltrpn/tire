@@ -4,29 +4,25 @@
 #include "plane.h"
 
 plane_t::plane_t(const vec3 &v, float d) {
-
 }
 
 plane_t::plane_t(const vec3 &v1, const vec3 &v2, const vec3 &v3) {
-
 }
 
 vec3 planeRayInsct(const vec3 &rs, const vec3 &re) {
-	return vec3();
+    return vec3();
 }
 
-bool pointInTrngl(const vec3 &v1, 
-					   const vec3 &v2, 
-					   const vec3 &v3,
-					   const vec3 &point) {
-	return false;
+bool pointInTrngl(const vec3 &v1, const vec3 &v2, const vec3 &v3, const vec3 &point) {
+    return false;
 }
 
 /*
-	Взято из репозитория https://github.com/da-nie/SoftwareGraphicsLibrary/
-	Статья на хабре - https://habr.com/ru/post/495664/
-	
-void CSGL::GetIntersectionPlaneAndLine(const SGLNVCTPoint& A,const SGLNVCTPoint& B,SGLNVCTPoint& new_point,float nx,float ny,float nz,float w)
+    Взято из репозитория https://github.com/da-nie/SoftwareGraphicsLibrary/
+    Статья на хабре - https://habr.com/ru/post/495664/
+
+void CSGL::GetIntersectionPlaneAndLine(const SGLNVCTPoint& A,const SGLNVCTPoint& B,SGLNVCTPoint&
+new_point,float nx,float ny,float nz,float w)
 {
  new_point=A;
  float ax=A.sGLVertex.X;

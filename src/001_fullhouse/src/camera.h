@@ -7,8 +7,8 @@
 
 class Camera {
     public:
-        enum {ORTHO, PERSPECTIVE};
-        
+        enum { ORTHO, PERSPECTIVE };
+
         Camera() {
             cmrFov = 45.0f;
             cmrAspect = 4.0f / 3.0f;
@@ -25,15 +25,15 @@ class Camera {
             cmrViewMatrix = mtrx4FromPerspective(cmrFov, cmrAspect, cmrNear, cmrFar);
         };
 
-        ~Camera() {};
+        ~Camera(){};
 
         void updateRotation();
         void updatePosition();
         void updateViewParameters();
-        
+
         void setViewParameters(float fov, float aspect, float near, float far);
 
-        void setCameraPosition(const vec3 &pos);
+        void setCameraPosition(const vec3& pos);
         void setCameraAngles(float yaw, float pitch, float roll);
 
         float* getCmrMatrixPointer();

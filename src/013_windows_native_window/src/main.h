@@ -4,8 +4,7 @@
 
 #include <windows.h>
 
-class kWindow
-    {
+class kWindow {
     private:
         virtual void OnDraw(HDC hDC) {
         }
@@ -24,11 +23,19 @@ class kWindow
             m_hWnd = nullptr;
         };
 
-        virtual ~kWindow() {
-        };
+        virtual ~kWindow(){};
 
-        virtual bool CreateEx(DWORD dwExStyle, LPCTSTR lpszClass, LPCTSTR lpszName, DWORD dwStyle,
-                              int x, int y, int nWidth, int nHeight, HWND hParent, HMENU hMenu, HINSTANCE hInst);
+        virtual bool CreateEx(DWORD dwExStyle,
+                              LPCTSTR lpszClass,
+                              LPCTSTR lpszName,
+                              DWORD dwStyle,
+                              int x,
+                              int y,
+                              int nWidth,
+                              int nHeight,
+                              HWND hParent,
+                              HMENU hMenu,
+                              HINSTANCE hInst);
 
         bool RegisterClass(LPCTSTR lpszClass, HINSTANCE hInst);
         virtual WPARAM MessagLoop();
@@ -40,6 +47,6 @@ class kWindow
         BOOL UpdateWindow() const {
             return ::UpdateWindow(m_hWnd);
         };
-}; 
+};
 
 #endif

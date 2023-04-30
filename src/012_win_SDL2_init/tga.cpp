@@ -1,27 +1,27 @@
 
 #include "tga.h"
 
-static const uint32_t TGA_IMAGE_TYPE_NO_IMAGE=0;
-static const uint32_t TGA_IMAGE_TYPE_PALETTE=1;
-static const uint32_t TGA_IMAGE_TYPE_RGB=2;
-static const uint32_t TGA_IMAGE_TYPE_GRAYSCALE=3;
-static const uint32_t TGA_IMAGE_TYPE_MASK=(1<<2)|(1<<1)|(1<<0);
-static const uint32_t TGA_IMAGE_TYPE_RLE_MASK=(1<<3);
+static const uint32_t TGA_IMAGE_TYPE_NO_IMAGE = 0;
+static const uint32_t TGA_IMAGE_TYPE_PALETTE = 1;
+static const uint32_t TGA_IMAGE_TYPE_RGB = 2;
+static const uint32_t TGA_IMAGE_TYPE_GRAYSCALE = 3;
+static const uint32_t TGA_IMAGE_TYPE_MASK = (1 << 2) | (1 << 1) | (1 << 0);
+static const uint32_t TGA_IMAGE_TYPE_RLE_MASK = (1 << 3);
 
-static const uint32_t TGA_DESCRIPTOR_FORWARD=32;
-static const uint32_t TGA_DESCRIPTOR_REVERSE=8;
+static const uint32_t TGA_DESCRIPTOR_FORWARD = 32;
+static const uint32_t TGA_DESCRIPTOR_REVERSE = 8;
 
-static const uint32_t TGA_COLOR_MAP_NO_PALETTE=0;
-static const uint32_t TGA_COLOR_MAP_PALETTE=1;
+static const uint32_t TGA_COLOR_MAP_NO_PALETTE = 0;
+static const uint32_t TGA_COLOR_MAP_PALETTE = 1;
 
 tga_img_c::tga_img_c() {
-	decompressed = nullptr;
+    decompressed = nullptr;
 }
 
 tga_img_c::~tga_img_c() {
-	if (decompressed != nullptr) {
-		delete[] decompressed;
-	}
+    if (decompressed != nullptr) {
+        delete[] decompressed;
+    }
 }
 
 bool tga_img_c::from_file(string fname) {
@@ -38,32 +38,31 @@ bool tga_img_c::from_file(string fname) {
 
     fileStream.read(reinterpret_cast<char*>(&sTGAHeader), sizeof(STGAHeader));
 
-    decompressed = new uint8_t[sTGAHeader.width * sTGAHeader.height * (sTGAHeader.bits/8)];
+    decompressed = new uint8_t[sTGAHeader.width * sTGAHeader.height * (sTGAHeader.bits / 8)];
 
     // Non RLE
     if (sTGAHeader.imageType == 2) {
-        for (i = 0; i < sTGAHeader.width * sTGAHeader.height; i++)
-        {
+        for (i = 0; i < sTGAHeader.width * sTGAHeader.height; i++) {
             fileStream.read(reinterpret_cast<char*>(&R), 1);
             fileStream.read(reinterpret_cast<char*>(&G), 1);
             fileStream.read(reinterpret_cast<char*>(&B), 1);
-            
-            if ((sTGAHeader.bits/8) == 4) {
+
+            if ((sTGAHeader.bits / 8) == 4) {
                 fileStream.read(reinterpret_cast<char*>(&A), 1);
             }
 
-            decompressed[i * (sTGAHeader.bits/8) + 0] = B;
-            decompressed[i * (sTGAHeader.bits/8) + 1] = G;
-            decompressed[i * (sTGAHeader.bits/8) + 2] = R;
-            
-            if ((sTGAHeader.bits/8) == 4) {
-                decompressed[i * (sTGAHeader.bits/8) + 3] = A;
+            decompressed[i * (sTGAHeader.bits / 8) + 0] = B;
+            decompressed[i * (sTGAHeader.bits / 8) + 1] = G;
+            decompressed[i * (sTGAHeader.bits / 8) + 2] = R;
+
+            if ((sTGAHeader.bits / 8) == 4) {
+                decompressed[i * (sTGAHeader.bits / 8) + 3] = A;
             }
         }
-    } 
+    }
 
-    //RLE
-    if (sTGAHeader.imageType == 10) { 
+    // RLE
+    if (sTGAHeader.imageType == 10) {
         for (i = 0; i < sTGAHeader.width * sTGAHeader.height;) {
             fileStream.read(reinterpret_cast<char*>(&BlockInfo), 1);
 
@@ -76,38 +75,37 @@ bool tga_img_c::from_file(string fname) {
                 fileStream.read(reinterpret_cast<char*>(&G), 1);
                 fileStream.read(reinterpret_cast<char*>(&B), 1);
 
-                if ((sTGAHeader.bits/8) == 4) {
+                if ((sTGAHeader.bits / 8) == 4) {
                     fileStream.read(reinterpret_cast<char*>(&A), 1);
                 }
 
-                for(k = 0; k < NumPixels + 1; k++) {
-                    decompressed[i * (sTGAHeader.bits/8) + 0] = B;
-                    decompressed[i * (sTGAHeader.bits/8) + 1] = G;
-                    decompressed[i * (sTGAHeader.bits/8) + 2] = R;
+                for (k = 0; k < NumPixels + 1; k++) {
+                    decompressed[i * (sTGAHeader.bits / 8) + 0] = B;
+                    decompressed[i * (sTGAHeader.bits / 8) + 1] = G;
+                    decompressed[i * (sTGAHeader.bits / 8) + 2] = R;
 
-                    if((sTGAHeader.bits/8) == 4) {
-                        decompressed[i * (sTGAHeader.bits/8) + 3] = A;
-
+                    if ((sTGAHeader.bits / 8) == 4) {
+                        decompressed[i * (sTGAHeader.bits / 8) + 3] = A;
                     }
                     i++;
                 }
 
-            } else { //Если незапакованные
+            } else {  //Если незапакованные
                 for (k = 0; k < NumPixels + 1; k++) {
                     fileStream.read(reinterpret_cast<char*>(&R), 1);
                     fileStream.read(reinterpret_cast<char*>(&G), 1);
                     fileStream.read(reinterpret_cast<char*>(&B), 1);
 
-                    if ((sTGAHeader.bits/8) == 4) {
+                    if ((sTGAHeader.bits / 8) == 4) {
                         fileStream.read(reinterpret_cast<char*>(&A), 1);
                     }
 
-                    decompressed[i * (sTGAHeader.bits/8) + 0] = B;
-                    decompressed[i * (sTGAHeader.bits/8) + 1] = G;
-                    decompressed[i * (sTGAHeader.bits/8) + 2] = R;
+                    decompressed[i * (sTGAHeader.bits / 8) + 0] = B;
+                    decompressed[i * (sTGAHeader.bits / 8) + 1] = G;
+                    decompressed[i * (sTGAHeader.bits / 8) + 2] = R;
 
-                    if ((sTGAHeader.bits/8) == 4) {
-                        decompressed[i * (sTGAHeader.bits/8) + 3] = A;
+                    if ((sTGAHeader.bits / 8) == 4) {
+                        decompressed[i * (sTGAHeader.bits / 8) + 3] = A;
                     }
 
                     i++;
@@ -139,7 +137,7 @@ uint8_t* tga_img_c::get_data() {
 
 /*
     Взято из репозитория https://github.com/da-nie/SoftwareGraphicsLibrary/
-	Статья на хабре - https://habr.com/ru/post/495664/
+    Статья на хабре - https://habr.com/ru/post/495664/
 
 bool tga_img_c::__from_file(string fname) {
     std::ifstream fileStream(fname, std::ifstream::binary);
@@ -148,45 +146,48 @@ bool tga_img_c::__from_file(string fname) {
         return 0;
     }
 
-    // определяем размер файла 
+    // определяем размер файла
     fileStream.seekg(0,std::ios_base::end);
     uint32_t file_size = static_cast<uint32_t>(fileStream.tellg());
     fileStream.seekg(0,std::ios_base::beg);
 
     uint8_t *data_ptr = new uint8_t[file_size+1];
 
-    //  читаем весь файл разом в временною переменную uint8_t *data_ptr 
+    //  читаем весь файл разом в временною переменную uint8_t *data_ptr
     fileStream.read(reinterpret_cast<char*>(data_ptr), sizeof(uint8_t)*file_size);
 
     fileStream.close();
 
     STGAHeader sTGAHeader;
- 
+
     // если размер считанного файла меньше
-    // размера заголовка tga 
+    // размера заголовка tga
     if (file_size < sizeof(STGAHeader)) {
         return false;
     }
 
     memcpy(&sTGAHeader,data_ptr,sizeof(STGAHeader));
-    
+
     if (sTGAHeader.imageType&TGA_IMAGE_TYPE_RLE_MASK) {
         return false;//RLE
     }
 
-    if ((sTGAHeader.imageType&TGA_IMAGE_TYPE_MASK)==TGA_IMAGE_TYPE_NO_IMAGE || (sTGAHeader.imageType&TGA_IMAGE_TYPE_MASK)==TGA_IMAGE_TYPE_GRAYSCALE) return(NULL);//ãðàäàöèè ñåðîãî è îòñóòñòâèå èçîáðàæåíèÿ íå ïîääåðæèâàåì
-        
+    if ((sTGAHeader.imageType&TGA_IMAGE_TYPE_MASK)==TGA_IMAGE_TYPE_NO_IMAGE ||
+(sTGAHeader.imageType&TGA_IMAGE_TYPE_MASK)==TGA_IMAGE_TYPE_GRAYSCALE) return(NULL);//ãðàäàöèè ñåðîãî
+è îòñóòñòâèå èçîáðàæåíèÿ íå ïîääåðæèâàåì
+
     img_width = sTGAHeader.width;
     img_height = sTGAHeader.height;
     img_channels = sTGAHeader.bits/8;
 
     int32_t line_length=sTGAHeader.width*sizeof(uint32_t);
-    
+
     int32_t image_length=sTGAHeader.width*sTGAHeader.height*sTGAHeader.bits/8;
-    
-    uint32_t image_offset=sizeof(struct STGAHeader)+sTGAHeader.colorMapStart+sTGAHeader.colorMapLength*sTGAHeader.colorMapBits/8+sTGAHeader.identsize;
+
+    uint32_t image_offset=sizeof(struct
+STGAHeader)+sTGAHeader.colorMapStart+sTGAHeader.colorMapLength*sTGAHeader.colorMapBits/8+sTGAHeader.identsize;
     if (image_offset+image_length > file_size) return(NULL);
-    
+
     if (sTGAHeader.bits==24) { //BGR
         data=new uint8_t[sTGAHeader.width*sTGAHeader.height*sizeof(uint32_t)];
         int32_t y,x;
@@ -280,7 +281,7 @@ bool tga_img_c::__from_file(string fname) {
         if (palette_offset+sTGAHeader.colorMapLength*3 > file_size) return(NULL);
 
         uint8_t *color_map=data_ptr+palette_offset;
-        
+
         data=new uint8_t[sTGAHeader.width*sTGAHeader.height*sizeof(uint32_t)];
         int32_t y,x;
 

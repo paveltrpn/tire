@@ -3,10 +3,11 @@
 #define __camera_h_
 
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/transform.hpp>
+
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/euler_angles.hpp>
 
 class CPerspCamera {
     public:
@@ -23,23 +24,23 @@ class CPerspCamera {
             cmrViewMatrix = glm::perspective(cmrFov, cmrAspect, cmrNear, cmrFar);
         };
 
-        ~CPerspCamera() {};
+        ~CPerspCamera(){};
 
-        void    setViewParameters(float fov, float aspect, float near, float far);
-        void    updateViewMatrix();
-        float*  getCmrMatrixPointer();
+        void setViewParameters(float fov, float aspect, float near, float far);
+        void updateViewMatrix();
+        float* getCmrMatrixPointer();
 
-        void    setCameraAngles(float yaw, float pitch, float roll);
-        void    setCameraPosition(const glm::vec3 &pos);
+        void setCameraAngles(float yaw, float pitch, float roll);
+        void setCameraPosition(const glm::vec3& pos);
 
-        void    moveCamera(const glm::vec3 &offset);
-        void    rotateCamera(float yaw, float pitch, float roll);
+        void moveCamera(const glm::vec3& offset);
+        void rotateCamera(float yaw, float pitch, float roll);
 
     private:
         glm::mat4 cmrViewMatrix;
 
         float cmrFov, cmrAspect, cmrNear, cmrFar;
-        glm::vec3  cmrPosition;
+        glm::vec3 cmrPosition;
         float cmrYaw, cmrPitch, cmrRoll;
 };
 
@@ -64,19 +65,19 @@ class CPerspLookAtCamera {
             cmrViewMatrix = perspMatrix * lookAtMatrix;
         };
 
-        ~CPerspLookAtCamera() {};
+        ~CPerspLookAtCamera(){};
 
-        void    calculateMoveVectors();
+        void calculateMoveVectors();
 
-        void    setViewParameters(float fov, float aspect, float near, float far);
-        void    updateViewMatrix();
-        void    setLookPoints(glm::vec3 eye, glm::vec3 target);
-        void    setUpVec(const glm::vec3& up);
-        void    moveViewPointsSideway(float spd);
-        void    moveViewPointsForward(float spd);
-        void    rotateEyeUp(float angl);
-        
-        float*  getCmrMatrixPointer();
+        void setViewParameters(float fov, float aspect, float near, float far);
+        void updateViewMatrix();
+        void setLookPoints(glm::vec3 eye, glm::vec3 target);
+        void setUpVec(const glm::vec3& up);
+        void moveViewPointsSideway(float spd);
+        void moveViewPointsForward(float spd);
+        void rotateEyeUp(float angl);
+
+        float* getCmrMatrixPointer();
 
     private:
         glm::mat4 cmrViewMatrix;

@@ -28,8 +28,8 @@ class CTime {
     public:
         CTime();
         void reset();
-        double get() const; // returns time in seconds
-        uint64_t getMs() const; // returns rounded time in milliseconds
+        double get() const;      // returns time in seconds
+        uint64_t getMs() const;  // returns rounded time in milliseconds
 
     private:
         std::chrono::time_point<std::chrono::high_resolution_clock> _startTime;
@@ -38,15 +38,16 @@ class CTime {
 class CTimeDelay {
     public:
         CTimeDelay() = delete;
-        explicit CTimeDelay( const uint64_t delayMs );
-        void setDelay( const uint64_t delayMs );
+        explicit CTimeDelay(const uint64_t delayMs);
+        void setDelay(const uint64_t delayMs);
         bool isPassed() const;
-        bool isPassed( const uint64_t delayMs ) const;
+        bool isPassed(const uint64_t delayMs) const;
 
         // Reset delay by starting the count from the current time.
         void reset();
 
-        // Explicitly set delay to passed state. Can be used in cases when first call of isPassed() must return true.
+        // Explicitly set delay to passed state. Can be used in cases when first call of isPassed()
+        // must return true.
         void pass();
 
     private:
@@ -54,6 +55,6 @@ class CTimeDelay {
         uint64_t _delayMs;
 };
 
-void delayforMs( const uint32_t delayMs );
+void delayforMs(const uint32_t delayMs);
 
 #endif

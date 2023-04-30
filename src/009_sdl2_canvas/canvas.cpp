@@ -1,6 +1,7 @@
 
 #include "canvas.h"
 #include <stdio.h>
+
 #include "jpeglib.h"
 #include "tga.h"
 
@@ -15,19 +16,21 @@ void canvas_c::set_pen_color(uint8_t r, uint8_t g, uint8_t b) {
 }
 
 void canvas_c::put_pixel(int32_t x, int32_t y) {
-    if ((x < 0) || (y < 0) || (x >= cnvs_width) || (y >= cnvs_width)) return;
+    if ((x < 0) || (y < 0) || (x >= cnvs_width) || (y >= cnvs_width))
+        return;
 
-    data[((x*bpp)*cnvs_height + y*bpp) + 0] = pen_color_r;
-    data[((x*bpp)*cnvs_height + y*bpp) + 1] = pen_color_g;
-    data[((x*bpp)*cnvs_height + y*bpp) + 2] = pen_color_b;
+    data[((x * bpp) * cnvs_height + y * bpp) + 0] = pen_color_r;
+    data[((x * bpp) * cnvs_height + y * bpp) + 1] = pen_color_g;
+    data[((x * bpp) * cnvs_height + y * bpp) + 2] = pen_color_b;
 }
 
 void canvas_c::put_pixel_br(int32_t x, int32_t y, float br) {
-    if ((x < 0) || (y < 0) || (x >= cnvs_width) || (y >= cnvs_width)) return;
+    if ((x < 0) || (y < 0) || (x >= cnvs_width) || (y >= cnvs_width))
+        return;
 
-    data[((x*bpp)*cnvs_height + y*bpp) + 0] = uint8_t(std::ceil(pen_color_r * br));
-    data[((x*bpp)*cnvs_height + y*bpp) + 1] = uint8_t(std::ceil(pen_color_g * br));
-    data[((x*bpp)*cnvs_height + y*bpp) + 2] = uint8_t(std::ceil(pen_color_b * br));
+    data[((x * bpp) * cnvs_height + y * bpp) + 0] = uint8_t(std::ceil(pen_color_r * br));
+    data[((x * bpp) * cnvs_height + y * bpp) + 1] = uint8_t(std::ceil(pen_color_g * br));
+    data[((x * bpp) * cnvs_height + y * bpp) + 2] = uint8_t(std::ceil(pen_color_b * br));
 }
 
 void canvas_c::brasenham_line(std::pair<int32_t, int32_t> start, std::pair<int32_t, int32_t> end) {
@@ -56,12 +59,12 @@ void canvas_c::brasenham_line(std::pair<int32_t, int32_t> start, std::pair<int32
 
         err2 = err * 2;
 
-        if(err2 > -dY) {
+        if (err2 > -dY) {
             err -= dY;
             now_point.first += signX;
         }
 
-        if(err2 < dX) {
+        if (err2 < dX) {
             err += dX;
             now_point.second += signY;
         }
@@ -92,11 +95,11 @@ void canvas_c::wu_line(std::pair<int32_t, int32_t> start, std::pair<int32_t, int
             std::swap(start, end);
         }
 
-        gradient = dy/dx;
+        gradient = dy / dx;
         xend = std::round(start.first);
         yend = start.second + gradient * (xend - start.first);
         gap = 1 - fpart(start.first + 0.5f);
-        xpxl1 = xend;  
+        xpxl1 = xend;
         ypxl1 = ipart(yend);
         put_pixel_br(xpxl1, ypxl1, (1.0f - fpart(yend)) * gap);
         put_pixel_br(xpxl1, ypxl1 + 1, fpart(yend) * gap);
@@ -120,25 +123,25 @@ void canvas_c::wu_line(std::pair<int32_t, int32_t> start, std::pair<int32_t, int
             std::swap(start, end);
         }
 
-        gradient = dx/dy;
+        gradient = dx / dy;
         yend = std::round(start.second);
-        xend = start.first + gradient*(yend - start.second);
+        xend = start.first + gradient * (yend - start.second);
         gap = fpart(start.second + 0.5f);
         ypxl1 = yend;
         xpxl1 = ipart(xend);
-        put_pixel_br(xpxl1, ypxl1, 1.0f - fpart(xend)*gap);
-        put_pixel_br(xpxl1 + 1, ypxl1, fpart(xend)*gap);
+        put_pixel_br(xpxl1, ypxl1, 1.0f - fpart(xend) * gap);
+        put_pixel_br(xpxl1 + 1, ypxl1, fpart(xend) * gap);
         inter = xend + gradient;
-    
+
         yend = std::round(end.second);
-        xend = end.first + gradient*(yend - end.second);
-        gap = fpart(end.second+0.5);
+        xend = end.first + gradient * (yend - end.second);
+        gap = fpart(end.second + 0.5);
         ypxl2 = yend;
         xpxl2 = ipart(xend);
         put_pixel_br(xpxl2, ypxl2, 1.0f - fpart(xend) * gap);
         put_pixel_br(xpxl2 + 1, ypxl2, fpart(xend) * gap);
 
-        for(i = ypxl1 + 1; i < ypxl2; i++) {
+        for (i = ypxl1 + 1; i < ypxl2; i++) {
             put_pixel_br(ipart(inter), i, 1.0f - fpart(inter));
             put_pixel_br(ipart(inter) + 1, i, fpart(inter));
             inter += gradient;
@@ -147,27 +150,27 @@ void canvas_c::wu_line(std::pair<int32_t, int32_t> start, std::pair<int32_t, int
 }
 
 void canvas_c::dda_line(std::pair<int32_t, int32_t> start, std::pair<int32_t, int32_t> end) {
-    int32_t dx = end.first - start.first; 
-    int32_t dy = end.second - start.second;  
-    int32_t steps = std::abs(dx) > std::abs(dy) ? std::abs(dx) : std::abs(dy); 
-   
-    float Xinc = dx / (float)steps; 
-    float Yinc = dy / (float)steps; 
+    int32_t dx = end.first - start.first;
+    int32_t dy = end.second - start.second;
+    int32_t steps = std::abs(dx) > std::abs(dy) ? std::abs(dx) : std::abs(dy);
 
-    float X = (float)start.first; 
+    float Xinc = dx / (float)steps;
+    float Yinc = dy / (float)steps;
+
+    float X = (float)start.first;
     float Y = (float)start.second;
 
-    for (int i = 0; i <= steps; i++) { 
-        put_pixel(X,Y); 
+    for (int i = 0; i <= steps; i++) {
+        put_pixel(X, Y);
         X += Xinc;
-        Y += Yinc; 
-    } 
+        Y += Yinc;
+    }
 }
 
 void canvas_c::brasenham_circle(std::pair<int32_t, int32_t> center, int32_t rd) {
     int32_t x = 0;
     int32_t y = rd;
-    int32_t delta = 1 -2 * rd;
+    int32_t delta = 1 - 2 * rd;
     int error = 0;
 
     while (y >= 0) {
@@ -176,7 +179,7 @@ void canvas_c::brasenham_circle(std::pair<int32_t, int32_t> center, int32_t rd) 
         put_pixel(center.first - x, center.second + y);
         put_pixel(center.first - x, center.second - y);
 
-        error =2 * (delta + y) - 1;
+        error = 2 * (delta + y) - 1;
 
         if ((delta < 0) && (error <= 0)) {
             delta += 2 * ++x + 1;
@@ -196,43 +199,42 @@ void canvas_c::rect(std::pair<int32_t, int32_t> ul,
                     std::pair<int32_t, int32_t> ur,
                     std::pair<int32_t, int32_t> dl,
                     std::pair<int32_t, int32_t> dr) {
-
 }
-        
+
 int canvas_c::write_jpeg(std::string fname) {
     /*
-    * Sample routine for JPEG compression.  We assume that the target file name
-    * and a compression quality factor are passed in.
-    */
+     * Sample routine for JPEG compression.  We assume that the target file name
+     * and a compression quality factor are passed in.
+     */
 
     /* This struct contains the JPEG compression parameters and pointers to
-    * working space (which is allocated as needed by the JPEG library).
-    * It is possible to have several such structures, representing multiple
-    * compression/decompression processes, in existence at once.  We refer
-    * to any one struct (and its associated working data) as a "JPEG object".
-    */
+     * working space (which is allocated as needed by the JPEG library).
+     * It is possible to have several such structures, representing multiple
+     * compression/decompression processes, in existence at once.  We refer
+     * to any one struct (and its associated working data) as a "JPEG object".
+     */
     struct jpeg_compress_struct cinfo;
     /* This struct represents a JPEG error handler.  It is declared separately
-    * because applications often want to supply a specialized error handler
-    * (see the second half of this file for an example).  But here we just
-    * take the easy way out and use the standard error handler, which will
-    * print a message on stderr and call exit() if compression fails.
-    * Note that this struct must live as long as the main JPEG parameter
-    * struct, to avoid dangling-pointer problems.
-    */
+     * because applications often want to supply a specialized error handler
+     * (see the second half of this file for an example).  But here we just
+     * take the easy way out and use the standard error handler, which will
+     * print a message on stderr and call exit() if compression fails.
+     * Note that this struct must live as long as the main JPEG parameter
+     * struct, to avoid dangling-pointer problems.
+     */
     struct jpeg_error_mgr jerr;
     /* More stuff */
-    FILE * outfile;		/* target file */
-    JSAMPROW row_pointer[1];	/* pointer to JSAMPLE row[s] */
-    int row_stride;		/* physical row width in image buffer */
+    FILE *outfile;           /* target file */
+    JSAMPROW row_pointer[1]; /* pointer to JSAMPLE row[s] */
+    int row_stride;          /* physical row width in image buffer */
 
     /* Step 1: allocate and initialize JPEG compression object */
 
     /* We have to set up the error handler first, in case the initialization
-    * step fails.  (Unlikely, but it could happen if you are out of memory.)
-    * This routine fills in the contents of struct jerr, and returns jerr's
-    * address which we place into the link field in cinfo.
-    */
+     * step fails.  (Unlikely, but it could happen if you are out of memory.)
+     * This routine fills in the contents of struct jerr, and returns jerr's
+     * address which we place into the link field in cinfo.
+     */
     cinfo.err = jpeg_std_error(&jerr);
     /* Now we can initialize the JPEG compression object. */
     jpeg_create_compress(&cinfo);
@@ -241,10 +243,10 @@ int canvas_c::write_jpeg(std::string fname) {
     /* Note: steps 2 and 3 can be done in either order. */
 
     /* Here we use the library-supplied code to send compressed data to a
-    * stdio stream.  You can also write your own code to do something else.
-    * VERY IMPORTANT: use "b" option to fopen() if you are on a machine that
-    * requires it in order to write binary files.
-    */
+     * stdio stream.  You can also write your own code to do something else.
+     * VERY IMPORTANT: use "b" option to fopen() if you are on a machine that
+     * requires it in order to write binary files.
+     */
     if ((outfile = fopen(fname.c_str(), "wb")) == NULL) {
         std::cout << "canvas_c::write_jpeg(): can't open %s " << fname.c_str() << "\n";
         return 1;
@@ -254,48 +256,48 @@ int canvas_c::write_jpeg(std::string fname) {
     /* Step 3: set parameters for compression */
 
     /* First we supply a description of the input image.
-    * Four fields of the cinfo struct must be filled in:
-    */
-    cinfo.image_width = cnvs_width; 	/* image width and height, in pixels */
+     * Four fields of the cinfo struct must be filled in:
+     */
+    cinfo.image_width = cnvs_width; /* image width and height, in pixels */
     cinfo.image_height = cnvs_height;
-    cinfo.input_components = bpp;		/* # of color components per pixel */
-    cinfo.in_color_space = JCS_RGB; 	/* colorspace of input image */
+    cinfo.input_components = bpp;   /* # of color components per pixel */
+    cinfo.in_color_space = JCS_RGB; /* colorspace of input image */
     /* Now use the library's routine to set default compression parameters.
-    * (You must set at least cinfo.in_color_space before calling this,
-    * since the defaults depend on the source color space.)
-    */
+     * (You must set at least cinfo.in_color_space before calling this,
+     * since the defaults depend on the source color space.)
+     */
     jpeg_set_defaults(&cinfo);
     /* Now you can set any non-default parameters you wish to.
-    * Here we just illustrate the use of quality (quantization table) scaling:
-    */
-    // тут стоит поиграться с параметром quantization, пока что не выяснил 
+     * Here we just illustrate the use of quality (quantization table) scaling:
+     */
+    // тут стоит поиграться с параметром quantization, пока что не выяснил
     // чему он должен быть равен, временно поставил - 128.
     jpeg_set_quality(&cinfo, 128, TRUE /* limit to baseline-JPEG values */);
 
     /* Step 4: Start compressor */
 
     /* TRUE ensures that we will write a complete interchange-JPEG file.
-    * Pass TRUE unless you are very sure of what you're doing.
-    */
+     * Pass TRUE unless you are very sure of what you're doing.
+     */
     jpeg_start_compress(&cinfo, TRUE);
 
     /* Step 5: while (scan lines remain to be written) */
     /*           jpeg_write_scanlines(...); */
 
     /* Here we use the library's state variable cinfo.next_scanline as the
-    * loop counter, so that we don't have to keep track ourselves.
-    * To keep things simple, we pass one scanline per call; you can pass
-    * more if you wish, though.
-    */
-    row_stride = cnvs_width * bpp;	/* JSAMPLEs per row in image_buffer */
+     * loop counter, so that we don't have to keep track ourselves.
+     * To keep things simple, we pass one scanline per call; you can pass
+     * more if you wish, though.
+     */
+    row_stride = cnvs_width * bpp; /* JSAMPLEs per row in image_buffer */
 
     while (cinfo.next_scanline < cinfo.image_height) {
         /* jpeg_write_scanlines expects an array of pointers to scanlines.
-        * Here the array is only one element long, but you could pass
-        * more than one scanline at a time if that's more convenient.
-        */
+         * Here the array is only one element long, but you could pass
+         * more than one scanline at a time if that's more convenient.
+         */
         row_pointer[0] = &data[cinfo.next_scanline * row_stride];
-        (void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
+        (void)jpeg_write_scanlines(&cinfo, row_pointer, 1);
     }
 
     /* Step 6: Finish compression */
@@ -316,7 +318,7 @@ int canvas_c::write_jpeg(std::string fname) {
 
 int canvas_c::write_tga(std::string fname) {
     TGA *tga_out;
-	TGAData tga_data;
+    TGAData tga_data;
 
     std::memset(&tga_data, 0, sizeof(TGAData));
 
@@ -325,11 +327,11 @@ int canvas_c::write_tga(std::string fname) {
     tga_out = TGAOpen(fname.c_str(), "wb");
 
     // Сообщаем параметры записываемого массива
-    tga_out->hdr.depth = bpp*8;
+    tga_out->hdr.depth = bpp * 8;
     tga_out->hdr.width = cnvs_width;
     tga_out->hdr.height = cnvs_height;
 
-    // В этом поле не должно быть 0, или TGAWriteScanlines() вернёт TGA_OK 
+    // В этом поле не должно быть 0, или TGAWriteScanlines() вернёт TGA_OK
     // и не будет ничего писать в файл кроме заголовка
     // значения этого поля из документации на libtga такие:
     // 0 = no image data included
@@ -340,9 +342,9 @@ int canvas_c::write_tga(std::string fname) {
     // 10 = RLE encoded grayscale
     // 11 = RLE encoded true-color
     // но нормально записывается только при tga_out->hdr.img_t = 10,
-    // при других значениях файл не читался. Это поле, по видимому, зависит 
+    // при других значениях файл не читался. Это поле, по видимому, зависит
     // от наличия флага TGA_RLE_ENCODE в структуре TGAData
-    tga_out->hdr.img_t = 10; 
+    tga_out->hdr.img_t = 10;
 
     tga_data.img_data = data;
 
@@ -351,20 +353,21 @@ int canvas_c::write_tga(std::string fname) {
 
     // Записываем массив на диск с установленными опциями.
     // TGAWriteImage() вызывает все необходимые действия - пишет заголовок и т.д.
-	if (TGAWriteImage(tga_out, &tga_data) != TGA_OK) {
-        std::cout << "canvas_c::write_jpeg(): TGAWriteImage() return error" << "\n";
+    if (TGAWriteImage(tga_out, &tga_data) != TGA_OK) {
+        std::cout << "canvas_c::write_jpeg(): TGAWriteImage() return error"
+                  << "\n";
     }
 
     // Записываем только заголовок и массив рисунка.
     // TGAWriteImage() кроме этого вызывает ещё несколько функций.
     //
     // TGAWriteHeader(tga_out);
-    // 
+    //
     // if (TGAWriteScanlines(tga_out, &tga_data) != TGA_OK) {
-        // std::cout << "canvas_c::write_jpeg(): TGAWriteScanlines() return error" << "\n";
+    // std::cout << "canvas_c::write_jpeg(): TGAWriteScanlines() return error" << "\n";
     // }
 
     TGAClose(tga_out);
-	
+
     return 0;
 }

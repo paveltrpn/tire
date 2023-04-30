@@ -20,7 +20,7 @@ void Camera::setViewParameters(float fov, float aspect, float near, float far) {
     cmrFar = far;
 }
 
-void Camera::setCameraPosition(const vec3 &pos) {
+void Camera::setCameraPosition(const vec3& pos) {
     cmrPosition = pos;
 
     cmrOffsetMatrix = mtrx4FromOffset(cmrPosition);

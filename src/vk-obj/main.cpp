@@ -1,6 +1,7 @@
 
-#include "instance.hpp"
 #include <iostream>
+
+#include "instance.hpp"
 
 int main() {
     vkInstanceHandle_c instanceHandle;

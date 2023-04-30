@@ -1,29 +1,28 @@
- 
-#include <iostream>
-#include <fmt/format.h>
 
-#include "imgui.h"
+#include <fmt/format.h>
+#include <iostream>
+
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
-
+#include "imgui.h"
 #include "service.h"
 #include "shader.h"
 
-void setup(const appState_s &appState) {
+void setup(const appState_s& appState) {
     glViewport(0, 0, appState.wndWidth, appState.wndHeight);
 
-	glClearColor(0.0f, 0.1f, 0.0f, 0.0f); 
-	glClearDepth(1.0);
-	glDepthFunc(GL_LESS);
-	glEnable(GL_DEPTH_TEST);
+    glClearColor(0.0f, 0.1f, 0.0f, 0.0f);
+    glClearDepth(1.0);
+    glDepthFunc(GL_LESS);
+    glEnable(GL_DEPTH_TEST);
 
-	glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-	glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+    glEnable(GL_COLOR_MATERIAL);
 }
 
 int main(int argc, char** argv) {
     appState_s appSate;
-    
+
     initGlfwWindow(appSate);
 
     // std::cout << g_appSate.glfwVersionStr << std::endl;
@@ -37,20 +36,21 @@ int main(int argc, char** argv) {
 
     COglProgram foo;
 
-    foo.appendShader({{GL_VERTEX_SHADER, "assets/vs.glsl"}, {GL_FRAGMENT_SHADER, "assets/fs.glsl"}});
+    foo.appendShader(
+      { { GL_VERTEX_SHADER, "assets/vs.glsl" }, { GL_FRAGMENT_SHADER, "assets/fs.glsl" } });
     foo.linkProgram();
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); 
+    ImGuiIO& io = ImGui::GetIO();
     (void)io;
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
-    //ImGui::StyleColorsClassic();
+    // ImGui::StyleColorsClassic();
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(appSate.glfwWndPtr, true);
@@ -58,37 +58,39 @@ int main(int argc, char** argv) {
 
     io.Fonts->AddFontFromFileTTF("assets/RobotoMono-Medium.ttf", 16);
 
-    while(!glfwWindowShouldClose(appSate.glfwWndPtr)) {
-		glfwPollEvents();
+    while (!glfwWindowShouldClose(appSate.glfwWndPtr)) {
+        glfwPollEvents();
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
+
         if (appSate.KEY_ESCAPE) {
             glfwSetWindowShouldClose(appSate.glfwWndPtr, GLFW_TRUE);
         }
 
         // -----------------------------------------------------------
-	    // Отрисовка меню
-	    // -----------------------------------------------------------
+        // Отрисовка меню
+        // -----------------------------------------------------------
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         {
-            ImGui::Begin("019_moderngl");                          
+            ImGui::Begin("019_moderngl");
 
-            ImGui::Text("Frame time - %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);               
-	    
+            ImGui::Text("Frame time - %.3f ms/frame (%.1f FPS)",
+                        1000.0f / ImGui::GetIO().Framerate,
+                        ImGui::GetIO().Framerate);
+
             ImGui::End();
         }
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	    // -----------------------------------------------------------
+        // -----------------------------------------------------------
 
-		glfwSwapBuffers(appSate.glfwWndPtr);
-	}
+        glfwSwapBuffers(appSate.glfwWndPtr);
+    }
 
     return 0;
 }

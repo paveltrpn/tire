@@ -19,43 +19,41 @@
  ***************************************************************************/
 
 #include "timing.h"
-
 #include <thread>
 
-
-CTime::CTime()
-    : _startTime( std::chrono::high_resolution_clock::now() )
-{}
+CTime::CTime() : _startTime(std::chrono::high_resolution_clock::now()) {
+}
 
 void CTime::reset() {
     _startTime = std::chrono::high_resolution_clock::now();
 }
 
 double CTime::get() const {
-    const std::chrono::duration<double> time = std::chrono::high_resolution_clock::now() - _startTime;
+    const std::chrono::duration<double> time
+      = std::chrono::high_resolution_clock::now() - _startTime;
     return time.count();
 }
 
 uint64_t CTime::getMs() const {
-    return static_cast<uint64_t>( get() * 1000 + 0.5 );
+    return static_cast<uint64_t>(get() * 1000 + 0.5);
 }
 
-CTimeDelay::CTimeDelay( const uint64_t delayMs )
-    : _prevTime( std::chrono::high_resolution_clock::now() )
-    , _delayMs( delayMs )
-{}
+CTimeDelay::CTimeDelay(const uint64_t delayMs)
+    : _prevTime(std::chrono::high_resolution_clock::now()), _delayMs(delayMs) {
+}
 
-void CTimeDelay::setDelay( const uint64_t delayMs ) {
+void CTimeDelay::setDelay(const uint64_t delayMs) {
     _delayMs = delayMs;
 }
 
 bool CTimeDelay::isPassed() const {
-    return isPassed( _delayMs );
+    return isPassed(_delayMs);
 }
 
-bool CTimeDelay::isPassed( const uint64_t delayMs ) const {
-    const std::chrono::duration<double> time = std::chrono::high_resolution_clock::now() - _prevTime;
-    const uint64_t passedMs = static_cast<uint64_t>( time.count() * 1000 + 0.5 );
+bool CTimeDelay::isPassed(const uint64_t delayMs) const {
+    const std::chrono::duration<double> time
+      = std::chrono::high_resolution_clock::now() - _prevTime;
+    const uint64_t passedMs = static_cast<uint64_t>(time.count() * 1000 + 0.5);
     return passedMs >= delayMs;
 }
 
@@ -64,10 +62,9 @@ void CTimeDelay::reset() {
 }
 
 void CTimeDelay::pass() {
-    _prevTime = std::chrono::high_resolution_clock::now() - std::chrono::milliseconds( 2 * _delayMs );
+    _prevTime = std::chrono::high_resolution_clock::now() - std::chrono::milliseconds(2 * _delayMs);
 }
 
-void delayforMs( const uint32_t delayMs ) {
-    std::this_thread::sleep_for( std::chrono::milliseconds( delayMs ) );
+void delayforMs(const uint32_t delayMs) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(delayMs));
 }
-

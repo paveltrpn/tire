@@ -2,20 +2,20 @@
 #ifndef __shader_h__
 #define __shader_h__
 
-#include <iostream>
 #include <fmt/format.h>
+#include <iostream>
 #include <string>
 #include <vector>
 
 #define GLEW_STATIC
+#include <GL/gl.h>
 #include <GL/glew.h>
 #include <GL/glu.h>
-#include <GL/gl.h>
 
 class COglProgram {
     private:
-        std::string         pName;
-        GLuint              pHandle;
+        std::string pName;
+        GLuint pHandle;
         std::vector<GLuint> shaderList;
 
         std::vector<std::tuple<std::string, GLenum>> pUniforms;

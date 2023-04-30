@@ -2,11 +2,11 @@
 #ifndef __tga_h__
 #define __tga_h__
 
-#include <iostream>
 #include <fstream>
-#include <string>
-#include <stdio.h>
+#include <iostream>
 #include <stdint.h>
+#include <stdio.h>
+#include <string>
 
 using namespace std;
 
@@ -15,39 +15,38 @@ using namespace std;
 // Если использовать #pragma pack(push, 1)
 // то sizeof(STGAHeader) = 18, как и должно
 #pragma pack(push, 1)
-typedef struct STGAHeader
-{
-	uint8_t identsize;
-	uint8_t colorMapType;
-	uint8_t imageType;
-	uint16_t colorMapStart;
-	uint16_t colorMapLength;
-	uint8_t colorMapBits;
-	uint16_t xstart;
-	uint16_t ystart;
-	uint16_t width;
-	uint16_t height;
-	uint8_t bits;
-	uint8_t descriptor;
+typedef struct STGAHeader {
+        uint8_t identsize;
+        uint8_t colorMapType;
+        uint8_t imageType;
+        uint16_t colorMapStart;
+        uint16_t colorMapLength;
+        uint8_t colorMapBits;
+        uint16_t xstart;
+        uint16_t ystart;
+        uint16_t width;
+        uint16_t height;
+        uint8_t bits;
+        uint8_t descriptor;
 } STGAHeader;
 #pragma pack(pop)
 
 class tga_img_c {
-	private:
-		STGAHeader sTGAHeader;
+    private:
+        STGAHeader sTGAHeader;
 
-		uint8_t* decompressed;
-	
-	public:
-		tga_img_c();
-		~tga_img_c();
+        uint8_t* decompressed;
 
-		bool from_file(string name);
+    public:
+        tga_img_c();
+        ~tga_img_c();
 
-		size_t      get_widht();
-        size_t      get_height();
-        size_t      get_chanels_count();
-        uint8_t*    get_data();
+        bool from_file(string name);
+
+        size_t get_widht();
+        size_t get_height();
+        size_t get_chanels_count();
+        uint8_t* get_data();
 };
 
 #endif

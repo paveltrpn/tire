@@ -9,9 +9,9 @@ include_directories("../../extern/fmt/include")
 link_directories("../../extern/glfw/build/src")
 link_directories("../../extern/fmt/build")
 
-set(CMAKE_C_COMPILER g++-12)
+set(CMAKE_CXX_COMPILER g++-12)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -std=c2x")
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wall -std=c++20")
 
 set(LIBS -lstdc++ -lfmt -lglfw3 -lm -lvulkan)
 
