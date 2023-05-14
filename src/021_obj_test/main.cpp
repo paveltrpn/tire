@@ -7,4 +7,4 @@ int main(int argc, char** argv) {
     WavefrontObj_c foo("nil");
 
     return 0;
-} 
+}

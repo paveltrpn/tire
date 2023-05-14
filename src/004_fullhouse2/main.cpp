@@ -94,7 +94,8 @@ void windowInit() {
     oglVersionString = (const char *)glGetString(GL_VERSION);
     oglslVersionString = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
 
-    std::cout << std::format("windowInit():\n  oglRenderString - {}\n  oglVersionString - {}\n  oglslVersionString - {}\n",
+    std::cout << std::format(
+      "windowInit():\n  oglRenderString - {}\n  oglVersionString - {}\n  oglslVersionString - {}\n",
       oglRenderString,
       oglVersionString,
       oglslVersionString);

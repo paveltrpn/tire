@@ -1,8 +1,9 @@
 
-#include "canvas.h"
 #include <jpeglib.h>
 #include <stdio.h>
 #include <tga.h>
+
+#include "canvas.h"
 
 void canvas_c::set_pen_size(int32_t size) {
     pen_size = size;

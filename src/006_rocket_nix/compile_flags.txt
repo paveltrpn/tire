@@ -1,0 +1,8 @@
+-xc++
+--std=c++20
+-I../../internal/algebra
+-I../../extern/glfw/include
+-I../../extern/glew-2.2.0/include
+-I../../extern/imgui
+-I../../extern/libjpeg-cmake
+-I../../extern/libtga/include

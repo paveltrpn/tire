@@ -6,8 +6,8 @@
 #include <vector>
 
 // Подключать GL именно в таком порядке!
-#include <GL/gl.h>
 #include <GL/glew.h>
+#include <GL/gl.h>
 #include <GL/glu.h>
 #include <GLFW/glfw3.h>
 
@@ -553,7 +553,7 @@ class app_c {
         void setupScene() {
             std::cout << "app_c::setup_scene()\n\n";
 
-            text.load_font("assets/RobotoMono-2048-1024-64-128.tga");
+            text.load_font("../../../assets/img_fonts/RobotoMono-2048-1024-64-128.tga");
 
             // Тест libjpeg-cmake
             bitmap_c jpeg;
@@ -574,8 +574,9 @@ class app_c {
             glBindBuffer(GL_ARRAY_BUFFER, gl_colorBuf);
             glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
 
-            auto vs = compileShader(GL_VERTEX_SHADER, "assets/vsSource.glsl");
-            auto fs = compileShader(GL_FRAGMENT_SHADER, "assets/fsSource.glsl");
+            auto vs = compileShader(GL_VERTEX_SHADER, "../../../assets/shaders/vsSource-006.glsl");
+            auto fs
+              = compileShader(GL_FRAGMENT_SHADER, "../../../assets/shaders/fsSource-006.glsl");
         };
 
         /* ====================================================================================================

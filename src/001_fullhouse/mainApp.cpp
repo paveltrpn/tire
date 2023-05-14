@@ -65,7 +65,7 @@ void mainApp_glfw_c::setup() {
 
     glColorMaterial(GL_FRONT, GL_DIFFUSE);
     glEnable(GL_COLOR_MATERIAL);
-    
+
     tex_image.load_jpg("../../../assets/textures/texture.jpg");
     tex_image.show_info();
     glEnable(GL_TEXTURE_2D);
@@ -80,8 +80,8 @@ void mainApp_glfw_c::setup() {
                  GL_RGB,
                  GL_UNSIGNED_BYTE,
                  tex_image.get_data_ptr());
-    //gluBuild2DMipmaps(GL_TEXTURE_2D, 3, tex_image.get_widht(), tex_image.get_height(), GL_RGB,
-    //GL_UNSIGNED_BYTE, tex_image.get_data());
+    // gluBuild2DMipmaps(GL_TEXTURE_2D, 3, tex_image.get_widht(), tex_image.get_height(), GL_RGB,
+    // GL_UNSIGNED_BYTE, tex_image.get_data());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

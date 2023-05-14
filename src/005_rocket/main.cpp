@@ -555,8 +555,8 @@ class app_c {
             glBindBuffer(GL_ARRAY_BUFFER, gl_colorBuf);
             glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
 
-            auto vShader = loadShaderSource("../../../assets/shaders/vsSource.glsl");
-            auto fShader = loadShaderSource("../../../assets/shaders/fsSource.glsl");
+            auto vShader = loadShaderSource("../../../assets/shaders/vsSource-006.glsl");
+            auto fShader = loadShaderSource("../../../assets/shaders/fsSource-006.glsl");
 
             // auto vs = compileShader(GL_FRAGMENT_SHADER, fShader);
         };
