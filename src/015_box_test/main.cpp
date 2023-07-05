@@ -1,14 +1,14 @@
 
 #include <array>
-#include <fmt/format.h>
+#include <format>
 #include <iostream>
 #include <map>
 #include <string>
 #include <thread>
 
 #define GLEW_STATIC
-#include <GL/gl.h>
 #include <GL/glew.h>
+#include <GL/gl.h>
 #include <GL/glu.h>
 #include <GLFW/glfw3.h>
 
@@ -25,9 +25,9 @@
 GLFWwindow* g_appWindow;
 GLFWmonitor* g_appMonitor;
 
-const GLubyte* oglRenderString;
-const GLubyte* oglVersionString;
-const GLubyte* oglslVersionString;
+std::string  oglRenderString;
+std::string  oglVersionString;
+std::string  oglslVersionString;
 
 CAppState g_AppState;
 CPerspCamera g_textCamera;
@@ -92,11 +92,11 @@ void windowInit() {
     // Лок на 60 фпс
     glfwSwapInterval(true);
 
-    oglRenderString = glGetString(GL_RENDERER);
-    oglVersionString = glGetString(GL_VERSION);
-    oglslVersionString = glGetString(GL_SHADING_LANGUAGE_VERSION);
+    oglRenderString = (const char*)glGetString(GL_RENDERER);
+    oglVersionString = (const char*)glGetString(GL_VERSION);
+    oglslVersionString = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
 
-    std::cout << fmt::format(
+    std::cout << std::format(
       "windowInit():\n  oglRenderString - {}\n  oglVersionString - {}\n  oglslVersionString - {}\n",
       oglRenderString,
       oglVersionString,
@@ -185,12 +185,12 @@ void appSetup() {
     g_textCamera.setViewParameters(45.0f, g_AppState.appWindowAspect, 0.01f, 100.0f);
     g_textCamera.updateViewMatrix();
 
-    g_screenText.loadFromFile("assets/RobotoMono-2048-1024-64-128.jpg");
+    g_screenText.loadFromFile("../../../assets/img_fonts/RobotoMono-2048-1024-64-128.jpg");
 
-    g_mtrlBase.appendMaterial("BOX_MTRL", "assets/rock.jpg");
-    g_mtrlBase.appendMaterial("WALL_MTRL", "assets/wall.jpg");
-    g_mtrlBase.appendMaterial("FLOOR_MTRL", "assets/floor.jpg");
-    g_mtrlBase.appendMaterial("DUMMY", "assets/floor.jpg");
+    g_mtrlBase.appendMaterial("BOX_MTRL", "../../../assets/textures/rock.jpg");
+    g_mtrlBase.appendMaterial("WALL_MTRL", "../../../assets/textures/wall.jpg");
+    g_mtrlBase.appendMaterial("FLOOR_MTRL", "../../../assets/textures/floor.jpg");
+    g_mtrlBase.appendMaterial("DUMMY", "../../../assets/textures/floor.jpg");
 
     g_bodyBase.appendNewBody("BOX", "DUMMY", { 3.0f, 3.0f, 3.0f });
     g_bodyBase.setBodyParameters("BOX", { -1.0f, 3.0f, -1.0f });
@@ -206,7 +206,7 @@ void appSetup() {
     g_bodyBase.setBodyParameters("WALL_LEFT", { -10.0f, 2.5f, 0.0f });
 
     for (auto& bodyName : g_bodyBase.getEntireBodyQueue()) {
-        std::cout << fmt::format("{}\n", bodyName);
+        std::cout << std::format("{}\n", bodyName);
     }
 }
 
@@ -288,13 +288,13 @@ void appLoop() {
         glLoadMatrixf(g_textCamera.getCmrMatrixPointer());
 
         g_screenText.setTextPosition(-11.0f, 8.0f);
-        g_screenText.drawString(fmt::format("frame time = {}", v_frameTime));
+        g_screenText.drawString(std::format("frame time = {}", v_frameTime));
 
         g_screenText.setTextPosition(-11.0f, 7.3f);
-        g_screenText.drawString(fmt::format("frames per second = {}", v_fps));
+        g_screenText.drawString(std::format("frames per second = {}", v_fps));
 
         g_screenText.setTextPosition(-11.0f, 6.6f);
-        g_screenText.drawString(fmt::format(
+        g_screenText.drawString(std::format(
           "pos X = {}, pos Y = {}", static_cast<float>(g_curPositionX), g_curPositionY));
         // -----------------------------------------------------------
 

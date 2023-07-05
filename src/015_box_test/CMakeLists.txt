@@ -27,11 +27,13 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall \
 set(LIBS -lstdc++ -lGL -lGLU -lGLEW)
 
 set(SOURCES main.cpp
-            mainApp.cpp
+            apputils.cpp
             mesh.cpp
-            bitmap.cpp
-            bitmap_text.cpp
-            camera.cpp)
+            camera.cpp
+            timing.cpp
+            screen_text.cpp
+            matbase.cpp
+            bitmap.cpp)
 
 set(ALGEBRA_DIR "../../internal/algebra")
 add_subdirectory(${ALGEBRA_DIR} "./algebra")
@@ -41,4 +43,4 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ".")
 
 add_executable(main ${SOURCES})
 
-target_link_libraries(main algebra libjpeg libtga glfw GLEW ${LIBS})
+target_link_libraries(main algebra libjpeg libtga GLEW glfw ${LIBS})

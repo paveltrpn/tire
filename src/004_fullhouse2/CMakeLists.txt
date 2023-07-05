@@ -14,8 +14,10 @@ set(GLFW_DIR "../../extern/glfw")
 add_subdirectory(${GLFW_DIR} ../${GLFW_DIR}/build)
 include_directories(${GLFW_DIR})
 
-include_directories("../../extern/glew-2.2.0/include")
-link_directories("../../extern/glew-2.2.0/lib")
+set(GLEW_DIR "../../extern/glew-cmake")
+add_subdirectory(${GLEW_DIR} ../${GLEW_DIR}/build)
+include_directories(${GLEW_DIR}/include)
+link_directories(${GLEW_DIR}/build/lib)
 
 set(CMAKE_CXX_COMPILER g++-13.1)
 

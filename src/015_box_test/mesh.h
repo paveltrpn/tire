@@ -7,9 +7,7 @@
 #include <utility>
 #include <vector>
 
-#define GLEW_STATIC
 #include <GL/gl.h>
-#include <GL/glew.h>
 #include <GL/glu.h>
 
 #include "mtrx3.h"

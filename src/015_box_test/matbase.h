@@ -5,9 +5,8 @@
 #include <map>
 #include <string>
 
-#define GLEW_STATIC
-#include <GL/gl.h>
 #include <GL/glew.h>
+#include <GL/gl.h>
 #include <GL/glu.h>
 
 #include "bitmap.h"

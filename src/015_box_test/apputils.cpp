@@ -2,9 +2,9 @@
 #include "apputils.h"
 
 void CAppState::showCurrentAppState() {
-    std::cout << fmt::format("CAppState::showCurrentAppState(): current application state is:\n");
+    std::cout << std::format("CAppState::showCurrentAppState(): current application state is:\n");
 
-    std::cout << fmt::format(
+    std::cout << std::format(
       "  appWindowWidth - {}\n  appWindowHeight - {}\n  appWindowAspect - {}\n  appName - {}\n",
       appWindowWidth,
       appWindowHeight,

@@ -3,7 +3,8 @@
 #define __load_jpeg_h__
 
 #include <cstdio>
-#include <fmt/format.h>
+#include <cstring>
+#include <format>
 #include <fstream>
 #include <iostream>
 #include <string>

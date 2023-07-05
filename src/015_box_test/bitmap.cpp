@@ -337,7 +337,7 @@ bool CBitmap::writeToJpegFile(const std::string& fname) {
      */
 
     if (decompressed == nullptr) {
-        std::cout << fmt::format("CBitmap::writeToFile(): Error! data to writing is empty!\n");
+        std::cout << std::format("CBitmap::writeToFile(): Error! data to writing is empty!\n");
         return false;
     }
 

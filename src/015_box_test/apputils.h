@@ -5,15 +5,10 @@
 #include <cstdint>
 #include <iostream>
 #include <string>
-
+#include <format>
 #include <source_location>
 
-#define GLEW_STATIC
-#include <GL/gl.h>
-#include <GL/glew.h>
 #include <GL/glu.h>
-
-#include "fmt/format.h"
 
 class CAppState {
     public:

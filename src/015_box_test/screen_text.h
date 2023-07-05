@@ -6,9 +6,8 @@
 #include <string>
 #include <vector>
 
-#define GLEW_STATIC
-#include <GL/gl.h>
 #include <GL/glew.h>
+#include <GL/gl.h>
 #include <GL/glu.h>
 
 class CScreenText {
