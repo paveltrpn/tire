@@ -1,52 +1,45 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.28)
 
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_COMPILER clang++)
 
 project (tiny-render)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS true)
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall \
-                                        -Wextra \
-                                        -Wpedantic \
-                                        -Wno-unused-parameter \
-                                        --std=c++2b \
-                                        --stdlib=libc++")
+set(CMAKE_CXX_STANDARD 20)
+add_compile_options(-g -Wall -Wextra -Wpedantic -stdlib=libc++ -Wno-unused-parameter)
+add_link_options(-stdlib=libc++)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 
-set(LIBJPEG_DIR "./extern/libjpeg-cmake")
-add_subdirectory(${LIBJPEG_DIR})
-include_directories(${LIBJPEG_DIR})
+set(EXTERN_LIBS "../extern_libs")
 
-set(LIBTGA_DIR "./extern/libtga")
-add_subdirectory(${LIBTGA_DIR})
-include_directories(${LIBTGA_DIR}/include)
+link_directories("${EXTERN_LIBS}/libjpeg/lib")
+include_directories("${EXTERN_LIBS}/libjpeg/include")
 
-set(GLFW_DIR "./extern/glfw")
-add_subdirectory(${GLFW_DIR})
-include_directories(${GLFW_DIR})
+link_directories("${EXTERN_LIBS}/libtga/lib")
+include_directories("${EXTERN_LIBS}/libtga/include")
 
-set(GLEW_DIR "./extern/glew-cmake")
-add_subdirectory(${GLEW_DIR})
-include_directories(${GLEW_DIR}/include)
-link_directories(${GLEW_DIR}/build/lib)
+link_directories("${EXTERN_LIBS}/glfw/lib")
+include_directories("${EXTERN_LIBS}/glfw/include")
 
-set(ALGEBRA_DIR "./internal/algebra")
+include_directories("${EXTERN_LIBS}/glew/include")
+link_directories("${EXTERN_LIBS}/glew/lib")
+
+set(ALGEBRA_DIR "internal/algebra")
 add_subdirectory(${ALGEBRA_DIR})
 include_directories(${ALGEBRA_DIR})
 
-set(LIBS -lGL -lGLU -lGLEW)
-
 add_subdirectory(src/001_fullhouse)
-target_link_libraries(001_fullhouse algebra libjpeg libtga glfw GL GLU GLEW)
+target_link_libraries(001_fullhouse algebra libjpeg tga glfw3 GL GLU GLEW)
 
 add_subdirectory(src/004_fullhouse2)
-target_link_libraries(004_fullhouse2 algebra libjpeg libtga glfw GL GLU GLEW)
+target_link_libraries(004_fullhouse2 algebra libjpeg tga glfw3 GL GLU GLEW)
 
 add_subdirectory(src/005_rocket)
-target_link_libraries(005_rocket algebra libjpeg libtga glfw GL GLU GLEW)
+target_link_libraries(005_rocket algebra libjpeg tga glfw3 GL GLU GLEW)
 
 add_subdirectory(src/006_rocket_nix)
-target_link_libraries(006_rocket_nix algebra libjpeg libtga glfw GL GLU GLEW)
+target_link_libraries(006_rocket_nix algebra libjpeg tga glfw3 GL GLU GLEW)
+
+add_subdirectory(src/008_canvas)
+target_link_libraries(008_canvas libjpeg tga)

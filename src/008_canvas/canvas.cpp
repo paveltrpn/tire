@@ -1,7 +1,7 @@
 
-#include <jpeglib.h>
 #include <stdio.h>
 #include <tga.h>
+#include <jpeglib.h>
 
 #include "canvas.h"
 
