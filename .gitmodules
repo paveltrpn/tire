@@ -1,0 +1,3 @@
+[submodule "toy-stl"]
+	path = toy-stl
+	url = https://github.com/paveltrpn/toy-stl

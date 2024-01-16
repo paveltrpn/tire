@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.28)
 
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_COMPILER clang++)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_SCAN_FOR_MODULES)
 
 project (tiny-render)
 
@@ -29,8 +31,28 @@ set(ALGEBRA_DIR "internal/algebra")
 add_subdirectory(${ALGEBRA_DIR})
 include_directories(${ALGEBRA_DIR})
 
+set(TOY_STL "toy-stl")
+add_library(toy_stl)
+target_sources(toy_stl
+  PUBLIC
+    FILE_SET CXX_MODULES FILES
+    ${TOY_STL}/src/concepts.cpp
+    ${TOY_STL}/src/array.cpp
+    ${TOY_STL}/src/raw_list.cpp
+    ${TOY_STL}/src/stack.cpp
+    ${TOY_STL}/src/vector.cpp
+    ${TOY_STL}/src/raw_vector.cpp
+    ${TOY_STL}/src/algebra.cpp
+    ${TOY_STL}/src/algebra_matrix.cpp
+    ${TOY_STL}/src/algebra_quaternion.cpp
+    ${TOY_STL}/src/algebra_vector.cpp
+    ${TOY_STL}/src/iterator_traits.cpp
+    ${TOY_STL}/src/toy_std.cpp
+    ${TOY_STL}/src/algorithm.cpp
+)
+
 add_subdirectory(src/001_fullhouse)
-target_link_libraries(001_fullhouse algebra libjpeg tga glfw3 GL GLU GLEW)
+target_link_libraries(001_fullhouse toy_stl algebra libjpeg tga glfw3 GL GLU GLEW)
 
 add_subdirectory(src/004_fullhouse2)
 target_link_libraries(004_fullhouse2 algebra libjpeg tga glfw3 GL GLU GLEW)

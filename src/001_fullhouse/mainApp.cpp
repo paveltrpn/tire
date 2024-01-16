@@ -8,6 +8,9 @@
 #include "timer.h"
 #include "vec4.h"
 
+import toy_std;
+toy::vector<int> foo;
+
 GLenum check_gl_error(const char* file, int line) {
     GLenum errorCode;
     while ((errorCode = glGetError()) != GL_NO_ERROR) {
