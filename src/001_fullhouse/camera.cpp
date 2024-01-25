@@ -1,8 +1,12 @@
 
 #include "camera.h"
 
+import toy_std;
+
+namespace alg = toy::algebra;
+ 
 void Camera::updateRotation() {
-    cmrViewMatrix = cmrViewMatrix * cmrRotateMatrix;
+    //cmrViewMatrix = cmrViewMatrix * cmrRotateMatrix;
 }
 
 void Camera::updatePosition() {
@@ -10,7 +14,7 @@ void Camera::updatePosition() {
 }
 
 void Camera::updateViewParameters() {
-    cmrViewMatrix = mtrx4FromPerspective(cmrFov, cmrAspect, cmrNear, cmrFar);
+    cmrViewMatrix.set_perspective(cmrFov, cmrAspect, cmrNear, cmrFar);
 }
 
 void Camera::setViewParameters(float fov, float aspect, float near, float far) {
@@ -20,11 +24,11 @@ void Camera::setViewParameters(float fov, float aspect, float near, float far) {
     cmrFar = far;
 }
 
-void Camera::setCameraPosition(const vec3& pos) {
+void Camera::setCameraPosition(const alg::vector3f& pos) {
     cmrPosition = pos;
 
-    cmrOffsetMatrix = mtrx4FromOffset(cmrPosition);
-    cmrOffsetMatrix.transposeSelf();
+    cmrOffsetMatrix.set_offset(cmrPosition);
+    cmrOffsetMatrix.transpose_self();
 }
 
 void Camera::setCameraAngles(float yaw, float pitch, float roll) {
@@ -32,9 +36,9 @@ void Camera::setCameraAngles(float yaw, float pitch, float roll) {
     cmrPitch = pitch;
     cmrRoll = roll;
 
-    cmrRotateMatrix = mtrx4FromEuler(cmrYaw, cmrPitch, cmrRoll);
+    cmrRotateMatrix.set_euler(cmrYaw, cmrPitch, cmrRoll);
 }
 
 float* Camera::getCmrMatrixPointer() {
-    return cmrViewMatrix.getData();
+    return cmrViewMatrix.data();
 }

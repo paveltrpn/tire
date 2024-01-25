@@ -2,8 +2,9 @@
 #ifndef __camera_h_
 #define __camera_h_
 
-#include "mtrx4.h"
-#include "vec3.h"
+import toy_std;
+
+namespace alg = toy::algebra;
 
 class Camera {
     public:
@@ -17,12 +18,12 @@ class Camera {
 
             cmrYaw = cmrPitch = cmrRoll = 0.0f;
 
-            cmrPosition = vec3();
+            cmrPosition = alg::vector3f{};
 
-            cmrRotateMatrix = mtrx4();
-            cmrOffsetMatrix = mtrx4();
+            cmrRotateMatrix = alg::matrix4f{};
+            cmrOffsetMatrix = alg::matrix4f{};
 
-            cmrViewMatrix = mtrx4FromPerspective(cmrFov, cmrAspect, cmrNear, cmrFar);
+            cmrViewMatrix.set_perspective(cmrFov, cmrAspect, cmrNear, cmrFar);
         };
 
         ~Camera(){};
@@ -33,17 +34,17 @@ class Camera {
 
         void setViewParameters(float fov, float aspect, float near, float far);
 
-        void setCameraPosition(const vec3& pos);
+        void setCameraPosition(const alg::vector3f& pos);
         void setCameraAngles(float yaw, float pitch, float roll);
 
         float* getCmrMatrixPointer();
 
     private:
-        mtrx4 cmrViewMatrix;
-        mtrx4 cmrRotateMatrix;
-        mtrx4 cmrOffsetMatrix;
+        alg::matrix4f cmrViewMatrix;
+        alg::matrix4f cmrRotateMatrix;
+        alg::matrix4f cmrOffsetMatrix;
 
-        vec3 cmrPosition;
+        alg::vector3f cmrPosition;
 
         float cmrFov, cmrAspect, cmrNear, cmrFar;
 

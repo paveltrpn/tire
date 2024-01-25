@@ -27,6 +27,10 @@ include_directories("${EXTERN_LIBS}/glfw/include")
 include_directories("${EXTERN_LIBS}/glew/include")
 link_directories("${EXTERN_LIBS}/glew/lib")
 
+set(ALGEBRA_DIR "internal/algebra")
+add_subdirectory(${ALGEBRA_DIR})
+include_directories(${ALGEBRA_DIR})
+
 set(TOY_STL "toy-stl")
 add_library(toy_stl)
 target_sources(toy_stl
@@ -47,21 +51,8 @@ target_sources(toy_stl
     ${TOY_STL}/src/algorithm.cpp
 )
 
-add_library(screen)
-target_sources(screen
-  PUBLIC
-    FILE_SET CXX_MODULES FILES
-    screen/Screen.cpp
-    screen/X11Screen.cpp
-    screen/GLFWScreen.cpp
-    screen/Render.cpp
-    screen/RenderGL.cpp
-    screen/RenderVK.cpp
-    screen/RenderSF.cpp
-)
-
-add_subdirectory(test/glfw_window)
-target_link_libraries(glfw_window screen glfw3 GL GLU GLEW)
+add_subdirectory(src/001_fullhouse)
+target_link_libraries(001_fullhouse toy_stl algebra libjpeg tga glfw3 GL GLU GLEW)
 
 #add_subdirectory(src/004_fullhouse2)
 #target_link_libraries(004_fullhouse2 algebra libjpeg tga glfw3 GL GLU GLEW)

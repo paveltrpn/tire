@@ -8,8 +8,10 @@
 #include "timer.h"
 #include "vec4.h"
 
-import toy_std;
+import toy_std.vector;
 toy::vector<int> foo;
+
+std::string workDir = "/mnt/Fdisk_ext4_ssd_sata/code/tiny-render";
 
 GLenum check_gl_error(const char* file, int line) {
     GLenum errorCode;
@@ -69,7 +71,7 @@ void mainApp_glfw_c::setup() {
     glColorMaterial(GL_FRONT, GL_DIFFUSE);
     glEnable(GL_COLOR_MATERIAL);
 
-    tex_image.load_jpg("../../../assets/textures/texture.jpg");
+    tex_image.load_jpg(workDir + "/assets/textures/texture.jpg");
     tex_image.show_info();
     glEnable(GL_TEXTURE_2D);
     glGenTextures(1, &texture);
@@ -91,7 +93,7 @@ void mainApp_glfw_c::setup() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    text.load_font("../../../assets/img_fonts/RobotoMono-2048-1024-64-128.tga");
+    text.load_font(workDir + "/assets/img_fonts/RobotoMono-2048-1024-64-128.tga");
 
     box.append(vec3(-4.0, 0.0, 0.0), mtrx3FromEuler(0.01, -0.02, 0.02));
     box.append(vec3(3.0, 6.0, 0.0), mtrx3FromEuler(0.01, -0.01, 0.03));
@@ -107,7 +109,7 @@ void mainApp_glfw_c::setup() {
     BodyList.push_back(Body(
       Body::ICOSAHEDRON, vec3(2.0f, 0.0f, -2.0f), vec3(0.0f, 0.0f, 0.0f), vec3(4.0f, 4.0f, 4.0f)));
 
-    camera.setCameraPosition(vec3(0.0f, 0.0f, -20.0f));
+    camera.setCameraPosition(alg::vector3f{0.0f, 0.0f, -20.0f});
     camera.updatePosition();
 }
 
