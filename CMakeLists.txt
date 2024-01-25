@@ -51,6 +51,7 @@ add_library(screen)
 target_sources(screen
   PUBLIC
     FILE_SET CXX_MODULES FILES
+    screen/IScreen.cpp
     screen/Screen.cpp
     screen/X11Screen.cpp
     screen/GLFWScreen.cpp
