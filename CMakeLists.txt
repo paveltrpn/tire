@@ -62,7 +62,7 @@ target_sources(screen
 )
 
 add_subdirectory(test/glfw_window)
-target_link_libraries(glfw_window screen glfw3 GL GLU GLEW)
+target_link_libraries(glfw_window screen glfw3 GL GLU GLEW vulkan)
 
 #add_subdirectory(src/004_fullhouse2)
 #target_link_libraries(004_fullhouse2 algebra libjpeg tga glfw3 GL GLU GLEW)

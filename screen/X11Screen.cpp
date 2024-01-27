@@ -16,11 +16,11 @@ import :RenderSF;
 namespace tire {
 export struct X11Screen final : Screen {
         X11Screen() = default;
-        X11Screen(const Screen& rhs) = delete;
-        X11Screen(Screen&& ths) = delete;
+        X11Screen(const X11Screen& rhs) = delete;
+        X11Screen(X11Screen&& ths) = delete;
 
-        X11Screen& operator=(const Screen& rhs) = delete;
-        X11Screen& operator=(Screen&& rhs) = delete;
+        X11Screen& operator=(const X11Screen& rhs) = delete;
+        X11Screen& operator=(X11Screen&& rhs) = delete;
 
         ~X11Screen() override {
             delete render_;
@@ -30,16 +30,16 @@ export struct X11Screen final : Screen {
             std::print("X11Screen(): call init()\n");
 
             switch (renderType) {
-            case RenderType::GL: {
-                render_ = new RenderGL{};
+            case RenderType::OPENGL: {
+                initOpenGL();
                 break;
             }
-            case RenderType::VK: {
-                render_ = new RenderVK{};
+            case RenderType::VULKAN: {
+                initVulkan();
                 break;
             }
-            case RenderType::SF: {
-                render_ = new RenderSF{};
+            case RenderType::SOFTWARE: {
+                initSoftware();
                 break;
             }
             default:
@@ -47,12 +47,17 @@ export struct X11Screen final : Screen {
             };
         };
 
-        [[nodiscard]] Render* getRender() override {
-            std::print("X11Screen(): call getRender()\n");
-            return render_;
-        };
+        void run() override {
+        }
 
     private:
-        Render* render_;
+        void initOpenGL() {
+        }
+
+        void initVulkan() {
+        }
+
+        void initSoftware() {
+        }
 };
 }  // namespace tire

@@ -14,6 +14,6 @@ export struct Render {
 
         virtual ~Render() = default;
 
-        virtual void run() = 0;
+        virtual void displayRenderInfo() = 0;
 };
 }  // namespace tire

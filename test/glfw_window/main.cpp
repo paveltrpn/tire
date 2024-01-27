@@ -9,12 +9,12 @@ import screen;
 int main(int argc, char** argv) {
     std::print("test GLFW window\n");
 
-    auto sc = std::make_unique<tire::X11Screen>();
+    auto sc = std::make_unique<tire::GLFWScreen>("first");
+    
+    sc->setWindowPosX(500);
+    sc->init(tire::RenderType::OPENGL);
 
-    sc->init(tire::RenderType::SF);
-    auto rd = sc->getRender();
-
-    rd->run();
+    sc->run();
 
     return 0;
 }

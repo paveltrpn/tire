@@ -25,6 +25,7 @@ Checks: >
   -misc-misplaced-const,
   -misc-no-recursion,
   -misc-unused-parameters,
+  -misc-non-private-member-variables-in-classes,
   -modernize-use-trailing-return-type,
   -modernize-use-constraints,
   -modernize-type-traits,
