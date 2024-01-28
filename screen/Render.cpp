@@ -1,6 +1,8 @@
 
 module;
 
+#include <GLFW/glfw3.h>
+
 export module screen:Render;
 
 namespace tire {
@@ -15,5 +17,6 @@ export struct Render {
         virtual ~Render() = default;
 
         virtual void displayRenderInfo() = 0;
+        virtual void swapBuffers() = 0;
 };
 }  // namespace tire

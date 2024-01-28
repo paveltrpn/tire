@@ -12,11 +12,10 @@ export module screen:GLFWScreen;
 
 import :Screen;
 import :Render;
-import :RenderGL;
-import :RenderVK;
-import :RenderSF;
+import :RenderGLFW;
 
 namespace tire {
+
 export struct GLFWScreen final : Screen {
         GLFWScreen(std::string_view name = "app") : Screen{ name } {
         }
@@ -28,8 +27,6 @@ export struct GLFWScreen final : Screen {
         GLFWScreen& operator=(GLFWScreen&& rhs) = delete;
 
         ~GLFWScreen() override {
-            delete render_;
-
             glfwDestroyWindow(window_);
             glfwTerminate();
         };
@@ -38,9 +35,8 @@ export struct GLFWScreen final : Screen {
             std::print("GLFWScreen(): call init()\n");
 
             if (glfwInit() != GLFW_TRUE) {
-                std::cout << "glfwInit() return - GLFW_FALSE!"
-                          << "\n";
-                exit(1);
+                std::print("GLFW initialization return - GLFW_FALSE!\n");
+                std::exit(1);
             }
 
             auto errorCallback
@@ -48,13 +44,40 @@ export struct GLFWScreen final : Screen {
 
             glfwSetErrorCallback(errorCallback);
 
-            window_ = glfwCreateWindow(width_, height_, appName_.c_str(), nullptr, nullptr);
-            if (window_ == nullptr) {
-                std::print("Failed to create GLFW window\n");
-                glfwTerminate();
-                exit(1);
+            switch (renderType) {
+            case RenderType::OPENGL: {
+                window_ = glfwCreateWindow(width_, height_, appName_.c_str(), nullptr, nullptr);
+                if (window_ == nullptr) {
+                    std::print("Failed to create GLFW window\n");
+                    glfwTerminate();
+                    exit(1);
+                };
+
+                initOpenGL(window_);
+                break;
+            }
+            case RenderType::VULKAN: {
+                glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+                glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+                window_ = glfwCreateWindow(width_, height_, appName_.c_str(), nullptr, nullptr);
+                if (window_ == nullptr) {
+                    std::print("Failed to create GLFW window\n");
+                    glfwTerminate();
+                    exit(1);
+                };
+
+                initVulkan();
+                break;
+            }
+            case RenderType::SOFTWARE: {
+                initSoftware();
+                break;
+            }
+            default:
+                break;
             };
-            
+
             glfwSetWindowPos(window_, posX_, posY_);
 
             auto keyCallback = [](GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -68,28 +91,11 @@ export struct GLFWScreen final : Screen {
             };
 
             glfwSetKeyCallback(window_, keyCallback);
-
-            switch (renderType) {
-            case RenderType::OPENGL: {
-                initOpenGL(window_);
-                break;
-            }
-            case RenderType::VULKAN: {
-                initVulkan();
-                break;
-            }
-            case RenderType::SOFTWARE: {
-                initSoftware();
-                break;
-            }
-            default:
-                break;
-            };
         };
 
         void run() override {
             while (!glfwWindowShouldClose(window_)) {
-                glfwSwapBuffers(window_);
+                render_->swapBuffers();
                 glfwPollEvents();
             }
         }
@@ -101,13 +107,14 @@ export struct GLFWScreen final : Screen {
         }
 
         void initVulkan() {
-            // render_ = new RenderVK_GLFW{};
+            render_ = new __glfw_vk_Render{};
+            // render_->displayRenderInfo();
         }
 
         void initSoftware() {
-            // render_ = new RenderSF_GLFW{};
         }
 
         GLFWwindow* window_;
 };
+
 }  // namespace tire

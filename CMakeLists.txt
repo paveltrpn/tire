@@ -55,10 +55,14 @@ target_sources(screen
     screen/Screen.cpp
     screen/X11Screen.cpp
     screen/GLFWScreen.cpp
+    screen/SDLScreen.cpp
     screen/Render.cpp
     screen/RenderGL.cpp
     screen/RenderVK.cpp
     screen/RenderSF.cpp
+    screen/RenderGLFW.cpp
+    screen/RenderSDL.cpp
+    screen/RenderX11.cpp
 )
 
 add_subdirectory(test/glfw_window)

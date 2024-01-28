@@ -40,7 +40,9 @@ export struct Screen {
         Screen& operator=(const Screen& rhs) = delete;
         Screen& operator=(Screen&& rhs) = delete;
 
-        virtual ~Screen() = default;
+        virtual ~Screen() {
+            delete render_;
+        };
 
         virtual void init(RenderType renderType) = 0;
         virtual void run() = 0;

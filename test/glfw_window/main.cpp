@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
     auto sc = std::make_unique<tire::GLFWScreen>("first");
     
     sc->setWindowPosX(500);
-    sc->init(tire::RenderType::OPENGL);
+    sc->init(tire::RenderType::VULKAN);
 
     sc->run();
 

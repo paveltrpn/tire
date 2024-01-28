@@ -5,27 +5,27 @@ module;
 #include <format>
 #include <print>
 
-export module screen:X11Screen;
+export module screen:SDLScreen;
 
 import :Screen;
 import :Render;
-import :RenderX11;
+import :RenderSDL;
 
 namespace tire {
 
-export struct X11Screen final : Screen {
-        X11Screen() = default;
-        X11Screen(const X11Screen& rhs) = delete;
-        X11Screen(X11Screen&& ths) = delete;
+export struct SDLScreen final : Screen {
+        SDLScreen() = default;
 
-        X11Screen& operator=(const X11Screen& rhs) = delete;
-        X11Screen& operator=(X11Screen&& rhs) = delete;
+        SDLScreen(const SDLScreen& rhs) = delete;
+        SDLScreen(SDLScreen&& ths) = delete;
 
-        ~X11Screen() override = default;
+        SDLScreen& operator=(const SDLScreen& rhs) = delete;
+        SDLScreen& operator=(SDLScreen&& rhs) = delete;
+
+        ~SDLScreen() override = default;
 
         void init(RenderType renderType) override {
-            std::print("X11Screen(): call init()\n");
-
+            std::print("SDLScreen(): call init()\n");
             switch (renderType) {
             case RenderType::OPENGL: {
                 initOpenGL();
@@ -53,4 +53,5 @@ export struct X11Screen final : Screen {
 
         void initSoftware(){};
 };
+
 }  // namespace tire
