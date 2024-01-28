@@ -14,15 +14,6 @@ import :RenderX11;
 namespace tire {
 
 export struct X11Screen final : Screen {
-        X11Screen() = default;
-        X11Screen(const X11Screen& rhs) = delete;
-        X11Screen(X11Screen&& ths) = delete;
-
-        X11Screen& operator=(const X11Screen& rhs) = delete;
-        X11Screen& operator=(X11Screen&& rhs) = delete;
-
-        ~X11Screen() override = default;
-
         void init(RenderType renderType) override {
             std::print("X11Screen(): call init()\n");
 

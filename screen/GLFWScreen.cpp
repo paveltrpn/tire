@@ -20,12 +20,6 @@ export struct GLFWScreen final : Screen {
         GLFWScreen(std::string_view name = "app") : Screen{ name } {
         }
 
-        GLFWScreen(const GLFWScreen& rhs) = delete;
-        GLFWScreen(GLFWScreen&& ths) = delete;
-
-        GLFWScreen& operator=(const GLFWScreen& rhs) = delete;
-        GLFWScreen& operator=(GLFWScreen&& rhs) = delete;
-
         ~GLFWScreen() override {
             glfwDestroyWindow(window_);
             glfwTerminate();
@@ -108,7 +102,7 @@ export struct GLFWScreen final : Screen {
 
         void initVulkan() {
             render_ = new __glfw_vk_Render{};
-            // render_->displayRenderInfo();
+            render_->displayRenderInfo();
         }
 
         void initSoftware() {

@@ -6,6 +6,7 @@ module;
 export module screen:Render;
 
 namespace tire {
+
 export struct Render {
         Render() = default;
         Render(const Render& rhs) = delete;
@@ -19,4 +20,5 @@ export struct Render {
         virtual void displayRenderInfo() = 0;
         virtual void swapBuffers() = 0;
 };
+
 }  // namespace tire

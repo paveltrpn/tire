@@ -15,15 +15,6 @@ import :Render;
 namespace tire {
 
 struct __gl_Render : Render {
-        __gl_Render() = default;
-        __gl_Render(const __gl_Render& rhs) = delete;
-        __gl_Render(__gl_Render&& ths) = delete;
-
-        __gl_Render& operator=(const __gl_Render& rhs) = delete;
-        __gl_Render& operator=(__gl_Render&& rhs) = delete;
-
-        ~__gl_Render() override = default;
-
         void displayRenderInfo() override {
             std::print("vendor - {}\nrenderer - {}\nOpenGL version - {}\nGLSL version - {}\n",
                        vendor_,

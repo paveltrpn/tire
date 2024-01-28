@@ -14,16 +14,6 @@ import :RenderSDL;
 namespace tire {
 
 export struct SDLScreen final : Screen {
-        SDLScreen() = default;
-
-        SDLScreen(const SDLScreen& rhs) = delete;
-        SDLScreen(SDLScreen&& ths) = delete;
-
-        SDLScreen& operator=(const SDLScreen& rhs) = delete;
-        SDLScreen& operator=(SDLScreen&& rhs) = delete;
-
-        ~SDLScreen() override = default;
-
         void init(RenderType renderType) override {
             std::print("SDLScreen(): call init()\n");
             switch (renderType) {
