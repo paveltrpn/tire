@@ -7,6 +7,7 @@ module;
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <expected>
 
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
@@ -44,58 +45,6 @@ VkResult vkCreateDebugUtilsMessenger(VkInstance instance,
 
 struct __vk_Render : Render {
         __vk_Render() {
-            initExtensionProperties();
-            initValidationLayers();
-            createrInstance();
-            initDebugMessenger();
-            initPhysicalDevices();
-        };
-
-        ~__vk_Render() override {
-            vkDestroyInstance(instance_, nullptr);
-        };
-
-        void displayRenderInfo() override {
-            std::print("Instance extensions count: {}\n", extensionProperties_.size());
-            std::print("==========================\n");
-            for (auto& prop : extensionProperties_) {
-                std::print("\t{} | revision: {}\n", prop.extensionName, prop.specVersion);
-            }
-
-            std::print("Layers count: {}\n", layerProperties_.size());
-            std::print("============\n");
-            for (auto& layer : layerProperties_) {
-                std::print("\t{} | specVersion: {}\n\t{}\n",
-                           layer.layerName,
-                           layer.specVersion,
-                           layer.description);
-            }
-            /*
-            std::print("physical devices names:\n");
-            for (auto& d : physicalDevicesProperties_) {
-                std::print("\t{}\n", d.deviceName);
-            }
-            */
-        }
-
-    protected:
-        void initExtensionProperties() {
-            uint32_t extCount;
-
-            vkEnumerateInstanceExtensionProperties(nullptr, &extCount, nullptr);
-            extensionProperties_.resize(extCount);
-            vkEnumerateInstanceExtensionProperties(nullptr, &extCount, extensionProperties_.data());
-        };
-
-        void initValidationLayers() {
-            uint32_t layerCount;
-
-            vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
-            layerProperties_.resize(layerCount);
-            vkEnumerateInstanceLayerProperties(&layerCount, layerProperties_.data());
-        }
-
-        void createrInstance() {
             appInfo_.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
             appInfo_.pApplicationName = "basic";
             appInfo_.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
@@ -103,25 +52,138 @@ struct __vk_Render : Render {
             appInfo_.engineVersion = VK_MAKE_VERSION(1, 0, 0);
             appInfo_.apiVersion = VK_API_VERSION_1_0;
 
-            // extract extension names from array of VkExtensionProperties to array of strings
-            std::vector<char*> extensions;
-            std::for_each(extensionProperties_.begin(),
-                          extensionProperties_.end(),
-                          [&extensions](auto& ep) { extensions.push_back(ep.extensionName); });
+            enumerateExtensionProperties();
+            enumerateValidationLayers();
+            createrInstance();
+            initDebugMessenger();
+            enumeratePhysicalDevices();
+        };
 
-            // extract validation layers names from  array of VkLayerProperties
-            // to array of strings
-            std::vector<char*> layers;
-            std::for_each(layerProperties_.begin(), layerProperties_.end(), [&layers](auto& lp) {
-                layers.push_back(lp.layerName);
-            });
+        ~__vk_Render() override {
+            vkDestroyInstance(instance_, nullptr);
+        };
 
+        void displayRenderInfo() override {
+            displayExtensionProperties();
+            displayValidationLayerProperties();
+            displayPhysicalDeviceProperties();
+        }
+
+    protected:
+        void enumerateExtensionProperties() {
+            uint32_t extCount;
+
+            vkEnumerateInstanceExtensionProperties(nullptr, &extCount, nullptr);
+            extensionProperties_.resize(extCount);
+            vkEnumerateInstanceExtensionProperties(nullptr, &extCount, extensionProperties_.data());
+        };
+
+        std::expected<std::vector<char*>, std::string> makeExtensionsList(
+          const std::vector<std::string>& list) {
+            std::vector<char*> rt{};
+
+            for (const auto& name : list) {
+                auto res
+                  = std::find_if(extensionProperties_.begin(),
+                                 extensionProperties_.end(),
+                                 [name](auto& ep) -> bool { return ep.extensionName == name; });
+                if (res == extensionProperties_.end()) {
+                    return std::unexpected(name);
+                } else {
+                    rt.push_back((*res).extensionName);
+                }
+            }
+
+            return rt;
+        }
+
+        void displayExtensionProperties() {
+            std::print("Instance extensions count: {}\n"
+                       "==========================\n",
+                       extensionProperties_.size());
+            for (auto& prop : extensionProperties_) {
+                std::print("\t{} | revision: {}\n", prop.extensionName, prop.specVersion);
+            }
+        }
+
+        void enumerateValidationLayers() {
+            uint32_t layerCount;
+
+            vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+            layerProperties_.resize(layerCount);
+            vkEnumerateInstanceLayerProperties(&layerCount, layerProperties_.data());
+        }
+
+        std::expected<std::vector<char*>, std::string> makeValidationLayersList(
+          const std::vector<std::string>& list) {
+            std::vector<char*> rt;
+
+            for (const auto& name : list) {
+                auto res = std::find_if(layerProperties_.begin(),
+                                        layerProperties_.end(),
+                                        [name](auto& lp) -> bool { return lp.layerName == name; });
+                if (res == layerProperties_.end()) {
+                    return std::unexpected(name);
+                } else {
+                    rt.push_back((*res).layerName);
+                }
+            }
+
+            return rt;
+        }
+
+        void displayValidationLayerProperties() {
+            std::print("Layers count: {}\n"
+                       "=============\n",
+                       layerProperties_.size());
+            for (auto& layer : layerProperties_) {
+                std::print("\t{} | specVersion: {}\n\t{}\n",
+                           layer.layerName,
+                           layer.specVersion,
+                           layer.description);
+            }
+        }
+
+        void createrInstance() {
             instanceCreateInfo_.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
             instanceCreateInfo_.pApplicationInfo = &appInfo_;
-            instanceCreateInfo_.enabledLayerCount = layers.size();
-            instanceCreateInfo_.ppEnabledLayerNames = layers.data();
-            instanceCreateInfo_.enabledExtensionCount = extensions.size();
-            instanceCreateInfo_.ppEnabledExtensionNames = extensions.data();
+
+            auto layers = makeValidationLayersList({ "VK_LAYER_INTEL_nullhw",
+                                                     "VK_LAYER_MESA_device_select",
+                                                     "VK_LAYER_MESA_overlay",
+                                                     "VK_LAYER_NV_optimus",
+                                                     //"VK_LAYER_VALVE_steam_fossilize_32",
+                                                     "VK_LAYER_VALVE_steam_fossilize_64",
+                                                     //"VK_LAYER_VALVE_steam_overlay_32",
+                                                     "VK_LAYER_VALVE_steam_overlay_64" });
+            if (!layers.has_value()) {
+                std::print(
+                  "no such vulkan validation layer: \"{}\"! contunue instance creation with zero "
+                  "enabled validation layers!\n",
+                  layers.error());
+
+                instanceCreateInfo_.enabledLayerCount = 0;
+                instanceCreateInfo_.ppEnabledLayerNames = nullptr;
+            } else {
+                instanceCreateInfo_.enabledLayerCount = (*layers).size();
+                instanceCreateInfo_.ppEnabledLayerNames = (*layers).data();
+            }
+
+            auto extensions = makeExtensionsList({ "VK_KHR_surface",
+                                                   "VK_KHR_xlib_surface",
+                                                   "VK_EXT_debug_report",
+                                                   "VK_EXT_debug_utils" });
+            if (!extensions.has_value()) {
+                std::print("no such vulkan extension: \"{}\"! contunue instance creation with zero "
+                           "enabled extensions!\n",
+                           extensions.error());
+
+                instanceCreateInfo_.enabledExtensionCount = 0;
+                instanceCreateInfo_.ppEnabledExtensionNames = nullptr;
+            } else {
+                instanceCreateInfo_.enabledExtensionCount = (*extensions).size();
+                instanceCreateInfo_.ppEnabledExtensionNames = (*extensions).data();
+            }
 
             auto res = vkCreateInstance(&instanceCreateInfo_, nullptr, &instance_);
 
@@ -152,15 +214,13 @@ struct __vk_Render : Render {
             }
         }
 
-        void initPhysicalDevices() {
+        void enumeratePhysicalDevices() {
             uint32_t devCount = 0;
 
             vkEnumeratePhysicalDevices(instance_, &devCount, nullptr);
             if (devCount == 0) {
                 std::print("no vk physical devices in system\n");
                 std::exit(1);
-            } else {
-                std::print("vk physical device count - {}\n", devCount);
             }
 
             physicalDevices_.resize(size_t(devCount));
@@ -173,6 +233,19 @@ struct __vk_Render : Render {
                 physicalDevicesProperties_.push_back(devProps);
             }
         }
+
+        void displayPhysicalDeviceProperties() {
+            std::print("physical devices:\n"
+                       "================\n");
+            for (auto& d : physicalDevicesProperties_) {
+                std::print("\tname: {}\n\tid: {}\n\tvendor id: {}\n\tapi: {}\n",
+                           d.deviceName,
+                           d.deviceID,
+                           d.vendorID,
+                           d.apiVersion);
+            }
+        }
+
         // all vk structures must be zero initialized
         VkInstance instance_{};
         VkApplicationInfo appInfo_{};
