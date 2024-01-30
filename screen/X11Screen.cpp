@@ -14,9 +14,13 @@ import :RenderX11;
 namespace tire {
 
 export struct X11Screen final : Screen {
-        void init(RenderType renderType) override {
-            std::print("X11Screen(): call init()\n");
+        void displayScreenInfo() override {
+            std::print("X11 based screen\n"
+                       "=================\n");
+            std::print("not implemented\n");
+        };
 
+        void init(RenderType renderType) override {
             switch (renderType) {
             case RenderType::OPENGL: {
                 initOpenGL();

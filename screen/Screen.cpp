@@ -5,6 +5,9 @@ module;
 #include <format>
 #include <print>
 
+#include "nlohmann/json.hpp"
+#include "nlohmann/json_fwd.hpp"
+
 export module screen:Screen;
 
 import :Render;
@@ -77,6 +80,12 @@ export struct Screen {
 
         [[nodiscard]] unsigned int getWindowPosY() noexcept {
             return posY_;
+        }
+
+        virtual void displayScreenInfo() = 0;
+
+        virtual void displayRenderInfo() {
+            render_->displayRenderInfo();
         }
 
     protected:

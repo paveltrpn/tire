@@ -18,6 +18,7 @@ export struct Render {
         virtual ~Render() = default;
 
         virtual void displayRenderInfo() = 0;
+
         virtual void swapBuffers() = 0;
 };
 

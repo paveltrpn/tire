@@ -14,8 +14,13 @@ import :RenderSDL;
 namespace tire {
 
 export struct SDLScreen final : Screen {
+        void displayScreenInfo() override {
+            std::print("SDL based screen\n"
+                       "=================\n");
+            std::print("not implemented\n");
+        };
+
         void init(RenderType renderType) override {
-            std::print("SDLScreen(): call init()\n");
             switch (renderType) {
             case RenderType::OPENGL: {
                 initOpenGL();

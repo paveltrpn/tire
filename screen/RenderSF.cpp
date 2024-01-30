@@ -10,6 +10,11 @@ export module screen:RenderSF;
 import :Render;
 
 namespace tire {
-export struct __sf_Render : Render {};
+export struct __sf_Render : Render {
+        void displayRenderInfo() override {
+            std::print("SF render not implemented\n");
+        };
 
+        void swapBuffers() override{};
+};
 }  // namespace tire

@@ -31,12 +31,20 @@ namespace tire {
 struct __glfw_gl_Render : __gl_Render {
         __glfw_gl_Render(GLFWwindow* window = nullptr) : window_{ window } {
             if (!window_) {
-                std::print("GLFW window pointer can't be null!\n");
-                std::exit(1);
+                throw std::runtime_error("GLFW window pointer can't be null!\n");
             }
 
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+            glGetIntegerv(GLFW_CONTEXT_VERSION_MAJOR, &ctxtVersionMajorMax_);
+            glGetIntegerv(GLFW_CONTEXT_VERSION_MINOR, &ctxtVersionMinorMax_);
+
+            if (true) {
+                ctxtVersionMajorUsed_ = ctxtVersionMajorMax_;
+                ctxtVersionMinorUsed_ = ctxtVersionMinorMax_;
+            }
+
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, ctxtVersionMajorUsed_);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, ctxtVersionMinorUsed_);
+
             glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
             glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
@@ -49,7 +57,7 @@ struct __glfw_gl_Render : __gl_Render {
                 std::exit(1);
             };
 
-            // Выключаем вертикальную синхронизацию (VSYNC)
+            // vsync off
             glfwSwapInterval(0);
 
             vendor_ = (const char*)glGetString(GL_VENDOR);
@@ -70,6 +78,10 @@ struct __glfw_gl_Render : __gl_Render {
 // =============== Vulkan with GLFW initialization struct ===============================
 // ======================================================================================
 struct __glfw_vk_Render : __vk_Render {
+        __glfw_vk_Render(std::string_view engName = "tiny-render",
+                         std::string_view appName = "tiny-render app")
+            : __vk_Render{ engName, appName } {};
+
         void swapBuffers() override{};
 };
 

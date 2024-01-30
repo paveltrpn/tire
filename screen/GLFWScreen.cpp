@@ -25,13 +25,19 @@ export struct GLFWScreen final : Screen {
             glfwTerminate();
         };
 
-        void init(RenderType renderType) override {
-            std::print("GLFWScreen(): call init()\n");
+        void displayScreenInfo() override {
+            std::print("GLFW based screen\n"
+                       "=================\n");
+            std::print("GLFW version: {}\n", glfwVersionString_);
+        };
 
+        void init(RenderType renderType) override {
             if (glfwInit() != GLFW_TRUE) {
-                std::print("GLFW initialization return - GLFW_FALSE!\n");
-                std::exit(1);
+                throw std::runtime_error("GLFW initialization return - GLFW_FALSE!\n");
             }
+
+            glfwVersionString_ = std::string{ glfwGetVersionString() };
+            glfwGetVersion(&glfwVersionMajor_, &glfwVersionMinor_, &glfwVersionRev_);
 
             auto errorCallback
               = [](int, const char* err_str) { std::print("GLFW Error: {}\n", err_str); };
@@ -40,12 +46,7 @@ export struct GLFWScreen final : Screen {
 
             switch (renderType) {
             case RenderType::OPENGL: {
-                window_ = glfwCreateWindow(width_, height_, appName_.c_str(), nullptr, nullptr);
-                if (window_ == nullptr) {
-                    std::print("Failed to create GLFW window\n");
-                    glfwTerminate();
-                    exit(1);
-                };
+                createWindow();
 
                 initOpenGL(window_);
                 break;
@@ -54,12 +55,7 @@ export struct GLFWScreen final : Screen {
                 glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
                 glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-                window_ = glfwCreateWindow(width_, height_, appName_.c_str(), nullptr, nullptr);
-                if (window_ == nullptr) {
-                    std::print("Failed to create GLFW window\n");
-                    glfwTerminate();
-                    exit(1);
-                };
+                createWindow();
 
                 initVulkan();
                 break;
@@ -95,20 +91,32 @@ export struct GLFWScreen final : Screen {
         }
 
     private:
+        void createWindow() {
+            window_ = glfwCreateWindow(width_, height_, appName_.c_str(), nullptr, nullptr);
+            if (window_ == nullptr) {
+                glfwTerminate();
+                throw std::runtime_error("Failed to create GLFW window\n");
+            };
+        }
+
         void initOpenGL(GLFWwindow* window) {
             render_ = new __glfw_gl_Render{ window };
-            render_->displayRenderInfo();
         }
 
         void initVulkan() {
             render_ = new __glfw_vk_Render{};
-            render_->displayRenderInfo();
         }
 
         void initSoftware() {
+            render_ = new __glfw_sf_Render{};
         }
 
         GLFWwindow* window_;
+
+        int glfwVersionMajor_;
+        int glfwVersionMinor_;
+        int glfwVersionRev_;
+        std::string glfwVersionString_;
 };
 
 }  // namespace tire

@@ -8,6 +8,7 @@ module;
 #include <vector>
 #include <algorithm>
 #include <expected>
+#include <variant>
 
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
@@ -26,7 +27,7 @@ debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
               VkDebugUtilsMessageTypeFlagsEXT messageType,
               const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
               void* pUserData) {
-    std::print("validation layer: {}\n", pCallbackData->pMessage);
+    std::print("validation layer debug:\t\t{}\n", pCallbackData->pMessage);
     return VK_FALSE;
 }
 
@@ -44,18 +45,26 @@ VkResult vkCreateDebugUtilsMessenger(VkInstance instance,
 }
 
 struct __vk_Render : Render {
-        __vk_Render() {
+        __vk_Render(std::string_view engName, std::string_view appName)
+            : applicationName_{ appName }, engineName_{ engName } {
             appInfo_.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-            appInfo_.pApplicationName = "basic";
+            appInfo_.pApplicationName = applicationName_.data();
             appInfo_.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-            appInfo_.pEngineName = "null engine";
+            appInfo_.pEngineName = engineName_.data();
             appInfo_.engineVersion = VK_MAKE_VERSION(1, 0, 0);
             appInfo_.apiVersion = VK_API_VERSION_1_0;
 
-            enumerateExtensionProperties();
-            enumerateValidationLayers();
-            createrInstance();
-            initDebugMessenger();
+            dbgCreateInfo_.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+            dbgCreateInfo_.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT
+                                             | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT
+                                             | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+            dbgCreateInfo_.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
+                                         | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT
+                                         | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+            dbgCreateInfo_.pfnUserCallback = debugCallback;
+            dbgCreateInfo_.pUserData = nullptr;  // Optional
+
+            createInstance();
             enumeratePhysicalDevices();
         };
 
@@ -78,19 +87,27 @@ struct __vk_Render : Render {
             vkEnumerateInstanceExtensionProperties(nullptr, &extCount, extensionProperties_.data());
         };
 
-        std::expected<std::vector<char*>, std::string> makeExtensionsList(
-          const std::vector<std::string>& list) {
+        // pass std::nullopt to enable all avaible exensions
+        std::vector<char*> makeExtensionsList(std::optional<std::vector<std::string>> list) {
             std::vector<char*> rt{};
 
-            for (const auto& name : list) {
-                auto res
-                  = std::find_if(extensionProperties_.begin(),
-                                 extensionProperties_.end(),
-                                 [name](auto& ep) -> bool { return ep.extensionName == name; });
-                if (res == extensionProperties_.end()) {
-                    return std::unexpected(name);
-                } else {
-                    rt.push_back((*res).extensionName);
+            enumerateExtensionProperties();
+
+            if (list) {
+                for (const auto& name : list.value()) {
+                    auto res
+                      = std::find_if(extensionProperties_.begin(),
+                                     extensionProperties_.end(),
+                                     [name](auto& ep) -> bool { return ep.extensionName == name; });
+                    if (res != extensionProperties_.end()) {
+                        rt.push_back((*res).extensionName);
+                    } else {
+                        std::print("extension \"{}\" not supported\n", name);
+                    }
+                }
+            } else {
+                for (auto& ep : extensionProperties_) {
+                    rt.push_back(ep.extensionName);
                 }
             }
 
@@ -114,18 +131,29 @@ struct __vk_Render : Render {
             vkEnumerateInstanceLayerProperties(&layerCount, layerProperties_.data());
         }
 
-        std::expected<std::vector<char*>, std::string> makeValidationLayersList(
-          const std::vector<std::string>& list) {
-            std::vector<char*> rt;
+        // pass std::nullopt to enable all avaible validation layers.
+        // may cause instance creation error, for example:
+        // "Requested layer "VK_LAYER_VALVE_steam_overlay_32" was wrong bit-type!"
+        std::vector<char*> makeValidationLayersList(std::optional<std::vector<std::string>> list) {
+            std::vector<char*> rt{};
 
-            for (const auto& name : list) {
-                auto res = std::find_if(layerProperties_.begin(),
-                                        layerProperties_.end(),
-                                        [name](auto& lp) -> bool { return lp.layerName == name; });
-                if (res == layerProperties_.end()) {
-                    return std::unexpected(name);
-                } else {
-                    rt.push_back((*res).layerName);
+            enumerateValidationLayers();
+
+            if (list) {
+                for (const auto& name : list.value()) {
+                    auto res = std::find_if(
+                      layerProperties_.begin(), layerProperties_.end(), [name](auto& lp) -> bool {
+                          return lp.layerName == name;
+                      });
+                    if (res != layerProperties_.end()) {
+                        rt.push_back((*res).layerName);
+                    } else {
+                        std::print("validation layer \"{}\" not supported\n", name);
+                    }
+                }
+            } else {
+                for (auto& lp : layerProperties_) {
+                    rt.push_back(lp.layerName);
                 }
             }
 
@@ -144,73 +172,58 @@ struct __vk_Render : Render {
             }
         }
 
-        void createrInstance() {
+        void createInstance(bool enableValidationLayers = true) {
             instanceCreateInfo_.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
             instanceCreateInfo_.pApplicationInfo = &appInfo_;
 
-            auto layers = makeValidationLayersList({ "VK_LAYER_INTEL_nullhw",
-                                                     "VK_LAYER_MESA_device_select",
-                                                     "VK_LAYER_MESA_overlay",
-                                                     "VK_LAYER_NV_optimus",
-                                                     //"VK_LAYER_VALVE_steam_fossilize_32",
-                                                     "VK_LAYER_VALVE_steam_fossilize_64",
-                                                     //"VK_LAYER_VALVE_steam_overlay_32",
-                                                     "VK_LAYER_VALVE_steam_overlay_64" });
-            if (!layers.has_value()) {
-                std::print(
-                  "no such vulkan validation layer: \"{}\"! contunue instance creation with zero "
-                  "enabled validation layers!\n",
-                  layers.error());
+            //
+            // validation layers
+            //
+            std::vector<std::string> vllist{ "VK_LAYER_INTEL_nullhw",
+                                             "VK_LAYER_MESA_device_select",
+                                             "VK_LAYER_MESA_overlay",
+                                             "VK_LAYER_NV_optimus",
+                                             //"VK_LAYER_VALVE_steam_fossilize_32",
+                                             "VK_LAYER_VALVE_steam_fossilize_64",
+                                             //"VK_LAYER_VALVE_steam_overlay_32",
+                                             "VK_LAYER_VALVE_steam_overlay_64" };
 
-                instanceCreateInfo_.enabledLayerCount = 0;
-                instanceCreateInfo_.ppEnabledLayerNames = nullptr;
-            } else {
-                instanceCreateInfo_.enabledLayerCount = (*layers).size();
-                instanceCreateInfo_.ppEnabledLayerNames = (*layers).data();
+            auto layers = makeValidationLayersList(vllist);
+
+            if (enableValidationLayers) {
+                instanceCreateInfo_.enabledLayerCount = static_cast<uint32_t>(layers.size());
+                instanceCreateInfo_.ppEnabledLayerNames = layers.data();
+                instanceCreateInfo_.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&dbgCreateInfo_;
             }
 
-            auto extensions = makeExtensionsList({ "VK_KHR_surface",
-                                                   "VK_KHR_xlib_surface",
-                                                   "VK_EXT_debug_report",
-                                                   "VK_EXT_debug_utils" });
-            if (!extensions.has_value()) {
-                std::print("no such vulkan extension: \"{}\"! contunue instance creation with zero "
-                           "enabled extensions!\n",
-                           extensions.error());
+            //
+            // extensions
+            //
+            std::vector<std::string> eplist{
+                "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_EXT_debug_report", "VK_EXT_debug_utils"
+            };
 
-                instanceCreateInfo_.enabledExtensionCount = 0;
-                instanceCreateInfo_.ppEnabledExtensionNames = nullptr;
-            } else {
-                instanceCreateInfo_.enabledExtensionCount = (*extensions).size();
-                instanceCreateInfo_.ppEnabledExtensionNames = (*extensions).data();
-            }
+            auto extensions = makeExtensionsList(std::nullopt);
 
+            instanceCreateInfo_.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+            instanceCreateInfo_.ppEnabledExtensionNames = extensions.data();
+
+            //
+            // instance creation
+            //
             auto res = vkCreateInstance(&instanceCreateInfo_, nullptr, &instance_);
 
             if (res != VK_SUCCESS) {
-                std::print("can't create vk instance with code: {}\n", static_cast<int>(res));
-                std::exit(0);
-            } else {
-                std::print("vk instance create success!!!\n");
+                throw std::runtime_error(
+                  std::format("can't create vk instance with code: {}\n", static_cast<int>(res)));
             }
-        }
 
-        void initDebugMessenger() {
-            VkDebugUtilsMessengerCreateInfoEXT dbgCreateInfo{};
-            dbgCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-            dbgCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT
-                                            | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT
-                                            | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-            dbgCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
-                                        | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT
-                                        | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-            dbgCreateInfo.pfnUserCallback = debugCallback;
-            dbgCreateInfo.pUserData = nullptr;  // Optional
-
-            if (vkCreateDebugUtilsMessenger(instance_, &dbgCreateInfo, nullptr, &debugMessenger_)
-                != VK_SUCCESS) {
-                std::print("failed to set up debug messenger!\n");
-                std::exit(1);
+            if (enableValidationLayers) {
+                if (vkCreateDebugUtilsMessenger(
+                      instance_, &dbgCreateInfo_, nullptr, &debugMessenger_)
+                    != VK_SUCCESS) {
+                    throw std::runtime_error("failed to set up debug messenger!\n");
+                }
             }
         }
 
@@ -219,8 +232,7 @@ struct __vk_Render : Render {
 
             vkEnumeratePhysicalDevices(instance_, &devCount, nullptr);
             if (devCount == 0) {
-                std::print("no vk physical devices in system\n");
-                std::exit(1);
+                throw std::runtime_error("no vk physical devices in system\n");
             }
 
             physicalDevices_.resize(size_t(devCount));
@@ -246,11 +258,15 @@ struct __vk_Render : Render {
             }
         }
 
+        std::string applicationName_;
+        std::string engineName_;
+
         // all vk structures must be zero initialized
         VkInstance instance_{};
         VkApplicationInfo appInfo_{};
         VkInstanceCreateInfo instanceCreateInfo_{};
-        VkDebugUtilsMessengerEXT debugMessenger_;
+        VkDebugUtilsMessengerEXT debugMessenger_{};
+        VkDebugUtilsMessengerCreateInfoEXT dbgCreateInfo_{};
 
         std::vector<VkExtensionProperties> extensionProperties_;
         std::vector<VkLayerProperties> layerProperties_;

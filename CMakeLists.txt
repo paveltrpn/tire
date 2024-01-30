@@ -27,6 +27,8 @@ include_directories("${EXTERN_LIBS}/glfw/include")
 include_directories("${EXTERN_LIBS}/glew/include")
 link_directories("${EXTERN_LIBS}/glew/lib")
 
+include_directories("${EXTERN_LIBS}/json/include")
+
 set(TOY_STL "toy-stl")
 add_library(toy_stl)
 target_sources(toy_stl
