@@ -10,7 +10,7 @@ module;
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-export module screen:RenderGL;
+export module render:RenderGL;
 
 import :Render;
 
@@ -28,10 +28,11 @@ void GLAPIENTRY MessageCallback(GLenum source,
                severity,
                message);
 }
+
 struct __gl_Render : Render {
         __gl_Render() {
-            //glEnable(GL_DEBUG_OUTPUT);
-            //glDebugMessageCallback(&MessageCallback, nullptr);
+            // glEnable(GL_DEBUG_OUTPUT);
+            // glDebugMessageCallback(&MessageCallback, nullptr);
         }
 
         void displayRenderInfo() override {

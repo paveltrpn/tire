@@ -16,7 +16,7 @@ module;
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-export module screen:RenderGLFW;
+export module render:RenderGLFW;
 
 import :Render;
 import :RenderGL;
@@ -27,7 +27,7 @@ namespace tire {
 // ======================================================================================
 // =============== OpenGL with GLFW initialization struct ===============================
 // ======================================================================================
-struct __glfw_gl_Render : __gl_Render {
+export struct __glfw_gl_Render : __gl_Render {
         __glfw_gl_Render(GLFWwindow* window = nullptr) : window_{ window } {
             if (!window_) {
                 throw std::runtime_error("GLFW window pointer can't be null!\n");
@@ -76,12 +76,12 @@ struct __glfw_gl_Render : __gl_Render {
 // ======================================================================================
 // =============== Vulkan with GLFW initialization struct ===============================
 // ======================================================================================
-struct __glfw_vk_Render : __vk_Render {
+export struct __glfw_vk_Render : __vk_Render {
         __glfw_vk_Render(std::string_view engName = "tiny-render",
                          std::string_view appName = "tiny-render app")
             : __vk_Render{ engName, appName } {};
 
-        void swapBuffers() override{};
+        void swapBuffers() override {};
 };
 
 }  // namespace tire

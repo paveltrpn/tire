@@ -9,9 +9,9 @@ module;
 #include "nlohmann/json.hpp"
 #include "nlohmann/json_fwd.hpp"
 
-export module screen:Screen;
+import render;
 
-import :Render;
+export module screen:Screen;
 
 namespace tire {
 
@@ -23,10 +23,11 @@ export enum class RenderType {
 
 export struct Screen {
         Screen() = default;
-        
+
         Screen(nlohmann::json& config) : config_{ config } {
             appName_ = config["Screen"]["application_name"];
             fullscreen_ = config["Screen"]["fullscreen"];
+            resizeable_ = config["Screen"]["resizeable"];
             width_ = config["Screen"]["window_width"];
             height_ = config["Screen"]["window_height"];
             posX_ = config["Screen"]["window_pos_x"];
@@ -93,6 +94,8 @@ export struct Screen {
         std::string appName_;
 
         bool fullscreen_;
+
+        bool resizeable_;
 
         unsigned int width_;
         unsigned int height_;

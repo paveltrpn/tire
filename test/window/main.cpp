@@ -8,6 +8,7 @@
 #include "nlohmann/json_fwd.hpp"
 
 import screen;
+import render;
 
 int main(int argc, char** argv) {
     auto configJson = R"(
@@ -16,6 +17,7 @@ int main(int argc, char** argv) {
       "type":"GLFW",
       "application_name":"app",
       "fullscreen":false,
+      "resizeable":false,
       "window_width":800,
       "window_height":600,
       "window_pos_x":100,
@@ -23,6 +25,7 @@ int main(int argc, char** argv) {
    },
    "Render":{
       "type":"Vulkan",
+      "resizeable":false,
       "OpnenGL":{
          "use_maximum_context_version":true,
          "use_context_version_major":2,

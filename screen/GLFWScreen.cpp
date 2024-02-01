@@ -7,15 +7,14 @@ module;
 #include <string>
 
 #include <GLFW/glfw3.h>
+
 #include "nlohmann/json.hpp"
 #include "nlohmann/json_fwd.hpp"
 
-
 export module screen:GLFWScreen;
 
+import render;
 import :Screen;
-import :Render;
-import :RenderGLFW;
 
 namespace tire {
 
@@ -99,11 +98,11 @@ export struct GLFWScreen final : Screen {
         }
 
         void initOpenGL(GLFWwindow* window) {
-            render_ = new __glfw_gl_Render{ window };
+            render_ = new tire::__glfw_gl_Render{ window };
         }
 
         void initVulkan() {
-            render_ = new __glfw_vk_Render{};
+            render_ = new tire::__glfw_vk_Render{};
         }
 
         GLFWwindow* window_;

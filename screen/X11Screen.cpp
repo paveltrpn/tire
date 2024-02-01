@@ -10,9 +10,9 @@ module;
 
 export module screen:X11Screen;
 
+import render;
+
 import :Screen;
-import :Render;
-import :RenderX11;
 
 namespace tire {
 

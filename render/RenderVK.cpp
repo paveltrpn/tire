@@ -15,7 +15,7 @@ module;
 
 #include "GLFW/glfw3.h"
 
-export module screen:RenderVK;
+export module render:RenderVK;
 
 import :Render;
 

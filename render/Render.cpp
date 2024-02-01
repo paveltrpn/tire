@@ -3,12 +3,13 @@ module;
 
 #include <GLFW/glfw3.h>
 
-export module screen:Render;
+export module render:Render;
 
 namespace tire {
 
 export struct Render {
         Render() = default;
+
         Render(const Render& rhs) = delete;
         Render(Render&& ths) = delete;
 
@@ -20,6 +21,10 @@ export struct Render {
         virtual void displayRenderInfo() = 0;
 
         virtual void swapBuffers() = 0;
+
+    protected:
+
+        bool resizeable_;
 };
 
 }  // namespace tire
