@@ -5,6 +5,9 @@ module;
 #include <format>
 #include <print>
 
+#include "nlohmann/json.hpp"
+#include "nlohmann/json_fwd.hpp"
+
 export module screen:X11Screen;
 
 import :Screen;
@@ -14,6 +17,9 @@ import :RenderX11;
 namespace tire {
 
 export struct X11Screen final : Screen {
+        X11Screen(nlohmann::json& config) : Screen{ config } {
+        }
+
         void displayScreenInfo() override {
             std::print("X11 based screen\n"
                        "=================\n");

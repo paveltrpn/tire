@@ -4,6 +4,7 @@ module;
 #include <iostream>
 #include <format>
 #include <print>
+#include <string>
 
 #include "nlohmann/json.hpp"
 #include "nlohmann/json_fwd.hpp"
@@ -11,8 +12,6 @@ module;
 export module screen:Screen;
 
 import :Render;
-
-#include <string>
 
 namespace tire {
 
@@ -23,19 +22,17 @@ export enum class RenderType {
 };
 
 export struct Screen {
-        Screen(std::string_view name = "app",
-               bool windowed = true,
-               unsigned int width = 800,
-               unsigned int height = 600,
-               unsigned int posX = 100,
-               unsigned int posY = 100)
-            : appName_{ name },
-              windowed_{ windowed },
-              width_{ width },
-              height_{ height },
-              posX_{ posX },
-              posY_{ posY },
-              windowAspect_{ static_cast<float>(width) / static_cast<float>(height) } {};
+        Screen() = default;
+        
+        Screen(nlohmann::json& config) : config_{ config } {
+            appName_ = config["Screen"]["application_name"];
+            fullscreen_ = config["Screen"]["fullscreen"];
+            width_ = config["Screen"]["window_width"];
+            height_ = config["Screen"]["window_height"];
+            posX_ = config["Screen"]["window_pos_x"];
+            posY_ = config["Screen"]["window_pos_y"];
+            windowAspect_ = static_cast<float>(width_) / static_cast<float>(height_);
+        };
 
         Screen(const Screen& rhs) = delete;
         Screen(Screen&& ths) = delete;
@@ -89,11 +86,13 @@ export struct Screen {
         }
 
     protected:
+        nlohmann::json config_;
+
         Render* render_;
 
         std::string appName_;
 
-        bool windowed_;
+        bool fullscreen_;
 
         unsigned int width_;
         unsigned int height_;

@@ -7,6 +7,9 @@ module;
 #include <string>
 
 #include <GLFW/glfw3.h>
+#include "nlohmann/json.hpp"
+#include "nlohmann/json_fwd.hpp"
+
 
 export module screen:GLFWScreen;
 
@@ -17,7 +20,7 @@ import :RenderGLFW;
 namespace tire {
 
 export struct GLFWScreen final : Screen {
-        GLFWScreen(std::string_view name = "app") : Screen{ name } {
+        GLFWScreen(nlohmann::json& config) : Screen{ config } {
         }
 
         ~GLFWScreen() override {

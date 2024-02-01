@@ -15,6 +15,7 @@ int main(int argc, char** argv) {
    "Screen":{
       "type":"GLFW",
       "application_name":"app",
+      "fullscreen":false,
       "window_width":800,
       "window_height":600,
       "window_pos_x":100,
@@ -37,15 +38,21 @@ int main(int argc, char** argv) {
 
     nlohmann::json config = nlohmann::json::parse(configJson);
 
-    auto sc = std::make_unique<tire::GLFWScreen>("first");
+    std::unique_ptr<tire::Screen> sc;
+    auto screenType = std::string{ config["Screen"]["type"] };
+    if (screenType == "GLFW")
+        sc = std::make_unique<tire::GLFWScreen>(config);
+    else if (screenType == "X11")
+        sc = std::make_unique<tire::X11Screen>(config);
+    else
+        throw std::runtime_error("unknown render type\n");
 
     sc->setWindowPosX(500);
 
-    auto render = std::string{ config["Render"]["type"] };
-
-    if (render == "OpenGL")
+    auto renderType = std::string{ config["Render"]["type"] };
+    if (renderType == "OpenGL")
         sc->init(tire::RenderType::OPENGL);
-    else if (render == "Vulkan")
+    else if (renderType == "Vulkan")
         sc->init(tire::RenderType::VULKAN);
     else
         throw std::runtime_error("unknown render type\n");
