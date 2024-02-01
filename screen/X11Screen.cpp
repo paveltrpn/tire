@@ -30,22 +30,16 @@ export struct X11Screen final : Screen {
                 initVulkan();
                 break;
             }
-            case RenderType::SOFTWARE: {
-                initSoftware();
-                break;
-            }
             default:
                 break;
             };
         };
 
-        void run() override{};
+        void run() override {};
 
     private:
-        void initOpenGL(){};
+        void initOpenGL() {};
 
-        void initVulkan(){};
-
-        void initSoftware(){};
+        void initVulkan() {};
 };
 }  // namespace tire

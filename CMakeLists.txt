@@ -57,27 +57,12 @@ target_sources(screen
     screen/Screen.cpp
     screen/X11Screen.cpp
     screen/GLFWScreen.cpp
-    screen/SDLScreen.cpp
     screen/Render.cpp
     screen/RenderGL.cpp
     screen/RenderVK.cpp
-    screen/RenderSF.cpp
     screen/RenderGLFW.cpp
-    screen/RenderSDL.cpp
     screen/RenderX11.cpp
 )
 
-add_subdirectory(test/glfw_window)
-target_link_libraries(glfw_window screen glfw3 GL GLU GLEW vulkan)
-
-#add_subdirectory(src/004_fullhouse2)
-#target_link_libraries(004_fullhouse2 algebra libjpeg tga glfw3 GL GLU GLEW)
-
-#add_subdirectory(src/005_rocket)
-#target_link_libraries(005_rocket algebra libjpeg tga glfw3 GL GLU GLEW)
-
-#add_subdirectory(src/006_rocket_nix)
-#target_link_libraries(006_rocket_nix algebra libjpeg tga glfw3 GL GLU GLEW)
-
-#add_subdirectory(src/008_canvas)
-#target_link_libraries(008_canvas libjpeg tga)
+add_subdirectory(test/window)
+target_link_libraries(window screen glfw3 GL GLU GLEW vulkan)

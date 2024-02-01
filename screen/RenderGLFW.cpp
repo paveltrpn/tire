@@ -21,7 +21,6 @@ export module screen:RenderGLFW;
 import :Render;
 import :RenderGL;
 import :RenderVK;
-import :RenderSF;
 
 namespace tire {
 
@@ -84,10 +83,5 @@ struct __glfw_vk_Render : __vk_Render {
 
         void swapBuffers() override{};
 };
-
-// ======================================================================================
-// =============== Softaware with GLFW initialization struct. May be some day... ========
-// ======================================================================================
-export struct __glfw_sf_Render : __sf_Render {};
 
 }  // namespace tire

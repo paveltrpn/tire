@@ -60,10 +60,6 @@ export struct GLFWScreen final : Screen {
                 initVulkan();
                 break;
             }
-            case RenderType::SOFTWARE: {
-                initSoftware();
-                break;
-            }
             default:
                 break;
             };
@@ -105,10 +101,6 @@ export struct GLFWScreen final : Screen {
 
         void initVulkan() {
             render_ = new __glfw_vk_Render{};
-        }
-
-        void initSoftware() {
-            render_ = new __glfw_sf_Render{};
         }
 
         GLFWwindow* window_;
