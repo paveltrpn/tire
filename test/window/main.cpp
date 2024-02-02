@@ -25,6 +25,7 @@ int main(int argc, char** argv) {
       "window_pos_y":100
    },
    "OpnenGL":{
+      "enable_vsync":true,
       "use_maximum_context_version":true,
       "use_context_version_major":2,
       "use_context_version_minor":1,
@@ -39,20 +40,22 @@ int main(int argc, char** argv) {
 )";
 
     nlohmann::json config = nlohmann::json::parse(configJson);
+    auto screenConfig = tire::Config{config["Screen"]};
 
-    auto screenType = std::string{ config["Screen"]["screen_type"] };
+    auto screenType = screenConfig.getString("screen_type");
 
     std::unique_ptr<tire::Screen> sc;
     if (screenType == "GLFW")
-        sc = std::make_unique<tire::GLFWScreen>(config["Screen"]);
+        sc = std::make_unique<tire::GLFWScreen>(screenConfig);
     else if (screenType == "X11")
-        sc = std::make_unique<tire::X11Screen>(config["Screen"]);
+        sc = std::make_unique<tire::X11Screen>(screenConfig);
     else
         throw std::runtime_error("unknown render type\n");
 
     sc->setWindowPosX(500);
 
-    auto renderType = std::string{ config["Screen"]["render_type"] };
+    auto renderType = screenConfig.getString("render_type");
+    
     if (renderType == "OpenGL")
         sc->initRender(tire::RenderType::OPENGL, config["OpenGL"]);
     else if (renderType == "Vulkan")
