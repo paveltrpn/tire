@@ -8,18 +8,16 @@ module;
 
 #include <GLFW/glfw3.h>
 
-#include "nlohmann/json.hpp"
-#include "nlohmann/json_fwd.hpp"
-
 export module screen:GLFWScreen;
 
+import config;
 import render;
 import :Screen;
 
 namespace tire {
 
 export struct GLFWScreen final : Screen {
-        GLFWScreen(nlohmann::json& config) : Screen{ config } {
+        GLFWScreen(const tire::Config& config) : Screen{ config } {
         }
 
         ~GLFWScreen() override {
@@ -33,7 +31,7 @@ export struct GLFWScreen final : Screen {
             std::print("GLFW version: {}\n", glfwVersionString_);
         };
 
-        void init(RenderType renderType) override {
+        void initRender(RenderType renderType, const tire::Config& config) override {
             if (glfwInit() != GLFW_TRUE) {
                 throw std::runtime_error("GLFW initialization return - GLFW_FALSE!\n");
             }
@@ -50,7 +48,7 @@ export struct GLFWScreen final : Screen {
             case RenderType::OPENGL: {
                 createWindow();
 
-                initOpenGL(window_);
+                initOpenGL(window_, config);
                 break;
             }
             case RenderType::VULKAN: {
@@ -59,7 +57,7 @@ export struct GLFWScreen final : Screen {
 
                 createWindow();
 
-                initVulkan();
+                initVulkan(config);
                 break;
             }
             default:
@@ -97,12 +95,12 @@ export struct GLFWScreen final : Screen {
             };
         }
 
-        void initOpenGL(GLFWwindow* window) {
-            render_ = new tire::__glfw_gl_Render{ window };
+        void initOpenGL(GLFWwindow* window, const tire::Config& config) {
+            render_ = new tire::__glfw_gl_Render{ window, config };
         }
 
-        void initVulkan() {
-            render_ = new tire::__glfw_vk_Render{};
+        void initVulkan(const tire::Config& config) {
+            render_ = new tire::__glfw_vk_Render{config};
         }
 
         GLFWwindow* window_;

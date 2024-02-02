@@ -5,10 +5,15 @@ module;
 
 export module render:Render;
 
+import config;
+
 namespace tire {
 
 export struct Render {
         Render() = default;
+
+        Render(const tire::Config& config) : config_{ config } {
+        }
 
         Render(const Render& rhs) = delete;
         Render(Render&& ths) = delete;
@@ -23,8 +28,7 @@ export struct Render {
         virtual void swapBuffers() = 0;
 
     protected:
-
-        bool resizeable_;
+        tire::Config config_;
 };
 
 }  // namespace tire

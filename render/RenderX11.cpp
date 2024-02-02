@@ -3,6 +3,8 @@ module;
 
 export module render:RenderX11;
 
+import config;
+
 import :Render;
 import :RenderGL;
 import :RenderVK;

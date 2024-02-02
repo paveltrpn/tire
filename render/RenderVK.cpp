@@ -17,6 +17,8 @@ module;
 
 export module render:RenderVK;
 
+import config;
+
 import :Render;
 
 namespace tire {
@@ -45,8 +47,10 @@ VkResult vkCreateDebugUtilsMessenger(VkInstance instance,
 }
 
 struct __vk_Render : Render {
-        __vk_Render(std::string_view engName, std::string_view appName)
-            : applicationName_{ appName }, engineName_{ engName } {
+        __vk_Render(const tire::Config& config) : Render{ config } {
+            applicationName_ = config_.getString("application_name");
+            engineName_ = config_.getString("engine_name");
+
             appInfo_.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
             appInfo_.pApplicationName = applicationName_.data();
             appInfo_.applicationVersion = VK_MAKE_VERSION(1, 0, 0);

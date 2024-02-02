@@ -12,6 +12,7 @@ module;
 
 export module render:RenderGL;
 
+import config;
 import :Render;
 
 namespace tire {
@@ -30,7 +31,7 @@ void GLAPIENTRY MessageCallback(GLenum source,
 }
 
 struct __gl_Render : Render {
-        __gl_Render() {
+        __gl_Render(const tire::Config& config): Render{config} {
             // glEnable(GL_DEBUG_OUTPUT);
             // glDebugMessageCallback(&MessageCallback, nullptr);
         }

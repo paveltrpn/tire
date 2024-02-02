@@ -6,9 +6,7 @@ module;
 #include <print>
 #include <string>
 
-#include "nlohmann/json.hpp"
-#include "nlohmann/json_fwd.hpp"
-
+import config;
 import render;
 
 export module screen:Screen;
@@ -24,14 +22,14 @@ export enum class RenderType {
 export struct Screen {
         Screen() = default;
 
-        Screen(nlohmann::json& config) : config_{ config } {
-            appName_ = config["Screen"]["application_name"];
-            fullscreen_ = config["Screen"]["fullscreen"];
-            resizeable_ = config["Screen"]["resizeable"];
-            width_ = config["Screen"]["window_width"];
-            height_ = config["Screen"]["window_height"];
-            posX_ = config["Screen"]["window_pos_x"];
-            posY_ = config["Screen"]["window_pos_y"];
+        Screen(const tire::Config& config) : config_{ config } {
+            appName_ = config.getString("application_name");
+            fullscreen_ = config.getBool("fullscreen");
+            resizeable_ = config.getBool("resizeable");
+            width_ =  config.getInt("window_width");
+            height_ = config.getInt("window_height");
+            posX_ = config.getInt("window_pos_x");
+            posY_ = config.getInt("window_pos_y");
             windowAspect_ = static_cast<float>(width_) / static_cast<float>(height_);
         };
 
@@ -45,7 +43,7 @@ export struct Screen {
             delete render_;
         };
 
-        virtual void init(RenderType renderType) = 0;
+        virtual void initRender(RenderType renderType, const tire::Config& config) = 0;
         virtual void run() = 0;
 
         void setWindowWidth(unsigned int width) noexcept {
@@ -87,7 +85,7 @@ export struct Screen {
         }
 
     protected:
-        nlohmann::json config_;
+        tire::Config config_;
 
         Render* render_;
 

@@ -49,6 +49,13 @@ target_sources(toy_stl
     ${TOY_STL}/src/algorithm.cpp
 )
 
+add_library(config)
+target_sources(config
+  PUBLIC
+    FILE_SET CXX_MODULES FILES
+    config/Config.cpp
+)
+
 add_library(render)
 target_sources(render
   PUBLIC
@@ -60,6 +67,7 @@ target_sources(render
     render/RenderGLFW.cpp
     render/RenderX11.cpp
 )
+target_link_libraries(render config)
 
 add_library(screen)
 target_sources(screen
@@ -70,7 +78,7 @@ target_sources(screen
     screen/X11Screen.cpp
     screen/GLFWScreen.cpp
 )
-target_link_libraries(screen render)
+target_link_libraries(screen render config)
 
 add_subdirectory(test/window)
-target_link_libraries(window screen render glfw3 GL GLU GLEW vulkan)
+target_link_libraries(window config screen render glfw3 GL GLU GLEW vulkan)

@@ -5,11 +5,9 @@ module;
 #include <format>
 #include <print>
 
-#include "nlohmann/json.hpp"
-#include "nlohmann/json_fwd.hpp"
-
 export module screen:X11Screen;
 
+import config;
 import render;
 
 import :Screen;
@@ -17,7 +15,7 @@ import :Screen;
 namespace tire {
 
 export struct X11Screen final : Screen {
-        X11Screen(nlohmann::json& config) : Screen{ config } {
+        X11Screen(const tire::Config& config) : Screen{ config } {
         }
 
         void displayScreenInfo() override {
@@ -26,14 +24,14 @@ export struct X11Screen final : Screen {
             std::print("not implemented\n");
         };
 
-        void init(RenderType renderType) override {
+        void initRender(RenderType renderType, const tire::Config& config) override {
             switch (renderType) {
             case RenderType::OPENGL: {
-                initOpenGL();
+                initOpenGL(config);
                 break;
             }
             case RenderType::VULKAN: {
-                initVulkan();
+                initVulkan(config);
                 break;
             }
             default:
@@ -44,8 +42,8 @@ export struct X11Screen final : Screen {
         void run() override {};
 
     private:
-        void initOpenGL() {};
+        void initOpenGL(const tire::Config& config) {};
 
-        void initVulkan() {};
+        void initVulkan(const tire::Config& config) {};
 };
 }  // namespace tire
