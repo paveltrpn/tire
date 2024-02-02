@@ -4,8 +4,6 @@
 #include <print>
 #include <memory>
 
-#include "nlohmann/json.hpp"
-
 import screen;
 import render;
 import config;

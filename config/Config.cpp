@@ -3,6 +3,7 @@ module;
 
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <format>
 #include <print>
 #include <type_traits>
@@ -36,6 +37,15 @@ export struct Config {
                            e.what(),
                            e.id,
                            e.byte);
+            }
+        }
+
+        Config(std::string_view fname) {
+            std::ifstream file{ fname };
+            if (file) {
+                file >> config_;
+            } else {
+                throw std::runtime_error(std::format("file not found: {}\n", fname));
             }
         }
 
