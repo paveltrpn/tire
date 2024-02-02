@@ -64,8 +64,6 @@ target_sources(render
     render/Render.cpp
     render/RenderGL.cpp
     render/RenderVK.cpp
-    render/RenderGLFW.cpp
-    render/RenderX11.cpp
 )
 target_link_libraries(render config)
 

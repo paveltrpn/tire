@@ -278,4 +278,21 @@ struct __vk_Render : Render {
         std::vector<VkPhysicalDeviceProperties> physicalDevicesProperties_;
 };
 
+// ======================================================================================
+// =============== Vulkan with GLFW initialization struct ===============================
+// ======================================================================================
+export struct __glfw_vk_Render : __vk_Render {
+        __glfw_vk_Render(const tire::Config& config) : __vk_Render{ config } {};
+
+        void swapBuffers() override {};
+};
+
+// ======================================================================================
+// =============== Vulkan with X11 initialization struct ===============================
+// ======================================================================================
+struct __x11_vk_Render : __vk_Render {
+        void displayRenderInfo() override {};
+        void swapBuffers() override {};
+};
+
 }  // namespace tire
