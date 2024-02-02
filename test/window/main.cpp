@@ -17,6 +17,7 @@ int main(int argc, char** argv) {
       "application_name":"app",
       "fullscreen":false,
       "resizeable":false,
+      "doublebuffer":true,
       "window_width":800,
       "window_height":600,
       "window_pos_x":100,

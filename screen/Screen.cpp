@@ -26,6 +26,7 @@ export struct Screen {
             appName_ = config.getString("application_name");
             fullscreen_ = config.getBool("fullscreen");
             resizeable_ = config.getBool("resizeable");
+            doublebuffer_ = config_.get<bool>("resizeable");
             width_ = config.getInt("window_width");
             height_ = config.getInt("window_height");
             posX_ = config.getInt("window_pos_x");
@@ -109,8 +110,8 @@ export struct Screen {
         std::string appName_;
 
         bool fullscreen_;
-
         bool resizeable_;
+        bool doublebuffer_;
 
         unsigned int width_;
         unsigned int height_;
