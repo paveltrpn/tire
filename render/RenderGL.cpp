@@ -75,12 +75,12 @@ export struct __glfw_gl_Render : __gl_Render {
             glGetIntegerv(GLFW_CONTEXT_VERSION_MAJOR, &ctxtVersionMajorMax_);
             glGetIntegerv(GLFW_CONTEXT_VERSION_MINOR, &ctxtVersionMinorMax_);
 
-            if (config_.getBool("use_maximum_context_version")) {
+            if (config_.get<bool>("use_maximum_context_version")) {
                 ctxtVersionMajorUsed_ = ctxtVersionMajorMax_;
                 ctxtVersionMinorUsed_ = ctxtVersionMinorMax_;
             } else {
-                ctxtVersionMajorUsed_ = config_.getInt("use_context_version_major");
-                ctxtVersionMinorUsed_ = config_.getInt("use_context_version_minor");
+                ctxtVersionMajorUsed_ = config_.get<int>("use_context_version_major");
+                ctxtVersionMinorUsed_ = config_.get<int>("use_context_version_minor");
             }
 
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, ctxtVersionMajorUsed_);
@@ -98,7 +98,7 @@ export struct __glfw_gl_Render : __gl_Render {
             }
 
             // vsync off
-            if (config_.getBool("enable_vsync")) {
+            if (config_.get<bool>("enable_vsync")) {
                 glfwSwapInterval(1);
             } else {
                 glfwSwapInterval(0);
@@ -110,7 +110,9 @@ export struct __glfw_gl_Render : __gl_Render {
             glslVersion_ = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
         };
 
-        void swapBuffers() override {
+        void preFrame() override {};
+
+        void postFrame() override {
             glfwSwapBuffers(window_);
         };
 
@@ -122,8 +124,11 @@ export struct __glfw_gl_Render : __gl_Render {
 // =============== OpenGL with X11 initialization struct ===============================
 // ======================================================================================
 struct __x11_gl_Render : __gl_Render {
+        __x11_gl_Render(const tire::Config& config) : __gl_Render(config){};
+
         void displayRenderInfo() override {};
-        void swapBuffers() override {};
+        void preFrame() override {};
+        void postFrame() override {};
 };
 
 }  // namespace tire

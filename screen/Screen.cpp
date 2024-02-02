@@ -39,12 +39,7 @@ export struct Screen {
         Screen& operator=(const Screen& rhs) = delete;
         Screen& operator=(Screen&& rhs) = delete;
 
-        virtual ~Screen() {
-            delete render_;
-        };
-
-        virtual void initRender(RenderType renderType, const tire::Config& config) = 0;
-        virtual void run() = 0;
+        virtual ~Screen() = default;
 
         void setWindowWidth(unsigned int width) noexcept {
             width_ = width;
@@ -80,15 +75,36 @@ export struct Screen {
 
         [[nodiscard]]
         Render* getRenderPtr() const {
-            return render_;
+            return render_.get();
         }
 
         virtual void displayScreenInfo() = 0;
 
+        virtual void initRender(RenderType renderType, const tire::Config& config) = 0;
+
+        void run() {
+            while (run_) {
+                preFrame();
+                render_->preFrame();
+
+                render_->postFrame();
+                postFrame();
+
+                run_ = isRun();
+            }
+        };
+
+    private:
+        bool run_{ true };
+
     protected:
+        virtual bool isRun() = 0;
+        virtual void preFrame() = 0;
+        virtual void postFrame() = 0;
+
         tire::Config config_;
 
-        Render* render_;
+        std::unique_ptr<Render> render_;
 
         std::string appName_;
 

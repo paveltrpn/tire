@@ -39,7 +39,15 @@ export struct X11Screen final : Screen {
             };
         };
 
-        void run() override {};
+        bool isRun() override {
+            return false;
+        }
+
+        void preFrame() override {
+        }
+
+        void postFrame() override {
+        }
 
     private:
         void initOpenGL(const tire::Config& config) {};

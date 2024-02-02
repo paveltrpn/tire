@@ -79,11 +79,15 @@ export struct GLFWScreen final : Screen {
             glfwSetKeyCallback(window_, keyCallback);
         };
 
-        void run() override {
-            while (!glfwWindowShouldClose(window_)) {
-                render_->swapBuffers();
-                glfwPollEvents();
-            }
+        bool isRun() override {
+            return !glfwWindowShouldClose(window_);
+        }
+
+        void preFrame() override {
+            glfwPollEvents();
+        }
+
+        void postFrame() override {
         }
 
     private:
@@ -96,11 +100,11 @@ export struct GLFWScreen final : Screen {
         }
 
         void initOpenGL(GLFWwindow* window, const tire::Config& config) {
-            render_ = new tire::__glfw_gl_Render{ window, config };
+            render_ = std::make_unique<tire::__glfw_gl_Render>(window, config);
         }
 
         void initVulkan(const tire::Config& config) {
-            render_ = new tire::__glfw_vk_Render{config};
+            render_ = std::make_unique<tire::__glfw_vk_Render>(config);
         }
 
         GLFWwindow* window_;

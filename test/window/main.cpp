@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
 {
    "Screen":{
       "screen_type":"GLFW",
-      "render_type":"Vulkan",
+      "render_type":"OpenGL",
       "application_name":"app",
       "fullscreen":false,
       "resizeable":false,
@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
       "window_pos_x":100,
       "window_pos_y":100
    },
-   "OpnenGL":{
+   "OpenGL":{
       "enable_vsync":true,
       "use_maximum_context_version":true,
       "use_context_version_major":2,

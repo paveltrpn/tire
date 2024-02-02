@@ -1,9 +1,2 @@
-*.o
-*.dll
-imgui.ini
-main
-main.exe
-/extern/*
-!/extern/.gitkeep
-!/extern/README.md
 build/
+.vscode/
