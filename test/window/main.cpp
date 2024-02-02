@@ -40,33 +40,35 @@ int main(int argc, char** argv) {
 )";
 
     nlohmann::json config = nlohmann::json::parse(configJson);
-    auto screenConfig = tire::Config{config["Screen"]};
+    auto screenConfig = tire::Config{ config["Screen"] };
 
     auto screenType = screenConfig.getString("screen_type");
 
-    std::unique_ptr<tire::Screen> sc;
+    std::unique_ptr<tire::Screen> scrn;
     if (screenType == "GLFW")
-        sc = std::make_unique<tire::GLFWScreen>(screenConfig);
+        scrn = std::make_unique<tire::GLFWScreen>(screenConfig);
     else if (screenType == "X11")
-        sc = std::make_unique<tire::X11Screen>(screenConfig);
+        scrn = std::make_unique<tire::X11Screen>(screenConfig);
     else
         throw std::runtime_error("unknown render type\n");
 
-    sc->setWindowPosX(500);
+    scrn->setWindowPosX(500);
 
     auto renderType = screenConfig.getString("render_type");
-    
+
     if (renderType == "OpenGL")
-        sc->initRender(tire::RenderType::OPENGL, config["OpenGL"]);
+        scrn->initRender(tire::RenderType::OPENGL, config["OpenGL"]);
     else if (renderType == "Vulkan")
-        sc->initRender(tire::RenderType::VULKAN, config["Vulkan"]);
+        scrn->initRender(tire::RenderType::VULKAN, config["Vulkan"]);
     else
         throw std::runtime_error("unknown render type\n");
 
-    sc->displayScreenInfo();
-    sc->displayRenderInfo();
+    auto rndr = scrn->getRenderPtr();
 
-    sc->run();
+    scrn->displayScreenInfo();
+    rndr->displayRenderInfo();
+
+    scrn->run();
 
     return 0;
 }

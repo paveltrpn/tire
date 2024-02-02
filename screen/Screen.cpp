@@ -26,7 +26,7 @@ export struct Screen {
             appName_ = config.getString("application_name");
             fullscreen_ = config.getBool("fullscreen");
             resizeable_ = config.getBool("resizeable");
-            width_ =  config.getInt("window_width");
+            width_ = config.getInt("window_width");
             height_ = config.getInt("window_height");
             posX_ = config.getInt("window_pos_x");
             posY_ = config.getInt("window_pos_y");
@@ -78,11 +78,12 @@ export struct Screen {
             return posY_;
         }
 
-        virtual void displayScreenInfo() = 0;
-
-        virtual void displayRenderInfo() {
-            render_->displayRenderInfo();
+        [[nodiscard]]
+        Render* getRenderPtr() const {
+            return render_;
         }
+
+        virtual void displayScreenInfo() = 0;
 
     protected:
         tire::Config config_;
