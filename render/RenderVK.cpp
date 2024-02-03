@@ -50,6 +50,7 @@ struct __vk_Render : Render {
         __vk_Render(const tire::Config& config) : Render{ config } {
             applicationName_ = config_.getString("application_name");
             engineName_ = config_.getString("engine_name");
+            enableValidationLayers_ = config_.get<bool>("enable_validation_layers");
 
             appInfo_.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
             appInfo_.pApplicationName = applicationName_.data();
@@ -68,6 +69,10 @@ struct __vk_Render : Render {
             dbgCreateInfo_.pfnUserCallback = debugCallback;
             dbgCreateInfo_.pUserData = nullptr;  // Optional
 
+            queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+            // queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+            queueCreateInfo.queueCount = 1;
+
             createInstance();
             enumeratePhysicalDevices();
         };
@@ -79,7 +84,12 @@ struct __vk_Render : Render {
         void displayRenderInfo() override {
             displayExtensionProperties();
             displayValidationLayerProperties();
-            displayPhysicalDeviceProperties();
+
+            for (size_t i = 0; i < physicalDevices_.size(); ++i) {
+                displayPhysicalDeviceProperties(i);
+                displayPhysicalDeviceFeatures(i);
+                displayPhysicalDeviceFamiliesProperties(i);
+            }
         }
 
     protected:
@@ -176,7 +186,7 @@ struct __vk_Render : Render {
             }
         }
 
-        void createInstance(bool enableValidationLayers = true) {
+        void createInstance() {
             instanceCreateInfo_.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
             instanceCreateInfo_.pApplicationInfo = &appInfo_;
 
@@ -194,15 +204,13 @@ struct __vk_Render : Render {
 
             auto layers = makeValidationLayersList(vllist);
 
-            if (enableValidationLayers) {
+            if (enableValidationLayers_) {
                 instanceCreateInfo_.enabledLayerCount = static_cast<uint32_t>(layers.size());
                 instanceCreateInfo_.ppEnabledLayerNames = layers.data();
                 instanceCreateInfo_.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&dbgCreateInfo_;
             }
 
-            //
             // extensions
-            //
             std::vector<std::string> eplist{
                 "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_EXT_debug_report", "VK_EXT_debug_utils"
             };
@@ -212,9 +220,7 @@ struct __vk_Render : Render {
             instanceCreateInfo_.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
             instanceCreateInfo_.ppEnabledExtensionNames = extensions.data();
 
-            //
             // instance creation
-            //
             auto res = vkCreateInstance(&instanceCreateInfo_, nullptr, &instance_);
 
             if (res != VK_SUCCESS) {
@@ -222,7 +228,7 @@ struct __vk_Render : Render {
                   std::format("can't create vk instance with code: {}\n", static_cast<int>(res)));
             }
 
-            if (enableValidationLayers) {
+            if (enableValidationLayers_) {
                 if (vkCreateDebugUtilsMessenger(
                       instance_, &dbgCreateInfo_, nullptr, &debugMessenger_)
                     != VK_SUCCESS) {
@@ -232,7 +238,7 @@ struct __vk_Render : Render {
         }
 
         void enumeratePhysicalDevices() {
-            uint32_t devCount = 0;
+            uint32_t devCount{};
 
             vkEnumeratePhysicalDevices(instance_, &devCount, nullptr);
             if (devCount == 0) {
@@ -243,27 +249,180 @@ struct __vk_Render : Render {
 
             vkEnumeratePhysicalDevices(instance_, &devCount, physicalDevices_.data());
 
-            for (auto& d : physicalDevices_) {
+            for (auto& device : physicalDevices_) {
                 VkPhysicalDeviceProperties devProps;
-                vkGetPhysicalDeviceProperties(d, &devProps);
+                VkPhysicalDeviceFeatures devFeatures;
+
+                // physical device properties
+                vkGetPhysicalDeviceProperties(device, &devProps);
                 physicalDevicesProperties_.push_back(devProps);
+
+                // physical device features
+                vkGetPhysicalDeviceFeatures(device, &devFeatures);
+                physicalDevicesFeatures_.push_back(devFeatures);
+
+                // physical device queue families properies
+                uint32_t queueFamilyCount{};
+
+                vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+                queueFamilyProperties_.resize(size_t(queueFamilyCount));
+                vkGetPhysicalDeviceQueueFamilyProperties(
+                  device, &queueFamilyCount, queueFamilyProperties_.data());
             }
         }
 
-        void displayPhysicalDeviceProperties() {
-            std::print("physical devices:\n"
+        bool isDeviceSuitable(size_t id) {
+            return physicalDevicesProperties_[id].deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+                   && physicalDevicesFeatures_[id].geometryShader;
+        }
+
+        void displayPhysicalDeviceProperties(size_t id) {
+            std::print("physical device properties:\n"
                        "================\n");
-            for (auto& d : physicalDevicesProperties_) {
-                std::print("\tname: {}\n\tid: {}\n\tvendor id: {}\n\tapi: {}\n",
-                           d.deviceName,
-                           d.deviceID,
-                           d.vendorID,
-                           d.apiVersion);
-            }
+
+            auto& d = physicalDevicesProperties_[id];
+            std::print("\tname: {}\n\tid: {}\n\tvendor id: {}\n\tapi: {}\n",
+                       d.deviceName,
+                       d.deviceID,
+                       d.vendorID,
+                       d.apiVersion);
+        }
+
+        void displayPhysicalDeviceFeatures(size_t id) {
+            std::print("physical device features:\n"
+                       "================\n");
+
+            auto& d = physicalDevicesFeatures_[id];
+            std::print("\trobustBufferAccess:\t{}\n"
+                       "\tfullDrawIndexUint32:\t{}\n"
+                       "\timageCubeArray:\t{}\n"
+                       "\tindependentBlend:\t{}\n"
+                       "\tgeometryShader:\t{}\n"
+                       "\ttessellationShader:\t{}\n"
+                       "\tsampleRateShading:\t{}\n"
+                       "\tdualSrcBlend:\t{}\n"
+                       "\tlogicOp:\t{}\n"
+                       "\tmultiDrawIndirect:\t{}\n"
+                       "\tdrawIndirectFirstInstance:\t{}\n"
+                       "\tdepthClamp:\t{}\n"
+                       "\tdepthBiasClamp:\t{}\n"
+                       "\tfillModeNonSolid:\t{}\n"
+                       "\tdepthBounds:\t{}\n"
+                       "\twideLines:\t{}\n"
+                       "\tlargePoints:\t{}\n"
+                       "\talphaToOne:\t{}\n"
+                       "\tmultiViewport:\t{}\n"
+                       "\tsamplerAnisotropy:\t{}\n"
+                       "\ttextureCompressionETC2:\t{}\n"
+                       "\ttextureCompressionASTC_LDR:\t{}\n"
+                       "\ttextureCompressionBC:\t{}\n"
+                       "\tocclusionQueryPrecise:\t{}\n"
+                       "\tpipelineStatisticsQuery:\t{}\n"
+                       "\tvertexPipelineStoresAndAtomics:\t{}\n"
+                       "\tfragmentStoresAndAtomics:\t{}\n"
+                       "\tshaderTessellationAndGeometryPointSize:\t{}\n"
+                       "\tshaderImageGatherExtended:\t{}\n"
+                       "\tshaderStorageImageExtendedFormats:\t{}\n"
+                       "\tshaderStorageImageMultisample:\t{}\n"
+                       "\tshaderStorageImageReadWithoutFormat:\t{}\n"
+                       "\tshaderStorageImageWriteWithoutFormat:\t{}\n"
+                       "\tshaderUniformBufferArrayDynamicIndexing:\t{}\n"
+                       "\tshaderSampledImageArrayDynamicIndexing:\t{}\n"
+                       "\tshaderStorageBufferArrayDynamicIndexing:\t{}\n"
+                       "\tshaderStorageImageArrayDynamicIndexing:\t{}\n"
+                       "\tshaderClipDistance:\t{}\n"
+                       "\tshaderCullDistance:\t{}\n"
+                       "\tshaderFloat64:\t{}\n"
+                       "\tshaderInt64:\t{}\n"
+                       "\tshaderInt16:\t{}\n"
+                       "\tshaderResourceResidency:\t{}\n"
+                       "\tshaderResourceMinLod:\t{}\n"
+                       "\tsparseBinding:\t{}\n"
+                       "\tsparseResidencyBuffer:\t{}\n"
+                       "\tsparseResidencyImage2D:\t{}\n"
+                       "\tsparseResidencyImage3D:\t{}\n"
+                       "\tsparseResidency2Samples:\t{}\n"
+                       "\tsparseResidency4Samples:\t{}\n"
+                       "\tsparseResidency8Samples:\t{}\n"
+                       "\tsparseResidency16Samples:\t{}\n"
+                       "\tsparseResidencyAliased:\t{}\n"
+                       "\tvariableMultisampleRate:\t{}\n"
+                       "\tinheritedQueries:\t{}\n",
+                       d.robustBufferAccess,
+                       d.fullDrawIndexUint32,
+                       d.imageCubeArray,
+                       d.independentBlend,
+                       d.geometryShader,
+                       d.tessellationShader,
+                       d.sampleRateShading,
+                       d.dualSrcBlend,
+                       d.logicOp,
+                       d.multiDrawIndirect,
+                       d.drawIndirectFirstInstance,
+                       d.depthClamp,
+                       d.depthBiasClamp,
+                       d.fillModeNonSolid,
+                       d.depthBounds,
+                       d.wideLines,
+                       d.largePoints,
+                       d.alphaToOne,
+                       d.multiViewport,
+                       d.samplerAnisotropy,
+                       d.textureCompressionETC2,
+                       d.textureCompressionASTC_LDR,
+                       d.textureCompressionBC,
+                       d.occlusionQueryPrecise,
+                       d.pipelineStatisticsQuery,
+                       d.vertexPipelineStoresAndAtomics,
+                       d.fragmentStoresAndAtomics,
+                       d.shaderTessellationAndGeometryPointSize,
+                       d.shaderImageGatherExtended,
+                       d.shaderStorageImageExtendedFormats,
+                       d.shaderStorageImageMultisample,
+                       d.shaderStorageImageReadWithoutFormat,
+                       d.shaderStorageImageWriteWithoutFormat,
+                       d.shaderUniformBufferArrayDynamicIndexing,
+                       d.shaderSampledImageArrayDynamicIndexing,
+                       d.shaderStorageBufferArrayDynamicIndexing,
+                       d.shaderStorageImageArrayDynamicIndexing,
+                       d.shaderClipDistance,
+                       d.shaderCullDistance,
+                       d.shaderFloat64,
+                       d.shaderInt64,
+                       d.shaderInt16,
+                       d.shaderResourceResidency,
+                       d.shaderResourceMinLod,
+                       d.sparseBinding,
+                       d.sparseResidencyBuffer,
+                       d.sparseResidencyImage2D,
+                       d.sparseResidencyImage3D,
+                       d.sparseResidency2Samples,
+                       d.sparseResidency4Samples,
+                       d.sparseResidency8Samples,
+                       d.sparseResidency16Samples,
+                       d.sparseResidencyAliased,
+                       d.variableMultisampleRate,
+                       d.inheritedQueries);
+        }
+
+        void displayPhysicalDeviceFamiliesProperties(size_t id) {
+            std::print("physical device families properties:\n"
+                       "================\n");
+
+            auto& d = queueFamilyProperties_[id];
+            std::print("\tqueueFlags:\t{}\n"
+                       "\tqueueCount:\t{}\n"
+                       "\ttimestampValidBits:\t{}\n"
+                       "\tminImageTransferGranularity: not printed\n",
+                       d.queueFlags,
+                       d.queueCount,
+                       d.timestampValidBits);
         }
 
         std::string applicationName_;
         std::string engineName_;
+
+        bool enableValidationLayers_{};
 
         // all vk structures must be zero initialized
         VkInstance instance_{};
@@ -272,10 +431,17 @@ struct __vk_Render : Render {
         VkDebugUtilsMessengerEXT debugMessenger_{};
         VkDebugUtilsMessengerCreateInfoEXT dbgCreateInfo_{};
 
+        VkDeviceQueueCreateInfo queueCreateInfo{};
+
+        // extensions and layers for instance creation
         std::vector<VkExtensionProperties> extensionProperties_;
         std::vector<VkLayerProperties> layerProperties_;
+
+        // physical devices, properties, features and families
         std::vector<VkPhysicalDevice> physicalDevices_;
         std::vector<VkPhysicalDeviceProperties> physicalDevicesProperties_;
+        std::vector<VkPhysicalDeviceFeatures> physicalDevicesFeatures_;
+        std::vector<VkQueueFamilyProperties> queueFamilyProperties_;
 };
 
 // ======================================================================================
@@ -290,7 +456,6 @@ export struct __glfw_vk_Render : __vk_Render {
             }
         };
 
-        void displayRenderInfo() override {};
         void preFrame() override {};
         void postFrame() override {};
 };

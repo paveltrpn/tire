@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
       "render_type":"Vulkan",
       "application_name":"app",
       "fullscreen":false,
-      "resizeable":false,
+      "resizeable":true,
       "window_width":800,
       "window_height":600,
       "window_pos_x":100,
@@ -31,8 +31,9 @@ int main(int argc, char** argv) {
       "enable_debug":true,
       "application_name":"vk-app",
       "engine_name":"vk-eng",
-      "enable_validation_layers":true
-   }
+      "enable_validation_layers":false
+   },
+   "Input":{}
 }
 )";
 
