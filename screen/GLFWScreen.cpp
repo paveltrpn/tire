@@ -58,8 +58,6 @@ export struct GLFWScreen final : Screen {
                 break;
             }
             case RenderType::VULKAN: {
-                glfwWindowHint(GLFW_DOUBLEBUFFER, GL_FALSE);
-                glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
                 glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
                 createWindow();
@@ -71,12 +69,6 @@ export struct GLFWScreen final : Screen {
                 break;
             };
 
-            if (doublebuffer_) {
-                glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
-            } else {
-                glfwWindowHint(GLFW_DOUBLEBUFFER, GL_FALSE);
-            }
-            
             glfwSetWindowPos(window_, posX_, posY_);
 
             auto keyCallback = [](GLFWwindow* window, int key, int scancode, int action, int mods) {

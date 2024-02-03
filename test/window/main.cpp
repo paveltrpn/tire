@@ -13,24 +13,22 @@ int main(int argc, char** argv) {
 {
    "Screen":{
       "screen_type":"GLFW",
-      "render_type":"OpenGL",
+      "render_type":"Vulkan",
       "application_name":"app",
       "fullscreen":false,
       "resizeable":false,
-      "doublebuffer":true,
       "window_width":800,
       "window_height":600,
       "window_pos_x":100,
       "window_pos_y":100
    },
-   "OpenGL":{
+   "Render":{
+      "doublebuffer":true,
       "enable_vsync":true,
       "use_maximum_context_version":true,
       "use_context_version_major":2,
       "use_context_version_minor":1,
-      "enable_debug":true
-   },
-   "Vulkan":{
+      "enable_debug":true,
       "application_name":"vk-app",
       "engine_name":"vk-eng",
       "enable_validation_layers":true
@@ -41,6 +39,7 @@ int main(int argc, char** argv) {
     tire::Config config{ configJson };
 
     auto screenConfig = tire::Config{ config.get<tire::json>("Screen") };
+    auto renderConfig = tire::Config{ config.get<tire::json>("Render") };
 
     auto screenType = screenConfig.get<std::string>("screen_type");
 
@@ -57,9 +56,9 @@ int main(int argc, char** argv) {
     auto renderType = screenConfig.getString("render_type");
 
     if (renderType == "OpenGL")
-        scrn->initRender(tire::RenderType::OPENGL, config.get<tire::json>("OpenGL"));
+        scrn->initRender(tire::RenderType::OPENGL, renderConfig);
     else if (renderType == "Vulkan")
-        scrn->initRender(tire::RenderType::VULKAN, config.get<tire::json>("Vulkan"));
+        scrn->initRender(tire::RenderType::VULKAN, renderConfig);
     else
         throw std::runtime_error("unknown render type\n");
 

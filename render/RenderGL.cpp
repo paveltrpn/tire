@@ -85,7 +85,13 @@ export struct __glfw_gl_Render : __gl_Render {
 
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, ctxtVersionMajorUsed_);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, ctxtVersionMinorUsed_);
-
+            
+            if (doublebuffer_) {
+                glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
+            } else {
+                glfwWindowHint(GLFW_DOUBLEBUFFER, GL_FALSE);
+            }
+            
             glfwMakeContextCurrent(window_);
 
             glewExperimental = GL_TRUE;

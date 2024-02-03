@@ -282,7 +282,13 @@ struct __vk_Render : Render {
 // =============== Vulkan with GLFW initialization struct ===============================
 // ======================================================================================
 export struct __glfw_vk_Render : __vk_Render {
-        __glfw_vk_Render(const tire::Config& config) : __vk_Render{ config } {};
+        __glfw_vk_Render(const tire::Config& config) : __vk_Render{ config } {
+            if (doublebuffer_) {
+                glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
+            } else {
+                glfwWindowHint(GLFW_DOUBLEBUFFER, GL_FALSE);
+            }
+        };
 
         void displayRenderInfo() override {};
         void preFrame() override {};

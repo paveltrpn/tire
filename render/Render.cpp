@@ -13,6 +13,7 @@ export struct Render {
         Render() = default;
 
         Render(const tire::Config& config) : config_{ config } {
+            doublebuffer_ = config_.get<bool>("doublebuffer");
         }
 
         Render(const Render& rhs) = delete;
@@ -30,6 +31,8 @@ export struct Render {
 
     protected:
         tire::Config config_;
+
+        bool doublebuffer_;
 };
 
 }  // namespace tire
