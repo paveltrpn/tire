@@ -77,7 +77,15 @@ target_sources(screen
     screen/X11Screen.cpp
     screen/GLFWScreen.cpp
 )
-target_link_libraries(screen render config)
+
+add_library(geometry)
+target_sources(geometry
+  PUBLIC
+    FILE_SET CXX_MODULES FILES
+    geometry/Polytope.cpp
+)
+
+target_link_libraries(screen render config geometry)
 
 add_subdirectory(test/window)
-target_link_libraries(window config screen render glfw3 GL GLU GLEW vulkan)
+target_link_libraries(window config screen render geometry glfw3 GL GLU GLEW vulkan)
