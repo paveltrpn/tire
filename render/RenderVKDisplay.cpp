@@ -35,7 +35,11 @@ void __vk_Render::displayPhysicalDeviceProperties(size_t id) {
                "================\n");
 
     auto& d = physicalDevicesProperties_[id];
-    std::print("\tname: {}\n\tid: {}\n\tvendor id: {}\n\tapi: {}\n",
+    std::print("\tdeviceName:\t{}\n"
+               "\tdeviceID:\t{}\n"
+               "\tvendorID:\t{}\n"
+               "\tapiVersion:\t{}\n"
+               "\tdeviceType: not printed\n",
                d.deviceName,
                d.deviceID,
                d.vendorID,

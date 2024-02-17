@@ -52,32 +52,13 @@ struct __vk_Render : Render {
             engineName_ = config_.getString("engine_name");
             enableValidationLayers_ = config_.get<bool>("enable_validation_layers");
 
-            appInfo_.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-            appInfo_.pApplicationName = applicationName_.data();
-            appInfo_.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-            appInfo_.pEngineName = engineName_.data();
-            appInfo_.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-            appInfo_.apiVersion = VK_API_VERSION_1_0;
-
-            dbgCreateInfo_.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-            dbgCreateInfo_.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT
-                                             | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT
-                                             | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-            dbgCreateInfo_.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
-                                         | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT
-                                         | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-            dbgCreateInfo_.pfnUserCallback = debugCallback;
-            dbgCreateInfo_.pUserData = nullptr;  // Optional
-
-            queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-            // queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
-            queueCreateInfo.queueCount = 1;
-
             createInstance();
-            enumeratePhysicalDevices();
+            initPhysicalDevices();
+            createDevice();
         };
 
         ~__vk_Render() override {
+            vkDestroyDevice(device_, nullptr);
             vkDestroyInstance(instance_, nullptr);
         };
 
@@ -129,7 +110,7 @@ struct __vk_Render : Render {
         }
 
         void displayExtensionProperties();
-        
+
         void enumerateValidationLayers() {
             uint32_t layerCount;
 
@@ -170,12 +151,30 @@ struct __vk_Render : Render {
         void displayValidationLayerProperties();
 
         void createInstance() {
+            // VkApplicationInfo
+            appInfo_.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+            appInfo_.pApplicationName = applicationName_.data();
+            appInfo_.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+            appInfo_.pEngineName = engineName_.data();
+            appInfo_.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+            appInfo_.apiVersion = VK_API_VERSION_1_0;
+
+            // VkDebugCreateInfo
+            dbgCreateInfo_.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+            dbgCreateInfo_.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT
+                                             | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT
+                                             | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+            dbgCreateInfo_.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
+                                         | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT
+                                         | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+            dbgCreateInfo_.pfnUserCallback = debugCallback;
+            dbgCreateInfo_.pUserData = nullptr;  // Optional
+
+            // VkInstanceCreateInfo
             instanceCreateInfo_.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
             instanceCreateInfo_.pApplicationInfo = &appInfo_;
 
-            //
             // validation layers
-            //
             std::vector<std::string> vllist{ "VK_LAYER_INTEL_nullhw",
                                              "VK_LAYER_MESA_device_select",
                                              "VK_LAYER_MESA_overlay",
@@ -185,11 +184,12 @@ struct __vk_Render : Render {
                                              //"VK_LAYER_VALVE_steam_overlay_32",
                                              "VK_LAYER_VALVE_steam_overlay_64" };
 
-            auto layers = makeValidationLayersList(vllist);
+            validationLayersNames_ = makeValidationLayersList(vllist);
 
             if (enableValidationLayers_) {
-                instanceCreateInfo_.enabledLayerCount = static_cast<uint32_t>(layers.size());
-                instanceCreateInfo_.ppEnabledLayerNames = layers.data();
+                instanceCreateInfo_.enabledLayerCount
+                  = static_cast<uint32_t>(validationLayersNames_.size());
+                instanceCreateInfo_.ppEnabledLayerNames = validationLayersNames_.data();
                 instanceCreateInfo_.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&dbgCreateInfo_;
             }
 
@@ -198,10 +198,11 @@ struct __vk_Render : Render {
                 "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_EXT_debug_report", "VK_EXT_debug_utils"
             };
 
-            auto extensions = makeExtensionsList(std::nullopt);
+            extensionsNames_ = makeExtensionsList(std::nullopt);
 
-            instanceCreateInfo_.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
-            instanceCreateInfo_.ppEnabledExtensionNames = extensions.data();
+            instanceCreateInfo_.enabledExtensionCount
+              = static_cast<uint32_t>(extensionsNames_.size());
+            instanceCreateInfo_.ppEnabledExtensionNames = extensionsNames_.data();
 
             // instance creation
             auto res = vkCreateInstance(&instanceCreateInfo_, nullptr, &instance_);
@@ -220,7 +221,7 @@ struct __vk_Render : Render {
             }
         }
 
-        void enumeratePhysicalDevices() {
+        void initPhysicalDevices() {
             uint32_t devCount{};
 
             vkEnumeratePhysicalDevices(instance_, &devCount, nullptr);
@@ -254,6 +255,34 @@ struct __vk_Render : Render {
             }
         }
 
+        void createDevice() {
+            queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+            // queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+            queueCreateInfo.queueCount = 1;
+
+            deviceCreateInfo_.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+            deviceCreateInfo_.pQueueCreateInfos = &queueCreateInfo;
+            deviceCreateInfo_.queueCreateInfoCount = 1;
+            deviceCreateInfo_.pEnabledFeatures = &physicalDevicesFeatures_[0];
+
+            // deviceCreateInfo_.enabledExtensionCount
+            //   = static_cast<uint32_t>(extensionsNames_.size());
+            // deviceCreateInfo_.ppEnabledExtensionNames = extensionsNames_.data();
+
+            if (enableValidationLayers_) {
+                deviceCreateInfo_.enabledLayerCount
+                  = static_cast<uint32_t>(validationLayersNames_.size());
+                deviceCreateInfo_.ppEnabledLayerNames = validationLayersNames_.data();
+            } else {
+                deviceCreateInfo_.enabledLayerCount = 0;
+            }
+
+            if (vkCreateDevice(physicalDevices_[0], &deviceCreateInfo_, nullptr, &device_)
+                != VK_SUCCESS) {
+                throw std::runtime_error("failed to create logical device!");
+            }
+        }
+
         bool isDeviceSuitable(size_t id) {
             return physicalDevicesProperties_[id].deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
                    && physicalDevicesFeatures_[id].geometryShader;
@@ -270,6 +299,8 @@ struct __vk_Render : Render {
 
         // all vk structures must be zero initialized
         VkInstance instance_{};
+        VkDevice device_{};
+
         VkApplicationInfo appInfo_{};
         VkInstanceCreateInfo instanceCreateInfo_{};
         VkDebugUtilsMessengerEXT debugMessenger_{};
@@ -277,9 +308,13 @@ struct __vk_Render : Render {
 
         VkDeviceQueueCreateInfo queueCreateInfo{};
 
+        VkDeviceCreateInfo deviceCreateInfo_{};
+
         // extensions and layers for instance creation
         std::vector<VkExtensionProperties> extensionProperties_;
         std::vector<VkLayerProperties> layerProperties_;
+        std::vector<char*> validationLayersNames_;
+        std::vector<char*> extensionsNames_;
 
         // physical devices, properties, features and families
         std::vector<VkPhysicalDevice> physicalDevices_;
