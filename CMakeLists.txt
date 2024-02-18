@@ -29,9 +29,9 @@ link_directories("${EXTERN_LIBS}/glew/lib")
 
 include_directories("${EXTERN_LIBS}/json/include")
 
-set(TOY_STL "toy-stl")
-add_library(toy_stl)
-target_sources(toy_stl
+set(TOY_STD "toy_std")
+add_library(toy_std)
+target_sources(toy_std
   PUBLIC
     FILE_SET CXX_MODULES FILES
     ${TOY_STL}/src/concepts.cpp
@@ -85,7 +85,8 @@ target_sources(geometry
     geometry/Polytope.cpp
 )
 
-target_link_libraries(screen render config geometry)
+target_link_libraries(screen render config)
+target_link_libraries(geometry toy_std)
 
 add_subdirectory(test/window)
 target_link_libraries(window config screen render geometry glfw3 GL GLU GLEW vulkan)
