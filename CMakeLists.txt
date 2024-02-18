@@ -81,6 +81,8 @@ add_library(geometry)
 target_sources(geometry
   PUBLIC
     FILE_SET CXX_MODULES FILES
+    geometry/IGeometry.cpp
+    geometry/Basics.cpp
     geometry/Polytope.cpp
 )
 

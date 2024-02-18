@@ -5,7 +5,7 @@ module;
 #include <string>
 #include <vector>
 
-export module geometry;
+export module geometry:Polythope;
 
 import toy_std;
 
