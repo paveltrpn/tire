@@ -29,24 +29,23 @@ link_directories("${EXTERN_LIBS}/glew/lib")
 
 include_directories("${EXTERN_LIBS}/json/include")
 
-set(TOY_STD "toy_std")
 add_library(toy_std)
 target_sources(toy_std
   PUBLIC
     FILE_SET CXX_MODULES FILES
-    ${TOY_STL}/src/concepts.cpp
-    ${TOY_STL}/src/array.cpp
-    ${TOY_STL}/src/raw_list.cpp
-    ${TOY_STL}/src/stack.cpp
-    ${TOY_STL}/src/vector.cpp
-    ${TOY_STL}/src/raw_vector.cpp
-    ${TOY_STL}/src/algebra.cpp
-    ${TOY_STL}/src/algebra_matrix.cpp
-    ${TOY_STL}/src/algebra_quaternion.cpp
-    ${TOY_STL}/src/algebra_vector.cpp
-    ${TOY_STL}/src/iterator_traits.cpp
-    ${TOY_STL}/src/toy_std.cpp
-    ${TOY_STL}/src/algorithm.cpp
+    toy_std/src/concepts.cpp
+    toy_std/src/array.cpp
+    toy_std/src/raw_list.cpp
+    toy_std/src/stack.cpp
+    toy_std/src/vector.cpp
+    toy_std/src/raw_vector.cpp
+    toy_std/src/algebra.cpp
+    toy_std/src/algebra_matrix.cpp
+    toy_std/src/algebra_quaternion.cpp
+    toy_std/src/algebra_vector.cpp
+    toy_std/src/iterator_traits.cpp
+    toy_std/src/toy_std.cpp
+    toy_std/src/algorithm.cpp
 )
 
 add_library(config)

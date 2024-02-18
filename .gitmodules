@@ -1,3 +1,6 @@
 [submodule "toy-stl"]
 	path = toy-stl
 	url = https://github.com/paveltrpn/toy-stl
+[submodule "toy_std"]
+	path = toy_std
+	url = https://github.com/paveltrpn/toy_std
