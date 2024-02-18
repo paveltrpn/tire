@@ -84,6 +84,7 @@ target_sources(geometry
     geometry/IGeometry.cpp
     geometry/Basics.cpp
     geometry/Polytope.cpp
+    geometry/Transformations.cpp
 )
 
 target_link_libraries(screen render config)
