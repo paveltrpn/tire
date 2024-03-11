@@ -8,7 +8,7 @@ module;
 
 #include "Config.h"
 
-import render;
+#include "Render.h"
 
 export module screen:Screen;
 

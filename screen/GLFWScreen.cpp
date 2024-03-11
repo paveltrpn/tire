@@ -9,10 +9,12 @@ module;
 #include <GLFW/glfw3.h>
 
 #include "Config.h"
+#include "Render.h"
+#include "RenderGL.h"
+#include "RenderVK.h"
 
 export module screen:GLFWScreen;
 
-import render;
 import :Screen;
 
 namespace tire {

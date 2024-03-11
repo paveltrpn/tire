@@ -6,10 +6,9 @@ module;
 #include <print>
 
 #include "Config.h"
+#include "Render.h"
 
 export module screen:X11Screen;
-
-import render;
 
 import :Screen;
 

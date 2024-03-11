@@ -59,14 +59,15 @@ include_directories("config")
 add_library(render)
 target_sources(render
   PUBLIC
-    FILE_SET CXX_MODULES FILES
-    render/IRender.cpp
     render/Render.cpp
+    render/Render.h
     render/RenderGL.cpp
+    render/RenderGL.h
     render/RenderVK.cpp
-    render/RenderVKDisplay.cpp
+    render/RenderVK.h
 )
 target_link_libraries(render config)
+include_directories("render")
 
 add_library(screen)
 target_sources(screen

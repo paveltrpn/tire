@@ -5,9 +5,9 @@
 #include <memory>
 
 #include "Config.h"
+#include "Render.h"
 
 import screen;
-import render;
 
 int main(int argc, char** argv) {
     auto configJson = R"(
