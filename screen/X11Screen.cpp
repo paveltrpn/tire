@@ -5,9 +5,10 @@ module;
 #include <format>
 #include <print>
 
+#include "Config.h"
+
 export module screen:X11Screen;
 
-import config;
 import render;
 
 import :Screen;

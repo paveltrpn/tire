@@ -6,7 +6,8 @@ module;
 #include <print>
 #include <string>
 
-import config;
+#include "Config.h"
+
 import render;
 
 export module screen:Screen;

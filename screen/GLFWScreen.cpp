@@ -8,9 +8,10 @@ module;
 
 #include <GLFW/glfw3.h>
 
+#include "Config.h"
+
 export module screen:GLFWScreen;
 
-import config;
 import render;
 import :Screen;
 

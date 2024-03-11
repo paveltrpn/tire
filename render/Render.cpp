@@ -2,10 +2,9 @@
 module;
 
 #include <GLFW/glfw3.h>
+#include "Config.h"
 
 export module render:Render;
-
-import config;
 
 namespace tire {
 

@@ -4,9 +4,10 @@
 #include <print>
 #include <memory>
 
+#include "Config.h"
+
 import screen;
 import render;
-import config;
 
 int main(int argc, char** argv) {
     auto configJson = R"(

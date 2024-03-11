@@ -51,9 +51,10 @@ target_sources(toy_std
 add_library(config)
 target_sources(config
   PUBLIC
-    FILE_SET CXX_MODULES FILES
     config/Config.cpp
+    config/Config.h
 )
+include_directories("config")
 
 add_library(render)
 target_sources(render
