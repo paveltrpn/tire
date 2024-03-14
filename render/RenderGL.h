@@ -14,6 +14,7 @@
 
 namespace tire {
 
+[[maybe_unused]]
 static void GLAPIENTRY MessageCallback(GLenum source,
                                        GLenum type,
                                        GLuint id,
