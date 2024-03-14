@@ -84,12 +84,14 @@ include_directories("screen")
 add_library(geometry)
 target_sources(geometry
   PUBLIC
-    FILE_SET CXX_MODULES FILES
-    geometry/IGeometry.cpp
     geometry/Basics.cpp
+    geometry/Basics.h
     geometry/Polytope.cpp
+    geometry/Polytope.h
     geometry/Transformations.cpp
+    geometry/Transformations.h
 )
+include_directories("geometry")
 
 target_link_libraries(screen render config)
 target_link_libraries(geometry toy_std)
