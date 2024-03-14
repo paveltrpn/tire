@@ -72,12 +72,14 @@ include_directories("render")
 add_library(screen)
 target_sources(screen
   PUBLIC
-    FILE_SET CXX_MODULES FILES
-    screen/IScreen.cpp
     screen/Screen.cpp
+    screen/Screen.h
     screen/X11Screen.cpp
+    screen/X11Screen.h
     screen/GLFWScreen.cpp
+    screen/GLFWScreen.h
 )
+include_directories("screen")
 
 add_library(geometry)
 target_sources(geometry

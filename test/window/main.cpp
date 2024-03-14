@@ -6,8 +6,8 @@
 
 #include "Config.h"
 #include "Render.h"
-
-import screen;
+#include "X11Screen.h"
+#include "GLFWScreen.h"
 
 int main(int argc, char** argv) {
     auto configJson = R"(

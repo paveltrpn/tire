@@ -1,123 +1,73 @@
 
-module;
-
 #include <iostream>
 #include <format>
 #include <print>
 #include <string>
 
 #include "Config.h"
-
 #include "Render.h"
-
-export module screen:Screen;
+#include "Screen.h"
 
 namespace tire {
 
-export enum class RenderType {
-    OPENGL,
-    VULKAN,
-    SOFTWARE,
+Screen::Screen(const Config& config) : config_{ config } {
+    appName_ = config.getString("application_name");
+    fullscreen_ = config.getBool("fullscreen");
+    resizeable_ = config.getBool("resizeable");
+
+    width_ = config.getInt("window_width");
+    height_ = config.getInt("window_height");
+    posX_ = config.getInt("window_pos_x");
+    posY_ = config.getInt("window_pos_y");
+    windowAspect_ = static_cast<float>(width_) / static_cast<float>(height_);
 };
 
-export struct Screen {
-        Screen() = default;
+void Screen::setWindowWidth(unsigned int width) noexcept {
+    width_ = width;
+}
 
-        Screen(const tire::Config& config) : config_{ config } {
-            appName_ = config.getString("application_name");
-            fullscreen_ = config.getBool("fullscreen");
-            resizeable_ = config.getBool("resizeable");
-            
-            width_ = config.getInt("window_width");
-            height_ = config.getInt("window_height");
-            posX_ = config.getInt("window_pos_x");
-            posY_ = config.getInt("window_pos_y");
-            windowAspect_ = static_cast<float>(width_) / static_cast<float>(height_);
-        };
+void Screen::setWindowHeight(unsigned int height) noexcept {
+    height_ = height;
+}
 
-        Screen(const Screen& rhs) = delete;
-        Screen(Screen&& ths) = delete;
+void Screen::setWindowPosX(unsigned int posX) noexcept {
+    posX_ = posX;
+}
 
-        Screen& operator=(const Screen& rhs) = delete;
-        Screen& operator=(Screen&& rhs) = delete;
+void Screen::setWindowPosY(unsigned int posY) noexcept {
+    posY_ = posY;
+}
 
-        virtual ~Screen() = default;
+unsigned int Screen::getWindowWidth() noexcept {
+    return width_;
+}
 
-        void setWindowWidth(unsigned int width) noexcept {
-            width_ = width;
-        }
+unsigned int Screen::getWindowHeight() noexcept {
+    return height_;
+}
 
-        void setWindowHeight(unsigned int height) noexcept {
-            height_ = height;
-        }
+unsigned int Screen::getWindowPosX() noexcept {
+    return posX_;
+}
 
-        void setWindowPosX(unsigned int posX) noexcept {
-            posX_ = posX;
-        }
+unsigned int Screen::getWindowPosY() noexcept {
+    return posY_;
+}
 
-        void setWindowPosY(unsigned int posY) noexcept {
-            posY_ = posY;
-        }
+Render* Screen::getRenderPtr() const {
+    return render_.get();
+}
 
-        [[nodiscard]] unsigned int getWindowWidth() noexcept {
-            return width_;
-        }
+void Screen::run() {
+    while (run_) {
+        preFrame();
+        render_->preFrame();
 
-        [[nodiscard]] unsigned int getWindowHeight() noexcept {
-            return height_;
-        }
+        render_->postFrame();
+        postFrame();
 
-        [[nodiscard]] unsigned int getWindowPosX() noexcept {
-            return posX_;
-        }
-
-        [[nodiscard]] unsigned int getWindowPosY() noexcept {
-            return posY_;
-        }
-
-        [[nodiscard]]
-        Render* getRenderPtr() const {
-            return render_.get();
-        }
-
-        virtual void displayScreenInfo() = 0;
-
-        virtual void initRender(RenderType renderType, const tire::Config& config) = 0;
-
-        void run() {
-            while (run_) {
-                preFrame();
-                render_->preFrame();
-
-                render_->postFrame();
-                postFrame();
-
-                run_ = isRun();
-            }
-        };
-
-    private:
-        bool run_{ true };
-
-    protected:
-        virtual bool isRun() = 0;
-        virtual void preFrame() = 0;
-        virtual void postFrame() = 0;
-
-        tire::Config config_;
-
-        std::unique_ptr<Render> render_;
-
-        std::string appName_;
-
-        bool fullscreen_;
-        bool resizeable_;
-
-        unsigned int width_;
-        unsigned int height_;
-        unsigned int posX_;
-        unsigned int posY_;
-
-        float windowAspect_;
+        run_ = isRun();
+    }
 };
+
 }  // namespace tire
