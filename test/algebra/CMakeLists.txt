@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28)
 
-set(SOURCES test.cpp)
+set(SOURCES vector.cpp matrix.cpp quaternion.cpp)
 
 set(WORK_DIR "/mnt/main_disk/code")
 set(BOOST_LOCAL "${WORK_DIR}/extern_libs/boost_1_84_0-clang")
