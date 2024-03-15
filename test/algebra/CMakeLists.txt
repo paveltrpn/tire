@@ -9,4 +9,3 @@ include_directories (${BOOST_LOCAL})
 link_directories(${BOOST_LOCAL}/lib)
 
 add_executable(algebra_test ${SOURCES})
-

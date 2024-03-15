@@ -65,11 +65,125 @@ struct _vector2_base {
 
 template <template <typename> class derived_, typename T>
 struct _vector3_base {
+        using self = _vector3_base<derived_, T>;
+        using derived = derived_<T>;
+
+        template <typename U>
+        auto operator+(derived_<U> rhs) -> derived_<decltype(T{} + U{})> {
+            return { data_[0] + rhs.data_[0], data_[1] + rhs.data_[1], data_[2] + rhs.data_[2] };
+        }
+
+        template <typename U>
+        auto operator-(derived_<U> rhs) -> derived_<decltype(T{} - U{})> {
+            return { data_[0] - rhs.data_[0], data_[1] - rhs.data_[1], data_[2] + rhs.data_[2] };
+        }
+
+        template <typename U>
+        auto operator*(derived_<U> rhs) -> derived_<decltype(T{} * U{})> {
+            return { data_[0] * rhs.data_[0], data_[1] * rhs.data_[1], data_[2] * rhs.data_[2] };
+        }
+
+        template <typename U>
+        auto operator/(derived_<U> rhs) -> derived_<decltype(T{} / U{})> {
+            return { data_[0] / rhs.data_[0], data_[1] / rhs.data_[1], data_[2] + rhs.data_[2] };
+        }
+
+        template <typename U>
+        derived_<T> &operator-=(derived_<U> rhs) {
+            data_[0] -= rhs.data_[0];
+            data_[1] -= rhs.data_[1];
+            data_[2] -= rhs.data_[2];
+            return static_cast<derived_<T> &>(*this);
+        }
+
+        template <typename U>
+        derived_<T> &operator+=(derived_<U> rhs) {
+            data_[0] += rhs.data_[0];
+            data_[1] += rhs.data_[1];
+            data_[2] += rhs.data_[2];
+            return static_cast<derived_<T> &>(*this);
+        }
+
+        template <typename U>
+        derived_<T> &operator*=(derived_<U> rhs) {
+            data_[0] *= rhs.data_[0];
+            data_[1] *= rhs.data_[1];
+            data_[2] *= rhs.data_[2];
+            return static_cast<derived_<T> &>(*this);
+        }
+
+        template <typename U>
+        derived_<T> &operator/=(derived_<U> rhs) {
+            data_[0] /= rhs.data_[0];
+            data_[1] /= rhs.data_[1];
+            data_[2] /= rhs.data_[2];
+            return static_cast<derived_<T> &>(*this);
+        }
+
         std::array<T, 3> data_;
 };
 
 template <template <typename> class derived_, typename T>
 struct _vector4_base {
+        using self = _vector4_base<derived_, T>;
+        using derived = derived_<T>;
+
+        template <typename U>
+        auto operator+(derived_<U> rhs) -> derived_<decltype(T{} + U{})> {
+            return { data_[0] + rhs.data_[0], data_[1] + rhs.data_[1], data_[2] + rhs.data_[2], data_[3] + rhs.data_[3] };
+        }
+
+        template <typename U>
+        auto operator-(derived_<U> rhs) -> derived_<decltype(T{} - U{})> {
+            return { data_[0] - rhs.data_[0], data_[1] - rhs.data_[1], data_[2] + rhs.data_[2], data_[3] - rhs.data_[3] };
+        }
+
+        template <typename U>
+        auto operator*(derived_<U> rhs) -> derived_<decltype(T{} * U{})> {
+            return { data_[0] * rhs.data_[0], data_[1] * rhs.data_[1], data_[2] * rhs.data_[2], data_[3] * rhs.data_[3] };
+        }
+
+        template <typename U>
+        auto operator/(derived_<U> rhs) -> derived_<decltype(T{} / U{})> {
+            return { data_[0] / rhs.data_[0], data_[1] / rhs.data_[1], data_[2] + rhs.data_[2], data_[3] / rhs.data_[3] };
+        }
+
+        template <typename U>
+        derived_<T> &operator-=(derived_<U> rhs) {
+            data_[0] -= rhs.data_[0];
+            data_[1] -= rhs.data_[1];
+            data_[2] -= rhs.data_[2];
+            data_[3] -= rhs.data_[3];
+            return static_cast<derived_<T> &>(*this);
+        }
+
+        template <typename U>
+        derived_<T> &operator+=(derived_<U> rhs) {
+            data_[0] += rhs.data_[0];
+            data_[1] += rhs.data_[1];
+            data_[2] += rhs.data_[2];
+            data_[3] += rhs.data_[3];
+            return static_cast<derived_<T> &>(*this);
+        }
+
+        template <typename U>
+        derived_<T> &operator*=(derived_<U> rhs) {
+            data_[0] *= rhs.data_[0];
+            data_[1] *= rhs.data_[1];
+            data_[2] *= rhs.data_[2];
+            data_[3] *= rhs.data_[3];
+            return static_cast<derived_<T> &>(*this);
+        }
+
+        template <typename U>
+        derived_<T> &operator/=(derived_<U> rhs) {
+            data_[0] /= rhs.data_[0];
+            data_[1] /= rhs.data_[1];
+            data_[2] /= rhs.data_[2];
+            data_[3] /= rhs.data_[3];
+            return static_cast<derived_<T> &>(*this);
+        }
+
         std::array<T, 4> data_;
 };
 
@@ -113,7 +227,5 @@ using vector3i = vector3<long long>;
 using vector4i = vector4<long long>;
 
 }  // namespace tire
-
-
 
 #endif

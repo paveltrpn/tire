@@ -78,7 +78,6 @@ target_sources(geometry
     modules/geometry/Transformations.cpp
     modules/geometry/Transformations.h
 )
-include_directories("geometry")
 
 target_link_libraries(screen render config)
 target_link_libraries(geometry)
