@@ -4,9 +4,9 @@
 #include <print>
 #include <string>
 
-#include "Config.h"
-#include "Render.h"
-#include "Screen.h"
+#include "config/Config.h"
+#include "render/Render.h"
+#include "screen/Screen.h"
 
 namespace tire {
 

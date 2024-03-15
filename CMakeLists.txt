@@ -29,72 +29,62 @@ link_directories("${EXTERN_LIBS}/glew/lib")
 
 include_directories("${EXTERN_LIBS}/json/include")
 
-add_library(toy_std)
-target_sources(toy_std
-  PUBLIC
-    FILE_SET CXX_MODULES FILES
-    toy_std/src/concepts.cpp
-    toy_std/src/array.cpp
-    toy_std/src/raw_list.cpp
-    toy_std/src/stack.cpp
-    toy_std/src/vector.cpp
-    toy_std/src/raw_vector.cpp
-    toy_std/src/algebra.cpp
-    toy_std/src/algebra_matrix.cpp
-    toy_std/src/algebra_quaternion.cpp
-    toy_std/src/algebra_vector.cpp
-    toy_std/src/iterator_traits.cpp
-    toy_std/src/toy_std.cpp
-    toy_std/src/algorithm.cpp
-)
+include_directories("modules")
 
 add_library(config)
 target_sources(config
   PUBLIC
-    config/Config.cpp
-    config/Config.h
+    modules/config/Config.cpp
+    modules/config/Config.h
 )
-include_directories("config")
+
+# add_library(algebra)
+# target_sources(algebra
+  # PUBLIC
+    # algebra/vectorBase.h
+    # algebra/Vector.h
+# )
 
 add_library(render)
 target_sources(render
   PUBLIC
-    render/Render.cpp
-    render/Render.h
-    render/RenderGL.cpp
-    render/RenderGL.h
-    render/RenderVK.cpp
-    render/RenderVK.h
+    modules/render/Render.cpp
+    modules/render/Render.h
+    modules/render/RenderGL.cpp
+    modules/render/RenderGL.h
+    modules/render/RenderVK.cpp
+    modules/render/RenderVK.h
 )
 target_link_libraries(render config)
-include_directories("render")
 
 add_library(screen)
 target_sources(screen
   PUBLIC
-    screen/Screen.cpp
-    screen/Screen.h
-    screen/X11Screen.cpp
-    screen/X11Screen.h
-    screen/GLFWScreen.cpp
-    screen/GLFWScreen.h
+    modules/screen/Screen.cpp
+    modules/screen/Screen.h
+    modules/screen/X11Screen.cpp
+    modules/screen/X11Screen.h
+    modules/screen/GLFWScreen.cpp
+    modules/screen/GLFWScreen.h
 )
-include_directories("screen")
 
 add_library(geometry)
 target_sources(geometry
   PUBLIC
-    geometry/Basics.cpp
-    geometry/Basics.h
-    geometry/Polytope.cpp
-    geometry/Polytope.h
-    geometry/Transformations.cpp
-    geometry/Transformations.h
+    modules/geometry/Basics.cpp
+    modules/geometry/Basics.h
+    modules/geometry/Polytope.cpp
+    modules/geometry/Polytope.h
+    modules/geometry/Transformations.cpp
+    modules/geometry/Transformations.h
 )
 include_directories("geometry")
 
 target_link_libraries(screen render config)
-target_link_libraries(geometry toy_std)
+target_link_libraries(geometry)
 
 add_subdirectory(test/window)
 target_link_libraries(window config screen render geometry glfw3 GL GLU GLEW vulkan)
+
+add_subdirectory(test/algebra)
+target_link_libraries(algebra_test boost_unit_test_framework)

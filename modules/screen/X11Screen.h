@@ -6,8 +6,8 @@
 #include <format>
 #include <print>
 
-#include "Config.h"
-#include "Render.h"
+#include "config/Config.h"
+#include "render/Render.h"
 #include "Screen.h"
 
 namespace tire {

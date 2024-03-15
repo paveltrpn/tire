@@ -5,37 +5,36 @@
 #include <cmath>
 #include <limits>
 
-import toy_std;
-import toy_std.algebra;
+#include "algebra/Vector.h"
 
 namespace tire {
 
-template <template <typename> typename derived, toy::Arithmetical T>
+template <template <typename> typename derived, typename T>
 struct basics2 {
-        toy::algebra::vector2<T> data_;
+        tire::vector2<T> data_;
 };
 
-template <template <typename> typename derived, toy::Arithmetical T>
+template <template <typename> typename derived, typename T>
 struct basics3 {
-        toy::algebra::vector3<T> data_;
+        tire::vector3<T> data_;
 };
 
-template <toy::Arithmetical T>
+template <typename T>
 struct point2 : basics2<point2, T> {
         using basics2<point2, T>::data_;
 };
 
-template <toy::Arithmetical T>
+template <typename T>
 struct point3 : basics3<point3, T> {
         using basics3<point3, T>::data_;
 };
 
-template <toy::Arithmetical T>
+template <typename T>
 struct normal3 : basics3<normal3, T> {
         using basics3<normal3, T>::data_;
 };
 
-template <toy::Arithmetical T>
+template <typename T>
 class OnTheLine {
         point3<T> const p1;
         point3<T> const p2;

@@ -3,7 +3,7 @@
 #define __glfwscreen_h__
 
 #include "Screen.h"
-#include "Config.h"
+#include "config/Config.h"
 
 namespace tire {
 

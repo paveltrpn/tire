@@ -16,7 +16,7 @@
 
 #include "GLFW/glfw3.h"
 
-#include "Config.h"
+#include "config/Config.h"
 #include "Render.h"
 
 namespace tire {

@@ -4,10 +4,10 @@
 #include <print>
 #include <memory>
 
-#include "Config.h"
-#include "Render.h"
-#include "X11Screen.h"
-#include "GLFWScreen.h"
+#include "config/Config.h"
+#include "render/Render.h"
+#include "screen/X11Screen.h"
+#include "screen/GLFWScreen.h"
 
 int main(int argc, char** argv) {
     auto configJson = R"(

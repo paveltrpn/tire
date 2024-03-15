@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "Basics.h"
+#include "algebra/Vector.h"
 
 namespace tire {
 
@@ -29,7 +30,7 @@ struct Polytope {
         std::vector<int> indexes_;
         std::vector<normal3<float>> normals_;
 
-        toy::algebra::vector3f baseColor_;
+        tire::vector3f baseColor_;
 };
 
 }  // namespace tire

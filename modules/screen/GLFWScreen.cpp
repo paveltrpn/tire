@@ -6,10 +6,10 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Config.h"
-#include "Render.h"
-#include "RenderGL.h"
-#include "RenderVK.h"
+#include "config/Config.h"
+#include "render/Render.h"
+#include "render/RenderGL.h"
+#include "render/RenderVK.h"
 
 #include "GLFWScreen.h"
 

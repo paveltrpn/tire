@@ -3,7 +3,7 @@
 #define __render_h__
 
 #include <GLFW/glfw3.h>
-#include "Config.h"
+#include "config/Config.h"
 
 namespace tire {
 

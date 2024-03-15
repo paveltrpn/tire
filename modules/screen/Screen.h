@@ -2,8 +2,8 @@
 #ifndef __screen_h__
 #define __screen_h__
 
-#include "Config.h"
-#include "Render.h"
+#include "config/Config.h"
+#include "render/Render.h"
 
 namespace tire {
 
