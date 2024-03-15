@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 
-#include "Basics.h"
 #include "algebra/Vector.h"
 
 namespace tire {
@@ -26,11 +25,11 @@ struct Polytope {
         Polytope(PolytopeType type);
 
     private:
-        std::vector<point3<float>> vertecies_;
-        std::vector<int> indexes_;
-        std::vector<normal3<float>> normals_;
-
-        tire::vector3f baseColor_;
+        // std::vector<point3<float>> vertecies_;
+        // std::vector<int> indexes_;
+        // std::vector<normal3<float>> normals_;
+// 
+        // tire::vector3f baseColor_;
 };
 
 }  // namespace tire

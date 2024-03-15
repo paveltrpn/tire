@@ -2,7 +2,7 @@
 #include <iostream>
 #include <ostream>
 
-#include "obj.h"
+#include "WavefrontObj.h"
 
 std::map<std::string, ObjTokens> tokens{
     { "#", ObjTokens::COMMENT },

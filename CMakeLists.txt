@@ -71,12 +71,12 @@ target_sources(screen
 add_library(geometry)
 target_sources(geometry
   PUBLIC
-    modules/geometry/Basics.cpp
-    modules/geometry/Basics.h
+    modules/geometry/WavefrontObj.cpp
+    modules/geometry/WavefrontObj.h
+    modules/geometry/WavefrontMtl.cpp
+    modules/geometry/WavefrontMtl.h
     modules/geometry/Polytope.cpp
     modules/geometry/Polytope.h
-    modules/geometry/Transformations.cpp
-    modules/geometry/Transformations.h
 )
 
 target_link_libraries(screen render config)
