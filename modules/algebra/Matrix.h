@@ -52,7 +52,7 @@ template <typename T, size_t pSize_>
 using matrix_sqr = matrix<T, pSize_, pSize_>;
 
 template <typename T, size_t pSize_>
-void __matrix_sqr_set_zero(matrix_sqr<T, pSize_>& a) {
+static inline void __matrix_sqr_set_zero(matrix_sqr<T, pSize_>& a) {
     for (size_t i = 0; i < pSize_; i++) {
         for (size_t j = 0; j < pSize_; j++) {
             a[i, j] = static_cast<T>(0);
@@ -61,7 +61,7 @@ void __matrix_sqr_set_zero(matrix_sqr<T, pSize_>& a) {
 }
 
 template <typename T, size_t pSize_>
-void __matrix_sqr_set_idtt(matrix_sqr<T, pSize_>& a) {
+static inline void __matrix_sqr_set_idtt(matrix_sqr<T, pSize_>& a) {
     for (size_t i = 0; i < pSize_; i++) {
         for (size_t j = 0; j < pSize_; j++) {
             if (i == j) {
@@ -74,8 +74,9 @@ void __matrix_sqr_set_idtt(matrix_sqr<T, pSize_>& a) {
 }
 
 template <typename T, size_t pSize_>
-auto __matrix_sqr_mult(const matrix_sqr<T, pSize_>& a, const matrix_sqr<T, pSize_>& b) {
-    matrix<T, pSize_, pSize_> rt;
+static inline auto __matrix_sqr_mult(const matrix_sqr<T, pSize_>& a,
+                                     const matrix_sqr<T, pSize_>& b) {
+    matrix<T, pSize_, pSize_> rt{};
 
     for (size_t i = 0; i < pSize_; i++) {
         for (size_t j = 0; j < pSize_; j++) {
@@ -89,8 +90,9 @@ auto __matrix_sqr_mult(const matrix_sqr<T, pSize_>& a, const matrix_sqr<T, pSize
 }
 
 template <typename T, size_t pSize_>
-auto __matrix_sqr_sum(const matrix_sqr<T, pSize_>& a, const matrix_sqr<T, pSize_>& b) {
-    matrix<T, pSize_, pSize_> rt;
+static inline auto __matrix_sqr_sum(const matrix_sqr<T, pSize_>& a,
+                                    const matrix_sqr<T, pSize_>& b) {
+    matrix<T, pSize_, pSize_> rt{};
 
     for (size_t i = 0; i < pSize_; i++) {
         for (size_t j = 0; j < pSize_; j++) {
@@ -102,8 +104,9 @@ auto __matrix_sqr_sum(const matrix_sqr<T, pSize_>& a, const matrix_sqr<T, pSize_
 }
 
 template <typename T, size_t pSize_>
-auto __matrix_sqr_sub(const matrix_sqr<T, pSize_>& a, const matrix_sqr<T, pSize_>& b) {
-    matrix<T, pSize_, pSize_> rt;
+static inline auto __matrix_sqr_sub(const matrix_sqr<T, pSize_>& a,
+                                    const matrix_sqr<T, pSize_>& b) {
+    matrix<T, pSize_, pSize_> rt{};
 
     for (size_t i = 0; i < pSize_; i++) {
         for (size_t j = 0; j < pSize_; j++) {
@@ -115,7 +118,7 @@ auto __matrix_sqr_sub(const matrix_sqr<T, pSize_>& a, const matrix_sqr<T, pSize_
 }
 
 template <typename T, size_t pSize_>
-auto __matrix_sqr_transpose(const matrix_sqr<T, pSize_>& m) {
+static inline auto __matrix_sqr_transpose(const matrix_sqr<T, pSize_>& m) {
     T tmp;
     auto rt = m;
 
@@ -131,7 +134,8 @@ auto __matrix_sqr_transpose(const matrix_sqr<T, pSize_>& m) {
 }
 
 template <typename T, size_t pSize_>
-auto __matrix_sqr_multVec(const matrix_sqr<T, pSize_>& m, const vector<T, pSize_>& v) {
+static inline auto __matrix_sqr_multVec(const matrix_sqr<T, pSize_>& m,
+                                        const vector<T, pSize_>& v) {
     std::decay_t<decltype(m)> rt;
 
     for (size_t i = 0; i < pSize_; i++) {
@@ -144,7 +148,7 @@ auto __matrix_sqr_multVec(const matrix_sqr<T, pSize_>& m, const vector<T, pSize_
 }
 
 template <typename T, size_t pSize_>
-std::pair<matrix_sqr<T, pSize_>, matrix_sqr<T, pSize_>> __matrix_sqr_lu(
+static inline std::pair<matrix_sqr<T, pSize_>, matrix_sqr<T, pSize_>> __matrix_sqr_lu(
   const matrix_sqr<T, pSize_>& m) {
     std::decay_t<decltype(m)> lm, um;
     size_t i, j, k;
@@ -176,7 +180,7 @@ std::pair<matrix_sqr<T, pSize_>, matrix_sqr<T, pSize_>> __matrix_sqr_lu(
 }
 
 template <typename T, size_t pSize_>
-T __matrix_sqr_det_lu(const matrix_sqr<T, pSize_>& m) {
+static inline T __matrix_sqr_det_lu(const matrix_sqr<T, pSize_>& m) {
     T det{ 1 };
 
     auto [_, u] = __matrix_sqr_lu(m);
@@ -188,7 +192,7 @@ T __matrix_sqr_det_lu(const matrix_sqr<T, pSize_>& m) {
 }
 
 template <typename T, size_t pSize_>
-std::pair<matrix_sqr<T, pSize_>, matrix_sqr<T, pSize_>> __matrix_sqr_ldlt(
+static inline std::pair<matrix_sqr<T, pSize_>, matrix_sqr<T, pSize_>> __matrix_sqr_ldlt(
   const matrix_sqr<T, pSize_>& m) {
     std::decay_t<decltype(m)> lm;
     vector<T, pSize_> dv;
@@ -218,8 +222,8 @@ std::pair<matrix_sqr<T, pSize_>, matrix_sqr<T, pSize_>> __matrix_sqr_ldlt(
 }
 
 template <typename T, size_t pSize_>
-vector<T, pSize_> __matrix_sqr_solve_gauss(const matrix_sqr<T, pSize_>& m,
-                                           const vector<T, pSize_>& v) {
+static inline vector<T, pSize_> __matrix_sqr_solve_gauss(const matrix_sqr<T, pSize_>& m,
+                                                         const vector<T, pSize_>& v) {
     size_t i, j, k;
     T t;
     std::array<std::array<T, pSize_ + 1>, pSize_> a;
@@ -267,7 +271,7 @@ vector<T, pSize_> __matrix_sqr_solve_gauss(const matrix_sqr<T, pSize_>& m,
 }
 
 template <typename T, size_t pSize_>
-void __matrix_sqr_insert_cmn(matrix_sqr<T, pSize_>& m, const vector<T, pSize_>& v) {
+static inline void __matrix_sqr_insert_cmn(matrix_sqr<T, pSize_>& m, const vector<T, pSize_>& v) {
     size_t i, j = 0;
 
     auto rt = m;
@@ -281,8 +285,8 @@ void __matrix_sqr_insert_cmn(matrix_sqr<T, pSize_>& m, const vector<T, pSize_>& 
 }
 
 template <typename T, size_t pSize_>
-vector<T, pSize_> __matrix_sqr_solve_kramer(const matrix_sqr<T, pSize_>& m,
-                                            const vector<T, pSize_>& v) {
+static inline vector<T, pSize_> __matrix_sqr_solve_kramer(const matrix_sqr<T, pSize_>& m,
+                                                          const vector<T, pSize_>& v) {
     T det;
     std::decay_t<decltype(m)> kr_mtrx;
     vector<T, pSize_> rt;
