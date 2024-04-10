@@ -15,21 +15,14 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 
 set(EXTERN_LIBS "../extern_libs")
 
-link_directories("${EXTERN_LIBS}/libjpeg/lib")
-include_directories("${EXTERN_LIBS}/libjpeg/include")
-
-link_directories("${EXTERN_LIBS}/libtga/lib")
-include_directories("${EXTERN_LIBS}/libtga/include")
-
 link_directories("${EXTERN_LIBS}/glfw/lib")
 include_directories("${EXTERN_LIBS}/glfw/include")
 
 include_directories("${EXTERN_LIBS}/glew/include")
 link_directories("${EXTERN_LIBS}/glew/lib")
 
-include_directories("${EXTERN_LIBS}/json/include")
-
 include_directories("modules")
+include_directories("3rdparty/include")
 
 add_library(config)
 target_sources(config
