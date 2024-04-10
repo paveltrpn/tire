@@ -13,16 +13,8 @@ add_link_options(-stdlib=libc++)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 
-set(EXTERN_LIBS "../extern_libs")
-
-link_directories("${EXTERN_LIBS}/glfw/lib")
-include_directories("${EXTERN_LIBS}/glfw/include")
-
-include_directories("${EXTERN_LIBS}/glew/include")
-link_directories("${EXTERN_LIBS}/glew/lib")
-
 include_directories("modules")
-include_directories("3rdparty/include")
+include_directories("3rdparty")
 
 add_library(config)
 target_sources(config
@@ -76,7 +68,7 @@ target_link_libraries(screen render config)
 target_link_libraries(geometry)
 
 add_subdirectory(test/window)
-target_link_libraries(window config screen render geometry glfw3 GL GLU GLEW vulkan)
+target_link_libraries(window config screen render geometry glfw GL GLU vulkan)
 
 add_subdirectory(test/algebra)
 target_link_libraries(algebra_test boost_unit_test_framework)

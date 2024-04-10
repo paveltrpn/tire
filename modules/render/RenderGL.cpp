@@ -4,7 +4,6 @@
 #include <format>
 #include <print>
 
-#include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 
@@ -62,12 +61,6 @@ __glfw_gl_Render::__glfw_gl_Render(GLFWwindow* window, const tire::Config& confi
     }
 
     glfwMakeContextCurrent(window_);
-
-    glewExperimental = GL_TRUE;
-
-    if (glewInit() != GLEW_OK) {
-        throw std::runtime_error("failed to initialize GLEW\n");
-    }
 
     // vsync off
     if (config_.get<bool>("enable_vsync")) {
