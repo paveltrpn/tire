@@ -20,11 +20,11 @@ __gl_Render::__gl_Render(const tire::Config& config) : Render{ config } {
 }
 
 void __gl_Render::displayRenderInfo() {
-    std::print("vendor - {}\nrenderer - {}\nOpenGL version - {}\nGLSL version - {}\n",
-               vendor_,
-               renderer_,
-               glVersion_,
-               glslVersion_);
+    spdlog::info("OpenGL context info\nvendor - {}\nrenderer - {}\nOpenGL version - {}\nGLSL version - {}",
+                 vendor_,
+                 renderer_,
+                 glVersion_,
+                 glslVersion_);
 }
 
 void __gl_Render::preFrame() {
@@ -297,6 +297,11 @@ __x11_gl_Render::__x11_gl_Render(const tire::Config& config) : __gl_Render(confi
 
     spdlog::info("Making context current");
     glXMakeCurrent(display_, window_, ctx);
+
+    vendor_ = (const char*)glGetString(GL_VENDOR);
+    renderer_ = (const char*)glGetString(GL_RENDERER);
+    glVersion_ = (const char*)glGetString(GL_VERSION);
+    glslVersion_ = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
 };
 
 __x11_gl_Render::~__x11_gl_Render() {

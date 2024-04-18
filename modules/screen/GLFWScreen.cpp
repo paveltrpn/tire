@@ -13,6 +13,9 @@
 
 #include "GLFWScreen.h"
 
+#include "spdlog/spdlog.h"
+
+
 namespace tire {
 
 GLFWScreen::GLFWScreen(const Config& config) : Screen{ config } {
@@ -24,9 +27,8 @@ GLFWScreen::~GLFWScreen() {
 };
 
 void GLFWScreen::displayScreenInfo() {
-    std::print("GLFW based screen\n"
-               "=================\n");
-    std::print("GLFW version: {}\n", glfwVersionString_);
+    spdlog::info("=== GLFW based screen ===");
+    spdlog::info("GLFW version: {}\n", glfwVersionString_);
 };
 
 void GLFWScreen::initRender(RenderType renderType, const Config& config) {

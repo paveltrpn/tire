@@ -8,6 +8,8 @@
 #include "render/RenderGL.h"
 #include "render/RenderVK.h"
 
+#include "spdlog/spdlog.h"
+
 namespace tire {
 
 X11Screen::X11Screen(const Config& config) : Screen{ config } {
@@ -17,9 +19,7 @@ X11Screen::~X11Screen() {
 }
 
 void X11Screen::displayScreenInfo() {
-    std::print("X11 based screen\n"
-               "=================\n");
-    std::print("not implemented\n");
+    spdlog::info("=== X11 based screen ===");
 };
 
 void X11Screen::initRender(RenderType renderType, const Config& config) {
