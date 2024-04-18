@@ -4,17 +4,19 @@
 #include <print>
 #include <memory>
 
+#include "spdlog/spdlog.h"
+
 #include "config/Config.h"
 #include "render/Render.h"
 #include "screen/X11Screen.h"
 #include "screen/GLFWScreen.h"
 
 int main(int argc, char** argv) {
-    auto configJson = R"(
+    auto configJson = R"foo(
 {
    "Screen":{
-      "screen_type":"GLFW",
-      "render_type":"Vulkan",
+      "screen_type":"X11",
+      "render_type":"OpenGL",
       "application_name":"app",
       "fullscreen":false,
       "resizeable":true,
@@ -36,7 +38,7 @@ int main(int argc, char** argv) {
    },
    "Input":{}
 }
-)";
+)foo";
 
     tire::Config config{ configJson };
 
@@ -50,8 +52,10 @@ int main(int argc, char** argv) {
         scrn = std::make_unique<tire::GLFWScreen>(screenConfig);
     else if (screenType == "X11")
         scrn = std::make_unique<tire::X11Screen>(screenConfig);
-    else
-        throw std::runtime_error("unknown render type\n");
+    else {
+        spdlog::info("unknown screen type");
+        return 0;
+    }
 
     scrn->setWindowPosX(500);
 
@@ -61,8 +65,10 @@ int main(int argc, char** argv) {
         scrn->initRender(tire::RenderType::OPENGL, renderConfig);
     else if (renderType == "Vulkan")
         scrn->initRender(tire::RenderType::VULKAN, renderConfig);
-    else
-        throw std::runtime_error("unknown render type\n");
+    else {
+        spdlog::info("unknown render type");
+        return 0;
+    }
 
     auto rndr = scrn->getRenderPtr();
 

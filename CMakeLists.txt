@@ -68,7 +68,7 @@ target_link_libraries(screen render config)
 target_link_libraries(geometry)
 
 add_subdirectory(test/window)
-target_link_libraries(window config screen render geometry glfw GL GLU vulkan)
+target_link_libraries(window config screen render geometry X11 glfw GL GLU vulkan)
 
 add_subdirectory(test/algebra)
 target_link_libraries(algebra_test boost_unit_test_framework)

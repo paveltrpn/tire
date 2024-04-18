@@ -8,6 +8,11 @@
 #include <print>
 
 #include "GLFW/glfw3.h"
+#include <GL/gl.h>
+#include <GL/glx.h>
+
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 #include "config/Config.h"
 #include "Render.h"
@@ -71,6 +76,13 @@ struct __x11_gl_Render : __gl_Render {
         void displayRenderInfo() override;
         void preFrame() override;
         void postFrame() override;
+
+        ~__x11_gl_Render();
+
+    private:
+        Display* display_;
+        Window window_;
+        Colormap colorMap_;
 };
 
 }  // namespace tire
