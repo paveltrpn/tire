@@ -19,6 +19,7 @@
 
 namespace tire {
 
+namespace __detail {
 [[maybe_unused]]
 static void GLAPIENTRY MessageCallback(GLenum source,
                                        GLenum type,
@@ -34,10 +35,52 @@ static void GLAPIENTRY MessageCallback(GLenum source,
                message);
 }
 
+// Helper to check for extension string presence.  Adapted from:
+//   http://www.opengl.org/resources/features/OGLextensions/
+static bool isExtensionSupported(const char* extList, const char* extension) {
+    const char* start;
+    const char *where, *terminator;
+
+    /* Extension names should not have spaces. */
+    where = strchr(extension, ' ');
+    if (where || *extension == '\0')
+        return false;
+
+    /* It takes a bit of care to be fool-proof about parsing the
+       OpenGL extensions string. Don't be fooled by sub-strings,
+       etc. */
+    for (start = extList;;) {
+        where = strstr(start, extension);
+
+        if (!where)
+            break;
+
+        terminator = where + strlen(extension);
+
+        if (where == start || *(where - 1) == ' ')
+            if (*terminator == ' ' || *terminator == '\0')
+                return true;
+
+        start = terminator;
+    }
+
+    return false;
+}
+
+static bool ctxErrorOccurred = false;
+static int ctxErrorHandler(Display* dpy, XErrorEvent* ev) {
+    ctxErrorOccurred = true;
+    return 0;
+}
+
+}  // namespace __detail
+
 struct __gl_Render : Render {
         __gl_Render(const tire::Config& config);
 
         void displayRenderInfo() override;
+        void preFrame() override;
+        void postFrame() override;
 
     protected:
         void setupDebugMessages();
@@ -60,8 +103,7 @@ struct __gl_Render : Render {
 struct __glfw_gl_Render : __gl_Render {
         __glfw_gl_Render(GLFWwindow* window, const tire::Config& config);
 
-        void preFrame() override;
-        void postFrame() override;
+        void swapBuffers() override;
 
     private:
         GLFWwindow* window_;
@@ -73,9 +115,7 @@ struct __glfw_gl_Render : __gl_Render {
 struct __x11_gl_Render : __gl_Render {
         __x11_gl_Render(const tire::Config& config);
 
-        void displayRenderInfo() override;
-        void preFrame() override;
-        void postFrame() override;
+        void swapBuffers() override;
 
         ~__x11_gl_Render();
 

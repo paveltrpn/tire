@@ -70,6 +70,10 @@ struct __vk_Render : Render {
             }
         }
 
+        void preFrame() override {};
+        void postFrame() override {};
+        void swapBuffers() override {};
+
     protected:
         void enumerateExtensionProperties() {
             uint32_t extCount;
@@ -331,9 +335,6 @@ struct __glfw_vk_Render : __vk_Render {
                 glfwWindowHint(GLFW_DOUBLEBUFFER, GL_FALSE);
             }
         };
-
-        void preFrame() override {};
-        void postFrame() override {};
 };
 
 // ======================================================================================
@@ -343,8 +344,6 @@ struct __x11_vk_Render : __vk_Render {
         __x11_vk_Render(const tire::Config& config) : __vk_Render{ config } {};
 
         void displayRenderInfo() override {};
-        void preFrame() override {};
-        void postFrame() override {};
 };
 
 }  // namespace tire

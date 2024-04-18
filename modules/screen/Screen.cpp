@@ -60,11 +60,10 @@ Render* Screen::getRenderPtr() const {
 
 void Screen::run() {
     while (run_) {
-        preFrame();
         render_->preFrame();
 
         render_->postFrame();
-        postFrame();
+        render_->swapBuffers();
 
         run_ = isRun();
     }

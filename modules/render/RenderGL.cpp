@@ -27,6 +27,14 @@ void __gl_Render::displayRenderInfo() {
                glslVersion_);
 }
 
+void __gl_Render::preFrame() {
+    glClearColor(0, 0.5, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void __gl_Render::postFrame() {
+}
+
 void __gl_Render::setupDebugMessages() {
 }
 
@@ -74,9 +82,7 @@ __glfw_gl_Render::__glfw_gl_Render(GLFWwindow* window, const tire::Config& confi
     glslVersion_ = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
 };
 
-void __glfw_gl_Render::preFrame() {};
-
-void __glfw_gl_Render::postFrame() {
+void __glfw_gl_Render::swapBuffers() {
     glfwSwapBuffers(window_);
 };
 
@@ -86,46 +92,9 @@ void __glfw_gl_Render::postFrame() {
 
 #define GLX_CONTEXT_MAJOR_VERSION_ARB 0x2091
 #define GLX_CONTEXT_MINOR_VERSION_ARB 0x2092
+
 typedef GLXContext (
   *glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
-
-// Helper to check for extension string presence.  Adapted from:
-//   http://www.opengl.org/resources/features/OGLextensions/
-static bool isExtensionSupported(const char* extList, const char* extension) {
-    const char* start;
-    const char *where, *terminator;
-
-    /* Extension names should not have spaces. */
-    where = strchr(extension, ' ');
-    if (where || *extension == '\0')
-        return false;
-
-    /* It takes a bit of care to be fool-proof about parsing the
-       OpenGL extensions string. Don't be fooled by sub-strings,
-       etc. */
-    for (start = extList;;) {
-        where = strstr(start, extension);
-
-        if (!where)
-            break;
-
-        terminator = where + strlen(extension);
-
-        if (where == start || *(where - 1) == ' ')
-            if (*terminator == ' ' || *terminator == '\0')
-                return true;
-
-        start = terminator;
-    }
-
-    return false;
-}
-
-static bool ctxErrorOccurred = false;
-static int ctxErrorHandler(Display* dpy, XErrorEvent* ev) {
-    ctxErrorOccurred = true;
-    return 0;
-}
 
 __x11_gl_Render::__x11_gl_Render(const tire::Config& config) : __gl_Render(config) {
     display_ = XOpenDisplay(nullptr);
@@ -135,31 +104,31 @@ __x11_gl_Render::__x11_gl_Render(const tire::Config& config) : __gl_Render(confi
     }
 
     // Get a matching FB config
-    static int visual_attribs[] = { GLX_X_RENDERABLE,
-                                    True,
-                                    GLX_DRAWABLE_TYPE,
-                                    GLX_WINDOW_BIT,
-                                    GLX_RENDER_TYPE,
-                                    GLX_RGBA_BIT,
-                                    GLX_X_VISUAL_TYPE,
-                                    GLX_TRUE_COLOR,
-                                    GLX_RED_SIZE,
-                                    8,
-                                    GLX_GREEN_SIZE,
-                                    8,
-                                    GLX_BLUE_SIZE,
-                                    8,
-                                    GLX_ALPHA_SIZE,
-                                    8,
-                                    GLX_DEPTH_SIZE,
-                                    24,
-                                    GLX_STENCIL_SIZE,
-                                    8,
-                                    GLX_DOUBLEBUFFER,
-                                    True,
-                                    // GLX_SAMPLE_BUFFERS  , 1,
-                                    // GLX_SAMPLES         , 4,
-                                    None };
+    constexpr int visual_attribs[] = { GLX_X_RENDERABLE,
+                                       True,
+                                       GLX_DRAWABLE_TYPE,
+                                       GLX_WINDOW_BIT,
+                                       GLX_RENDER_TYPE,
+                                       GLX_RGBA_BIT,
+                                       GLX_X_VISUAL_TYPE,
+                                       GLX_TRUE_COLOR,
+                                       GLX_RED_SIZE,
+                                       8,
+                                       GLX_GREEN_SIZE,
+                                       8,
+                                       GLX_BLUE_SIZE,
+                                       8,
+                                       GLX_ALPHA_SIZE,
+                                       8,
+                                       GLX_DEPTH_SIZE,
+                                       24,
+                                       GLX_STENCIL_SIZE,
+                                       8,
+                                       GLX_DOUBLEBUFFER,
+                                       True,
+                                       // GLX_SAMPLE_BUFFERS  , 1,
+                                       // GLX_SAMPLES         , 4,
+                                       None };
 
     int glx_major, glx_minor;
 
@@ -263,12 +232,13 @@ __x11_gl_Render::__x11_gl_Render(const tire::Config& config) : __gl_Render(confi
     // Note this error handler is global.  All display connections in all threads
     // of a process use the same error handler, so be sure to guard against other
     // threads issuing X commands while this code is running.
-    ctxErrorOccurred = false;
-    int (*oldHandler)(Display*, XErrorEvent*) = XSetErrorHandler(&ctxErrorHandler);
+    __detail::ctxErrorOccurred = false;
+    int (*oldHandler)(Display*, XErrorEvent*) = XSetErrorHandler(&__detail::ctxErrorHandler);
 
     // Check for the GLX_ARB_create_context extension string and the function.
     // If either is not present, use GLX 1.3 context creation method.
-    if (!isExtensionSupported(glxExts, "GLX_ARB_create_context") || !glXCreateContextAttribsARB) {
+    if (!__detail::isExtensionSupported(glxExts, "GLX_ARB_create_context")
+        || !glXCreateContextAttribsARB) {
         printf("glXCreateContextAttribsARB() not found"
                " ... using old-style GLX context\n");
         ctx = glXCreateNewContext(display_, bestFbc, GLX_RGBA_TYPE, 0, True);
@@ -289,7 +259,7 @@ __x11_gl_Render::__x11_gl_Render(const tire::Config& config) : __gl_Render(confi
 
         // Sync to ensure any errors generated are processed.
         XSync(display_, False);
-        if (!ctxErrorOccurred && ctx)
+        if (!__detail::ctxErrorOccurred && ctx)
             printf("Created GL 3.0 context\n");
         else {
             // Couldn't create GL 3.0 context.  Fall back to old-style 2.x context.
@@ -301,10 +271,9 @@ __x11_gl_Render::__x11_gl_Render(const tire::Config& config) : __gl_Render(confi
             // GLX_CONTEXT_MINOR_VERSION_ARB = 0
             context_attribs[3] = 0;
 
-            ctxErrorOccurred = false;
+            __detail::ctxErrorOccurred = false;
 
-            printf("Failed to create GL 3.0 context"
-                   " ... using old-style GLX context\n");
+            spdlog::info("Failed to create GL 3.0 context... using old-style GLX context");
             ctx = glXCreateContextAttribsARB(display_, bestFbc, 0, True, context_attribs);
         }
     }
@@ -315,19 +284,18 @@ __x11_gl_Render::__x11_gl_Render(const tire::Config& config) : __gl_Render(confi
     // Restore the original error handler
     XSetErrorHandler(oldHandler);
 
-    if (ctxErrorOccurred || !ctx) {
-        printf("Failed to create an OpenGL context\n");
-        exit(1);
+    if (__detail::ctxErrorOccurred || !ctx) {
+        std::runtime_error("failed to create an OpenGL context");
     }
 
     // Verifying that context is a direct context
     if (!glXIsDirect(display_, ctx)) {
-        printf("Indirect GLX rendering context obtained\n");
+        spdlog::info("Indirect GLX rendering context obtained");
     } else {
-        printf("Direct GLX rendering context obtained\n");
+        spdlog::info("Direct GLX rendering context obtained");
     }
 
-    printf("Making context current\n");
+    spdlog::info("Making context current");
     glXMakeCurrent(display_, window_, ctx);
 };
 
@@ -337,14 +305,7 @@ __x11_gl_Render::~__x11_gl_Render() {
     XCloseDisplay(display_);
 }
 
-void __x11_gl_Render::displayRenderInfo() {};
-
-void __x11_gl_Render::preFrame() {
-    glClearColor(0, 0.5, 1, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-};
-
-void __x11_gl_Render::postFrame() {
+void __x11_gl_Render::swapBuffers() {
     glXSwapBuffers(display_, window_);
 };
 

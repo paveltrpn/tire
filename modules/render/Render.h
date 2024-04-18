@@ -24,6 +24,7 @@ struct Render {
 
         virtual void preFrame() = 0;
         virtual void postFrame() = 0;
+        virtual void swapBuffers() = 0;
 
     protected:
         tire::Config config_;
