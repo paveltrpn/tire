@@ -42,17 +42,6 @@ target_sources(render
 )
 target_link_libraries(render config)
 
-add_library(screen)
-target_sources(screen
-  PUBLIC
-    modules/screen/Screen.cpp
-    modules/screen/Screen.h
-    modules/screen/X11Screen.cpp
-    modules/screen/X11Screen.h
-    modules/screen/GLFWScreen.cpp
-    modules/screen/GLFWScreen.h
-)
-
 add_library(geometry)
 target_sources(geometry
   PUBLIC
@@ -64,11 +53,11 @@ target_sources(geometry
     modules/geometry/Polytope.h
 )
 
-target_link_libraries(screen render config)
+target_link_libraries(render config)
 target_link_libraries(geometry)
 
 add_subdirectory(test/window)
-target_link_libraries(window config screen render geometry X11 glfw GL GLU vulkan)
+target_link_libraries(window config render geometry X11 GL GLU vulkan)
 
 add_subdirectory(test/algebra)
 target_link_libraries(algebra_test boost_unit_test_framework)

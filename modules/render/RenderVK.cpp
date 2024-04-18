@@ -7,7 +7,7 @@
 
 namespace tire {
 
-void __vk_Render::displayExtensionProperties() {
+void RenderVK::displayExtensionProperties() {
     std::print("Instance extensions count: {}\n"
                "==========================\n",
                extensionProperties_.size());
@@ -16,7 +16,7 @@ void __vk_Render::displayExtensionProperties() {
     }
 }
 
-void __vk_Render::displayValidationLayerProperties() {
+void RenderVK::displayValidationLayerProperties() {
     std::print("Layers count: {}\n"
                "=============\n",
                layerProperties_.size());
@@ -26,7 +26,7 @@ void __vk_Render::displayValidationLayerProperties() {
     }
 }
 
-void __vk_Render::displayPhysicalDeviceProperties(size_t id) {
+void RenderVK::displayPhysicalDeviceProperties(size_t id) {
     std::print("physical device properties:\n"
                "================\n");
 
@@ -42,7 +42,7 @@ void __vk_Render::displayPhysicalDeviceProperties(size_t id) {
                d.apiVersion);
 }
 
-void __vk_Render::displayPhysicalDeviceFeatures(size_t id) {
+void RenderVK::displayPhysicalDeviceFeatures(size_t id) {
     std::print("physical device features:\n"
                "================\n");
 
@@ -159,7 +159,7 @@ void __vk_Render::displayPhysicalDeviceFeatures(size_t id) {
                d.inheritedQueries);
 }
 
-void __vk_Render::displayPhysicalDeviceFamiliesProperties(size_t id) {
+void RenderVK::displayPhysicalDeviceFamiliesProperties(size_t id) {
     std::print("physical device families properties:\n"
                "================\n");
 

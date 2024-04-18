@@ -14,8 +14,6 @@
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 
-#include "GLFW/glfw3.h"
-
 #include "config/Config.h"
 #include "Render.h"
 
@@ -43,8 +41,8 @@ static VkResult vkCreateDebugUtilsMessenger(VkInstance instance,
     }
 }
 
-struct __vk_Render : Render {
-        __vk_Render(const tire::Config& config) : Render{ config } {
+struct RenderVK : Render {
+        RenderVK(const tire::Config& config) : Render{ config } {
             applicationName_ = config_.getString("application_name");
             engineName_ = config_.getString("engine_name");
             enableValidationLayers_ = config_.get<bool>("enable_validation_layers");
@@ -54,7 +52,7 @@ struct __vk_Render : Render {
             createDevice();
         };
 
-        ~__vk_Render() override {
+        ~RenderVK() override {
             vkDestroyDevice(device_, nullptr);
             vkDestroyInstance(instance_, nullptr);
         };
@@ -322,28 +320,6 @@ struct __vk_Render : Render {
         std::vector<VkPhysicalDeviceProperties> physicalDevicesProperties_;
         std::vector<VkPhysicalDeviceFeatures> physicalDevicesFeatures_;
         std::vector<VkQueueFamilyProperties> queueFamilyProperties_;
-};
-
-// ======================================================================================
-// =============== Vulkan with GLFW initialization struct ===============================
-// ======================================================================================
-struct __glfw_vk_Render : __vk_Render {
-        __glfw_vk_Render(const tire::Config& config) : __vk_Render{ config } {
-            if (doublebuffer_) {
-                glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
-            } else {
-                glfwWindowHint(GLFW_DOUBLEBUFFER, GL_FALSE);
-            }
-        };
-};
-
-// ======================================================================================
-// =============== Vulkan with X11 initialization struct ===============================
-// ======================================================================================
-struct __x11_vk_Render : __vk_Render {
-        __x11_vk_Render(const tire::Config& config) : __vk_Render{ config } {};
-
-        void displayRenderInfo() override {};
 };
 
 }  // namespace tire

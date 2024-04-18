@@ -7,7 +7,6 @@
 #include <format>
 #include <print>
 
-#include "GLFW/glfw3.h"
 #include <GL/gl.h>
 #include <GL/glx.h>
 
@@ -75,14 +74,17 @@ static int ctxErrorHandler(Display* dpy, XErrorEvent* ev) {
 
 }  // namespace __detail
 
-struct __gl_Render : Render {
-        __gl_Render(const tire::Config& config);
+struct RenderGL : Render {
+        RenderGL(const tire::Config& config);
+        ~RenderGL() override;
 
         void displayRenderInfo() override;
         void preFrame() override;
         void postFrame() override;
 
-    protected:
+        void swapBuffers() override;
+
+    private:
         void setupDebugMessages();
 
         int ctxtVersionMajorMax_{};
@@ -95,34 +97,6 @@ struct __gl_Render : Render {
         std::string renderer_;
         std::string glVersion_;
         std::string glslVersion_;
-};
-
-// ======================================================================================
-// =============== OpenGL with GLFW initialization struct ===============================
-// ======================================================================================
-struct __glfw_gl_Render : __gl_Render {
-        __glfw_gl_Render(GLFWwindow* window, const tire::Config& config);
-
-        void swapBuffers() override;
-
-    private:
-        GLFWwindow* window_;
-};
-
-// ======================================================================================
-// =============== OpenGL with X11 initialization struct ===============================
-// ======================================================================================
-struct __x11_gl_Render : __gl_Render {
-        __x11_gl_Render(const tire::Config& config);
-
-        void swapBuffers() override;
-
-        ~__x11_gl_Render();
-
-    private:
-        Display* display_;
-        Window window_;
-        Colormap colorMap_;
 };
 
 }  // namespace tire
