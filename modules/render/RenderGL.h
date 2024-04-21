@@ -18,7 +18,7 @@
 
 namespace tire {
 
-namespace __detail {
+namespace __detail_tire {
 [[maybe_unused]]
 static void GLAPIENTRY MessageCallback(GLenum source,
                                        GLenum type,
@@ -72,7 +72,7 @@ static int ctxErrorHandler(Display* dpy, XErrorEvent* ev) {
     return 0;
 }
 
-}  // namespace __detail
+}  // namespace __detail_tire
 
 struct RenderGL : Render {
         RenderGL(const tire::Config& config);
@@ -85,13 +85,11 @@ struct RenderGL : Render {
         void swapBuffers() override;
 
     private:
+        void configureGl();
+        
         void setupDebugMessages();
 
-        int ctxtVersionMajorMax_{};
-        int ctxtVersionMinorMax_{};
-
-        int ctxtVersionMajorUsed_{};
-        int ctxtVersionMinorUsed_{};
+        GLXContext glContext_{ nullptr };
 
         std::string vendor_;
         std::string renderer_;

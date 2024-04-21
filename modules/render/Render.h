@@ -64,19 +64,18 @@ struct Render {
             return posY_;
         };
 
-        void run() {
-            while (run_) {
-                preFrame();
-                postFrame();
-                swapBuffers();
-            }
-        }
+        void run();
+        void frame();
+
+    private:
+        void initConfig(const tire::Config& config);
+        void configureX11();
 
     protected:
         bool run_{ true };
-
         tire::Config config_;
 
+        // X11
         Display* display_;
         Window window_;
         Colormap colorMap_;

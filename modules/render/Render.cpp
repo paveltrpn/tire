@@ -9,6 +9,17 @@
 namespace tire {
 
 Render::Render(const tire::Config& config) : config_{ config } {
+    initConfig(config);
+    configureX11();
+}
+
+Render::~Render() {
+    XDestroyWindow(display_, window_);
+    XFreeColormap(display_, colorMap_);
+    XCloseDisplay(display_);
+}
+
+void Render::initConfig(const tire::Config& config) {
     doublebuffer_ = config_.get<bool>("doublebuffer");
     appName_ = config.getString("application_name");
     fullscreen_ = config.getBool("fullscreen");
@@ -19,7 +30,9 @@ Render::Render(const tire::Config& config) : config_{ config } {
     posX_ = config.getInt("window_pos_x");
     posY_ = config.getInt("window_pos_y");
     windowAspect_ = static_cast<float>(width_) / static_cast<float>(height_);
+}
 
+void Render::configureX11() {
     display_ = XOpenDisplay(nullptr);
 
     if (!display_) {
@@ -67,14 +80,12 @@ Render::Render(const tire::Config& config) : config_{ config } {
     if (!fbc) {
         throw std::runtime_error("failed to retrieve a framebuffer config\n");
     }
-    spdlog::info("Found {} matching FB configs", fbcount);
 
     // Pick the FB config/visual with the most samples per pixel
     spdlog::info("getting XVisualInfos");
     int best_fbc = -1, worst_fbc = -1, best_num_samp = -1, worst_num_samp = 999;
 
-    int i;
-    for (i = 0; i < fbcount; ++i) {
+    for (auto i = 0; i < fbcount; ++i) {
         XVisualInfo* vi = glXGetVisualFromFBConfig(display_, fbc[i]);
         if (vi) {
             int samp_buf, samples;
@@ -96,6 +107,7 @@ Render::Render(const tire::Config& config) : config_{ config } {
         XFree(vi);
     }
 
+    // choose best framebuffer config
     bestFbc_ = fbc[best_fbc];
 
     // Be sure to free the FBConfig list allocated by glXChooseFBConfig()
@@ -105,7 +117,7 @@ Render::Render(const tire::Config& config) : config_{ config } {
     XVisualInfo* vi = glXGetVisualFromFBConfig(display_, bestFbc_);
     spdlog::info("chosen visual ID = {}", vi->visualid);
 
-    spdlog::info("creating colormap");
+    // create colormap
     XSetWindowAttributes swa;
     swa.colormap = colorMap_
       = XCreateColormap(display_, RootWindow(display_, vi->screen), vi->visual, AllocNone);
@@ -113,7 +125,7 @@ Render::Render(const tire::Config& config) : config_{ config } {
     swa.border_pixel = 0;
     swa.event_mask = StructureNotifyMask;
 
-    spdlog::info("creating window");
+    // create window
     window_ = XCreateWindow(display_,
                             RootWindow(display_, vi->screen),
                             posX_,
@@ -128,22 +140,49 @@ Render::Render(const tire::Config& config) : config_{ config } {
                             &swa);
 
     if (!window_) {
-        std::runtime_error("failed to create window");
+        throw std::runtime_error("failed to create window");
     }
 
-    // Done with the visual info data
     XFree(vi);
 
-    XStoreName(display_, window_, "GL 3.0 Window");
-
-    spdlog::info("mapping window");
+    XStoreName(display_, window_, appName_.c_str());
     XMapWindow(display_, window_);
 }
 
-Render::~Render() {
-    XDestroyWindow(display_, window_);
-    XFreeColormap(display_, colorMap_);
-    XCloseDisplay(display_);
+void Render::frame() {
+    preFrame();
+
+    postFrame();
+    swapBuffers();
+}
+
+void Render::run() {
+    XSelectInput(display_, window_, KeyPressMask | KeyReleaseMask);
+    while (run_) {
+        while (XPending(display_)) {
+            XEvent KeyEvent;
+            XNextEvent(display_, &KeyEvent);
+            if (KeyEvent.type == KeyPress) {
+                auto keyEventCode = KeyEvent.xkey.keycode;
+                switch (keyEventCode) {
+                case 9: {  // == ESCAPE
+                    run_ = false;
+                    break;
+                }
+                default:
+                    break;
+                }
+
+            } else if (KeyEvent.type == KeyRelease) {
+                auto keyEventCode = KeyEvent.xkey.keycode;
+                switch (keyEventCode) {
+                default:
+                    break;
+                }
+            }
+        }
+        frame();
+    }
 }
 
 }  // namespace tire
