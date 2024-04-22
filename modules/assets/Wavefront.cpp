@@ -2,7 +2,9 @@
 #include <iostream>
 #include <ostream>
 
-#include "WavefrontObj.h"
+#include "Wavefront.h"
+
+namespace tire {
 
 std::map<std::string, ObjTokens> tokens{
     { "#", ObjTokens::COMMENT },
@@ -24,9 +26,11 @@ std::map<std::string, ObjTokens> tokens{
     { "s", ObjTokens::SMOOTH_GROUP },
 };
 
-WavefrontObj_c::WavefrontObj_c(const std::string &fname) {
+wavefront::wavefront(const std::string &fname) {
     std::cout << "wavefront obj ctor from file " << fname << std::endl;
 }
 
-WavefrontObj_c::~WavefrontObj_c() {
+wavefront::~wavefront() {
 }
+
+}  // namespace tire

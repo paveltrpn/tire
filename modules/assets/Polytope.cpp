@@ -3,7 +3,7 @@
 
 namespace tire {
 
-Polytope::Polytope(PolytopeType type) {
+polytope::polytope(PolytopeType type) {
 }
 
 }  // namespace tire

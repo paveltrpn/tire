@@ -2,14 +2,18 @@
 #ifndef __render_h__
 #define __render_h__
 
-#include <GLFW/glfw3.h>
-#include "config/Config.h"
+#include <memory>
+#include <list>
 
 #include <GL/gl.h>
 #include <GL/glx.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+
+#include "config/Config.h"
+#include "geometry/Node.h"
+#include "geometry/Point.h"
 
 namespace tire {
 
@@ -35,6 +39,8 @@ struct Render {
         void run();
         void frame();
 
+        void appendToRenderList(std::shared_ptr<tire::node<tire::point3f>> node);
+
     private:
         void configureX11();
 
@@ -47,6 +53,9 @@ struct Render {
         Window window_;
         Colormap colorMap_;
         GLXFBConfig bestFbc_;
+
+        // render list
+        std::list<std::shared_ptr<tire::node<tire::point3f>>> renderList_;
 };
 
 }  // namespace tire

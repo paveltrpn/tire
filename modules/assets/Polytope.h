@@ -1,12 +1,10 @@
 
-#ifndef __geometry_polytope_h__
-#define __geometry_polytope_h__
+#ifndef __assets_polytope_h__
+#define __assets_polytope_h__
 
 #include <iostream>
 #include <string>
 #include <vector>
-
-#include "algebra/Vector.h"
 
 namespace tire {
 
@@ -21,15 +19,10 @@ enum class PolytopeType {
     TEAPOT
 };
 
-struct Polytope {
-        Polytope(PolytopeType type);
+struct polytope {
+        polytope(PolytopeType type);
 
     private:
-        // std::vector<point3<float>> vertecies_;
-        // std::vector<int> indexes_;
-        // std::vector<normal3<float>> normals_;
-// 
-        // tire::vector3f baseColor_;
 };
 
 }  // namespace tire

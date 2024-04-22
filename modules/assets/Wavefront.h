@@ -1,11 +1,13 @@
 
-#ifndef __obj_h__
-#define __obj_h__
+#ifndef __assets_wavefront_h__
+#define __assets_wavefront_h__
 
 #include <iostream>
 #include <string>
 #include <vector>
 #include <map>
+
+namespace tire {
 
 enum class ObjTokens {
     COMMENT,
@@ -27,14 +29,14 @@ enum class ObjTokens {
     SURFACE_ELEMENT,
 };
 
-class WavefrontObj_c {
+class wavefront {
     public:
-        WavefrontObj_c(const WavefrontObj_c &rhs) = delete;
-        WavefrontObj_c(const std::string &fname);
-        ~WavefrontObj_c();
+        wavefront(const wavefront &rhs) = delete;
+        wavefront(const std::string &fname);
+        ~wavefront();
 
-        WavefrontObj_c &operator=(const WavefrontObj_c &rhs) = delete;
-        WavefrontObj_c &operator=(const WavefrontObj_c &&rhs) = delete;
+        wavefront &operator=(const wavefront &rhs) = delete;
+        wavefront &operator=(const wavefront &&rhs) = delete;
 
     private:
         int vertsCount_;
@@ -46,5 +48,7 @@ class WavefrontObj_c {
         std::vector<float> faceTexCoords_;
         std::vector<float> vertTexCoords_;
 };
+
+}  // namespace tire
 
 #endif

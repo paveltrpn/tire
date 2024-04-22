@@ -38,12 +38,12 @@ target_link_libraries(render config)
 add_library(assets)
 target_sources(assets
   PUBLIC
-    modules/assets/WavefrontObj.cpp
-    modules/assets/WavefrontObj.h
-    modules/assets/WavefrontMtl.cpp
-    modules/assets/WavefrontMtl.h
+    modules/assets/Wavefront.cpp
+    modules/assets/Wavefront.h
     modules/assets/Polytope.cpp
     modules/assets/Polytope.h
+    modules/assets/Png.cpp
+    modules/assets/Png.h
 )
 
 add_library(camera)
