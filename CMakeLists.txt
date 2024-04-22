@@ -67,6 +67,12 @@ target_sources(geometry
     modules/geometry/Node.h
     modules/geometry/Transformations.cpp
     modules/geometry/Transformations.h
+    modules/geometry/Vector.cpp
+    modules/geometry/Vector.h
+    modules/geometry/Point.cpp
+    modules/geometry/Point.h
+    modules/geometry/Normal.cpp
+    modules/geometry/Normal.h
 )
 
 target_link_libraries(render config)
