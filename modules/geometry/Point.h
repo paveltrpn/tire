@@ -8,34 +8,80 @@
 namespace tire {
 
 template <typename T>
-struct point2 {
-    private:
-        glm::vec<2, T> pos_;
-};
-
-template <typename T>
 struct point3 {
-    private:
-        glm::vec<3, T> pos_;
-};
+        using value_type = T;
+        
+        using self = point3<T>;
+        using vec_type = glm::vec<3, T>;
+        using mat3x3_type = glm::mat<3, 3, T>;
+        using mat4x4_type = glm::mat<4, 4, T>;
 
-template <typename T>
-struct point4 {
-    private:
-        glm::vec<4, T> pos_;
-};
+        point3() : pos_{} {
+        }
 
-using point2i = point2<long long>;
-using point2f = point2<float>;
-using point2d = point2<double>;
+        point3(T x, T y, T z) : pos_{ x, y, z } {
+        }
+
+        point3(vec_type rhs) : pos_{ rhs } {
+        }
+
+        void move(vec_type offst) {
+            pos_ += offst;
+        }
+
+        void transform(mat3x3_type factor) {
+            pos_ *= factor;
+        }
+
+        void transform(mat4x4_type factor) {
+            pos_ *= factor;
+        }
+
+        self& operator+(vec_type offst) {
+            pos_ = pos_ + offst;
+            return *this;
+        }
+
+        self& operator-(vec_type offst) {
+            pos_ = pos_ - offst;
+            return *this;
+        }
+
+        self& operator+=(vec_type offst) {
+            pos_ += offst;
+            return *this;
+        }
+
+        self& operator-=(vec_type offst) {
+            pos_ -= offst;
+            return *this;
+        }
+
+        self& operator*(mat3x3_type factor) {
+            pos_ = pos_ * factor;
+            return *this;
+        }
+
+        self& operator*=(mat3x3_type factor) {
+            pos_ = pos_ * factor;
+        }
+
+        self& operator*(mat4x4_type factor) {
+            pos_ = pos_ * factor;
+            return *this;
+        }
+
+        self& operator*=(mat4x4_type factor) {
+            pos_ = pos_ * factor;
+        }
+
+    private:
+        vec_type pos_;
+};
 
 using point3i = point3<long long>;
 using point3f = point3<float>;
 using point3d = point3<double>;
-
-using point4i = point4<long long>;
-using point4f = point4<float>;
-using point4d = point4<double>;
 
 }  // namespace tire
 

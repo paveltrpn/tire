@@ -61,7 +61,7 @@ void Render::configureX11() {
     }
 
     spdlog::info("glx version: {}.{}", glx_major, glx_minor);
-    
+
     int fbcount;
     GLXFBConfig* fbc
       = glXChooseFBConfig(display_, DefaultScreen(display_), visual_attribs, &fbcount);
@@ -171,6 +171,10 @@ void Render::run() {
         }
         frame();
     }
+}
+
+void Render::appendToRenderList(std::shared_ptr<tire::node<tire::point3f>> node) {
+    renderList_.push_back(node);
 }
 
 }  // namespace tire
