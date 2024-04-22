@@ -9,7 +9,6 @@
 namespace tire {
 
 Render::Render(const tire::Config& config) : config_{ config } {
-    initConfig(config);
     configureX11();
 }
 
@@ -17,19 +16,6 @@ Render::~Render() {
     XDestroyWindow(display_, window_);
     XFreeColormap(display_, colorMap_);
     XCloseDisplay(display_);
-}
-
-void Render::initConfig(const tire::Config& config) {
-    doublebuffer_ = config_.get<bool>("doublebuffer");
-    appName_ = config.getString("application_name");
-    fullscreen_ = config.getBool("fullscreen");
-    resizeable_ = config.getBool("resizeable");
-
-    width_ = config.getInt("window_width");
-    height_ = config.getInt("window_height");
-    posX_ = config.getInt("window_pos_x");
-    posY_ = config.getInt("window_pos_y");
-    windowAspect_ = static_cast<float>(width_) / static_cast<float>(height_);
 }
 
 void Render::configureX11() {
@@ -130,10 +116,10 @@ void Render::configureX11() {
     // create window
     window_ = XCreateWindow(display_,
                             RootWindow(display_, vi->screen),
-                            posX_,
-                            posY_,
-                            width_,
-                            height_,
+                            config_.get<int>("window_pos_x", 100),
+                            config_.get<int>("window_pos_y", 100),
+                            config_.get<int>("window_width", 320),
+                            config_.get<int>("window_height", 240),
                             0,
                             vi->depth,
                             InputOutput,
@@ -147,7 +133,7 @@ void Render::configureX11() {
 
     XFree(vi);
 
-    XStoreName(display_, window_, appName_.c_str());
+    XStoreName(display_, window_, config_.get<std::string>("application_name", "default").c_str());
     XMapWindow(display_, window_);
 }
 

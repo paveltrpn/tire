@@ -67,14 +67,14 @@ void RenderGL::configureGl() {
         context_attribs[0] = GLX_CONTEXT_MAJOR_VERSION_ARB;
         context_attribs[2] = GLX_CONTEXT_MINOR_VERSION_ARB;
         context_attribs[4] = None;
-        if (config_.get<bool>("use_maximum_context_version")) {
+        if (config_.get<bool>("use_maximum_context_version", true)) {
             // this parameters force X11 to use higher context among the possible
             context_attribs[1] = 3;
             context_attribs[3] = 0;
         } else {
             // or use user defined context version
-            context_attribs[1] = config_.get<int>("use_context_version_major");
-            context_attribs[3] = config_.get<int>("use_context_version_minor");
+            context_attribs[1] = config_.get<int>("use_context_version_major", 3);
+            context_attribs[3] = config_.get<int>("use_context_version_minor", 3);
         }
 
         glContext_

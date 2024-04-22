@@ -2,6 +2,7 @@
 #ifndef __config_h__
 #define __config_h__
 
+#include <exception>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -9,6 +10,7 @@
 #include <print>
 #include <type_traits>
 
+#include "spdlog/spdlog.h"
 #include "nlohmann/json.hpp"
 
 namespace tire {
@@ -47,14 +49,21 @@ struct Config {
 
         template <ConfigParamType T>
         [[nodiscard]]
-        T get(std::string_view param) const {
-            T rt;
+        T get(std::string_view param, T dflt = {}) const {
             try {
-                rt = config_[param];
-            } catch (const json::exception& e) {
-                std::print("config param error:\t{}\n", e.what());
+                if (config_.contains(param)) {
+                    return config_[param];
+                } else {
+                    spdlog::warn("no such config parameter \"{}\"", param);
+                    spdlog::warn("default value used: {}", dflt);
+                    return dflt;
+                }
+            } catch (json::exception& e) {
+                spdlog::warn(
+                  "json exception handled... config param error \"{}\", what: {}", param, e.what());
+                spdlog::warn("default value used: {}", dflt);
+                return dflt;
             }
-            return rt;
         }
 
     private:

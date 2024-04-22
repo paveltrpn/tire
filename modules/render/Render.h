@@ -36,7 +36,6 @@ struct Render {
         void frame();
 
     private:
-        void initConfig(const tire::Config& config);
         void configureX11();
 
     protected:
@@ -48,16 +47,6 @@ struct Render {
         Window window_;
         Colormap colorMap_;
         GLXFBConfig bestFbc_;
-
-        bool doublebuffer_;
-        std::string appName_;
-        bool fullscreen_;
-        bool resizeable_;
-        unsigned int width_;
-        unsigned int height_;
-        unsigned int posX_;
-        unsigned int posY_;
-        float windowAspect_;
 };
 
 }  // namespace tire

@@ -12,7 +12,7 @@
 #include "spdlog/spdlog.h"
 
 int main(int argc, char** argv) {
-    auto configJson = R"foo(
+    constexpr auto configJson = R"foo(
 {
       "render_type":"OpenGL",
       "application_name":"app",
@@ -28,7 +28,6 @@ int main(int argc, char** argv) {
       "use_context_version_major":3,
       "use_context_version_minor":2,
       "enable_debug":true,
-      "application_name":"vk-app",
       "engine_name":"vk-eng",
       "enable_validation_layers":false
 }
