@@ -48,8 +48,6 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    rndr->setWindowPosX(500);
-
     rndr->displayRenderInfo();
 
     rndr->run();

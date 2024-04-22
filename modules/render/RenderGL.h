@@ -86,7 +86,7 @@ struct RenderGL : Render {
 
     private:
         void configureGl();
-        
+
         void setupDebugMessages();
 
         GLXContext glContext_{ nullptr };

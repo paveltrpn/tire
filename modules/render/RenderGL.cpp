@@ -13,12 +13,6 @@
 
 namespace tire {
 
-#define GLX_CONTEXT_MAJOR_VERSION_ARB 0x2091
-#define GLX_CONTEXT_MINOR_VERSION_ARB 0x2092
-
-typedef GLXContext (
-  *glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
-
 RenderGL::RenderGL(const tire::Config& config) : Render{ config } {
     configureGl();
 }
@@ -36,9 +30,22 @@ void RenderGL::configureGl() {
 
     // NOTE: It is not necessary to create or make current to a context before
     // calling glXGetProcAddressARB
-    glXCreateContextAttribsARBProc glXCreateContextAttribsARB = 0;
+    using glXCreateContextAttribsARBProc
+      = GLXContext (*)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
+    glXCreateContextAttribsARBProc glXCreateContextAttribsARB{ nullptr };
     glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB(
       (const GLubyte*)"glXCreateContextAttribsARB");
+
+    using glXSwapIntervalEXTProc = void (*)(Display*, GLXDrawable, int);
+    glXSwapIntervalEXTProc glXSwapIntervalEXT{ nullptr };
+    glXSwapIntervalEXT
+      = (glXSwapIntervalEXTProc)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalEXT");
+
+    GLXDrawable drawable = glXGetCurrentDrawable();
+    const int interval = 1;
+    if (drawable) {
+        glXSwapIntervalEXT(display_, drawable, interval);
+    }
 
     // Install an X error handler so the application won't exit if GL 3.0
     // context allocation fails.
@@ -75,21 +82,17 @@ void RenderGL::configureGl() {
 
         // Sync to ensure any errors generated are processed.
         XSync(display_, False);
-        if (!__detail_tire::ctxErrorOccurred && glContext_)
-            spdlog::info("created GL 3.0 context");
-        else {
-            // Couldn't create GL 3.0 context.  Fall back to old-style 2.x context.
-            // When a context version below 3.0 is requested, implementations will
-            // return the newest context version compatible with OpenGL versions less
-            // than version 3.0.
-            // GLX_CONTEXT_MAJOR_VERSION_ARB = 1
+
+        // If error ocured try to get legacy OpenGL context.
+        // When a context version below 3.0 is requested, implementations will
+        // return the newest context version compatible with OpenGL versions less
+        // than version 3.0.
+        if (__detail_tire::ctxErrorOccurred && glContext_) {
             context_attribs[1] = 1;
-            // GLX_CONTEXT_MINOR_VERSION_ARB = 0
             context_attribs[3] = 0;
 
             __detail_tire::ctxErrorOccurred = false;
 
-            spdlog::info("failed to create GL 3.0 context... using old-style GLX context");
             glContext_ = glXCreateContextAttribsARB(
               display_, bestFbc_, nullptr, True, context_attribs.data());
         }

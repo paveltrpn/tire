@@ -42,22 +42,38 @@ target_sources(render
 )
 target_link_libraries(render config)
 
+add_library(assets)
+target_sources(assets
+  PUBLIC
+    modules/assets/WavefrontObj.cpp
+    modules/assets/WavefrontObj.h
+    modules/assets/WavefrontMtl.cpp
+    modules/assets/WavefrontMtl.h
+    modules/assets/Polytope.cpp
+    modules/assets/Polytope.h
+)
+
+add_library(camera)
+target_sources(camera
+  PUBLIC
+    modules/camera/Camera.cpp
+    modules/camera/Camera.h
+)
+
 add_library(geometry)
 target_sources(geometry
   PUBLIC
-    modules/geometry/WavefrontObj.cpp
-    modules/geometry/WavefrontObj.h
-    modules/geometry/WavefrontMtl.cpp
-    modules/geometry/WavefrontMtl.h
-    modules/geometry/Polytope.cpp
-    modules/geometry/Polytope.h
+    modules/geometry/Node.cpp
+    modules/geometry/Node.h
+    modules/geometry/Transformations.cpp
+    modules/geometry/Transformations.h
 )
 
 target_link_libraries(render config)
-target_link_libraries(geometry)
+target_link_libraries(assets)
 
 add_subdirectory(test/window)
-target_link_libraries(window config render geometry X11 GL GLU vulkan)
+target_link_libraries(window config render assets X11 GL GLU vulkan)
 
 add_subdirectory(test/algebra)
 target_link_libraries(algebra_test boost_unit_test_framework)

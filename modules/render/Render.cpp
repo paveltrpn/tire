@@ -74,6 +74,8 @@ void Render::configureX11() {
         throw std::runtime_error("invalid GLX version");
     }
 
+    spdlog::info("glx version: {}.{}", glx_major, glx_minor);
+    
     int fbcount;
     GLXFBConfig* fbc
       = glXChooseFBConfig(display_, DefaultScreen(display_), visual_attribs, &fbcount);

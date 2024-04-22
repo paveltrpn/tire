@@ -32,38 +32,6 @@ struct Render {
         virtual void postFrame() = 0;
         virtual void swapBuffers() = 0;
 
-        void setWindowWidth(unsigned int width) noexcept {
-            width_ = width;
-        };
-
-        void setWindowHeight(unsigned int height) noexcept {
-            height_ = height;
-        };
-
-        void setWindowPosX(unsigned int posX) noexcept {
-            posX_ = posX;
-        };
-
-        void setWindowPosY(unsigned int posY) noexcept {
-            posY_ = posY;
-        };
-
-        [[nodiscard]] unsigned int getWindowWidth() noexcept {
-            return width_;
-        };
-
-        [[nodiscard]] unsigned int getWindowHeight() noexcept {
-            return height_;
-        };
-
-        [[nodiscard]] unsigned int getWindowPosX() noexcept {
-            return posX_;
-        };
-
-        [[nodiscard]] unsigned int getWindowPosY() noexcept {
-            return posY_;
-        };
-
         void run();
         void frame();
 
