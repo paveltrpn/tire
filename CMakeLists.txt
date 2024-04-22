@@ -23,13 +23,6 @@ target_sources(config
     modules/config/Config.h
 )
 
-# add_library(algebra)
-# target_sources(algebra
-  # PUBLIC
-    # algebra/vectorBase.h
-    # algebra/Vector.h
-# )
-
 add_library(render)
 target_sources(render
   PUBLIC
