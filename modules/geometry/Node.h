@@ -5,6 +5,7 @@
 #include <vector>
 #include <initializer_list>
 
+#include "glm/ext/vector_float3.hpp"
 #include "glm/vec2.hpp"
 #include "glm/mat4x4.hpp"
 
@@ -13,14 +14,59 @@
 
 namespace tire {
 
-template <typename pType_ = tire::point3f>
+template <typename scalarT_ = tire::point3f>
 struct node {
-        using value_type = pType_::value_type;
-        
-        using vec2_type = glm::vec<2, value_type>;
-        using vec3_type = glm::vec<3, value_type>;
-        using mat3x3_type = glm::mat<3, 3, value_type>;
-        using mat4x4_type = glm::mat<4, 4, value_type>;
+        using vec2_type = glm::vec<2, scalarT_>;
+        using vec3_type = glm::vec<3, scalarT_>;
+        using mat3x3_type = glm::mat<3, 3, scalarT_>;
+        using mat4x4_type = glm::mat<4, 4, scalarT_>;
+
+        void setVerteciesArray(std::vector<scalarT_>::const_iterator start,
+                               std::vector<scalarT_>::const_iterator end) {
+            std::copy(start, end, begin(vertecies_));
+        }
+
+        void setVerteciesArray(std::initializer_list<scalarT_> values) {
+            std::copy(begin(values), end(values), begin(vertecies_));
+        }
+
+        void setIndicesArray(std::vector<long long>::const_iterator start,
+                             std::vector<long long>::const_iterator end) {
+            std::copy(start, end, begin(indices_));
+        }
+
+        void setIndicesArray(std::initializer_list<long long> values) {
+            std::copy(begin(values), end(values), begin(indices_));
+        }
+
+        void setNormalsArray(std::vector<tire::normalf>::const_iterator start,
+                             std::vector<tire::normalf>::const_iterator end) {
+        }
+
+        void setNormalsArray(std::initializer_list<tire::normalf> values) {
+        }
+
+        void setColorsArray(std::vector<vec3_type>::const_iterator start,
+                            std::vector<vec3_type> end) {
+        }
+
+        void setColorsArray(std::initializer_list<vec3_type> values) {
+        }
+
+        void setTexCoordsArray(std::vector<vec2_type>::const_iterator start,
+                               std::vector<vec2_type>::const_iterator end) {
+        }
+
+        void setTexCoordsArray(std::initializer_list<vec2_type> values) {
+        }
+
+        auto getVerteciesData() {
+            return vertecies_.data();
+        }
+
+        auto getIndeciessData() {
+            return indices_.data();
+        }
 
         void setOffset(vec3_type offst) {
             offset_ = offst;
@@ -55,35 +101,10 @@ struct node {
             }
         }
 
-        void setVertecies(std::vector<pType_>::const_iterator start,
-                          std::vector<pType_>::const_iterator end) {
-            std::copy(start, end, begin(vertecies_));
-        }
-
-        void setVertecies(std::initializer_list<pType_> values) {
-            std::copy(begin(values), end(values), begin(vertecies_));
-        }
-
-        void setIndices_(std::vector<long long>::const_iterator start,
-                         std::vector<long long>::const_iterator end) {
-            std::copy(start, end, begin(indices_));
-        }
-        void setIndices_(std::initializer_list<long long> values) {
-            std::copy(begin(values), end(values), begin(indices_));
-        }
-
-        auto getVerteciesData() {
-            return vertecies_.data();
-        }
-
-        auto getIndeciessData() {
-            return indices_.data();
-        }
-
     private:
         bool dirty_{ false };
 
-        std::vector<pType_> vertecies_;
+        std::vector<scalarT_> vertecies_;
         std::vector<long long> indices_;
         std::vector<vec3_type> colors_;
         std::vector<vec2_type> texCoords_;
@@ -97,3 +118,4 @@ struct node {
 }  // namespace tire
 
 #endif
+

@@ -9,34 +9,39 @@
 
 namespace tire {
 
-template <typename T = float>
+template <typename scalarT_ = float>
 struct normal {
-        using self = normal<T>;
-        using vec_type = glm::vec<3, T>;
-        using mat3x3_type = glm::mat<3, 3, T>;
-        using mat4x4_type = glm::mat<4, 4, T>;
+        using self = normal<scalarT_>;
+        using vec_type = glm::vec<3, scalarT_>;
+        using mat3x3_type = glm::mat<3, 3, scalarT_>;
+        using mat4x4_type = glm::mat<4, 4, scalarT_>;
 
-        T dot(vec_type rhs) {
-            return normal_.x * rhs.x + normal_.y * rhs.y + normal_.z * rhs.z;
+        scalarT_ x() {
+            return normal_.x();
         }
 
-        T sqLength() {
-            return dot(this->normal_);
+        scalarT_ y() {
+            return normal_.y();
         }
 
-        T lenght() {
-            return std::sqrt(sqLength());
+        scalarT_ z() {
+            return normal_.z();
+        }
+
+        scalarT_ dot(vec_type rhs) {
+            return glm::dot(normal_, rhs);
+        }
+
+        scalarT_ sqLength() {
+            return glm::dot(this->normal_, this->normal_);
+        }
+
+        scalarT_ lenght() {
+            return normal_.lenght();
         }
 
         void normalize() {
-            auto l = lenght();
-            if (l < std::numeric_limits<T>::epsilon()) {
-                return;
-            } else {
-                normal_.x /= l;
-                normal_.y /= l;
-                normal_.z /= l;
-            }
+            glm::normalize(normal_);
         }
 
         void transform(mat3x3_type rhs) {

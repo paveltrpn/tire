@@ -7,22 +7,32 @@
 
 namespace tire {
 
-template <typename T>
+template <typename scalarT_ = float>
 struct point3 {
-        using value_type = T;
-        
-        using self = point3<T>;
-        using vec_type = glm::vec<3, T>;
-        using mat3x3_type = glm::mat<3, 3, T>;
-        using mat4x4_type = glm::mat<4, 4, T>;
+        using self = point3<scalarT_>;
+        using vec_type = glm::vec<3, scalarT_>;
+        using mat3x3_type = glm::mat<3, 3, scalarT_>;
+        using mat4x4_type = glm::mat<4, 4, scalarT_>;
 
         point3() : pos_{} {
         }
 
-        point3(T x, T y, T z) : pos_{ x, y, z } {
+        point3(scalarT_ x, scalarT_ y, scalarT_ z) : pos_{ x, y, z } {
         }
 
         point3(vec_type rhs) : pos_{ rhs } {
+        }
+
+        scalarT_ x() {
+            return pos_.x();
+        }
+
+        scalarT_ y() {
+            return pos_.y();
+        }
+
+        scalarT_ z() {
+            return pos_.z();
         }
 
         void move(vec_type offst) {

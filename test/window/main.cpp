@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
     rndr->displayRenderInfo();
 
     auto box_one = std::make_shared<tire::node<tire::point3f>>();
-    box_one->setVertecies({ tire::point3f{ 1.0f, 1.0f, 1.0f },
+    box_one->setVerteciesArray({ tire::point3f{ 1.0f, 1.0f, 1.0f },
                             tire::point3f{ 1.0f, -1.0f, 1.0f },
                             tire::point3f{ -1.0f, -1.0f, 1.0f },
                             tire::point3f{ -1.0f, 1.0f, 1.0f },
@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
                             tire::point3f{ -1.0f, -1.0f, -1.0f },
                             tire::point3f{ -1.0f, 1.0f, -1.0f } });
 
-    box_one->setIndices_({ 0, 1, 2, 3, 0, 2, 4, 5, 6, 7, 4, 6 });
+    box_one->setIndicesArray({ 0, 1, 2, 3, 0, 2, 4, 5, 6, 7, 4, 6 });
 
     rndr->appendToRenderList(box_one);
 
