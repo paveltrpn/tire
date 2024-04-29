@@ -13,8 +13,7 @@
 
 #include "spdlog/spdlog.h"
 
-int main(int argc, char** argv) {
-    constexpr auto configJson = R"foo(
+constexpr auto configJson = R"foo(
 {
       "render_type":"OpenGL",
       "application_name":"app",
@@ -35,6 +34,7 @@ int main(int argc, char** argv) {
 }
 )foo";
 
+int main(int argc, char** argv) {
     tire::Config config{ configJson };
 
     auto renderType = config.getString("render_type");
@@ -51,15 +51,15 @@ int main(int argc, char** argv) {
 
     rndr->displayRenderInfo();
 
-    auto box_one = std::make_shared<tire::node<tire::point3f>>();
+    auto box_one = std::make_shared<tire::node<float>>();
     box_one->setVerteciesArray({ tire::point3f{ 1.0f, 1.0f, 1.0f },
-                            tire::point3f{ 1.0f, -1.0f, 1.0f },
-                            tire::point3f{ -1.0f, -1.0f, 1.0f },
-                            tire::point3f{ -1.0f, 1.0f, 1.0f },
-                            tire::point3f{ 1.0f, 1.0f, -1.0f },
-                            tire::point3f{ 1.0f, -1.0f, -1.0f },
-                            tire::point3f{ -1.0f, -1.0f, -1.0f },
-                            tire::point3f{ -1.0f, 1.0f, -1.0f } });
+                                 tire::point3f{ 1.0f, -1.0f, 1.0f },
+                                 tire::point3f{ -1.0f, -1.0f, 1.0f },
+                                 tire::point3f{ -1.0f, 1.0f, 1.0f },
+                                 tire::point3f{ 1.0f, 1.0f, -1.0f },
+                                 tire::point3f{ 1.0f, -1.0f, -1.0f },
+                                 tire::point3f{ -1.0f, -1.0f, -1.0f },
+                                 tire::point3f{ -1.0f, 1.0f, -1.0f } });
 
     box_one->setIndicesArray({ 0, 1, 2, 3, 0, 2, 4, 5, 6, 7, 4, 6 });
 

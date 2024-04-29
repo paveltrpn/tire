@@ -173,7 +173,7 @@ void Render::run() {
     }
 }
 
-void Render::appendToRenderList(std::shared_ptr<tire::node<tire::point3f>> node) {
+void Render::appendToRenderList(std::shared_ptr<tire::node<point_scalar_type>> node) {
     renderList_.push_back(node);
 }
 

@@ -5,28 +5,38 @@
 #include <vector>
 #include <initializer_list>
 
-#include "glm/ext/vector_float3.hpp"
-#include "glm/vec2.hpp"
-#include "glm/mat4x4.hpp"
+#include "Vector.h"
+#include "Matrix.h"
 
 #include "Point.h"
 #include "Normal.h"
 
 namespace tire {
 
-template <typename scalarT_ = tire::point3f>
+template <typename scalarT_ = float>
 struct node {
-        using vec2_type = glm::vec<2, scalarT_>;
-        using vec3_type = glm::vec<3, scalarT_>;
-        using mat3x3_type = glm::mat<3, 3, scalarT_>;
-        using mat4x4_type = glm::mat<4, 4, scalarT_>;
+        using point_type = tire::point3<scalarT_>;
+        using vec2_type = tire::vec<2, scalarT_>;
+        using vec3_type = tire::vec<3, scalarT_>;
+        using mat3x3_type = tire::mat<3, scalarT_>;
+        using mat4x4_type = tire::mat<4, scalarT_>;
 
-        void setVerteciesArray(std::vector<scalarT_>::const_iterator start,
-                               std::vector<scalarT_>::const_iterator end) {
+        node()
+            : offset_{ scalarT_{}, scalarT_{}, scalarT_{} },
+              rotation_{ vec3_type{ scalarT_{ 1.0 }, scalarT_{}, scalarT_{} },
+                         vec3_type{ scalarT_{}, scalarT_{ 1.0 }, scalarT_{} },
+                         vec3_type{ scalarT_{}, scalarT_{}, scalarT_{ 1.0 } } },
+              scale_{ vec3_type{ scalarT_{ 1.0 }, scalarT_{}, scalarT_{} },
+                      vec3_type{ scalarT_{}, scalarT_{ 1.0 }, scalarT_{} },
+                      vec3_type{ scalarT_{}, scalarT_{}, scalarT_{ 1.0 } } } {
+        }
+
+        void setVerteciesArray(std::vector<point_type>::const_iterator start,
+                               std::vector<point_type>::const_iterator end) {
             std::copy(start, end, begin(vertecies_));
         }
 
-        void setVerteciesArray(std::initializer_list<scalarT_> values) {
+        void setVerteciesArray(std::initializer_list<point_type> values) {
             std::copy(begin(values), end(values), begin(vertecies_));
         }
 
@@ -104,18 +114,17 @@ struct node {
     private:
         bool dirty_{ false };
 
-        std::vector<scalarT_> vertecies_;
+        std::vector<point_type> vertecies_;
         std::vector<long long> indices_;
         std::vector<vec3_type> colors_;
         std::vector<vec2_type> texCoords_;
         std::vector<tire::normalf> normals_;
 
-        vec3_type offset_{};
-        mat3x3_type rotation_{};
-        mat3x3_type scale_{};
+        vec3_type offset_;
+        mat3x3_type rotation_;
+        mat3x3_type scale_;
 };
 
 }  // namespace tire
 
 #endif
-

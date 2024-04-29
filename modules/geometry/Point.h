@@ -2,17 +2,17 @@
 #ifndef __tire_point_h__
 #define __tire_point_h__
 
-#include "glm/ext/vector_float3.hpp"
-#include "glm/vec3.hpp"
+#include "Vector.h"
+#include "Matrix.h"
 
 namespace tire {
 
 template <typename scalarT_ = float>
 struct point3 {
         using self = point3<scalarT_>;
-        using vec_type = glm::vec<3, scalarT_>;
-        using mat3x3_type = glm::mat<3, 3, scalarT_>;
-        using mat4x4_type = glm::mat<4, 4, scalarT_>;
+        using vec_type = tire::vec<3, scalarT_>;
+        using mat3x3_type = tire::mat<3, scalarT_>;
+        using mat4x4_type = tire::mat<4, scalarT_>;
 
         point3() : pos_{} {
         }

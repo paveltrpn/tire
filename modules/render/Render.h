@@ -18,6 +18,8 @@
 namespace tire {
 
 struct Render {
+        using point_scalar_type = float;
+
         Render() = delete;
 
         Render(const tire::Config& config);
@@ -39,7 +41,7 @@ struct Render {
         void run();
         void frame();
 
-        void appendToRenderList(std::shared_ptr<tire::node<tire::point3f>> node);
+        void appendToRenderList(std::shared_ptr<tire::node<point_scalar_type>> node);
 
     private:
         void configureX11();
@@ -55,7 +57,7 @@ struct Render {
         GLXFBConfig bestFbc_;
 
         // render list
-        std::list<std::shared_ptr<tire::node<tire::point3f>>> renderList_;
+        std::list<std::shared_ptr<tire::node<point_scalar_type>>> renderList_;
 };
 
 }  // namespace tire

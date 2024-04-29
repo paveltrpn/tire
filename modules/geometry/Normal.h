@@ -32,7 +32,7 @@ struct normal {
             return glm::dot(normal_, rhs);
         }
 
-        scalarT_ sqLength() {
+        scalarT_ squareLength() {
             return glm::dot(this->normal_, this->normal_);
         }
 

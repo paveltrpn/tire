@@ -60,8 +60,8 @@ target_sources(geometry
     modules/geometry/Node.h
     modules/geometry/Transformations.cpp
     modules/geometry/Transformations.h
-    modules/geometry/Vector.cpp
     modules/geometry/Vector.h
+    modules/geometry/Matrix.h
     modules/geometry/Point.cpp
     modules/geometry/Point.h
     modules/geometry/Normal.cpp
