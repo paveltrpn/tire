@@ -3,18 +3,18 @@
 #define __tire_normal_h__
 
 #include <limits>
-#include "glm/matrix.hpp"
-#include "glm/vec3.hpp"
-#include "glm/mat3x3.hpp"
+
+#include "Vector.h"
+#include "Matrix.h"
 
 namespace tire {
 
 template <typename scalarT_ = float>
 struct normal {
         using self = normal<scalarT_>;
-        using vec_type = glm::vec<3, scalarT_>;
-        using mat3x3_type = glm::mat<3, 3, scalarT_>;
-        using mat4x4_type = glm::mat<4, 4, scalarT_>;
+        using vec_type = tire::vec<3, scalarT_>;
+        using mat3x3_type = tire::mat<3, scalarT_>;
+        using mat4x4_type = tire::mat<4, scalarT_>;
 
         scalarT_ x() {
             return normal_.x();
