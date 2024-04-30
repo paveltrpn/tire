@@ -27,7 +27,12 @@ int main(int argc, char **argv) {
     auto renderType = config.getString("render_type");
 
     std::unique_ptr<tire::Render> rndr;
-    rndr = std::make_unique<tire::RenderGL>(config);
+    try {
+        rndr = std::make_unique<tire::RenderGL>(config);
+    } catch (const std::exception &e) {
+        spdlog::critical("caught exception: {}", e.what());
+        return 0;
+    }
 
     rndr->displayRenderInfo();
 

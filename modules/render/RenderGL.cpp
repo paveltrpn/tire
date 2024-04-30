@@ -25,70 +25,35 @@ void RenderGL::configureGl() {
     // glEnable(GL_DEBUG_OUTPUT);
     // glDebugMessageCallback(&MessageCallback, nullptr);
 
-    // Get the default screen's GLX extension list
-    const char* glxExts = glXQueryExtensionsString(display_, DefaultScreen(display_));
+    setSwapInterval(1);
 
-    // NOTE: It is not necessary to create or make current to a context before
-    // calling glXGetProcAddressARB
-    using glXCreateContextAttribsARBProc
-      = GLXContext (*)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
-    glXCreateContextAttribsARBProc glXCreateContextAttribsARB{ nullptr };
-    glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB(
-      (const GLubyte*)"glXCreateContextAttribsARB");
-
-    using glXSwapIntervalEXTProc = void (*)(Display*, GLXDrawable, int);
-    glXSwapIntervalEXTProc glXSwapIntervalEXT{ nullptr };
-    glXSwapIntervalEXT
-      = (glXSwapIntervalEXTProc)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalEXT");
-
-    GLXDrawable drawable = glXGetCurrentDrawable();
-    const int interval = 1;
-    if (drawable) {
-        glXSwapIntervalEXT(display_, drawable, interval);
-    }
-
-    // Install an X error handler so the application won't exit if GL 3.0
-    // context allocation fails.
-    //
-    // Note this error handler is global.  All display connections in all threads
-    // of a process use the same error handler, so be sure to guard against other
-    // threads issuing X commands while this code is running.
     __detail_tire::ctxErrorOccurred = false;
     int (*oldHandler)(Display*, XErrorEvent*) = XSetErrorHandler(&__detail_tire::ctxErrorHandler);
 
     // Check for the GLX_ARB_create_context extension string and the function.
     // If either is not present, use GLX 1.3 context creation method.
-    if (!__detail_tire::isExtensionSupported(glxExts, "GLX_ARB_create_context")
-        || !glXCreateContextAttribsARB) {
-        spdlog::warn("glXCreateContextAttribsARB() not found... using old-style GLX context");
-        glContext_ = glXCreateNewContext(display_, bestFbc_, GLX_RGBA_TYPE, nullptr, True);
-    } else {  // If it does, try to get a GL 3.0 (or greater) context!
-        std::array<int, 5> context_attribs;
-        context_attribs[0] = GLX_CONTEXT_MAJOR_VERSION_ARB;
-        context_attribs[2] = GLX_CONTEXT_MINOR_VERSION_ARB;
-        if (config_.get<bool>("use_maximum_context_version", true)) {
-            // this parameters force X11 to use higher context among the possible
-            context_attribs[1] = 3;
-            context_attribs[3] = 0;
-        } else {
-            // or use user defined context version
-            context_attribs[1] = config_.get<int>("use_context_version_major", 3);
-            context_attribs[3] = config_.get<int>("use_context_version_minor", 3);
-        }
-        context_attribs[4] = GLX_CONTEXT_PROFILE_MASK_ARB;
-        context_attribs[5] = GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
-        context_attribs[6] = None;
+    std::array<int, 5> context_attribs;
+    context_attribs[0] = GLX_CONTEXT_MAJOR_VERSION_ARB;
+    context_attribs[2] = GLX_CONTEXT_MINOR_VERSION_ARB;
+    if (config_.get<bool>("use_maximum_context_version", true)) {
+        // this parameters force X11 to use higher context among the possible
+        context_attribs[1] = 3;
+        context_attribs[3] = 0;
+    } else {
+        // or use user defined context version
+        context_attribs[1] = config_.get<int>("use_context_version_major", 3);
+        context_attribs[3] = config_.get<int>("use_context_version_minor", 3);
+    }
+    context_attribs[4] = GLX_CONTEXT_PROFILE_MASK_ARB;
+    context_attribs[5] = GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
+    context_attribs[6] = None;
 
-        glContext_
-          = glXCreateContextAttribsARB(display_, bestFbc_, nullptr, True, context_attribs.data());
+    glContext_
+      = glXCreateContextAttribsARB(display_, bestFbc_, nullptr, True, context_attribs.data());
 
-        // Sync to ensure any errors generated are processed.
-        XSync(display_, False);
-
-        // error ocured
-        if (__detail_tire::ctxErrorOccurred && glContext_) {
-            throw std::runtime_error("can't create modern OpenGL context!");
-        }
+    // error ocured
+    if (__detail_tire::ctxErrorOccurred && glContext_) {
+        throw std::runtime_error("can't create modern OpenGL context!");
     }
 
     // Sync to ensure any errors generated are processed.

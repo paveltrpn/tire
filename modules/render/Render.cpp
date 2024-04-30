@@ -9,7 +9,10 @@
 namespace tire {
 
 Render::Render(const tire::Config& config) : config_{ config } {
+    openDisplay();
+    checkGlxVersion();
     configureX11();
+    initGlxExtensions();
 }
 
 Render::~Render() {
@@ -18,13 +21,76 @@ Render::~Render() {
     XCloseDisplay(display_);
 }
 
-void Render::configureX11() {
+void Render::openDisplay() {
     display_ = XOpenDisplay(nullptr);
 
     if (!display_) {
         throw std::runtime_error("failed to open X display");
     }
+}
 
+void Render::checkGlxVersion() {
+    int glx_major, glx_minor;
+
+    // FBConfigs were added in GLX version 1.3.
+    if (!glXQueryVersion(display_, &glx_major, &glx_minor) || ((glx_major == 1) && (glx_minor < 3))
+        || (glx_major < 1)) {
+        throw std::runtime_error("invalid GLX version");
+    }
+
+    spdlog::info("glx version: {}.{}", glx_major, glx_minor);
+}
+
+void Render::initGlxExtensions() {
+    auto isGlxExtensionSupported = [](const char* extList, const char* extension) -> bool {
+        const char* start;
+        const char *where, *terminator;
+
+        /* Extension names should not have spaces. */
+        where = strchr(extension, ' ');
+        if (where || *extension == '\0')
+            return false;
+
+        /* It takes a bit of care to be fool-proof about parsing the
+           OpenGL extensions string. Don't be fooled by sub-strings,
+           etc. */
+        for (start = extList;;) {
+            where = strstr(start, extension);
+
+            if (!where)
+                break;
+
+            terminator = where + strlen(extension);
+
+            if (where == start || *(where - 1) == ' ')
+                if (*terminator == ' ' || *terminator == '\0')
+                    return true;
+
+            start = terminator;
+        }
+
+        return false;
+    };
+    // Get the default screen's GLX extension list
+    const char* glxExts = glXQueryExtensionsString(display_, DefaultScreen(display_));
+
+    glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB(
+      (const GLubyte*)"glXCreateContextAttribsARB");
+
+    if (!isGlxExtensionSupported(glxExts, "GLX_ARB_create_context")
+        || !glXCreateContextAttribsARB) {
+        throw std::runtime_error("extension glXCreateContextAttribsARB not supported!");
+    }
+
+    glXSwapIntervalEXT
+      = (glXSwapIntervalEXTProc)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalEXT");
+
+    if (!isGlxExtensionSupported(glxExts, "GLX_EXT_swap_control") || !glXSwapIntervalEXT) {
+        throw std::runtime_error("extension glXSwapIntervalEXT not supported!");
+    }
+}
+
+void Render::configureX11() {
     // Get a matching FB config
     constexpr int visual_attribs[] = { GLX_X_RENDERABLE,
                                        True,
@@ -51,16 +117,6 @@ void Render::configureX11() {
                                        // GLX_SAMPLE_BUFFERS  , 1,
                                        // GLX_SAMPLES         , 4,
                                        None };
-
-    int glx_major, glx_minor;
-
-    // FBConfigs were added in GLX version 1.3.
-    if (!glXQueryVersion(display_, &glx_major, &glx_minor) || ((glx_major == 1) && (glx_minor < 3))
-        || (glx_major < 1)) {
-        throw std::runtime_error("invalid GLX version");
-    }
-
-    spdlog::info("glx version: {}.{}", glx_major, glx_minor);
 
     int fbcount;
     GLXFBConfig* fbc
@@ -170,6 +226,13 @@ void Render::run() {
             }
         }
         frame();
+    }
+}
+
+void Render::setSwapInterval(int interval) {
+    GLXDrawable drawable = glXGetCurrentDrawable();
+    if (drawable) {
+        glXSwapIntervalEXT(display_, drawable, interval);
     }
 }
 

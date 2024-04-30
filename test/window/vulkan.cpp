@@ -24,7 +24,12 @@ int main(int argc, char **argv) {
     }
 
     std::unique_ptr<tire::Render> rndr;
-    rndr = std::make_unique<tire::RenderVK>(config);
+    try {
+        rndr = std::make_unique<tire::RenderVK>(config);
+    } catch (const std::exception &e) {
+        spdlog::critical("caught exception: {}", e.what());
+        return 0;
+    }
 
     rndr->displayRenderInfo();
 

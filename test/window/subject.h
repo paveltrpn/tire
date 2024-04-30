@@ -1,6 +1,6 @@
 
 #ifndef __subject_h__
-#define __sublect_h__
+#define __subject_h__
 
 #include "render/Render.h"
 
