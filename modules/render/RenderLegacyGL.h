@@ -1,27 +1,15 @@
 
-#ifndef __rendergl_h__
-#define __rendergl_h__
 
-#include <string>
-#include <iostream>
-#include <format>
-#include <print>
+#ifndef __renderlegacygl_h__
+#define __renderlegacygl_h__
 
-#include <GL/gl.h>
-#include <GL/glx.h>
-
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-
-#include "config/Config.h"
 #include "Render.h"
 
 namespace tire {
 
-
-struct RenderGL : Render {
-        RenderGL(const tire::Config& config);
-        ~RenderGL() override;
+struct RenderLegacyGL : Render {
+        RenderLegacyGL(const tire::Config& config);
+        ~RenderLegacyGL() override;
 
         void displayRenderInfo() override;
         void preFrame() override;
@@ -43,5 +31,4 @@ struct RenderGL : Render {
 };
 
 }  // namespace tire
-
 #endif

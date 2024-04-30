@@ -28,6 +28,8 @@ target_sources(render
   PUBLIC
     modules/render/Render.cpp
     modules/render/Render.h
+    modules/render/RenderLegacyGL.cpp
+    modules/render/RenderLegacyGL.h
     modules/render/RenderGL.cpp
     modules/render/RenderGL.h
     modules/render/RenderVK.cpp
