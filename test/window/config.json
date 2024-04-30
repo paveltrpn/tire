@@ -1,0 +1,18 @@
+{
+  "render_type": "OpenGL",
+  "application_name": "app",
+  "fullscreen": false,
+  "resizeable": true,
+  "window_width": 800,
+  "window_height": 600,
+  "window_pos_x": 100,
+  "window_pos_y": 100,
+  "doublebuffer": true,
+  "enable_vsync": true,
+  "use_maximum_context_version": false,
+  "use_context_version_major": 3,
+  "use_context_version_minor": 2,
+  "enable_debug": true,
+  "engine_name": "vk-eng",
+  "enable_validation_layers": false
+}

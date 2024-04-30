@@ -60,13 +60,12 @@ void RenderGL::configureGl() {
     // If either is not present, use GLX 1.3 context creation method.
     if (!__detail_tire::isExtensionSupported(glxExts, "GLX_ARB_create_context")
         || !glXCreateContextAttribsARB) {
-        spdlog::info("glXCreateContextAttribsARB() not found... using old-style GLX context");
+        spdlog::warn("glXCreateContextAttribsARB() not found... using old-style GLX context");
         glContext_ = glXCreateNewContext(display_, bestFbc_, GLX_RGBA_TYPE, nullptr, True);
     } else {  // If it does, try to get a GL 3.0 (or greater) context!
         std::array<int, 5> context_attribs;
         context_attribs[0] = GLX_CONTEXT_MAJOR_VERSION_ARB;
         context_attribs[2] = GLX_CONTEXT_MINOR_VERSION_ARB;
-        context_attribs[4] = None;
         if (config_.get<bool>("use_maximum_context_version", true)) {
             // this parameters force X11 to use higher context among the possible
             context_attribs[1] = 3;
@@ -76,6 +75,9 @@ void RenderGL::configureGl() {
             context_attribs[1] = config_.get<int>("use_context_version_major", 3);
             context_attribs[3] = config_.get<int>("use_context_version_minor", 3);
         }
+        context_attribs[4] = GLX_CONTEXT_PROFILE_MASK_ARB;
+        context_attribs[5] = GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
+        context_attribs[6] = None;
 
         glContext_
           = glXCreateContextAttribsARB(display_, bestFbc_, nullptr, True, context_attribs.data());
@@ -83,18 +85,9 @@ void RenderGL::configureGl() {
         // Sync to ensure any errors generated are processed.
         XSync(display_, False);
 
-        // If error ocured try to get legacy OpenGL context.
-        // When a context version below 3.0 is requested, implementations will
-        // return the newest context version compatible with OpenGL versions less
-        // than version 3.0.
+        // error ocured
         if (__detail_tire::ctxErrorOccurred && glContext_) {
-            context_attribs[1] = 1;
-            context_attribs[3] = 0;
-
-            __detail_tire::ctxErrorOccurred = false;
-
-            glContext_ = glXCreateContextAttribsARB(
-              display_, bestFbc_, nullptr, True, context_attribs.data());
+            throw std::runtime_error("can't create modern OpenGL context!");
         }
     }
 

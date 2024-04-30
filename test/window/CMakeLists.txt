@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 3.28)
 
-set(SOURCES main.cpp)
+add_executable(gl
+    gl.cpp
+    subject.cpp)
 
-add_executable(window ${SOURCES})
+add_executable(lg
+    legacy.cpp
+    subject.cpp)
+
+add_executable(vk
+    vulkan.cpp
+    subject.cpp)
 

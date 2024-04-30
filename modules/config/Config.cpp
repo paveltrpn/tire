@@ -26,12 +26,12 @@ Config::Config(const char* lines) {
     }
 }
 
-Config::Config(std::string_view fname) {
+Config::Config(std::filesystem::path fname) {
     std::ifstream file{ fname };
     if (file) {
         file >> config_;
     } else {
-        throw std::runtime_error(std::format("file not found: {}\n", fname));
+        throw std::runtime_error(std::format("file not found: {}\n", fname.string()));
     }
 }
 

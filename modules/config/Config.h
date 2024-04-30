@@ -9,6 +9,7 @@
 #include <format>
 #include <print>
 #include <type_traits>
+#include <filesystem>
 
 #include "spdlog/spdlog.h"
 #include "nlohmann/json.hpp"
@@ -28,7 +29,7 @@ struct Config {
         Config() = default;
 
         explicit Config(const char* lines);
-        Config(std::string_view fname);
+        explicit Config(std::filesystem::path fname);
 
         // clangd: modernize-pass-by-value! WAT???
         Config(const json& config);

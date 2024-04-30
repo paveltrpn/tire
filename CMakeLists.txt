@@ -74,7 +74,6 @@ target_link_libraries(render config)
 target_link_libraries(assets)
 
 add_subdirectory(test/window)
-target_link_libraries(window config render assets X11 GL GLU vulkan)
-
-add_subdirectory(test/algebra)
-target_link_libraries(algebra_test boost_unit_test_framework)
+target_link_libraries(gl config render assets X11 GL GLU vulkan)
+target_link_libraries(vk config render assets X11 GL GLU vulkan)
+target_link_libraries(lg config render assets X11 GL GLU vulkan)
