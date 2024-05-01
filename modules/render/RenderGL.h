@@ -19,14 +19,11 @@
 
 namespace tire {
 
-struct RenderGL : Render {
+struct RenderGL final : Render {
         RenderGL(const tire::Config& config);
         ~RenderGL() override;
 
         void displayRenderInfo() override;
-        void preFrame() override;
-        void postFrame() override;
-        void swapBuffers() override;
 
         void appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) override;
 
@@ -34,6 +31,16 @@ struct RenderGL : Render {
         void configureGl();
         void setupDebugMessages();
 
+        void preFrame() override;
+        void postFrame() override;
+        void swapBuffers() override;
+
+        void traverse() override {};
+
+        void allocateBuffers();
+        void deleteBuffers();
+
+    private:
         GLXContext glContext_{ nullptr };
 
         // OpeneGL function pointers handler object
@@ -44,8 +51,8 @@ struct RenderGL : Render {
         std::string glVersion_{};
         std::string glslVersion_{};
 
-        std::vector<GLuint> bufferObjects_{};
-        std::vector<GLuint> vertexObjects_{};
+        GLuint bufferObject_{};
+        GLuint vertexObject_{};
 };
 
 }  // namespace tire

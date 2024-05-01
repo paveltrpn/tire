@@ -7,14 +7,11 @@
 
 namespace tire {
 
-struct RenderLegacyGL : Render {
+struct RenderLegacyGL final : Render {
         RenderLegacyGL(const tire::Config& config);
         ~RenderLegacyGL() override;
 
         void displayRenderInfo() override;
-        void preFrame() override;
-        void postFrame() override;
-        void swapBuffers() override;
 
         void appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) override;
 
@@ -23,7 +20,16 @@ struct RenderLegacyGL : Render {
 
         void setupDebugMessages();
 
+        void preFrame() override;
+        void postFrame() override;
+        void swapBuffers() override;
+
+        void traverse() override {};
+
         GLXContext glContext_{ nullptr };
+
+        // OpeneGL function pointers handler object
+        std::shared_ptr<GLFunctions> gl;
 
         std::string vendor_;
         std::string renderer_;

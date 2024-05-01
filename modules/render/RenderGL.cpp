@@ -17,13 +17,18 @@ namespace tire {
 
 RenderGL::RenderGL(const tire::Config& config) : Render{ config } {
     configureGl();
+    // setup VSYNC
     setSwapInterval(1);
 
     gl = std::make_shared<GLFunctions>();
     gl->initGLFunctions();
+
+    // allocate BO, VBO
+    allocateBuffers();
 }
 
 RenderGL::~RenderGL() {
+    deleteBuffers();
     glXDestroyContext(display_, glContext_);
 }
 
@@ -44,7 +49,7 @@ void RenderGL::configureGl() {
         context_attribs[1] = 3;
         context_attribs[3] = 0;
     } else {
-        // or use user defined context version
+        // or use user defined context version with 3.3 by default
         context_attribs[1] = config_.get<int>("use_context_version_major", 3);
         context_attribs[3] = config_.get<int>("use_context_version_minor", 3);
     }
@@ -111,6 +116,12 @@ void RenderGL::swapBuffers() {
 
 void RenderGL::appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) {
     renderList_.push_back(node);
+}
+
+void RenderGL::allocateBuffers() {
+}
+
+void RenderGL::deleteBuffers() {
 }
 
 }  // namespace tire

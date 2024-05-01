@@ -59,27 +59,23 @@ struct Render {
         virtual ~Render();
 
         virtual void displayRenderInfo() = 0;
+        void run();
 
+        virtual void appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) = 0;
+
+    protected:
+        void frame();
         virtual void preFrame() = 0;
         virtual void postFrame() = 0;
         virtual void swapBuffers() = 0;
 
-        void run();
-        void frame();
-
-        virtual void appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) = 0;
-
-    private:
-        void openDisplay();
-        void checkGlxVersion();
-        void initGlxExtensions();
-        void configureX11();
-
-    protected:
         [[nodiscard]]
         bool isExtensionSupported(const char* extList, const char* extension);
         void setSwapInterval(int interval);
 
+        virtual void traverse() = 0;
+
+    protected:
         bool run_{ true };
         tire::Config config_;
 
@@ -102,6 +98,12 @@ struct Render {
         glXSwapIntervalEXTProc glXSwapIntervalEXT{ nullptr };
         static constexpr int GLX_SWAP_INTERVAL{ 0x20F1 };
         static constexpr int GLX_MAX_SWAP_INTEVAL{ 0x20F2 };
+
+    private:
+        void openDisplay();
+        void checkGlxVersion();
+        void initGlxExtensions();
+        void configureX11();
 };
 
 }  // namespace tire

@@ -41,7 +41,7 @@ static VkResult vkCreateDebugUtilsMessenger(VkInstance instance,
     }
 }
 
-struct RenderVK : Render {
+struct RenderVK final : Render {
         RenderVK(const tire::Config& config) : Render{ config } {
             applicationName_ = config_.getString("application_name");
             engineName_ = config_.getString("engine_name");
@@ -74,7 +74,9 @@ struct RenderVK : Render {
 
         void appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) override;
 
-    protected:
+        void traverse() override {};
+
+    private:
         void enumerateExtensionProperties() {
             uint32_t extCount;
 
@@ -293,6 +295,7 @@ struct RenderVK : Render {
         void displayPhysicalDeviceFeatures(size_t id);
         void displayPhysicalDeviceFamiliesProperties(size_t id);
 
+    private:
         std::string applicationName_;
         std::string engineName_;
 
