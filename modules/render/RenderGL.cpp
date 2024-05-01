@@ -22,12 +22,7 @@ RenderGL::RenderGL(const tire::Config &config) : Render{ config } {
     // setup VSYNC
     setSwapInterval(1);
 
-    initGL();
-
-    gl = std::make_shared<GLFunctions>();
-    gl->initGLFunctions();
-
-    program_.setGlFunctionsPtr(gl.get());
+    initOpenGLFunctions();
 
     // linkProgram();
     program_.linkProgram(
@@ -39,7 +34,7 @@ RenderGL::RenderGL(const tire::Config &config) : Render{ config } {
     glm::mat4 projection = glm::perspective(
       50.0f, static_cast<float>(width_) / static_cast<float>(height_), 0.1f, 100.0f);
     glm::mat4 offset = glm::translate(projection, glm::vec3(0.0f, 0.0f, -15.0f));
-    gl->UniformMatrix4fv(matrix, 1, GL_FALSE, &offset[0][0]);
+    glUniformMatrix4fv(matrix, 1, GL_FALSE, &offset[0][0]);
 }
 
 RenderGL::~RenderGL() {
@@ -132,32 +127,32 @@ void RenderGL::swapBuffers() {
 void RenderGL::appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) {
     renderList_.push_back(node);
 
-    gl->GenBuffers(1, &bufferObject_);
-    gl->GenVertexArrays(1, &vertexObject_);
+    glGenBuffers(1, &bufferObject_);
+    glGenVertexArrays(1, &vertexObject_);
 
-    gl->BindBuffer(GL_ARRAY_BUFFER, bufferObject_);
-    gl->BindVertexArray(vertexObject_);
-    gl->BufferData(GL_ARRAY_BUFFER, node->getVerteciesArraySize(), nullptr, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, bufferObject_);
+    glBindVertexArray(vertexObject_);
+    glBufferData(GL_ARRAY_BUFFER, node->getVerteciesArraySize(), nullptr, GL_DYNAMIC_DRAW);
     // position attribute
-    gl->VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-    gl->EnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(0);
 
-    gl->BindBuffer(GL_ARRAY_BUFFER, bufferObject_);
-    gl->BindVertexArray(vertexObject_);
-    gl->BufferSubData(GL_ARRAY_BUFFER, 0, node->getVerteciesArraySize(), node->getVerteciesData());
+    glBindBuffer(GL_ARRAY_BUFFER, bufferObject_);
+    glBindVertexArray(vertexObject_);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, node->getVerteciesArraySize(), node->getVerteciesData());
     // color attribute
-    // gl->VertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void *)(12 * sizeof(float)));
-    // gl->EnableVertexAttribArray(1);
+    // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void *)(12 * sizeof(float)));
+    // glEnableVertexAttribArray(1);
     // texture coordinates attribute
-    // gl->VertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void *)(24 * sizeof(float)));
-    // gl->EnableVertexAttribArray(2);
+    // glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void *)(24 * sizeof(float)));
+    // glEnableVertexAttribArray(2);
 }
 
 void RenderGL::traverse() {
-    gl->EnableVertexAttribArray(0);
-    gl->BindVertexArray(vertexObject_);
+    glEnableVertexAttribArray(0);
+    glBindVertexArray(vertexObject_);
     glDrawArrays(GL_TRIANGLES, 0, 12);
-    gl->DisableVertexAttribArray(0);
+    glDisableVertexAttribArray(0);
 };
 
 }  // namespace tire

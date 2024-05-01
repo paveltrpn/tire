@@ -10,20 +10,20 @@ void Shader::linkProgram(std::vector<std::pair<GLuint, std::string>> shaders) {
     program_ = glCreateProgram();
 
     for (const auto &shHandle : shaderList) {
-        gl->AttachShader(program_, shHandle);
+        glAttachShader(program_, shHandle);
     }
 
-    gl->LinkProgram(program_);
+    glLinkProgram(program_);
 
     GLint success;
-    gl->GetProgramiv(program_, GL_LINK_STATUS, &success);
+    glGetProgramiv(program_, GL_LINK_STATUS, &success);
 
     if (success == GL_FALSE) {
         int32_t logLength;
-        gl->GetProgramiv(program_, GL_INFO_LOG_LENGTH, &logLength);
+        glGetProgramiv(program_, GL_INFO_LOG_LENGTH, &logLength);
 
         std::shared_ptr<GLchar[]> log(new GLchar[logLength]);
-        gl->GetProgramInfoLog(program_, logLength, nullptr, log.get());
+        glGetProgramInfoLog(program_, logLength, nullptr, log.get());
 
         spdlog::error("can't link program with trace:\n{}", log.get());
         return;
@@ -31,7 +31,7 @@ void Shader::linkProgram(std::vector<std::pair<GLuint, std::string>> shaders) {
 }
 
 void Shader::use() {
-    gl->UseProgram(program_);
+    glUseProgram(program_);
 }
 
 std::vector<GLuint> Shader::getShadersList(std::vector<std::pair<GLuint, std::string>> shaders) {
@@ -41,22 +41,22 @@ std::vector<GLuint> Shader::getShadersList(std::vector<std::pair<GLuint, std::st
         return rt;
     } else {
         for (const auto &[type, source] : shaders) {
-            GLuint shHandle = gl->CreateShader(type);
+            GLuint shHandle = glCreateShader(type);
 
             const char *c_str = source.c_str();
 
-            gl->ShaderSource(shHandle, 1, &c_str, nullptr);
-            gl->CompileShader(shHandle);
+            glShaderSource(shHandle, 1, &c_str, nullptr);
+            glCompileShader(shHandle);
 
             GLint success;
-            gl->GetShaderiv(shHandle, GL_COMPILE_STATUS, &success);
+            glGetShaderiv(shHandle, GL_COMPILE_STATUS, &success);
 
             if (success == GL_FALSE) {
                 int32_t logLength;
-                gl->GetShaderiv(shHandle, GL_INFO_LOG_LENGTH, &logLength);
+                glGetShaderiv(shHandle, GL_INFO_LOG_LENGTH, &logLength);
 
                 std::shared_ptr<GLchar[]> log(new GLchar[logLength]);
-                gl->GetShaderInfoLog(shHandle, logLength, nullptr, log.get());
+                glGetShaderInfoLog(shHandle, logLength, nullptr, log.get());
 
                 spdlog::error("can't compile shader with trace:\n{}", log.get());
                 return rt;
@@ -77,10 +77,10 @@ void Shader::getActiveAttributes() {
     GLsizei length;                  // name length
 
     GLint count;
-    gl->GetProgramiv(program_, GL_ACTIVE_ATTRIBUTES, &count);
+    glGetProgramiv(program_, GL_ACTIVE_ATTRIBUTES, &count);
 
     for (GLint i = 0; i < count; i++) {
-        gl->GetActiveAttrib(program_, (GLuint)i, bufSize, &length, &size, &type, name);
+        glGetActiveAttrib(program_, (GLuint)i, bufSize, &length, &size, &type, name);
         attributes_.push_back({ name, type });
     }
 }
@@ -94,10 +94,10 @@ void Shader::getActiveUniforms() {
     GLsizei length;                  // name length
 
     GLint count;
-    gl->GetProgramiv(program_, GL_ACTIVE_UNIFORMS, &count);
+    glGetProgramiv(program_, GL_ACTIVE_UNIFORMS, &count);
 
     for (GLint i = 0; i < count; i++) {
-        gl->GetActiveUniform(program_, (GLuint)i, bufSize, &length, &size, &type, name);
+        glGetActiveUniform(program_, (GLuint)i, bufSize, &length, &size, &type, name);
         uniforms_.push_back({ name, type });
     }
 }
@@ -115,7 +115,7 @@ void Shader::showActiveAttributes() {
 }
 
 GLuint Shader::getUniform(const std::string &id) {
-    return gl->GetUniformLocation(program_, id.c_str());
+    return glGetUniformLocation(program_, id.c_str());
 }
 
 Shader::~Shader() {
@@ -123,7 +123,7 @@ Shader::~Shader() {
     // glDeleteShader(shader);
     // }
 
-    gl->DeleteProgram(program_);
+    glDeleteProgram(program_);
 }
 
 }  // namespace tire

@@ -5,101 +5,127 @@
 
 namespace tire {
 
-PFNGLCREATEPROGRAMPROC glCreateProgram;
+// shaders
+PFNGLCREATEPROGRAMPROC glCreateProgram{ nullptr };
+PFNGLLINKPROGRAMPROC glLinkProgram{ nullptr };
+PFNGLUSEPROGRAMPROC glUseProgram{ nullptr };
+PFNGLSHADERSOURCEPROC glShaderSource{ nullptr };
+PFNGLCOMPILESHADERPROC glCompileShader{ nullptr };
+PFNGLCREATESHADERPROC glCreateShader{ nullptr };
+PFNGLGETSHADERIVPROC glGetShaderiv{ nullptr };
+PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog{ nullptr };
+PFNGLDELETESHADERPROC glDeleteShader{ nullptr };
+PFNGLDELETEPROGRAMPROC glDeleteProgram{ nullptr };
+PFNGLGETACTIVEUNIFORMPROC glGetActiveUniform{ nullptr };
+PFNGLGETPROGRAMIVPROC glGetProgramiv{ nullptr };
+PFNGLATTACHSHADERPROC glAttachShader{ nullptr };
+PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog{ nullptr };
+PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation{ nullptr };
+PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv{ nullptr };
+PFNGLGETACTIVEATTRIBPROC glGetActiveAttrib{ nullptr };
 
-void initGL() {
+// VAO
+PFNGLGENBUFFERSPROC glGenBuffers{ nullptr };
+PFNGLGENVERTEXARRAYSPROC glGenVertexArrays{ nullptr };
+PFNGLBINDBUFFERPROC glBindBuffer{ nullptr };
+PFNGLBINDVERTEXARRAYPROC glBindVertexArray{ nullptr };
+PFNGLBUFFERDATAPROC glBufferData{ nullptr };
+PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer{ nullptr };
+PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray{ nullptr };
+PFNGLBUFFERSUBDATAPROC glBufferSubData{ nullptr };
+PFNGLDRAWARRAYSEXTPROC glDrawArrays{ nullptr };
+PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray{ nullptr };
+PFNGLDELETEBUFFERSPROC glDeleteBuffers{ nullptr };
+PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArrays{ nullptr };
+
+void initOpenGLFunctions() {
+    // shaders
     glCreateProgram = reinterpret_cast<PFNGLCREATEPROGRAMPROC>(
       glXGetProcAddress(reinterpret_cast<const GLubyte *>("glCreateProgram")));
-}
 
-void GLFunctions::initGLFunctions() {
-    // shaders
-    CreateProgram = reinterpret_cast<PFNGLCREATEPROGRAMPROC>(
-      glXGetProcAddress(reinterpret_cast<const GLubyte *>("glCreateProgram")));
-
-    LinkProgram
+    glLinkProgram
       = reinterpret_cast<PFNGLLINKPROGRAMPROC>(glXGetProcAddress((const GLubyte *)"glLinkProgram"));
 
-    UseProgram
+    glUseProgram
       = reinterpret_cast<PFNGLUSEPROGRAMPROC>(glXGetProcAddress((const GLubyte *)"glUseProgram"));
 
-    ShaderSource = reinterpret_cast<PFNGLSHADERSOURCEPROC>(
+    glShaderSource = reinterpret_cast<PFNGLSHADERSOURCEPROC>(
       glXGetProcAddress((const GLubyte *)"glShaderSource"));
 
-    CompileShader = reinterpret_cast<PFNGLCOMPILESHADERPROC>(
+    glCompileShader = reinterpret_cast<PFNGLCOMPILESHADERPROC>(
       glXGetProcAddress((const GLubyte *)"glCompileShader"));
 
-    CreateShader = reinterpret_cast<PFNGLCREATESHADERPROC>(
+    glCreateShader = reinterpret_cast<PFNGLCREATESHADERPROC>(
       glXGetProcAddress((const GLubyte *)"glCreateShader"));
 
-    GetShaderiv
+    glGetShaderiv
       = reinterpret_cast<PFNGLGETSHADERIVPROC>(glXGetProcAddress((const GLubyte *)"glGetShaderiv"));
 
-    GetShaderInfoLog = reinterpret_cast<PFNGLGETSHADERINFOLOGPROC>(
+    glGetShaderInfoLog = reinterpret_cast<PFNGLGETSHADERINFOLOGPROC>(
       glXGetProcAddress((const GLubyte *)"glGetShaderInfoLog"));
 
-    DeleteShader = reinterpret_cast<PFNGLDELETESHADERPROC>(
+    glDeleteShader = reinterpret_cast<PFNGLDELETESHADERPROC>(
       glXGetProcAddress((const GLubyte *)"glDeleteShader"));
 
-    DeleteProgram = reinterpret_cast<PFNGLDELETEPROGRAMPROC>(
+    glDeleteProgram = reinterpret_cast<PFNGLDELETEPROGRAMPROC>(
       glXGetProcAddress((const GLubyte *)"glDeleteProgram"));
 
-    GetActiveUniform = reinterpret_cast<PFNGLGETACTIVEUNIFORMPROC>(
+    glGetActiveUniform = reinterpret_cast<PFNGLGETACTIVEUNIFORMPROC>(
       glXGetProcAddress((const GLubyte *)"glGetActiveUniform"));
 
-    GetProgramiv = reinterpret_cast<PFNGLGETPROGRAMIVPROC>(
+    glGetProgramiv = reinterpret_cast<PFNGLGETPROGRAMIVPROC>(
       glXGetProcAddress((const GLubyte *)"glGetProgramiv"));
 
-    AttachShader = reinterpret_cast<PFNGLATTACHSHADERPROC>(
+    glAttachShader = reinterpret_cast<PFNGLATTACHSHADERPROC>(
       glXGetProcAddress((const GLubyte *)"glAttachShader"));
 
-    GetProgramInfoLog = reinterpret_cast<PFNGLGETPROGRAMINFOLOGPROC>(
+    glGetProgramInfoLog = reinterpret_cast<PFNGLGETPROGRAMINFOLOGPROC>(
       glXGetProcAddress((const GLubyte *)"glGetProgramInfoLog"));
 
-    GetUniformLocation = reinterpret_cast<PFNGLGETUNIFORMLOCATIONPROC>(
+    glGetUniformLocation = reinterpret_cast<PFNGLGETUNIFORMLOCATIONPROC>(
       glXGetProcAddress((const GLubyte *)"glGetUniformLocation"));
 
-    UniformMatrix4fv = reinterpret_cast<PFNGLUNIFORMMATRIX4FVPROC>(
+    glUniformMatrix4fv = reinterpret_cast<PFNGLUNIFORMMATRIX4FVPROC>(
       glXGetProcAddress((const GLubyte *)"glUniformMatrix4fv"));
 
-    GetActiveAttrib = reinterpret_cast<PFNGLGETACTIVEATTRIBPROC>(
+    glGetActiveAttrib = reinterpret_cast<PFNGLGETACTIVEATTRIBPROC>(
       glXGetProcAddress((const GLubyte *)"glGetActiveAttrib"));
 
     // VAO
-    GenBuffers = reinterpret_cast<PFNGLGENBUFFERSPROC>(
+    glGenBuffers = reinterpret_cast<PFNGLGENBUFFERSPROC>(
       glXGetProcAddress(reinterpret_cast<const GLubyte *>("glGenBuffers")));
 
-    GenVertexArrays = reinterpret_cast<PFNGLGENVERTEXARRAYSPROC>(
+    glGenVertexArrays = reinterpret_cast<PFNGLGENVERTEXARRAYSPROC>(
       glXGetProcAddress(reinterpret_cast<const GLubyte *>("glGenVertexArrays")));
 
-    BindBuffer = reinterpret_cast<PFNGLBINDBUFFERPROC>(
+    glBindBuffer = reinterpret_cast<PFNGLBINDBUFFERPROC>(
       glXGetProcAddress(reinterpret_cast<const GLubyte *>("glBindBuffer")));
 
-    BindVertexArray = reinterpret_cast<PFNGLBINDVERTEXARRAYPROC>(
+    glBindVertexArray = reinterpret_cast<PFNGLBINDVERTEXARRAYPROC>(
       glXGetProcAddress(reinterpret_cast<const GLubyte *>("glBindVertexArray")));
 
-    BufferData = reinterpret_cast<PFNGLBUFFERDATAPROC>(
+    glBufferData = reinterpret_cast<PFNGLBUFFERDATAPROC>(
       glXGetProcAddress(reinterpret_cast<const GLubyte *>("glBufferData")));
 
-    VertexAttribPointer = reinterpret_cast<PFNGLVERTEXATTRIBPOINTERPROC>(
+    glVertexAttribPointer = reinterpret_cast<PFNGLVERTEXATTRIBPOINTERPROC>(
       glXGetProcAddress(reinterpret_cast<const GLubyte *>("glVertexAttribPointer")));
 
-    EnableVertexAttribArray = reinterpret_cast<PFNGLENABLEVERTEXATTRIBARRAYPROC>(
+    glEnableVertexAttribArray = reinterpret_cast<PFNGLENABLEVERTEXATTRIBARRAYPROC>(
       glXGetProcAddress(reinterpret_cast<const GLubyte *>("glEnableVertexAttribArray")));
 
-    BufferSubData = reinterpret_cast<PFNGLBUFFERSUBDATAPROC>(
+    glBufferSubData = reinterpret_cast<PFNGLBUFFERSUBDATAPROC>(
       glXGetProcAddress(reinterpret_cast<const GLubyte *>("glBufferSubData")));
 
-    DrawArrays = reinterpret_cast<PFNGLDRAWARRAYSEXTPROC>(
+    glDrawArrays = reinterpret_cast<PFNGLDRAWARRAYSEXTPROC>(
       glXGetProcAddress(reinterpret_cast<const GLubyte *>("glDrawArrays")));
 
-    DisableVertexAttribArray = reinterpret_cast<PFNGLDISABLEVERTEXATTRIBARRAYPROC>(
+    glDisableVertexAttribArray = reinterpret_cast<PFNGLDISABLEVERTEXATTRIBARRAYPROC>(
       glXGetProcAddress(reinterpret_cast<const GLubyte *>("glDisableVertexAttribArray")));
 
-    DeleteBuffers = reinterpret_cast<PFNGLDELETEBUFFERSPROC>(
+    glDeleteBuffers = reinterpret_cast<PFNGLDELETEBUFFERSPROC>(
       glXGetProcAddress(reinterpret_cast<const GLubyte *>("glDeleteBuffers")));
 
-    DeleteVertexArrays = reinterpret_cast<PFNGLDELETEVERTEXARRAYSPROC>(
+    glDeleteVertexArrays = reinterpret_cast<PFNGLDELETEVERTEXARRAYSPROC>(
       glXGetProcAddress(reinterpret_cast<const GLubyte *>("glDeleteVertexArrays")));
 }
 

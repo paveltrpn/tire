@@ -13,13 +13,9 @@ namespace tire {
 
 struct Shader final {
         Shader() = default;
-        Shader(GLFunctions *funcPtr) : gl{ funcPtr } {};
         ~Shader();
 
-        void setGlFunctionsPtr(GLFunctions *funcPtr) {
-            gl = funcPtr;
-        }
-
+        [[nodiscard]]
         GLuint getProgramId() const {
             return program_;
         };
@@ -38,8 +34,6 @@ struct Shader final {
         void getActiveUniforms();
 
     private:
-        GLFunctions *gl{};
-
         GLuint program_{};
 
         std::vector<std::pair<std::string, GLenum>> uniforms_;

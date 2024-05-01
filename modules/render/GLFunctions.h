@@ -9,46 +9,40 @@
 
 namespace tire {
 
+// shaders
 extern PFNGLCREATEPROGRAMPROC glCreateProgram;
+extern PFNGLLINKPROGRAMPROC glLinkProgram;
+extern PFNGLUSEPROGRAMPROC glUseProgram;
+extern PFNGLSHADERSOURCEPROC glShaderSource;
+extern PFNGLCOMPILESHADERPROC glCompileShader;
+extern PFNGLCREATESHADERPROC glCreateShader;
+extern PFNGLGETSHADERIVPROC glGetShaderiv;
+extern PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
+extern PFNGLDELETESHADERPROC glDeleteShader;
+extern PFNGLDELETEPROGRAMPROC glDeleteProgram;
+extern PFNGLGETACTIVEUNIFORMPROC glGetActiveUniform;
+extern PFNGLGETPROGRAMIVPROC glGetProgramiv;
+extern PFNGLATTACHSHADERPROC glAttachShader;
+extern PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
+extern PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
+extern PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
+extern PFNGLGETACTIVEATTRIBPROC glGetActiveAttrib;
 
-void initGL();
+// VAO
+extern PFNGLGENBUFFERSPROC glGenBuffers;
+extern PFNGLGENVERTEXARRAYSPROC glGenVertexArrays;
+extern PFNGLBINDBUFFERPROC glBindBuffer;
+extern PFNGLBINDVERTEXARRAYPROC glBindVertexArray;
+extern PFNGLBUFFERDATAPROC glBufferData;
+extern PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
+extern PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
+extern PFNGLBUFFERSUBDATAPROC glBufferSubData;
+extern PFNGLDRAWARRAYSEXTPROC glDrawArrays;
+extern PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray;
+extern PFNGLDELETEBUFFERSPROC glDeleteBuffers;
+extern PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArrays;
 
-struct GLFunctions {
-        void initGLFunctions();
-
-        // shaders
-        PFNGLCREATEPROGRAMPROC CreateProgram{ nullptr };
-        PFNGLLINKPROGRAMPROC LinkProgram{ nullptr };
-        PFNGLUSEPROGRAMPROC UseProgram{ nullptr };
-        PFNGLSHADERSOURCEPROC ShaderSource{ nullptr };
-        PFNGLCOMPILESHADERPROC CompileShader{ nullptr };
-        PFNGLCREATESHADERPROC CreateShader{ nullptr };
-        PFNGLGETSHADERIVPROC GetShaderiv{ nullptr };
-        PFNGLGETSHADERINFOLOGPROC GetShaderInfoLog{ nullptr };
-        PFNGLDELETESHADERPROC DeleteShader{ nullptr };
-        PFNGLDELETEPROGRAMPROC DeleteProgram{ nullptr };
-        PFNGLGETACTIVEUNIFORMPROC GetActiveUniform{ nullptr };
-        PFNGLGETPROGRAMIVPROC GetProgramiv{ nullptr };
-        PFNGLATTACHSHADERPROC AttachShader{ nullptr };
-        PFNGLGETPROGRAMINFOLOGPROC GetProgramInfoLog{ nullptr };
-        PFNGLGETUNIFORMLOCATIONPROC GetUniformLocation{ nullptr };
-        PFNGLUNIFORMMATRIX4FVPROC UniformMatrix4fv{ nullptr };
-        PFNGLGETACTIVEATTRIBPROC GetActiveAttrib{ nullptr };
-
-        // VAO
-        PFNGLGENBUFFERSPROC GenBuffers{ nullptr };
-        PFNGLGENVERTEXARRAYSPROC GenVertexArrays{ nullptr };
-        PFNGLBINDBUFFERPROC BindBuffer{ nullptr };
-        PFNGLBINDVERTEXARRAYPROC BindVertexArray{ nullptr };
-        PFNGLBUFFERDATAPROC BufferData{ nullptr };
-        PFNGLVERTEXATTRIBPOINTERPROC VertexAttribPointer{ nullptr };
-        PFNGLENABLEVERTEXATTRIBARRAYPROC EnableVertexAttribArray{ nullptr };
-        PFNGLBUFFERSUBDATAPROC BufferSubData{ nullptr };
-        PFNGLDRAWARRAYSEXTPROC DrawArrays{ nullptr };
-        PFNGLDISABLEVERTEXATTRIBARRAYPROC DisableVertexAttribArray{ nullptr };
-        PFNGLDELETEBUFFERSPROC DeleteBuffers{ nullptr };
-        PFNGLDELETEVERTEXARRAYSPROC DeleteVertexArrays{ nullptr };
-};
+void initOpenGLFunctions();
 
 }  // namespace tire
 

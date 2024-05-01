@@ -42,9 +42,6 @@ struct RenderGL final : Render {
     private:
         GLXContext glContext_{ nullptr };
 
-        // OpeneGL function pointers handler object
-        std::shared_ptr<GLFunctions> gl;
-
         std::string vendor_{};
         std::string renderer_{};
         std::string glVersion_{};
