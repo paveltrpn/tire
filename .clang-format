@@ -21,8 +21,8 @@ BreakBeforeTernaryOperators: true
 ContinuationIndentWidth: 2
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
-AlwaysBreakBeforeMultilineStrings: No
-AlwaysBreakTemplateDeclarations: Yes
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakTemplateDeclarations: true
 AlignEscapedNewlines: DontAlign
 BinPackArguments: false
 BraceWrapping:

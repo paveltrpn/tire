@@ -15,9 +15,9 @@
 
 #include "config/Config.h"
 #include "Render.h"
+#include "GLFunctions.h"
 
 namespace tire {
-
 
 struct RenderGL : Render {
         RenderGL(const tire::Config& config);
@@ -35,6 +35,9 @@ struct RenderGL : Render {
         void setupDebugMessages();
 
         GLXContext glContext_{ nullptr };
+
+        // OpeneGL function pointers handler object
+        std::shared_ptr<GLFunctions> gl;
 
         std::string vendor_;
         std::string renderer_;

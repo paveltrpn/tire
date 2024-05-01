@@ -1,5 +1,6 @@
 
 #include <GL/glx.h>
+#include <memory>
 #include <string>
 #include <iostream>
 #include <format>
@@ -9,12 +10,17 @@
 #include "Render.h"
 #include "RenderGL.h"
 
+#include "render/GLFunctions.h"
 #include "spdlog/spdlog.h"
 
 namespace tire {
 
 RenderGL::RenderGL(const tire::Config& config) : Render{ config } {
     configureGl();
+    setSwapInterval(1);
+
+    gl = std::make_shared<GLFunctions>();
+    gl->initGLFunctions();
 }
 
 RenderGL::~RenderGL() {
@@ -24,9 +30,7 @@ RenderGL::~RenderGL() {
 void RenderGL::configureGl() {
     // glEnable(GL_DEBUG_OUTPUT);
     // glDebugMessageCallback(&MessageCallback, nullptr);
-
-    setSwapInterval(1);
-
+    
     __detail_tire::ctxErrorOccurred = false;
     int (*oldHandler)(Display*, XErrorEvent*) = XSetErrorHandler(&__detail_tire::ctxErrorHandler);
 

@@ -14,6 +14,7 @@
 #include "config/Config.h"
 #include "geometry/Node.h"
 #include "geometry/Point.h"
+#include "GLFunctions.h"
 
 namespace tire {
 
@@ -66,7 +67,7 @@ struct Render {
         void run();
         void frame();
 
-        void appendToRenderList(std::shared_ptr<tire::node<point_scalar_type>> node);
+        void appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node);
 
     private:
         void openDisplay();
@@ -75,6 +76,8 @@ struct Render {
         void configureX11();
 
     protected:
+        [[nodiscard]]
+        bool isExtensionSupported(const char* extList, const char* extension);
         void setSwapInterval(int interval);
 
         bool run_{ true };
@@ -87,14 +90,18 @@ struct Render {
         GLXFBConfig bestFbc_;
 
         // render list
-        std::list<std::shared_ptr<tire::node<point_scalar_type>>> renderList_;
+        std::list<std::shared_ptr<tire::Node<point_scalar_type>>> renderList_;
 
+        // glx extensions section
+    protected:
         using glXCreateContextAttribsARBProc
           = GLXContext (*)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
         glXCreateContextAttribsARBProc glXCreateContextAttribsARB{ nullptr };
 
         using glXSwapIntervalEXTProc = void (*)(Display*, GLXDrawable, int);
         glXSwapIntervalEXTProc glXSwapIntervalEXT{ nullptr };
+        static constexpr int GLX_SWAP_INTERVAL{ 0x20F1 };
+        static constexpr int GLX_MAX_SWAP_INTEVAL{ 0x20F2 };
 };
 
 }  // namespace tire

@@ -15,6 +15,7 @@ namespace tire {
 
 RenderLegacyGL::RenderLegacyGL(const tire::Config& config) : Render{ config } {
     configureGl();
+    setSwapInterval(1);
 }
 
 RenderLegacyGL::~RenderLegacyGL() {
@@ -25,8 +26,6 @@ void RenderLegacyGL::configureGl() {
     // glEnable(GL_DEBUG_OUTPUT);
     // glDebugMessageCallback(&MessageCallback, nullptr);
 
-    setSwapInterval(1);
-    
     __detail_tire::ctxErrorOccurred = false;
     int (*oldHandler)(Display*, XErrorEvent*) = XSetErrorHandler(&__detail_tire::ctxErrorHandler);
 

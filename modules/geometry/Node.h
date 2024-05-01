@@ -15,7 +15,7 @@
 namespace tire {
 
 template <typename scalarT_ = float>
-struct node {
+struct Node {
         using point_type = tire::point3<scalarT_>;
         using normal_type = tire::normal<scalarT_>;
         using vec2_type = tire::vec<2, scalarT_>;
@@ -23,7 +23,7 @@ struct node {
         using mat3_type = tire::mat<3, scalarT_>;
         using mat4_type = tire::mat<4, scalarT_>;
 
-        node()
+        Node()
             : offset_{ scalarT_{}, scalarT_{}, scalarT_{} },
               rotation_{ vec3_type{ scalarT_{ 1.0 }, scalarT_{}, scalarT_{} },
                          vec3_type{ scalarT_{}, scalarT_{ 1.0 }, scalarT_{} },

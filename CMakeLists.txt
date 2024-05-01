@@ -34,6 +34,8 @@ target_sources(render
     modules/render/RenderGL.h
     modules/render/RenderVK.cpp
     modules/render/RenderVK.h
+    modules/render/GLFunctions.cpp
+    modules/render/GLFunctions.h
 )
 target_link_libraries(render config)
 

@@ -2,7 +2,7 @@
 #include "subject.h"
 
 void initSubject(tire::Render *rndr) {
-    auto box_one = std::make_shared<tire::node<float>>();
+    auto box_one = std::make_shared<tire::Node<float>>();
     box_one->setVerteciesArray({ tire::point3f{ 1.0f, 1.0f, 1.0f },
                                  tire::point3f{ 1.0f, -1.0f, 1.0f },
                                  tire::point3f{ -1.0f, -1.0f, 1.0f },

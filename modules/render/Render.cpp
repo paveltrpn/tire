@@ -1,5 +1,6 @@
 
 #include <GLFW/glfw3.h>
+#include <ranges>
 
 #include "config/Config.h"
 #include "Render.h"
@@ -41,43 +42,44 @@ void Render::checkGlxVersion() {
     spdlog::info("glx version: {}.{}", glx_major, glx_minor);
 }
 
-void Render::initGlxExtensions() {
-    auto isGlxExtensionSupported = [](const char* extList, const char* extension) -> bool {
-        const char* start;
-        const char *where, *terminator;
+bool Render::isExtensionSupported(const char* extList, const char* extension) {
+    const char* start;
+    const char *where, *terminator;
 
-        /* Extension names should not have spaces. */
-        where = strchr(extension, ' ');
-        if (where || *extension == '\0')
-            return false;
-
-        /* It takes a bit of care to be fool-proof about parsing the
-           OpenGL extensions string. Don't be fooled by sub-strings,
-           etc. */
-        for (start = extList;;) {
-            where = strstr(start, extension);
-
-            if (!where)
-                break;
-
-            terminator = where + strlen(extension);
-
-            if (where == start || *(where - 1) == ' ')
-                if (*terminator == ' ' || *terminator == '\0')
-                    return true;
-
-            start = terminator;
-        }
-
+    /* Extension names should not have spaces. */
+    where = strchr(extension, ' ');
+    if (where || *extension == '\0')
         return false;
-    };
+
+    /* It takes a bit of care to be fool-proof about parsing the
+       OpenGL extensions string. Don't be fooled by sub-strings,
+       etc. */
+    for (start = extList;;) {
+        where = strstr(start, extension);
+
+        if (!where)
+            break;
+
+        terminator = where + strlen(extension);
+
+        if (where == start || *(where - 1) == ' ')
+            if (*terminator == ' ' || *terminator == '\0')
+                return true;
+
+        start = terminator;
+    }
+
+    return false;
+}
+
+void Render::initGlxExtensions() {
     // Get the default screen's GLX extension list
     const char* glxExts = glXQueryExtensionsString(display_, DefaultScreen(display_));
 
     glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB(
       (const GLubyte*)"glXCreateContextAttribsARB");
 
-    if (!isGlxExtensionSupported(glxExts, "GLX_ARB_create_context")
+    if (!isExtensionSupported(glxExts, "GLX_ARB_create_context")
         || !glXCreateContextAttribsARB) {
         throw std::runtime_error("extension glXCreateContextAttribsARB not supported!");
     }
@@ -85,7 +87,7 @@ void Render::initGlxExtensions() {
     glXSwapIntervalEXT
       = (glXSwapIntervalEXTProc)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalEXT");
 
-    if (!isGlxExtensionSupported(glxExts, "GLX_EXT_swap_control") || !glXSwapIntervalEXT) {
+    if (!isExtensionSupported(glxExts, "GLX_EXT_swap_control") || !glXSwapIntervalEXT) {
         throw std::runtime_error("extension glXSwapIntervalEXT not supported!");
     }
 }
@@ -195,6 +197,10 @@ void Render::configureX11() {
 
 void Render::frame() {
     preFrame();
+    
+    for (auto& node: renderList_) {
+
+    }
 
     postFrame();
     swapBuffers();
@@ -236,7 +242,7 @@ void Render::setSwapInterval(int interval) {
     }
 }
 
-void Render::appendToRenderList(std::shared_ptr<tire::node<point_scalar_type>> node) {
+void Render::appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) {
     renderList_.push_back(node);
 }
 

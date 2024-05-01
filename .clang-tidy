@@ -26,6 +26,7 @@ Checks: >
   -misc-no-recursion,
   -misc-unused-parameters,
   -misc-non-private-member-variables-in-classes,
+  -misc-include-cleaner,
   -modernize-use-trailing-return-type,
   -modernize-use-constraints,
   -modernize-type-traits,
