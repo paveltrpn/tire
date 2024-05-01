@@ -40,6 +40,21 @@ void GLFunctions::initGLFunctions() {
     GetActiveUniform = reinterpret_cast<PFNGLGETACTIVEUNIFORMPROC>(
       glXGetProcAddress((const GLubyte *)"glGetActiveUniform"));
 
+    GetProgramiv = reinterpret_cast<PFNGLGETPROGRAMIVPROC>(
+      glXGetProcAddress((const GLubyte *)"glGetProgramiv"));
+
+    AttachShader = reinterpret_cast<PFNGLATTACHSHADERPROC>(
+      glXGetProcAddress((const GLubyte *)"glAttachShader"));
+
+    GetProgramInfoLog = reinterpret_cast<PFNGLGETPROGRAMINFOLOGPROC>(
+      glXGetProcAddress((const GLubyte *)"glGetProgramInfoLog"));
+
+    GetUniformLocation = reinterpret_cast<PFNGLGETUNIFORMLOCATIONPROC>(
+      glXGetProcAddress((const GLubyte *)"glGetUniformLocation"));
+
+    UniformMatrix4fv = reinterpret_cast<PFNGLUNIFORMMATRIX4FVPROC>(
+      glXGetProcAddress((const GLubyte *)"glUniformMatrix4fv"));
+
     // VAO
     GenBuffers = reinterpret_cast<PFNGLGENBUFFERSPROC>(
       glXGetProcAddress(reinterpret_cast<const GLubyte *>("glGenBuffers")));

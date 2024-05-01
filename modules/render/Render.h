@@ -85,6 +85,12 @@ struct Render {
         Colormap colorMap_;
         GLXFBConfig bestFbc_;
 
+        // window properties
+        int posx_{};
+        int posy_{};
+        int width_{};
+        int height_{};
+
         // render list
         std::list<std::shared_ptr<tire::Node<point_scalar_type>>> renderList_;
 

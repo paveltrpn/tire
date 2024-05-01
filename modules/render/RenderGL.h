@@ -35,10 +35,10 @@ struct RenderGL final : Render {
         void postFrame() override;
         void swapBuffers() override;
 
-        void traverse() override {};
+        void traverse() override;
 
-        void allocateBuffers();
-        void deleteBuffers();
+        std::vector<GLuint> appendShader(std::vector<std::tuple<GLuint, std::string>> shaders);
+        void linkProgram();
 
     private:
         GLXContext glContext_{ nullptr };
@@ -53,6 +53,7 @@ struct RenderGL final : Render {
 
         GLuint bufferObject_{};
         GLuint vertexObject_{};
+        GLuint programObject_{};
 };
 
 }  // namespace tire

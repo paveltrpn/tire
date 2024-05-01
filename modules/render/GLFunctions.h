@@ -24,6 +24,11 @@ struct GLFunctions {
         PFNGLDELETESHADERPROC DeleteShader;
         PFNGLDELETEPROGRAMPROC DeleteProgram;
         PFNGLGETACTIVEUNIFORMPROC GetActiveUniform;
+        PFNGLGETPROGRAMIVPROC GetProgramiv;
+        PFNGLATTACHSHADERPROC AttachShader;
+        PFNGLGETPROGRAMINFOLOGPROC GetProgramInfoLog;
+        PFNGLGETUNIFORMLOCATIONPROC GetUniformLocation;
+        PFNGLUNIFORMMATRIX4FVPROC UniformMatrix4fv;
 
         // VAO
         PFNGLGENBUFFERSPROC GenBuffers;

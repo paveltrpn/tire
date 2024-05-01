@@ -42,6 +42,22 @@ struct Node {
             std::copy(values.begin(), values.end(), std::back_inserter(vertecies_));
         }
 
+        /*
+         * return vertecies count, stored in vertecies array
+         */
+        [[nodiscard]]
+        size_t getVerteciesCount() const {
+            return vertecies_.size();
+        }
+
+        /*
+         * return vertecies array size in bytes
+         */
+        [[nodiscard]]
+        size_t getVerteciesArraySize() const {
+            return getVerteciesCount() * 3 * sizeof(scalarT_);
+        }
+
         void setIndicesArray(std::vector<long long>::const_iterator start,
                              std::vector<long long>::const_iterator end) {
             std::copy(start, end, std::back_inserter(indices_));
@@ -121,6 +137,7 @@ struct Node {
 
     private:
         bool dirty_{ false };
+        bool useIndecies_{ false };
 
         std::vector<point_type> vertecies_;
         std::vector<long long> indices_;

@@ -172,12 +172,18 @@ void Render::configureX11() {
     swa.event_mask = StructureNotifyMask;
 
     // create window
+
+    posx_ = config_.get<int>("window_pos_x", 100);
+    posy_ = config_.get<int>("window_pos_y", 100);
+    width_ = config_.get<int>("window_width", 320);
+    height_ = config_.get<int>("window_height", 240);
+
     window_ = XCreateWindow(display_,
                             RootWindow(display_, vi->screen),
-                            config_.get<int>("window_pos_x", 100),
-                            config_.get<int>("window_pos_y", 100),
-                            config_.get<int>("window_width", 320),
-                            config_.get<int>("window_height", 240),
+                            posx_,
+                            posy_,
+                            width_,
+                            height_,
                             0,
                             vi->depth,
                             InputOutput,
@@ -197,10 +203,8 @@ void Render::configureX11() {
 
 void Render::frame() {
     preFrame();
-    
-    for (auto& node: renderList_) {
 
-    }
+    traverse();
 
     postFrame();
     swapBuffers();
