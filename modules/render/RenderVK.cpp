@@ -173,4 +173,8 @@ void RenderVK::displayPhysicalDeviceFamiliesProperties(size_t id) {
                d.timestampValidBits);
 }
 
+void RenderVK::appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) {
+    renderList_.push_back(node);
+}
+
 }  // namespace tire

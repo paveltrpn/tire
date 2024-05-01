@@ -242,8 +242,4 @@ void Render::setSwapInterval(int interval) {
     }
 }
 
-void Render::appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) {
-    renderList_.push_back(node);
-}
-
 }  // namespace tire

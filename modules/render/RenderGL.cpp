@@ -109,4 +109,8 @@ void RenderGL::swapBuffers() {
     glXSwapBuffers(display_, window_);
 };
 
+void RenderGL::appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) {
+    renderList_.push_back(node);
+}
+
 }  // namespace tire

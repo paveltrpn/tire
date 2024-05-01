@@ -14,8 +14,9 @@ struct RenderLegacyGL : Render {
         void displayRenderInfo() override;
         void preFrame() override;
         void postFrame() override;
-
         void swapBuffers() override;
+
+        void appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) override;
 
     private:
         void configureGl();

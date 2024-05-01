@@ -67,7 +67,7 @@ struct Render {
         void run();
         void frame();
 
-        void appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node);
+        virtual void appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) = 0;
 
     private:
         void openDisplay();

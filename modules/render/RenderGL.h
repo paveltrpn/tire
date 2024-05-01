@@ -26,12 +26,12 @@ struct RenderGL : Render {
         void displayRenderInfo() override;
         void preFrame() override;
         void postFrame() override;
-
         void swapBuffers() override;
+
+        void appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) override;
 
     private:
         void configureGl();
-
         void setupDebugMessages();
 
         GLXContext glContext_{ nullptr };
@@ -39,10 +39,13 @@ struct RenderGL : Render {
         // OpeneGL function pointers handler object
         std::shared_ptr<GLFunctions> gl;
 
-        std::string vendor_;
-        std::string renderer_;
-        std::string glVersion_;
-        std::string glslVersion_;
+        std::string vendor_{};
+        std::string renderer_{};
+        std::string glVersion_{};
+        std::string glslVersion_{};
+
+        std::vector<GLuint> bufferObjects_{};
+        std::vector<GLuint> vertexObjects_{};
 };
 
 }  // namespace tire

@@ -72,6 +72,8 @@ struct RenderVK : Render {
         void postFrame() override {};
         void swapBuffers() override {};
 
+        void appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) override;
+
     protected:
         void enumerateExtensionProperties() {
             uint32_t extCount;
