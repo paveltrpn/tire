@@ -17,6 +17,8 @@
 #include "Render.h"
 #include "GLFunctions.h"
 
+#include "shader/Shader.h"
+
 namespace tire {
 
 struct RenderGL final : Render {
@@ -37,9 +39,6 @@ struct RenderGL final : Render {
 
         void traverse() override;
 
-        std::vector<GLuint> appendShader(std::vector<std::tuple<GLuint, std::string>> shaders);
-        void linkProgram();
-
     private:
         GLXContext glContext_{ nullptr };
 
@@ -53,7 +52,7 @@ struct RenderGL final : Render {
 
         GLuint bufferObject_{};
         GLuint vertexObject_{};
-        GLuint programObject_{};
+        Shader program_;
 };
 
 }  // namespace tire

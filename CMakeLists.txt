@@ -57,6 +57,15 @@ target_sources(camera
     modules/camera/Camera.h
 )
 
+add_library(shader)
+target_sources(shader
+  PUBLIC
+    modules/shader/Shader.cpp
+    modules/shader/Shader.h
+    modules/shader/ShaderSources.cpp
+    modules/shader/ShaderSources.h
+)
+
 add_library(geometry)
 target_sources(geometry
   PUBLIC
@@ -72,10 +81,10 @@ target_sources(geometry
     modules/geometry/Normal.h
 )
 
-target_link_libraries(render config)
+target_link_libraries(render config shader)
 target_link_libraries(assets)
 
 add_subdirectory(test/window)
-target_link_libraries(gl config render assets X11 GL GLU vulkan)
-target_link_libraries(vk config render assets X11 GL GLU vulkan)
-target_link_libraries(lg config render assets X11 GL GLU vulkan)
+target_link_libraries(gl config render shader assets X11 GL GLU vulkan)
+target_link_libraries(vk config render shader assets X11 GL GLU vulkan)
+target_link_libraries(lg config render shader assets X11 GL GLU vulkan)

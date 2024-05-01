@@ -5,6 +5,13 @@
 
 namespace tire {
 
+PFNGLCREATEPROGRAMPROC glCreateProgram;
+
+void initGL() {
+    glCreateProgram = reinterpret_cast<PFNGLCREATEPROGRAMPROC>(
+      glXGetProcAddress(reinterpret_cast<const GLubyte *>("glCreateProgram")));
+}
+
 void GLFunctions::initGLFunctions() {
     // shaders
     CreateProgram = reinterpret_cast<PFNGLCREATEPROGRAMPROC>(
@@ -54,6 +61,9 @@ void GLFunctions::initGLFunctions() {
 
     UniformMatrix4fv = reinterpret_cast<PFNGLUNIFORMMATRIX4FVPROC>(
       glXGetProcAddress((const GLubyte *)"glUniformMatrix4fv"));
+
+    GetActiveAttrib = reinterpret_cast<PFNGLGETACTIVEATTRIBPROC>(
+      glXGetProcAddress((const GLubyte *)"glGetActiveAttrib"));
 
     // VAO
     GenBuffers = reinterpret_cast<PFNGLGENBUFFERSPROC>(

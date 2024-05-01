@@ -17,15 +17,29 @@
 
 namespace tire {
 
-RenderGL::RenderGL(const tire::Config& config) : Render{ config } {
+RenderGL::RenderGL(const tire::Config &config) : Render{ config } {
     configureGl();
     // setup VSYNC
     setSwapInterval(1);
 
+    initGL();
+
     gl = std::make_shared<GLFunctions>();
     gl->initGLFunctions();
 
-    linkProgram();
+    program_.setGlFunctionsPtr(gl.get());
+
+    // linkProgram();
+    program_.linkProgram(
+      { { GL_VERTEX_SHADER, shaderSourcesManager_.getVertexShader("basic_gl") },
+        { GL_FRAGMENT_SHADER, shaderSourcesManager_.getFragmentShader("basic_gl") } });
+
+    program_.use();
+    auto matrix = program_.getUniform("matrix");
+    glm::mat4 projection = glm::perspective(
+      50.0f, static_cast<float>(width_) / static_cast<float>(height_), 0.1f, 100.0f);
+    glm::mat4 offset = glm::translate(projection, glm::vec3(0.0f, 0.0f, -15.0f));
+    gl->UniformMatrix4fv(matrix, 1, GL_FALSE, &offset[0][0]);
 }
 
 RenderGL::~RenderGL() {
@@ -137,113 +151,6 @@ void RenderGL::appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>>
     // texture coordinates attribute
     // gl->VertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void *)(24 * sizeof(float)));
     // gl->EnableVertexAttribArray(2);
-}
-
-void loadShader(std::string fname) {
-    std::string shader;
-    std::ifstream File;
-    File.open(fname, std::ios::in);
-
-    if (File) {
-        shader.assign(std::istreambuf_iterator<char>(File), std::istreambuf_iterator<char>());
-    }
-
-    std::cout << shader << "\n";
-}
-
-std::vector<GLuint> RenderGL::appendShader(std::vector<std::tuple<GLuint, std::string>> shaders) {
-    if (shaders.size() < 2) {
-        spdlog::critical(" RenderGL::appendShader(): ERROR! Wrong shader count!");
-        std::exit(1);
-    } else {
-        std::vector<GLuint> rt;
-        for (const auto &[type, source] : shaders) {
-            // Читаем файл в одну строку за раз
-            std::ifstream inFile;
-
-            GLuint shHandle = gl->CreateShader(type);
-
-            const char *c_str = source.c_str();
-
-            gl->ShaderSource(shHandle, 1, &c_str, nullptr);
-            gl->CompileShader(shHandle);
-
-            GLint success;
-            gl->GetShaderiv(shHandle, GL_COMPILE_STATUS, &success);
-
-            if (success == GL_FALSE) {
-                int32_t logLength;
-                gl->GetShaderiv(shHandle, GL_INFO_LOG_LENGTH, &logLength);
-
-                std::shared_ptr<GLchar[]> log(new GLchar[logLength]);
-                gl->GetShaderInfoLog(shHandle, logLength, nullptr, log.get());
-
-                spdlog::critical(
-                  "COglProgram::appendShader(): ERROR! Can't compile shader with trace:\n{}",
-                  log.get());
-                inFile.close();
-                std::exit(1);
-            }
-
-            rt.push_back(shHandle);
-        }
-        return rt;
-    }
-}
-
-void RenderGL::linkProgram() {
-    std::string vertexShaderSource = "#version 330 core\n"
-                                     "layout (location = 0) in vec3 pos;\n"
-                                     "out vec3 outColor;\n"
-                                     "uniform mat4 matrix;\n"
-                                     "void main() {\n"
-                                     "   outColor = vec3(1.0f, 0.0f, 0.0f);\n"
-                                     "   gl_Position = matrix * vec4(pos, 1.0);\n"
-                                     "}\n";
-
-    std::string fragmentShaderSource = "#version 330 core\n"
-                                       "out vec4 FragColor;\n"
-                                       "in vec3 outColor;\n"
-                                       "void main() {\n"
-                                       "    FragColor = vec4(outColor, 0.5);\n"
-                                       "    //vec4 texColor = texture(texture1, texCoord);\n"
-                                       "    //if(texColor.a < 0.1)\n"
-                                       "    //     discard;\n"
-                                       "    //FragColor = texColor;\n"
-                                       "}\n";
-
-    auto shaderList = appendShader(
-      { { GL_VERTEX_SHADER, vertexShaderSource }, { GL_FRAGMENT_SHADER, fragmentShaderSource } });
-
-    programObject_ = gl->CreateProgram();
-
-    for (const auto &shHandle : shaderList) {
-        gl->AttachShader(programObject_, shHandle);
-    }
-
-    gl->LinkProgram(programObject_);
-
-    GLint success;
-    gl->GetProgramiv(programObject_, GL_LINK_STATUS, &success);
-
-    if (success == GL_FALSE) {
-        int32_t logLength;
-        gl->GetProgramiv(programObject_, GL_INFO_LOG_LENGTH, &logLength);
-
-        std::shared_ptr<GLchar[]> log(new GLchar[logLength]);
-        gl->GetProgramInfoLog(programObject_, logLength, nullptr, log.get());
-
-        spdlog::critical("RenderGL::linkProgram(): ERROR! Can't link program with trace:\n{}",
-                         log.get());
-        std::exit(1);
-    }
-
-    gl->UseProgram(programObject_);
-    auto matrix = gl->GetUniformLocation(programObject_, "matrix");
-    glm::mat4 projection = glm::perspective(
-      50.0f, static_cast<float>(width_) / static_cast<float>(height_), 0.1f, 100.0f);
-    glm::mat4 offset = glm::translate(projection, glm::vec3(0.0f, 0.0f, -15.0f));
-    gl->UniformMatrix4fv(matrix, 1, GL_FALSE, &offset[0][0]);
 }
 
 void RenderGL::traverse() {

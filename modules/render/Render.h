@@ -15,6 +15,7 @@
 #include "geometry/Node.h"
 #include "geometry/Point.h"
 #include "GLFunctions.h"
+#include "shader/ShaderSources.h"
 
 namespace tire {
 
@@ -90,6 +91,9 @@ struct Render {
         int posy_{};
         int width_{};
         int height_{};
+
+        // shader sources manager
+        ShaderSourcesManager shaderSourcesManager_{};
 
         // render list
         std::list<std::shared_ptr<tire::Node<point_scalar_type>>> renderList_;
