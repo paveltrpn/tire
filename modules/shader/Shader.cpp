@@ -22,10 +22,12 @@ void Shader::linkProgram(std::vector<std::pair<GLuint, std::string>> shaders) {
         int32_t logLength;
         glGetProgramiv(program_, GL_INFO_LOG_LENGTH, &logLength);
 
-        std::shared_ptr<GLchar[]> log(new GLchar[logLength]);
-        glGetProgramInfoLog(program_, logLength, nullptr, log.get());
+        std::vector<GLchar> log;
+        log.reserve(logLength);
 
-        spdlog::error("can't link program with trace:\n{}", log.get());
+        glGetProgramInfoLog(program_, logLength, nullptr, log.data());
+
+        spdlog::error("can't link program with trace:\n{}", log.data());
         return;
     }
 }
@@ -55,10 +57,11 @@ std::vector<GLuint> Shader::getShadersList(std::vector<std::pair<GLuint, std::st
                 int32_t logLength;
                 glGetShaderiv(shHandle, GL_INFO_LOG_LENGTH, &logLength);
 
-                std::shared_ptr<GLchar[]> log(new GLchar[logLength]);
-                glGetShaderInfoLog(shHandle, logLength, nullptr, log.get());
+                std::vector<GLchar> log;
+                log.reserve(logLength);
+                glGetShaderInfoLog(shHandle, logLength, nullptr, log.data());
 
-                spdlog::error("can't compile shader with trace:\n{}", log.get());
+                spdlog::error("can't compile shader with trace:\n{}", log.data());
                 return rt;
             }
 
@@ -72,16 +75,16 @@ void Shader::getActiveAttributes() {
     GLint size;   // size of the variable
     GLenum type;  // type of the variable (float, vec3 or mat4, etc)
 
-    constexpr GLsizei bufSize = 16;  // maximum name length
-    GLchar name[bufSize];            // variable name in GLSL
-    GLsizei length;                  // name length
+    constexpr GLsizei bufSize = 16;    // maximum name length
+    std::array<GLchar, bufSize> name;  // variable name in GLSL
+    GLsizei length;                    // name length
 
     GLint count;
     glGetProgramiv(program_, GL_ACTIVE_ATTRIBUTES, &count);
 
     for (GLint i = 0; i < count; i++) {
-        glGetActiveAttrib(program_, (GLuint)i, bufSize, &length, &size, &type, name);
-        attributes_.push_back({ name, type });
+        glGetActiveAttrib(program_, (GLuint)i, bufSize, &length, &size, &type, name.data());
+        attributes_.push_back({ name.data(), type });
     }
 }
 
@@ -89,16 +92,16 @@ void Shader::getActiveUniforms() {
     GLint size;   // size of the variable
     GLenum type;  // type of the variable (float, vec3 or mat4, etc)
 
-    constexpr GLsizei bufSize = 16;  // maximum name length
-    GLchar name[bufSize];            // variable name in GLSL
-    GLsizei length;                  // name length
+    constexpr GLsizei bufSize = 16;    // maximum name length
+    std::array<GLchar, bufSize> name;  // variable name in GLSL
+    GLsizei length;                    // name length
 
     GLint count;
     glGetProgramiv(program_, GL_ACTIVE_UNIFORMS, &count);
 
     for (GLint i = 0; i < count; i++) {
-        glGetActiveUniform(program_, (GLuint)i, bufSize, &length, &size, &type, name);
-        uniforms_.push_back({ name, type });
+        glGetActiveUniform(program_, (GLuint)i, bufSize, &length, &size, &type, name.data());
+        uniforms_.push_back({ name.data(), type });
     }
 }
 
