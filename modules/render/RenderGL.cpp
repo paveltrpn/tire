@@ -19,18 +19,16 @@ namespace tire {
 
 RenderGL::RenderGL(const tire::Config &config) : Render{ config } {
     configureGl();
+    initOpenGLFunctions();
     // setup VSYNC
     setSwapInterval(1);
 
-    initOpenGLFunctions();
-
     // linkProgram();
-    program_.linkProgram(
-      { { GL_VERTEX_SHADER, shaderSourcesManager_.getVertexShader("basic_gl") },
-        { GL_FRAGMENT_SHADER, shaderSourcesManager_.getFragmentShader("basic_gl") } });
+    program_.link({ { GL_VERTEX_SHADER, shaderSourcesManager_.getVertexShader("basic_gl") },
+                    { GL_FRAGMENT_SHADER, shaderSourcesManager_.getFragmentShader("basic_gl") } });
 
     program_.use();
-    auto matrix = program_.getUniform("matrix");
+    auto matrix = program_.getUniformLocation("matrix");
     glm::mat4 projection = glm::perspective(
       50.0f, static_cast<float>(width_) / static_cast<float>(height_), 0.1f, 100.0f);
     glm::mat4 offset = glm::translate(projection, glm::vec3(0.0f, 0.0f, -15.0f));

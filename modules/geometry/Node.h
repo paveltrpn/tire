@@ -6,31 +6,29 @@
 #include <initializer_list>
 #include <iterator>
 
-#include "Vector.h"
-#include "Matrix.h"
-
 #include "Point.h"
 #include "Normal.h"
 
 namespace tire {
 
-template <typename scalarT_ = float>
+template <typename T = float>
 struct Node {
-        using point_type = tire::point3<scalarT_>;
-        using normal_type = tire::normal<scalarT_>;
-        using vec2_type = tire::vec<2, scalarT_>;
-        using vec3_type = tire::vec<3, scalarT_>;
-        using mat3_type = tire::mat<3, scalarT_>;
-        using mat4_type = tire::mat<4, scalarT_>;
+        using scalar_type = T;
+        using point_type = tire::point3<scalar_type>;
+        using normal_type = tire::normal<scalar_type>;
+        using vec2_type = tire::algebra::Vector<scalar_type, 2>;
+        using vec3_type = tire::algebra::Vector<scalar_type, 3>;
+        using mat3_type = tire::algebra::Matrix<scalar_type, 3>;
+        using mat4_type = tire::algebra::Matrix<scalar_type, 4>;
 
         Node()
-            : offset_{ scalarT_{}, scalarT_{}, scalarT_{} },
-              rotation_{ vec3_type{ scalarT_{ 1.0 }, scalarT_{}, scalarT_{} },
-                         vec3_type{ scalarT_{}, scalarT_{ 1.0 }, scalarT_{} },
-                         vec3_type{ scalarT_{}, scalarT_{}, scalarT_{ 1.0 } } },
-              scale_{ vec3_type{ scalarT_{ 1.0 }, scalarT_{}, scalarT_{} },
-                      vec3_type{ scalarT_{}, scalarT_{ 1.0 }, scalarT_{} },
-                      vec3_type{ scalarT_{}, scalarT_{}, scalarT_{ 1.0 } } } {
+            : offset_{ T{}, T{}, T{} },
+              rotation_{ vec3_type{ T{ 1.0 }, T{}, T{} },
+                         vec3_type{ T{}, T{ 1.0 }, T{} },
+                         vec3_type{ T{}, T{}, T{ 1.0 } } },
+              scale_{ vec3_type{ T{ 1.0 }, T{}, T{} },
+                      vec3_type{ T{}, T{ 1.0 }, T{} },
+                      vec3_type{ T{}, T{}, T{ 1.0 } } } {
         }
 
         void setVerteciesArray(std::vector<point_type>::const_iterator start,
@@ -55,7 +53,7 @@ struct Node {
          */
         [[nodiscard]]
         size_t getVerteciesArraySize() const {
-            return getVerteciesCount() * 3 * sizeof(scalarT_);
+            return getVerteciesCount() * 3 * sizeof(scalar_type);
         }
 
         void setIndicesArray(std::vector<long long>::const_iterator start,

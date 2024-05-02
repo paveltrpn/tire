@@ -4,17 +4,17 @@
 
 #include <limits>
 
-#include "Vector.h"
-#include "Matrix.h"
+#include "algebra/Vector.h"
+#include "algebra/Matrix.h"
 
 namespace tire {
 
 template <typename scalarT_ = float>
 struct normal {
         using self = normal<scalarT_>;
-        using vec_type = tire::vec<3, scalarT_>;
-        using mat3x3_type = tire::mat<3, scalarT_>;
-        using mat4x4_type = tire::mat<4, scalarT_>;
+        using vec_type = tire::algebra::Vector<scalarT_, 3>;
+        using mat3x3_type = tire::algebra::Matrix<scalarT_, 3>;
+        using mat4x4_type = tire::algebra::Matrix<scalarT_, 4>;
 
         scalarT_ x() {
             return normal_.x();

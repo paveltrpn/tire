@@ -4,7 +4,7 @@
 
 namespace tire {
 
-void Shader::linkProgram(std::vector<std::pair<GLuint, std::string>> shaders) {
+void Shader::link(std::vector<std::pair<GLuint, std::string>> shaders) {
     auto shaderList = getShadersList(shaders);
 
     program_ = glCreateProgram();
@@ -117,7 +117,7 @@ void Shader::showActiveAttributes() {
     }
 }
 
-GLuint Shader::getUniform(const std::string &id) {
+GLuint Shader::getUniformLocation(const std::string &id) {
     return glGetUniformLocation(program_, id.c_str());
 }
 

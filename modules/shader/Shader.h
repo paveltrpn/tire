@@ -20,13 +20,25 @@ struct Shader final {
             return program_;
         };
 
-        void linkProgram(std::vector<std::pair<GLuint, std::string>> shaders);
+        void link(std::vector<std::pair<GLuint, std::string>> shaders);
         void use();
 
         void showActiveUniforms();
         void showActiveAttributes();
 
-        GLuint getUniform(const std::string &id);
+        GLuint getUniformLocation(const std::string &id);
+
+        template <typename T>
+        void setScalarUniform(GLint location, T value) {
+        }
+
+        template <typename T>
+        void setVectorUniform(GLint location, T value) {
+        }
+
+        template <typename T>
+        void setMatrixUniform(GLint location, T value) {
+        }
 
     private:
         std::vector<GLuint> getShadersList(std::vector<std::pair<GLuint, std::string>> shaders);

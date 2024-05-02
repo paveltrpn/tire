@@ -2,17 +2,17 @@
 #ifndef __tire_point_h__
 #define __tire_point_h__
 
-#include "Vector.h"
-#include "Matrix.h"
+#include "algebra/Vector.h"
+#include "algebra/Matrix.h"
 
 namespace tire {
 
 template <typename scalarT_ = float>
 struct point3 {
         using self = point3<scalarT_>;
-        using vec_type = tire::vec<3, scalarT_>;
-        using mat3x3_type = tire::mat<3, scalarT_>;
-        using mat4x4_type = tire::mat<4, scalarT_>;
+        using vec_type = tire::algebra::Vector<scalarT_, 3>;
+        using mat3x3_type = tire::algebra::Matrix<scalarT_, 3>;
+        using mat4x4_type = tire::algebra::Matrix<scalarT_, 4>;
 
         point3() : pos_{} {
         }

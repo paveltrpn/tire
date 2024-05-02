@@ -1,4 +1,7 @@
 
+#ifndef __algebramatrix_h__
+#define __algebramatrix_h__
+
 #include <iostream>
 #include <cstddef>
 #include <mdspan>
@@ -1044,4 +1047,94 @@ struct matrix<T, __SZ4, __SZ4> {
         std::array<T, __SZ4 * __SZ4> data_;
 };
 
+namespace algebra {
+
+template <typename T, size_t size_>
+struct matrix_base_glm {
+        using scalar_type = T;
+        using self = matrix_base_glm<T, size_>;
+
+    private:
+        glm::mat<size_, size_, scalar_type> mat_;
+};
+
+template <typename T>
+struct matrix_base_glm<T, 2> {
+        using scalar_type = T;
+        using vec_type = Vector<scalar_type, 2>;
+        using self = matrix_base_glm<scalar_type, 2>;
+
+        matrix_base_glm() = default;
+        matrix_base_glm(vec_type r1, vec_type r2)
+            : mat_{ glm::vec<2, scalar_type>{ r1.x(), r1.y() },
+                    glm::vec<2, scalar_type>{ r2.x(), r2.y() } } {
+        }
+
+    private:
+        glm::mat<2, 2, scalar_type> mat_;
+};
+
+template <typename T>
+struct matrix_base_glm<T, 3> {
+        using scalar_type = T;
+        using vec_type = Vector<scalar_type, 3>;
+        using self = matrix_base_glm<scalar_type, 3>;
+
+        matrix_base_glm() = default;
+        matrix_base_glm(vec_type r1, vec_type r2, vec_type r3)
+            : mat_{ glm::vec<3, scalar_type>{ r1.x(), r1.y(), r1.x() },
+                    glm::vec<3, scalar_type>{ r2.x(), r2.y(), r1.z() },
+                    glm::vec<3, scalar_type>{ r3.x(), r3.y(), r3.z() } } {
+        }
+
+    private:
+        glm::mat<3, 3, scalar_type> mat_;
+};
+
+template <typename T>
+struct matrix_base_glm<T, 4> {
+        using scalar_type = T;
+        using vec_type = Vector<scalar_type, 3>;
+        using self = matrix_base_glm<scalar_type, 4>;
+
+        matrix_base_glm() = default;
+        matrix_base_glm(vec_type r1, vec_type r2, vec_type r3, vec_type r4)
+            : mat_{ glm::vec<4, scalar_type>{ r1.x(), r1.y(), r1.x(), r1.w() },
+                    glm::vec<4, scalar_type>{ r2.x(), r2.y(), r1.z(), r2.w() },
+                    glm::vec<4, scalar_type>{ r3.x(), r3.y(), r3.z(), r3.w() },
+                    glm::vec<4, scalar_type>{ r4.x(), r4.y(), r4.z(), r4.w() } } {
+        }
+
+    private:
+        glm::mat<4, 4, scalar_type> mat_;
+};
+
+template <typename T, size_t size_>
+using Matrix = matrix_base_glm<T, size_>;
+
+template <typename T>
+using Matrix2 = matrix_base_glm<T, 2>;
+
+template <typename T>
+using Matrix3 = matrix_base_glm<T, 3>;
+
+template <typename T>
+using Matrix4 = matrix_base_glm<T, 4>;
+
+using Matrix2i = Matrix2<long long>;
+using Matrix3i = Matrix3<long long>;
+using Matrix4i = Matrix4<long long>;
+
+using Matrix2f = Matrix2<float>;
+using Matrix3f = Matrix3<float>;
+using Matrix4f = Matrix4<float>;
+
+using Matrix2d = Matrix2<double>;
+using Matrix3d = Matrix3<double>;
+using Matrix4d = Matrix4<double>;
+
+}  // namespace algebra
+
 }  // namespace tire
+
+#endif
