@@ -9,11 +9,10 @@
 #include "config/Config.h"
 #include "Render.h"
 #include "RenderGL.h"
+#include "algebra/Matrix.h"
 
 #include "render/GLFunctions.h"
 #include "spdlog/spdlog.h"
-
-#include <glm/gtc/matrix_transform.hpp>
 
 namespace tire {
 
@@ -29,10 +28,16 @@ RenderGL::RenderGL(const tire::Config &config) : Render{ config } {
 
     program_.use();
     auto matrix = program_.getUniformLocation("matrix");
-    glm::mat4 projection = glm::perspective(
+
+    tire::algebra::Matrix4f projection;
+    projection.perspective(
       50.0f, static_cast<float>(width_) / static_cast<float>(height_), 0.1f, 100.0f);
-    glm::mat4 offset = glm::translate(projection, glm::vec3(0.0f, 0.0f, -15.0f));
-    glUniformMatrix4fv(matrix, 1, GL_FALSE, &offset[0][0]);
+
+    tire::algebra::Matrix4f offset;
+    offset.translate(0.0f, 0.0f, -15.0f);
+
+    auto result = projection.mult(offset);
+    glUniformMatrix4fv(matrix, 1, GL_FALSE, &result.mat_[0][0]);
 }
 
 RenderGL::~RenderGL() {

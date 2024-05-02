@@ -7,82 +7,41 @@
 
 namespace tire {
 
-template <typename scalarT_ = float>
+template <typename T = float>
 struct point3 {
-        using self = point3<scalarT_>;
-        using vec_type = tire::algebra::Vector<scalarT_, 3>;
-        using mat3x3_type = tire::algebra::Matrix<scalarT_, 3>;
-        using mat4x4_type = tire::algebra::Matrix<scalarT_, 4>;
+        using scalar_type = T;
+        using self = point3<scalar_type>;
+        using vec_type = tire::algebra::Vector<scalar_type, 3>;
+        using mat3_type = tire::algebra::Matrix<scalar_type, 3>;
+        using mat4_type = tire::algebra::Matrix<scalar_type, 4>;
 
         point3() : pos_{} {
         }
 
-        point3(scalarT_ x, scalarT_ y, scalarT_ z) : pos_{ x, y, z } {
+        point3(scalar_type x, scalar_type y, scalar_type z) : pos_{ x, y, z } {
         }
 
         point3(vec_type rhs) : pos_{ rhs } {
         }
 
-        scalarT_ x() {
+        scalar_type x() {
             return pos_.x();
         }
 
-        scalarT_ y() {
+        scalar_type y() {
             return pos_.y();
         }
 
-        scalarT_ z() {
+        scalar_type z() {
             return pos_.z();
         }
 
         void move(vec_type offst) {
-            pos_ += offst;
+            pos_.sumSelf(offst);
         }
 
-        void transform(mat3x3_type factor) {
-            pos_ *= factor;
-        }
-
-        void transform(mat4x4_type factor) {
-            pos_ *= factor;
-        }
-
-        self& operator+(vec_type offst) {
-            pos_ = pos_ + offst;
-            return *this;
-        }
-
-        self& operator-(vec_type offst) {
-            pos_ = pos_ - offst;
-            return *this;
-        }
-
-        self& operator+=(vec_type offst) {
-            pos_ += offst;
-            return *this;
-        }
-
-        self& operator-=(vec_type offst) {
-            pos_ -= offst;
-            return *this;
-        }
-
-        self& operator*(mat3x3_type factor) {
-            pos_ = pos_ * factor;
-            return *this;
-        }
-
-        self& operator*=(mat3x3_type factor) {
-            pos_ = pos_ * factor;
-        }
-
-        self& operator*(mat4x4_type factor) {
-            pos_ = pos_ * factor;
-            return *this;
-        }
-
-        self& operator*=(mat4x4_type factor) {
-            pos_ = pos_ * factor;
+        void transform(mat3_type mtrx) {
+            pos_ = mtrx.mult(pos_);
         }
 
     private:

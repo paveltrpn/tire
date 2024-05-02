@@ -39,7 +39,6 @@ struct vector_base_glm {
             return glm::dot(vec_, rhs.vec_);
         }
 
-    private:
         glm::vec<size_, scalar_type> vec_;
 };
 
@@ -100,10 +99,9 @@ struct vector_base_glm<T, 2> {
         }
 
         void normalize() {
-            return glm::normalize(vec_);
+            vec_ = glm::normalize(vec_);
         }
 
-    private:
         glm::vec<2, scalar_type> vec_;
 };
 
@@ -172,7 +170,7 @@ struct vector_base_glm<T, 3> {
         }
 
         void normalize() {
-            return glm::normalize(vec_);
+            vec_ = glm::normalize(vec_);
         }
 
         self cross(const vector_base_glm& rhs) {
@@ -183,7 +181,6 @@ struct vector_base_glm<T, 3> {
             vec_ = glm::cross(vec_, rhs.vec_);
         }
 
-    private:
         glm::vec<3, scalar_type> vec_;
 };
 
@@ -261,12 +258,12 @@ struct vector_base_glm<T, 4> {
         }
 
         void normalize() {
-            return glm::normalize(vec_);
+            vec_ = glm::normalize(vec_);
         }
 
-    private:
         glm::vec<4, scalar_type> vec_;
 };
+
 }  // namespace tire::algebra
 
 #endif

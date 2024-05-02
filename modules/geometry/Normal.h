@@ -9,49 +9,46 @@
 
 namespace tire {
 
-template <typename scalarT_ = float>
+template <typename T = float>
 struct normal {
-        using self = normal<scalarT_>;
-        using vec_type = tire::algebra::Vector<scalarT_, 3>;
-        using mat3x3_type = tire::algebra::Matrix<scalarT_, 3>;
-        using mat4x4_type = tire::algebra::Matrix<scalarT_, 4>;
+        using scalar_type = T;
+        using self = normal<scalar_type>;
+        using vec_type = tire::algebra::Vector3<scalar_type>;
+        using mat3_type = tire::algebra::Matrix3<scalar_type>;
+        using mat4_type = tire::algebra::Matrix4<scalar_type>;
 
-        scalarT_ x() {
+        scalar_type x() {
             return normal_.x();
         }
 
-        scalarT_ y() {
+        scalar_type y() {
             return normal_.y();
         }
 
-        scalarT_ z() {
+        scalar_type z() {
             return normal_.z();
         }
 
-        scalarT_ dot(vec_type rhs) {
-            return glm::dot(normal_, rhs);
+        scalar_type dot(vec_type rhs) {
+            return normal_.dot(rhs);
         }
 
-        scalarT_ squareLength() {
-            return glm::dot(this->normal_, this->normal_);
+        scalar_type squareLength() {
+            return normal_.dot(normal_);
         }
 
-        scalarT_ lenght() {
-            return normal_.lenght();
+        scalar_type lenght() {
+            return normal_.length();
         }
 
         void normalize() {
-            glm::normalize(normal_);
+            normal_.normalize();
         }
 
-        void transform(mat3x3_type rhs) {
-            auto i_rhs = glm::inverse(rhs);
-            normal_ *= glm::transpose(i_rhs);
-        }
-
-        void transform(mat4x4_type rhs) {
-            auto i_rhs = glm::inverse(rhs);
-            normal_ *= glm::transpose(i_rhs);
+        void transform(mat3_type rhs) {
+            auto i = rhs.inverse();
+            auto ti = i.transpose();
+            normal_ = ti.mult(normal_);
         }
 
     private:
