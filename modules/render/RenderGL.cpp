@@ -6,6 +6,7 @@
 #include <format>
 #include <print>
 
+#include "algebra/matrix_base_glm.h"
 #include "config/Config.h"
 #include "Render.h"
 #include "RenderGL.h"
@@ -29,15 +30,12 @@ RenderGL::RenderGL(const tire::Config &config) : Render{ config } {
     program_.use();
     auto matrix = program_.getUniformLocation("matrix");
 
-    tire::algebra::Matrix4f projection;
-    projection.perspective(
+    tire::algebra::Matrix4f projection = tire::algebra::perspective<float>(
       50.0f, static_cast<float>(width_) / static_cast<float>(height_), 0.1f, 100.0f);
+    tire::algebra::Matrix4f offset = tire::algebra::translate(0.0f, 0.0f, -15.0f);
 
-    tire::algebra::Matrix4f offset;
-    offset.translate(0.0f, 0.0f, -15.0f);
-
-    auto result = projection.mult(offset);
-    glUniformMatrix4fv(matrix, 1, GL_FALSE, &result.mat_[0][0]);
+    auto result = projection * offset;
+    glUniformMatrix4fv(matrix, 1, GL_FALSE, result.data());
 }
 
 RenderGL::~RenderGL() {
@@ -47,9 +45,9 @@ RenderGL::~RenderGL() {
 void RenderGL::configureGl() {
     // glEnable(GL_DEBUG_OUTPUT);
     // glDebugMessageCallback(&MessageCallback, nullptr);
-    
+
     __detail_tire::ctxErrorOccurred = false;
-    int (*oldHandler)(Display*, XErrorEvent*) = XSetErrorHandler(&__detail_tire::ctxErrorHandler);
+    int (*oldHandler)(Display *, XErrorEvent *) = XSetErrorHandler(&__detail_tire::ctxErrorHandler);
 
     // Check for the GLX_ARB_create_context extension string and the function.
     // If either is not present, use GLX 1.3 context creation method.
@@ -96,10 +94,10 @@ void RenderGL::configureGl() {
 
     glXMakeCurrent(display_, window_, glContext_);
 
-    vendor_ = (const char*)glGetString(GL_VENDOR);
-    renderer_ = (const char*)glGetString(GL_RENDERER);
-    glVersion_ = (const char*)glGetString(GL_VERSION);
-    glslVersion_ = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+    vendor_ = (const char *)glGetString(GL_VENDOR);
+    renderer_ = (const char *)glGetString(GL_RENDERER);
+    glVersion_ = (const char *)glGetString(GL_VERSION);
+    glslVersion_ = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
 }
 
 void RenderGL::displayRenderInfo() {
