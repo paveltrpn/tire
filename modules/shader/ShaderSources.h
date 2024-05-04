@@ -8,8 +8,8 @@
 
 namespace tire {
 
-struct ShaderSourcesManager final {
-        ShaderSourcesManager();
+struct ShaderDatabase final {
+        ShaderDatabase();
         std::string getVertexShader(const std::string &shaderId);
         std::string getFragmentShader(const std::string &shaderId);
 

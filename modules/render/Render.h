@@ -93,7 +93,7 @@ struct Render {
         int height_{};
 
         // shader sources manager
-        ShaderSourcesManager shaderSourcesManager_{};
+        ShaderDatabase shaderSourcesManager_{};
 
         // render list
         std::list<std::shared_ptr<tire::Node<point_scalar_type>>> renderList_;

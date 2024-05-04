@@ -13,6 +13,7 @@ struct matrix_base_glm;
 
 template <typename T>
 struct matrix_base_glm<T, 2> {
+        static constexpr size_t size = 2;
         using scalar_type = T;
         using vec_type = Vector2<scalar_type>;
         using self = matrix_base_glm<scalar_type, 2>;
@@ -52,6 +53,7 @@ struct matrix_base_glm<T, 2> {
 
 template <typename T>
 struct matrix_base_glm<T, 3> {
+        static constexpr size_t size = 3;
         using scalar_type = T;
         using vec_type = Vector3<scalar_type>;
         using self = matrix_base_glm<scalar_type, 3>;
@@ -94,6 +96,7 @@ struct matrix_base_glm<T, 3> {
 
 template <typename T>
 struct matrix_base_glm<T, 4> {
+        static constexpr size_t size = 4;
         using scalar_type = T;
         using vec_type = Vector4<scalar_type>;
         using self = matrix_base_glm<scalar_type, 4>;

@@ -6,6 +6,7 @@
 #include <format>
 #include <print>
 
+#include "algebra/Vector.h"
 #include "algebra/matrix_base_glm.h"
 #include "config/Config.h"
 #include "Render.h"
@@ -28,14 +29,17 @@ RenderGL::RenderGL(const tire::Config &config) : Render{ config } {
                     { GL_FRAGMENT_SHADER, shaderSourcesManager_.getFragmentShader("basic_gl") } });
 
     program_.use();
-    auto matrix = program_.getUniformLocation("matrix");
 
     tire::algebra::Matrix4f projection = tire::algebra::perspective<float>(
       50.0f, static_cast<float>(width_) / static_cast<float>(height_), 0.1f, 100.0f);
     tire::algebra::Matrix4f offset = tire::algebra::translate(0.0f, 0.0f, -15.0f);
 
     auto result = projection * offset;
-    glUniformMatrix4fv(matrix, 1, GL_FALSE, result.data());
+    // glUniformMatrix4fv(matrix, 1, GL_FALSE, result.data());
+    auto matrix = program_.getUniformLocation("matrix");
+    program_.setMatrixUniform(matrix, GL_FALSE, result);
+    auto color = program_.getUniformLocation("color");
+    program_.setVectorUniform(color, tire::algebra::Vector3f{ 0.9f, 0.2f, 0.5f });
 }
 
 RenderGL::~RenderGL() {

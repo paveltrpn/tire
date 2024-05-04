@@ -12,6 +12,7 @@
 #include "config/Config.h"
 #include "geometry/Point.h"
 #include "geometry/Node.h"
+#include "algebra/Matrix.h"
 
 #include "spdlog/spdlog.h"
 

@@ -4,7 +4,7 @@
 
 namespace tire {
 
-ShaderSourcesManager::ShaderSourcesManager() {
+ShaderDatabase::ShaderDatabase() {
     vertexShaderSources_["default"] = R"foo(
 void main() {
 })foo";
@@ -18,8 +18,9 @@ void main() {
 layout (location = 0) in vec3 pos;
 out vec3 outColor;
 uniform mat4 matrix;
+uniform vec3 color;
 void main() {
-   outColor = vec3(1.0f, 0.0f, 0.0f);
+   outColor = color;
    gl_Position = matrix * vec4(pos, 1.0);
 };)foo";
 
@@ -36,7 +37,7 @@ void main() {
 };)foo";
 }
 
-std::string ShaderSourcesManager::getVertexShader(const std::string &shaderId) {
+std::string ShaderDatabase::getVertexShader(const std::string &shaderId) {
     if (vertexShaderSources_.contains(shaderId)) {
         return vertexShaderSources_[shaderId];
     } else {
@@ -45,7 +46,7 @@ std::string ShaderSourcesManager::getVertexShader(const std::string &shaderId) {
     }
 }
 
-std::string ShaderSourcesManager::getFragmentShader(const std::string &shaderId) {
+std::string ShaderDatabase::getFragmentShader(const std::string &shaderId) {
     if (fragmentShaderSources_.contains(shaderId)) {
         return fragmentShaderSources_[shaderId];
     } else {

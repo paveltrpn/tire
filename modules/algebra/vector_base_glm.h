@@ -7,43 +7,11 @@
 namespace tire::algebra {
 
 template <typename T, size_t size_>
-struct vector_base_glm {
-        using scalar_type = T;
-        using self = glm::vec<size_, scalar_type>;
-
-        self sum(const vector_base_glm& rhs) {
-            return vec_ + rhs.vec_;
-        }
-
-        self sub(const vector_base_glm& rhs) {
-            return vec_ - rhs.vec_;
-        }
-
-        self scale(scalar_type factor) {
-            return vec_ * factor;
-        }
-
-        void sumSelf(const vector_base_glm& rhs) {
-            vec_ += rhs.vec_;
-        }
-
-        void subSelf(const vector_base_glm& rhs) {
-            vec_ -= rhs.vec_;
-        }
-
-        void scaleSelf(scalar_type factor) {
-            vec_ *= factor;
-        }
-
-        scalar_type dot(const vector_base_glm& rhs) {
-            return glm::dot(vec_, rhs.vec_);
-        }
-
-        glm::vec<size_, scalar_type> vec_;
-};
+struct vector_base_glm;
 
 template <typename T>
 struct vector_base_glm<T, 2> {
+        static constexpr size_t size = 2;
         using scalar_type = T;
         using self = glm::vec<2, scalar_type>;
 
@@ -101,12 +69,17 @@ struct vector_base_glm<T, 2> {
         void normalize() {
             vec_ = glm::normalize(vec_);
         }
+        
+        scalar_type * data() {
+            return &vec_[0];
+        }
 
         glm::vec<2, scalar_type> vec_;
 };
 
 template <typename T>
 struct vector_base_glm<T, 3> {
+        static constexpr size_t size = 3;
         using scalar_type = T;
         using self = glm::vec<3, scalar_type>;
 
@@ -181,11 +154,16 @@ struct vector_base_glm<T, 3> {
             vec_ = glm::cross(vec_, rhs.vec_);
         }
 
+        scalar_type * data() {
+            return &vec_[0];
+        }
+
         glm::vec<3, scalar_type> vec_;
 };
 
 template <typename T>
 struct vector_base_glm<T, 4> {
+        static constexpr size_t size = 4;
         using scalar_type = T;
         using self = glm::vec<4, scalar_type>;
 
@@ -259,6 +237,10 @@ struct vector_base_glm<T, 4> {
 
         void normalize() {
             vec_ = glm::normalize(vec_);
+        }
+
+        scalar_type * data() {
+            return &vec_[0];
         }
 
         glm::vec<4, scalar_type> vec_;

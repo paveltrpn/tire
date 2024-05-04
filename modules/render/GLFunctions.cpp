@@ -21,8 +21,10 @@ PFNGLGETPROGRAMIVPROC glGetProgramiv{ nullptr };
 PFNGLATTACHSHADERPROC glAttachShader{ nullptr };
 PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog{ nullptr };
 PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation{ nullptr };
-PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv{ nullptr };
 PFNGLGETACTIVEATTRIBPROC glGetActiveAttrib{ nullptr };
+
+PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv{ nullptr };
+PFNGLUNIFORM3FVPROC glUniform3fv{ nullptr };
 
 // VAO
 PFNGLGENBUFFERSPROC glGenBuffers{ nullptr };
@@ -85,11 +87,14 @@ void initOpenGLFunctions() {
     glGetUniformLocation = reinterpret_cast<PFNGLGETUNIFORMLOCATIONPROC>(
       glXGetProcAddress((const GLubyte *)"glGetUniformLocation"));
 
+    glGetActiveAttrib = reinterpret_cast<PFNGLGETACTIVEATTRIBPROC>(
+      glXGetProcAddress((const GLubyte *)"glGetActiveAttrib"));
+
     glUniformMatrix4fv = reinterpret_cast<PFNGLUNIFORMMATRIX4FVPROC>(
       glXGetProcAddress((const GLubyte *)"glUniformMatrix4fv"));
 
-    glGetActiveAttrib = reinterpret_cast<PFNGLGETACTIVEATTRIBPROC>(
-      glXGetProcAddress((const GLubyte *)"glGetActiveAttrib"));
+    glUniform3fv
+      = reinterpret_cast<PFNGLUNIFORM3FVPROC>(glXGetProcAddress((const GLubyte *)"glUniform3fv"));
 
     // VAO
     glGenBuffers = reinterpret_cast<PFNGLGENBUFFERSPROC>(
