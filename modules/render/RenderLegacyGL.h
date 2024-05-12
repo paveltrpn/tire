@@ -8,7 +8,7 @@
 namespace tire {
 
 struct RenderLegacyGL final : Render {
-        RenderLegacyGL(const tire::Config& config);
+        RenderLegacyGL();
         ~RenderLegacyGL() override;
 
         void displayRenderInfo() override;

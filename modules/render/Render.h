@@ -47,9 +47,7 @@ static int ctxErrorHandler(Display* dpy, XErrorEvent* ev) {
 struct Render {
         using point_scalar_type = float;
 
-        Render() = delete;
-
-        Render(const tire::Config& config);
+        Render();
 
         Render(const Render& rhs) = delete;
         Render(Render&& ths) = delete;
@@ -78,7 +76,6 @@ struct Render {
 
     protected:
         bool run_{ true };
-        tire::Config config_;
 
         // X11
         Display* display_;

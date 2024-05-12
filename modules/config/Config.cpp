@@ -12,31 +12,41 @@
 
 namespace tire {
 
+Config* Config::instance_ = nullptr;
+
 Config::Config(const char* lines) {
-    try {
-        config_ = json::parse(lines);
-    } catch (const json::parse_error& e) {
-        std::print("config json parse error\n"
-                   "message:\t{}\n"
-                   "exception id:\t{}\n"
-                   "byte position of error:\t{}\n",
-                   e.what(),
-                   e.id,
-                   e.byte);
+    if (!instance_) {
+        try {
+            config_ = nlohmann::json::parse(lines);
+        } catch (const nlohmann::json::parse_error& e) {
+            std::print("config json parse error\n"
+                       "message:\t{}\n"
+                       "exception id:\t{}\n"
+                       "byte position of error:\t{}\n",
+                       e.what(),
+                       e.id,
+                       e.byte);
+        }
+        instance_ = this;
     }
 }
 
 Config::Config(std::filesystem::path fname) {
-    std::ifstream file{ fname };
-    if (file) {
-        file >> config_;
-    } else {
-        throw std::runtime_error(std::format("file not found: {}\n", fname.string()));
+    if (!instance_) {
+        std::ifstream file{ fname };
+        if (file) {
+            file >> config_;
+        } else {
+            throw std::runtime_error(std::format("file not found: {}\n", fname.string()));
+        }
+        instance_ = this;
     }
 }
 
-// clangd: modernize-pass-by-value! WAT???
-Config::Config(const json& config) : config_{ config } {
+Config::Config(const nlohmann::json& config) : config_{ config } {
+    if (!instance_) {
+        instance_ = this;
+    }
 }
 
 [[nodiscard]]
@@ -60,7 +70,7 @@ float Config::getFloat(std::string_view param) const {
 }
 
 [[nodiscard]]
-json Config::getJson(std::string_view param) const {
+nlohmann::json Config::getJson(std::string_view param) const {
     return config_[param];
 }
 

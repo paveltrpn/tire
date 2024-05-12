@@ -13,7 +13,7 @@
 
 namespace tire {
 
-RenderLegacyGL::RenderLegacyGL(const tire::Config& config) : Render{ config } {
+RenderLegacyGL::RenderLegacyGL() : Render{} {
     configureGl();
     setSwapInterval(1);
 }
@@ -27,7 +27,7 @@ void RenderLegacyGL::configureGl() {
     // glDebugMessageCallback(&MessageCallback, nullptr);
 
     __detail_tire::ctxErrorOccurred = false;
-    int (*oldHandler)(Display*, XErrorEvent*) = XSetErrorHandler(&__detail_tire::ctxErrorHandler);
+    int (*oldHandler)(Display *, XErrorEvent *) = XSetErrorHandler(&__detail_tire::ctxErrorHandler);
 
     std::array<int, 5> context_attribs;
     context_attribs[0] = GLX_CONTEXT_MAJOR_VERSION_ARB;
@@ -64,10 +64,10 @@ void RenderLegacyGL::configureGl() {
 
     glXMakeCurrent(display_, window_, glContext_);
 
-    vendor_ = (const char*)glGetString(GL_VENDOR);
-    renderer_ = (const char*)glGetString(GL_RENDERER);
-    glVersion_ = (const char*)glGetString(GL_VERSION);
-    glslVersion_ = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+    vendor_ = (const char *)glGetString(GL_VENDOR);
+    renderer_ = (const char *)glGetString(GL_RENDERER);
+    glVersion_ = (const char *)glGetString(GL_VERSION);
+    glslVersion_ = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
 }
 
 void RenderLegacyGL::displayRenderInfo() {

@@ -18,7 +18,7 @@
 
 namespace tire {
 
-RenderGL::RenderGL(const tire::Config &config) : Render{ config } {
+RenderGL::RenderGL() : Render{} {
     configureGl();
     initOpenGLFunctions();
     // setup VSYNC
@@ -47,6 +47,8 @@ RenderGL::~RenderGL() {
 }
 
 void RenderGL::configureGl() {
+    auto cptr = Config::instance();
+
     // glEnable(GL_DEBUG_OUTPUT);
     // glDebugMessageCallback(&MessageCallback, nullptr);
 
@@ -58,14 +60,14 @@ void RenderGL::configureGl() {
     std::array<int, 5> context_attribs;
     context_attribs[0] = GLX_CONTEXT_MAJOR_VERSION_ARB;
     context_attribs[2] = GLX_CONTEXT_MINOR_VERSION_ARB;
-    if (config_.get<bool>("use_maximum_context_version", true)) {
+    if (cptr->get<bool>("use_maximum_context_version", true)) {
         // this parameters force X11 to use higher context among the possible
         context_attribs[1] = 3;
         context_attribs[3] = 0;
     } else {
         // or use user defined context version with 3.3 by default
-        context_attribs[1] = config_.get<int>("use_context_version_major", 3);
-        context_attribs[3] = config_.get<int>("use_context_version_minor", 3);
+        context_attribs[1] = cptr->get<int>("use_context_version_major", 3);
+        context_attribs[3] = cptr->get<int>("use_context_version_minor", 3);
     }
     context_attribs[4] = GLX_CONTEXT_PROFILE_MASK_ARB;
     context_attribs[5] = GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;

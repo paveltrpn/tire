@@ -16,23 +16,26 @@
 
 namespace tire {
 
-using json = nlohmann::json;
-
 template <typename T>
 concept ConfigParamType
   = std::is_same_v<bool, std::remove_cv_t<T>> || std::is_same_v<int, std::remove_cv_t<T>>
     || std::is_same_v<float, std::remove_cv_t<T>>
     || std::is_same_v<std::string, std::remove_cv_t<T>>
-    || std::is_same_v<json, std::remove_cv_t<T>>;
+    || std::is_same_v<nlohmann::json, std::remove_cv_t<T>>;
 
-struct Config {
+struct Config final {
         Config() = default;
 
         explicit Config(const char* lines);
         explicit Config(std::filesystem::path fname);
+        explicit Config(const nlohmann::json& config);
 
-        // clangd: modernize-pass-by-value! WAT???
-        Config(const json& config);
+        Config(const Config& rhs) = delete;
+        Config(Config&& rhs) = delete;
+        Config& operator=(const Config& rhs) = delete;
+        Config& operator=(Config&& rhs) = delete;
+
+        ~Config() = delete;
 
         [[nodiscard]]
         std::string getString(std::string_view param) const;
@@ -46,7 +49,7 @@ struct Config {
         float getFloat(std::string_view param) const;
 
         [[nodiscard]]
-        json getJson(std::string_view param) const;
+        nlohmann::json getJson(std::string_view param) const;
 
         template <ConfigParamType T>
         [[nodiscard]]
@@ -59,7 +62,7 @@ struct Config {
                     spdlog::warn("default value used: {}", dflt);
                     return dflt;
                 }
-            } catch (json::exception& e) {
+            } catch (nlohmann::json::exception& e) {
                 spdlog::warn(
                   "json exception handled... config param error \"{}\", what: {}", param, e.what());
                 spdlog::warn("default value used: {}", dflt);
@@ -67,8 +70,16 @@ struct Config {
             }
         }
 
+        static Config* instance() {
+            assert(instance_);
+            return instance_;
+        }
+
     private:
-        json config_;
+        static Config* instance_;
+
+    private:
+        nlohmann::json config_;
 };
 
 }  // namespace tire

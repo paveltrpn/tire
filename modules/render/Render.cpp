@@ -9,7 +9,7 @@
 
 namespace tire {
 
-Render::Render(const tire::Config& config) : config_{ config } {
+Render::Render() {
     openDisplay();
     checkGlxVersion();
     configureX11();
@@ -79,8 +79,7 @@ void Render::initGlxExtensions() {
     glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB(
       (const GLubyte*)"glXCreateContextAttribsARB");
 
-    if (!isExtensionSupported(glxExts, "GLX_ARB_create_context")
-        || !glXCreateContextAttribsARB) {
+    if (!isExtensionSupported(glxExts, "GLX_ARB_create_context") || !glXCreateContextAttribsARB) {
         throw std::runtime_error("extension glXCreateContextAttribsARB not supported!");
     }
 
@@ -173,10 +172,11 @@ void Render::configureX11() {
 
     // create window
 
-    posx_ = config_.get<int>("window_pos_x", 100);
-    posy_ = config_.get<int>("window_pos_y", 100);
-    width_ = config_.get<int>("window_width", 320);
-    height_ = config_.get<int>("window_height", 240);
+    auto cptr = Config::instance();
+    posx_ = cptr->get<int>("window_pos_x", 100);
+    posy_ = cptr->get<int>("window_pos_y", 100);
+    width_ = cptr->get<int>("window_width", 320);
+    height_ = cptr->get<int>("window_height", 240);
 
     window_ = XCreateWindow(display_,
                             RootWindow(display_, vi->screen),
@@ -197,7 +197,7 @@ void Render::configureX11() {
 
     XFree(vi);
 
-    XStoreName(display_, window_, config_.get<std::string>("application_name", "default").c_str());
+    XStoreName(display_, window_, cptr->get<std::string>("application_name", "default").c_str());
     XMapWindow(display_, window_);
 }
 

@@ -15,9 +15,8 @@
 #include "spdlog/spdlog.h"
 
 int main(int argc, char **argv) {
-    tire::Config config;
     try {
-        config = tire::Config{ std::filesystem::path{ "../test/window/config.json" } };
+        new tire::Config{ std::filesystem::path{ "../test/window/config.json" } };
     } catch (const std::exception &e) {
         spdlog::critical("caught exception: {}", e.what());
         return 0;
@@ -25,7 +24,7 @@ int main(int argc, char **argv) {
 
     std::unique_ptr<tire::Render> rndr;
     try {
-        rndr = std::make_unique<tire::RenderLegacyGL>(config);
+        rndr = std::make_unique<tire::RenderLegacyGL>();
     } catch (const std::exception &e) {
         spdlog::critical("caught exception: {}", e.what());
         return 0;

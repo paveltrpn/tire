@@ -22,7 +22,7 @@
 namespace tire {
 
 struct RenderGL final : Render {
-        RenderGL(const tire::Config& config);
+        RenderGL();
         ~RenderGL() override;
 
         void displayRenderInfo() override;

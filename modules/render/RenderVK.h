@@ -42,10 +42,12 @@ static VkResult vkCreateDebugUtilsMessenger(VkInstance instance,
 }
 
 struct RenderVK final : Render {
-        RenderVK(const tire::Config& config) : Render{ config } {
-            applicationName_ = config_.getString("application_name");
-            engineName_ = config_.getString("engine_name");
-            enableValidationLayers_ = config_.get<bool>("enable_validation_layers");
+        RenderVK() : Render{} {
+            auto cptr = Config::instance();
+
+            applicationName_ = cptr->getString("application_name");
+            engineName_ = cptr->getString("engine_name");
+            enableValidationLayers_ = cptr->get<bool>("enable_validation_layers");
 
             createInstance();
             initPhysicalDevices();
