@@ -24,7 +24,7 @@ concept ConfigParamType
     || std::is_same_v<nlohmann::json, std::remove_cv_t<T>>;
 
 struct Config final {
-        Config() = default;
+        Config() = delete;
 
         explicit Config(const char* lines);
         explicit Config(std::filesystem::path fname);
@@ -35,7 +35,7 @@ struct Config final {
         Config& operator=(const Config& rhs) = delete;
         Config& operator=(Config&& rhs) = delete;
 
-        ~Config() = delete;
+        ~Config() = default;
 
         [[nodiscard]]
         std::string getString(std::string_view param) const;
@@ -72,11 +72,11 @@ struct Config final {
 
         static Config* instance() {
             assert(instance_);
-            return instance_;
+            return instance_.get();
         }
 
     private:
-        static Config* instance_;
+        static std::unique_ptr<Config> instance_;
 
     private:
         nlohmann::json config_;

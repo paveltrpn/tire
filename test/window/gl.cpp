@@ -18,7 +18,6 @@
 
 int main(int argc, char **argv) {
     try {
-        // config = tire::Config{ std::filesystem::path{ "../test/window/config.json" } };
         new tire::Config{ std::filesystem::path{
           "/mnt/main_disk/code/tiny_render/test/window/config.json" } };
     } catch (const std::exception &e) {

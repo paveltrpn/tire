@@ -1,4 +1,5 @@
 
+#include <memory>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -12,7 +13,7 @@
 
 namespace tire {
 
-Config* Config::instance_ = nullptr;
+std::unique_ptr<Config> Config::instance_ = nullptr;
 
 Config::Config(const char* lines) {
     if (!instance_) {
@@ -27,7 +28,7 @@ Config::Config(const char* lines) {
                        e.id,
                        e.byte);
         }
-        instance_ = this;
+        instance_.reset(this);
     }
 }
 
@@ -39,13 +40,13 @@ Config::Config(std::filesystem::path fname) {
         } else {
             throw std::runtime_error(std::format("file not found: {}\n", fname.string()));
         }
-        instance_ = this;
+        instance_.reset(this);
     }
 }
 
 Config::Config(const nlohmann::json& config) : config_{ config } {
     if (!instance_) {
-        instance_ = this;
+        instance_.reset(this);
     }
 }
 
