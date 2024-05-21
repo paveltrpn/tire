@@ -104,9 +104,8 @@ export {
                 read(fileStream, fileHeader_.bfOffBits, sizeof(fileHeader_.bfOffBits));
 
                 if (fileHeader_.bfType != 0x4D42) {
-                    std::cout << "bmp_img_c::from_file(): Error -'" << fname << "' is not BMP file."
-                              << std::endl;
-                    // return 0;
+                    spdlog::error("error opening file: {}", fname);
+                    throw std::runtime_error("file not found");
                 }
 
                 // информация изображения
@@ -189,22 +188,19 @@ export {
                 if (infoHeader_.biSize != 12 && infoHeader_.biSize != 40 && infoHeader_.biSize != 52
                     && infoHeader_.biSize != 56 && infoHeader_.biSize != 108
                     && infoHeader_.biSize != 124) {
-                    std::cout << "bmp_img_c::from_file(): Error - Unsupported BMP format."
-                              << std::endl;
-                    // return 0;
+                    spdlog::error("unsupported BMP format");
+                    throw std::runtime_error("unsupported BMP format");
                 }
 
                 if (infoHeader_.biBitCount != 16 && infoHeader_.biBitCount != 24
                     && infoHeader_.biBitCount != 32) {
-                    std::cout << "bmp_img_c::from_file(): Error - Unsupported BMP bit count."
-                              << std::endl;
-                    // return 0;
+                    spdlog::error("unsupported BMP bit count");
+                    throw std::runtime_error("unsupported BMP bit count");
                 }
 
                 if (infoHeader_.biCompression != 0 && infoHeader_.biCompression != 3) {
-                    std::cout << "bmp_img_c::from_file(): Error - Unsupported BMP compression."
-                              << std::endl;
-                    // return 0;
+                    spdlog::error("unsupported BMP compression");
+                    throw std::runtime_error("unsupported BMP compression");
                 }
 
                 // определение размера отступа в конце каждой строки
@@ -236,9 +232,7 @@ export {
             }
 
             ~bmp() {
-                if (decompressed_ != nullptr) {
-                    delete[] decompressed_;
-                }
+                delete[] decompressed_;
             };
 
             size_t width() {
