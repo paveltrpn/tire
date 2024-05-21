@@ -86,3 +86,7 @@ add_subdirectory(test/window)
 target_link_libraries(gl config render shader assets X11 GL GLU vulkan)
 target_link_libraries(vk config render shader assets X11 GL GLU vulkan)
 target_link_libraries(lg config render shader assets X11 GL GLU vulkan)
+
+add_subdirectory(test/wavefront)
+target_link_libraries(wavefront assets)
+

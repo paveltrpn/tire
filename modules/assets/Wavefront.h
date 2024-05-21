@@ -10,28 +10,50 @@
 
 namespace tire {
 
-struct WavefrontMtl final {};
+struct WavefrontMtl final {
+        enum class MtlTokens {};
+
+        using enum MtlTokens;
+};
 
 struct WavefrontObj final {
         enum class ObjTokens {
-            COMMENT,
-            OBJECT_NAME,
             GEOMETRIC_VERTICES,
-            VERTEX_NORMALS,
             TEXTURE_VERTICES,
+            VERTEX_NORMALS,
             PARAMETER_SPACE_VERTICES,
-            FORMS_OF_CURVE,
+            CURVE_OR_SURFACE,
             DEGREE,
             BASIS_MATRIX,
             STEP_SIZE,
-            POINT_ELEMENT,
-            LINE_ELEMENT,
-            FACE_ELEMENT,
-            SMOOTH_GROUP,
-            CURVE_ELEMENT,
-            CURVE_2D_ELEMENT,
-            SURFACE_ELEMENT,
-            MATERIAL_LIB,
+            POINT,
+            LINE,
+            FACE,
+            CURVE,
+            CURVE_2D,
+            SOURFACE,
+            PARAMETER_VALUES,
+            OUTER_TRIMMING_LOOP,
+            INNER_TRIMMING_LOOP,
+            SPECIAL_CURVE,
+            SPECIAL_POINT,
+            END_STATEMENT,
+            CONNECT,
+            GROUP_NAME,
+            SMOOTHING_GROUP,
+            MERGING_GROUP,
+            OBJECT_NAME,
+            BEVEL_INTERPOLATION,
+            COLOR_INTERPOLATION,
+            DISSOLVE_INTERPOLATION,
+            LEVEL_OF_DETAIL,
+            MATERIAL_NAME,
+            MATERIAL_LIBRARY,
+            SHADOW_CASTING,
+            RAY_TRACING,
+            CURVE_APPROXIMATION_TECHNIQUE,
+            SURFACE_APPROXIMATION_TECHNIQUE,
+            COMMENT,
         };
 
         using enum ObjTokens;
@@ -39,7 +61,7 @@ struct WavefrontObj final {
     public:
         WavefrontObj() = delete;
 
-        WavefrontObj(std::string_view path);
+        WavefrontObj(std::string_view path) noexcept(false);
 
         ~WavefrontObj() = default;
 
@@ -50,6 +72,8 @@ struct WavefrontObj final {
 
         [[nodiscard]]
         std::shared_ptr<tire::Node<float>> getAsNode(std::string_view path);
+
+        friend std::ostream &operator<<(std::ostream &os, const WavefrontObj &rhs);
 
     private:
         void assertFilePath(std::string_view path) noexcept(false);

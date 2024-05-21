@@ -1,9 +1,0 @@
--xc++
---std=c++20
--I../../extern/fmt/include
--I../../extern/glfw/include
--I../../extern/glew-2.2.0/include
--I../../extern/imgui
--I../../extern/libjpeg-cmake/include
--I../../extern/libtga/include
--I../../extern/glm/include
