@@ -46,8 +46,16 @@ target_sources(assets
     modules/assets/Wavefront.h
     modules/assets/Polytope.cpp
     modules/assets/Polytope.h
-    modules/assets/Png.cpp
-    modules/assets/Png.h
+)
+
+add_library(image)
+target_sources(image
+  PUBLIC
+    FILE_SET CXX_MODULES FILES
+    modules/image/image.cpp
+    modules/image/bmp.cpp
+    modules/image/tga.cpp
+
 )
 
 add_library(camera)
