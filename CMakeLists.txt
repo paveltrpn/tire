@@ -55,6 +55,7 @@ target_sources(image
     modules/image/image.cpp
     modules/image/bmp.cpp
     modules/image/tga.cpp
+    modules/image/canvas.cpp
 
 )
 
