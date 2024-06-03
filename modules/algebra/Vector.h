@@ -2,21 +2,24 @@
 #ifndef __algebravector_h__
 #define __algebravector_h__
 
-#include "vector_base_glm.h"
+#include "vector_base_self.h"
 
 namespace tire::algebra {
 
-template <typename T, size_t size_>
-using Vector = vector_base_glm<T, size_>;
+template <typename T>
+struct dummy_derived {};
+
+template <typename T, size_t pSize_>
+using Vector = vector_base<dummy_derived, T, pSize_>;
 
 template <typename T>
-using Vector2 = Vector<T, 2>;
+using Vector2 = vector2<T>;
 
 template <typename T>
-using Vector3 = Vector<T, 3>;
+using Vector3 = vector3<T>;
 
 template <typename T>
-using Vector4 = Vector<T, 4>;
+using Vector4 = vector4<T>;
 
 using Vector2i = Vector2<int>;
 using Vector3i = Vector3<int>;
@@ -40,14 +43,11 @@ using Vector4d = Vector4<double>;
 
 template <typename T>
 concept ConceptVector
-  = std::is_same_v<T, Vector<long long, 4>> || std::is_same_v<T, Vector<float, 4>>
-    || std::is_same_v<T, Vector<double, 4>> || std::is_same_v<T, Vector<int, 4>>
-    || std::is_same_v<T, Vector<unsigned int, 4>> || std::is_same_v<T, Vector<long long, 3>>
-    || std::is_same_v<T, Vector<float, 3>> || std::is_same_v<T, Vector<double, 3>>
-    || std::is_same_v<T, Vector<int, 3>> || std::is_same_v<T, Vector<unsigned int, 3>>
-    || std::is_same_v<T, Vector<long long, 2>> || std::is_same_v<T, Vector<float, 2>>
-    || std::is_same_v<T, Vector<double, 2>> || std::is_same_v<T, Vector<int, 2>>
-    || std::is_same_v<T, Vector<unsigned int, 2>>;
+  = std::is_same_v<T, Vector4l> || std::is_same_v<T, Vector3f> || std::is_same_v<T, Vector4d>
+    || std::is_same_v<T, Vector4i> || std::is_same_v<T, Vector4ui> || std::is_same_v<T, Vector3l>
+    || std::is_same_v<T, Vector3f> || std::is_same_v<T, Vector3d> || std::is_same_v<T, Vector3i>
+    || std::is_same_v<T, Vector3ui> || std::is_same_v<T, Vector2l> || std::is_same_v<T, Vector2f>
+    || std::is_same_v<T, Vector2d> || std::is_same_v<T, Vector2i> || std::is_same_v<T, Vector2ui>;
 }  // namespace tire::algebra
 
 #endif

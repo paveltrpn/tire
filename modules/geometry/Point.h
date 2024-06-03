@@ -11,7 +11,7 @@ template <typename T = float>
 struct point3 {
         using scalar_type = T;
         using self = point3<scalar_type>;
-        using vec_type = tire::algebra::Vector<scalar_type, 3>;
+        using vec_type = tire::algebra::Vector3<scalar_type>;
         using mat3_type = tire::algebra::Matrix<scalar_type, 3>;
         using mat4_type = tire::algebra::Matrix<scalar_type, 4>;
 

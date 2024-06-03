@@ -30,7 +30,7 @@ float fpart(float a) {
 }
 
 export {
-    struct canvas_c {
+    struct Canvas {
         private:
             uint8_t *data;
 
@@ -46,7 +46,7 @@ export {
             uint8_t pen_color_b = 255;
 
         public:
-            canvas_c(int32_t width, int32_t height) {
+            Canvas(int32_t width, int32_t height) {
                 cnvs_height = height;
                 cnvs_width = width;
 
@@ -57,7 +57,7 @@ export {
                 // std::memset(data, 128, cnvs_height*cnvs_width*bpp);
             }
 
-            ~canvas_c() {
+            ~Canvas() {
                 delete[] data;
             }
 
@@ -204,8 +204,8 @@ export {
                 float Xinc = dx / (float)steps;
                 float Yinc = dy / (float)steps;
 
-                float X = (float)start.first;
-                float Y = (float)start.second;
+                auto X = (float)start.first;
+                auto Y = (float)start.second;
 
                 for (int i = 0; i <= steps; i++) {
                     put_pixel(X, Y);
@@ -311,7 +311,7 @@ export {
                  * requires it in order to write binary files.
                  */
                 if ((outfile = fopen(fname.c_str(), "wb")) == NULL) {
-                    std::cout << "canvas_c::write_jpeg(): can't open %s " << fname.c_str() << "\n";
+                    std::cout << "Canvas::write_jpeg(): can't open %s " << fname.c_str() << "\n";
                     return 1;
                 }
                 jpeg_stdio_dest(&cinfo, outfile);
@@ -417,7 +417,7 @@ export {
                 // Записываем массив на диск с установленными опциями.
                 // TGAWriteImage() вызывает все необходимые действия - пишет заголовок и т.д.
                 if (TGAWriteImage(tga_out, &tga_data) != TGA_OK) {
-                    std::cout << "canvas_c::write_jpeg(): TGAWriteImage() return error" << "\n";
+                    std::cout << "Canvas::write_jpeg(): TGAWriteImage() return error" << "\n";
                 }
 
                 // Записываем только заголовок и массив рисунка.
@@ -426,7 +426,7 @@ export {
                 // TGAWriteHeader(tga_out);
                 //
                 // if (TGAWriteScanlines(tga_out, &tga_data) != TGA_OK) {
-                // std::cout << "canvas_c::write_jpeg(): TGAWriteScanlines() return error" << "\n";
+                // std::cout << "Canvas::write_jpeg(): TGAWriteScanlines() return error" << "\n";
                 // }
 
                 TGAClose(tga_out);

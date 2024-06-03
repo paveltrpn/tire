@@ -16,20 +16,12 @@ struct Node {
         using scalar_type = T;
         using point_type = tire::point3<scalar_type>;
         using normal_type = tire::normal<scalar_type>;
-        using vec2_type = tire::algebra::Vector<scalar_type, 2>;
-        using vec3_type = tire::algebra::Vector<scalar_type, 3>;
+        using vec2_type = tire::algebra::Vector2<scalar_type>;
+        using vec3_type = tire::algebra::Vector2<scalar_type>;
         using mat3_type = tire::algebra::Matrix<scalar_type, 3>;
         using mat4_type = tire::algebra::Matrix<scalar_type, 4>;
 
-        Node()
-            : offset_{ T{}, T{}, T{} },
-              rotation_{ vec3_type{ T{ 1.0 }, T{}, T{} },
-                         vec3_type{ T{}, T{ 1.0 }, T{} },
-                         vec3_type{ T{}, T{}, T{ 1.0 } } },
-              scale_{ vec3_type{ T{ 1.0 }, T{}, T{} },
-                      vec3_type{ T{}, T{ 1.0 }, T{} },
-                      vec3_type{ T{}, T{}, T{ 1.0 } } } {
-        }
+        Node() = default;
 
         void setVerteciesArray(std::vector<point_type>::const_iterator start,
                                std::vector<point_type>::const_iterator end) {
@@ -143,9 +135,9 @@ struct Node {
         std::vector<vec2_type> texCoords_;
         std::vector<normal_type> normals_;
 
-        vec3_type offset_;
-        mat3_type rotation_;
-        mat3_type scale_;
+        vec3_type offset_{};
+        mat3_type rotation_{};
+        mat3_type scale_{};
 };
 
 }  // namespace tire

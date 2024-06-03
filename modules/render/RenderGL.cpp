@@ -7,7 +7,6 @@
 #include <print>
 
 #include "algebra/Vector.h"
-#include "algebra/matrix_base_glm.h"
 #include "config/Config.h"
 #include "Render.h"
 #include "RenderGL.h"
@@ -34,7 +33,7 @@ RenderGL::RenderGL() : Render{} {
       50.0f, static_cast<float>(width_) / static_cast<float>(height_), 0.1f, 100.0f);
     tire::algebra::Matrix4f offset = tire::algebra::translate(0.0f, 0.0f, -15.0f);
 
-    auto result = projection * offset;
+    auto result = offset * projection;
     // glUniformMatrix4fv(matrix, 1, GL_FALSE, result.data());
     auto matrix = program_.getUniformLocation("matrix");
     program_.setMatrixUniform(matrix, GL_FALSE, result);

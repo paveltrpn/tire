@@ -36,11 +36,12 @@ struct lenght_type<long double> {
 template <template <typename> typename derived, typename T, size_t pSize_>
 struct vector_base {
         using self = vector_base<derived, T, pSize_>;
-        using value_type = T;
+        using scalar_type = T;
         using reference = T&;
         using pointer = T*;
+        using const_pointer = const T*;
 
-        value_type& operator[](size_t id) {
+        scalar_type& operator[](size_t id) {
             return data_[id];
         }
 
@@ -60,8 +61,8 @@ struct vector_base {
                 data_[i] *= factor;
         }
 
-        value_type dot(const self& b) const {
-            value_type rt{};
+        scalar_type dot(const self& b) const {
+            scalar_type rt{};
 
             for (size_t i = 0; i < pSize_; ++i)
                 rt += data_[i] * b.data_[i];
@@ -69,11 +70,11 @@ struct vector_base {
             return rt;
         }
 
-        value_type sqLenght() const {
+        scalar_type sqLenght() const {
             return dot(*this);
         }
 
-        auto lenght() -> typename lenght_type<value_type>::type const {
+        auto lenght() -> typename lenght_type<scalar_type>::type const {
             return std::sqrt(sqLenght());
         }
 
@@ -139,25 +140,36 @@ struct vector_base {
             return *this;
         }
 
+        [[nodiscard]] pointer data() {
+            return data_.data();
+        }
+
+        [[nodiscard]] const_pointer data() const {
+            return data_.data();
+        }
+
         std::array<T, pSize_> data_;
 };
 
 template <typename T>
 struct vector2 : vector_base<vector2, T, __SZ2> {
         using self = vector2<T>;
-        using value_type = T;
+        using scalar_type = T;
         using reference = T&;
         using pointer = T*;
+        using const_pointer = const T*;
+
+        static constexpr size_t size = __SZ2;
 
         using vector_base<vector2, T, __SZ2>::data_;
 
         [[nodiscard]]
-        value_type x() const {
+        scalar_type x() const {
             return data_[0];
         }
 
         [[nodiscard]]
-        value_type y() const {
+        scalar_type y() const {
             return data_[1];
         }
 
@@ -206,30 +218,41 @@ struct vector2 : vector_base<vector2, T, __SZ2> {
             (*this).dot(rhs);
             return *this;
         }
+
+        [[nodiscard]] pointer data() {
+            return data_.data();
+        }
+
+        [[nodiscard]] const_pointer data() const {
+            return data_.data();
+        }
 };
 
 // vector3
 template <typename T>
 struct vector3 : vector_base<vector3, T, __SZ3> {
         using self = vector3<T>;
-        using value_type = T;
+        using scalar_type = T;
         using reference = T&;
         using pointer = T*;
+        using const_pointer = const T*;
+
+        static constexpr size_t size = __SZ3;
 
         using vector_base<vector3, T, __SZ3>::data_;
 
         [[nodiscard]]
-        value_type x() const {
+        scalar_type x() const {
             return data_[0];
         }
 
         [[nodiscard]]
-        value_type y() const {
+        scalar_type y() const {
             return data_[1];
         }
 
         [[nodiscard]]
-        value_type z() const {
+        scalar_type z() const {
             return data_[2];
         }
 
@@ -290,30 +313,41 @@ struct vector3 : vector_base<vector3, T, __SZ3> {
             rt.cross(rhs);
             return rt;
         }
+
+        [[nodiscard]] pointer data() {
+            return data_.data();
+        }
+
+        [[nodiscard]] const_pointer data() const {
+            return data_.data();
+        }
 };
 
 template <typename T>
 struct vector4 : vector_base<vector4, T, __SZ4> {
         using self = vector4<T>;
-        using value_type = T;
+        using scalar_type = T;
         using reference = T&;
         using pointer = T*;
+        using const_pointer = const T*;
+
+        static constexpr size_t size = __SZ4;
 
         using vector_base<vector4, T, __SZ4>::data_;
 
-        [[nodiscard]] value_type x() const {
+        [[nodiscard]] scalar_type x() const {
             return data_[0];
         }
 
-        [[nodiscard]] value_type y() const {
+        [[nodiscard]] scalar_type y() const {
             return data_[1];
         }
 
-        [[nodiscard]] value_type z() const {
+        [[nodiscard]] scalar_type z() const {
             return data_[2];
         }
 
-        [[nodiscard]] value_type w() const {
+        [[nodiscard]] scalar_type w() const {
             return data_[3];
         }
 
@@ -362,25 +396,15 @@ struct vector4 : vector_base<vector4, T, __SZ4> {
             (*this).dot(rhs);
             return *this;
         }
+
+        [[nodiscard]] pointer data() {
+            return data_.data();
+        }
+
+        [[nodiscard]] const_pointer data() const {
+            return data_.data();
+        }
 };
-
-template <typename T>
-struct dummy_derived {};
-
-template <typename T, size_t pSize_>
-using vector = vector_base<dummy_derived, T, pSize_>;
-
-using vector2i = vector2<int>;
-using vector3i = vector3<int>;
-using vector4i = vector4<int>;
-
-using vector2f = vector2<float>;
-using vector3f = vector3<float>;
-using vector4f = vector4<float>;
-
-using vector2d = vector2<double>;
-using vector3d = vector3<double>;
-using vector4d = vector4<double>;
 
 }  // namespace tire::algebra
 

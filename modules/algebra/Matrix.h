@@ -5,22 +5,22 @@
 #include <cstddef>
 #include <type_traits>
 
-#include "matrix_base_glm.h"
+#include "matrix_base_self.h"
 #include "Vector.h"
 
 namespace tire::algebra {
 
 template <typename T, size_t size_>
-using Matrix = matrix_base_glm<T, size_>;
+using Matrix = matrix_base<T, size_, size_>;
 
 template <typename T>
-using Matrix2 = matrix_base_glm<T, 2>;
+using Matrix2 = matrix_base<T, 2, 2>;
 
 template <typename T>
-using Matrix3 = matrix_base_glm<T, 3>;
+using Matrix3 = matrix_base<T, 3, 3>;
 
 template <typename T>
-using Matrix4 = matrix_base_glm<T, 4>;
+using Matrix4 = matrix_base<T, 4, 4>;
 
 using Matrix2i = Matrix2<int>;
 using Matrix3i = Matrix3<int>;

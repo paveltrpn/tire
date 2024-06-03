@@ -11,6 +11,7 @@
 #include <iostream>
 #include <format>
 
+#include "algebra/Vector.h"
 #include "vector_base_self.h"
 
 namespace tire::algebra {
@@ -32,30 +33,13 @@ constexpr size_t idCw(T i, T j, T n) {
 
 template <typename T, size_t pWidth_, size_t pHeight_>
     requires(pWidth_ > 0 && pHeight_ > 0)
-struct matrix;
-
-template <typename T>
-using matrix2 = matrix<T, __SZ2, __SZ2>;
-
-template <typename T>
-using matrix3 = matrix<T, __SZ3, __SZ3>;
-
-template <typename T>
-using matrix4 = matrix<T, __SZ4, __SZ4>;
-
-using matrix2f = matrix2<float>;
-using matrix3f = matrix3<float>;
-using matrix4f = matrix4<float>;
-
-using matrix2d = matrix2<double>;
-using matrix3d = matrix3<double>;
-using matrix4d = matrix4<double>;
+struct matrix_base;
 
 template <typename T, size_t pSize_>
-using matrix_sqr = matrix<T, pSize_, pSize_>;
+using matrix_base_sqr = matrix_base<T, pSize_, pSize_>;
 
 template <typename T, size_t pSize_>
-static inline void __matrix_sqr_set_zero(matrix_sqr<T, pSize_>& a) {
+static inline void __matrix_sqr_set_zero(matrix_base_sqr<T, pSize_>& a) {
     for (size_t i = 0; i < pSize_; i++) {
         for (size_t j = 0; j < pSize_; j++) {
             a[i, j] = static_cast<T>(0);
@@ -64,7 +48,7 @@ static inline void __matrix_sqr_set_zero(matrix_sqr<T, pSize_>& a) {
 }
 
 template <typename T, size_t pSize_>
-static inline void __matrix_sqr_set_idtt(matrix_sqr<T, pSize_>& a) {
+static inline void __matrix_sqr_set_idtt(matrix_base_sqr<T, pSize_>& a) {
     for (size_t i = 0; i < pSize_; i++) {
         for (size_t j = 0; j < pSize_; j++) {
             if (i == j) {
@@ -77,9 +61,9 @@ static inline void __matrix_sqr_set_idtt(matrix_sqr<T, pSize_>& a) {
 }
 
 template <typename T, size_t pSize_>
-static inline auto __matrix_sqr_mult(const matrix_sqr<T, pSize_>& a,
-                                     const matrix_sqr<T, pSize_>& b) {
-    matrix<T, pSize_, pSize_> rt{};
+static inline auto __matrix_sqr_mult(const matrix_base_sqr<T, pSize_>& a,
+                                     const matrix_base_sqr<T, pSize_>& b) {
+    matrix_base<T, pSize_, pSize_> rt{};
 
     for (size_t i = 0; i < pSize_; i++) {
         for (size_t j = 0; j < pSize_; j++) {
@@ -93,9 +77,9 @@ static inline auto __matrix_sqr_mult(const matrix_sqr<T, pSize_>& a,
 }
 
 template <typename T, size_t pSize_>
-static inline auto __matrix_sqr_sum(const matrix_sqr<T, pSize_>& a,
-                                    const matrix_sqr<T, pSize_>& b) {
-    matrix<T, pSize_, pSize_> rt{};
+static inline auto __matrix_sqr_sum(const matrix_base_sqr<T, pSize_>& a,
+                                    const matrix_base_sqr<T, pSize_>& b) {
+    matrix_base<T, pSize_, pSize_> rt{};
 
     for (size_t i = 0; i < pSize_; i++) {
         for (size_t j = 0; j < pSize_; j++) {
@@ -107,9 +91,9 @@ static inline auto __matrix_sqr_sum(const matrix_sqr<T, pSize_>& a,
 }
 
 template <typename T, size_t pSize_>
-static inline auto __matrix_sqr_sub(const matrix_sqr<T, pSize_>& a,
-                                    const matrix_sqr<T, pSize_>& b) {
-    matrix<T, pSize_, pSize_> rt{};
+static inline auto __matrix_sqr_sub(const matrix_base_sqr<T, pSize_>& a,
+                                    const matrix_base_sqr<T, pSize_>& b) {
+    matrix_base<T, pSize_, pSize_> rt{};
 
     for (size_t i = 0; i < pSize_; i++) {
         for (size_t j = 0; j < pSize_; j++) {
@@ -121,7 +105,7 @@ static inline auto __matrix_sqr_sub(const matrix_sqr<T, pSize_>& a,
 }
 
 template <typename T, size_t pSize_>
-static inline auto __matrix_sqr_transpose(const matrix_sqr<T, pSize_>& m) {
+static inline auto __matrix_sqr_transpose(const matrix_base_sqr<T, pSize_>& m) {
     T tmp;
     auto rt = m;
 
@@ -137,8 +121,8 @@ static inline auto __matrix_sqr_transpose(const matrix_sqr<T, pSize_>& m) {
 }
 
 template <typename T, size_t pSize_>
-static inline auto __matrix_sqr_multVec(const matrix_sqr<T, pSize_>& m,
-                                        const vector<T, pSize_>& v) {
+static inline auto __matrix_sqr_multVec(const matrix_base_sqr<T, pSize_>& m,
+                                        const Vector<T, pSize_>& v) {
     std::decay_t<decltype(m)> rt;
 
     for (size_t i = 0; i < pSize_; i++) {
@@ -151,8 +135,8 @@ static inline auto __matrix_sqr_multVec(const matrix_sqr<T, pSize_>& m,
 }
 
 template <typename T, size_t pSize_>
-static inline std::pair<matrix_sqr<T, pSize_>, matrix_sqr<T, pSize_>> __matrix_sqr_lu(
-  const matrix_sqr<T, pSize_>& m) {
+static inline std::pair<matrix_base_sqr<T, pSize_>, matrix_base_sqr<T, pSize_>> __matrix_sqr_lu(
+  const matrix_base_sqr<T, pSize_>& m) {
     std::decay_t<decltype(m)> lm, um;
     size_t i, j, k;
     T sum;
@@ -183,7 +167,7 @@ static inline std::pair<matrix_sqr<T, pSize_>, matrix_sqr<T, pSize_>> __matrix_s
 }
 
 template <typename T, size_t pSize_>
-static inline T __matrix_sqr_det_lu(const matrix_sqr<T, pSize_>& m) {
+static inline T __matrix_sqr_det_lu(const matrix_base_sqr<T, pSize_>& m) {
     T det{ 1 };
 
     auto [_, u] = __matrix_sqr_lu(m);
@@ -195,10 +179,10 @@ static inline T __matrix_sqr_det_lu(const matrix_sqr<T, pSize_>& m) {
 }
 
 template <typename T, size_t pSize_>
-static inline std::pair<matrix_sqr<T, pSize_>, matrix_sqr<T, pSize_>> __matrix_sqr_ldlt(
-  const matrix_sqr<T, pSize_>& m) {
+static inline std::pair<matrix_base_sqr<T, pSize_>, matrix_base_sqr<T, pSize_>> __matrix_sqr_ldlt(
+  const matrix_base_sqr<T, pSize_>& m) {
     std::decay_t<decltype(m)> lm;
-    vector<T, pSize_> dv;
+    Vector<T, pSize_> dv;
     size_t i, j, k;
     T sum;
 
@@ -210,7 +194,7 @@ static inline std::pair<matrix_sqr<T, pSize_>, matrix_sqr<T, pSize_>> __matrix_s
                 if (i == j) {
                     if (sum <= 0) {
                         std::cout << "__matrix_sqr_ldlt(): matrix is not positive deﬁnite";
-                        return { matrix<T, pSize_, pSize_>{}, vector<T, pSize_>{} };
+                        return { matrix_base<T, pSize_, pSize_>{}, Vector<T, pSize_>{} };
                     }
                     dv[i] = sum;
                     lm[i, i] = 1.0;
@@ -225,12 +209,12 @@ static inline std::pair<matrix_sqr<T, pSize_>, matrix_sqr<T, pSize_>> __matrix_s
 }
 
 template <typename T, size_t pSize_>
-static inline vector<T, pSize_> __matrix_sqr_solve_gauss(const matrix_sqr<T, pSize_>& m,
-                                                         const vector<T, pSize_>& v) {
+static inline Vector<T, pSize_> __matrix_sqr_solve_gauss(const matrix_base_sqr<T, pSize_>& m,
+                                                         const Vector<T, pSize_>& v) {
     size_t i, j, k;
     T t;
     std::array<std::array<T, pSize_ + 1>, pSize_> a;
-    vector<T, pSize_> rt;
+    Vector<T, pSize_> rt;
 
     for (i = 0; i < pSize_; i++) {
         for (j = 0; j < pSize_; j++) {
@@ -274,7 +258,8 @@ static inline vector<T, pSize_> __matrix_sqr_solve_gauss(const matrix_sqr<T, pSi
 }
 
 template <typename T, size_t pSize_>
-static inline void __matrix_sqr_insert_cmn(matrix_sqr<T, pSize_>& m, const vector<T, pSize_>& v) {
+static inline void __matrix_sqr_insert_cmn(matrix_base_sqr<T, pSize_>& m,
+                                           const Vector<T, pSize_>& v) {
     size_t i, j = 0;
 
     auto rt = m;
@@ -288,17 +273,17 @@ static inline void __matrix_sqr_insert_cmn(matrix_sqr<T, pSize_>& m, const vecto
 }
 
 template <typename T, size_t pSize_>
-static inline vector<T, pSize_> __matrix_sqr_solve_kramer(const matrix_sqr<T, pSize_>& m,
-                                                          const vector<T, pSize_>& v) {
+static inline Vector<T, pSize_> __matrix_sqr_solve_kramer(const matrix_base_sqr<T, pSize_>& m,
+                                                          const Vector<T, pSize_>& v) {
     T det;
     std::decay_t<decltype(m)> kr_mtrx;
-    vector<T, pSize_> rt;
+    Vector<T, pSize_> rt;
 
     det = __matrix_sqr_det_lu(m);
 
     if (fabs(det) < std::numeric_limits<float>::epsilon()) {
         std::cout << "__matrix_sqr_solve_kramer(): system has no solve\n";
-        return vector<T, pSize_>{};
+        return Vector<T, pSize_>{};
     }
 
     for (size_t i = 0; i < pSize_; i++) {
@@ -311,22 +296,22 @@ static inline vector<T, pSize_> __matrix_sqr_solve_kramer(const matrix_sqr<T, pS
 
 template <typename T, size_t pWidth_, size_t pHeight_>
     requires(pWidth_ > 0 && pHeight_ > 0)
-struct matrix {
-        using self = matrix<T, pWidth_, pHeight_>;
-        using value_type = T;
+struct matrix_base {
+        using self = matrix_base<T, pWidth_, pHeight_>;
+        using scalar_type = T;
         using reference = T&;
         using const_reference = const T&;
         using pointer = T*;
         using const_pointer = const T*;
 
-        matrix() = default;
-        matrix(const self& rhs) = default;
-        matrix(self&& rhs) = default;
+        matrix_base() = default;
+        matrix_base(const self& rhs) = default;
+        matrix_base(self&& rhs) = default;
 
         self& operator=(const self& rhs) = default;
         self& operator=(self&& rhs) = default;
 
-        ~matrix() = default;
+        ~matrix_base() = default;
 
         // row-wise indexing operator
         reference operator[](size_t i, size_t j) {
@@ -339,34 +324,37 @@ struct matrix {
 
 template <typename T, size_t pSize_>
     requires(pSize_ > 0)
-struct matrix<T, pSize_, pSize_> {
-        using self = matrix<T, pSize_, pSize_>;
-        using value_type = T;
+struct matrix_base<T, pSize_, pSize_> {
+        using self = matrix_base<T, pSize_, pSize_>;
+        using scalar_type = T;
         using reference = T&;
         using const_reference = const T&;
         using pointer = T*;
         using const_pointer = const T*;
 
-        matrix() = default;
-        matrix(const self& rhs) = default;
-        matrix(self&& rhs) = default;
+        static constexpr size_t size = pSize_;
+
+        matrix_base() = default;
+        matrix_base(const self& rhs) = default;
+        matrix_base(self&& rhs) = default;
 
         self& operator=(const self& rhs) = default;
         self& operator=(self&& rhs) = default;
 
-        ~matrix() = default;
+        ~matrix_base() = default;
 
         // row-wise indexing operator
         reference operator[](size_t i, size_t j) {
             return std::mdspan(data_.data(), pSize_, pSize_)[i, j];
         }
 
-        void set_idtt() {
+        void idtt() {
             __matrix_sqr_set_idtt(*this);
         }
 
-        self mult(self b) {
-            return __matrix_sqr_mult(*this, b);
+        void mult(self b) {
+            auto tmp = __matrix_sqr_mult(*this, b);
+            *this = tmp;
         }
 
     private:
@@ -374,24 +362,26 @@ struct matrix<T, pSize_, pSize_> {
 };
 
 template <typename T>
-struct matrix<T, __SZ2, __SZ2> {
-        using self = matrix<T, __SZ2, __SZ2>;
+struct matrix_base<T, __SZ2, __SZ2> {
+        using self = matrix_base<T, __SZ2, __SZ2>;
         using self_vec = vector2<T>;
-        using value_type = T;
+        using scalar_type = T;
         using reference = T&;
         using const_reference = const T&;
         using pointer = T*;
         using const_pointer = const T*;
 
-        matrix() = default;
-        matrix(const self& rhs) = default;
-        matrix(self&& rhs) = default;
+        static constexpr size_t size = __SZ2;
 
-        explicit matrix(std::initializer_list<value_type> list) {
-            set_zero();
+        matrix_base() = default;
+        matrix_base(const self& rhs) = default;
+        matrix_base(self&& rhs) = default;
+
+        explicit matrix_base(std::initializer_list<scalar_type> list) {
+            zero();
             for (size_t i = 0; auto&& elem : list) {
                 data_[i] = elem;
-                if (i > __SZ4 * __SZ4)
+                if (i > __SZ2 * __SZ2)
                     break;
                 ++i;
             }
@@ -400,7 +390,7 @@ struct matrix<T, __SZ2, __SZ2> {
         self& operator=(const self& rhs) = default;
         self& operator=(self&& rhs) = default;
 
-        ~matrix() = default;
+        ~matrix_base() = default;
 
         reference operator[](size_t id) {
             return data_[id];
@@ -419,39 +409,19 @@ struct matrix<T, __SZ2, __SZ2> {
             return std::mdspan(data_.data(), __SZ2, __SZ2)[i, j];
         }
 
-        void set_zero() {
+        void zero() {
             __matrix_sqr_set_zero(*this);
         }
 
-        void set_idtt() {
+        void idtt() {
             __matrix_sqr_set_idtt(*this);
         }
 
-        self mult(self b) {
-            return __matrix_sqr_mult(*this, b);
-        }
-
         self operator*(const self& rhs) {
-            return this->mult(rhs);
+            return __matrix_sqr_mult(*this, rhs);
         }
 
-        self sum(self b) {
-            return __matrix_sqr_sum(*this, b);
-        }
-
-        self sub(self b) {
-            return __matrix_sqr_sub(*this, b);
-        }
-
-        self_vec mult_vec(const self_vec& rhs) {
-            return __matrix_sqr_multVec(*this, rhs);
-        }
-
-        self_vec operator*(const self_vec& rhs) {
-            return this->mult_vec(rhs);
-        }
-
-        void mult_self(self b) {
+        void mult(self b) {
             auto tmp = __matrix_sqr_mult(*this, b);
             *this = tmp;
         }
@@ -460,7 +430,7 @@ struct matrix<T, __SZ2, __SZ2> {
             return __matrix_sqr_lu(*this);
         }
 
-        value_type det_lu() {
+        scalar_type det_lu() {
             return __matrix_sqr_det_lu(*this);
         }
 
@@ -468,23 +438,19 @@ struct matrix<T, __SZ2, __SZ2> {
             return __matrix_sqr_ldlt(*this);
         }
 
-        vector4<value_type> solve_gauss(const vector4<value_type>& v) {
+        vector4<scalar_type> solve_gauss(const vector4<scalar_type>& v) {
             return __matrix_sqr_solve_gauss(*this, v);
         }
 
-        void insert_cmn(const vector4<value_type>& v) {
+        void insert_cmn(const vector4<scalar_type>& v) {
             __matrix_sqr_insert_cmn(*this, v);
         }
 
-        vector4<value_type> solve_kramer(const vector4<value_type>& v) {
+        vector4<scalar_type> solve_kramer(const vector4<scalar_type>& v) {
             return __matrix_sqr_solve_kramer(*this, v);
         }
 
-        self transpose() {
-            return __matrix_sqr_transpose(*this);
-        }
-
-        void transpose_self() {
+        void transpose() {
             std::swap(data_[2], data_[1]);
         }
 
@@ -493,27 +459,29 @@ struct matrix<T, __SZ2, __SZ2> {
 };
 
 template <typename T>
-struct matrix<T, __SZ3, __SZ3> {
-        using self = matrix<T, __SZ3, __SZ3>;
+struct matrix_base<T, __SZ3, __SZ3> {
+        using self = matrix_base<T, __SZ3, __SZ3>;
         using self_vec = vector3<T>;
-        using value_type = T;
+        using scalar_type = T;
         using reference = T&;
         using const_reference = const T&;
         using pointer = T*;
         using const_pointer = const T*;
 
-        matrix() = default;
-        matrix(const self& rhs) = default;
-        matrix(self&& rhs) = default;
+        static constexpr size_t size = __SZ3;
 
-        explicit matrix(std::initializer_list<value_type> list) {
+        matrix_base() = default;
+        matrix_base(const self& rhs) = default;
+        matrix_base(self&& rhs) = default;
+
+        explicit matrix_base(std::initializer_list<scalar_type> list) {
             if (list.size() >= 9) {
                 for (size_t i = 0; auto&& elem : list) {
                     data_[i] = elem;
                     ++i;
                 }
             } else if (list.size() < 9) {
-                set_zero();
+                zero();
                 for (size_t i = 0; auto&& elem : list) {
                     data_[i] = elem;
                     ++i;
@@ -524,7 +492,7 @@ struct matrix<T, __SZ3, __SZ3> {
         self& operator=(const self& rhs) = default;
         self& operator=(self&& rhs) = default;
 
-        ~matrix() = default;
+        ~matrix_base() = default;
 
         reference operator[](size_t id) {
             return data_[id];
@@ -543,48 +511,32 @@ struct matrix<T, __SZ3, __SZ3> {
             return std::mdspan(data_.data(), __SZ3, __SZ3)[i, j];
         }
 
-        void set_zero() {
+        void zero() {
             __matrix_sqr_set_zero(*this);
         }
 
-        void set_idtt() {
+        void idtt() {
             __matrix_sqr_set_idtt(*this);
         }
 
-        self mult(const self& b) {
-            return __matrix_sqr_mult(*this, b);
+        void mult(self b) {
+            auto tmp = __matrix_sqr_mult(*this, b);
+            *this = tmp;
         }
 
         self operator*(const self& rhs) {
-            return this->mult(rhs);
-        }
-
-        self sum(const self& b) {
-            return __matrix_sqr_sum(*this, b);
-        }
-
-        self sub(const self& b) {
-            return __matrix_sqr_sub(*this, b);
-        }
-
-        self_vec mult_vec(const self_vec& rhs) {
-            return __matrix_sqr_multVec(*this, rhs);
+            return __matrix_sqr_mult(*this, rhs);
         }
 
         self_vec operator*(const self_vec& rhs) {
             return this->mult_vec(rhs);
         }
 
-        void mult_self(const self& b) {
-            auto tmp = __matrix_sqr_mult(*this, b);
-            *this = tmp;
-        }
-
         std::pair<self, self> lu() {
             return __matrix_sqr_lu(*this);
         }
 
-        value_type det_lu() {
+        scalar_type det_lu() {
             return __matrix_sqr_det_lu(*this);
         }
 
@@ -592,20 +544,21 @@ struct matrix<T, __SZ3, __SZ3> {
             return __matrix_sqr_ldlt(*this);
         }
 
-        vector4<value_type> solve_gauss(const vector4<value_type>& v) {
+        vector4<scalar_type> solve_gauss(const vector4<scalar_type>& v) {
             return __matrix_sqr_solve_gauss(*this, v);
         }
 
-        void insert_cmn(const vector4<value_type>& v) {
+        void insert_cmn(const vector4<scalar_type>& v) {
             __matrix_sqr_insert_cmn(*this, v);
         }
 
-        vector4<value_type> solve_kramer(const vector4<value_type>& v) {
+        vector4<scalar_type> solve_kramer(const vector4<scalar_type>& v) {
             return __matrix_sqr_solve_kramer(*this, v);
         }
 
-        self transpose() {
-            return __matrix_sqr_transpose(*this);
+        void transpose() {
+            auto tmp = __matrix_sqr_transpose(*this);
+            *this = tmp;
         }
 
         void display() {
@@ -626,28 +579,30 @@ struct matrix<T, __SZ3, __SZ3> {
 };
 
 template <typename T>
-std::ostream& operator<<(std::ostream& os, matrix<T, __SZ3, __SZ3>& m) {
+std::ostream& operator<<(std::ostream& os, matrix_base<T, __SZ3, __SZ3>& m) {
     os << std::format(
       "{} {} {}\n{} {} {}\n{} {} {}\n", m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8]);
     return os;
 }
 
 template <typename T>
-struct matrix<T, __SZ4, __SZ4> {
-        using self = matrix<T, __SZ4, __SZ4>;
+struct matrix_base<T, __SZ4, __SZ4> {
+        using self = matrix_base<T, __SZ4, __SZ4>;
         using self_vec = vector4<T>;
-        using value_type = T;
+        using scalar_type = T;
         using reference = T&;
         using const_reference = const T&;
         using pointer = T*;
         using const_pointer = const T*;
 
-        matrix() = default;
-        matrix(const self& rhs) = default;
-        matrix(self&& rhs) = default;
+        static constexpr size_t size = __SZ4;
 
-        explicit matrix(std::initializer_list<value_type> list) {
-            set_zero();
+        matrix_base() = default;
+        matrix_base(const self& rhs) = default;
+        matrix_base(self&& rhs) = default;
+
+        explicit matrix_base(std::initializer_list<scalar_type> list) {
+            zero();
             for (size_t i = 0; auto&& elem : list) {
                 data_[i] = elem;
                 if (i > __SZ4 * __SZ4)
@@ -659,7 +614,7 @@ struct matrix<T, __SZ4, __SZ4> {
         self& operator=(const self& rhs) = default;
         self& operator=(self&& rhs) = default;
 
-        ~matrix() = default;
+        ~matrix_base() = default;
 
         reference operator[](size_t id) {
             return data_[id];
@@ -678,48 +633,32 @@ struct matrix<T, __SZ4, __SZ4> {
             return std::mdspan(data_.data(), __SZ4, __SZ4)[i, j];
         }
 
-        void set_zero() {
+        void zero() {
             __matrix_sqr_set_zero(*this);
         }
 
-        void set_idtt() {
+        void idtt() {
             __matrix_sqr_set_idtt(*this);
         }
 
-        self mult(self b) {
-            return __matrix_sqr_mult(*this, b);
+        void mult(self b) {
+            auto tmp = __matrix_sqr_mult(*this, b);
+            *this = tmp;
         }
 
         self operator*(const self& rhs) {
-            return this->mult(rhs);
-        }
-
-        self sum(self b) {
-            return __matrix_sqr_sum(*this, b);
-        }
-
-        self sub(self b) {
-            return __matrix_sqr_sub(*this, b);
-        }
-
-        self_vec mult_vec(const self_vec& rhs) {
-            return __matrix_sqr_multVec(*this, rhs);
+            return __matrix_sqr_mult(*this, rhs);
         }
 
         self_vec operator*(const self_vec& rhs) {
             return this->mult_vec(rhs);
         }
 
-        void mult_self(self b) {
-            auto tmp = __matrix_sqr_mult(*this, b);
-            *this = tmp;
-        }
-
         std::pair<self, self> lu() {
             return __matrix_sqr_lu(*this);
         }
 
-        value_type det_lu() {
+        scalar_type det_lu() {
             return __matrix_sqr_det_lu(*this);
         }
 
@@ -727,25 +666,26 @@ struct matrix<T, __SZ4, __SZ4> {
             return __matrix_sqr_ldlt(*this);
         }
 
-        vector4<value_type> solve_gauss(const vector4<value_type>& v) {
+        vector4<scalar_type> solve_gauss(const vector4<scalar_type>& v) {
             return __matrix_sqr_solve_gauss(*this, v);
         }
 
-        void insert_cmn(const vector4<value_type>& v) {
+        void insert_cmn(const vector4<scalar_type>& v) {
             __matrix_sqr_insert_cmn(*this, v);
         }
 
-        vector4<value_type> solve_kramer(const vector4<value_type>& v) {
+        vector4<scalar_type> solve_kramer(const vector4<scalar_type>& v) {
             return __matrix_sqr_solve_kramer(*this, v);
         }
 
-        self transpose() {
-            return __matrix_sqr_transpose(*this);
+        void transpose() {
+            auto tmp = __matrix_sqr_transpose(*this);
+            *this = tmp;
         }
 
-        vector3<value_type> mult_vec3(const vector3<value_type>& v) {
-            vector3<value_type> rt;
-            value_type w;
+        vector3<scalar_type> mult_vec3(const vector3<scalar_type>& v) {
+            vector3<scalar_type> rt;
+            scalar_type w;
 
             rt[0] = v[0] * *this[0] + v[1] * *this[1] + v[2] * *this[2] + *this[3];
             rt[1] = v[0] * *this[4] + v[1] * *this[5] + v[2] * *this[6] + *this[7];
@@ -763,13 +703,13 @@ struct matrix<T, __SZ4, __SZ4> {
             return rt;
         }
 
-        vector3<value_type> operator*(const vector3<value_type>& rhs) {
+        vector3<scalar_type> operator*(const vector3<scalar_type>& rhs) {
             return this->mult_vec3(rhs);
         }
 
-        void set_perspective(value_type fovy, value_type aspect, value_type near, value_type far) {
-            value_type f = 1.0 / tanf(fovy / std::numbers::sqrt2_v<float>);
-            value_type nf;
+        void perspective(scalar_type fovy, scalar_type aspect, scalar_type near, scalar_type far) {
+            scalar_type f = 1.0 / tanf(fovy / std::numbers::sqrt2_v<float>);
+            scalar_type nf;
 
             data_[0] = f / aspect;
             data_[1] = 0.0;
@@ -786,7 +726,7 @@ struct matrix<T, __SZ4, __SZ4> {
             data_[13] = 0.0;
             data_[15] = 0.0;
 
-            if (far >= std::numeric_limits<value_type>::epsilon()) {
+            if (far >= std::numeric_limits<scalar_type>::epsilon()) {
                 nf = 1.0 / (near - far);
                 data_[10] = (far + near) * nf;
                 data_[14] = 2.0 * far * near * nf;
@@ -796,30 +736,30 @@ struct matrix<T, __SZ4, __SZ4> {
             }
         }
 
-        void set_lookAt(const vector3<value_type>& eye,
-                        const vector3<value_type>& center,
-                        const vector3<value_type>& up) {
-            set_idtt();
-            vector3<value_type> eyeDir;
+        void lookAt(const vector3<scalar_type>& eye,
+                    const vector3<scalar_type>& center,
+                    const vector3<scalar_type>& up) {
+            idtt();
+            vector3<scalar_type> eyeDir;
 
-            constexpr value_type floatEps = std::numeric_limits<value_type>::epsilon();
+            constexpr scalar_type floatEps = std::numeric_limits<scalar_type>::epsilon();
             if (std::fabs(eye[0] - center[0]) < floatEps && std::fabs(eye[1] - center[1]) < floatEps
                 && std::fabs(eye[2] - center[2]) < floatEps) {
                 return;
             }
 
-            value_type z0 = eye[0] - center[0];
-            value_type z1 = eye[1] - center[1];
-            value_type z2 = eye[2] - center[2];
+            scalar_type z0 = eye[0] - center[0];
+            scalar_type z1 = eye[1] - center[1];
+            scalar_type z2 = eye[2] - center[2];
 
-            value_type len = 1.0 / std::hypot(z0, z1, z2);  //??? было просто hypot
+            scalar_type len = 1.0 / std::hypot(z0, z1, z2);  //??? было просто hypot
             z0 *= len;
             z1 *= len;
             z2 *= len;
 
-            value_type x0 = up[1] * z2 - up[2] * z1;
-            value_type x1 = up[2] * z0 - up[0] * z2;
-            value_type x2 = up[0] * z1 - up[1] * z0;
+            scalar_type x0 = up[1] * z2 - up[2] * z1;
+            scalar_type x1 = up[2] * z0 - up[0] * z2;
+            scalar_type x2 = up[0] * z1 - up[1] * z0;
             len = std::hypot(x0, x1, x2);
             if (len == 0.0) {
                 x0 = 0;
@@ -832,9 +772,9 @@ struct matrix<T, __SZ4, __SZ4> {
                 x2 *= len;
             }
 
-            value_type y0 = z1 * x2 - z2 * x1;
-            value_type y1 = z2 * x0 - z0 * x2;
-            value_type y2 = z0 * x1 - z1 * x0;
+            scalar_type y0 = z1 * x2 - z2 * x1;
+            scalar_type y1 = z2 * x0 - z0 * x2;
+            scalar_type y2 = z0 * x1 - z1 * x0;
 
             len = std::hypot(y0, y1, y2);
             if (len == 0.0) {
@@ -866,12 +806,12 @@ struct matrix<T, __SZ4, __SZ4> {
             data_[15] = 1.0;
         }
 
-        void set_orthographic(value_type left,
-                              value_type right,
-                              value_type bottom,
-                              value_type top,
-                              value_type near,
-                              value_type far) {
+        void orthographic(scalar_type left,
+                          scalar_type right,
+                          scalar_type bottom,
+                          scalar_type top,
+                          scalar_type near,
+                          scalar_type far) {
             data_[0] = 2.0 / (right - left);
             data_[1] = 0;
             data_[2] = 0;
@@ -893,48 +833,33 @@ struct matrix<T, __SZ4, __SZ4> {
             data_[15] = 1.0;
         }
 
-        void set_scale(const vector3<value_type>& offset) {
-            this->set_idtt();
+        void scale(const vector3<scalar_type>& offset) {
+            idtt();
 
             data_[0] = offset[0];
             data_[5] = offset[1];
             data_[11] = offset[2];
         }
 
-        void set_offset(const vector3<value_type>& offset) {
-            this->set_idtt();
+        void translate(const vector3<scalar_type>& offset) {
+            idtt();
 
             data_[3] = offset[0];
             data_[7] = offset[1];
             data_[11] = offset[2];
         }
 
-        void transpose_self() {
-            self tmp;
+        void translate(scalar_type dx, scalar_type dy, scalar_type dz) {
+            idtt();
 
-            tmp[0] = data_[0];
-            tmp[1] = data_[4];
-            tmp[2] = data_[8];
-            tmp[3] = data_[12];
-            tmp[4] = data_[1];
-            tmp[5] = data_[5];
-            tmp[6] = data_[9];
-            tmp[7] = data_[13];
-            tmp[8] = data_[2];
-            tmp[9] = data_[6];
-            tmp[10] = data_[10];
-            tmp[11] = data_[14];
-            tmp[12] = data_[3];
-            tmp[13] = data_[7];
-            tmp[14] = data_[11];
-            tmp[15] = data_[15];
-
-            *this = tmp;
+            data_[3] = dx;
+            data_[7] = dy;
+            data_[11] = dz;
         }
 
-        void set_rotation_yaw(value_type angl) {
+        void rotation_yaw(scalar_type angl) {
             this->set_idtt();
-            value_type sa, ca;
+            scalar_type sa, ca;
 
             sincosf(degToRad(angl), &sa, &ca);
 
@@ -944,7 +869,7 @@ struct matrix<T, __SZ4, __SZ4> {
             data_[10] = ca;
         }
 
-        void set_rotation_pitch(value_type angl) {
+        void rotation_pitch(scalar_type angl) {
             this->set_idtt();
             float sa, ca;
 
@@ -956,7 +881,7 @@ struct matrix<T, __SZ4, __SZ4> {
             data_[10] = ca;
         }
 
-        void set_rotation_roll(value_type angl) {
+        void rotation_roll(scalar_type angl) {
             this->set_idtt();
             float sa, ca;
 
@@ -968,7 +893,7 @@ struct matrix<T, __SZ4, __SZ4> {
             data_[5] = ca;
         }
 
-        void set_euler(value_type yaw, value_type pitch, value_type roll) {
+        void euler(scalar_type yaw, scalar_type pitch, scalar_type roll) {
             self y, p, r;
 
             y.set_rotation_yaw(yaw);
@@ -979,8 +904,8 @@ struct matrix<T, __SZ4, __SZ4> {
             mult_self(r);
         }
 
-        void set_axis_angl(const vector3<value_type>& ax, value_type phi) {
-            value_type cosphi, sinphi, vxvy, vxvz, vyvz, vx, vy, vz;
+        void axis_angle(const vector3<scalar_type>& ax, scalar_type phi) {
+            scalar_type cosphi, sinphi, vxvy, vxvz, vyvz, vx, vy, vz;
 
             cosphi = cosf(degToRad(phi));
             sinphi = sinf(degToRad(phi));
@@ -1046,6 +971,34 @@ struct matrix<T, __SZ4, __SZ4> {
     private:
         std::array<T, __SZ4 * __SZ4> data_;
 };
+
+template <typename T, size_t size_>
+auto transpose(matrix_base<T, size_, size_>& arg) -> decltype(arg) {
+    matrix_base<T, size_, size_> rt{ arg };
+    rt.transpose();
+    return rt;
+}
+
+template <typename T>
+matrix_base<T, 4, 4> translate(T dx, T dy, T dz) {
+    matrix_base<T, 4, 4> rt{};
+    rt.translate(dx, dy, dz);
+    return rt;
+}
+
+template <typename T>
+matrix_base<T, 4, 4> rotate(T dy, T dp, T dr) {
+    matrix_base<T, 4, 4> rt;
+    rt.euler(dy, dp, dr);
+    return rt;
+}
+
+template <typename T>
+matrix_base<T, 4, 4> perspective(float fov, float aspect, float ncp, float fcp) {
+    matrix_base<T, 4, 4> rt;
+    rt.perspective(fov, aspect, ncp, fcp);
+    return rt;
+}
 
 }  // namespace tire::algebra
 
