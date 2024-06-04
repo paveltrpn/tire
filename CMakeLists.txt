@@ -38,8 +38,6 @@ target_sources(render
   PUBLIC
     modules/render/Render.cpp
     modules/render/Render.h
-    modules/render/RenderLegacyGL.cpp
-    modules/render/RenderLegacyGL.h
     modules/render/RenderGL.cpp
     modules/render/RenderGL.h
     modules/render/RenderVK.cpp
@@ -105,7 +103,6 @@ target_link_libraries(geometry algebra)
 add_subdirectory(test/window)
 target_link_libraries(gl camera config render shader assets X11 GL GLU vulkan)
 target_link_libraries(vk camera config render shader assets X11 GL GLU vulkan)
-target_link_libraries(lg camera config render shader assets X11 GL GLU vulkan)
 
 add_subdirectory(test/wavefront)
 target_link_libraries(wavefront assets)

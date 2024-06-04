@@ -4,10 +4,6 @@ add_executable(gl
     gl.cpp
     subject.cpp)
 
-add_executable(lg
-    legacy.cpp
-    subject.cpp)
-
 add_executable(vk
     vulkan.cpp
     subject.cpp)
