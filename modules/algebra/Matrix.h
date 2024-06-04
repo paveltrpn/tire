@@ -862,8 +862,8 @@ struct matrix_base<T, __SZ4, __SZ4> {
         }
 
         void rotation_yaw(scalar_type angl) {
-            this->set_idtt();
-            scalar_type sa, ca;
+            idtt();
+            scalar_type sa{}, ca{};
 
             sincosf(degToRad(angl), &sa, &ca);
 
@@ -874,20 +874,20 @@ struct matrix_base<T, __SZ4, __SZ4> {
         }
 
         void rotation_pitch(scalar_type angl) {
-            this->set_idtt();
-            float sa, ca;
+            idtt();
+            scalar_type sa{}, ca{};
 
             sincosf(degToRad(angl), &sa, &ca);
 
             data_[0] = ca;
-            data_[2] = sa;
-            data_[8] = -sa;
+            data_[2] = -sa;
+            data_[8] = sa;
             data_[10] = ca;
         }
 
         void rotation_roll(scalar_type angl) {
-            this->set_idtt();
-            float sa, ca;
+            idtt();
+            scalar_type sa{}, ca{};
 
             sincosf(degToRad(angl), &sa, &ca);
 
@@ -900,19 +900,18 @@ struct matrix_base<T, __SZ4, __SZ4> {
         void euler(scalar_type yaw, scalar_type pitch, scalar_type roll) {
             self y, p, r;
 
-            y.set_rotation_yaw(yaw);
-            p.set_rotation_pitch(pitch);
-            r.set_rotation_roll(roll);
+            y.rotation_yaw(yaw);
+            p.rotation_pitch(pitch);
+            r.rotation_roll(roll);
 
-            *this = y * p;
-            mult_self(r);
+            *this = y * p * r;
         }
 
         void axis_angle(const vector3_base<scalar_type>& ax, scalar_type phi) {
             scalar_type cosphi, sinphi, vxvy, vxvz, vyvz, vx, vy, vz;
 
-            cosphi = cosf(degToRad(phi));
-            sinphi = sinf(degToRad(phi));
+            cosphi = std::cos(degToRad(phi));
+            sinphi = std::sin(degToRad(phi));
             vxvy = ax[0] * ax[1];
             vxvz = ax[0] * ax[2];
             vyvz = ax[1] * ax[2];
@@ -989,6 +988,13 @@ matrix_base<T, 4, 4> translate(T dx, T dy, T dz) {
 }
 
 template <typename T>
+matrix_base<T, 4, 4> translate(vector3_base<T>& offset) {
+    matrix_base<T, 4, 4> rt{};
+    rt.translate(offset.x(), offset.y(), offset.z());
+    return rt;
+}
+
+template <typename T>
 matrix_base<T, 4, 4> rotate(T dy, T dp, T dr) {
     matrix_base<T, 4, 4> rt;
     rt.euler(dy, dp, dr);
@@ -996,9 +1002,23 @@ matrix_base<T, 4, 4> rotate(T dy, T dp, T dr) {
 }
 
 template <typename T>
+matrix_base<T, 4, 4> rotate(vector3_base<T> ax, T phi) {
+    matrix_base<T, 4, 4> rt;
+    rt.axis_angle(ax, phi);
+    return rt;
+}
+
+template <typename T>
 matrix_base<T, 4, 4> perspective(float fov, float aspect, float ncp, float fcp) {
     matrix_base<T, 4, 4> rt;
     rt.perspective(fov, aspect, ncp, fcp);
+    return rt;
+}
+
+template <typename T>
+matrix_base<T, 4, 4> orthographic(T left, T right, T bottom, T top, T near, T far) {
+    matrix_base<T, 4, 4> rt;
+    rt.orthographic(left, right, bottom, top, near, far);
     return rt;
 }
 
