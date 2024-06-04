@@ -2,8 +2,7 @@
 #ifndef __tire_point_h__
 #define __tire_point_h__
 
-#include "algebra/Vector.h"
-#include "algebra/Matrix.h"
+import algebra;
 
 namespace tire {
 

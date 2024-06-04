@@ -23,6 +23,16 @@ target_sources(config
     modules/config/Config.h
 )
 
+add_library(algebra)
+target_sources(algebra
+    PUBLIC
+      FILE_SET CXX_MODULES FILES
+        modules/algebra/Matrix.cpp
+        modules/algebra/Vector.cpp
+        modules/algebra/Quaternion.cpp
+        modules/algebra/Algebra.cpp
+)
+
 add_library(render)
 target_sources(render
   PUBLIC
@@ -37,7 +47,7 @@ target_sources(render
     modules/render/GLFunctions.cpp
     modules/render/GLFunctions.h
 )
-target_link_libraries(render config)
+target_link_libraries(render camera config shader algebra)
 
 add_library(assets)
 target_sources(assets
@@ -47,6 +57,7 @@ target_sources(assets
     modules/assets/Polytope.cpp
     modules/assets/Polytope.h
 )
+target_link_libraries(assets algebra)
 
 add_library(image)
 target_sources(image
@@ -61,10 +72,11 @@ target_sources(image
 
 add_library(camera)
 target_sources(camera
-  PUBLIC
-    modules/camera/Camera.cpp
-    modules/camera/Camera.h
+    PUBLIC
+      FILE_SET CXX_MODULES FILES
+        modules/camera/Camera.cpp
 )
+target_link_libraries(camera algebra)
 
 add_library(shader)
 target_sources(shader
@@ -74,6 +86,7 @@ target_sources(shader
     modules/shader/ShaderSources.cpp
     modules/shader/ShaderSources.h
 )
+target_link_libraries(shader algebra)
 
 add_library(geometry)
 target_sources(geometry
@@ -87,14 +100,12 @@ target_sources(geometry
     modules/geometry/Normal.cpp
     modules/geometry/Normal.h
 )
-
-target_link_libraries(render config shader)
-target_link_libraries(assets)
+target_link_libraries(geometry algebra)
 
 add_subdirectory(test/window)
-target_link_libraries(gl config render shader assets X11 GL GLU vulkan)
-target_link_libraries(vk config render shader assets X11 GL GLU vulkan)
-target_link_libraries(lg config render shader assets X11 GL GLU vulkan)
+target_link_libraries(gl camera config render shader assets X11 GL GLU vulkan)
+target_link_libraries(vk camera config render shader assets X11 GL GLU vulkan)
+target_link_libraries(lg camera config render shader assets X11 GL GLU vulkan)
 
 add_subdirectory(test/wavefront)
 target_link_libraries(wavefront assets)

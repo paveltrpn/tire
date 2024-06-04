@@ -4,8 +4,7 @@
 
 #include <limits>
 
-#include "algebra/Vector.h"
-#include "algebra/Matrix.h"
+import algebra;
 
 namespace tire {
 

@@ -10,8 +10,8 @@
 #include <type_traits>
 
 #include "render/GLFunctions.h"
-#include "algebra/Vector.h"
-#include "algebra/Matrix.h"
+
+import algebra;
 
 namespace tire {
 

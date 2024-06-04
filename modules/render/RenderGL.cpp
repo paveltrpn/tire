@@ -6,15 +6,15 @@
 #include <format>
 #include <print>
 
-#include "algebra/Vector.h"
 #include "config/Config.h"
 #include "Render.h"
 #include "RenderGL.h"
-#include "algebra/Matrix.h"
-#include "camera/Camera.h"
 
 #include "render/GLFunctions.h"
 #include "spdlog/spdlog.h"
+
+import algebra;
+import camera;
 
 namespace tire {
 

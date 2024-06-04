@@ -9,6 +9,8 @@
 #include "Point.h"
 #include "Normal.h"
 
+import algebra;
+
 namespace tire {
 
 template <typename T = float>
