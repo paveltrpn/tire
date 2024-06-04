@@ -201,16 +201,19 @@ void Render::configureX11() {
     XMapWindow(display_, window_);
 }
 
-void Render::frame() {
-    preFrame();
-
-    traverse();
-
-    postFrame();
-    swapBuffers();
-}
-
 void Render::run() {
+    if (camera_ == nullptr) {
+        spdlog::critical("how to render without camera???");
+        return;
+    }
+
+    if (renderList_.empty()) {
+        spdlog::critical("nothing to render!!!");
+        return;
+    }
+
+    initMainLoop();
+
     XSelectInput(display_, window_, KeyPressMask | KeyReleaseMask);
     while (run_) {
         while (XPending(display_)) {
@@ -235,7 +238,12 @@ void Render::run() {
                 }
             }
         }
-        frame();
+        preFrame();
+
+        traverse();
+
+        postFrame();
+        swapBuffers();
     }
 }
 

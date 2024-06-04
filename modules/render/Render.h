@@ -17,6 +17,8 @@
 #include "GLFunctions.h"
 #include "shader/ShaderSources.h"
 
+import camera;
+
 namespace tire {
 
 namespace __detail_tire {
@@ -61,18 +63,20 @@ struct Render {
         void run();
 
         virtual void appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) = 0;
+        void addCamera(std::shared_ptr<tire::camera::Camera> cameraPtr) {
+            camera_ = cameraPtr;
+        }
 
     protected:
-        void frame();
+        virtual void initMainLoop() = 0;
         virtual void preFrame() = 0;
+        virtual void traverse() = 0;
         virtual void postFrame() = 0;
         virtual void swapBuffers() = 0;
 
         [[nodiscard]]
         bool isExtensionSupported(const char* extList, const char* extension);
         void setSwapInterval(int interval);
-
-        virtual void traverse() = 0;
 
     protected:
         bool run_{ true };
@@ -94,6 +98,9 @@ struct Render {
 
         // render list
         std::list<std::shared_ptr<tire::Node<point_scalar_type>>> renderList_;
+
+        // cameras
+        std::shared_ptr<tire::camera::Camera> camera_{ nullptr };
 
         // glx extensions section
     protected:

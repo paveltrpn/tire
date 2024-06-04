@@ -70,6 +70,7 @@ struct RenderVK final : Render {
             }
         }
 
+        void initMainLoop() override {};
         void preFrame() override {};
         void postFrame() override {};
         void swapBuffers() override {};

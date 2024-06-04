@@ -23,25 +23,6 @@ RenderGL::RenderGL() : Render{} {
     initOpenGLFunctions();
     // setup VSYNC
     setSwapInterval(1);
-
-    // linkProgram();
-    program_.link({ { GL_VERTEX_SHADER, shaderSourcesManager_.getVertexShader("basic_gl") },
-                    { GL_FRAGMENT_SHADER, shaderSourcesManager_.getFragmentShader("basic_gl") } });
-
-    program_.use();
-
-    // glUniformMatrix4fv(matrix, 1, GL_FALSE, result.data());
-
-    auto camera = tire::camera::Perspective(
-      50.0f, static_cast<float>(width_) / static_cast<float>(height_), 0.1f, 100.0f);
-
-    camera.move(tire::algebra::Vector3f{ 0.0f, 0.0f, -25.0f });
-    camera.rotate(0.0f, 3.0f, 0.0f);
-
-    auto matrix = program_.getUniformLocation("matrix");
-    program_.setMatrixUniform(matrix, GL_FALSE, camera.getMatrix());
-    auto color = program_.getUniformLocation("color");
-    program_.setVectorUniform(color, tire::algebra::Vector3f{ 0.9f, 0.2f, 0.5f });
 }
 
 RenderGL::~RenderGL() {
@@ -116,6 +97,27 @@ void RenderGL::displayRenderInfo() {
       glVersion_,
       glslVersion_);
 }
+
+void RenderGL::initMainLoop() {
+    // linkProgram();
+    program_.link({ { GL_VERTEX_SHADER, shaderSourcesManager_.getVertexShader("basic_gl") },
+                    { GL_FRAGMENT_SHADER, shaderSourcesManager_.getFragmentShader("basic_gl") } });
+
+    program_.use();
+
+    // glUniformMatrix4fv(matrix, 1, GL_FALSE, result.data());
+
+    // auto camera = tire::camera::Perspective(
+    // 50.0f, static_cast<float>(width_) / static_cast<float>(height_), 0.1f, 100.0f);
+
+    // camera.move(tire::algebra::Vector3f{ 8.0f, 0.0f, -20.0f });
+    // camera.rotate(0.0f, 20.0f, 0.0f);
+
+    auto matrix = program_.getUniformLocation("matrix");
+    program_.setMatrixUniform(matrix, GL_FALSE, camera_->getMatrix());
+    auto color = program_.getUniformLocation("color");
+    program_.setVectorUniform(color, tire::algebra::Vector3f{ 0.9f, 0.2f, 0.5f });
+};
 
 void RenderGL::preFrame() {
     glViewport(0, 0, width_, height_);

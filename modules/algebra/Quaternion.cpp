@@ -4,50 +4,42 @@ module;
 #include <cstddef>
 #include <array>
 
-export module algebra.quaternion;
+export module algebra:quaternion;
 
-import algebra.vector;
+import :vector;
 
 namespace tire {
 
 export {
     template <typename T>
-    struct quaternion {
-            quaternion() = default;
+    struct quaternion_base {
+            quaternion_base() = default;
 
-            quaternion(quaternion&& rhs) = delete;
-
-            explicit quaternion(const quaternion& rhs) : data_{ rhs.data_ } {
+            explicit quaternion_base(const quaternion_base& rhs) : data_{ rhs.data_ } {
             }
 
-            explicit quaternion(const std::array<T, 4>& rhs) {
+            explicit quaternion_base(const std::array<T, 4>& rhs) {
                 data_[0] = rhs[0];
                 data_[1] = rhs[1];
                 data_[2] = rhs[2];
                 data_[3] = rhs[3];
             }
 
-            quaternion(T x, T y, T z, T w) {
+            quaternion_base(T x, T y, T z, T w) {
                 data_[0] = x;
                 data_[1] = y;
                 data_[2] = z;
                 data_[3] = w;
             }
 
-            quaternion(const algebra::vector2<T>& rhs) {
-                data_[0] = rhs.data_[0];
-                data_[1] = rhs.data_[1];
-                data_[2] = data_[3] = T{};
-            }
-
-            quaternion(const algebra::vector3_base<T>& rhs) {
+            quaternion_base(const algebra::vector3_base<T>& rhs) {
                 data_[0] = rhs.data_[0];
                 data_[1] = rhs.data_[1];
                 data_[2] = rhs.data_[2];
                 data_[3] = T{};
             }
 
-            explicit quaternion(const algebra::vector4_base<T>& rhs) {
+            explicit quaternion_base(const algebra::vector4_base<T>& rhs) {
                 data_[0] = rhs.data_[0];
                 data_[1] = rhs.data_[1];
                 data_[2] = rhs.data_[2];
@@ -78,7 +70,7 @@ export {
                 return data_[3];
             }
 
-            quaternion& operator=(const quaternion& rhs) {
+            quaternion_base& operator=(const quaternion_base& rhs) {
                 if (this != &rhs) {
                     data_[0] = rhs.data_[0];
                     data_[1] = rhs.data_[1];
@@ -89,35 +81,35 @@ export {
                 return *this;
             };
 
-            quaternion operator+(const quaternion& b) {
-                return quaternion{
+            quaternion_base operator+(const quaternion_base& b) {
+                return quaternion_base{
                     data_[0] + b[0], data_[1] + b[1], data_[2] + b[2], data_[3] + b[3]
                 };
             }
 
-            quaternion operator+=(const quaternion& b) {
+            quaternion_base operator+=(const quaternion_base& b) {
                 return this + b;
             }
 
-            quaternion operator-(const quaternion& b) {
-                return quaternion{
+            quaternion_base operator-(const quaternion_base& b) {
+                return quaternion_base{
                     data_[0] - b[0], data_[1] - b[1], data_[2] - b[2], data_[3] - b[3]
                 };
             }
 
-            quaternion operator-=(const quaternion& b) {
+            quaternion_base operator-=(const quaternion_base& b) {
                 return this - b;
             }
 
-            quaternion& operator=(quaternion&& rhs) = delete;
+            quaternion_base& operator=(quaternion_base&& rhs) = delete;
 
-            ~quaternion() = default;
+            ~quaternion_base() = default;
 
             /*
              * Test purpose members
              */
 
-            [[nodiscard]] T* getData() {
+            [[nodiscard]] T* data() {
                 return data_.data();
             };
 

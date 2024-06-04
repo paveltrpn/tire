@@ -20,6 +20,7 @@ struct RenderLegacyGL final : Render {
 
         void setupDebugMessages();
 
+        void initMainLoop() override {};
         void preFrame() override;
         void postFrame() override;
         void swapBuffers() override;

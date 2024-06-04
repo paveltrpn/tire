@@ -15,6 +15,8 @@
 
 #include "spdlog/spdlog.h"
 
+import camera;
+
 int main(int argc, char **argv) {
     try {
         new tire::Config{ std::filesystem::path{
@@ -35,6 +37,19 @@ int main(int argc, char **argv) {
     rndr->displayRenderInfo();
 
     initSubject(rndr.get());
+
+    {
+        auto configPtr = tire::Config::instance();
+        auto width = static_cast<float>(configPtr->get<int>("window_width"));
+        auto height = static_cast<float>(configPtr->get<int>("window_height"));
+        auto camera
+          = std::make_shared<tire::camera::Perspective>(50.0f, width / height, 0.1f, 100.0f);
+
+        camera->move(tire::algebra::Vector3f{ 8.0f, 0.0f, -20.0f });
+        camera->rotate(0.0f, 20.0f, 0.0f);
+
+        rndr->addCamera(camera);
+    }
 
     rndr->run();
 

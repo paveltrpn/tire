@@ -5,10 +5,10 @@ module;
 #include <cmath>
 #include <array>
 
-export module algebra.vector;
+export module algebra:vector;
 
 namespace tire::algebra {
-export {
+
     constexpr size_t __SZ2 = 2;
     constexpr size_t __SZ3 = 3;
     constexpr size_t __SZ4 = 4;
@@ -232,31 +232,33 @@ export {
     template <typename T>
     struct vector3_base;
 
-    template <typename T>
-    vector3_base<T> sum(const vector3_base<T>& lhs, const vector3_base<T>& rhs) {
-        return { lhs[0] + rhs[0], lhs[1] + rhs[1], lhs[2] + rhs[2] };
-    }
+    export {
+        template <typename T>
+        vector3_base<T> sum(const vector3_base<T>& lhs, const vector3_base<T>& rhs) {
+            return { lhs[0] + rhs[0], lhs[1] + rhs[1], lhs[2] + rhs[2] };
+        }
 
-    template <typename T>
-    vector3_base<T> sub(const vector3_base<T>& lhs, const vector3_base<T>& rhs) {
-        return { lhs[0] - rhs[0], lhs[1] - rhs[1], lhs[2] - rhs[2] };
-    }
+        template <typename T>
+        vector3_base<T> sub(const vector3_base<T>& lhs, const vector3_base<T>& rhs) {
+            return { lhs[0] - rhs[0], lhs[1] - rhs[1], lhs[2] - rhs[2] };
+        }
 
-    template <typename T>
-    vector3_base<T> scale(const vector3_base<T>& lhs, T factor) {
-        return { lhs[0] * factor, lhs[1] * factor, lhs[2] * factor };
-    }
+        template <typename T>
+        vector3_base<T> scale(const vector3_base<T>& lhs, T factor) {
+            return { lhs[0] * factor, lhs[1] * factor, lhs[2] * factor };
+        }
 
-    template <typename T>
-    T dot(const vector3_base<T>& lhs, const vector3_base<T>& rhs) {
-        return lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2];
-    }
+        template <typename T>
+        T dot(const vector3_base<T>& lhs, const vector3_base<T>& rhs) {
+            return lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2];
+        }
 
-    template <typename T>
-    vector3_base<T> cross(const vector3_base<T>& lhs, const vector3_base<T>& rhs) {
-        return { lhs[1] * rhs[2] - lhs[2] * rhs[1],
-                 lhs[2] * rhs[0] - lhs[0] * rhs[2],
-                 lhs[0] * rhs[1] - lhs[1] * rhs[0] };
+        template <typename T>
+        vector3_base<T> cross(const vector3_base<T>& lhs, const vector3_base<T>& rhs) {
+            return { lhs[1] * rhs[2] - lhs[2] * rhs[1],
+                     lhs[2] * rhs[0] - lhs[0] * rhs[2],
+                     lhs[0] * rhs[1] - lhs[1] * rhs[0] };
+        }
     }
 
     template <typename T>
@@ -344,24 +346,26 @@ export {
     template <typename T>
     struct vector4_base;
 
-    template <typename T>
-    vector4_base<T> sum(const vector4_base<T>& lhs, const vector4_base<T>& rhs) {
-        return { lhs[0] + rhs[0], lhs[1] + rhs[1], lhs[2] + rhs[2], lhs[3] + rhs[3] };
-    }
+    export {
+        template <typename T>
+        vector4_base<T> sum(const vector4_base<T>& lhs, const vector4_base<T>& rhs) {
+            return { lhs[0] + rhs[0], lhs[1] + rhs[1], lhs[2] + rhs[2], lhs[3] + rhs[3] };
+        }
 
-    template <typename T>
-    vector4_base<T> sub(const vector4_base<T>& lhs, const vector4_base<T>& rhs) {
-        return { lhs[0] - rhs[0], lhs[1] - rhs[1], lhs[2] - rhs[2], lhs[3] - rhs[3] };
-    }
+        template <typename T>
+        vector4_base<T> sub(const vector4_base<T>& lhs, const vector4_base<T>& rhs) {
+            return { lhs[0] - rhs[0], lhs[1] - rhs[1], lhs[2] - rhs[2], lhs[3] - rhs[3] };
+        }
 
-    template <typename T>
-    vector4_base<T> scale(const vector4_base<T>& lhs, T factor) {
-        return { lhs[0] * factor, lhs[1] * factor, lhs[2] * factor, lhs[3] * factor };
-    }
+        template <typename T>
+        vector4_base<T> scale(const vector4_base<T>& lhs, T factor) {
+            return { lhs[0] * factor, lhs[1] * factor, lhs[2] * factor, lhs[3] * factor };
+        }
 
-    template <typename T>
-    T dot(const vector4_base<T>& lhs, const vector4_base<T>& rhs) {
-        return lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2] + lhs[3] * rhs[3];
+        template <typename T>
+        T dot(const vector4_base<T>& lhs, const vector4_base<T>& rhs) {
+            return lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2] + lhs[3] * rhs[3];
+        }
     }
 
     template <typename T>
@@ -443,48 +447,49 @@ export {
     template <typename T>
     struct dummy_derived {};
 
-    template <typename T, size_t pSize_>
-    using Vector = vector_base<dummy_derived, T, pSize_>;
+    export {
+        template <typename T, size_t pSize_>
+        using Vector = vector_base<dummy_derived, T, pSize_>;
 
-    template <typename T>
-    using Vector2 = vector2<T>;
+        template <typename T>
+        using Vector2 = vector2<T>;
 
-    template <typename T>
-    using Vector3 = vector3_base<T>;
+        template <typename T>
+        using Vector3 = vector3_base<T>;
 
-    template <typename T>
-    using Vector4 = vector4_base<T>;
+        template <typename T>
+        using Vector4 = vector4_base<T>;
 
-    using Vector2i = Vector2<int>;
-    using Vector3i = Vector3<int>;
-    using Vector4i = Vector4<int>;
+        using Vector2i = Vector2<int>;
+        using Vector3i = Vector3<int>;
+        using Vector4i = Vector4<int>;
 
-    using Vector2ui = Vector2<unsigned int>;
-    using Vector3ui = Vector3<unsigned int>;
-    using Vector4ui = Vector4<unsigned int>;
+        using Vector2ui = Vector2<unsigned int>;
+        using Vector3ui = Vector3<unsigned int>;
+        using Vector4ui = Vector4<unsigned int>;
 
-    using Vector2ll = Vector2<long long>;
-    using Vector3ll = Vector3<long long>;
-    using Vector4ll = Vector4<long long>;
+        using Vector2ll = Vector2<long long>;
+        using Vector3ll = Vector3<long long>;
+        using Vector4ll = Vector4<long long>;
 
-    using Vector2f = Vector2<float>;
-    using Vector3f = Vector3<float>;
-    using Vector4f = Vector4<float>;
+        using Vector2f = Vector2<float>;
+        using Vector3f = Vector3<float>;
+        using Vector4f = Vector4<float>;
 
-    using Vector2d = Vector2<double>;
-    using Vector3d = Vector3<double>;
-    using Vector4d = Vector4<double>;
+        using Vector2d = Vector2<double>;
+        using Vector3d = Vector3<double>;
+        using Vector4d = Vector4<double>;
 
-    template <typename T>
-    concept ConceptVector
-      = std::is_same_v<T, Vector4ll> || std::is_same_v<T, Vector3f> || std::is_same_v<T, Vector4d>
-        || std::is_same_v<T, Vector4i> || std::is_same_v<T, Vector4ui>
-        || std::is_same_v<T, Vector3ll> || std::is_same_v<T, Vector3f>
-        || std::is_same_v<T, Vector3d> || std::is_same_v<T, Vector3i>
-        || std::is_same_v<T, Vector3ui> || std::is_same_v<T, Vector2ll>
-        || std::is_same_v<T, Vector2f> || std::is_same_v<T, Vector2d> || std::is_same_v<T, Vector2i>
-        || std::is_same_v<T, Vector2ui>;
-}
+        template <typename T>
+        concept ConceptVector = std::is_same_v<T, Vector4ll> || std::is_same_v<T, Vector3f>
+                                || std::is_same_v<T, Vector4d> || std::is_same_v<T, Vector4i>
+                                || std::is_same_v<T, Vector4ui> || std::is_same_v<T, Vector3ll>
+                                || std::is_same_v<T, Vector3f> || std::is_same_v<T, Vector3d>
+                                || std::is_same_v<T, Vector3i> || std::is_same_v<T, Vector3ui>
+                                || std::is_same_v<T, Vector2ll> || std::is_same_v<T, Vector2f>
+                                || std::is_same_v<T, Vector2d> || std::is_same_v<T, Vector2i>
+                                || std::is_same_v<T, Vector2ui>;
+    }
 
 }  // namespace tire::algebra
 
