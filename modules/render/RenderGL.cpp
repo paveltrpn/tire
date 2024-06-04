@@ -14,6 +14,9 @@
 
 #include "render/GLFunctions.h"
 #include "spdlog/spdlog.h"
+#include <glm/glm.hpp>                   //vec3, vec4, ivec4, mat4
+#include <glm/gtc/matrix_transform.hpp>  //translate, rotate, scale, perspective
+#include <glm/gtc/type_ptr.hpp>
 
 namespace tire {
 
@@ -32,13 +35,24 @@ RenderGL::RenderGL() : Render{} {
     tire::algebra::Matrix4f projection = tire::algebra::perspective<float>(
       50.0f, static_cast<float>(width_) / static_cast<float>(height_), 0.1f, 100.0f);
     tire::algebra::Matrix4f offset = tire::algebra::translate(0.0f, 0.0f, -15.0f);
-
-    auto result = offset * projection;
+    auto result = projection * tire::algebra::transpose(offset);
     // glUniformMatrix4fv(matrix, 1, GL_FALSE, result.data());
     auto matrix = program_.getUniformLocation("matrix");
     program_.setMatrixUniform(matrix, GL_FALSE, result);
     auto color = program_.getUniformLocation("color");
     program_.setVectorUniform(color, tire::algebra::Vector3f{ 0.9f, 0.2f, 0.5f });
+
+    // auto _projection = glm::perspective(
+    // 50.0f, static_cast<float>(width_) / static_cast<float>(height_), 0.1f, 100.0f);
+
+    // auto _offset = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -15.0));
+
+    // auto result = projection * offset;
+
+    // auto matrix = program_.getUniformLocation("matrix");
+    // auto color = program_.getUniformLocation("color");
+
+    // glUniformMatrix4fv(matrix, 1, GL_FALSE, glm::value_ptr(result));
 }
 
 RenderGL::~RenderGL() {

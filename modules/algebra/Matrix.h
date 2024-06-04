@@ -16,9 +16,12 @@
 
 namespace tire::algebra {
 
-template <typename T>
+template <std::floating_point T>
+constexpr T _half_circle = T(180.0L);
+
+template <std::floating_point T>
 constexpr T degToRad(T deg) {
-    return deg * M_PI / 180.0;
+    return deg * std::numbers::pi_v<T> / _half_circle<T>;
 }
 
 template <std::unsigned_integral T>
@@ -42,7 +45,7 @@ template <typename T, size_t pSize_>
 static inline void __matrix_sqr_set_zero(matrix_base_sqr<T, pSize_>& a) {
     for (size_t i = 0; i < pSize_; i++) {
         for (size_t j = 0; j < pSize_; j++) {
-            a[i, j] = static_cast<T>(0);
+            a[i, j] = static_cast<T>(0.0);
         }
     }
 }
@@ -52,7 +55,7 @@ static inline void __matrix_sqr_set_idtt(matrix_base_sqr<T, pSize_>& a) {
     for (size_t i = 0; i < pSize_; i++) {
         for (size_t j = 0; j < pSize_; j++) {
             if (i == j) {
-                a[i, j] = static_cast<T>(1);
+                a[i, j] = static_cast<T>(1.0);
             } else {
                 a[i, j] = T{};
             }
@@ -708,15 +711,15 @@ struct matrix_base<T, __SZ4, __SZ4> {
         }
 
         void perspective(scalar_type fovy, scalar_type aspect, scalar_type near, scalar_type far) {
-            scalar_type f = 1.0 / tanf(fovy / std::numbers::sqrt2_v<float>);
-            scalar_type nf;
+            scalar_type h = std::cos(static_cast<scalar_type>(0.5) * fovy)
+                            / std::sin(static_cast<scalar_type>(0.5) * fovy);
 
-            data_[0] = f / aspect;
+            data_[0] = h / aspect;
             data_[1] = 0.0;
             data_[2] = 0.0;
             data_[3] = 0.0;
             data_[4] = 0.0;
-            data_[5] = f;
+            data_[5] = h;
             data_[6] = 0.0;
             data_[7] = 0.0;
             data_[8] = 0.0;
@@ -727,9 +730,10 @@ struct matrix_base<T, __SZ4, __SZ4> {
             data_[15] = 0.0;
 
             if (far >= std::numeric_limits<scalar_type>::epsilon()) {
-                nf = 1.0 / (near - far);
-                data_[10] = (far + near) * nf;
-                data_[14] = 2.0 * far * near * nf;
+                scalar_type nf;
+                nf = 1.0 / (far - near);
+                data_[10] = -(far + near) * nf;
+                data_[14] = -(2.0 * far * near) * nf;
             } else {
                 data_[10] = -1.0;
                 data_[14] = -2.0 * near;
@@ -973,10 +977,8 @@ struct matrix_base<T, __SZ4, __SZ4> {
 };
 
 template <typename T, size_t size_>
-auto transpose(matrix_base<T, size_, size_>& arg) -> decltype(arg) {
-    matrix_base<T, size_, size_> rt{ arg };
-    rt.transpose();
-    return rt;
+auto transpose(matrix_base<T, size_, size_>& arg) -> decltype(auto) {
+    return __matrix_sqr_transpose(arg);
 }
 
 template <typename T>
