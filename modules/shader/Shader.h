@@ -19,9 +19,14 @@ template <typename T>
 concept ConceptGLScalar = std::is_same_v<T, GLint> || std::is_same_v<T, GLuint>
                           || std::is_same_v<T, GLfloat> || std::is_same_v<T, GLdouble>;
 
+enum class ShaderID {
+    BASIC_COLOR,
+    BASIC_TEXTURE,
+};
+
 struct Shader final {
         Shader() = default;
-        ~Shader();
+        ~Shader() = default;
 
         [[nodiscard]]
         GLuint getProgramId() const {
@@ -30,6 +35,8 @@ struct Shader final {
 
         void link(std::vector<std::pair<GLuint, std::string>> shaders);
         void use();
+
+        void reset();
 
         void showActiveUniforms();
         void showActiveAttributes();
@@ -78,6 +85,7 @@ struct Shader final {
         }
 
     private:
+        [[nodiscard]]
         std::vector<GLuint> getShadersList(std::vector<std::pair<GLuint, std::string>> shaders);
         void getActiveAttributes();
         void getActiveUniforms();

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <format>
 #include <print>
+#include <map>
 
 #include "config/Config.h"
 #include "Render.h"
@@ -89,6 +90,9 @@ void RenderGL::configureGl() {
     glslVersion_ = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
 }
 
+void RenderGL::setupDebugMessages() {
+}
+
 void RenderGL::displayRenderInfo() {
     spdlog::info(
       "OpenGL context info\nvendor - {}\nrenderer - {}\nOpenGL version - {}\nGLSL version - {}",
@@ -98,25 +102,28 @@ void RenderGL::displayRenderInfo() {
       glslVersion_);
 }
 
+void RenderGL::prepareShaders() {
+    auto program = tire::Shader{};
+    program.link(
+      { { GL_VERTEX_SHADER, shaderSourcesManager_.getVertexShader("basic_color") },
+        { GL_FRAGMENT_SHADER, shaderSourcesManager_.getFragmentShader("basic_color") } });
+
+    program.use();
+
+    auto matrix = program.getUniformLocation("matrix");
+    program.setMatrixUniform(matrix, GL_FALSE, camera_->getMatrix());
+    auto color = program.getUniformLocation("color");
+    program.setVectorUniform(color, tire::algebra::Vector3f{ 0.9f, 0.2f, 0.5f });
+
+    programs_.insert(std::pair{ ShaderID::BASIC_COLOR, program });
+}
+
 void RenderGL::initMainLoop() {
-    // linkProgram();
-    program_.link({ { GL_VERTEX_SHADER, shaderSourcesManager_.getVertexShader("basic_gl") },
-                    { GL_FRAGMENT_SHADER, shaderSourcesManager_.getFragmentShader("basic_gl") } });
+    prepareShaders();
 
-    program_.use();
+    tire::Shader basic_color = programs_[ShaderID::BASIC_COLOR];
 
-    // glUniformMatrix4fv(matrix, 1, GL_FALSE, result.data());
-
-    // auto camera = tire::camera::Perspective(
-    // 50.0f, static_cast<float>(width_) / static_cast<float>(height_), 0.1f, 100.0f);
-
-    // camera.move(tire::algebra::Vector3f{ 8.0f, 0.0f, -20.0f });
-    // camera.rotate(0.0f, 20.0f, 0.0f);
-
-    auto matrix = program_.getUniformLocation("matrix");
-    program_.setMatrixUniform(matrix, GL_FALSE, camera_->getMatrix());
-    auto color = program_.getUniformLocation("color");
-    program_.setVectorUniform(color, tire::algebra::Vector3f{ 0.9f, 0.2f, 0.5f });
+    basic_color.use();
 };
 
 void RenderGL::preFrame() {
@@ -125,10 +132,14 @@ void RenderGL::preFrame() {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void RenderGL::postFrame() {
-}
+void RenderGL::frame() {
+    glEnableVertexAttribArray(0);
+    glBindVertexArray(vertexObject_);
+    glDrawArrays(GL_TRIANGLES, 0, 12);
+    glDisableVertexAttribArray(0);
+};
 
-void RenderGL::setupDebugMessages() {
+void RenderGL::postFrame() {
 }
 
 void RenderGL::swapBuffers() {
@@ -158,12 +169,5 @@ void RenderGL::appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>>
     // glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void *)(24 * sizeof(float)));
     // glEnableVertexAttribArray(2);
 }
-
-void RenderGL::traverse() {
-    glEnableVertexAttribArray(0);
-    glBindVertexArray(vertexObject_);
-    glDrawArrays(GL_TRIANGLES, 0, 12);
-    glDisableVertexAttribArray(0);
-};
 
 }  // namespace tire

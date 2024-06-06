@@ -8,7 +8,7 @@
 
 namespace tire {
 
-enum class PolytopeType {
+enum class PolytopeType : char {
     TETRAHEDRON,
     OCTAHEDRON,
     DODECAHEDRON,

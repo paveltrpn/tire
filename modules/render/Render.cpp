@@ -10,6 +10,11 @@
 namespace tire {
 
 Render::Render() {
+    if (!tire::Config::instance()) {
+        spdlog::critical("instantiate config first!!!");
+        throw std::runtime_error("instantiate config first!!!");
+    }
+
     openDisplay();
     checkGlxVersion();
     configureX11();
@@ -240,7 +245,7 @@ void Render::run() {
         }
         preFrame();
 
-        traverse();
+        frame();
 
         postFrame();
         swapBuffers();

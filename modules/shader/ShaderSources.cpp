@@ -13,7 +13,7 @@ void main() {
 void main() {
 })foo";
 
-    vertexShaderSources_["basic_gl"] = R"foo(
+    vertexShaderSources_["basic_color"] = R"foo(
 #version 330 core
 layout (location = 0) in vec3 pos;
 out vec3 outColor;
@@ -24,7 +24,7 @@ void main() {
    gl_Position = matrix * vec4(pos, 1.0);
 };)foo";
 
-    fragmentShaderSources_["basic_gl"] = R"foo(
+    fragmentShaderSources_["basic_color"] = R"foo(
 #version 330 core
 out vec4 FragColor;
 in vec3 outColor;

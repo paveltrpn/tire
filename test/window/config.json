@@ -14,5 +14,6 @@
   "use_context_version_minor": 2,
   "enable_debug": true,
   "engine_name": "vk-eng",
-  "enable_validation_layers": false
+  "enable_validation_layers": false,
+  "perspective_camera_fov": 50.0
 }

@@ -121,11 +121,7 @@ GLuint Shader::getUniformLocation(const std::string &id) {
     return glGetUniformLocation(program_, id.c_str());
 }
 
-Shader::~Shader() {
-    // for (auto &shader : shaderList) {
-    // glDeleteShader(shader);
-    // }
-
+void Shader::reset() {
     glDeleteProgram(program_);
 }
 

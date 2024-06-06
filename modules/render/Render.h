@@ -70,7 +70,7 @@ struct Render {
     protected:
         virtual void initMainLoop() = 0;
         virtual void preFrame() = 0;
-        virtual void traverse() = 0;
+        virtual void frame() = 0;
         virtual void postFrame() = 0;
         virtual void swapBuffers() = 0;
 

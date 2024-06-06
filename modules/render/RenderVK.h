@@ -72,12 +72,12 @@ struct RenderVK final : Render {
 
         void initMainLoop() override {};
         void preFrame() override {};
+        void frame() override {};
         void postFrame() override {};
         void swapBuffers() override {};
 
         void appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) override;
 
-        void traverse() override {};
 
     private:
         void enumerateExtensionProperties() {
