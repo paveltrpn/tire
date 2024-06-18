@@ -16,9 +16,7 @@ Render::Render() {
     }
 
     openDisplay();
-    checkGlxVersion();
     configureX11();
-    initGlxExtensions();
 }
 
 Render::~Render() {
@@ -33,18 +31,6 @@ void Render::openDisplay() {
     if (!display_) {
         throw std::runtime_error("failed to open X display");
     }
-}
-
-void Render::checkGlxVersion() {
-    int glx_major, glx_minor;
-
-    // FBConfigs were added in GLX version 1.3.
-    if (!glXQueryVersion(display_, &glx_major, &glx_minor) || ((glx_major == 1) && (glx_minor < 3))
-        || (glx_major < 1)) {
-        throw std::runtime_error("invalid GLX version");
-    }
-
-    spdlog::info("glx version: {}.{}", glx_major, glx_minor);
 }
 
 bool Render::isExtensionSupported(const char* extList, const char* extension) {
@@ -75,25 +61,6 @@ bool Render::isExtensionSupported(const char* extList, const char* extension) {
     }
 
     return false;
-}
-
-void Render::initGlxExtensions() {
-    // Get the default screen's GLX extension list
-    const char* glxExts = glXQueryExtensionsString(display_, DefaultScreen(display_));
-
-    glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB(
-      (const GLubyte*)"glXCreateContextAttribsARB");
-
-    if (!isExtensionSupported(glxExts, "GLX_ARB_create_context") || !glXCreateContextAttribsARB) {
-        throw std::runtime_error("extension glXCreateContextAttribsARB not supported!");
-    }
-
-    glXSwapIntervalEXT
-      = (glXSwapIntervalEXTProc)glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalEXT");
-
-    if (!isExtensionSupported(glxExts, "GLX_EXT_swap_control") || !glXSwapIntervalEXT) {
-        throw std::runtime_error("extension glXSwapIntervalEXT not supported!");
-    }
 }
 
 void Render::configureX11() {
@@ -249,13 +216,6 @@ void Render::run() {
 
         postFrame();
         swapBuffers();
-    }
-}
-
-void Render::setSwapInterval(int interval) {
-    GLXDrawable drawable = glXGetCurrentDrawable();
-    if (drawable) {
-        glXSwapIntervalEXT(display_, drawable, interval);
     }
 }
 

@@ -30,6 +30,8 @@ struct RenderGL final : Render {
         void appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) override;
 
     private:
+        void checkGlxVersion();
+        void initGlxExtensions();
         void configureGl();
         void setupDebugMessages();
 
@@ -39,9 +41,21 @@ struct RenderGL final : Render {
         void postFrame() override;
         void swapBuffers() override;
 
+        void setSwapInterval(int interval) override;
+
         void prepareShaders();
 
     private:
+        // glx extensions section
+        using glXCreateContextAttribsARBProc
+          = GLXContext (*)(Display *, GLXFBConfig, GLXContext, Bool, const int *);
+        glXCreateContextAttribsARBProc glXCreateContextAttribsARB{ nullptr };
+
+        using glXSwapIntervalEXTProc = void (*)(Display *, GLXDrawable, int);
+        glXSwapIntervalEXTProc glXSwapIntervalEXT{ nullptr };
+        static constexpr int GLX_SWAP_INTERVAL{ 0x20F1 };
+        static constexpr int GLX_MAX_SWAP_INTEVAL{ 0x20F2 };
+
         GLXContext glContext_{ nullptr };
 
         std::string vendor_{};

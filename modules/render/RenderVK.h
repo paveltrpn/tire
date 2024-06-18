@@ -76,6 +76,8 @@ struct RenderVK final : Render {
         void postFrame() override {};
         void swapBuffers() override {};
 
+        void setSwapInterval(int interval) override {};
+
         void appendToRenderList(std::shared_ptr<tire::Node<point_scalar_type>> node) override;
 
 

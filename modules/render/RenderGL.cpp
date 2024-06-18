@@ -20,6 +20,8 @@ import camera;
 namespace tire {
 
 RenderGL::RenderGL() : Render{} {
+    checkGlxVersion();
+    initGlxExtensions();
     configureGl();
     initOpenGLFunctions();
     // setup VSYNC
@@ -28,6 +30,44 @@ RenderGL::RenderGL() : Render{} {
 
 RenderGL::~RenderGL() {
     glXDestroyContext(display_, glContext_);
+}
+
+void RenderGL::checkGlxVersion() {
+    int glx_major, glx_minor;
+
+    // FBConfigs were added in GLX version 1.3.
+    if (!glXQueryVersion(display_, &glx_major, &glx_minor) || ((glx_major == 1) && (glx_minor < 3))
+        || (glx_major < 1)) {
+        throw std::runtime_error("invalid GLX version");
+    }
+
+    spdlog::info("glx version: {}.{}", glx_major, glx_minor);
+}
+
+void RenderGL::initGlxExtensions() {
+    // Get the default screen's GLX extension list
+    const char *glxExts = glXQueryExtensionsString(display_, DefaultScreen(display_));
+
+    glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB(
+      (const GLubyte *)"glXCreateContextAttribsARB");
+
+    if (!isExtensionSupported(glxExts, "GLX_ARB_create_context") || !glXCreateContextAttribsARB) {
+        throw std::runtime_error("extension glXCreateContextAttribsARB not supported!");
+    }
+
+    glXSwapIntervalEXT
+      = (glXSwapIntervalEXTProc)glXGetProcAddressARB((const GLubyte *)"glXSwapIntervalEXT");
+
+    if (!isExtensionSupported(glxExts, "GLX_EXT_swap_control") || !glXSwapIntervalEXT) {
+        throw std::runtime_error("extension glXSwapIntervalEXT not supported!");
+    }
+}
+
+void RenderGL::setSwapInterval(int interval) {
+    GLXDrawable drawable = glXGetCurrentDrawable();
+    if (drawable) {
+        glXSwapIntervalEXT(display_, drawable, interval);
+    }
 }
 
 void RenderGL::configureGl() {

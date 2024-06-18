@@ -76,7 +76,7 @@ struct Render {
 
         [[nodiscard]]
         bool isExtensionSupported(const char* extList, const char* extension);
-        void setSwapInterval(int interval);
+        virtual void setSwapInterval(int interval) = 0;
 
     protected:
         bool run_{ true };
@@ -102,21 +102,8 @@ struct Render {
         // cameras
         std::shared_ptr<tire::camera::Camera> camera_{ nullptr };
 
-        // glx extensions section
-    protected:
-        using glXCreateContextAttribsARBProc
-          = GLXContext (*)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
-        glXCreateContextAttribsARBProc glXCreateContextAttribsARB{ nullptr };
-
-        using glXSwapIntervalEXTProc = void (*)(Display*, GLXDrawable, int);
-        glXSwapIntervalEXTProc glXSwapIntervalEXT{ nullptr };
-        static constexpr int GLX_SWAP_INTERVAL{ 0x20F1 };
-        static constexpr int GLX_MAX_SWAP_INTEVAL{ 0x20F2 };
-
     private:
         void openDisplay();
-        void checkGlxVersion();
-        void initGlxExtensions();
         void configureX11();
 };
 

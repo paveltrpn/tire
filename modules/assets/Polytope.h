@@ -19,8 +19,8 @@ enum class PolytopeType : char {
     TEAPOT
 };
 
-struct polytope {
-        polytope(PolytopeType type);
+struct Polytope final {
+        Polytope(PolytopeType type);
 
     private:
 };
