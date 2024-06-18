@@ -123,11 +123,6 @@ void RenderGL::configureGl() {
     }
 
     glXMakeCurrent(display_, window_, glContext_);
-
-    vendor_ = (const char *)glGetString(GL_VENDOR);
-    renderer_ = (const char *)glGetString(GL_RENDERER);
-    glVersion_ = (const char *)glGetString(GL_VERSION);
-    glslVersion_ = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
 }
 
 void RenderGL::setupDebugMessages() {
@@ -136,10 +131,10 @@ void RenderGL::setupDebugMessages() {
 void RenderGL::displayRenderInfo() {
     spdlog::info(
       "OpenGL context info\nvendor - {}\nrenderer - {}\nOpenGL version - {}\nGLSL version - {}",
-      vendor_,
-      renderer_,
-      glVersion_,
-      glslVersion_);
+      getGLVendorString(),
+      getGLRendererString(),
+      getGLVersionString(),
+      getGLSLVendorString());
 }
 
 void RenderGL::prepareShaders() {

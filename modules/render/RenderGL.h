@@ -35,6 +35,22 @@ struct RenderGL final : Render {
         void configureGl();
         void setupDebugMessages();
 
+        std::string getGLVendorString() {
+            return { (const char *)glGetString(GL_VENDOR) };
+        }
+
+        std::string getGLRendererString() {
+            return { (const char *)glGetString(GL_RENDERER) };
+        }
+
+        std::string getGLVersionString() {
+            return { (const char *)glGetString(GL_VERSION) };
+        }
+
+        std::string getGLSLVendorString() {
+            return { (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION) };
+        }
+
         void initMainLoop() override;
         void preFrame() override;
         void frame() override;
@@ -56,12 +72,8 @@ struct RenderGL final : Render {
         static constexpr int GLX_SWAP_INTERVAL{ 0x20F1 };
         static constexpr int GLX_MAX_SWAP_INTEVAL{ 0x20F2 };
 
+        // X11 OpenGL context
         GLXContext glContext_{ nullptr };
-
-        std::string vendor_{};
-        std::string renderer_{};
-        std::string glVersion_{};
-        std::string glslVersion_{};
 
         GLuint bufferObject_{};
         GLuint vertexObject_{};
