@@ -13,7 +13,7 @@
 
 import algebra;
 
-namespace tire {
+namespace tire::opengl {
 
 template <typename T>
 concept ConceptGLScalar = std::is_same_v<T, GLint> || std::is_same_v<T, GLuint>
@@ -97,6 +97,6 @@ struct Shader final {
         std::vector<std::pair<std::string, GLenum>> attributes_;
 };
 
-}  // namespace tire
+}  // namespace tire::opengl
 
 #endif

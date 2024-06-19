@@ -138,7 +138,7 @@ void RenderGL::displayRenderInfo() {
 }
 
 void RenderGL::prepareShaders() {
-    auto program = tire::Shader{};
+    auto program = opengl::Shader{};
     program.link(
       { { GL_VERTEX_SHADER, shaderSourcesManager_.getVertexShader("basic_color") },
         { GL_FRAGMENT_SHADER, shaderSourcesManager_.getFragmentShader("basic_color") } });
@@ -150,13 +150,13 @@ void RenderGL::prepareShaders() {
     auto color = program.getUniformLocation("color");
     program.setVectorUniform(color, tire::algebra::Vector3f{ 0.9f, 0.2f, 0.5f });
 
-    programs_.insert(std::pair{ ShaderID::BASIC_COLOR, program });
+    programs_.insert(std::pair{ opengl::ShaderID::BASIC_COLOR, program });
 }
 
 void RenderGL::initMainLoop() {
     prepareShaders();
 
-    tire::Shader basic_color = programs_[ShaderID::BASIC_COLOR];
+    opengl::Shader basic_color = programs_[opengl::ShaderID::BASIC_COLOR];
 
     basic_color.use();
 };

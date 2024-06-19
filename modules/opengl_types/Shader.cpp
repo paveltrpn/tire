@@ -2,7 +2,7 @@
 #include "Shader.h"
 #include "spdlog/spdlog.h"
 
-namespace tire {
+namespace tire::opengl {
 
 void Shader::link(std::vector<std::pair<GLuint, std::string>> shaders) {
     auto shaderList = getShadersList(shaders);
@@ -125,4 +125,4 @@ void Shader::reset() {
     glDeleteProgram(program_);
 }
 
-}  // namespace tire
+}  // namespace tire::opengl

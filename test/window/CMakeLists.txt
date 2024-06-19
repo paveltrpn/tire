@@ -5,6 +5,6 @@ add_executable(gl
     subject.cpp)
 
 add_executable(vk
-    vulkan.cpp
+    vk.cpp
     subject.cpp)
 

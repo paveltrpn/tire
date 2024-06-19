@@ -45,7 +45,7 @@ target_sources(render
     modules/render/GLFunctions.cpp
     modules/render/GLFunctions.h
 )
-target_link_libraries(render camera config shader algebra)
+target_link_libraries(render camera config assets algebra)
 
 add_library(assets)
 target_sources(assets
@@ -54,6 +54,8 @@ target_sources(assets
     modules/assets/Wavefront.h
     modules/assets/Polytope.cpp
     modules/assets/Polytope.h
+    modules/assets/ShaderSources.cpp
+    modules/assets/ShaderSources.h
 )
 target_link_libraries(assets algebra)
 
@@ -65,7 +67,6 @@ target_sources(image
     modules/image/bmp.cpp
     modules/image/tga.cpp
     modules/image/canvas.cpp
-
 )
 
 add_library(camera)
@@ -76,15 +77,21 @@ target_sources(camera
 )
 target_link_libraries(camera algebra)
 
-add_library(shader)
-target_sources(shader
+add_library(opengl_types)
+target_sources(opengl_types
   PUBLIC
-    modules/shader/Shader.cpp
-    modules/shader/Shader.h
-    modules/shader/ShaderSources.cpp
-    modules/shader/ShaderSources.h
+    modules/opengl_types/Shader.cpp
+    modules/opengl_types/Shader.h
 )
-target_link_libraries(shader algebra)
+target_link_libraries(opengl_types algebra)
+
+add_library(vulkan_types)
+target_sources(vulkan_types
+  PUBLIC
+    modules/vulkan_types/VulkanContext.cpp
+    modules/vulkan_types/VulkanContext.h
+)
+target_link_libraries(vulkan_types)
 
 add_library(geometry)
 target_sources(geometry
@@ -101,8 +108,8 @@ target_sources(geometry
 target_link_libraries(geometry algebra)
 
 add_subdirectory(test/window)
-target_link_libraries(gl camera config render shader assets X11 GL GLU vulkan)
-target_link_libraries(vk camera config render shader assets X11 GL GLU vulkan)
+target_link_libraries(gl camera opengl_types vulkan_types config render assets X11 GL GLU vulkan)
+target_link_libraries(vk camera vulkan_types opengl_types config render assets X11 GL GLU vulkan)
 
 add_subdirectory(test/wavefront)
 target_link_libraries(wavefront assets)
