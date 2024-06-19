@@ -3,7 +3,7 @@
 #include <GL/glcorearb.h>
 #include <GL/glext.h>
 
-namespace tire {
+namespace tire::opengl {
 
 // shaders
 PFNGLCREATEPROGRAMPROC glCreateProgram{ nullptr };
@@ -134,4 +134,4 @@ void initOpenGLFunctions() {
       glXGetProcAddress(reinterpret_cast<const GLubyte *>("glDeleteVertexArrays")));
 }
 
-}  // namespace tire
+}  // namespace tire::opengl

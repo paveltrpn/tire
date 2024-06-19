@@ -9,7 +9,7 @@
 #include <utility>
 #include <type_traits>
 
-#include "render/GLFunctions.h"
+#include "GLFunctions.h"
 
 import algebra;
 

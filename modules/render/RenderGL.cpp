@@ -11,7 +11,6 @@
 #include "Render.h"
 #include "RenderGL.h"
 
-#include "render/GLFunctions.h"
 #include "spdlog/spdlog.h"
 
 import algebra;
@@ -19,11 +18,13 @@ import camera;
 
 namespace tire {
 
+using namespace tire::opengl;
+
 RenderGL::RenderGL() : Render{} {
     checkGlxVersion();
     initGlxExtensions();
     configureGl();
-    initOpenGLFunctions();
+    opengl::initOpenGLFunctions();
     // setup VSYNC
     setSwapInterval(1);
 }

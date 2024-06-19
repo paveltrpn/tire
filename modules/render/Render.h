@@ -14,7 +14,6 @@
 #include "config/Config.h"
 #include "geometry/Node.h"
 #include "geometry/Point.h"
-#include "GLFunctions.h"
 #include "assets/ShaderSources.h"
 
 import camera;

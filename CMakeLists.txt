@@ -42,10 +42,8 @@ target_sources(render
     modules/render/RenderGL.h
     modules/render/RenderVK.cpp
     modules/render/RenderVK.h
-    modules/render/GLFunctions.cpp
-    modules/render/GLFunctions.h
 )
-target_link_libraries(render camera config assets algebra)
+target_link_libraries(render camera opengl_types config assets algebra)
 
 add_library(assets)
 target_sources(assets
@@ -80,6 +78,8 @@ target_link_libraries(camera algebra)
 add_library(opengl_types)
 target_sources(opengl_types
   PUBLIC
+    modules/opengl_types/GLFunctions.cpp
+    modules/opengl_types/GLFunctions.h
     modules/opengl_types/Shader.cpp
     modules/opengl_types/Shader.h
 )
@@ -108,8 +108,8 @@ target_sources(geometry
 target_link_libraries(geometry algebra)
 
 add_subdirectory(test/window)
-target_link_libraries(gl camera opengl_types vulkan_types config render assets X11 GL GLU vulkan)
-target_link_libraries(vk camera vulkan_types opengl_types config render assets X11 GL GLU vulkan)
+target_link_libraries(gl camera opengl_types config render assets X11 GL GLU vulkan)
+target_link_libraries(vk camera vulkan_types config render assets X11 GL GLU vulkan)
 
 add_subdirectory(test/wavefront)
 target_link_libraries(wavefront assets)

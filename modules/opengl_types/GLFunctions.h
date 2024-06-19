@@ -7,7 +7,7 @@
 #include <GL/glext.h>
 #include <GL/glcorearb.h>
 
-namespace tire {
+namespace tire::opengl {
 
 // shaders
 extern PFNGLCREATEPROGRAMPROC glCreateProgram;
@@ -46,6 +46,6 @@ extern PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArrays;
 
 void initOpenGLFunctions();
 
-}  // namespace tire
+}  // namespace tire::opengl
 
 #endif

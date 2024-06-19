@@ -15,7 +15,7 @@
 
 #include "config/Config.h"
 #include "Render.h"
-#include "GLFunctions.h"
+#include "opengl_types/GLFunctions.h"
 
 #include "opengl_types/Shader.h"
 
