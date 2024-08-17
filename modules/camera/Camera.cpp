@@ -10,7 +10,7 @@ namespace tire::camera {
 export {
     struct Camera {
             using scalar_type = float;
-            using matrix4_type = toy::algebra::matrix4d;
+            using matrix4_type = toy::algebra::matrix4<scalar_type>;
             using vector3_type = toy::algebra::vector3<scalar_type>;
 
             void setDirty() {
@@ -103,12 +103,11 @@ export {
 
         private:
             void update() override {
-                auto projection
-                  = toy::algebra::perspective<scalar_type>(fov_, aspect_, ncp_, fcp_);
+                auto projection = toy::algebra::perspective<scalar_type>(fov_, aspect_, ncp_, fcp_);
                 auto offset = toy::algebra::translate(position_);
-                auto rotation = tou::algebra::rotate(yaw_, pitch_, roll_);
+                auto rotation = toy::algebra::rotate(yaw_, pitch_, roll_);
 
-                matrix_ = projection * rotation * tire::algebra::transpose(offset);
+                matrix_ = projection * rotation * toy::algebra::transpose(offset);
             }
 
         private:
@@ -138,11 +137,11 @@ export {
         private:
             void update() override {
                 auto projection
-                  = tire::algebra::orthographic(left_, right_, bottom_, top_, near_, far_);
-                auto offset = tire::algebra::translate(position_);
-                auto rotation = tire::algebra::rotate(yaw_, pitch_, roll_);
+                  = toy::algebra::orthographic(left_, right_, bottom_, top_, near_, far_);
+                auto offset = toy::algebra::translate(position_);
+                auto rotation = toy::algebra::rotate(yaw_, pitch_, roll_);
 
-                matrix_ = projection * rotation * tire::algebra::transpose(offset);
+                matrix_ = projection * rotation * toy::algebra::transpose(offset);
             }
 
         private:

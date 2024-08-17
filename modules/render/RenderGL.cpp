@@ -13,7 +13,7 @@
 
 #include "spdlog/spdlog.h"
 
-import algebra;
+import toy_std;
 import camera;
 
 namespace tire {
@@ -149,7 +149,7 @@ void RenderGL::prepareShaders() {
     auto matrix = program.getUniformLocation("matrix");
     program.setMatrixUniform(matrix, GL_FALSE, camera_->getMatrix());
     auto color = program.getUniformLocation("color");
-    program.setVectorUniform(color, tire::algebra::Vector3f{ 0.9f, 0.2f, 0.5f });
+    program.setVectorUniform(color, toy::algebra::vector3<float>{ 0.9f, 0.2f, 0.5f });
 
     programs_.insert(std::pair{ opengl::ShaderID::BASIC_COLOR, program });
 }

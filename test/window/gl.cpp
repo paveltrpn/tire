@@ -16,6 +16,7 @@
 #include "spdlog/spdlog.h"
 
 import camera;
+import toy_std;
 
 int main(int argc, char **argv) {
     try {
@@ -45,7 +46,7 @@ int main(int argc, char **argv) {
         auto camera
           = std::make_shared<tire::camera::Perspective>(50.0f, width / height, 0.1f, 100.0f);
 
-        camera->move(tire::algebra::Vector3f{ 8.0f, 0.0f, -20.0f });
+        camera->move(toy::algebra::vector3<float>{ 8.0f, 0.0f, -20.0f });
         camera->rotate(0.0f, 20.0f, 0.0f);
 
         rndr->addCamera(camera);

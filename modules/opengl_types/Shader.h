@@ -49,25 +49,25 @@ struct Shader final {
 
         template <toy::ConceptVector T>
         void setVectorUniform(GLint location, T value) {
-            if constexpr (std::is_same_v<typename T::scalar_type, float> && T::size == 2) {
+            if constexpr (std::is_same_v<typename T::value_type, float> && T::size == 2) {
                 glUniform2fv(location, 1, value.data());
-            } else if constexpr (std::is_same_v<typename T::scalar_type, float> && T::size == 3) {
+            } else if constexpr (std::is_same_v<typename T::value_type, float> && T::size == 3) {
                 glUniform3fv(location, 1, value.data());
-            } else if constexpr (std::is_same_v<typename T::scalar_type, float> && T::size == 4) {
+            } else if constexpr (std::is_same_v<typename T::value_type, float> && T::size == 4) {
                 glUniform4fv(location, 1, value.data());
-            } else if constexpr (std::is_same_v<typename T::scalar_type, int> && T::size == 2) {
+            } else if constexpr (std::is_same_v<typename T::value_type, int> && T::size == 2) {
                 glUniform2iv(location, 1, value.data());
-            } else if constexpr (std::is_same_v<typename T::scalar_type, int> && T::size == 3) {
+            } else if constexpr (std::is_same_v<typename T::value_type, int> && T::size == 3) {
                 glUniform3iv(location, 1, value.data());
-            } else if constexpr (std::is_same_v<typename T::scalar_type, int> && T::size == 4) {
+            } else if constexpr (std::is_same_v<typename T::value_type, int> && T::size == 4) {
                 glUniform4iv(location, 1, value.data());
-            } else if constexpr (std::is_same_v<typename T::scalar_type, unsigned int>
+            } else if constexpr (std::is_same_v<typename T::value_type, unsigned int>
                                  && T::size == 2) {
                 glUniform2uiv(location, 1, value.data());
-            } else if constexpr (std::is_same_v<typename T::scalar_type, unsigned int>
+            } else if constexpr (std::is_same_v<typename T::value_type, unsigned int>
                                  && T::size == 3) {
                 glUniform3uiv(location, 1, value.data());
-            } else if constexpr (std::is_same_v<typename T::scalar_type, unsigned int>
+            } else if constexpr (std::is_same_v<typename T::value_type, unsigned int>
                                  && T::size == 4) {
                 glUniform4uiv(location, 1, value.data());
             }
@@ -75,11 +75,11 @@ struct Shader final {
 
         template <toy::ConceptMatrixFloat T>
         void setMatrixUniform(GLuint location, GLboolean transpose, T value) {
-            if constexpr (std::is_same_v<typename T::scalar_type, float> && T::size == 2) {
+            if constexpr (std::is_same_v<typename T::value_type, float> && T::size == 2) {
                 glUniformMatrix2fv(location, 1, transpose, value.data());
-            } else if constexpr (std::is_same_v<typename T::scalar_type, float> && T::size == 3) {
+            } else if constexpr (std::is_same_v<typename T::value_type, float> && T::size == 3) {
                 glUniformMatrix3fv(location, 1, transpose, value.data());
-            } else if constexpr (std::is_same_v<typename T::scalar_type, float> && T::size == 4) {
+            } else if constexpr (std::is_same_v<typename T::value_type, float> && T::size == 4) {
                 glUniformMatrix4fv(location, 1, transpose, value.data());
             }
         }

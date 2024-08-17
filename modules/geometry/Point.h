@@ -10,9 +10,9 @@ template <typename T = double>
 struct point3 {
         using scalar_type = T;
         using self = point3<scalar_type>;
-        using vec_type =  toy::algebra::vector3<scalar_type>;
-        using mat3_type = toy::algebra::matrix3d;
-        using mat4_type = toy::algebra::matrix3d;
+        using vec_type = toy::algebra::vector3<scalar_type>;
+        using mat3_type = toy::algebra::matrix3<scalar_type>;
+        using mat4_type = toy::algebra::matrix3<scalar_type>;
 
         point3() : pos_{} {
         }
@@ -48,6 +48,7 @@ struct point3 {
 };
 
 using point3l = point3<long long>;
+using point3f = point3<float>;
 using point3d = point3<double>;
 
 }  // namespace tire
