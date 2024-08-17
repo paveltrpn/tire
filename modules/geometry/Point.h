@@ -2,17 +2,17 @@
 #ifndef __tire_point_h__
 #define __tire_point_h__
 
-import algebra;
+import toy_std;
 
 namespace tire {
 
-template <typename T = float>
+template <typename T = double>
 struct point3 {
         using scalar_type = T;
         using self = point3<scalar_type>;
-        using vec_type = tire::algebra::Vector3<scalar_type>;
-        using mat3_type = tire::algebra::Matrix<scalar_type, 3>;
-        using mat4_type = tire::algebra::Matrix<scalar_type, 4>;
+        using vec_type =  toy::algebra::vector3<scalar_type>;
+        using mat3_type = toy::algebra::matrix3d;
+        using mat4_type = toy::algebra::matrix3d;
 
         point3() : pos_{} {
         }
@@ -36,19 +36,18 @@ struct point3 {
         }
 
         void move(vec_type offst) {
-            pos_.sumSelf(offst);
+            pos_.plus(offst);
         }
 
-        void transform(mat3_type mtrx) {
-            pos_ = mtrx.mult(pos_);
-        }
+        // void transform(mat3_type mtrx) {
+        //     pos_ = mtrx.mult(pos_);
+        // }
 
     private:
         vec_type pos_;
 };
 
-using point3i = point3<long long>;
-using point3f = point3<float>;
+using point3l = point3<long long>;
 using point3d = point3<double>;
 
 }  // namespace tire

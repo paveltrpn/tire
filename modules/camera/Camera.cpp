@@ -3,15 +3,15 @@ module;
 
 export module camera;
 
-import algebra;
+import toy_std;
 
 namespace tire::camera {
 
 export {
     struct Camera {
             using scalar_type = float;
-            using matrix4_type = tire::algebra::Matrix4<scalar_type>;
-            using vector3_type = tire::algebra::Vector3<scalar_type>;
+            using matrix4_type = toy::algebra::matrix4d;
+            using vector3_type = toy::algebra::vector3<scalar_type>;
 
             void setDirty() {
                 dirty_ = true;
@@ -37,7 +37,7 @@ export {
             }
 
             void move(const vector3_type& offset) {
-                position_.sum(offset);
+                position_.plus(offset);
                 setDirty();
             }
 
@@ -48,7 +48,7 @@ export {
                 setDirty();
             }
 
-            void setPosition(const tire::algebra::Vector3<scalar_type>& pos) {
+            void setPosition(const toy::algebra::vector3<scalar_type>& pos) {
                 position_ = pos;
                 setDirty();
             }
@@ -104,9 +104,9 @@ export {
         private:
             void update() override {
                 auto projection
-                  = tire::algebra::perspective<scalar_type>(fov_, aspect_, ncp_, fcp_);
-                auto offset = tire::algebra::translate(position_);
-                auto rotation = tire::algebra::rotate(yaw_, pitch_, roll_);
+                  = toy::algebra::perspective<scalar_type>(fov_, aspect_, ncp_, fcp_);
+                auto offset = toy::algebra::translate(position_);
+                auto rotation = tou::algebra::rotate(yaw_, pitch_, roll_);
 
                 matrix_ = projection * rotation * tire::algebra::transpose(offset);
             }

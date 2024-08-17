@@ -9,7 +9,7 @@
 #include "Point.h"
 #include "Normal.h"
 
-import algebra;
+import toy_std;
 
 namespace tire {
 
@@ -18,10 +18,10 @@ struct Node {
         using scalar_type = T;
         using point_type = tire::point3<scalar_type>;
         using normal_type = tire::normal<scalar_type>;
-        using vec2_type = tire::algebra::Vector2<scalar_type>;
-        using vec3_type = tire::algebra::Vector2<scalar_type>;
-        using mat3_type = tire::algebra::Matrix<scalar_type, 3>;
-        using mat4_type = tire::algebra::Matrix<scalar_type, 4>;
+        using vec2_type = toy::algebra::vector2<scalar_type>;
+        using vec3_type = toy::algebra::vector2<scalar_type>;
+        using mat3_type = toy::algebra::matrix3d;
+        using mat4_type = toy::algebra::matrix4d;
 
         Node() = default;
 

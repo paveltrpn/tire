@@ -11,7 +11,7 @@
 
 #include "GLFunctions.h"
 
-import algebra;
+import toy_std;
 
 namespace tire::opengl {
 
@@ -47,7 +47,7 @@ struct Shader final {
         void setScalarUniform(GLint location, T value) {
         }
 
-        template <tire::algebra::ConceptVector T>
+        template <toy::ConceptVector T>
         void setVectorUniform(GLint location, T value) {
             if constexpr (std::is_same_v<typename T::scalar_type, float> && T::size == 2) {
                 glUniform2fv(location, 1, value.data());

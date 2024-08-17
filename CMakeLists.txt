@@ -28,16 +28,6 @@ target_sources(config
     modules/config/Config.h
 )
 
-add_library(algebra)
-target_sources(algebra
-    PUBLIC
-      FILE_SET CXX_MODULES FILES
-        modules/algebra/Matrix.cpp
-        modules/algebra/Vector.cpp
-        modules/algebra/Quaternion.cpp
-        modules/algebra/Algebra.cpp
-)
-
 add_library(render)
 target_sources(render
   PUBLIC
@@ -48,7 +38,7 @@ target_sources(render
     modules/render/RenderVK.cpp
     modules/render/RenderVK.h
 )
-target_link_libraries(render camera opengl_types config assets algebra)
+target_link_libraries(render camera opengl_types config assets toy_std)
 
 add_library(assets)
 target_sources(assets
@@ -60,7 +50,7 @@ target_sources(assets
     modules/assets/ShaderSources.cpp
     modules/assets/ShaderSources.h
 )
-target_link_libraries(assets algebra)
+target_link_libraries(assets toy_std)
 
 add_library(image)
 target_sources(image
@@ -78,7 +68,7 @@ target_sources(camera
       FILE_SET CXX_MODULES FILES
         modules/camera/Camera.cpp
 )
-target_link_libraries(camera algebra)
+target_link_libraries(camera toy_std)
 
 add_library(opengl_types)
 target_sources(opengl_types
@@ -88,7 +78,7 @@ target_sources(opengl_types
     modules/opengl_types/Shader.cpp
     modules/opengl_types/Shader.h
 )
-target_link_libraries(opengl_types algebra)
+target_link_libraries(opengl_types toy_std)
 
 add_library(vulkan_types)
 target_sources(vulkan_types
@@ -110,7 +100,7 @@ target_sources(geometry
     modules/geometry/Normal.cpp
     modules/geometry/Normal.h
 )
-target_link_libraries(geometry algebra)
+target_link_libraries(geometry toy_std)
 
 add_subdirectory(test/window)
 target_link_libraries(gl camera opengl_types config render assets X11 GL GLU vulkan)

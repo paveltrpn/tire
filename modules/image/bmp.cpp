@@ -90,7 +90,7 @@ unsigned char bitextract(const unsigned int byte, const unsigned int mask) {
 export {
     struct bmp {
             bmp(std::string_view fname) {
-                std::ifstream fileStream(fname, std::ifstream::binary);
+                std::ifstream fileStream(fname.data(), std::ifstream::binary);
                 if (!fileStream) {
                     std::cout << "Error opening file '" << fname << "." << std::endl;
                     // return 0;
