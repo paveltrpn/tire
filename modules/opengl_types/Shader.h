@@ -73,7 +73,7 @@ struct Shader final {
             }
         }
 
-        template <tire::algebra::ConceptMatrixFloat T>
+        template <toy::ConceptMatrixFloat T>
         void setMatrixUniform(GLuint location, GLboolean transpose, T value) {
             if constexpr (std::is_same_v<typename T::scalar_type, float> && T::size == 2) {
                 glUniformMatrix2fv(location, 1, transpose, value.data());

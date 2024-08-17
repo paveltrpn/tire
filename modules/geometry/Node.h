@@ -20,8 +20,8 @@ struct Node {
         using normal_type = tire::normal<scalar_type>;
         using vec2_type = toy::algebra::vector2<scalar_type>;
         using vec3_type = toy::algebra::vector2<scalar_type>;
-        using mat3_type = toy::algebra::matrix3d;
-        using mat4_type = toy::algebra::matrix4d;
+        using mat3_type = toy::algebra::matrix3<scalar_type>;
+        using mat4_type = toy::algebra::matrix4<scalar_type>;
 
         Node() = default;
 

@@ -13,8 +13,8 @@ struct normal {
         using scalar_type = T;
         using self = normal<scalar_type>;
         using vec_type = toy::algebra::vector3<scalar_type>;
-        using mat3_type = toy::algebra::matrix3d;
-        using mat4_type = toy::algebra::matrix4d;
+        using mat3_type = toy::algebra::matrix3<scalar_type>;
+        using mat4_type = toy::algebra::matrix4<scalar_type>;
 
         scalar_type x() {
             return normal_.x();
