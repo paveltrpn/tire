@@ -83,8 +83,8 @@ target_link_libraries(opengl_types toy_std)
 add_library(vulkan_types)
 target_sources(vulkan_types
   PUBLIC
-    modules/vulkan_types/VulkanContext.cpp
-    modules/vulkan_types/VulkanContext.h
+      FILE_SET CXX_MODULES FILES
+        modules/vulkan_types/VulkanContext.cpp
 )
 target_link_libraries(vulkan_types)
 

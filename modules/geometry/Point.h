@@ -39,9 +39,9 @@ struct point3 {
             pos_.plus(offst);
         }
 
-        // void transform(mat3_type mtrx) {
-        //     pos_ = mtrx.mult(pos_);
-        // }
+        void transform(mat3_type mtrx) {
+            pos_ = mtrx.mult(pos_);
+        }
 
     private:
         vec_type pos_;

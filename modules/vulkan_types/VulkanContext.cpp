@@ -1,4 +1,5 @@
+module;
 
-#include "VulkanContext.h"
+export module vulkan_types;
 
 namespace tire::vulkan {}
