@@ -3,16 +3,18 @@
 #include <format>
 #include <print>
 #include <memory>
+#include <filesystem>
 
 #include "subject.h"
 
 #include "render/Render.h"
 #include "render/RenderVK.h"
-#include "config/Config.h"
 #include "geometry/Point.h"
 #include "geometry/Node.h"
 
 #include "spdlog/spdlog.h"
+
+import config;
 
 int main(int argc, char **argv) {
     try {

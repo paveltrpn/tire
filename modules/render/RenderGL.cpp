@@ -7,7 +7,6 @@
 #include <print>
 #include <map>
 
-#include "config/Config.h"
 #include "RenderGL.h"
 
 #include "spdlog/spdlog.h"
@@ -15,6 +14,7 @@
 import toy_std;
 import camera;
 import opengl_types;
+import config;
 
 namespace tire {
 

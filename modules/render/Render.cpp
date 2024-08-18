@@ -2,10 +2,11 @@
 #include <GLFW/glfw3.h>
 #include <ranges>
 
-#include "config/Config.h"
 #include "Render.h"
 
 #include "spdlog/spdlog.h"
+
+import config;
 
 namespace tire {
 

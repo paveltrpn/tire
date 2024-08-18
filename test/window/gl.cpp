@@ -9,12 +9,12 @@
 
 #include "render/Render.h"
 #include "render/RenderGL.h"
-#include "config/Config.h"
 #include "geometry/Point.h"
 #include "geometry/Node.h"
 
 #include "spdlog/spdlog.h"
 
+import config;
 import camera;
 import toy_std;
 

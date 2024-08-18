@@ -24,8 +24,8 @@ add_subdirectory(modules/toy_std)
 add_library(config)
 target_sources(config
   PUBLIC
-    modules/config/Config.cpp
-    modules/config/Config.h
+    FILE_SET CXX_MODULES FILES
+        modules/config/Config.cpp
 )
 
 add_library(render)

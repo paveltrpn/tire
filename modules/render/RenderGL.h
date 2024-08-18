@@ -13,10 +13,10 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#include "config/Config.h"
 #include "Render.h"
 
 import opengl_types;
+import config;
 
 namespace tire {
 
