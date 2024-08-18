@@ -15,11 +15,12 @@
 
 #include "config/Config.h"
 #include "Render.h"
-#include "opengl_types/GLFunctions.h"
 
-#include "opengl_types/Shader.h"
+import opengl_types;
 
 namespace tire {
+
+using namespace tire::opengl;
 
 struct RenderGL final : Render {
         RenderGL();
@@ -78,7 +79,7 @@ struct RenderGL final : Render {
         GLuint bufferObject_{};
         GLuint vertexObject_{};
 
-        std::map<opengl::ShaderID, opengl::Shader> programs_;
+        std::map<ShaderID, Shader> programs_;
 };
 
 }  // namespace tire

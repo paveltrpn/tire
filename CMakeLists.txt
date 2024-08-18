@@ -73,10 +73,10 @@ target_link_libraries(camera toy_std)
 add_library(opengl_types)
 target_sources(opengl_types
   PUBLIC
-    modules/opengl_types/GLFunctions.cpp
-    modules/opengl_types/GLFunctions.h
-    modules/opengl_types/Shader.cpp
-    modules/opengl_types/Shader.h
+      FILE_SET CXX_MODULES FILES
+        modules/opengl_types/opengl_types.cpp
+        modules/opengl_types/GLFunctions.cpp
+        modules/opengl_types/Shader.cpp
 )
 target_link_libraries(opengl_types toy_std)
 
