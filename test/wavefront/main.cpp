@@ -4,7 +4,7 @@
 
 #include "spdlog/spdlog.h"
 
-#include "assets/Wavefront.h"
+import assets;
 
 int main(int argc, char **argv) {
     try {

@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <list>
+#include <print>
 
 #include <GL/gl.h>
 #include <GL/glx.h>
@@ -13,10 +14,10 @@
 
 #include "geometry/Node.h"
 #include "geometry/Point.h"
-#include "assets/ShaderSources.h"
 
 import camera;
 import config;
+import assets;
 
 namespace tire {
 

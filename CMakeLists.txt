@@ -43,12 +43,11 @@ target_link_libraries(render camera opengl_types config assets toy_std)
 add_library(assets)
 target_sources(assets
   PUBLIC
-    modules/assets/Wavefront.cpp
-    modules/assets/Wavefront.h
-    modules/assets/Polytope.cpp
-    modules/assets/Polytope.h
-    modules/assets/ShaderSources.cpp
-    modules/assets/ShaderSources.h
+    FILE_SET CXX_MODULES FILES
+        modules/assets/assets.cpp
+        modules/assets/Wavefront.cpp
+        modules/assets/Polytope.cpp
+        modules/assets/ShaderSources.cpp
 )
 target_link_libraries(assets toy_std)
 
