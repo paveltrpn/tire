@@ -5,9 +5,9 @@ module;
 #include <string>
 #include <map>
 
-#include "geometry/Node.h"
-
 export module assets:wavefront;
+
+import geometry;
 
 namespace tire {
 

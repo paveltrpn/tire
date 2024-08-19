@@ -9,14 +9,13 @@
 
 #include "render/Render.h"
 #include "render/RenderGL.h"
-#include "geometry/Point.h"
-#include "geometry/Node.h"
 
 #include "spdlog/spdlog.h"
 
 import config;
 import camera;
 import toy_std;
+import geometry;
 
 int main(int argc, char **argv) {
     try {

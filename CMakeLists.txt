@@ -49,7 +49,7 @@ target_sources(assets
         modules/assets/Polytope.cpp
         modules/assets/ShaderSources.cpp
 )
-target_link_libraries(assets toy_std)
+target_link_libraries(assets toy_std geometry)
 
 add_library(image)
 target_sources(image
@@ -90,14 +90,12 @@ target_link_libraries(vulkan_types)
 add_library(geometry)
 target_sources(geometry
   PUBLIC
-    modules/geometry/Node.cpp
-    modules/geometry/Node.h
-    modules/geometry/Transformations.cpp
-    modules/geometry/Transformations.h
-    modules/geometry/Point.cpp
-    modules/geometry/Point.h
-    modules/geometry/Normal.cpp
-    modules/geometry/Normal.h
+      FILE_SET CXX_MODULES FILES
+        modules/geometry/geometry.cpp
+        modules/geometry/Node.cpp
+        modules/geometry/Transformations.cpp
+        modules/geometry/Point.cpp
+        modules/geometry/Normal.cpp
 )
 target_link_libraries(geometry toy_std)
 

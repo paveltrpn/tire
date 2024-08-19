@@ -9,12 +9,11 @@
 
 #include "render/Render.h"
 #include "render/RenderVK.h"
-#include "geometry/Point.h"
-#include "geometry/Node.h"
 
 #include "spdlog/spdlog.h"
 
 import config;
+import geometry;
 
 int main(int argc, char **argv) {
     try {
