@@ -34,7 +34,7 @@ export {
             //     return normal_.dot(rhs);
             // }
 
-            // scalar_type squareLength() {
+            // sualar_type squareLength() {
             //     return normal_.dot(normal_);
             // }
 

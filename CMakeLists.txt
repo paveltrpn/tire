@@ -31,12 +31,14 @@ target_sources(config
 add_library(render)
 target_sources(render
   PUBLIC
-    modules/render/Render.cpp
-    modules/render/Render.h
-    modules/render/RenderGL.cpp
-    modules/render/RenderGL.h
-    modules/render/RenderVK.cpp
-    modules/render/RenderVK.h
+    FILE_SET CXX_MODULES FILES
+        modules/render/render_module.cpp
+        modules/render/Render.cpp
+        modules/render/Render_def.cpp
+        modules/render/RenderGL.cpp
+        modules/render/RenderGL_def.cpp
+        modules/render/RenderVK.cpp
+        modules/render/RenderVK_def.cpp
 )
 target_link_libraries(render camera opengl_types config assets toy_std)
 

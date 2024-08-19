@@ -1,19 +1,13 @@
 
-#include <iostream>
-#include <format>
-#include <print>
 #include <memory>
 #include <filesystem>
 
-#include "subject.h"
-
-#include "render/Render.h"
-#include "render/RenderVK.h"
-
 #include "spdlog/spdlog.h"
 
+#include "subject.h"
+
+import render;
 import config;
-import geometry;
 
 int main(int argc, char **argv) {
     try {

@@ -1,21 +1,15 @@
 
-#include <iostream>
-#include <format>
-#include <print>
 #include <memory>
 #include <filesystem>
 
-#include "subject.h"
-
-#include "render/Render.h"
-#include "render/RenderGL.h"
-
 #include "spdlog/spdlog.h"
 
+#include "subject.h"
+
+import render;
 import config;
 import camera;
 import toy_std;
-import geometry;
 
 int main(int argc, char **argv) {
     try {
