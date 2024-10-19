@@ -14,7 +14,7 @@ import :rendervk;
 namespace tire {
 
 RenderVK::RenderVK() : Render{} {
-    auto configPtr = Config::instance();
+    const auto configPtr = Config::instance();
 
     applicationName_ = configPtr->getString("application_name");
     engineName_ = configPtr->getString("engine_name");

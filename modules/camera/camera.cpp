@@ -1,7 +1,7 @@
 
 module;
 
-export module camera;
+export module camera:camera;
 
 import toy_std;
 

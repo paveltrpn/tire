@@ -1,5 +1,7 @@
+
 module;
 
 export module vulkan_types;
 
-namespace tire::vulkan {}
+export import :vulkan_types;
+

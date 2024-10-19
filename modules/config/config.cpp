@@ -12,7 +12,7 @@ module;
 #include "spdlog/spdlog.h"
 #include "nlohmann/json.hpp"
 
-export module config;
+export module config:config;
 
 namespace tire {
 
