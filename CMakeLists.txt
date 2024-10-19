@@ -42,6 +42,30 @@ target_sources(render
 )
 target_link_libraries(render camera opengl_types config assets toy_std)
 
+set(QT_VERSION 6.8)
+list(APPEND CMAKE_PREFIX_PATH $ENV{LOCAL_QT_DIR})
+find_package(Qt6 ${QT_VERSION} COMPONENTS
+    Core
+    Gui
+    Quick
+    QuickWidgets
+    QuickControls2
+    Qml
+    OpenGL)
+
+add_library(qt_render
+        modules/qt_render/qt_render.h
+        modules/qt_render/qt_render.cpp
+)
+set_target_properties(qt_render PROPERTIES AUTOMOC TRUE)
+target_link_libraries(qt_render PUBLIC
+    Qt::Core
+    Qt::Quick
+    Qt::QuickWidgets
+    Qt::QuickControls2
+    Qt::Qml
+    Qt::OpenGL)
+
 add_library(assets)
 target_sources(assets
   PUBLIC
