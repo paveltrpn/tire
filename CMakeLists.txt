@@ -17,6 +17,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 
 include_directories("3rdparty")
+include_directories("modules")
 
 add_subdirectory(modules/toy_std)
 
@@ -56,6 +57,8 @@ find_package(Qt6 ${QT_VERSION} COMPONENTS
 add_library(qt_render
         modules/qt_render/qt_render.h
         modules/qt_render/qt_render.cpp
+        modules/qt_render/render_window.h
+        modules/qt_render/render_window.cpp
 )
 set_target_properties(qt_render PROPERTIES AUTOMOC TRUE)
 target_link_libraries(qt_render PUBLIC
@@ -133,4 +136,14 @@ target_link_libraries(vk camera vulkan_types config render assets X11 GL GLU vul
 
 add_subdirectory(test/wavefront)
 target_link_libraries(wavefront assets)
+
+add_subdirectory(test/qt)
+target_link_libraries(qt PUBLIC
+    qt_render
+    Qt::Core
+    Qt::Quick
+    Qt::QuickWidgets
+    Qt::QuickControls2
+    Qt::Qml
+    Qt::OpenGL)
 
