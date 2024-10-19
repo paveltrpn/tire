@@ -74,8 +74,6 @@ target_sources(assets
   PUBLIC
     FILE_SET CXX_MODULES FILES
         modules/assets/interface.cpp
-        modules/assets/wavefront.cpp
-        modules/assets/polytope.cpp
         modules/assets/shader_sources.cpp
 )
 target_link_libraries(assets toy_std geometry)
@@ -127,6 +125,8 @@ target_sources(geometry
         modules/geometry/transformations.cpp
         modules/geometry/point.cpp
         modules/geometry/normal.cpp
+        modules/geometry/wavefront.cpp
+        modules/geometry/polytope.cpp
 )
 target_link_libraries(geometry toy_std)
 
@@ -135,7 +135,7 @@ target_link_libraries(gl camera opengl_types config render assets X11 GL GLU vul
 target_link_libraries(vk camera vulkan_types config render assets X11 GL GLU vulkan)
 
 add_subdirectory(test/wavefront)
-target_link_libraries(wavefront assets)
+target_link_libraries(wavefront geometry)
 
 add_subdirectory(test/qt)
 target_link_libraries(qt PUBLIC

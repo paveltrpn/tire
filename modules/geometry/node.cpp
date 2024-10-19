@@ -5,141 +5,87 @@ module;
 #include <initializer_list>
 #include <iterator>
 
-export module geometry:node;
+export module geometry : node;
 
 import toy_std;
-import :point;
-import :normal;
+import : polytope;
+import : point;
+import : normal;
 
-namespace tire {
+using namespace toy::algebra;
+
+namespace tire
+{
 export {
-    template <typename T = float>
+
     struct Node {
-            using scalar_type = T;
-            using point_type = tire::point3<scalar_type>;
-            using normal_type = tire::normal<scalar_type>;
-            using vec2_type = toy::algebra::vector2<scalar_type>;
-            using vec3_type = toy::algebra::vector2<scalar_type>;
-            using mat3_type = toy::algebra::matrix3<scalar_type>;
-            using mat4_type = toy::algebra::matrix4<scalar_type>;
+        Node() = default;
 
-            Node() = default;
+        Node( const Polytope &body ) {
+            vertecies_ = body.getVertecies();
+            indices_ = body.getIndices();
+        }
 
-            void setVerteciesArray(std::vector<point_type>::const_iterator start,
-                                   std::vector<point_type>::const_iterator end) {
-                std::copy(start, end, std::back_inserter(vertecies_));
-            }
-
-            void setVerteciesArray(std::initializer_list<point_type> values) {
-                std::copy(values.begin(), values.end(), std::back_inserter(vertecies_));
-            }
-
-            /*
+        /*
              * return vertecies count, stored in vertecies array
              */
-            [[nodiscard]]
-            size_t getVerteciesCount() const {
-                return vertecies_.size();
-            }
+        [[nodiscard]] size_t getVerteciesCount() const { return vertecies_.size(); }
 
-            /*
+        /*
              * return vertecies array size in bytes
              */
-            [[nodiscard]]
-            size_t getVerteciesArraySize() const {
-                return getVerteciesCount() * 3 * sizeof(scalar_type);
-            }
+        [[nodiscard]] size_t getVerteciesArraySize() const { return getVerteciesCount() * 3 * sizeof( double ); }
 
-            void setIndicesArray(std::vector<long long>::const_iterator start,
-                                 std::vector<long long>::const_iterator end) {
-                std::copy(start, end, std::back_inserter(indices_));
-            }
+        auto getVerteciesData() { return vertecies_.data(); }
 
-            void setIndicesArray(std::initializer_list<long long> values) {
-                std::copy(values.begin(), values.end(), std::back_inserter(indices_));
-            }
+        auto getIndeciessData() { return indices_.data(); }
 
-            void setNormalsArray(std::vector<normal_type>::const_iterator start,
-                                 std::vector<normal_type>::const_iterator end) {
-                std::copy(start, end, std::back_inserter(normals_));
-            }
+        void setOffset( vector3d offst ) {
+            offset_ = offst;
+            dirty_ = true;
+        }
 
-            void setNormalsArray(std::initializer_list<normal_type> values) {
-                std::copy(values.begin(), values.end(), std::back_inserter(normals_));
-            }
+        void setRotate( matrix3d rtn ) {
+            rotation_ = rtn;
+            dirty_ = true;
+        }
 
-            void setColorsArray(std::vector<vec3_type>::const_iterator start,
-                                std::vector<vec3_type> end) {
-                std::copy(start, end, std::back_inserter(colors_));
-            }
+        void setScale( matrix3d scl ) {
+            scale_ = scl;
+            dirty_ = true;
+        }
 
-            void setColorsArray(std::initializer_list<vec3_type> values) {
-                std::copy(values.begin(), values.end(), std::back_inserter(colors_));
-            }
-
-            void setTexCoordsArray(std::vector<vec2_type>::const_iterator start,
-                                   std::vector<vec2_type>::const_iterator end) {
-                std::copy(start, end, std::back_inserter(texCoords_));
-            }
-
-            void setTexCoordsArray(std::initializer_list<vec2_type> values) {
-                std::copy(values.begin(), values.end(), std::back_inserter(texCoords_));
-            }
-
-            auto getVerteciesData() {
-                return vertecies_.data();
-            }
-
-            auto getIndeciessData() {
-                return indices_.data();
-            }
-
-            void setOffset(vec3_type offst) {
-                offset_ = offst;
-                dirty_ = true;
-            }
-
-            void setRotate(mat3_type rtn) {
-                rotation_ = rtn;
-                dirty_ = true;
-            }
-
-            void setScale(mat3_type scl) {
-                scale_ = scl;
-                dirty_ = true;
-            }
-
-            void applyRotate() {
-                if (dirty_) {
-                    for (auto i = 0; i < vertecies_; ++i) {
-                        vertecies_[i].transform(rotation_);
-                    }
-                    dirty_ = false;
+        void applyRotate() {
+            if ( dirty_ ) {
+                for ( auto i = 0; i < vertecies_.size(); ++i ) {
+                    //vertecies_[i].transform( rotation_ );
                 }
+                dirty_ = false;
             }
+        }
 
-            void applyScale() {
-                if (dirty_) {
-                    for (auto i = 0; i < vertecies_; ++i) {
-                        vertecies_[i].transform(scale_);
-                    }
-                    dirty_ = false;
+        void applyScale() {
+            if ( dirty_ ) {
+                for ( auto i = 0; i < vertecies_.size(); ++i ) {
+                    //vertecies_[i].transform( scale_ );
                 }
+                dirty_ = false;
             }
+        }
 
-        private:
-            bool dirty_{ false };
-            bool useIndecies_{ false };
+    private:
+        bool dirty_{ false };
+        bool useIndecies_{ false };
 
-            std::vector<point_type> vertecies_;
-            std::vector<long long> indices_;
-            std::vector<vec3_type> colors_;
-            std::vector<vec2_type> texCoords_;
-            std::vector<normal_type> normals_;
+        std::vector<point3d> vertecies_;
+        std::vector<long long> indices_;
+        std::vector<vector3f> colors_;
+        std::vector<vector2f> texCoords_;
+        std::vector<normald> normals_;
 
-            vec3_type offset_{};
-            mat3_type rotation_{};
-            mat3_type scale_{};
+        vector3d offset_{};
+        matrix3d rotation_{};
+        matrix3d scale_{};
     };
 }
-}  // namespace tire
+} // namespace tire
