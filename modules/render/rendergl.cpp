@@ -15,7 +15,6 @@
 
 import toy_std;
 import camera;
-import opengl_types;
 
 namespace tire
 {

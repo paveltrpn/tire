@@ -18,8 +18,6 @@
 #include "render.h"
 #include "geometry/node.h"
 
-import opengl_types;
-
 namespace tire
 {
 

@@ -34,7 +34,7 @@ add_library(render
     modules/render/rendervk.cpp
     modules/render/rendervk.h
 )
-target_link_libraries(render camera opengl_types config assets toy_std)
+target_link_libraries(render camera opengl_types config geometry toy_std)
 
 set(QT_VERSION 6.8)
 list(APPEND CMAKE_PREFIX_PATH $ENV{LOCAL_QT_DIR})
@@ -48,10 +48,10 @@ find_package(Qt6 ${QT_VERSION} COMPONENTS
     OpenGL)
 
 add_library(qt_render
-        modules/qt_render/qt_render.h
-        modules/qt_render/qt_render.cpp
-        modules/qt_render/render_window.h
-        modules/qt_render/render_window.cpp
+    modules/qt_render/qt_render.h
+    modules/qt_render/qt_render.cpp
+    modules/qt_render/render_window.h
+    modules/qt_render/render_window.cpp
 )
 set_target_properties(qt_render PROPERTIES AUTOMOC TRUE)
 target_link_libraries(qt_render PUBLIC
@@ -61,15 +61,6 @@ target_link_libraries(qt_render PUBLIC
     Qt::QuickControls2
     Qt::Qml
     Qt::OpenGL)
-
-add_library(assets)
-target_sources(assets
-  PUBLIC
-    FILE_SET CXX_MODULES FILES
-        modules/assets/interface.cpp
-        modules/assets/shader_sources.cpp
-)
-target_link_libraries(assets toy_std geometry)
 
 add_library(image)
 target_sources(image
@@ -90,13 +81,13 @@ target_sources(camera
 )
 target_link_libraries(camera toy_std)
 
-add_library(opengl_types)
-target_sources(opengl_types
-  PUBLIC
-      FILE_SET CXX_MODULES FILES
-        modules/opengl_types/interface.cpp
-        modules/opengl_types/functions.cpp
-        modules/opengl_types/shader.cpp
+add_library(opengl_types
+    modules/opengl_types/functions.cpp
+    modules/opengl_types/functions.h
+    modules/opengl_types/shader.cpp
+    modules/opengl_types/shader.h
+    modules/opengl_types/shader_sources.cpp
+    modules/opengl_types/shader_sources.h
 )
 target_link_libraries(opengl_types toy_std)
 
@@ -126,8 +117,8 @@ add_library(geometry
 target_link_libraries(geometry toy_std)
 
 add_subdirectory(test/window)
-target_link_libraries(gl camera opengl_types config render assets X11 GL GLU vulkan)
-target_link_libraries(vk camera vulkan_types config render assets X11 GL GLU vulkan)
+target_link_libraries(gl camera opengl_types config render X11 GL GLU vulkan)
+target_link_libraries(vk camera vulkan_types config render X11 GL GLU vulkan)
 
 add_subdirectory(test/wavefront)
 target_link_libraries(wavefront geometry)
