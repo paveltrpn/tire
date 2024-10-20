@@ -11,6 +11,7 @@
 
 #include "functions.h"
 
+#include "algebra/concepts.h"
 #include "algebra/vector2.h"
 #include "algebra/vector3.h"
 #include "algebra/vector4.h"
@@ -46,7 +47,7 @@ struct Shader final {
 
     template <typename T> void setScalarUniform( GLint location, T value ) {}
 
-    template <typename T> void setVectorUniform( GLint location, T value ) {
+    template <algebra::VectorFloat T> void setVectorUniform( GLint location, T value ) {
         if constexpr ( std::is_same_v<T, algebra::vector2f> ) {
             glUniform2fv( location, 1, value.data() );
         } else if constexpr ( std::is_same_v<T, algebra::vector3f> ) {
@@ -68,7 +69,7 @@ struct Shader final {
         }
     }
 
-    template <typename T> void setMatrixUniform( GLuint location, GLboolean transpose, T value ) {
+    template <algebra::MatrixDouble T> void setMatrixUniform( GLuint location, GLboolean transpose, T value ) {
         if constexpr ( std::is_same_v<T, algebra::matrix2f> ) {
             glUniformMatrix2fv( location, 1, transpose, value.data() );
         } else if constexpr ( std::is_same_v<T, algebra::matrix3f> ) {

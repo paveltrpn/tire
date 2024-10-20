@@ -19,8 +19,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 include_directories("3rdparty")
 include_directories("modules")
 
-
 add_library(algebra
+    modules/algebra/concepts.h
     modules/algebra/matrix.h
     modules/algebra/matrix2.h
     modules/algebra/matrix3.h
