@@ -3,12 +3,47 @@
 #include <GL/gl.h>
 #include <GL/glext.h>
 #include <GL/glcorearb.h>
+#include "spdlog/spdlog.h"
 
 #include "functions.h"
 
 namespace tire::opengl
 {
+
 // shaders
+PFNGLCREATEPROGRAMPROC glCreateProgram{ nullptr };
+PFNGLLINKPROGRAMPROC glLinkProgram{ nullptr };
+PFNGLUSEPROGRAMPROC glUseProgram{ nullptr };
+PFNGLSHADERSOURCEPROC glShaderSource{ nullptr };
+PFNGLCOMPILESHADERPROC glCompileShader{ nullptr };
+PFNGLCREATESHADERPROC glCreateShader{ nullptr };
+PFNGLGETSHADERIVPROC glGetShaderiv{ nullptr };
+PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog{ nullptr };
+PFNGLDELETESHADERPROC glDeleteShader{ nullptr };
+PFNGLDELETEPROGRAMPROC glDeleteProgram{ nullptr };
+PFNGLGETACTIVEUNIFORMPROC glGetActiveUniform{ nullptr };
+PFNGLGETPROGRAMIVPROC glGetProgramiv{ nullptr };
+PFNGLATTACHSHADERPROC glAttachShader{ nullptr };
+PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog{ nullptr };
+PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation{ nullptr };
+PFNGLGETACTIVEATTRIBPROC glGetActiveAttrib{ nullptr };
+
+PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv{ nullptr };
+PFNGLUNIFORM3FVPROC glUniform3fv{ nullptr };
+
+// VAO
+PFNGLGENBUFFERSPROC glGenBuffers{ nullptr };
+PFNGLGENVERTEXARRAYSPROC glGenVertexArrays{ nullptr };
+PFNGLBINDBUFFERPROC glBindBuffer{ nullptr };
+PFNGLBINDVERTEXARRAYPROC glBindVertexArray{ nullptr };
+PFNGLBUFFERDATAPROC glBufferData{ nullptr };
+PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer{ nullptr };
+PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray{ nullptr };
+PFNGLBUFFERSUBDATAPROC glBufferSubData{ nullptr };
+PFNGLDRAWARRAYSEXTPROC glDrawArrays{ nullptr };
+PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray{ nullptr };
+PFNGLDELETEBUFFERSPROC glDeleteBuffers{ nullptr };
+PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArrays{ nullptr };
 
 void initOpenGLFunctions() {
     // shaders
@@ -94,4 +129,5 @@ void initOpenGLFunctions() {
     glDeleteVertexArrays = reinterpret_cast<PFNGLDELETEVERTEXARRAYSPROC>(
         glXGetProcAddress( reinterpret_cast<const GLubyte *>( "glDeleteVertexArrays" ) ) );
 }
+
 } // namespace tire::opengl

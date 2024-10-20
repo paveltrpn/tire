@@ -24,8 +24,7 @@ RenderGL::RenderGL()
     checkGlxVersion();
     initGlxExtensions();
     configureGl();
-    opengl::initOpenGLFunctions();
-    // setup VSYNC
+    initOpenGLFunctions();
     setSwapInterval( 1 );
 }
 
@@ -161,11 +160,12 @@ void RenderGL::preFrame() {
     glClear( GL_COLOR_BUFFER_BIT );
 }
 
-void RenderGL::frame() {
-    glEnableVertexAttribArray( 0 );
-    glBindVertexArray( vertexObject_ );
-    glDrawArrays( GL_TRIANGLES, 0, 12 );
-    glDisableVertexAttribArray( 0 );
+void RenderGL::frame(){
+    // TODO: segfault 20.11.25 next start here!!! deal with buffers!!
+    // glEnableVertexAttribArray( 0 );
+    // glBindVertexArray( vertexObject_ );
+    // glDrawArrays( GL_TRIANGLES, 0, 12 );
+    // glDisableVertexAttribArray( 0 );
 };
 
 void RenderGL::postFrame() {

@@ -10,39 +10,39 @@ namespace tire::opengl
 {
 
 // shaders
-static PFNGLCREATEPROGRAMPROC glCreateProgram{ nullptr };
-static PFNGLLINKPROGRAMPROC glLinkProgram{ nullptr };
-static PFNGLUSEPROGRAMPROC glUseProgram{ nullptr };
-static PFNGLSHADERSOURCEPROC glShaderSource{ nullptr };
-static PFNGLCOMPILESHADERPROC glCompileShader{ nullptr };
-static PFNGLCREATESHADERPROC glCreateShader{ nullptr };
-static PFNGLGETSHADERIVPROC glGetShaderiv{ nullptr };
-static PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog{ nullptr };
-static PFNGLDELETESHADERPROC glDeleteShader{ nullptr };
-static PFNGLDELETEPROGRAMPROC glDeleteProgram{ nullptr };
-static PFNGLGETACTIVEUNIFORMPROC glGetActiveUniform{ nullptr };
-static PFNGLGETPROGRAMIVPROC glGetProgramiv{ nullptr };
-static PFNGLATTACHSHADERPROC glAttachShader{ nullptr };
-static PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog{ nullptr };
-static PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation{ nullptr };
-static PFNGLGETACTIVEATTRIBPROC glGetActiveAttrib{ nullptr };
+extern PFNGLCREATEPROGRAMPROC glCreateProgram;
+extern PFNGLLINKPROGRAMPROC glLinkProgram;
+extern PFNGLUSEPROGRAMPROC glUseProgram;
+extern PFNGLSHADERSOURCEPROC glShaderSource;
+extern PFNGLCOMPILESHADERPROC glCompileShader;
+extern PFNGLCREATESHADERPROC glCreateShader;
+extern PFNGLGETSHADERIVPROC glGetShaderiv;
+extern PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
+extern PFNGLDELETESHADERPROC glDeleteShader;
+extern PFNGLDELETEPROGRAMPROC glDeleteProgram;
+extern PFNGLGETACTIVEUNIFORMPROC glGetActiveUniform;
+extern PFNGLGETPROGRAMIVPROC glGetProgramiv;
+extern PFNGLATTACHSHADERPROC glAttachShader;
+extern PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
+extern PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
+extern PFNGLGETACTIVEATTRIBPROC glGetActiveAttrib;
 
-static PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv{ nullptr };
-static PFNGLUNIFORM3FVPROC glUniform3fv{ nullptr };
+extern PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
+extern PFNGLUNIFORM3FVPROC glUniform3fv;
 
 // VAO
-static PFNGLGENBUFFERSPROC glGenBuffers{ nullptr };
-static PFNGLGENVERTEXARRAYSPROC glGenVertexArrays{ nullptr };
-static PFNGLBINDBUFFERPROC glBindBuffer{ nullptr };
-static PFNGLBINDVERTEXARRAYPROC glBindVertexArray{ nullptr };
-static PFNGLBUFFERDATAPROC glBufferData{ nullptr };
-static PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer{ nullptr };
-static PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray{ nullptr };
-static PFNGLBUFFERSUBDATAPROC glBufferSubData{ nullptr };
-static PFNGLDRAWARRAYSEXTPROC glDrawArrays{ nullptr };
-static PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray{ nullptr };
-static PFNGLDELETEBUFFERSPROC glDeleteBuffers{ nullptr };
-static PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArrays{ nullptr };
+extern PFNGLGENBUFFERSPROC glGenBuffers;
+extern PFNGLGENVERTEXARRAYSPROC glGenVertexArrays;
+extern PFNGLBINDBUFFERPROC glBindBuffer;
+extern PFNGLBINDVERTEXARRAYPROC glBindVertexArray;
+extern PFNGLBUFFERDATAPROC glBufferData;
+extern PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
+extern PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
+extern PFNGLBUFFERSUBDATAPROC glBufferSubData;
+extern PFNGLDRAWARRAYSEXTPROC glDrawArrays;
+extern PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray;
+extern PFNGLDELETEBUFFERSPROC glDeleteBuffers;
+extern PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArrays;
 
 void initOpenGLFunctions();
 

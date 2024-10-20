@@ -2,19 +2,14 @@ cmake_minimum_required(VERSION 3.28)
 
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_COMPILER clang++)
-add_compile_options(-g 
-                    -Wall 
-                    -Wextra 
-                    -Wpedantic 
-                    -stdlib=libc++
-                    -Wno-unused-parameter)
-
+add_compile_options(-stdlib=libc++)
 add_link_options(-stdlib=libc++)
 
 project (tiny_render)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
+set(CMAKE_BUILD_TYPE Debug)
 
 include_directories("3rdparty")
 include_directories("modules")
