@@ -5,9 +5,8 @@
 #include "spdlog/spdlog.h"
 
 #include "subject.h"
+#include "config/config.h"
 #include "render/rendervk.h"
-
-import config;
 
 int main( int argc, char **argv ) {
     try {

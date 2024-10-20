@@ -11,11 +11,9 @@
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 
+#include "config/config.h"
 #include "render.h"
-
 #include "geometry/node.h"
-
-import config;
 
 namespace tire
 {

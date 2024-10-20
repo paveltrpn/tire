@@ -11,10 +11,10 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
+#include "config/config.h"
 #include "geometry/node.h"
 
 import camera;
-import config;
 import assets;
 
 namespace tire

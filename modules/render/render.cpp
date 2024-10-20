@@ -8,8 +8,6 @@
 
 #include "render.h"
 
-import config;
-
 namespace tire
 {
 

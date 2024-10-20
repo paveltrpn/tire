@@ -5,9 +5,9 @@
 #include "spdlog/spdlog.h"
 
 #include "subject.h"
+#include "config/config.h"
 #include "render/rendergl.h"
 
-import config;
 import camera;
 import toy_std;
 
