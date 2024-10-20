@@ -11,7 +11,12 @@
 
 #include "functions.h"
 
-import toy_std;
+#include "algebra/vector2.h"
+#include "algebra/vector3.h"
+#include "algebra/vector4.h"
+#include "algebra/matrix2.h"
+#include "algebra/matrix3.h"
+#include "algebra/matrix4.h"
 
 namespace tire::opengl
 {
@@ -41,10 +46,10 @@ struct Shader final {
 
     template <typename T> void setScalarUniform( GLint location, T value ) {}
 
-    template <toy::ConceptVector T> void setVectorUniform( GLint location, T value ) {
-        if constexpr ( std::is_same_v<T, toy::algebra::vector2f> ) {
+    template <typename T> void setVectorUniform( GLint location, T value ) {
+        if constexpr ( std::is_same_v<T, algebra::vector2f> ) {
             glUniform2fv( location, 1, value.data() );
-        } else if constexpr ( std::is_same_v<T, toy::algebra::vector3f> ) {
+        } else if constexpr ( std::is_same_v<T, algebra::vector3f> ) {
             glUniform3fv( location, 1, value.data() );
         } else if constexpr ( std::is_same_v<typename T::value_type, float> && T::size == 4 ) {
             glUniform4fv( location, 1, value.data() );
@@ -63,12 +68,12 @@ struct Shader final {
         }
     }
 
-    template <toy::ConceptMatrixFloat T> void setMatrixUniform( GLuint location, GLboolean transpose, T value ) {
-        if constexpr ( std::is_same_v<T, toy::algebra::matrix2f> ) {
+    template <typename T> void setMatrixUniform( GLuint location, GLboolean transpose, T value ) {
+        if constexpr ( std::is_same_v<T, algebra::matrix2f> ) {
             glUniformMatrix2fv( location, 1, transpose, value.data() );
-        } else if constexpr ( std::is_same_v<T, toy::algebra::matrix3f> ) {
+        } else if constexpr ( std::is_same_v<T, algebra::matrix3f> ) {
             glUniformMatrix3fv( location, 1, transpose, value.data() );
-        } else if constexpr ( std::is_same_v<T, toy::algebra::matrix4f> ) {
+        } else if constexpr ( std::is_same_v<T, algebra::matrix4f> ) {
             glUniformMatrix4fv( location, 1, transpose, value.data() );
         }
     }

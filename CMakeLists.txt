@@ -19,7 +19,19 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 include_directories("3rdparty")
 include_directories("modules")
 
-add_subdirectory(modules/toy_std)
+
+add_library(algebra
+    modules/algebra/matrix.h
+    modules/algebra/matrix2.h
+    modules/algebra/matrix3.h
+    modules/algebra/matrix4.h
+    modules/algebra/vector.h
+    modules/algebra/vector2.h
+    modules/algebra/vector3.h
+    modules/algebra/vector4.h
+    modules/algebra/quaternion.h
+)
+set_target_properties(algebra PROPERTIES LINKER_LANGUAGE CXX)
 
 add_library(config
     modules/config/config.h
@@ -34,7 +46,7 @@ add_library(render
     modules/render/rendervk.cpp
     modules/render/rendervk.h
 )
-target_link_libraries(render camera opengl_types config geometry toy_std)
+target_link_libraries(render camera opengl_types config geometry algebra)
 
 set(QT_VERSION 6.8)
 list(APPEND CMAKE_PREFIX_PATH $ENV{LOCAL_QT_DIR})
@@ -72,14 +84,11 @@ target_sources(image
     modules/image/canvas.cpp
 )
 
-add_library(camera)
-target_sources(camera
-    PUBLIC
-      FILE_SET CXX_MODULES FILES
-        modules/camera/interface.cpp
-        modules/camera/camera.cpp
+add_library(camera
+    modules/camera/camera.h
+    modules/camera/camera.cpp
 )
-target_link_libraries(camera toy_std)
+target_link_libraries(camera algebra)
 
 add_library(opengl_types
     modules/opengl_types/functions.cpp
@@ -89,7 +98,7 @@ add_library(opengl_types
     modules/opengl_types/shader_sources.cpp
     modules/opengl_types/shader_sources.h
 )
-target_link_libraries(opengl_types toy_std)
+target_link_libraries(opengl_types algebra)
 
 add_library(vulkan_types)
 target_sources(vulkan_types
@@ -114,11 +123,11 @@ add_library(geometry
     modules/geometry/polytope.cpp
     modules/geometry/polytope.h
 )
-target_link_libraries(geometry toy_std)
+target_link_libraries(geometry algebra)
 
 add_subdirectory(test/window)
-target_link_libraries(gl camera opengl_types config render X11 GL GLU vulkan)
-target_link_libraries(vk camera vulkan_types config render X11 GL GLU vulkan)
+target_link_libraries(gl algebra camera opengl_types config render X11 GL GLU vulkan)
+target_link_libraries(vk algebra camera vulkan_types config render X11 GL GLU vulkan)
 
 add_subdirectory(test/wavefront)
 target_link_libraries(wavefront geometry)

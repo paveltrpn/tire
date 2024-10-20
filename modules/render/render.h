@@ -15,8 +15,7 @@
 #include "geometry/node.h"
 #include "opengl_types/shader.h"
 #include "opengl_types/shader_sources.h"
-
-import camera;
+#include "camera/camera.h"
 
 namespace tire
 {

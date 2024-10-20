@@ -8,9 +8,8 @@
 #include "point.h"
 #include "normal.h"
 
-import toy_std;
-
-using namespace toy::algebra;
+#include "algebra/vector3.h"
+#include "algebra/matrix3.h"
 
 namespace tire
 {
@@ -35,17 +34,17 @@ long long *Node::getIndeciessData() {
     return indices_.data();
 }
 
-void Node::setOffset( vector3d offst ) {
+void Node::setOffset( algebra::vector3d offst ) {
     offset_ = offst;
     dirty_ = true;
 }
 
-void Node::setRotate( matrix3d rtn ) {
+void Node::setRotate( algebra::matrix3d rtn ) {
     rotation_ = rtn;
     dirty_ = true;
 }
 
-void Node::setScale( matrix3d scl ) {
+void Node::setScale( algebra::matrix3d scl ) {
     scale_ = scl;
     dirty_ = true;
 }

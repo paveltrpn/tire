@@ -9,9 +9,9 @@
 #include "point.h"
 #include "normal.h"
 
-import toy_std;
-
-using namespace toy::algebra;
+#include "algebra/vector2.h"
+#include "algebra/vector3.h"
+#include "algebra/matrix3.h"
 
 namespace tire
 {
@@ -26,9 +26,9 @@ struct Node {
     point3d *getVerteciesData();
     long long *getIndeciessData();
 
-    void setOffset( vector3d offst );
-    void setRotate( matrix3d rtn );
-    void setScale( matrix3d scl );
+    void setOffset( algebra::vector3d offst );
+    void setRotate( algebra::matrix3d rtn );
+    void setScale( algebra::matrix3d scl );
     void applyRotate();
     void applyScale();
 
@@ -38,12 +38,12 @@ private:
 
     std::vector<point3d> vertecies_;
     std::vector<long long> indices_;
-    std::vector<vector3f> colors_;
-    std::vector<vector2f> texCoords_;
+    std::vector<algebra::vector3f> colors_;
+    std::vector<algebra::vector2f> texCoords_;
     std::vector<normald> normals_;
 
-    vector3d offset_{};
-    matrix3d rotation_{};
-    matrix3d scale_{};
+    algebra::vector3d offset_{};
+    algebra::matrix3d rotation_{};
+    algebra::matrix3d scale_{};
 };
 } // namespace tire

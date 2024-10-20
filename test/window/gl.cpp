@@ -7,9 +7,9 @@
 #include "subject.h"
 #include "config/config.h"
 #include "render/rendergl.h"
+#include "camera/camera.h"
 
-import camera;
-import toy_std;
+#include "algebra/vector3.h"
 
 int main( int argc, char **argv ) {
     try {
@@ -37,7 +37,7 @@ int main( int argc, char **argv ) {
         auto height = static_cast<float>( configPtr->get<int>( "window_height" ) );
         auto camera = std::make_shared<tire::camera::Perspective>( 50.0f, width / height, 0.1f, 100.0f );
 
-        camera->move( toy::algebra::vector3<float>{ 8.0f, 0.0f, -20.0f } );
+        camera->move( tire::algebra::vector3d{ 8.0f, 0.0f, -20.0f } );
         camera->rotate( 0.0f, 20.0f, 0.0f );
 
         rndr->addCamera( camera );
