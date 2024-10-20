@@ -116,17 +116,19 @@ target_sources(vulkan_types
 )
 target_link_libraries(vulkan_types)
 
-add_library(geometry)
-target_sources(geometry
-  PUBLIC
-      FILE_SET CXX_MODULES FILES
-        modules/geometry/interface.cpp
-        modules/geometry/node.cpp
-        modules/geometry/transformations.cpp
-        modules/geometry/point.cpp
-        modules/geometry/normal.cpp
-        modules/geometry/wavefront.cpp
-        modules/geometry/polytope.cpp
+add_library(geometry
+    modules/geometry/node.cpp
+    modules/geometry/node.h
+    modules/geometry/transformations.cpp
+    modules/geometry/transformations.h
+    modules/geometry/point.cpp
+    modules/geometry/point.h
+    modules/geometry/normal.cpp
+    modules/geometry/normal.h
+    modules/geometry/wavefront.cpp
+    modules/geometry/wavefront.h
+    modules/geometry/polytope.cpp
+    modules/geometry/polytope.h
 )
 target_link_libraries(geometry toy_std)
 

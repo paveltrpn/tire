@@ -13,6 +13,8 @@ module;
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
+#include "geometry/node.h"
+
 export module render : rendergl;
 
 import : render;

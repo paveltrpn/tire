@@ -1,5 +1,5 @@
 
-#include "transformations.h"
+#pragma once
 
 namespace tire {
 }  // namespace tire

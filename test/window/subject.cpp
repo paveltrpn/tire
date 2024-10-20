@@ -2,7 +2,7 @@
 #include <memory>
 #include "subject.h"
 
-import geometry;
+#include "geometry/node.h"
 
 void initSubject( tire::Render *rndr ) {
     auto box_one = std::make_shared<tire::Node>();

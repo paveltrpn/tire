@@ -11,6 +11,8 @@ module;
 
 #include "spdlog/spdlog.h"
 
+#include "geometry/node.h"
+
 export module render : rendergl_def;
 
 import : rendergl;

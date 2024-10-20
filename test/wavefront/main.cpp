@@ -4,7 +4,7 @@
 
 #include "spdlog/spdlog.h"
 
-import geometry;
+#include "geometry/wavefront.h"
 
 int main( int argc, char **argv ) {
     try {
