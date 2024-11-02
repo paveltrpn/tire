@@ -40,8 +40,8 @@ int main( int argc, char **argv ) {
         auto camera = std::make_shared<tire::camera::Perspective>(
             50.0f, width / height, 0.1f, 100.0f );
 
-        camera->move( tire::algebra::vector3f{ 0.0f, 0.0f, 0.0f } );
-        camera->rotate( 0.0f, 0.0f, 0.0f );
+        camera->move( tire::algebra::vector3f{ 0.0f, 0.0f, -10.0f } );
+        camera->rotate( 5.0f, 0.0f, 0.0f );
 
         rndr->addCamera( camera );
     }

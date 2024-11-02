@@ -11,16 +11,18 @@
 #include "vector3.h"
 #include "vector4.h"
 
-namespace tire::algebra
-{
+namespace tire::algebra {
 
-template <std::floating_point T> constexpr T _half_circle = T( 180.0L );
+template <std::floating_point T>
+constexpr T _half_circle = T( 180.0L );
 
-template <std::floating_point T> constexpr T degToRad( T deg ) {
+template <std::floating_point T>
+constexpr T degToRad( T deg ) {
     return deg * std::numbers::pi_v<T> / _half_circle<T>;
 }
 
-template <typename T> struct matrix4 final : public matrix_sqr_base<T, 4> {
+template <typename T>
+struct matrix4 final : public matrix_sqr_base<T, 4> {
     using base_type = matrix_sqr_base<T, 4>;
     using typename base_type::value_type;
     using self = matrix4<value_type>;
@@ -79,37 +81,53 @@ template <typename T> struct matrix4 final : public matrix_sqr_base<T, 4> {
         auto this01 = ( *this )[0, 1];
         auto this02 = ( *this )[0, 2];
 
-        ( *this )[0, 0] = this00 * rhs[0, 0] + this01 * rhs[1, 0] + this02 * rhs[2, 0] + ( *this )[0, 3] * rhs[3, 0];
-        ( *this )[0, 1] = this00 * rhs[0, 1] + this01 * rhs[1, 1] + this02 * rhs[2, 1] + ( *this )[0, 3] * rhs[3, 1];
-        ( *this )[0, 2] = this00 * rhs[0, 2] + this01 * rhs[1, 2] + this02 * rhs[2, 2] + ( *this )[0, 3] * rhs[3, 2];
-        ( *this )[0, 3] = this00 * rhs[0, 3] + this01 * rhs[1, 3] + this02 * rhs[2, 3] + ( *this )[0, 3] * rhs[3, 3];
+        ( *this )[0, 0] = this00 * rhs[0, 0] + this01 * rhs[1, 0] +
+                          this02 * rhs[2, 0] + ( *this )[0, 3] * rhs[3, 0];
+        ( *this )[0, 1] = this00 * rhs[0, 1] + this01 * rhs[1, 1] +
+                          this02 * rhs[2, 1] + ( *this )[0, 3] * rhs[3, 1];
+        ( *this )[0, 2] = this00 * rhs[0, 2] + this01 * rhs[1, 2] +
+                          this02 * rhs[2, 2] + ( *this )[0, 3] * rhs[3, 2];
+        ( *this )[0, 3] = this00 * rhs[0, 3] + this01 * rhs[1, 3] +
+                          this02 * rhs[2, 3] + ( *this )[0, 3] * rhs[3, 3];
 
         auto this10 = ( *this )[1, 0];
         auto this11 = ( *this )[1, 1];
         auto this12 = ( *this )[1, 2];
 
-        ( *this )[1, 0] = this10 * rhs[0, 0] + this11 * rhs[1, 0] + this12 * rhs[2, 0] + ( *this )[1, 3] * rhs[3, 0];
-        ( *this )[1, 1] = this10 * rhs[0, 1] + this11 * rhs[1, 1] + this12 * rhs[2, 1] + ( *this )[1, 3] * rhs[3, 1];
-        ( *this )[1, 2] = this10 * rhs[0, 2] + this11 * rhs[1, 2] + this12 * rhs[2, 2] + ( *this )[1, 3] * rhs[3, 2];
-        ( *this )[1, 3] = this10 * rhs[0, 3] + this11 * rhs[1, 3] + this12 * rhs[2, 3] + ( *this )[1, 3] * rhs[3, 3];
+        ( *this )[1, 0] = this10 * rhs[0, 0] + this11 * rhs[1, 0] +
+                          this12 * rhs[2, 0] + ( *this )[1, 3] * rhs[3, 0];
+        ( *this )[1, 1] = this10 * rhs[0, 1] + this11 * rhs[1, 1] +
+                          this12 * rhs[2, 1] + ( *this )[1, 3] * rhs[3, 1];
+        ( *this )[1, 2] = this10 * rhs[0, 2] + this11 * rhs[1, 2] +
+                          this12 * rhs[2, 2] + ( *this )[1, 3] * rhs[3, 2];
+        ( *this )[1, 3] = this10 * rhs[0, 3] + this11 * rhs[1, 3] +
+                          this12 * rhs[2, 3] + ( *this )[1, 3] * rhs[3, 3];
 
         auto this20 = ( *this )[2, 0];
         auto this21 = ( *this )[2, 1];
         auto this22 = ( *this )[2, 2];
 
-        ( *this )[2, 0] = this20 * rhs[0, 0] + this21 * rhs[1, 0] + this22 * rhs[2, 0] + ( *this )[2, 3] * rhs[3, 0];
-        ( *this )[2, 1] = this20 * rhs[0, 1] + this21 * rhs[1, 1] + this22 * rhs[2, 1] + ( *this )[2, 3] * rhs[3, 1];
-        ( *this )[2, 2] = this20 * rhs[0, 2] + this21 * rhs[1, 2] + this22 * rhs[2, 2] + ( *this )[2, 3] * rhs[3, 2];
-        ( *this )[2, 3] = this20 * rhs[0, 3] + this21 * rhs[1, 3] + this22 * rhs[2, 3] + ( *this )[2, 3] * rhs[3, 3];
+        ( *this )[2, 0] = this20 * rhs[0, 0] + this21 * rhs[1, 0] +
+                          this22 * rhs[2, 0] + ( *this )[2, 3] * rhs[3, 0];
+        ( *this )[2, 1] = this20 * rhs[0, 1] + this21 * rhs[1, 1] +
+                          this22 * rhs[2, 1] + ( *this )[2, 3] * rhs[3, 1];
+        ( *this )[2, 2] = this20 * rhs[0, 2] + this21 * rhs[1, 2] +
+                          this22 * rhs[2, 2] + ( *this )[2, 3] * rhs[3, 2];
+        ( *this )[2, 3] = this20 * rhs[0, 3] + this21 * rhs[1, 3] +
+                          this22 * rhs[2, 3] + ( *this )[2, 3] * rhs[3, 3];
 
         auto this30 = ( *this )[3, 0];
         auto this31 = ( *this )[3, 1];
         auto this32 = ( *this )[3, 2];
 
-        ( *this )[3, 0] = this30 * rhs[0, 0] + this31 * rhs[1, 0] + this32 * rhs[2, 0] + ( *this )[3, 3] * rhs[3, 0];
-        ( *this )[3, 1] = this30 * rhs[0, 1] + this31 * rhs[1, 1] + this32 * rhs[2, 1] + ( *this )[3, 3] * rhs[3, 1];
-        ( *this )[3, 2] = this30 * rhs[0, 2] + this31 * rhs[1, 2] + this32 * rhs[2, 2] + ( *this )[3, 3] * rhs[3, 2];
-        ( *this )[3, 3] = this30 * rhs[0, 3] + this31 * rhs[1, 3] + this32 * rhs[2, 3] + ( *this )[3, 3] * rhs[3, 3];
+        ( *this )[3, 0] = this30 * rhs[0, 0] + this31 * rhs[1, 0] +
+                          this32 * rhs[2, 0] + ( *this )[3, 3] * rhs[3, 0];
+        ( *this )[3, 1] = this30 * rhs[0, 1] + this31 * rhs[1, 1] +
+                          this32 * rhs[2, 1] + ( *this )[3, 3] * rhs[3, 1];
+        ( *this )[3, 2] = this30 * rhs[0, 2] + this31 * rhs[1, 2] +
+                          this32 * rhs[2, 2] + ( *this )[3, 3] * rhs[3, 2];
+        ( *this )[3, 3] = this30 * rhs[0, 3] + this31 * rhs[1, 3] +
+                          this32 * rhs[2, 3] + ( *this )[3, 3] * rhs[3, 3];
     }
 
     self operator*( const self &rhs ) {
@@ -123,10 +141,14 @@ template <typename T> struct matrix4 final : public matrix_sqr_base<T, 4> {
         vector3<value_type> rt;
         value_type w;
 
-        rt[0] = v[0] * ( *this )[0] + v[1] * ( *this )[1] + v[2] * ( *this )[2] + ( *this )[3];
-        rt[1] = v[0] * ( *this )[4] + v[1] * ( *this )[5] + v[2] * ( *this )[6] + ( *this )[7];
-        rt[2] = v[0] * ( *this )[8] + v[1] * ( *this )[9] + v[2] * ( *this )[10] + ( *this )[11];
-        w = v[0] * ( *this )[12] + v[1] * ( *this )[13] + v[2] * ( *this )[14] + ( *this )[15];
+        rt[0] = v[0] * ( *this )[0] + v[1] * ( *this )[1] +
+                v[2] * ( *this )[2] + ( *this )[3];
+        rt[1] = v[0] * ( *this )[4] + v[1] * ( *this )[5] +
+                v[2] * ( *this )[6] + ( *this )[7];
+        rt[2] = v[0] * ( *this )[8] + v[1] * ( *this )[9] +
+                v[2] * ( *this )[10] + ( *this )[11];
+        w = v[0] * ( *this )[12] + v[1] * ( *this )[13] + v[2] * ( *this )[14] +
+            ( *this )[15];
 
         // normalize if w is different than 1 (convert from homogeneous to Cartesian
         // coordinates)
@@ -142,10 +164,14 @@ template <typename T> struct matrix4 final : public matrix_sqr_base<T, 4> {
     vector4<value_type> mult_vector4( const vector4<value_type> &v ) {
         vector4<value_type> rt;
 
-        rt[0] = v[0] * ( *this )[0] + v[1] * ( *this )[1] + v[2] * ( *this )[2] + ( *this )[3];
-        rt[1] = v[0] * ( *this )[4] + v[1] * ( *this )[5] + v[2] * ( *this )[6] + ( *this )[7];
-        rt[2] = v[0] * ( *this )[8] + v[1] * ( *this )[9] + v[2] * ( *this )[10] + ( *this )[11];
-        rt[3] = v[0] * ( *this )[12] + v[1] * ( *this )[13] + v[2] * ( *this )[14] + ( *this )[15];
+        rt[0] = v[0] * ( *this )[0] + v[1] * ( *this )[1] +
+                v[2] * ( *this )[2] + ( *this )[3];
+        rt[1] = v[0] * ( *this )[4] + v[1] * ( *this )[5] +
+                v[2] * ( *this )[6] + ( *this )[7];
+        rt[2] = v[0] * ( *this )[8] + v[1] * ( *this )[9] +
+                v[2] * ( *this )[10] + ( *this )[11];
+        rt[3] = v[0] * ( *this )[12] + v[1] * ( *this )[13] +
+                v[2] * ( *this )[14] + ( *this )[15];
 
         return rt;
     }
@@ -181,9 +207,10 @@ template <typename T> struct matrix4 final : public matrix_sqr_base<T, 4> {
         ( *this )[15] = 1.0;
     }
 
-    void perspective( value_type fovy, value_type aspect, value_type near, value_type far ) {
-        value_type h =
-            std::cos( static_cast<value_type>( 0.5 ) * fovy ) / std::sin( static_cast<value_type>( 0.5 ) * fovy );
+    void perspective( value_type fovy, value_type aspect, value_type near,
+                      value_type far ) {
+        value_type h = std::cos( static_cast<value_type>( 0.5 ) * fovy ) /
+                       std::sin( static_cast<value_type>( 0.5 ) * fovy );
 
         ( *this )[0] = h / aspect;
         ( *this )[1] = 0.0;
@@ -211,11 +238,15 @@ template <typename T> struct matrix4 final : public matrix_sqr_base<T, 4> {
         }
     }
 
-    void lookAt( const vector3<value_type> &eye, const vector3<value_type> &center, const vector3<value_type> &up ) {
+    void lookAt( const vector3<value_type> &eye,
+                 const vector3<value_type> &center,
+                 const vector3<value_type> &up ) {
         vector3<value_type> eyeDir;
 
-        constexpr value_type floatEps = std::numeric_limits<value_type>::epsilon();
-        if ( std::fabs( eye[0] - center[0] ) < floatEps && std::fabs( eye[1] - center[1] ) < floatEps &&
+        constexpr value_type floatEps =
+            std::numeric_limits<value_type>::epsilon();
+        if ( std::fabs( eye[0] - center[0] ) < floatEps &&
+             std::fabs( eye[1] - center[1] ) < floatEps &&
              std::fabs( eye[2] - center[2] ) < floatEps ) {
             return;
         }
@@ -278,8 +309,8 @@ template <typename T> struct matrix4 final : public matrix_sqr_base<T, 4> {
         ( *this )[15] = 1.0;
     }
 
-    void orthographic( value_type left, value_type right, value_type bottom, value_type top, value_type near,
-                       value_type far ) {
+    void orthographic( value_type left, value_type right, value_type bottom,
+                       value_type top, value_type near, value_type far ) {
         ( *this )[0] = 2.0 / ( right - left );
         ( *this )[1] = 0.0;
         ( *this )[2] = 0.0;
@@ -348,8 +379,8 @@ template <typename T> struct matrix4 final : public matrix_sqr_base<T, 4> {
         ca = std::cos( a );
 
         ( *this )[0] = ca;
-        ( *this )[2] = -sa;
-        ( *this )[8] = sa;
+        ( *this )[2] = sa;
+        ( *this )[8] = -sa;
         ( *this )[10] = ca;
     }
 
@@ -411,43 +442,50 @@ template <typename T> struct matrix4 final : public matrix_sqr_base<T, 4> {
     }
 };
 
-template <typename T> auto transpose( matrix4<T> &arg ) -> decltype( auto ) {
+template <typename T>
+auto transpose( matrix4<T> &arg ) -> decltype( auto ) {
     matrix4<T> rt{ arg };
     rt.transpose();
     return rt;
 }
 
-template <typename T> matrix4<T> translate( T dx, T dy, T dz ) {
+template <typename T>
+matrix4<T> translate( T dx, T dy, T dz ) {
     matrix4<T> rt{};
     rt.translate( dx, dy, dz );
     return rt;
 }
 
-template <typename T> matrix4<T> translate( vector3<T> &offset ) {
+template <typename T>
+matrix4<T> translate( vector3<T> &offset ) {
     matrix4<T> rt{};
     rt.translate( offset.x(), offset.y(), offset.z() );
     return rt;
 }
 
-template <typename T> matrix4<T> rotate( T dy, T dp, T dr ) {
+template <typename T>
+matrix4<T> rotate( T dy, T dp, T dr ) {
     matrix4<T> rt;
     rt.euler( dy, dp, dr );
     return rt;
 }
 
-template <typename T> matrix4<T> rotate( vector3<T> ax, T phi ) {
+template <typename T>
+matrix4<T> rotate( vector3<T> ax, T phi ) {
     matrix4<T> rt;
     rt.axis_angle( ax, phi );
     return rt;
 }
 
-template <typename T> matrix4<T> perspective( float fov, float aspect, float ncp, float fcp ) {
+template <typename T>
+matrix4<T> perspective( float fov, float aspect, float ncp, float fcp ) {
     matrix4<T> rt;
     rt.perspective( fov, aspect, ncp, fcp );
     return rt;
 }
 
-template <typename T> matrix4<T> orthographic( T left, T right, T bottom, T top, T near, T far ) {
+template <typename T>
+matrix4<T> orthographic( T left, T right, T bottom, T top, T near, T far ) {
     matrix4<T> rt;
     rt.orthographic( left, right, bottom, top, near, far );
     return rt;
@@ -457,4 +495,4 @@ using matrix4l = matrix4<long long>;
 using matrix4f = matrix4<float>;
 using matrix4d = matrix4<double>;
 
-} // namespace tire::algebra
+}  // namespace tire::algebra

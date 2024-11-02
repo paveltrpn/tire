@@ -176,7 +176,7 @@ void RenderGL::initMainLoop() {
 
     opengl::Shader basic_color = programs_[opengl::ShaderID::BASIC_COLOR];
 
-    // basic_color.use();
+    basic_color.use();
 };
 
 void RenderGL::preFrame() {
@@ -216,8 +216,8 @@ void RenderGL::swapBuffers() {
 void RenderGL::appendToRenderList( std::shared_ptr<tire::Node> node ) {
     renderList_.push_back( node );
 
-    float positions[]{ 0.0f,   0.5f, -10.0f, -0.5f, -0.5f,
-                       -10.0f, 0.5f, -0.5f,  -10.0f };
+    float positions[]{ 0.0f, 0.5f, 0.0f,  -0.5f, -0.5f,
+                       0.0f, 0.5f, -0.5f, 0.0f };
 
     glGenVertexArrays( 1, &vertexObject_ );
     glBindVertexArray( vertexObject_ );
