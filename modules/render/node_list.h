@@ -17,7 +17,10 @@ struct NodeList final {
 
     NodeList() = default;
 
+    bool empty() const { return list_.empty(); };
+
     void push_back( const std::shared_ptr<Node> &node );
+    void push_back( Node &node );
 
 private:
     std::list<std::shared_ptr<Node>> list_;

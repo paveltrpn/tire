@@ -157,9 +157,12 @@ void RenderGL::prepareShaders() {
     program.use();
 
     auto matrix = program.getUniformLocation( "matrix" );
+
     program.setMatrixUniform( matrix, GL_FALSE, camera_->getMatrix() );
     auto color = program.getUniformLocation( "color" );
     program.setVectorUniform( color, algebra::vector3f{ 0.9f, 0.2f, 0.5f } );
+
+    log::attention( "mat: {}, col: {}", matrix, color );
 
     programs_.insert( std::pair{ opengl::ShaderID::BASIC_COLOR, program } );
 }
@@ -173,21 +176,30 @@ void RenderGL::initMainLoop() {
 
     opengl::Shader basic_color = programs_[opengl::ShaderID::BASIC_COLOR];
 
-    basic_color.use();
+    // basic_color.use();
 };
 
 void RenderGL::preFrame() {
     glViewport( 0, 0, width_, height_ );
     glClearColor( 0, 0.5, 1, 1 );
     glClear( GL_COLOR_BUFFER_BIT );
+
+    glEnable( GL_DEPTH_TEST );
+    glDepthFunc( GL_LESS );
 }
 
-void RenderGL::frame(){
-    // TODO: segfault 20.11.25 next start here!!! deal with buffers!!
+void RenderGL::frame() {
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+    glBindBuffer( GL_ARRAY_BUFFER, bufferObject_ );
+
     // glEnableVertexAttribArray( 0 );
     // glBindVertexArray( vertexObject_ );
-    // glDrawArrays( GL_TRIANGLES, 0, 12 );
+    // glDrawElements( GL_TRIANGLES, 12, GL_UNSIGNED_INT, (void *)0 );
     // glDisableVertexAttribArray( 0 );
+
+    glBindVertexArray( vertexObject_ );
+    glDrawArrays( GL_TRIANGLES, 0, 3 );
 };
 
 void RenderGL::postFrame() {
@@ -204,21 +216,41 @@ void RenderGL::swapBuffers() {
 void RenderGL::appendToRenderList( std::shared_ptr<tire::Node> node ) {
     renderList_.push_back( node );
 
-    glGenBuffers( 1, &bufferObject_ );
+    float positions[]{ 0.0f,   0.5f, -10.0f, -0.5f, -0.5f,
+                       -10.0f, 0.5f, -0.5f,  -10.0f };
+
     glGenVertexArrays( 1, &vertexObject_ );
-
-    glBindBuffer( GL_ARRAY_BUFFER, bufferObject_ );
     glBindVertexArray( vertexObject_ );
-    glBufferData( GL_ARRAY_BUFFER, node->getVerteciesArraySize(), nullptr,
-                  GL_DYNAMIC_DRAW );
-    // position attribute
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
+    glGenBuffers( 1, &bufferObject_ );
+    glBindBuffer( GL_ARRAY_BUFFER, vertexObject_ );
+    glBufferData( GL_ARRAY_BUFFER, sizeof( float ) * 9, &positions[0],
+                  GL_STATIC_DRAW );
     glEnableVertexAttribArray( 0 );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, false, 0, 0 );
 
-    glBindBuffer( GL_ARRAY_BUFFER, bufferObject_ );
-    glBindVertexArray( vertexObject_ );
-    glBufferSubData( GL_ARRAY_BUFFER, 0, node->getVerteciesArraySize(),
-                     node->getVerteciesData() );
+    glBindBuffer( GL_ARRAY_BUFFER, 0 );
+    glBindVertexArray( 0 );
+
+    // glGenBuffers( 1, &bufferObject_ );
+    //
+
+    // glBindBuffer( GL_ARRAY_BUFFER, bufferObject_ );
+    // glBindVertexArray( vertexObject_ );
+    // glBufferData( GL_ARRAY_BUFFER, node->verteciesArraySize(), nullptr,
+    // GL_STATIC_DRAW );
+    //position attribute
+    // glVertexAttribPointer( 0, 3, GL_DOUBLE, GL_FALSE, 0, nullptr );
+    // glEnableVertexAttribArray( 0 );
+
+    // glGenBuffers( 1, &elementsObject_ );
+    // glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, elementsObject_ );
+    // glBufferData( GL_ELEMENT_ARRAY_BUFFER, node->indeciesArraySize(),
+    // node->indeciesData(), GL_STATIC_DRAW );
+
+    // glBindBuffer( GL_ARRAY_BUFFER, bufferObject_ );
+    // glBindVertexArray( vertexObject_ );
+    // glBufferSubData( GL_ARRAY_BUFFER, 0, node->verteciesArraySize(),
+    //node->verteciesData() );
     // color attribute
     // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void *)(12 * sizeof(float)));
     // glEnableVertexAttribArray(1);

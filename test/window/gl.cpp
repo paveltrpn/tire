@@ -12,7 +12,8 @@
 
 int main( int argc, char **argv ) {
     try {
-        new tire::Config{ std::filesystem::path{ "/mnt/main_disk/code/tiny_render/test/window/config.json" } };
+        new tire::Config{ std::filesystem::path{
+            "/mnt/main_disk/code/tiny_render/test/window/config.json" } };
     } catch ( const std::exception &e ) {
         tire::log::error( "caught exception: {}", e.what() );
         return 0;
@@ -32,12 +33,15 @@ int main( int argc, char **argv ) {
 
     {
         auto configPtr = tire::Config::instance();
-        auto width = static_cast<float>( configPtr->get<int>( "window_width" ) );
-        auto height = static_cast<float>( configPtr->get<int>( "window_height" ) );
-        auto camera = std::make_shared<tire::camera::Perspective>( 50.0f, width / height, 0.1f, 100.0f );
+        auto width =
+            static_cast<float>( configPtr->get<int>( "window_width" ) );
+        auto height =
+            static_cast<float>( configPtr->get<int>( "window_height" ) );
+        auto camera = std::make_shared<tire::camera::Perspective>(
+            50.0f, width / height, 0.1f, 100.0f );
 
-        camera->move( tire::algebra::vector3d{ 8.0f, 0.0f, -20.0f } );
-        camera->rotate( 0.0f, 20.0f, 0.0f );
+        camera->move( tire::algebra::vector3f{ 0.0f, 0.0f, 0.0f } );
+        camera->rotate( 0.0f, 0.0f, 0.0f );
 
         rndr->addCamera( camera );
     }

@@ -1,8 +1,7 @@
 
 #include "camera.h"
 
-namespace tire::camera
-{
+namespace tire::camera {
 
 void Camera::setDirty() {
     dirty_ = true;
@@ -13,13 +12,13 @@ void Camera::unSetDirty() {
 }
 
 // recalculate projection matrix despite on _dirty flag
-algebra::matrix4d Camera::forceGetMatrix() {
+algebra::matrix4f Camera::forceGetMatrix() {
     update();
     unSetDirty();
     return matrix_;
 }
 
-algebra::matrix4d Camera::getMatrix() {
+algebra::matrix4f Camera::getMatrix() {
     if ( !dirty_ ) {
         return matrix_;
     } else {
@@ -27,30 +26,30 @@ algebra::matrix4d Camera::getMatrix() {
     }
 }
 
-void Camera::move( const algebra::vector3d &offset ) {
+void Camera::move( const algebra::vector3f &offset ) {
     position_.plus( offset );
     setDirty();
 }
 
-void Camera::rotate( double yawOffset, double pitchOffset, double rollOffset ) {
+void Camera::rotate( float yawOffset, float pitchOffset, float rollOffset ) {
     yaw_ += yawOffset;
     pitch_ += pitchOffset;
     roll_ += rollOffset;
     setDirty();
 }
 
-void Camera::setPosition( const algebra::vector3d &pos ) {
+void Camera::setPosition( const algebra::vector3f &pos ) {
     position_ = pos;
     setDirty();
 }
 
-void Camera::setAngles( double yaw, double pitch, double roll ) {
+void Camera::setAngles( float yaw, float pitch, float roll ) {
     yaw_ = yaw;
     pitch_ = pitch;
     roll_ = roll;
     setDirty();
 }
-Perspective::Perspective( double fov, double aspect, double ncp, double fcp )
+Perspective::Perspective( float fov, float aspect, float ncp, float fcp )
     : fov_{ fov }
     , aspect_{ aspect }
     , ncp_{ ncp }
@@ -59,35 +58,36 @@ Perspective::Perspective( double fov, double aspect, double ncp, double fcp )
     unSetDirty();
 }
 
-void Perspective::setFov( double fov ) {
+void Perspective::setFov( float fov ) {
     fov_ = fov;
     setDirty();
 }
 
-void Perspective::setAspect( double aspect ) {
+void Perspective::setAspect( float aspect ) {
     aspect_ = aspect;
     setDirty();
 }
 
-void Perspective::setNcp( double ncp ) {
+void Perspective::setNcp( float ncp ) {
     ncp_ = ncp;
     setDirty();
 }
 
-void Perspective::setFcp( double fcp ) {
+void Perspective::setFcp( float fcp ) {
     fcp_ = fcp;
     setDirty();
 }
 
 void Perspective::update() {
-    auto projection = algebra::perspective<double>( fov_, aspect_, ncp_, fcp_ );
+    auto projection = algebra::perspective<float>( fov_, aspect_, ncp_, fcp_ );
     auto offset = algebra::translate( position_ );
     auto rotation = algebra::rotate( yaw_, pitch_, roll_ );
 
     matrix_ = projection * rotation * algebra::transpose( offset );
 }
 
-Orthographic::Orthographic( double left, double right, double bottom, double top, double near, double far )
+Orthographic::Orthographic( float left, float right, float bottom, float top,
+                            float near, float far )
     : left_{ left }
     , right_{ right }
     , bottom_{ bottom }
@@ -99,11 +99,12 @@ Orthographic::Orthographic( double left, double right, double bottom, double top
 }
 
 void Orthographic::update() {
-    auto projection = algebra::orthographic( left_, right_, bottom_, top_, near_, far_ );
+    auto projection =
+        algebra::orthographic( left_, right_, bottom_, top_, near_, far_ );
     auto offset = algebra::translate( position_ );
     auto rotation = algebra::rotate( yaw_, pitch_, roll_ );
 
     matrix_ = projection * rotation * algebra::transpose( offset );
 }
 
-} // namespace tire::camera
+}  // namespace tire::camera

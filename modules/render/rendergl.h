@@ -18,8 +18,7 @@
 #include "render.h"
 #include "geometry/node.h"
 
-namespace tire
-{
+namespace tire {
 
 using namespace tire::opengl;
 
@@ -37,13 +36,21 @@ private:
     void configureGl();
     void setupDebugMessages();
 
-    std::string getGLVendorString() { return { (const char *)glGetString( GL_VENDOR ) }; }
+    std::string getGLVendorString() {
+        return { (const char *)glGetString( GL_VENDOR ) };
+    }
 
-    std::string getGLRendererString() { return { (const char *)glGetString( GL_RENDERER ) }; }
+    std::string getGLRendererString() {
+        return { (const char *)glGetString( GL_RENDERER ) };
+    }
 
-    std::string getGLVersionString() { return { (const char *)glGetString( GL_VERSION ) }; }
+    std::string getGLVersionString() {
+        return { (const char *)glGetString( GL_VERSION ) };
+    }
 
-    std::string getGLSLVendorString() { return { (const char *)glGetString( GL_SHADING_LANGUAGE_VERSION ) }; }
+    std::string getGLSLVendorString() {
+        return { (const char *)glGetString( GL_SHADING_LANGUAGE_VERSION ) };
+    }
 
     void initMainLoop() override;
     void preFrame() override;
@@ -57,7 +64,10 @@ private:
 
 private:
     // glx extensions section
-    using glXCreateContextAttribsARBProc = GLXContext ( * )( Display *, GLXFBConfig, GLXContext, Bool, const int * );
+    using glXCreateContextAttribsARBProc = GLXContext ( * )( Display *,
+                                                             GLXFBConfig,
+                                                             GLXContext, Bool,
+                                                             const int * );
     glXCreateContextAttribsARBProc glXCreateContextAttribsARB{ nullptr };
 
     using glXSwapIntervalEXTProc = void ( * )( Display *, GLXDrawable, int );
@@ -70,8 +80,9 @@ private:
 
     GLuint bufferObject_{};
     GLuint vertexObject_{};
+    GLuint elementsObject_{};
 
     std::map<ShaderID, Shader> programs_;
 };
 
-} // namespace tire
+}  // namespace tire

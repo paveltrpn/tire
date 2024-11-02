@@ -16,6 +16,7 @@
 #include "opengl_types/shader.h"
 #include "opengl_types/shader_sources.h"
 #include "camera/camera.h"
+#include "node_list.h"
 
 namespace tire {
 
@@ -87,10 +88,10 @@ protected:
     ShaderDatabase shaderSourcesManager_{};
 
     // render list
-    std::list<std::shared_ptr<tire::Node>> renderList_;
+    NodeList renderList_;
 
     // cameras
-    std::shared_ptr<tire::camera::Camera> camera_{ nullptr };
+    std::shared_ptr<camera::Camera> camera_{ nullptr };
 
 private:
     void openDisplay();

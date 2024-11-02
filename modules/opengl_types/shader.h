@@ -18,15 +18,14 @@
 #include "algebra/matrix3.h"
 #include "algebra/matrix4.h"
 
-namespace tire::opengl
-{
+namespace tire::opengl {
 
 template <typename T>
 concept ConceptGLScalar =
-    std::is_same_v<T, GLint> || std::is_same_v<T, GLuint> || std::is_same_v<T, GLfloat> || std::is_same_v<T, GLdouble>;
+    std::is_same_v<T, GLint> || std::is_same_v<T, GLuint> ||
+    std::is_same_v<T, GLfloat> || std::is_same_v<T, GLdouble>;
 
-enum class ShaderID
-{
+enum class ShaderID {
     BASIC_COLOR,
     BASIC_TEXTURE,
 };
@@ -44,31 +43,52 @@ struct Shader final {
     void showActiveAttributes();
     GLuint getUniformLocation( const std::string &id );
 
-    template <typename T> void setScalarUniform( GLint location, T value ) {}
+    template <typename T>
+    void setScalarUniform( GLint location, T value ) {}
 
-    template <algebra::VectorFloat T> void setVectorUniform( GLint location, T value ) {
+    // only declaration now
+    template <algebra::VectorDouble T>
+    void setVectorUniform( GLint location, T value );
+
+    template <algebra::VectorFloat T>
+    void setVectorUniform( GLint location, T value ) {
         if constexpr ( std::is_same_v<T, algebra::vector2f> ) {
             glUniform2fv( location, 1, value.data() );
         } else if constexpr ( std::is_same_v<T, algebra::vector3f> ) {
             glUniform3fv( location, 1, value.data() );
-        } else if constexpr ( std::is_same_v<typename T::value_type, float> && T::size == 4 ) {
+        } else if constexpr ( std::is_same_v<typename T::value_type, float> &&
+                              T::size == 4 ) {
             glUniform4fv( location, 1, value.data() );
-        } else if constexpr ( std::is_same_v<typename T::value_type, int> && T::size == 2 ) {
+        } else if constexpr ( std::is_same_v<typename T::value_type, int> &&
+                              T::size == 2 ) {
             glUniform2iv( location, 1, value.data() );
-        } else if constexpr ( std::is_same_v<typename T::value_type, int> && T::size == 3 ) {
+        } else if constexpr ( std::is_same_v<typename T::value_type, int> &&
+                              T::size == 3 ) {
             glUniform3iv( location, 1, value.data() );
-        } else if constexpr ( std::is_same_v<typename T::value_type, int> && T::size == 4 ) {
+        } else if constexpr ( std::is_same_v<typename T::value_type, int> &&
+                              T::size == 4 ) {
             glUniform4iv( location, 1, value.data() );
-        } else if constexpr ( std::is_same_v<typename T::value_type, unsigned int> && T::size == 2 ) {
+        } else if constexpr ( std::is_same_v<typename T::value_type,
+                                             unsigned int> &&
+                              T::size == 2 ) {
             glUniform2uiv( location, 1, value.data() );
-        } else if constexpr ( std::is_same_v<typename T::value_type, unsigned int> && T::size == 3 ) {
+        } else if constexpr ( std::is_same_v<typename T::value_type,
+                                             unsigned int> &&
+                              T::size == 3 ) {
             glUniform3uiv( location, 1, value.data() );
-        } else if constexpr ( std::is_same_v<typename T::value_type, unsigned int> && T::size == 4 ) {
+        } else if constexpr ( std::is_same_v<typename T::value_type,
+                                             unsigned int> &&
+                              T::size == 4 ) {
             glUniform4uiv( location, 1, value.data() );
         }
     }
 
-    template <algebra::MatrixDouble T> void setMatrixUniform( GLuint location, GLboolean transpose, T value ) {
+    // only declaration now
+    template <algebra::MatrixDouble T>
+    void setMatrixUniform( GLuint location, GLboolean transpose, T value );
+
+    template <algebra::MatrixFloat T>
+    void setMatrixUniform( GLuint location, GLboolean transpose, T value ) {
         if constexpr ( std::is_same_v<T, algebra::matrix2f> ) {
             glUniformMatrix2fv( location, 1, transpose, value.data() );
         } else if constexpr ( std::is_same_v<T, algebra::matrix3f> ) {
@@ -79,7 +99,8 @@ struct Shader final {
     }
 
 private:
-    [[nodiscard]] std::vector<GLuint> getShadersList( std::vector<std::pair<GLuint, std::string>> shaders );
+    [[nodiscard]] std::vector<GLuint> getShadersList(
+        std::vector<std::pair<GLuint, std::string>> shaders );
     void getActiveAttributes();
     void getActiveUniforms();
 
@@ -89,4 +110,4 @@ private:
     std::vector<std::pair<std::string, GLenum>> uniforms_;
     std::vector<std::pair<std::string, GLenum>> attributes_;
 };
-} // namespace tire::opengl
+}  // namespace tire::opengl

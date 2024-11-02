@@ -4,10 +4,10 @@
 #include <GL/glext.h>
 #include <GL/glcorearb.h>
 
+#include "log/log.h"
 #include "functions.h"
 
-namespace tire::opengl
-{
+namespace tire::opengl {
 
 // shaders
 PFNGLCREATEPROGRAMPROC glCreateProgram{ nullptr };
@@ -43,90 +43,116 @@ PFNGLDRAWARRAYSEXTPROC glDrawArrays{ nullptr };
 PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray{ nullptr };
 PFNGLDELETEBUFFERSPROC glDeleteBuffers{ nullptr };
 PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArrays{ nullptr };
+PFNGLDRAWELEMENTSPROC glDrawElements{ nullptr };
 
 void initOpenGLFunctions() {
     // shaders
-    glCreateProgram = reinterpret_cast<PFNGLCREATEPROGRAMPROC>(
-        glXGetProcAddress( reinterpret_cast<const GLubyte *>( "glCreateProgram" ) ) );
+    glCreateProgram =
+        reinterpret_cast<PFNGLCREATEPROGRAMPROC>( glXGetProcAddress(
+            reinterpret_cast<const GLubyte *>( "glCreateProgram" ) ) );
 
-    glLinkProgram = reinterpret_cast<PFNGLLINKPROGRAMPROC>( glXGetProcAddress( (const GLubyte *)"glLinkProgram" ) );
+    glLinkProgram = reinterpret_cast<PFNGLLINKPROGRAMPROC>(
+        glXGetProcAddress( (const GLubyte *)"glLinkProgram" ) );
 
-    glUseProgram = reinterpret_cast<PFNGLUSEPROGRAMPROC>( glXGetProcAddress( (const GLubyte *)"glUseProgram" ) );
+    glUseProgram = reinterpret_cast<PFNGLUSEPROGRAMPROC>(
+        glXGetProcAddress( (const GLubyte *)"glUseProgram" ) );
 
-    glShaderSource = reinterpret_cast<PFNGLSHADERSOURCEPROC>( glXGetProcAddress( (const GLubyte *)"glShaderSource" ) );
+    glShaderSource = reinterpret_cast<PFNGLSHADERSOURCEPROC>(
+        glXGetProcAddress( (const GLubyte *)"glShaderSource" ) );
 
-    glCompileShader =
-        reinterpret_cast<PFNGLCOMPILESHADERPROC>( glXGetProcAddress( (const GLubyte *)"glCompileShader" ) );
+    glCompileShader = reinterpret_cast<PFNGLCOMPILESHADERPROC>(
+        glXGetProcAddress( (const GLubyte *)"glCompileShader" ) );
 
-    glCreateShader = reinterpret_cast<PFNGLCREATESHADERPROC>( glXGetProcAddress( (const GLubyte *)"glCreateShader" ) );
+    glCreateShader = reinterpret_cast<PFNGLCREATESHADERPROC>(
+        glXGetProcAddress( (const GLubyte *)"glCreateShader" ) );
 
-    glGetShaderiv = reinterpret_cast<PFNGLGETSHADERIVPROC>( glXGetProcAddress( (const GLubyte *)"glGetShaderiv" ) );
+    glGetShaderiv = reinterpret_cast<PFNGLGETSHADERIVPROC>(
+        glXGetProcAddress( (const GLubyte *)"glGetShaderiv" ) );
 
-    glGetShaderInfoLog =
-        reinterpret_cast<PFNGLGETSHADERINFOLOGPROC>( glXGetProcAddress( (const GLubyte *)"glGetShaderInfoLog" ) );
+    glGetShaderInfoLog = reinterpret_cast<PFNGLGETSHADERINFOLOGPROC>(
+        glXGetProcAddress( (const GLubyte *)"glGetShaderInfoLog" ) );
 
-    glDeleteShader = reinterpret_cast<PFNGLDELETESHADERPROC>( glXGetProcAddress( (const GLubyte *)"glDeleteShader" ) );
+    glDeleteShader = reinterpret_cast<PFNGLDELETESHADERPROC>(
+        glXGetProcAddress( (const GLubyte *)"glDeleteShader" ) );
 
-    glDeleteProgram =
-        reinterpret_cast<PFNGLDELETEPROGRAMPROC>( glXGetProcAddress( (const GLubyte *)"glDeleteProgram" ) );
+    glDeleteProgram = reinterpret_cast<PFNGLDELETEPROGRAMPROC>(
+        glXGetProcAddress( (const GLubyte *)"glDeleteProgram" ) );
 
-    glGetActiveUniform =
-        reinterpret_cast<PFNGLGETACTIVEUNIFORMPROC>( glXGetProcAddress( (const GLubyte *)"glGetActiveUniform" ) );
+    glGetActiveUniform = reinterpret_cast<PFNGLGETACTIVEUNIFORMPROC>(
+        glXGetProcAddress( (const GLubyte *)"glGetActiveUniform" ) );
 
-    glGetProgramiv = reinterpret_cast<PFNGLGETPROGRAMIVPROC>( glXGetProcAddress( (const GLubyte *)"glGetProgramiv" ) );
+    glGetProgramiv = reinterpret_cast<PFNGLGETPROGRAMIVPROC>(
+        glXGetProcAddress( (const GLubyte *)"glGetProgramiv" ) );
 
-    glAttachShader = reinterpret_cast<PFNGLATTACHSHADERPROC>( glXGetProcAddress( (const GLubyte *)"glAttachShader" ) );
+    glAttachShader = reinterpret_cast<PFNGLATTACHSHADERPROC>(
+        glXGetProcAddress( (const GLubyte *)"glAttachShader" ) );
 
-    glGetProgramInfoLog =
-        reinterpret_cast<PFNGLGETPROGRAMINFOLOGPROC>( glXGetProcAddress( (const GLubyte *)"glGetProgramInfoLog" ) );
+    glGetProgramInfoLog = reinterpret_cast<PFNGLGETPROGRAMINFOLOGPROC>(
+        glXGetProcAddress( (const GLubyte *)"glGetProgramInfoLog" ) );
 
-    glGetUniformLocation =
-        reinterpret_cast<PFNGLGETUNIFORMLOCATIONPROC>( glXGetProcAddress( (const GLubyte *)"glGetUniformLocation" ) );
+    glGetUniformLocation = reinterpret_cast<PFNGLGETUNIFORMLOCATIONPROC>(
+        glXGetProcAddress( (const GLubyte *)"glGetUniformLocation" ) );
 
-    glGetActiveAttrib =
-        reinterpret_cast<PFNGLGETACTIVEATTRIBPROC>( glXGetProcAddress( (const GLubyte *)"glGetActiveAttrib" ) );
+    glGetActiveAttrib = reinterpret_cast<PFNGLGETACTIVEATTRIBPROC>(
+        glXGetProcAddress( (const GLubyte *)"glGetActiveAttrib" ) );
 
-    glUniformMatrix4fv =
-        reinterpret_cast<PFNGLUNIFORMMATRIX4FVPROC>( glXGetProcAddress( (const GLubyte *)"glUniformMatrix4fv" ) );
+    glUniformMatrix4fv = reinterpret_cast<PFNGLUNIFORMMATRIX4FVPROC>(
+        glXGetProcAddress( (const GLubyte *)"glUniformMatrix4fv" ) );
 
-    glUniform3fv = reinterpret_cast<PFNGLUNIFORM3FVPROC>( glXGetProcAddress( (const GLubyte *)"glUniform3fv" ) );
+    glUniform3fv = reinterpret_cast<PFNGLUNIFORM3FVPROC>(
+        glXGetProcAddress( (const GLubyte *)"glUniform3fv" ) );
 
     // VAO
-    glGenBuffers = reinterpret_cast<PFNGLGENBUFFERSPROC>(
-        glXGetProcAddress( reinterpret_cast<const GLubyte *>( "glGenBuffers" ) ) );
+    glGenBuffers = reinterpret_cast<PFNGLGENBUFFERSPROC>( glXGetProcAddress(
+        reinterpret_cast<const GLubyte *>( "glGenBuffers" ) ) );
 
-    glGenVertexArrays = reinterpret_cast<PFNGLGENVERTEXARRAYSPROC>(
-        glXGetProcAddress( reinterpret_cast<const GLubyte *>( "glGenVertexArrays" ) ) );
+    glGenVertexArrays =
+        reinterpret_cast<PFNGLGENVERTEXARRAYSPROC>( glXGetProcAddress(
+            reinterpret_cast<const GLubyte *>( "glGenVertexArrays" ) ) );
 
-    glBindBuffer = reinterpret_cast<PFNGLBINDBUFFERPROC>(
-        glXGetProcAddress( reinterpret_cast<const GLubyte *>( "glBindBuffer" ) ) );
+    glBindBuffer = reinterpret_cast<PFNGLBINDBUFFERPROC>( glXGetProcAddress(
+        reinterpret_cast<const GLubyte *>( "glBindBuffer" ) ) );
 
-    glBindVertexArray = reinterpret_cast<PFNGLBINDVERTEXARRAYPROC>(
-        glXGetProcAddress( reinterpret_cast<const GLubyte *>( "glBindVertexArray" ) ) );
+    glBindVertexArray =
+        reinterpret_cast<PFNGLBINDVERTEXARRAYPROC>( glXGetProcAddress(
+            reinterpret_cast<const GLubyte *>( "glBindVertexArray" ) ) );
 
-    glBufferData = reinterpret_cast<PFNGLBUFFERDATAPROC>(
-        glXGetProcAddress( reinterpret_cast<const GLubyte *>( "glBufferData" ) ) );
+    glBufferData = reinterpret_cast<PFNGLBUFFERDATAPROC>( glXGetProcAddress(
+        reinterpret_cast<const GLubyte *>( "glBufferData" ) ) );
 
-    glVertexAttribPointer = reinterpret_cast<PFNGLVERTEXATTRIBPOINTERPROC>(
-        glXGetProcAddress( reinterpret_cast<const GLubyte *>( "glVertexAttribPointer" ) ) );
+    glVertexAttribPointer =
+        reinterpret_cast<PFNGLVERTEXATTRIBPOINTERPROC>( glXGetProcAddress(
+            reinterpret_cast<const GLubyte *>( "glVertexAttribPointer" ) ) );
 
-    glEnableVertexAttribArray = reinterpret_cast<PFNGLENABLEVERTEXATTRIBARRAYPROC>(
-        glXGetProcAddress( reinterpret_cast<const GLubyte *>( "glEnableVertexAttribArray" ) ) );
+    glEnableVertexAttribArray =
+        reinterpret_cast<PFNGLENABLEVERTEXATTRIBARRAYPROC>(
+            glXGetProcAddress( reinterpret_cast<const GLubyte *>(
+                "glEnableVertexAttribArray" ) ) );
 
-    glBufferSubData = reinterpret_cast<PFNGLBUFFERSUBDATAPROC>(
-        glXGetProcAddress( reinterpret_cast<const GLubyte *>( "glBufferSubData" ) ) );
+    glBufferSubData =
+        reinterpret_cast<PFNGLBUFFERSUBDATAPROC>( glXGetProcAddress(
+            reinterpret_cast<const GLubyte *>( "glBufferSubData" ) ) );
 
-    glDrawArrays = reinterpret_cast<PFNGLDRAWARRAYSEXTPROC>(
-        glXGetProcAddress( reinterpret_cast<const GLubyte *>( "glDrawArrays" ) ) );
+    glDrawArrays = reinterpret_cast<PFNGLDRAWARRAYSEXTPROC>( glXGetProcAddress(
+        reinterpret_cast<const GLubyte *>( "glDrawArrays" ) ) );
 
-    glDisableVertexAttribArray = reinterpret_cast<PFNGLDISABLEVERTEXATTRIBARRAYPROC>(
-        glXGetProcAddress( reinterpret_cast<const GLubyte *>( "glDisableVertexAttribArray" ) ) );
+    glDisableVertexAttribArray =
+        reinterpret_cast<PFNGLDISABLEVERTEXATTRIBARRAYPROC>(
+            glXGetProcAddress( reinterpret_cast<const GLubyte *>(
+                "glDisableVertexAttribArray" ) ) );
 
-    glDeleteBuffers = reinterpret_cast<PFNGLDELETEBUFFERSPROC>(
-        glXGetProcAddress( reinterpret_cast<const GLubyte *>( "glDeleteBuffers" ) ) );
+    glDeleteBuffers =
+        reinterpret_cast<PFNGLDELETEBUFFERSPROC>( glXGetProcAddress(
+            reinterpret_cast<const GLubyte *>( "glDeleteBuffers" ) ) );
 
-    glDeleteVertexArrays = reinterpret_cast<PFNGLDELETEVERTEXARRAYSPROC>(
-        glXGetProcAddress( reinterpret_cast<const GLubyte *>( "glDeleteVertexArrays" ) ) );
+    glDeleteVertexArrays =
+        reinterpret_cast<PFNGLDELETEVERTEXARRAYSPROC>( glXGetProcAddress(
+            reinterpret_cast<const GLubyte *>( "glDeleteVertexArrays" ) ) );
+
+    glDrawElements = reinterpret_cast<PFNGLDRAWELEMENTSPROC>( glXGetProcAddress(
+        reinterpret_cast<const GLubyte *>( "glDrawElements" ) ) );
+    if ( !glDrawElements )
+        log::error( "can't get glDrawElements function adress!" );
 }
 
-} // namespace tire::opengl
+}  // namespace tire::opengl

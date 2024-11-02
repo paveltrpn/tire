@@ -4,6 +4,7 @@
 #include <vector>
 #include <initializer_list>
 #include <iterator>
+#include <memory>
 
 #include "polytope.h"
 #include "point.h"
@@ -13,18 +14,21 @@
 #include "algebra/vector3.h"
 #include "algebra/matrix3.h"
 
-namespace tire
-{
-struct Node {
-    Node() = default;
-
+namespace tire {
+struct Node final : std::enable_shared_from_this<Node> {
     Node( const Polytope &body );
 
-    size_t getVerteciesCount() const;
-    size_t getVerteciesArraySize() const;
+    std::shared_ptr<const Node> asSharedPtr() const;
+    std::shared_ptr<Node> asSharedPtr();
 
-    point3d *getVerteciesData();
-    long long *getIndeciessData();
+    size_t verteciesCount() const;
+    size_t verteciesArraySize() const;
+
+    size_t indeciesCount() const;
+    size_t indeciesArraySize() const;
+
+    point3d *verteciesData();
+    unsigned int *indeciesData();
 
     void setOffset( algebra::vector3d offst );
     void setRotate( algebra::matrix3d rtn );
@@ -37,7 +41,7 @@ private:
     bool useIndecies_{ false };
 
     std::vector<point3d> vertecies_;
-    std::vector<long long> indices_;
+    std::vector<unsigned int> indices_;
     std::vector<algebra::vector3f> colors_;
     std::vector<algebra::vector2f> texCoords_;
     std::vector<normald> normals_;
@@ -46,4 +50,4 @@ private:
     algebra::matrix3d rotation_{};
     algebra::matrix3d scale_{};
 };
-} // namespace tire
+}  // namespace tire

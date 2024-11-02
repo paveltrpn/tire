@@ -7,30 +7,49 @@
 #include "polytope.h"
 #include "point.h"
 #include "normal.h"
+#include "log/log.h"
 
 #include "algebra/vector3.h"
 #include "algebra/matrix3.h"
 
-namespace tire
-{
+namespace tire {
 Node::Node( const Polytope &body ) {
     vertecies_ = body.getVertecies();
     indices_ = body.getIndices();
+
+    log::info( "appended vertecies:{}, indecies: {}", vertecies_.size(),
+               indices_.size() );
 }
 
-size_t Node::getVerteciesCount() const {
+std::shared_ptr<const Node> Node::asSharedPtr() const {
+    return shared_from_this();
+}
+
+std::shared_ptr<Node> Node::asSharedPtr() {
+    return shared_from_this();
+}
+
+size_t Node::verteciesCount() const {
     return vertecies_.size();
 }
 
-size_t Node::getVerteciesArraySize() const {
-    return getVerteciesCount() * 3 * sizeof( double );
+size_t Node::verteciesArraySize() const {
+    return verteciesCount() * 3 * sizeof( double );
 }
 
-point3d *Node::getVerteciesData() {
+size_t Node::indeciesCount() const {
+    return indices_.size();
+}
+
+size_t Node::indeciesArraySize() const {
+    return indeciesCount() * sizeof( unsigned int );
+}
+
+point3d *Node::verteciesData() {
     return vertecies_.data();
 }
 
-long long *Node::getIndeciessData() {
+unsigned int *Node::indeciesData() {
     return indices_.data();
 }
 
@@ -67,4 +86,4 @@ void Node::applyScale() {
     }
 }
 
-} // namespace tire
+}  // namespace tire
