@@ -5,8 +5,8 @@
 #include <vector>
 #include <utility>
 #include <type_traits>
-#include "spdlog/spdlog.h"
 
+#include "log/log.h"
 #include "shader.h"
 
 namespace tire::opengl
@@ -39,7 +39,7 @@ void Shader::link( std::vector<std::pair<GLuint, std::string>> shaders ) {
 
         glGetProgramInfoLog( program_, logLength, nullptr, log.data() );
 
-        spdlog::error( "can't link program with trace:\n{}", log.data() );
+        log::error( "can't link program with trace:\n{}", log.data() );
         return;
     }
 }
@@ -71,7 +71,7 @@ GLuint Shader::getUniformLocation( const std::string &id ) {
 std::vector<GLuint> Shader::getShadersList( std::vector<std::pair<GLuint, std::string>> shaders ) {
     std::vector<GLuint> rt;
     if ( shaders.size() < 2 ) {
-        spdlog::error( " wrong shader count!" );
+        log::error( " wrong shader count!" );
         return rt;
     } else {
         for ( const auto &[type, source] : shaders ) {
@@ -93,7 +93,7 @@ std::vector<GLuint> Shader::getShadersList( std::vector<std::pair<GLuint, std::s
                 log.reserve( logLength );
                 glGetShaderInfoLog( shHandle, logLength, nullptr, log.data() );
 
-                spdlog::error( "can't compile shader with trace:\n{}", log.data() );
+                log::error( "can't compile shader with trace:\n{}", log.data() );
                 return rt;
             }
 

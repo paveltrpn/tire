@@ -4,7 +4,8 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include "spdlog/spdlog.h"
+
+#include "log/log.h"
 
 namespace tire
 {
@@ -47,7 +48,7 @@ void main() {
         if ( vertexShaderSources_.contains( shaderId ) ) {
             return vertexShaderSources_[shaderId];
         } else {
-            spdlog::warn( "can't find vertex shader source with id: {}", shaderId );
+            log::warning( "can't find vertex shader source with id: {}", shaderId );
             return vertexShaderSources_["default"];
         }
     }
@@ -55,7 +56,7 @@ void main() {
         if ( fragmentShaderSources_.contains( shaderId ) ) {
             return fragmentShaderSources_[shaderId];
         } else {
-            spdlog::warn( "can't find fragment shader source with id: {}", shaderId );
+            log::warning( "can't find fragment shader source with id: {}", shaderId );
             return fragmentShaderSources_["default"];
         }
     }

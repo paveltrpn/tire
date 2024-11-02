@@ -2,7 +2,7 @@
 #include <memory>
 #include <filesystem>
 
-#include "spdlog/spdlog.h"
+#include "log/log.h"
 
 #include "subject.h"
 #include "config/config.h"
@@ -12,7 +12,7 @@ int main( int argc, char **argv ) {
     try {
         new tire::Config{ std::filesystem::path{ "../test/window/config.json" } };
     } catch ( const std::exception &e ) {
-        spdlog::critical( "caught exception: {}", e.what() );
+        tire::log::error( "caught exception: {}", e.what() );
         return 0;
     }
 
@@ -20,7 +20,7 @@ int main( int argc, char **argv ) {
     try {
         rndr = std::make_unique<tire::RenderVK>();
     } catch ( const std::exception &e ) {
-        spdlog::critical( "caught exception: {}", e.what() );
+        tire::log::error( "caught exception: {}", e.what() );
         return 0;
     }
 

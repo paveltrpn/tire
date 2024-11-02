@@ -7,7 +7,6 @@
 #include <vector>
 #include <utility>
 #include <type_traits>
-#include "spdlog/spdlog.h"
 
 #include "functions.h"
 

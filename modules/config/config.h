@@ -10,7 +10,7 @@
 #include <type_traits>
 #include <filesystem>
 
-#include "spdlog/spdlog.h"
+#include "log/log.h"
 #include "nlohmann/json.hpp"
 
 namespace tire
@@ -80,13 +80,13 @@ struct Config final {
             if ( config_.contains( param ) ) {
                 return config_[param];
             } else {
-                spdlog::warn( "no such config parameter \"{}\"", param );
-                spdlog::warn( "default value used: {}", dflt );
+                log::warning( "no such config parameter \"{}\"", param );
+                log::warning( "default value used: {}", dflt );
                 return dflt;
             }
         } catch ( nlohmann::json::exception &e ) {
-            spdlog::warn( "json exception handled... config param error \"{}\", what: {}", param, e.what() );
-            spdlog::warn( "default value used: {}", dflt );
+            log::warning( "json exception handled... config param error \"{}\", what: {}", param, e.what() );
+            log::warning( "default value used: {}", dflt );
             return dflt;
         }
     }

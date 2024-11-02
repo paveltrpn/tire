@@ -3,7 +3,6 @@
 #include <GL/gl.h>
 #include <GL/glext.h>
 #include <GL/glcorearb.h>
-#include "spdlog/spdlog.h"
 
 #include "functions.h"
 

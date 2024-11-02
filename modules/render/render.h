@@ -17,16 +17,15 @@
 #include "opengl_types/shader_sources.h"
 #include "camera/camera.h"
 
-namespace tire
-{
+namespace tire {
 
-namespace __detail_tire
-{
-[[maybe_unused]] static void GLAPIENTRY MessageCallback( GLenum source, GLenum type, GLuint id, GLenum severity,
-                                                         GLsizei length, const GLchar *message,
-                                                         const void *userParam ) {
+namespace __detail {
+[[maybe_unused]] static void GLAPIENTRY MessageCallback(
+    GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
+    const GLchar *message, const void *userParam ) {
     std::print( "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-                ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ), type, severity, message );
+                ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ), type,
+                severity, message );
 }
 
 static bool ctxErrorOccurred = false;
@@ -35,7 +34,7 @@ static bool ctxErrorOccurred = false;
     return 0;
 }
 
-} // namespace __detail_tire
+}  // namespace __detail
 
 struct Render {
     using point_scalar_type = float;
@@ -54,7 +53,9 @@ struct Render {
     void run();
 
     virtual void appendToRenderList( std::shared_ptr<tire::Node> node ) = 0;
-    void addCamera( std::shared_ptr<tire::camera::Camera> cameraPtr ) { camera_ = cameraPtr; }
+    void addCamera( std::shared_ptr<tire::camera::Camera> cameraPtr ) {
+        camera_ = cameraPtr;
+    }
 
 protected:
     virtual void initMainLoop() = 0;
@@ -63,7 +64,8 @@ protected:
     virtual void postFrame() = 0;
     virtual void swapBuffers() = 0;
 
-    [[nodiscard]] bool isExtensionSupported( const char *extList, const char *extension );
+    [[nodiscard]] bool isExtensionSupported( const char *extList,
+                                             const char *extension );
     virtual void setSwapInterval( int interval ) = 0;
 
 protected:
@@ -95,4 +97,4 @@ private:
     void configureX11();
 };
 
-} // namespace tire
+}  // namespace tire

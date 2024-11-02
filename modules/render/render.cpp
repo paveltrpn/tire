@@ -4,8 +4,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#include "spdlog/spdlog.h"
-
+#include "log/log.h"
 #include "render.h"
 
 namespace tire
@@ -13,7 +12,7 @@ namespace tire
 
 Render::Render() {
     if ( !tire::Config::instance() ) {
-        spdlog::critical( "instantiate config first!!!" );
+        log::error( "instantiate config first!!!" );
         throw std::runtime_error( "instantiate config first!!!" );
     }
 
@@ -28,6 +27,7 @@ Render::~Render() {
 }
 
 void Render::openDisplay() {
+    log::info( "open X11 display..." );
     display_ = XOpenDisplay( nullptr );
 
     if ( !display_ ) {
@@ -66,6 +66,7 @@ bool Render::isExtensionSupported( const char *extList, const char *extension ) 
 }
 
 void Render::configureX11() {
+    log::info( "begin configure X11..." );
     // Get a matching FB config
     constexpr int visual_attribs[] = { GLX_X_RENDERABLE, True, GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT, GLX_RENDER_TYPE,
                                        GLX_RGBA_BIT, GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR, GLX_RED_SIZE, 8, GLX_GREEN_SIZE,
@@ -82,7 +83,7 @@ void Render::configureX11() {
     }
 
     // Pick the FB config/visual with the most samples per pixel
-    spdlog::info( "getting XVisualInfos" );
+    log::info( "getting XVisualInfos..." );
     int best_fbc = -1, worst_fbc = -1, best_num_samp = -1, worst_num_samp = 999;
 
     for ( auto i = 0; i < fbcount; ++i ) {
@@ -92,11 +93,11 @@ void Render::configureX11() {
             glXGetFBConfigAttrib( display_, fbc[i], GLX_SAMPLE_BUFFERS, &samp_buf );
             glXGetFBConfigAttrib( display_, fbc[i], GLX_SAMPLES, &samples );
 
-            spdlog::info( "matching fbconfig {}, visual ID {}: SAMPLE_BUFFERS = {},"
-                          " SAMPLES = {}",
-                          i,
-                          vi->visualid, // TODO: need to be HEX
-                          samp_buf, samples );
+            log::info( "matching fbconfig {}, visual ID {}: SAMPLE_BUFFERS = {},"
+                       " SAMPLES = {}",
+                       i,
+                       vi->visualid, // TODO: need to be HEX
+                       samp_buf, samples );
 
             if ( best_fbc < 0 || ( samp_buf && samples > best_num_samp ) )
                 best_fbc = i, best_num_samp = samples;
@@ -114,7 +115,7 @@ void Render::configureX11() {
 
     // Get a visual
     XVisualInfo *vi = glXGetVisualFromFBConfig( display_, bestFbc_ );
-    spdlog::info( "chosen visual ID = {}", vi->visualid );
+    log::info( "chosen visual ID = {}", vi->visualid );
 
     // create colormap
     XSetWindowAttributes swa;
@@ -124,6 +125,8 @@ void Render::configureX11() {
     swa.event_mask = StructureNotifyMask;
 
     // create window
+
+    log::info( "create a X11 window..." );
 
     auto cptr = Config::instance();
     posx_ = cptr->get<int>( "window_pos_x", 100 );
@@ -135,6 +138,7 @@ void Render::configureX11() {
                              InputOutput, vi->visual, CWBorderPixel | CWColormap | CWEventMask, &swa );
 
     if ( !window_ ) {
+        log::error( "unable to create window" );
         throw std::runtime_error( "failed to create window" );
     }
 
@@ -146,12 +150,12 @@ void Render::configureX11() {
 
 void Render::run() {
     if ( camera_ == nullptr ) {
-        spdlog::critical( "how to render without camera???" );
+        log::error( "how to render without camera???" );
         return;
     }
 
     if ( renderList_.empty() ) {
-        spdlog::critical( "nothing to render!!!" );
+        log::error( "render list is empty! nothing to render!!!" );
         return;
     }
 

@@ -7,154 +7,144 @@ module;
 #include <cstdio>
 #include <string>
 
-#include "spdlog/spdlog.h"
+#include "log/log.h"
 
 export module image.tga;
 
-namespace tire {
+namespace tire
+{
 // GCC 9.2.0 выравнивает эту структуру
 // и поэтому sizeof(STGAHeader) = 20.
 // Если использовать #pragma pack(push, 1)
 // то sizeof(STGAHeader) = 18, как и должно
-#pragma pack(push, 1)
+#pragma pack( push, 1 )
 struct STGAHeader {
-        uint8_t identsize;
-        uint8_t colorMapType;
-        uint8_t imageType;
-        uint16_t colorMapStart;
-        uint16_t colorMapLength;
-        uint8_t colorMapBits;
-        uint16_t xstart;
-        uint16_t ystart;
-        uint16_t width;
-        uint16_t height;
-        uint8_t bits;
-        uint8_t descriptor;
+    uint8_t identsize;
+    uint8_t colorMapType;
+    uint8_t imageType;
+    uint16_t colorMapStart;
+    uint16_t colorMapLength;
+    uint8_t colorMapBits;
+    uint16_t xstart;
+    uint16_t ystart;
+    uint16_t width;
+    uint16_t height;
+    uint8_t bits;
+    uint8_t descriptor;
 };
-#pragma pack(pop)
+#pragma pack( pop )
 
 export {
     struct tga {
-            tga(std::string_view fname) {
-                std::ifstream fileStream;
-                unsigned char BlockInfo, isPacked, R, G, B, A;
-                unsigned int NumPixels;
-                size_t i, k;
+        tga( std::string_view fname ) {
+            std::ifstream fileStream;
+            unsigned char BlockInfo, isPacked, R, G, B, A;
+            unsigned int NumPixels;
+            size_t i, k;
 
-                fileStream.open(fname, std::ifstream::binary);
-                if (!fileStream) {
-                    spdlog::error("error opening file: {}", fname);
-                    throw std::runtime_error("file not found");
+            fileStream.open( fname, std::ifstream::binary );
+            if ( !fileStream ) {
+                log::error( "error opening file: {}", fname );
+                throw std::runtime_error( "file not found" );
+            }
+
+            fileStream.read( reinterpret_cast<char *>( &sTGAHeader_ ), sizeof( STGAHeader ) );
+
+            decompressed_ = new uint8_t[sTGAHeader_.width * sTGAHeader_.height * ( sTGAHeader_.bits / 8 )];
+
+            // Non RLE
+            if ( sTGAHeader_.imageType == 2 ) {
+                for ( i = 0; i < sTGAHeader_.width * sTGAHeader_.height; i++ ) {
+                    fileStream.read( reinterpret_cast<char *>( &R ), 1 );
+                    fileStream.read( reinterpret_cast<char *>( &G ), 1 );
+                    fileStream.read( reinterpret_cast<char *>( &B ), 1 );
+
+                    if ( ( sTGAHeader_.bits / 8 ) == 4 ) {
+                        fileStream.read( reinterpret_cast<char *>( &A ), 1 );
+                    }
+
+                    decompressed_[i * ( sTGAHeader_.bits / 8 ) + 0] = B;
+                    decompressed_[i * ( sTGAHeader_.bits / 8 ) + 1] = G;
+                    decompressed_[i * ( sTGAHeader_.bits / 8 ) + 2] = R;
+
+                    if ( ( sTGAHeader_.bits / 8 ) == 4 ) {
+                        decompressed_[i * ( sTGAHeader_.bits / 8 ) + 3] = A;
+                    }
                 }
+            }
 
-                fileStream.read(reinterpret_cast<char*>(&sTGAHeader_), sizeof(STGAHeader));
+            // RLE
+            if ( sTGAHeader_.imageType == 10 ) {
+                for ( i = 0; i < sTGAHeader_.width * sTGAHeader_.height; ) {
+                    fileStream.read( reinterpret_cast<char *>( &BlockInfo ), 1 );
 
-                decompressed_
-                  = new uint8_t[sTGAHeader_.width * sTGAHeader_.height * (sTGAHeader_.bits / 8)];
+                    isPacked = BlockInfo & 128;
+                    NumPixels = BlockInfo & 127;
 
-                // Non RLE
-                if (sTGAHeader_.imageType == 2) {
-                    for (i = 0; i < sTGAHeader_.width * sTGAHeader_.height; i++) {
-                        fileStream.read(reinterpret_cast<char*>(&R), 1);
-                        fileStream.read(reinterpret_cast<char*>(&G), 1);
-                        fileStream.read(reinterpret_cast<char*>(&B), 1);
+                    // Если запакованные данные
+                    if ( isPacked ) {
+                        fileStream.read( reinterpret_cast<char *>( &R ), 1 );
+                        fileStream.read( reinterpret_cast<char *>( &G ), 1 );
+                        fileStream.read( reinterpret_cast<char *>( &B ), 1 );
 
-                        if ((sTGAHeader_.bits / 8) == 4) {
-                            fileStream.read(reinterpret_cast<char*>(&A), 1);
+                        if ( ( sTGAHeader_.bits / 8 ) == 4 ) {
+                            fileStream.read( reinterpret_cast<char *>( &A ), 1 );
                         }
 
-                        decompressed_[i * (sTGAHeader_.bits / 8) + 0] = B;
-                        decompressed_[i * (sTGAHeader_.bits / 8) + 1] = G;
-                        decompressed_[i * (sTGAHeader_.bits / 8) + 2] = R;
+                        for ( k = 0; k < NumPixels + 1; k++ ) {
+                            decompressed_[i * ( sTGAHeader_.bits / 8 ) + 0] = B;
+                            decompressed_[i * ( sTGAHeader_.bits / 8 ) + 1] = G;
+                            decompressed_[i * ( sTGAHeader_.bits / 8 ) + 2] = R;
 
-                        if ((sTGAHeader_.bits / 8) == 4) {
-                            decompressed_[i * (sTGAHeader_.bits / 8) + 3] = A;
+                            if ( ( sTGAHeader_.bits / 8 ) == 4 ) {
+                                decompressed_[i * ( sTGAHeader_.bits / 8 ) + 3] = A;
+                            }
+                            i++;
+                        }
+
+                    } else { // Если незапакованные
+                        for ( k = 0; k < NumPixels + 1; k++ ) {
+                            fileStream.read( reinterpret_cast<char *>( &R ), 1 );
+                            fileStream.read( reinterpret_cast<char *>( &G ), 1 );
+                            fileStream.read( reinterpret_cast<char *>( &B ), 1 );
+
+                            if ( ( sTGAHeader_.bits / 8 ) == 4 ) {
+                                fileStream.read( reinterpret_cast<char *>( &A ), 1 );
+                            }
+
+                            decompressed_[i * ( sTGAHeader_.bits / 8 ) + 0] = B;
+                            decompressed_[i * ( sTGAHeader_.bits / 8 ) + 1] = G;
+                            decompressed_[i * ( sTGAHeader_.bits / 8 ) + 2] = R;
+
+                            if ( ( sTGAHeader_.bits / 8 ) == 4 ) {
+                                decompressed_[i * ( sTGAHeader_.bits / 8 ) + 3] = A;
+                            }
+
+                            i++;
                         }
                     }
                 }
-
-                // RLE
-                if (sTGAHeader_.imageType == 10) {
-                    for (i = 0; i < sTGAHeader_.width * sTGAHeader_.height;) {
-                        fileStream.read(reinterpret_cast<char*>(&BlockInfo), 1);
-
-                        isPacked = BlockInfo & 128;
-                        NumPixels = BlockInfo & 127;
-
-                        // Если запакованные данные
-                        if (isPacked) {
-                            fileStream.read(reinterpret_cast<char*>(&R), 1);
-                            fileStream.read(reinterpret_cast<char*>(&G), 1);
-                            fileStream.read(reinterpret_cast<char*>(&B), 1);
-
-                            if ((sTGAHeader_.bits / 8) == 4) {
-                                fileStream.read(reinterpret_cast<char*>(&A), 1);
-                            }
-
-                            for (k = 0; k < NumPixels + 1; k++) {
-                                decompressed_[i * (sTGAHeader_.bits / 8) + 0] = B;
-                                decompressed_[i * (sTGAHeader_.bits / 8) + 1] = G;
-                                decompressed_[i * (sTGAHeader_.bits / 8) + 2] = R;
-
-                                if ((sTGAHeader_.bits / 8) == 4) {
-                                    decompressed_[i * (sTGAHeader_.bits / 8) + 3] = A;
-                                }
-                                i++;
-                            }
-
-                        } else {  // Если незапакованные
-                            for (k = 0; k < NumPixels + 1; k++) {
-                                fileStream.read(reinterpret_cast<char*>(&R), 1);
-                                fileStream.read(reinterpret_cast<char*>(&G), 1);
-                                fileStream.read(reinterpret_cast<char*>(&B), 1);
-
-                                if ((sTGAHeader_.bits / 8) == 4) {
-                                    fileStream.read(reinterpret_cast<char*>(&A), 1);
-                                }
-
-                                decompressed_[i * (sTGAHeader_.bits / 8) + 0] = B;
-                                decompressed_[i * (sTGAHeader_.bits / 8) + 1] = G;
-                                decompressed_[i * (sTGAHeader_.bits / 8) + 2] = R;
-
-                                if ((sTGAHeader_.bits / 8) == 4) {
-                                    decompressed_[i * (sTGAHeader_.bits / 8) + 3] = A;
-                                }
-
-                                i++;
-                            }
-                        }
-                    }
-                }
-
-                fileStream.close();
             }
 
-            ~tga() {
-                delete[] decompressed_;
-            }
+            fileStream.close();
+        }
 
-            bool from_file(std::string name);
+        ~tga() { delete[] decompressed_; }
 
-            size_t widht() {
-                return sTGAHeader_.width;
-            }
+        bool from_file( std::string name );
 
-            size_t height() {
-                return sTGAHeader_.height;
-            }
+        size_t widht() { return sTGAHeader_.width; }
 
-            size_t chanels() {
-                return sTGAHeader_.bits / 8;
-            }
+        size_t height() { return sTGAHeader_.height; }
 
-            uint8_t* data() {
-                return decompressed_;
-            }
+        size_t chanels() { return sTGAHeader_.bits / 8; }
 
-        private:
-            STGAHeader sTGAHeader_{};
+        uint8_t *data() { return decompressed_; }
 
-            uint8_t* decompressed_{ nullptr };
+    private:
+        STGAHeader sTGAHeader_{};
+
+        uint8_t *decompressed_{ nullptr };
     };
 
     /*
@@ -368,4 +358,4 @@ static const uint32_t TGA_COLOR_MAP_PALETTE = 1;
     }
     */
 }
-}  // namespace tire
+} // namespace tire

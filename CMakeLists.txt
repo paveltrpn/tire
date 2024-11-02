@@ -14,6 +14,12 @@ set(CMAKE_BUILD_TYPE Debug)
 include_directories("3rdparty")
 include_directories("modules")
 
+add_library(log
+    modules/log/log.h
+    modules/log/log.cpp
+)
+set_target_properties(log PROPERTIES LINKER_LANGUAGE CXX)
+
 add_library(algebra
     modules/algebra/concepts.h
     modules/algebra/matrix.h
@@ -39,7 +45,10 @@ add_library(render
     modules/render/rendergl.cpp
     modules/render/rendergl.h
     modules/render/rendervk.cpp
+    modules/render/rendervk_printinfo.cpp
     modules/render/rendervk.h
+    modules/render/node_list.cpp
+    modules/render/node_list.h
 )
 target_link_libraries(render camera opengl_types config geometry algebra)
 
@@ -121,8 +130,8 @@ add_library(geometry
 target_link_libraries(geometry algebra)
 
 add_subdirectory(test/window)
-target_link_libraries(gl algebra camera opengl_types config render X11 GL GLU vulkan)
-target_link_libraries(vk algebra camera vulkan_types config render X11 GL GLU vulkan)
+target_link_libraries(gl log algebra camera opengl_types config render X11 GL GLU vulkan)
+target_link_libraries(vk log algebra camera vulkan_types config render X11 GL GLU vulkan)
 
 add_subdirectory(test/wavefront)
 target_link_libraries(wavefront geometry)

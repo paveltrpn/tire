@@ -2,8 +2,7 @@
 #include <memory>
 #include <filesystem>
 
-#include "spdlog/spdlog.h"
-
+#include "log/log.h"
 #include "subject.h"
 #include "config/config.h"
 #include "render/rendergl.h"
@@ -15,7 +14,7 @@ int main( int argc, char **argv ) {
     try {
         new tire::Config{ std::filesystem::path{ "/mnt/main_disk/code/tiny_render/test/window/config.json" } };
     } catch ( const std::exception &e ) {
-        spdlog::critical( "caught exception: {}", e.what() );
+        tire::log::error( "caught exception: {}", e.what() );
         return 0;
     }
 
@@ -23,7 +22,7 @@ int main( int argc, char **argv ) {
     try {
         rndr = std::make_unique<tire::RenderGL>();
     } catch ( const std::exception &e ) {
-        spdlog::critical( "caught exception: {}", e.what() );
+        tire::log::error( "caught exception: {}", e.what() );
         return 0;
     }
 

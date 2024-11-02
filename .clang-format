@@ -1,4 +1,8 @@
-BasedOnStyle: Microsoft
+BasedOnStyle: Google
+BreakBeforeBraces: Custom
+IndentWidth: 4
+TabWidth: 4
+SpacesBeforeTrailingComments: 2
 BreakConstructorInitializers: BeforeComma
 BreakInheritanceList: BeforeComma
 ConstructorInitializerAllOnOneLineOrOnePerLine: 'false'
