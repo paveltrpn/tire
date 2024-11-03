@@ -52,32 +52,6 @@ add_library(render
 )
 target_link_libraries(render camera gl config geometry algebra)
 
-set(QT_VERSION 6.8)
-list(APPEND CMAKE_PREFIX_PATH $ENV{LOCAL_QT_DIR})
-find_package(Qt6 ${QT_VERSION} COMPONENTS
-    Core
-    Gui
-    Quick
-    QuickWidgets
-    QuickControls2
-    Qml
-    OpenGL)
-
-add_library(qt_render
-    modules/qt_render/qt_render.h
-    modules/qt_render/qt_render.cpp
-    modules/qt_render/render_window.h
-    modules/qt_render/render_window.cpp
-)
-set_target_properties(qt_render PROPERTIES AUTOMOC TRUE)
-target_link_libraries(qt_render PUBLIC
-    Qt::Core
-    Qt::Quick
-    Qt::QuickWidgets
-    Qt::QuickControls2
-    Qt::Qml
-    Qt::OpenGL)
-
 add_library(image)
 target_sources(image
   PUBLIC
@@ -132,14 +106,3 @@ target_link_libraries(vk_test log algebra camera vk config render X11 GL GLU vul
 
 add_subdirectory(test/wavefront)
 target_link_libraries(wavefront geometry)
-
-add_subdirectory(test/qt)
-target_link_libraries(qt PUBLIC
-    qt_render
-    Qt::Core
-    Qt::Quick
-    Qt::QuickWidgets
-    Qt::QuickControls2
-    Qt::Qml
-    Qt::OpenGL)
-
