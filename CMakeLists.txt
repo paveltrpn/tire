@@ -50,7 +50,7 @@ add_library(render
     modules/render/node_list.cpp
     modules/render/node_list.h
 )
-target_link_libraries(render camera opengl_types config geometry algebra)
+target_link_libraries(render camera gl config geometry algebra)
 
 set(QT_VERSION 6.8)
 list(APPEND CMAKE_PREFIX_PATH $ENV{LOCAL_QT_DIR})
@@ -94,24 +94,21 @@ add_library(camera
 )
 target_link_libraries(camera algebra)
 
-add_library(opengl_types
-    modules/opengl_types/functions.cpp
-    modules/opengl_types/functions.h
-    modules/opengl_types/shader.cpp
-    modules/opengl_types/shader.h
-    modules/opengl_types/shader_sources.cpp
-    modules/opengl_types/shader_sources.h
+add_library(gl
+    modules/gl/functions.cpp
+    modules/gl/functions.h
+    modules/gl/shader.cpp
+    modules/gl/shader.h
+    modules/gl/shader_sources.cpp
+    modules/gl/shader_sources.h
 )
-target_link_libraries(opengl_types algebra)
+target_link_libraries(gl algebra)
 
-add_library(vulkan_types)
-target_sources(vulkan_types
-  PUBLIC
-      FILE_SET CXX_MODULES FILES
-        modules/vulkan_types/interface.cpp
-        modules/vulkan_types/vulkan_context.cpp
+add_library(vk
+    modules/vk/vulkan_context.cpp
+    modules/vk/vulkan_context.h
 )
-target_link_libraries(vulkan_types)
+target_link_libraries(vk)
 
 add_library(geometry
     modules/geometry/node.cpp
@@ -130,8 +127,8 @@ add_library(geometry
 target_link_libraries(geometry algebra)
 
 add_subdirectory(test/window)
-target_link_libraries(gl log algebra camera opengl_types config render X11 GL GLU vulkan)
-target_link_libraries(vk log algebra camera vulkan_types config render X11 GL GLU vulkan)
+target_link_libraries(gl_test log algebra camera gl config render X11 GL GLU vulkan)
+target_link_libraries(vk_test log algebra camera vk config render X11 GL GLU vulkan)
 
 add_subdirectory(test/wavefront)
 target_link_libraries(wavefront geometry)

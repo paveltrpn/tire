@@ -6,11 +6,10 @@
 #include <GL/glext.h>
 #include <GL/glcorearb.h>
 
-namespace tire::opengl {
+namespace tire::gl {
 
-typedef void( APIENTRYP PFNGLDRAWELEMENTSPROC )( GLenum mode, GLsizei count,
-                                                 GLenum type,
-                                                 const void* indices );
+using PFNGLDRAWELEMENTSPROC = void ( * )( GLenum mode, GLsizei count,
+                                          GLenum type, const void* indices );
 
 // shaders
 extern PFNGLCREATEPROGRAMPROC glCreateProgram;
@@ -48,6 +47,6 @@ extern PFNGLDELETEBUFFERSPROC glDeleteBuffers;
 extern PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArrays;
 extern PFNGLDRAWELEMENTSPROC glDrawElements;
 
-void initOpenGLFunctions();
+void init();
 
-}  // namespace tire::opengl
+}  // namespace tire::gl

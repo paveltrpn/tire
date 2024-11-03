@@ -13,8 +13,8 @@
 
 #include "config/config.h"
 #include "geometry/node.h"
-#include "opengl_types/shader.h"
-#include "opengl_types/shader_sources.h"
+#include "gl/shader.h"
+#include "gl/shader_sources.h"
 #include "camera/camera.h"
 #include "node_list.h"
 

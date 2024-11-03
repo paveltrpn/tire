@@ -7,7 +7,7 @@
 #include "log/log.h"
 #include "functions.h"
 
-namespace tire::opengl {
+namespace tire::gl {
 
 // shaders
 PFNGLCREATEPROGRAMPROC glCreateProgram{ nullptr };
@@ -45,7 +45,7 @@ PFNGLDELETEBUFFERSPROC glDeleteBuffers{ nullptr };
 PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArrays{ nullptr };
 PFNGLDRAWELEMENTSPROC glDrawElements{ nullptr };
 
-void initOpenGLFunctions() {
+void init() {
     // shaders
     glCreateProgram =
         reinterpret_cast<PFNGLCREATEPROGRAMPROC>( glXGetProcAddress(
@@ -152,7 +152,7 @@ void initOpenGLFunctions() {
     glDrawElements = reinterpret_cast<PFNGLDRAWELEMENTSPROC>( glXGetProcAddress(
         reinterpret_cast<const GLubyte *>( "glDrawElements" ) ) );
     if ( !glDrawElements )
-        log::error( "can't get glDrawElements function adress!" );
+        log::error( "can't get glDrawElements function address!" );
 }
 
-}  // namespace tire::opengl
+}  // namespace tire::gl

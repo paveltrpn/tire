@@ -48,8 +48,8 @@ void info( std::format_string<Ts...> msg, Ts &&...args ) {
 }
 
 template <typename... Ts>
-void attention( std::format_string<Ts...> msg, Ts &&...args ) {
-    constexpr char preamble[] = "\033[3;35m[attention] \033[0m";
+void debug( std::format_string<Ts...> msg, Ts &&...args ) {
+    constexpr char preamble[] = "\033[3;35m[debug] \033[0m";
     std::cout << preamble
               << std::vformat( msg.get(), std::make_format_args( args... ) )
               << "\n";

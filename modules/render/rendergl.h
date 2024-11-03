@@ -20,7 +20,7 @@
 
 namespace tire {
 
-using namespace tire::opengl;
+using namespace tire::gl;
 
 struct RenderGL final : Render {
     RenderGL();

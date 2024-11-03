@@ -18,7 +18,7 @@
 #include "algebra/matrix3.h"
 #include "algebra/matrix4.h"
 
-namespace tire::opengl {
+namespace tire::gl {
 
 template <typename T>
 concept ConceptGLScalar =
@@ -110,4 +110,4 @@ private:
     std::vector<std::pair<std::string, GLenum>> uniforms_;
     std::vector<std::pair<std::string, GLenum>> attributes_;
 };
-}  // namespace tire::opengl
+}  // namespace tire::gl

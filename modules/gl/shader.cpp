@@ -9,8 +9,7 @@
 #include "log/log.h"
 #include "shader.h"
 
-namespace tire::opengl
-{
+namespace tire::gl {
 
 GLuint Shader::getProgramId() const {
     return program_;
@@ -68,7 +67,8 @@ GLuint Shader::getUniformLocation( const std::string &id ) {
     return glGetUniformLocation( program_, id.c_str() );
 }
 
-std::vector<GLuint> Shader::getShadersList( std::vector<std::pair<GLuint, std::string>> shaders ) {
+std::vector<GLuint> Shader::getShadersList(
+    std::vector<std::pair<GLuint, std::string>> shaders ) {
     std::vector<GLuint> rt;
     if ( shaders.size() < 2 ) {
         log::error( " wrong shader count!" );
@@ -93,7 +93,8 @@ std::vector<GLuint> Shader::getShadersList( std::vector<std::pair<GLuint, std::s
                 log.reserve( logLength );
                 glGetShaderInfoLog( shHandle, logLength, nullptr, log.data() );
 
-                log::error( "can't compile shader with trace:\n{}", log.data() );
+                log::error( "can't compile shader with trace:\n{}",
+                            log.data() );
                 return rt;
             }
 
@@ -104,37 +105,39 @@ std::vector<GLuint> Shader::getShadersList( std::vector<std::pair<GLuint, std::s
 }
 
 void Shader::getActiveAttributes() {
-    GLint size;  // size of the variable
-    GLenum type; // type of the variable (float, vec3 or mat4, etc)
+    GLint size;   // size of the variable
+    GLenum type;  // type of the variable (float, vec3 or mat4, etc)
 
-    constexpr GLsizei bufSize = 16;   // maximum name length
-    std::array<GLchar, bufSize> name; // variable name in GLSL
-    GLsizei length;                   // name length
+    constexpr GLsizei bufSize = 16;    // maximum name length
+    std::array<GLchar, bufSize> name;  // variable name in GLSL
+    GLsizei length;                    // name length
 
     GLint count;
     glGetProgramiv( program_, GL_ACTIVE_ATTRIBUTES, &count );
 
     for ( GLint i = 0; i < count; i++ ) {
-        glGetActiveAttrib( program_, (GLuint)i, bufSize, &length, &size, &type, name.data() );
+        glGetActiveAttrib( program_, (GLuint)i, bufSize, &length, &size, &type,
+                           name.data() );
         attributes_.push_back( { name.data(), type } );
     }
 }
 
 void Shader::getActiveUniforms() {
-    GLint size;  // size of the variable
-    GLenum type; // type of the variable (float, vec3 or mat4, etc)
+    GLint size;   // size of the variable
+    GLenum type;  // type of the variable (float, vec3 or mat4, etc)
 
-    constexpr GLsizei bufSize = 16;   // maximum name length
-    std::array<GLchar, bufSize> name; // variable name in GLSL
-    GLsizei length;                   // name length
+    constexpr GLsizei bufSize = 16;    // maximum name length
+    std::array<GLchar, bufSize> name;  // variable name in GLSL
+    GLsizei length;                    // name length
 
     GLint count;
     glGetProgramiv( program_, GL_ACTIVE_UNIFORMS, &count );
 
     for ( GLint i = 0; i < count; i++ ) {
-        glGetActiveUniform( program_, (GLuint)i, bufSize, &length, &size, &type, name.data() );
+        glGetActiveUniform( program_, (GLuint)i, bufSize, &length, &size, &type,
+                            name.data() );
         uniforms_.push_back( { name.data(), type } );
     }
 }
 
-} // namespace tire::opengl
+}  // namespace tire::gl

@@ -15,14 +15,14 @@
 
 namespace tire {
 
-using namespace tire::opengl;
+using namespace tire::gl;
 
 RenderGL::RenderGL()
     : Render{} {
     checkGlxVersion();
     initGlxExtensions();
     configureGl();
-    initOpenGLFunctions();
+    gl::init();
     setSwapInterval( 1 );
 }
 
@@ -147,7 +147,7 @@ void RenderGL::displayRenderInfo() {
 }
 
 void RenderGL::prepareShaders() {
-    auto program = opengl::Shader{};
+    auto program = gl::Shader{};
     program.link(
         { { GL_VERTEX_SHADER,
             shaderSourcesManager_.getVertexShader( "basic_color" ) },
@@ -162,9 +162,9 @@ void RenderGL::prepareShaders() {
     auto color = program.getUniformLocation( "color" );
     program.setVectorUniform( color, algebra::vector3f{ 0.9f, 0.2f, 0.5f } );
 
-    log::attention( "mat: {}, col: {}", matrix, color );
+    log::debug( "mat: {}, col: {}", matrix, color );
 
-    programs_.insert( std::pair{ opengl::ShaderID::BASIC_COLOR, program } );
+    programs_.insert( std::pair{ gl::ShaderID::BASIC_COLOR, program } );
 }
 
 // =============================================================================
@@ -174,7 +174,7 @@ void RenderGL::prepareShaders() {
 void RenderGL::initMainLoop() {
     prepareShaders();
 
-    opengl::Shader basic_color = programs_[opengl::ShaderID::BASIC_COLOR];
+    gl::Shader basic_color = programs_[gl::ShaderID::BASIC_COLOR];
 
     basic_color.use();
 };
