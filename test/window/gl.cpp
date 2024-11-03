@@ -3,7 +3,7 @@
 #include <filesystem>
 
 #include "log/log.h"
-#include "subject.h"
+#include "scene.h"
 #include "config/config.h"
 #include "render/rendergl.h"
 #include "camera/camera.h"
@@ -29,7 +29,7 @@ int main( int argc, char **argv ) {
 
     rndr->displayRenderInfo();
 
-    initSubject( rndr.get() );
+    initScene( rndr.get() );
 
     {
         auto configPtr = tire::Config::instance();

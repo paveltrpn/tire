@@ -4,13 +4,14 @@
 
 #include "log/log.h"
 
-#include "subject.h"
+#include "scene.h"
 #include "config/config.h"
 #include "render/rendervk.h"
 
 int main( int argc, char **argv ) {
     try {
-        new tire::Config{ std::filesystem::path{ "../test/window/config.json" } };
+        new tire::Config{
+            std::filesystem::path{ "../test/window/config.json" } };
     } catch ( const std::exception &e ) {
         tire::log::error( "caught exception: {}", e.what() );
         return 0;
@@ -26,7 +27,7 @@ int main( int argc, char **argv ) {
 
     rndr->displayRenderInfo();
 
-    initSubject( rndr.get() );
+    initScene( rndr.get() );
 
     rndr->run();
 
