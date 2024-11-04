@@ -6,7 +6,7 @@
 
 #include "scene.h"
 #include "config/config.h"
-#include "render/rendervk.h"
+#include "render/vk/rendervk.h"
 
 int main( int argc, char **argv ) {
     try {

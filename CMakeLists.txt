@@ -42,19 +42,21 @@ add_library(config
 add_library(render
     modules/render/render.cpp
     modules/render/render.h
-    modules/render/rendergl.cpp
-    modules/render/rendergl.h
-    modules/render/rendervk.cpp
-    modules/render/rendervk_printinfo.cpp
-    modules/render/rendervk.h
     modules/render/node_list.cpp
     modules/render/node_list.h
+    modules/render/gl/rendergl.cpp
+    modules/render/gl/rendergl.h
     modules/render/gl/functions.cpp
     modules/render/gl/functions.h
     modules/render/gl/shader.cpp
     modules/render/gl/shader.h
+    modules/render/gl/buffer.cpp
+    modules/render/gl/buffer.h
     modules/render/gl/shader_sources.cpp
     modules/render/gl/shader_sources.h
+    modules/render/vk/rendervk.cpp
+    modules/render/vk/rendervk.h
+    modules/render/vk/rendervk_printinfo.cpp
     modules/render/vk/vulkan_context.cpp
     modules/render/vk/vulkan_context.h
 )

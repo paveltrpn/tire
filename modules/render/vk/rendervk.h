@@ -12,24 +12,26 @@
 #include <vulkan/vulkan_core.h>
 
 #include "config/config.h"
-#include "render.h"
+#include "../render.h"
 #include "geometry/node.h"
 
-namespace tire
-{
+namespace tire {
 
-static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback( VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                                                     VkDebugUtilsMessageTypeFlagsEXT messageType,
-                                                     const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
-                                                     void *pUserData ) {
+static VKAPI_ATTR VkBool32 VKAPI_CALL
+debugCallback( VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+               VkDebugUtilsMessageTypeFlagsEXT messageType,
+               const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
+               void *pUserData ) {
     std::print( "validation layer debug:\t\t{}\n", pCallbackData->pMessage );
     return VK_FALSE;
 }
 
-static VkResult vkCreateDebugUtilsMessenger( VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo,
-                                             const VkAllocationCallbacks *pAllocator,
-                                             VkDebugUtilsMessengerEXT *pDebugMessenger ) {
-    auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr( instance, "vkCreateDebugUtilsMessengerEXT" );
+static VkResult vkCreateDebugUtilsMessenger(
+    VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo,
+    const VkAllocationCallbacks *pAllocator,
+    VkDebugUtilsMessengerEXT *pDebugMessenger ) {
+    auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
+        instance, "vkCreateDebugUtilsMessengerEXT" );
     if ( func != nullptr ) {
         return func( instance, pCreateInfo, pAllocator, pDebugMessenger );
     } else {
@@ -68,19 +70,24 @@ private:
 
         vkEnumerateInstanceExtensionProperties( nullptr, &extCount, nullptr );
         extensionProperties_.resize( extCount );
-        vkEnumerateInstanceExtensionProperties( nullptr, &extCount, extensionProperties_.data() );
+        vkEnumerateInstanceExtensionProperties( nullptr, &extCount,
+                                                extensionProperties_.data() );
     };
 
     // pass std::nullopt to enable all avaible exensions
-    std::vector<char *> makeExtensionsList( std::optional<std::vector<std::string>> list ) {
+    std::vector<char *> makeExtensionsList(
+        std::optional<std::vector<std::string>> list ) {
         std::vector<char *> rt{};
 
         enumerateExtensionProperties();
 
         if ( list ) {
             for ( const auto &name : list.value() ) {
-                auto res = std::find_if( extensionProperties_.begin(), extensionProperties_.end(),
-                                         [name]( auto &ep ) -> bool { return ep.extensionName == name; } );
+                auto res = std::find_if( extensionProperties_.begin(),
+                                         extensionProperties_.end(),
+                                         [name]( auto &ep ) -> bool {
+                                             return ep.extensionName == name;
+                                         } );
                 if ( res != extensionProperties_.end() ) {
                     rt.push_back( ( *res ).extensionName );
                 } else {
@@ -103,25 +110,31 @@ private:
 
         vkEnumerateInstanceLayerProperties( &layerCount, nullptr );
         layerProperties_.resize( layerCount );
-        vkEnumerateInstanceLayerProperties( &layerCount, layerProperties_.data() );
+        vkEnumerateInstanceLayerProperties( &layerCount,
+                                            layerProperties_.data() );
     }
 
     // pass std::nullopt to enable all avaible validation layers.
     // may cause instance creation error, for example:
     // "Requested layer "VK_LAYER_VALVE_steam_overlay_32" was wrong bit-type!"
-    std::vector<char *> makeValidationLayersList( std::optional<std::vector<std::string>> list ) {
+    std::vector<char *> makeValidationLayersList(
+        std::optional<std::vector<std::string>> list ) {
         std::vector<char *> rt{};
 
         enumerateValidationLayers();
 
         if ( list ) {
             for ( const auto &name : list.value() ) {
-                auto res = std::find_if( layerProperties_.begin(), layerProperties_.end(),
-                                         [name]( auto &lp ) -> bool { return lp.layerName == name; } );
+                auto res = std::find_if( layerProperties_.begin(),
+                                         layerProperties_.end(),
+                                         [name]( auto &lp ) -> bool {
+                                             return lp.layerName == name;
+                                         } );
                 if ( res != layerProperties_.end() ) {
                     rt.push_back( ( *res ).layerName );
                 } else {
-                    std::print( "validation layer \"{}\" not supported\n", name );
+                    std::print( "validation layer \"{}\" not supported\n",
+                                name );
                 }
             }
         } else {
@@ -145,56 +158,70 @@ private:
         appInfo_.apiVersion = VK_API_VERSION_1_0;
 
         // VkDebugCreateInfo
-        dbgCreateInfo_.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-        dbgCreateInfo_.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
-                                         VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-                                         VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-        dbgCreateInfo_.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-                                     VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-                                     VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+        dbgCreateInfo_.sType =
+            VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+        dbgCreateInfo_.messageSeverity =
+            VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
+            VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+            VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+        dbgCreateInfo_.messageType =
+            VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+            VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+            VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
         dbgCreateInfo_.pfnUserCallback = debugCallback;
-        dbgCreateInfo_.pUserData = nullptr; // Optional
+        dbgCreateInfo_.pUserData = nullptr;  // Optional
 
         // VkInstanceCreateInfo
         instanceCreateInfo_.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         instanceCreateInfo_.pApplicationInfo = &appInfo_;
 
         // validation layers
-        std::vector<std::string> vllist{ "VK_LAYER_INTEL_nullhw", "VK_LAYER_MESA_device_select",
-                                         "VK_LAYER_MESA_overlay", "VK_LAYER_NV_optimus",
-                                         //"VK_LAYER_VALVE_steam_fossilize_32",
-                                         "VK_LAYER_VALVE_steam_fossilize_64",
-                                         //"VK_LAYER_VALVE_steam_overlay_32",
-                                         "VK_LAYER_VALVE_steam_overlay_64" };
+        std::vector<std::string> vllist{
+            "VK_LAYER_INTEL_nullhw", "VK_LAYER_MESA_device_select",
+            "VK_LAYER_MESA_overlay", "VK_LAYER_NV_optimus",
+            //"VK_LAYER_VALVE_steam_fossilize_32",
+            "VK_LAYER_VALVE_steam_fossilize_64",
+            //"VK_LAYER_VALVE_steam_overlay_32",
+            "VK_LAYER_VALVE_steam_overlay_64" };
 
         validationLayersNames_ = makeValidationLayersList( vllist );
 
         if ( enableValidationLayers_ ) {
-            instanceCreateInfo_.enabledLayerCount = static_cast<uint32_t>( validationLayersNames_.size() );
-            instanceCreateInfo_.ppEnabledLayerNames = validationLayersNames_.data();
-            instanceCreateInfo_.pNext = (VkDebugUtilsMessengerCreateInfoEXT *)&dbgCreateInfo_;
+            instanceCreateInfo_.enabledLayerCount =
+                static_cast<uint32_t>( validationLayersNames_.size() );
+            instanceCreateInfo_.ppEnabledLayerNames =
+                validationLayersNames_.data();
+            instanceCreateInfo_.pNext =
+                (VkDebugUtilsMessengerCreateInfoEXT *)&dbgCreateInfo_;
         }
 
         // extensions
-        std::vector<std::string> eplist{ "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_EXT_debug_report",
-                                         "VK_EXT_debug_utils" };
+        std::vector<std::string> eplist{
+            "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_EXT_debug_report",
+            "VK_EXT_debug_utils" };
 
         extensionsNames_ = makeExtensionsList( std::nullopt );
 
-        instanceCreateInfo_.enabledExtensionCount = static_cast<uint32_t>( extensionsNames_.size() );
+        instanceCreateInfo_.enabledExtensionCount =
+            static_cast<uint32_t>( extensionsNames_.size() );
         instanceCreateInfo_.ppEnabledExtensionNames = extensionsNames_.data();
 
         // instance creation
-        auto res = vkCreateInstance( &instanceCreateInfo_, nullptr, &instance_ );
+        auto res =
+            vkCreateInstance( &instanceCreateInfo_, nullptr, &instance_ );
 
         if ( res != VK_SUCCESS ) {
             throw std::runtime_error(
-                std::format( "can't create vk instance with code: {}\n", static_cast<int>( res ) ) );
+                std::format( "can't create vk instance with code: {}\n",
+                             static_cast<int>( res ) ) );
         }
 
         if ( enableValidationLayers_ ) {
-            if ( vkCreateDebugUtilsMessenger( instance_, &dbgCreateInfo_, nullptr, &debugMessenger_ ) != VK_SUCCESS ) {
-                throw std::runtime_error( "failed to set up debug messenger!\n" );
+            if ( vkCreateDebugUtilsMessenger( instance_, &dbgCreateInfo_,
+                                              nullptr, &debugMessenger_ ) !=
+                 VK_SUCCESS ) {
+                throw std::runtime_error(
+                    "failed to set up debug messenger!\n" );
             }
         }
     }
@@ -209,7 +236,8 @@ private:
 
         physicalDevices_.resize( size_t( devCount ) );
 
-        vkEnumeratePhysicalDevices( instance_, &devCount, physicalDevices_.data() );
+        vkEnumeratePhysicalDevices( instance_, &devCount,
+                                    physicalDevices_.data() );
 
         for ( auto &device : physicalDevices_ ) {
             VkPhysicalDeviceProperties devProps;
@@ -226,9 +254,11 @@ private:
             // physical device queue families properies
             uint32_t queueFamilyCount{};
 
-            vkGetPhysicalDeviceQueueFamilyProperties( device, &queueFamilyCount, nullptr );
+            vkGetPhysicalDeviceQueueFamilyProperties( device, &queueFamilyCount,
+                                                      nullptr );
             queueFamilyProperties_.resize( size_t( queueFamilyCount ) );
-            vkGetPhysicalDeviceQueueFamilyProperties( device, &queueFamilyCount, queueFamilyProperties_.data() );
+            vkGetPhysicalDeviceQueueFamilyProperties(
+                device, &queueFamilyCount, queueFamilyProperties_.data() );
         }
     }
 
@@ -247,19 +277,23 @@ private:
         // deviceCreateInfo_.ppEnabledExtensionNames = extensionsNames_.data();
 
         if ( enableValidationLayers_ ) {
-            deviceCreateInfo_.enabledLayerCount = static_cast<uint32_t>( validationLayersNames_.size() );
-            deviceCreateInfo_.ppEnabledLayerNames = validationLayersNames_.data();
+            deviceCreateInfo_.enabledLayerCount =
+                static_cast<uint32_t>( validationLayersNames_.size() );
+            deviceCreateInfo_.ppEnabledLayerNames =
+                validationLayersNames_.data();
         } else {
             deviceCreateInfo_.enabledLayerCount = 0;
         }
 
-        if ( vkCreateDevice( physicalDevices_[0], &deviceCreateInfo_, nullptr, &device_ ) != VK_SUCCESS ) {
+        if ( vkCreateDevice( physicalDevices_[0], &deviceCreateInfo_, nullptr,
+                             &device_ ) != VK_SUCCESS ) {
             throw std::runtime_error( "failed to create logical device!" );
         }
     }
 
     bool isDeviceSuitable( size_t id ) {
-        return physicalDevicesProperties_[id].deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
+        return physicalDevicesProperties_[id].deviceType ==
+                   VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
                physicalDevicesFeatures_[id].geometryShader;
     }
 
@@ -299,4 +333,4 @@ private:
     std::vector<VkQueueFamilyProperties> queueFamilyProperties_;
 };
 
-} // namespace tire
+}  // namespace tire

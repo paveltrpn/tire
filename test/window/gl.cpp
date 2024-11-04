@@ -5,7 +5,7 @@
 #include "log/log.h"
 #include "scene.h"
 #include "config/config.h"
-#include "render/rendergl.h"
+#include "render/gl/rendergl.h"
 #include "camera/camera.h"
 
 #include "algebra/vector3.h"

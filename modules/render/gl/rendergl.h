@@ -15,7 +15,7 @@
 #include <X11/Xutil.h>
 
 #include "config/config.h"
-#include "render.h"
+#include "../render.h"
 #include "geometry/node.h"
 
 namespace tire {
