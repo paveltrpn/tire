@@ -29,6 +29,21 @@ int main( int argc, char **argv ) {
 
     initScene( rndr.get() );
 
+    {
+        auto configPtr = tire::Config::instance();
+        auto width =
+            static_cast<float>( configPtr->get<int>( "window_width" ) );
+        auto height =
+            static_cast<float>( configPtr->get<int>( "window_height" ) );
+        auto camera = std::make_shared<tire::camera::Perspective>(
+            50.0f, width / height, 0.1f, 100.0f );
+
+        camera->move( tire::algebra::vector3f{ 0.0f, 0.0f, -10.0f } );
+        camera->rotate( 5.0f, 0.0f, 0.0f );
+
+        rndr->addCamera( camera );
+    }
+
     rndr->run();
 
     return 0;
