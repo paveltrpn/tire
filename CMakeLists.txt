@@ -56,9 +56,9 @@ add_library(render
     modules/render/gl/shader_sources.h
     modules/render/vk/rendervk.cpp
     modules/render/vk/rendervk.h
-    modules/render/vk/rendervk_printinfo.cpp
-    modules/render/vk/vulkan_context.cpp
-    modules/render/vk/vulkan_context.h
+    modules/render/vk/info.cpp
+    modules/render/vk/main_loop.cpp
+    modules/render/vk/node_list.cpp
 )
 target_link_libraries(render camera config geometry algebra)
 

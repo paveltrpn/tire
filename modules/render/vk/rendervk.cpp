@@ -3,13 +3,11 @@
 #include <format>
 
 #include <vulkan/vulkan.h>
-#include <vulkan/vulkan_core.h>
 
 #include "rendervk.h"
 #include "geometry/node.h"
 
-namespace tire
-{
+namespace tire {
 
 RenderVK::RenderVK()
     : Render{} {
@@ -17,7 +15,8 @@ RenderVK::RenderVK()
 
     applicationName_ = configPtr->getString( "application_name" );
     engineName_ = configPtr->getString( "engine_name" );
-    enableValidationLayers_ = configPtr->get<bool>( "enable_validation_layers" );
+    enableValidationLayers_ =
+        configPtr->get<bool>( "enable_validation_layers" );
 
     createInstance();
     initPhysicalDevices();
@@ -29,127 +28,226 @@ RenderVK::~RenderVK() {
     vkDestroyInstance( instance_, nullptr );
 };
 
-void RenderVK::displayExtensionProperties() {
-    std::print( "Instance extensions count: {}\n"
-                "==========================\n",
-                extensionProperties_.size() );
-    for ( auto &prop : extensionProperties_ ) {
-        std::print( "\t{} | revision: {}\n", prop.extensionName, prop.specVersion );
+void RenderVK::setSwapInterval( int interval ) {
+
+};
+
+void RenderVK::enumerateExtensionProperties() {
+    uint32_t extCount;
+
+    vkEnumerateInstanceExtensionProperties( nullptr, &extCount, nullptr );
+    extensionProperties_.resize( extCount );
+    vkEnumerateInstanceExtensionProperties( nullptr, &extCount,
+                                            extensionProperties_.data() );
+};
+
+// pass std::nullopt to enable all available exensions
+std::vector<char *> RenderVK::makeExtensionsList(
+    std::optional<std::vector<std::string>> list ) {
+    std::vector<char *> rt{};
+
+    enumerateExtensionProperties();
+
+    if ( list ) {
+        for ( const auto &name : list.value() ) {
+            auto res = std::find_if( extensionProperties_.begin(),
+                                     extensionProperties_.end(),
+                                     [name]( auto &ep ) -> bool {
+                                         return ep.extensionName == name;
+                                     } );
+            if ( res != extensionProperties_.end() ) {
+                rt.push_back( ( *res ).extensionName );
+            } else {
+                std::print( "extension \"{}\" not supported\n", name );
+            }
+        }
+    } else {
+        for ( auto &ep : extensionProperties_ ) {
+            rt.push_back( ep.extensionName );
+        }
+    }
+
+    return rt;
+}
+
+void RenderVK::enumerateValidationLayers() {
+    uint32_t layerCount;
+
+    vkEnumerateInstanceLayerProperties( &layerCount, nullptr );
+    layerProperties_.resize( layerCount );
+    vkEnumerateInstanceLayerProperties( &layerCount, layerProperties_.data() );
+}
+
+// pass std::nullopt to enable all avaible validation layers.
+// may cause instance creation error, for example:
+// "Requested layer "VK_LAYER_VALVE_steam_overlay_32" was wrong bit-type!"
+std::vector<char *> RenderVK::makeValidationLayersList(
+    std::optional<std::vector<std::string>> list ) {
+    std::vector<char *> rt{};
+
+    enumerateValidationLayers();
+
+    if ( list ) {
+        for ( const auto &name : list.value() ) {
+            auto res = std::find_if(
+                layerProperties_.begin(), layerProperties_.end(),
+                [name]( auto &lp ) -> bool { return lp.layerName == name; } );
+            if ( res != layerProperties_.end() ) {
+                rt.push_back( ( *res ).layerName );
+            } else {
+                std::print( "validation layer \"{}\" not supported\n", name );
+            }
+        }
+    } else {
+        for ( auto &lp : layerProperties_ ) {
+            rt.push_back( lp.layerName );
+        }
+    }
+
+    return rt;
+}
+
+void RenderVK::createInstance() {
+    // VkApplicationInfo
+    appInfo_.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+    appInfo_.pApplicationName = applicationName_.data();
+    appInfo_.applicationVersion = VK_MAKE_VERSION( 1, 0, 0 );
+    appInfo_.pEngineName = engineName_.data();
+    appInfo_.engineVersion = VK_MAKE_VERSION( 1, 0, 0 );
+    appInfo_.apiVersion = VK_API_VERSION_1_0;
+
+    // VkDebugCreateInfo
+    dbgCreateInfo_.sType =
+        VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+    dbgCreateInfo_.messageSeverity =
+        VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
+        VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+        VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+    dbgCreateInfo_.messageType =
+        VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+        VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+        VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+    dbgCreateInfo_.pfnUserCallback = debugCallback;
+    dbgCreateInfo_.pUserData = nullptr;  // Optional
+
+    // VkInstanceCreateInfo
+    instanceCreateInfo_.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    instanceCreateInfo_.pApplicationInfo = &appInfo_;
+
+    // validation layers
+    std::vector<std::string> vllist{
+        "VK_LAYER_INTEL_nullhw", "VK_LAYER_MESA_device_select",
+        "VK_LAYER_MESA_overlay", "VK_LAYER_NV_optimus",
+        //"VK_LAYER_VALVE_steam_fossilize_32",
+        "VK_LAYER_VALVE_steam_fossilize_64",
+        //"VK_LAYER_VALVE_steam_overlay_32",
+        "VK_LAYER_VALVE_steam_overlay_64" };
+
+    validationLayersNames_ = makeValidationLayersList( vllist );
+
+    if ( enableValidationLayers_ ) {
+        instanceCreateInfo_.enabledLayerCount =
+            static_cast<uint32_t>( validationLayersNames_.size() );
+        instanceCreateInfo_.ppEnabledLayerNames = validationLayersNames_.data();
+        instanceCreateInfo_.pNext =
+            (VkDebugUtilsMessengerCreateInfoEXT *)&dbgCreateInfo_;
+    }
+
+    // extensions
+    std::vector<std::string> eplist{ "VK_KHR_surface", "VK_KHR_xlib_surface",
+                                     "VK_EXT_debug_report",
+                                     "VK_EXT_debug_utils" };
+
+    extensionsNames_ = makeExtensionsList( std::nullopt );
+
+    instanceCreateInfo_.enabledExtensionCount =
+        static_cast<uint32_t>( extensionsNames_.size() );
+    instanceCreateInfo_.ppEnabledExtensionNames = extensionsNames_.data();
+
+    // instance creation
+    auto res = vkCreateInstance( &instanceCreateInfo_, nullptr, &instance_ );
+
+    if ( res != VK_SUCCESS ) {
+        throw std::runtime_error(
+            std::format( "can't create vk instance with code: {}\n",
+                         static_cast<int>( res ) ) );
+    }
+
+    if ( enableValidationLayers_ ) {
+        if ( vkCreateDebugUtilsMessenger( instance_, &dbgCreateInfo_, nullptr,
+                                          &debugMessenger_ ) != VK_SUCCESS ) {
+            throw std::runtime_error( "failed to set up debug messenger!\n" );
+        }
     }
 }
 
-void RenderVK::displayValidationLayerProperties() {
-    std::print( "Layers count: {}\n"
-                "=============\n",
-                layerProperties_.size() );
-    for ( auto &layer : layerProperties_ ) {
-        std::print( "\t{} | specVersion: {}\n\t{}\n", layer.layerName, layer.specVersion, layer.description );
+void RenderVK::initPhysicalDevices() {
+    uint32_t devCount{};
+
+    vkEnumeratePhysicalDevices( instance_, &devCount, nullptr );
+    if ( devCount == 0 ) {
+        throw std::runtime_error( "no vk physical devices in system\n" );
+    }
+
+    physicalDevices_.resize( size_t( devCount ) );
+
+    vkEnumeratePhysicalDevices( instance_, &devCount, physicalDevices_.data() );
+
+    for ( auto &device : physicalDevices_ ) {
+        VkPhysicalDeviceProperties devProps;
+        VkPhysicalDeviceFeatures devFeatures;
+
+        // physical device properties
+        vkGetPhysicalDeviceProperties( device, &devProps );
+        physicalDevicesProperties_.push_back( devProps );
+
+        // physical device features
+        vkGetPhysicalDeviceFeatures( device, &devFeatures );
+        physicalDevicesFeatures_.push_back( devFeatures );
+
+        // physical device queue families properies
+        uint32_t queueFamilyCount{};
+
+        vkGetPhysicalDeviceQueueFamilyProperties( device, &queueFamilyCount,
+                                                  nullptr );
+        queueFamilyProperties_.resize( size_t( queueFamilyCount ) );
+        vkGetPhysicalDeviceQueueFamilyProperties(
+            device, &queueFamilyCount, queueFamilyProperties_.data() );
     }
 }
 
-void RenderVK::displayPhysicalDeviceProperties( size_t id ) {
-    std::print( "physical device properties:\n"
-                "================\n" );
+void RenderVK::createDevice() {
+    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    // queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+    queueCreateInfo.queueCount = 1;
 
-    auto &d = physicalDevicesProperties_[id];
-    std::print( "\tdeviceName:\t{}\n"
-                "\tdeviceID:\t{}\n"
-                "\tvendorID:\t{}\n"
-                "\tapiVersion:\t{}\n"
-                "\tdeviceType: not printed\n",
-                d.deviceName, d.deviceID, d.vendorID, d.apiVersion );
+    deviceCreateInfo_.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    deviceCreateInfo_.pQueueCreateInfos = &queueCreateInfo;
+    deviceCreateInfo_.queueCreateInfoCount = 1;
+    deviceCreateInfo_.pEnabledFeatures = &physicalDevicesFeatures_[0];
+
+    // deviceCreateInfo_.enabledExtensionCount
+    //   = static_cast<uint32_t>(extensionsNames_.size());
+    // deviceCreateInfo_.ppEnabledExtensionNames = extensionsNames_.data();
+
+    if ( enableValidationLayers_ ) {
+        deviceCreateInfo_.enabledLayerCount =
+            static_cast<uint32_t>( validationLayersNames_.size() );
+        deviceCreateInfo_.ppEnabledLayerNames = validationLayersNames_.data();
+    } else {
+        deviceCreateInfo_.enabledLayerCount = 0;
+    }
+
+    if ( vkCreateDevice( physicalDevices_[0], &deviceCreateInfo_, nullptr,
+                         &device_ ) != VK_SUCCESS ) {
+        throw std::runtime_error( "failed to create logical device!" );
+    }
 }
 
-void RenderVK::displayPhysicalDeviceFeatures( size_t id ) {
-    std::print( "physical device features:\n"
-                "================\n" );
-
-    auto &d = physicalDevicesFeatures_[id];
-    std::print(
-        "\trobustBufferAccess:\t{}\n"
-        "\tfullDrawIndexUint32:\t{}\n"
-        "\timageCubeArray:\t{}\n"
-        "\tindependentBlend:\t{}\n"
-        "\tgeometryShader:\t{}\n"
-        "\ttessellationShader:\t{}\n"
-        "\tsampleRateShading:\t{}\n"
-        "\tdualSrcBlend:\t{}\n"
-        "\tlogicOp:\t{}\n"
-        "\tmultiDrawIndirect:\t{}\n"
-        "\tdrawIndirectFirstInstance:\t{}\n"
-        "\tdepthClamp:\t{}\n"
-        "\tdepthBiasClamp:\t{}\n"
-        "\tfillModeNonSolid:\t{}\n"
-        "\tdepthBounds:\t{}\n"
-        "\twideLines:\t{}\n"
-        "\tlargePoints:\t{}\n"
-        "\talphaToOne:\t{}\n"
-        "\tmultiViewport:\t{}\n"
-        "\tsamplerAnisotropy:\t{}\n"
-        "\ttextureCompressionETC2:\t{}\n"
-        "\ttextureCompressionASTC_LDR:\t{}\n"
-        "\ttextureCompressionBC:\t{}\n"
-        "\tocclusionQueryPrecise:\t{}\n"
-        "\tpipelineStatisticsQuery:\t{}\n"
-        "\tvertexPipelineStoresAndAtomics:\t{}\n"
-        "\tfragmentStoresAndAtomics:\t{}\n"
-        "\tshaderTessellationAndGeometryPointSize:\t{}\n"
-        "\tshaderImageGatherExtended:\t{}\n"
-        "\tshaderStorageImageExtendedFormats:\t{}\n"
-        "\tshaderStorageImageMultisample:\t{}\n"
-        "\tshaderStorageImageReadWithoutFormat:\t{}\n"
-        "\tshaderStorageImageWriteWithoutFormat:\t{}\n"
-        "\tshaderUniformBufferArrayDynamicIndexing:\t{}\n"
-        "\tshaderSampledImageArrayDynamicIndexing:\t{}\n"
-        "\tshaderStorageBufferArrayDynamicIndexing:\t{}\n"
-        "\tshaderStorageImageArrayDynamicIndexing:\t{}\n"
-        "\tshaderClipDistance:\t{}\n"
-        "\tshaderCullDistance:\t{}\n"
-        "\tshaderFloat64:\t{}\n"
-        "\tshaderInt64:\t{}\n"
-        "\tshaderInt16:\t{}\n"
-        "\tshaderResourceResidency:\t{}\n"
-        "\tshaderResourceMinLod:\t{}\n"
-        "\tsparseBinding:\t{}\n"
-        "\tsparseResidencyBuffer:\t{}\n"
-        "\tsparseResidencyImage2D:\t{}\n"
-        "\tsparseResidencyImage3D:\t{}\n"
-        "\tsparseResidency2Samples:\t{}\n"
-        "\tsparseResidency4Samples:\t{}\n"
-        "\tsparseResidency8Samples:\t{}\n"
-        "\tsparseResidency16Samples:\t{}\n"
-        "\tsparseResidencyAliased:\t{}\n"
-        "\tvariableMultisampleRate:\t{}\n"
-        "\tinheritedQueries:\t{}\n",
-        d.robustBufferAccess, d.fullDrawIndexUint32, d.imageCubeArray, d.independentBlend, d.geometryShader,
-        d.tessellationShader, d.sampleRateShading, d.dualSrcBlend, d.logicOp, d.multiDrawIndirect,
-        d.drawIndirectFirstInstance, d.depthClamp, d.depthBiasClamp, d.fillModeNonSolid, d.depthBounds, d.wideLines,
-        d.largePoints, d.alphaToOne, d.multiViewport, d.samplerAnisotropy, d.textureCompressionETC2,
-        d.textureCompressionASTC_LDR, d.textureCompressionBC, d.occlusionQueryPrecise, d.pipelineStatisticsQuery,
-        d.vertexPipelineStoresAndAtomics, d.fragmentStoresAndAtomics, d.shaderTessellationAndGeometryPointSize,
-        d.shaderImageGatherExtended, d.shaderStorageImageExtendedFormats, d.shaderStorageImageMultisample,
-        d.shaderStorageImageReadWithoutFormat, d.shaderStorageImageWriteWithoutFormat,
-        d.shaderUniformBufferArrayDynamicIndexing, d.shaderSampledImageArrayDynamicIndexing,
-        d.shaderStorageBufferArrayDynamicIndexing, d.shaderStorageImageArrayDynamicIndexing, d.shaderClipDistance,
-        d.shaderCullDistance, d.shaderFloat64, d.shaderInt64, d.shaderInt16, d.shaderResourceResidency,
-        d.shaderResourceMinLod, d.sparseBinding, d.sparseResidencyBuffer, d.sparseResidencyImage2D,
-        d.sparseResidencyImage3D, d.sparseResidency2Samples, d.sparseResidency4Samples, d.sparseResidency8Samples,
-        d.sparseResidency16Samples, d.sparseResidencyAliased, d.variableMultisampleRate, d.inheritedQueries );
+bool RenderVK::isDeviceSuitable( size_t id ) {
+    return physicalDevicesProperties_[id].deviceType ==
+               VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
+           physicalDevicesFeatures_[id].geometryShader;
 }
 
-void RenderVK::displayPhysicalDeviceFamiliesProperties( size_t id ) {
-    std::print( "physical device families properties:\n"
-                "================\n" );
-
-    auto &d = queueFamilyProperties_[id];
-    std::print( "\tqueueFlags:\t{}\n"
-                "\tqueueCount:\t{}\n"
-                "\ttimestampValidBits:\t{}\n"
-                "\tminImageTransferGranularity: not printed\n",
-                d.queueFlags, d.queueCount, d.timestampValidBits );
-}
-
-void RenderVK::appendToRenderList( std::shared_ptr<tire::Node> node ) {
-    renderList_.push_back( node );
-}
-} // namespace tire
+}  // namespace tire

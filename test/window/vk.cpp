@@ -1,7 +1,7 @@
 
 #include <memory>
 #include <filesystem>
-
+#include <string>
 #include "log/log.h"
 
 #include "scene.h"
