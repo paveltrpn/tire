@@ -71,6 +71,7 @@ private:
     void initPhysicalDevices();
     void pickAndCreateDevice(
         size_t id );  // TODO: make physical device pick smarter
+    void createSurface();
 
     void displayExtensionProperties();
     void displayValidationLayerProperties();
@@ -88,13 +89,14 @@ private:
     VkInstance instance_{ VK_NULL_HANDLE };
     VkDevice device_{ VK_NULL_HANDLE };
     VkQueue graphicsQueue_{ VK_NULL_HANDLE };
+    VkSurfaceKHR surface_{};
 
     // structures
     VkApplicationInfo appInfo_{};
     VkInstanceCreateInfo instanceCreateInfo_{};
     VkDebugUtilsMessengerEXT debugMessenger_{};
     VkDebugUtilsMessengerCreateInfoEXT dbgCreateInfo_{};
-    VkDeviceQueueCreateInfo queueCreateInfo{};
+    VkDeviceQueueCreateInfo queueCreateInfo_{};
     VkDeviceCreateInfo deviceCreateInfo_{};
 
     // vulkan entities info lists
@@ -102,11 +104,10 @@ private:
     std::vector<VkLayerProperties> layerProperties_;
     std::vector<char *> validationLayersNames_;
     std::vector<char *> extensionsNames_;
-
     struct PhysicalDevice {
         VkPhysicalDevice device{ VK_NULL_HANDLE };
-        VkPhysicalDeviceProperties devicesProperties{};
-        VkPhysicalDeviceFeatures devicesFeatures{};
+        VkPhysicalDeviceProperties properties{};
+        VkPhysicalDeviceFeatures features{};
         std::vector<VkQueueFamilyProperties> queueFamilyProperties{};
     };
     std::vector<PhysicalDevice> physicalDevices_;

@@ -2,6 +2,7 @@
 #include <print>
 #include <format>
 
+#define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vulkan.h>
 
 #include "rendervk.h"
@@ -29,6 +30,7 @@ RenderVK::RenderVK()
 
 RenderVK::~RenderVK() {
     vkDestroyDevice( device_, nullptr );
+    vkDestroySurfaceKHR( instance_, surface_, nullptr );
     vkDestroyInstance( instance_, nullptr );
 };
 
@@ -219,7 +221,7 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
     // Check is physical device suitable, can be done acoording to
     // physical devices properties and physical device queue families properies
 
-    const auto &deviceProps = physicalDevices_[id].devicesProperties;
+    const auto &deviceProps = physicalDevices_[id].properties;
     if ( !( deviceProps.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU ) ) {
         throw std::runtime_error(
             "picked physical device is not discrete GPU!" );
@@ -228,17 +230,28 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
     // Create a new device instance.
     // A logical device is created as a connection to a physical device.
 
-    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    // queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
-    queueCreateInfo.queueCount = 1;
+    queueCreateInfo_.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+
+    uint32_t graphicsFamily{};
+    int i = 0;
+    for ( const auto &queueFamily :
+          physicalDevices_[id].queueFamilyProperties ) {
+        if ( queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT ) {
+            graphicsFamily = i;
+        }
+        i++;
+    }
+    queueCreateInfo_.queueFamilyIndex = graphicsFamily;
+    queueCreateInfo_.queueCount = 1;
 
     deviceCreateInfo_.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-    deviceCreateInfo_.pQueueCreateInfos = &queueCreateInfo;
+    deviceCreateInfo_.pQueueCreateInfos = &queueCreateInfo_;
     deviceCreateInfo_.queueCreateInfoCount = 1;
-    deviceCreateInfo_.pEnabledFeatures = &physicalDevices_[id].devicesFeatures;
+    deviceCreateInfo_.pEnabledFeatures = &physicalDevices_[id].features;
 
-    // deviceCreateInfo_.enabledExtensionCount
-    //   = static_cast<uint32_t>(extensionsNames_.size());
+    // TODO: crash
+    // deviceCreateInfo_.enabledExtensionCount =
+    // static_cast<uint32_t>( extensionsNames_.size() );
     // deviceCreateInfo_.ppEnabledExtensionNames = extensionsNames_.data();
 
     if ( enableValidationLayers_ ) {
@@ -255,7 +268,18 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
         throw std::runtime_error( "failed to create logical device!" );
     }
 
-    vkGetDeviceQueue( device_, id, 0, &graphicsQueue_ );
+    vkGetDeviceQueue( device_, graphicsFamily, 0, &graphicsQueue_ );
+}
+
+void RenderVK::createSurface() {
+    VkXlibSurfaceCreateInfoKHR xlibSurfInfo{};
+    xlibSurfInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+    xlibSurfInfo.dpy = display_;
+    xlibSurfInfo.window = window_;
+    if ( vkCreateXlibSurfaceKHR( instance_, &xlibSurfInfo, nullptr,
+                                 &surface_ ) != VK_SUCCESS ) {
+        throw std::runtime_error( "failed to create xlib surface!" );
+    }
 }
 
 }  // namespace tire

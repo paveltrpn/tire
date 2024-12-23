@@ -50,7 +50,7 @@ void RenderVK::displayPhysicalDeviceProperties( size_t id ) {
 ================
 )" );
 
-    auto &d = physicalDevices_[id].devicesProperties;
+    auto &d = physicalDevices_[id].properties;
     std::print(
         R"(	deviceName:	{}
 	deviceID:	{}
@@ -67,7 +67,7 @@ void RenderVK::displayPhysicalDeviceFeatures( size_t id ) {
 ================
 )" );
 
-    auto &d = physicalDevices_[id].devicesFeatures;
+    auto &d = physicalDevices_[id].features;
     std::print(
         R"(	robustBufferAccess:	{}
 	fullDrawIndexUint32:	{}
