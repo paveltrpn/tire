@@ -50,7 +50,7 @@ void RenderVK::displayPhysicalDeviceProperties( size_t id ) {
 ================
 )" );
 
-    auto &d = physicalDevicesProperties_[id];
+    auto &d = physicalDevices_[id].devicesProperties;
     std::print(
         R"(	deviceName:	{}
 	deviceID:	{}
@@ -67,7 +67,7 @@ void RenderVK::displayPhysicalDeviceFeatures( size_t id ) {
 ================
 )" );
 
-    auto &d = physicalDevicesFeatures_[id];
+    auto &d = physicalDevices_[id].devicesFeatures;
     std::print(
         R"(	robustBufferAccess:	{}
 	fullDrawIndexUint32:	{}
@@ -157,14 +157,18 @@ void RenderVK::displayPhysicalDeviceFamiliesProperties( size_t id ) {
 ================
 )" );
 
-    auto &d = queueFamilyProperties_[id];
-    std::print(
-        R"(	queueFlags:	{}
+    const auto &queueFamilyProperties =
+        physicalDevices_[id].queueFamilyProperties;
+
+    for ( const auto &prop : queueFamilyProperties ) {
+        std::print(
+            R"(	queueFlags:	{}
 	queueCount:	{}
 	timestampValidBits:	{}
 	minImageTransferGranularity: not printed
 )",
-        d.queueFlags, d.queueCount, d.timestampValidBits );
+            prop.queueFlags, prop.queueCount, prop.timestampValidBits );
+    }
 }
 
 }  // namespace tire

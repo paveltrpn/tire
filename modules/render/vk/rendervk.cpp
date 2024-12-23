@@ -18,9 +18,13 @@ RenderVK::RenderVK()
     enableValidationLayers_ =
         configPtr->get<bool>( "enable_validation_layers" );
 
-    createInstance();
-    initPhysicalDevices();
-    createDevice();
+    try {
+        createInstance();
+        initPhysicalDevices();
+        pickAndCreateDevice( 0 );
+    } catch ( const std::runtime_error &e ) {
+        throw std::runtime_error( e.what() );
+    }
 };
 
 RenderVK::~RenderVK() {
@@ -28,7 +32,7 @@ RenderVK::~RenderVK() {
     vkDestroyInstance( instance_, nullptr );
 };
 
-void RenderVK::setSwapInterval( int interval ) {
+void RenderVK::setSwapInterval( int interval ){
 
 };
 
@@ -183,40 +187,47 @@ void RenderVK::createInstance() {
 
 void RenderVK::initPhysicalDevices() {
     uint32_t devCount{};
-
     vkEnumeratePhysicalDevices( instance_, &devCount, nullptr );
     if ( devCount == 0 ) {
         throw std::runtime_error( "no vk physical devices in system\n" );
     }
 
-    physicalDevices_.resize( size_t( devCount ) );
+    std::vector<VkPhysicalDevice> physicalDevices( devCount );
+    vkEnumeratePhysicalDevices( instance_, &devCount, physicalDevices.data() );
 
-    vkEnumeratePhysicalDevices( instance_, &devCount, physicalDevices_.data() );
-
-    for ( auto &device : physicalDevices_ ) {
+    for ( const auto device : physicalDevices ) {
+        // Collect physical devices and its properties
         VkPhysicalDeviceProperties devProps;
         VkPhysicalDeviceFeatures devFeatures;
-
-        // physical device properties
         vkGetPhysicalDeviceProperties( device, &devProps );
-        physicalDevicesProperties_.push_back( devProps );
-
-        // physical device features
         vkGetPhysicalDeviceFeatures( device, &devFeatures );
-        physicalDevicesFeatures_.push_back( devFeatures );
 
-        // physical device queue families properies
+        // Collect physical device queue families properies
         uint32_t queueFamilyCount{};
-
         vkGetPhysicalDeviceQueueFamilyProperties( device, &queueFamilyCount,
                                                   nullptr );
-        queueFamilyProperties_.resize( size_t( queueFamilyCount ) );
-        vkGetPhysicalDeviceQueueFamilyProperties(
-            device, &queueFamilyCount, queueFamilyProperties_.data() );
+        std::vector<VkQueueFamilyProperties> qfp( queueFamilyCount );
+        vkGetPhysicalDeviceQueueFamilyProperties( device, &queueFamilyCount,
+                                                  qfp.data() );
+
+        physicalDevices_.push_back(
+            PhysicalDevice{ device, devProps, devFeatures, qfp } );
     }
 }
 
-void RenderVK::createDevice() {
+void RenderVK::pickAndCreateDevice( size_t id ) {
+    // Check is physical device suitable, can be done acoording to
+    // physical devices properties and physical device queue families properies
+
+    const auto &deviceProps = physicalDevices_[id].devicesProperties;
+    if ( !( deviceProps.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU ) ) {
+        throw std::runtime_error(
+            "picked physical device is not discrete GPU!" );
+    }
+
+    // Create a new device instance.
+    // A logical device is created as a connection to a physical device.
+
     queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
     // queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
     queueCreateInfo.queueCount = 1;
@@ -224,7 +235,7 @@ void RenderVK::createDevice() {
     deviceCreateInfo_.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     deviceCreateInfo_.pQueueCreateInfos = &queueCreateInfo;
     deviceCreateInfo_.queueCreateInfoCount = 1;
-    deviceCreateInfo_.pEnabledFeatures = &physicalDevicesFeatures_[0];
+    deviceCreateInfo_.pEnabledFeatures = &physicalDevices_[id].devicesFeatures;
 
     // deviceCreateInfo_.enabledExtensionCount
     //   = static_cast<uint32_t>(extensionsNames_.size());
@@ -238,16 +249,13 @@ void RenderVK::createDevice() {
         deviceCreateInfo_.enabledLayerCount = 0;
     }
 
-    if ( vkCreateDevice( physicalDevices_[0], &deviceCreateInfo_, nullptr,
-                         &device_ ) != VK_SUCCESS ) {
+    // Create a logical device
+    if ( vkCreateDevice( physicalDevices_[id].device, &deviceCreateInfo_,
+                         nullptr, &device_ ) != VK_SUCCESS ) {
         throw std::runtime_error( "failed to create logical device!" );
     }
-}
 
-bool RenderVK::isDeviceSuitable( size_t id ) {
-    return physicalDevicesProperties_[id].deviceType ==
-               VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
-           physicalDevicesFeatures_[id].geometryShader;
+    vkGetDeviceQueue( device_, id, 0, &graphicsQueue_ );
 }
 
 }  // namespace tire

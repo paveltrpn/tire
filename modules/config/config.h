@@ -39,7 +39,7 @@ struct Config final {
         }
     }
 
-    explicit Config( std::filesystem::path fname ) {
+    explicit Config( const std::filesystem::path &fname ) {
         if ( !instance_ ) {
             std::ifstream file{ fname };
             if ( file ) {

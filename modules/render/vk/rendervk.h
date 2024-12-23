@@ -61,15 +61,17 @@ private:
     std::vector<char *> makeExtensionsList(
         std::optional<std::vector<std::string>> list );
     void enumerateValidationLayers();
-    // pass std::nullopt to enable all avaible validation layers.
+    // pass std::nullopt to enable all available validation layers.
     // may cause instance creation error, for example:
     // "Requested layer "VK_LAYER_VALVE_steam_overlay_32" was wrong bit-type!"
     std::vector<char *> makeValidationLayersList(
         std::optional<std::vector<std::string>> list );
+
     void createInstance();
     void initPhysicalDevices();
-    void createDevice();
-    bool isDeviceSuitable( size_t id );
+    void pickAndCreateDevice(
+        size_t id );  // TODO: make physical device pick smarter
+
     void displayExtensionProperties();
     void displayValidationLayerProperties();
     void displayPhysicalDeviceProperties( size_t id );
@@ -82,30 +84,32 @@ private:
 
     bool enableValidationLayers_{};
 
-    // all vk structures must be zero initialized
-    VkInstance instance_{};
-    VkDevice device_{};
+    // handles
+    VkInstance instance_{ VK_NULL_HANDLE };
+    VkDevice device_{ VK_NULL_HANDLE };
+    VkQueue graphicsQueue_{ VK_NULL_HANDLE };
 
+    // structures
     VkApplicationInfo appInfo_{};
     VkInstanceCreateInfo instanceCreateInfo_{};
     VkDebugUtilsMessengerEXT debugMessenger_{};
     VkDebugUtilsMessengerCreateInfoEXT dbgCreateInfo_{};
-
     VkDeviceQueueCreateInfo queueCreateInfo{};
-
     VkDeviceCreateInfo deviceCreateInfo_{};
 
-    // extensions and layers for instance creation
+    // vulkan entities info lists
     std::vector<VkExtensionProperties> extensionProperties_;
     std::vector<VkLayerProperties> layerProperties_;
     std::vector<char *> validationLayersNames_;
     std::vector<char *> extensionsNames_;
 
-    // physical devices, properties, features and families
-    std::vector<VkPhysicalDevice> physicalDevices_;
-    std::vector<VkPhysicalDeviceProperties> physicalDevicesProperties_;
-    std::vector<VkPhysicalDeviceFeatures> physicalDevicesFeatures_;
-    std::vector<VkQueueFamilyProperties> queueFamilyProperties_;
+    struct PhysicalDevice {
+        VkPhysicalDevice device{ VK_NULL_HANDLE };
+        VkPhysicalDeviceProperties devicesProperties{};
+        VkPhysicalDeviceFeatures devicesFeatures{};
+        std::vector<VkQueueFamilyProperties> queueFamilyProperties{};
+    };
+    std::vector<PhysicalDevice> physicalDevices_;
 };
 
 }  // namespace tire
