@@ -39,13 +39,33 @@ void RenderVK::setSwapInterval( int interval ){
 std::vector<char *> RenderVK::makeExtensionsList(
     std::optional<std::vector<std::string>> list ) {
     std::vector<char *> rt{};
+    uint32_t extCount{};
 
-    uint32_t extCount;
+    {
+        const auto err = vkEnumerateInstanceExtensionProperties(
+            nullptr, &extCount, nullptr );
+        if ( err != VK_SUCCESS ) {
+            throw std::runtime_error( std::format(
+                "can't enumerate instance extension properties with code: {}\n",
+                string_VkResult( err ) ) );
+        } else {
+            log::info( "instance extension properties value: {}", extCount );
+        }
+    }
 
-    vkEnumerateInstanceExtensionProperties( nullptr, &extCount, nullptr );
     extensionProperties_.resize( extCount );
-    vkEnumerateInstanceExtensionProperties( nullptr, &extCount,
-                                            extensionProperties_.data() );
+
+    {
+        const auto err = vkEnumerateInstanceExtensionProperties(
+            nullptr, &extCount, extensionProperties_.data() );
+        if ( err != VK_SUCCESS ) {
+            throw std::runtime_error( std::format(
+                "can't acquire instance extension properties with code: {}\n",
+                string_VkResult( err ) ) );
+        } else {
+            log::info( "instance extension properties aquired" );
+        }
+    }
 
     if ( list ) {
         for ( const auto &name : list.value() ) {
@@ -75,12 +95,33 @@ std::vector<char *> RenderVK::makeExtensionsList(
 std::vector<char *> RenderVK::makeValidationLayersList(
     std::optional<std::vector<std::string>> list ) {
     std::vector<char *> rt{};
-
     uint32_t layerCount;
 
-    vkEnumerateInstanceLayerProperties( &layerCount, nullptr );
+    {
+        const auto err =
+            vkEnumerateInstanceLayerProperties( &layerCount, nullptr );
+        if ( err != VK_SUCCESS ) {
+            throw std::runtime_error( std::format(
+                "can't enumerate instance layer properties with code: {}\n",
+                string_VkResult( err ) ) );
+        } else {
+            log::info( "instance layer properties value: {}", layerCount );
+        }
+    }
+
     layerProperties_.resize( layerCount );
-    vkEnumerateInstanceLayerProperties( &layerCount, layerProperties_.data() );
+
+    {
+        const auto err = vkEnumerateInstanceLayerProperties(
+            &layerCount, layerProperties_.data() );
+        if ( err != VK_SUCCESS ) {
+            throw std::runtime_error( std::format(
+                "can't acquire instance layer properties with code: {}\n",
+                string_VkResult( err ) ) );
+        } else {
+            log::info( "instance layer properties aquired" );
+        }
+    }
 
     if ( list ) {
         for ( const auto &name : list.value() ) {
@@ -188,15 +229,38 @@ void RenderVK::createInstance() {
 
 void RenderVK::initPhysicalDevices() {
     uint32_t devCount{};
-    vkEnumeratePhysicalDevices( instance_, &devCount, nullptr );
-    if ( devCount == 0 ) {
-        throw std::runtime_error( "no vk physical devices in system\n" );
+
+    {
+        const auto err =
+            vkEnumeratePhysicalDevices( instance_, &devCount, nullptr );
+        if ( err != VK_SUCCESS ) {
+            throw std::runtime_error(
+                std::format( "can't enumerate physical devices with code: {}\n",
+                             string_VkResult( err ) ) );
+        } else {
+            log::info( "physical devices enumerate success" );
+        }
     }
 
-    log::info( "vulkan devices count: {}", devCount );
+    if ( devCount == 0 ) {
+        throw std::runtime_error( "no vulkan physical devices in system\n" );
+    } else {
+        log::info( "vulkan devices count: {}", devCount );
+    }
 
     std::vector<VkPhysicalDevice> physicalDevices( devCount );
-    vkEnumeratePhysicalDevices( instance_, &devCount, physicalDevices.data() );
+
+    {
+        const auto err = vkEnumeratePhysicalDevices( instance_, &devCount,
+                                                     physicalDevices.data() );
+        if ( err != VK_SUCCESS ) {
+            throw std::runtime_error(
+                std::format( "can't acquire physical devices with code: {}\n",
+                             string_VkResult( err ) ) );
+        } else {
+            log::info( "physical devices acquire success" );
+        }
+    }
 
     for ( const auto device : physicalDevices ) {
         // Collect physical devices and its properties
@@ -219,7 +283,8 @@ void RenderVK::initPhysicalDevices() {
                             .features = devFeatures,
                             .queueFamilyProperties = qfp } );
 
-        log::info( "    devices name: {}", devProps.deviceName );
+        log::info( "    device name: {}", devProps.deviceName );
+        log::info( "    device queue family count: {}", queueFamilyCount );
     }
 }
 
@@ -328,12 +393,12 @@ void RenderVK::createSurface() {
     xlibSurfInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
     xlibSurfInfo.dpy = display_;
     xlibSurfInfo.window = window_;
-    const auto res =
+    const auto err =
         vkCreateXlibSurfaceKHR( instance_, &xlibSurfInfo, nullptr, &surface_ );
-    if ( res != VK_SUCCESS ) {
+    if ( err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create xlib surface with code {}\n!",
-                         string_VkResult( res ) ) );
+                         string_VkResult( err ) ) );
     } else {
         log::info( "surface create success!" );
     }

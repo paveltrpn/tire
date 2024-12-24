@@ -96,12 +96,12 @@ void Render::configureX11() {
                                   &samp_buf );
             glXGetFBConfigAttrib( display_, fbc[i], GLX_SAMPLES, &samples );
 
-            log::info(
-                "matching fbconfig {}, visual ID {}: SAMPLE_BUFFERS = {},"
-                " SAMPLES = {}",
-                i,
-                vi->visualid,  // TODO: need to be HEX
-                samp_buf, samples );
+            // log::info(
+            // "matching fbconfig {}, visual ID {}: SAMPLE_BUFFERS = {},"
+            // " SAMPLES = {}",
+            // i,
+            // vi->visualid,  // TODO: need to be HEX
+            // samp_buf, samples );
 
             if ( best_fbc < 0 || ( samp_buf && samples > best_num_samp ) )
                 best_fbc = i, best_num_samp = samples;
@@ -119,7 +119,7 @@ void Render::configureX11() {
 
     // Get a visual
     XVisualInfo *vi = glXGetVisualFromFBConfig( display_, bestFbc_ );
-    log::info( "chosen visual ID = {}", vi->visualid );
+    log::info( "chosen visual ID: {}", vi->visualid );
 
     // create colormap
     XSetWindowAttributes swa;
@@ -145,7 +145,6 @@ void Render::configureX11() {
                              CWBorderPixel | CWColormap | CWEventMask, &swa );
 
     if ( !window_ ) {
-        log::error( "unable to create window" );
         throw std::runtime_error( "failed to create window" );
     }
 
