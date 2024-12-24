@@ -171,4 +171,23 @@ void RenderVK::displayPhysicalDeviceFamiliesProperties( size_t id ) {
     }
 }
 
+void RenderVK::displaySurfaceCapabilities() {
+    std::print(
+        R"(physical device surface capabilities:
+================
+)" );
+
+    std::print(
+        R"(	minImageCount:		{}
+        maxImageCount:		{}
+        maxImageArrayLayers:	{}
+        currentExtent.width:	{}
+        currentExtent.height:	{}
+)",
+        surfaceCapabilities_.minImageCount, surfaceCapabilities_.maxImageCount,
+        surfaceCapabilities_.maxImageArrayLayers,
+        surfaceCapabilities_.currentExtent.width,
+        surfaceCapabilities_.currentExtent.height );
+}
+
 }  // namespace tire

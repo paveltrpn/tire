@@ -78,6 +78,7 @@ private:
     void displayPhysicalDeviceProperties( size_t id );
     void displayPhysicalDeviceFeatures( size_t id );
     void displayPhysicalDeviceFamiliesProperties( size_t id );
+    void displaySurfaceCapabilities();
 
 private:
     std::string applicationName_;
@@ -86,31 +87,28 @@ private:
     bool enableValidationLayers_{};
 
     // handles
+    VkDebugUtilsMessengerEXT debugMessenger_{ VK_NULL_HANDLE };
     VkInstance instance_{ VK_NULL_HANDLE };
+    VkSurfaceKHR surface_{ VK_NULL_HANDLE };
     VkDevice device_{ VK_NULL_HANDLE };
     VkQueue graphicsQueue_{ VK_NULL_HANDLE };
-    VkSurfaceKHR surface_{};
+    VkQueue presentQueue_{ VK_NULL_HANDLE };
 
-    // structures
-    VkApplicationInfo appInfo_{};
-    VkInstanceCreateInfo instanceCreateInfo_{};
-    VkDebugUtilsMessengerEXT debugMessenger_{};
-    VkDebugUtilsMessengerCreateInfoEXT dbgCreateInfo_{};
-    VkDeviceQueueCreateInfo queueCreateInfo_{};
-    VkDeviceCreateInfo deviceCreateInfo_{};
+    // structs
+    VkSurfaceCapabilitiesKHR surfaceCapabilities_{};
 
     // vulkan entities info lists
-    std::vector<VkExtensionProperties> extensionProperties_;
-    std::vector<VkLayerProperties> layerProperties_;
-    std::vector<char *> validationLayersNames_;
-    std::vector<char *> extensionsNames_;
+    std::vector<VkExtensionProperties> extensionProperties_{};
+    std::vector<VkLayerProperties> layerProperties_{};
+    std::vector<char *> validationLayersNames_{};
+    std::vector<char *> extensionsNames_{};
     struct PhysicalDevice {
         VkPhysicalDevice device{ VK_NULL_HANDLE };
         VkPhysicalDeviceProperties properties{};
         VkPhysicalDeviceFeatures features{};
         std::vector<VkQueueFamilyProperties> queueFamilyProperties{};
     };
-    std::vector<PhysicalDevice> physicalDevices_;
+    std::vector<PhysicalDevice> physicalDevices_{};
 };
 
 }  // namespace tire

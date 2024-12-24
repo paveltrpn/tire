@@ -25,7 +25,7 @@ int main( int argc, char **argv ) {
         return 0;
     }
 
-    rndr->displayRenderInfo();
+    // rndr->displayRenderInfo();
 
     initScene( rndr.get() );
 

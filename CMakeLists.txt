@@ -8,11 +8,13 @@ add_link_options(-stdlib=libc++)
 project (tiny_render)
 
 set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHED)
 
 include_directories("3rdparty")
 include_directories("modules")
+
+find_package(Vulkan REQUIRED)
 
 add_library(log
     modules/log/log.h
@@ -95,8 +97,8 @@ add_library(geometry
 target_link_libraries(geometry algebra)
 
 add_subdirectory(test/window)
-target_link_libraries(gl_test log algebra camera config render X11 GL GLU vulkan)
-target_link_libraries(vk_test log algebra camera config render X11 GL GLU vulkan)
+target_link_libraries(gl_test PUBLIC log algebra camera config render X11 GL GLU Vulkan::Vulkan)
+target_link_libraries(vk_test PUBLIC log algebra camera config render X11 GL GLU Vulkan::Vulkan)
 
 add_subdirectory(test/wavefront)
 target_link_libraries(wavefront geometry)
