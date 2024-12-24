@@ -15,13 +15,6 @@ namespace tire {
 
 RenderVK::RenderVK()
     : Render{} {
-    const auto configPtr = Config::instance();
-
-    applicationName_ = configPtr->getString( "application_name" );
-    engineName_ = configPtr->getString( "engine_name" );
-    enableValidationLayers_ =
-        configPtr->get<bool>( "enable_validation_layers" );
-
     try {
         createInstance();
         createSurface();
@@ -42,21 +35,17 @@ void RenderVK::setSwapInterval( int interval ){
 
 };
 
-void RenderVK::enumerateExtensionProperties() {
+// pass std::nullopt to enable all available exensions
+std::vector<char *> RenderVK::makeExtensionsList(
+    std::optional<std::vector<std::string>> list ) {
+    std::vector<char *> rt{};
+
     uint32_t extCount;
 
     vkEnumerateInstanceExtensionProperties( nullptr, &extCount, nullptr );
     extensionProperties_.resize( extCount );
     vkEnumerateInstanceExtensionProperties( nullptr, &extCount,
                                             extensionProperties_.data() );
-};
-
-// pass std::nullopt to enable all available exensions
-std::vector<char *> RenderVK::makeExtensionsList(
-    std::optional<std::vector<std::string>> list ) {
-    std::vector<char *> rt{};
-
-    enumerateExtensionProperties();
 
     if ( list ) {
         for ( const auto &name : list.value() ) {
@@ -80,14 +69,6 @@ std::vector<char *> RenderVK::makeExtensionsList(
     return rt;
 }
 
-void RenderVK::enumerateValidationLayers() {
-    uint32_t layerCount;
-
-    vkEnumerateInstanceLayerProperties( &layerCount, nullptr );
-    layerProperties_.resize( layerCount );
-    vkEnumerateInstanceLayerProperties( &layerCount, layerProperties_.data() );
-}
-
 // pass std::nullopt to enable all avaible validation layers.
 // may cause instance creation error, for example:
 // "Requested layer "VK_LAYER_VALVE_steam_overlay_32" was wrong bit-type!"
@@ -95,7 +76,11 @@ std::vector<char *> RenderVK::makeValidationLayersList(
     std::optional<std::vector<std::string>> list ) {
     std::vector<char *> rt{};
 
-    enumerateValidationLayers();
+    uint32_t layerCount;
+
+    vkEnumerateInstanceLayerProperties( &layerCount, nullptr );
+    layerProperties_.resize( layerCount );
+    vkEnumerateInstanceLayerProperties( &layerCount, layerProperties_.data() );
 
     if ( list ) {
         for ( const auto &name : list.value() ) {
@@ -118,11 +103,15 @@ std::vector<char *> RenderVK::makeValidationLayersList(
 }
 
 void RenderVK::createInstance() {
+    const auto configPtr = Config::instance();
+    const auto applicationName = configPtr->getString( "application_name" );
+    const auto engineName = configPtr->getString( "engine_name" );
+
     VkApplicationInfo appInfo{};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-    appInfo.pApplicationName = applicationName_.data();
+    appInfo.pApplicationName = applicationName.data();
     appInfo.applicationVersion = VK_MAKE_VERSION( 1, 0, 0 );
-    appInfo.pEngineName = engineName_.data();
+    appInfo.pEngineName = engineName.data();
     appInfo.engineVersion = VK_MAKE_VERSION( 1, 0, 0 );
     appInfo.apiVersion = VK_API_VERSION_1_0;
 
@@ -144,17 +133,16 @@ void RenderVK::createInstance() {
     instanceCreateInfo.pApplicationInfo = &appInfo;
 
     // validation layers
-    std::vector<std::string> vllist{
-        "VK_LAYER_INTEL_nullhw", "VK_LAYER_MESA_device_select",
-        "VK_LAYER_MESA_overlay", "VK_LAYER_NV_optimus",
-        //"VK_LAYER_VALVE_steam_fossilize_32",
-        "VK_LAYER_VALVE_steam_fossilize_64",
-        //"VK_LAYER_VALVE_steam_overlay_32",
-        "VK_LAYER_VALVE_steam_overlay_64" };
+    std::vector<std::string> vllist{ "VK_LAYER_INTEL_nullhw",
+                                     "VK_LAYER_MESA_device_select",
+                                     "VK_LAYER_MESA_overlay",
+                                     "VK_LAYER_NV_optimus",
+                                     "VK_LAYER_VALVE_steam_fossilize_64",
+                                     "VK_LAYER_VALVE_steam_overlay_64" };
 
     validationLayersNames_ = makeValidationLayersList( vllist );
 
-    if ( enableValidationLayers_ ) {
+    if ( configPtr->get<bool>( "enable_validation_layers" ) ) {
         instanceCreateInfo.enabledLayerCount =
             static_cast<uint32_t>( validationLayersNames_.size() );
         instanceCreateInfo.ppEnabledLayerNames = validationLayersNames_.data();
@@ -185,7 +173,7 @@ void RenderVK::createInstance() {
         log::info( "vulkan instance created!" );
     }
 
-    if ( enableValidationLayers_ ) {
+    if ( configPtr->get<bool>( "enable_validation_layers" ) ) {
         const auto err = vkCreateDebugUtilsMessenger(
             instance_, &dbgCreateInfo, nullptr, &debugMessenger_ );
         if ( err != VK_SUCCESS ) {
@@ -297,7 +285,7 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
     // static_cast<uint32_t>( extensionsNames_.size() );
     // deviceCreateInfo_.ppEnabledExtensionNames = extensionsNames_.data();
 
-    if ( enableValidationLayers_ ) {
+    if ( Config::instance()->get<bool>( "enable_validation_layers" ) ) {
         deviceCreateInfo.enabledLayerCount =
             static_cast<uint32_t>( validationLayersNames_.size() );
         deviceCreateInfo.ppEnabledLayerNames = validationLayersNames_.data();
@@ -329,7 +317,7 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
                 "failed to obtain surface capabilities with code {}!\n",
                 string_VkResult( err ) ) );
         } else {
-            log::info( "vkGetPhysicalDeviceSurfaceCapabilitiesKHR success!" );
+            log::info( "vk get surface capabilities success!" );
         }
     }
     // displaySurfaceCapabilities();

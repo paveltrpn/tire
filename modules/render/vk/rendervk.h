@@ -56,14 +56,10 @@ struct RenderVK final : Render {
     void swapBuffers() override;
 
 private:
-    void enumerateExtensionProperties();
     // pass std::nullopt to enable all available exensions
     std::vector<char *> makeExtensionsList(
         std::optional<std::vector<std::string>> list );
-    void enumerateValidationLayers();
     // pass std::nullopt to enable all available validation layers.
-    // may cause instance creation error, for example:
-    // "Requested layer "VK_LAYER_VALVE_steam_overlay_32" was wrong bit-type!"
     std::vector<char *> makeValidationLayersList(
         std::optional<std::vector<std::string>> list );
 
@@ -81,11 +77,6 @@ private:
     void displaySurfaceCapabilities();
 
 private:
-    std::string applicationName_;
-    std::string engineName_;
-
-    bool enableValidationLayers_{};
-
     // handles
     VkDebugUtilsMessengerEXT debugMessenger_{ VK_NULL_HANDLE };
     VkInstance instance_{ VK_NULL_HANDLE };
