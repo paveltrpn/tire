@@ -49,13 +49,13 @@ struct RenderVK final : Render {
     void setSwapInterval( int interval ) override;
     void appendToRenderList( std::shared_ptr<tire::Node> node ) override;
 
+private:
     void initMainLoop() override;
     void preFrame() override;
     void frame() override;
     void postFrame() override;
     void swapBuffers() override;
 
-private:
     // pass std::nullopt to enable all available exensions
     std::vector<char *> makeExtensionsList(
         std::optional<std::vector<std::string>> list );
@@ -68,6 +68,8 @@ private:
     void pickAndCreateDevice(
         size_t id );  // TODO: make physical device pick smarter
     void createSurface();
+    void createSwapchain();
+    void createImageViews();
 
     void displayExtensionProperties();
     void displayValidationLayerProperties();
@@ -84,22 +86,31 @@ private:
     VkDevice device_{ VK_NULL_HANDLE };
     VkQueue graphicsQueue_{ VK_NULL_HANDLE };
     VkQueue presentQueue_{ VK_NULL_HANDLE };
+    VkSwapchainKHR swapChain_{ VK_NULL_HANDLE };
+    std::vector<VkImage> swapChainImages_{};
+    std::vector<VkImageView> swapChainImageViews_{};
 
-    // structs
-    VkSurfaceCapabilitiesKHR surfaceCapabilities_{};
-
-    // vulkan entities info lists
+    // vulkan entities info
     std::vector<VkExtensionProperties> extensionProperties_{};
     std::vector<VkLayerProperties> layerProperties_{};
     std::vector<char *> validationLayersNames_{};
     std::vector<char *> extensionsNames_{};
+
+    VkSurfaceCapabilitiesKHR surfaceCapabilities_{};
+    std::vector<VkSurfaceFormatKHR> surfaceFormats_{};
+    std::vector<VkPresentModeKHR> presentModes_{};
+
     struct PhysicalDevice {
         VkPhysicalDevice device{ VK_NULL_HANDLE };
         VkPhysicalDeviceProperties properties{};
         VkPhysicalDeviceFeatures features{};
+        std::vector<VkExtensionProperties> extensions{};
         std::vector<VkQueueFamilyProperties> queueFamilyProperties{};
     };
     std::vector<PhysicalDevice> physicalDevices_{};
+
+    VkFormat swapChainImageFormat_{};
+    VkExtent2D swapChainExtent_{};
 };
 
 }  // namespace tire
