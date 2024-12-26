@@ -639,4 +639,7 @@ void RenderVK::createImageViews() {
     }
 }
 
+void RenderVK::createGraphicsPipeline() {
+}
+
 }  // namespace tire

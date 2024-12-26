@@ -21,9 +21,18 @@ concept ConfigParamType = std::is_same_v<bool, std::remove_cv_t<T>> ||
                           std::is_same_v<nlohmann::json, std::remove_cv_t<T>>;
 
 struct Config final {
-    Config() = delete;
+private:
+    Config() {
+        basePath_ = std::filesystem::canonical( "/proc/self/exe" )
+                        .parent_path()
+                        .parent_path()
+                        .parent_path()
+                        .parent_path();
+    };
 
-    explicit Config( const char *lines ) {
+public:
+    explicit Config( const char *lines )
+        : Config() {
         if ( !instance_ ) {
             try {
                 config_ = nlohmann::json::parse( lines );
@@ -39,14 +48,16 @@ struct Config final {
         }
     }
 
-    explicit Config( const std::filesystem::path &fname ) {
+    explicit Config( const std::filesystem::path &fname )
+        : Config() {
         if ( !instance_ ) {
-            std::ifstream file{ fname };
+            const auto path = std::filesystem::path{ basePath_ / fname };
+            std::ifstream file{ path };
             if ( file ) {
                 file >> config_;
             } else {
                 throw std::runtime_error(
-                    std::format( "file not found: {}\n", fname.string() ) );
+                    std::format( "file not found: {}\n", path.string() ) );
             }
             instance_.reset( this );
         }
@@ -64,6 +75,10 @@ struct Config final {
     Config &operator=( Config &&rhs ) = delete;
 
     ~Config() = default;
+
+    [[nodiscard]] std::filesystem::path getBasePath() const {
+        return basePath_;
+    };
 
     [[nodiscard]] std::string getString( std::string_view param ) const {
         return config_[param];
@@ -105,7 +120,10 @@ struct Config final {
     }
 
     static Config *instance() {
-        assert( instance_ );
+        if ( !instance_ ) {
+            log::error(
+                "config global instance must be initialized explicitly!" );
+        }
         return instance_.get();
     }
 
@@ -114,6 +132,7 @@ private:
 
 private:
     nlohmann::json config_;
+    std::filesystem::path basePath_{};
 };
 
 }  // namespace tire

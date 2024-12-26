@@ -4,10 +4,11 @@
 #include <vulkan/vk_enum_string_helper.h>
 
 #include "shader.h"
+#include "log/log.h"
 
 namespace tire::vk {
 
-Shader::Shader( const VkDevice device )
+Shader::Shader( const VkDevice &device )
     : device_{ device } {
 }
 
@@ -42,9 +43,22 @@ void Shader::add( const std::string &path, const std::string &name ) {
         throw std::runtime_error(
             std::format( "failed to create shader module {} with code {}!",
                          name, string_VkResult( err ) ) );
+    } else {
+        log::info( "shader module {} created!", name );
     }
 
     modules_[name] = module;
+}
+
+VkShaderModule Shader::get( const std::string &name ) {
+    VkShaderModule module;
+    try {
+        module = modules_.at( name );
+    } catch ( std::out_of_range &e ) {
+        log::warning( "module {} not exist!", name );
+        return VK_NULL_HANDLE;
+    }
+    return module;
 }
 
 }  // namespace tire::vk

@@ -13,7 +13,6 @@ namespace tire {
 
 Render::Render() {
     if ( !tire::Config::instance() ) {
-        log::error( "instantiate config first!!!" );
         throw std::runtime_error( "instantiate config first!!!" );
     }
 

@@ -6,7 +6,7 @@
 namespace tire::vk {
 
 struct Shader final {
-    Shader( const VkDevice device );
+    Shader( const VkDevice &device );
 
     Shader( const Shader &other ) = delete;
     Shader( Shader &&other ) = delete;
@@ -16,10 +16,11 @@ struct Shader final {
     ~Shader();
 
     void add( const std::string &path, const std::string &name );
+    VkShaderModule get( const std::string &name );
 
 private:
     // non owning
-    const VkDevice device_;
+    const VkDevice &device_;
     std::map<std::string, VkShaderModule> modules_{};
 };
 

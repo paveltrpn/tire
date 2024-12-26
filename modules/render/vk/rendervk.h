@@ -70,6 +70,7 @@ private:
     void createSurface();
     void createSwapchain();
     void createImageViews();
+    void createGraphicsPipeline();
 
     void displayExtensionProperties();
     void displayValidationLayerProperties();
