@@ -5,18 +5,19 @@
 
 namespace tire::vk {
 
-struct Shader final {
-    Shader( const VkDevice &device );
+struct ShaderStorage final {
+    ShaderStorage( const VkDevice &device );
 
-    Shader( const Shader &other ) = delete;
-    Shader( Shader &&other ) = delete;
-    Shader &operator=( const Shader &other ) = delete;
-    Shader &operator=( Shader &&other ) = delete;
+    ShaderStorage( const ShaderStorage &other ) = delete;
+    ShaderStorage( ShaderStorage &&other ) = delete;
+    ShaderStorage &operator=( const ShaderStorage &other ) = delete;
+    ShaderStorage &operator=( ShaderStorage &&other ) = delete;
 
-    ~Shader();
+    ~ShaderStorage();
 
     void add( const std::string &path, const std::string &name );
     VkShaderModule get( const std::string &name );
+    void destroy( const std::string &name );
 
 private:
     // non owning

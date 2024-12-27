@@ -8,17 +8,17 @@
 
 namespace tire::vk {
 
-Shader::Shader( const VkDevice &device )
+ShaderStorage::ShaderStorage( const VkDevice &device )
     : device_{ device } {
 }
 
-Shader::~Shader() {
+ShaderStorage::~ShaderStorage() {
     for ( const auto &module : modules_ ) {
         vkDestroyShaderModule( device_, std::get<1>( module ), nullptr );
     }
 }
 
-void Shader::add( const std::string &path, const std::string &name ) {
+void ShaderStorage::add( const std::string &path, const std::string &name ) {
     std::ifstream file( path, std::ios::ate | std::ios::binary );
     if ( !file.is_open() ) {
         throw std::runtime_error(
@@ -50,7 +50,7 @@ void Shader::add( const std::string &path, const std::string &name ) {
     modules_[name] = module;
 }
 
-VkShaderModule Shader::get( const std::string &name ) {
+VkShaderModule ShaderStorage::get( const std::string &name ) {
     VkShaderModule module;
     try {
         module = modules_.at( name );
@@ -61,4 +61,14 @@ VkShaderModule Shader::get( const std::string &name ) {
     return module;
 }
 
+void ShaderStorage::destroy( const std::string &name ) {
+    VkShaderModule module;
+    try {
+        module = modules_.at( name );
+    } catch ( std::out_of_range &e ) {
+        log::warning( "module {} not exist!", name );
+        return;
+    }
+    vkDestroyShaderModule( device_, module, nullptr );
+}
 }  // namespace tire::vk

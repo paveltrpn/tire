@@ -31,41 +31,29 @@ private:
     };
 
 public:
-    explicit Config( const char *lines )
-        : Config() {
-        if ( !instance_ ) {
-            try {
-                config_ = nlohmann::json::parse( lines );
-            } catch ( const nlohmann::json::parse_error &e ) {
-                log::error(
-                    "config json parse error\n"
-                    "message:\t{}\n"
-                    "exception id:\t{}\n"
-                    "byte position of error:\t{}\n",
-                    e.what(), e.id, e.byte );
-            }
-            instance_.reset( this );
-        }
-    }
-
     explicit Config( const std::filesystem::path &fname )
         : Config() {
         if ( !instance_ ) {
             const auto path = std::filesystem::path{ basePath_ / fname };
             std::ifstream file{ path };
             if ( file ) {
-                file >> config_;
+                try {
+                    config_ = nlohmann::json::parse( file );
+                } catch ( const nlohmann::json::parse_error &e ) {
+                    log::error(
+                        "config json parse error\n"
+                        "message:\t{}\n"
+                        "exception id:\t{}\n"
+                        "byte position of error:\t{}\n",
+                        e.what(), e.id, e.byte );
+                }
             } else {
                 throw std::runtime_error(
                     std::format( "file not found: {}\n", path.string() ) );
             }
             instance_.reset( this );
-        }
-    }
-
-    explicit Config( const nlohmann::json &config ) {
-        if ( !instance_ ) {
-            instance_.reset( this );
+        } else {
+            log::warning( "attempt to reinitialize config instance!" );
         }
     }
 
@@ -76,7 +64,7 @@ public:
 
     ~Config() = default;
 
-    [[nodiscard]] std::filesystem::path getBasePath() const {
+    [[nodiscard]] const std::filesystem::path &getBasePath() const {
         return basePath_;
     };
 
@@ -106,15 +94,16 @@ public:
             if ( config_.contains( param ) ) {
                 return config_[param];
             } else {
-                log::warning( "no such config parameter \"{}\"", param );
-                log::warning( "default value used: {}", dflt );
+                log::warning(
+                    "no such config parameter \"{}\", default value used",
+                    param );
                 return dflt;
             }
         } catch ( nlohmann::json::exception &e ) {
             log::warning(
-                "json exception handled... config param error \"{}\", what: {}",
+                "json exception handled... config param error \"{}\", what: "
+                "{}, default value used",
                 param, e.what() );
-            log::warning( "default value used: {}", dflt );
             return dflt;
         }
     }
