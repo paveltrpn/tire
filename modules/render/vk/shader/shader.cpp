@@ -4,8 +4,9 @@
 #include <vulkan/vk_enum_string_helper.h>
 
 #include "shader.h"
-#define ENABLE_DEBUG_OUTPUT
 #include "log/log.h"
+
+static constexpr bool ENABLE_DEBUG_OUTPUT{ true };
 
 namespace tire::vk {
 
@@ -45,7 +46,7 @@ void ShaderStorage::add( const std::string &path, const std::string &name ) {
             std::format( "failed to create shader module {} with code {}!",
                          name, string_VkResult( err ) ) );
     } else {
-        log::info( "shader module {} created!", name );
+        log::debug<ENABLE_DEBUG_OUTPUT>( "shader module {} created!", name );
     }
 
     modules_[name] = module;
@@ -76,7 +77,8 @@ void ShaderStorage::destroy( const std::string &name ) {
 
 void ShaderStorage::list() {
     for ( const auto &key : modules_ ) {
-        log::debug( "available shader module: \"{}\"", std::get<0>( key ) );
+        log::debug<ENABLE_DEBUG_OUTPUT>( "available shader module: \"{}\"",
+                                         std::get<0>( key ) );
     }
 }
 
