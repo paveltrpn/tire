@@ -20,6 +20,11 @@ add_library(log
     modules/log/log.h
     modules/log/log.cpp
 )
+#global user defined output messages macro definition
+add_compile_definitions(ENABLE_DEBUG_OUTPUT=false)
+add_compile_definitions(ENABLE_WARNING_OUTPUT=true)
+add_compile_definitions(ENABLE_INFO_OUTPUT=true)
+add_compile_definitions(ENABLE_ERROR_OUTPUT=true)
 set_target_properties(log PROPERTIES LINKER_LANGUAGE CXX)
 
 add_library(algebra

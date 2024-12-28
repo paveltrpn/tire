@@ -12,7 +12,7 @@
 #include "geometry/node.h"
 #include "log/log.h"
 
-static constexpr bool ENABLE_DEBUG_OUTPUT{ true };
+static constexpr bool DEBUG_OUTPUT_RENDERVK_CPP{ true };
 
 namespace tire {
 RenderVK::RenderVK()
@@ -69,7 +69,7 @@ std::vector<char *> RenderVK::makeExtensionsList(
                              "properties with code: {}\n",
                              string_VkResult( err ) ) );
         } else {
-            log::debug<ENABLE_DEBUG_OUTPUT>(
+            log::debug<DEBUG_OUTPUT_RENDERVK_CPP>(
                 "instance extension properties value: {}", extCount );
         }
     }
@@ -127,7 +127,7 @@ std::vector<char *> RenderVK::makeValidationLayersList(
                 "can't enumerate instance layer properties with code: {}\n",
                 string_VkResult( err ) ) );
         } else {
-            log::debug<ENABLE_DEBUG_OUTPUT>(
+            log::debug<DEBUG_OUTPUT_RENDERVK_CPP>(
                 "instance layer properties value: {}", layerCount );
         }
     }
@@ -243,7 +243,7 @@ void RenderVK::createInstance() {
                 std::format( "failed to set up debug messenger with code {}!\n",
                              string_VkResult( err ) ) );
         } else {
-            log::debug<ENABLE_DEBUG_OUTPUT>(
+            log::debug<DEBUG_OUTPUT_RENDERVK_CPP>(
                 "vkCreateDebugUtilsMessenger success!" );
         }
     }
@@ -260,7 +260,7 @@ void RenderVK::initPhysicalDevices() {
                 std::format( "can't enumerate physical devices with code: {}\n",
                              string_VkResult( err ) ) );
         } else {
-            log::debug<ENABLE_DEBUG_OUTPUT>(
+            log::debug<DEBUG_OUTPUT_RENDERVK_CPP>(
                 "physical devices enumerate success, count: {}", devCount );
         }
     }
@@ -279,7 +279,7 @@ void RenderVK::initPhysicalDevices() {
                 std::format( "can't acquire physical devices with code: {}\n",
                              string_VkResult( err ) ) );
         } else {
-            log::debug<ENABLE_DEBUG_OUTPUT>(
+            log::debug<DEBUG_OUTPUT_RENDERVK_CPP>(
                 "physical devices acquire success" );
         }
     }
@@ -314,7 +314,7 @@ void RenderVK::initPhysicalDevices() {
                                  "with code: {}\n",
                                  string_VkResult( err ) ) );
             } else {
-                log::debug<ENABLE_DEBUG_OUTPUT>(
+                log::debug<DEBUG_OUTPUT_RENDERVK_CPP>(
                     "physical device extensions enumerated for device: {}, "
                     "count: {}",
                     devProps.deviceName, extensionCount );
@@ -333,7 +333,7 @@ void RenderVK::initPhysicalDevices() {
                                  "with code: {}\n",
                                  string_VkResult( err ) ) );
             } else {
-                log::debug<ENABLE_DEBUG_OUTPUT>(
+                log::debug<DEBUG_OUTPUT_RENDERVK_CPP>(
                     "physical device extensions acquired for device: {}",
                     devProps.deviceName );
             }
@@ -381,7 +381,7 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
                              "presentation with code {}!\n",
                              string_VkResult( err ) ) );
         } else {
-            log::debug<ENABLE_DEBUG_OUTPUT>(
+            log::debug<DEBUG_OUTPUT_RENDERVK_CPP>(
                 "device surface support for "
                 "presentation acquire success!" );
         }
@@ -392,8 +392,10 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
         i++;
     }
 
-    log::debug<ENABLE_DEBUG_OUTPUT>( "graphics family: {}", graphicsFamily );
-    log::debug<ENABLE_DEBUG_OUTPUT>( "present family: {}", presentFamily );
+    log::debug<DEBUG_OUTPUT_RENDERVK_CPP>( "graphics family: {}",
+                                           graphicsFamily );
+    log::debug<DEBUG_OUTPUT_RENDERVK_CPP>( "present family: {}",
+                                           presentFamily );
 
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
     const std::set<uint32_t> uniqueQueueFamilies = { graphicsFamily,
@@ -456,7 +458,7 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
                 "failed to obtain surface capabilities with code {}!\n",
                 string_VkResult( err ) ) );
         } else {
-            log::debug<ENABLE_DEBUG_OUTPUT>(
+            log::debug<DEBUG_OUTPUT_RENDERVK_CPP>(
                 "physical device surface capabilities acquire success!" );
         }
     }
@@ -472,7 +474,7 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
                              "count with code {}!\n",
                              string_VkResult( err ) ) );
         } else {
-            log::debug<ENABLE_DEBUG_OUTPUT>(
+            log::debug<DEBUG_OUTPUT_RENDERVK_CPP>(
                 "physical device surface formats count obtain success, "
                 "count: "
                 "{}",
@@ -492,7 +494,7 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
                 "count with code {}!\n",
                 string_VkResult( err ) ) );
         } else {
-            log::debug<ENABLE_DEBUG_OUTPUT>(
+            log::debug<DEBUG_OUTPUT_RENDERVK_CPP>(
                 "physical device surface formats acquire success!" );
         }
     }
@@ -508,7 +510,7 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
                              "count with code {}!\n",
                              string_VkResult( err ) ) );
         } else {
-            log::debug<ENABLE_DEBUG_OUTPUT>(
+            log::debug<DEBUG_OUTPUT_RENDERVK_CPP>(
                 "physical device present modes count obtain success, "
                 "count: "
                 "{}",
@@ -528,7 +530,7 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
                              "with code {}!\n",
                              string_VkResult( err ) ) );
         } else {
-            log::debug<ENABLE_DEBUG_OUTPUT>(
+            log::debug<DEBUG_OUTPUT_RENDERVK_CPP>(
                 "physical device present modes acquire success!" );
         }
     }
@@ -624,7 +626,7 @@ void RenderVK::createSwapchain() {
                 "failed to get swapchain images count with code {}\n!",
                 string_VkResult( err ) ) );
         } else {
-            log::debug<ENABLE_DEBUG_OUTPUT>(
+            log::debug<DEBUG_OUTPUT_RENDERVK_CPP>(
                 "vulkan swapchain images count: {}", swapchainImageCount );
         }
     }
@@ -639,7 +641,7 @@ void RenderVK::createSwapchain() {
                 std::format( "failed to get swapchain images with code {}\n!",
                              string_VkResult( err ) ) );
         } else {
-            log::debug<ENABLE_DEBUG_OUTPUT>(
+            log::debug<DEBUG_OUTPUT_RENDERVK_CPP>(
                 "vulkan swapchain images acquired!" );
         }
     }
@@ -673,8 +675,8 @@ void RenderVK::createImageViews() {
                 "failed to create swapchain image views with code {}\n!",
                 string_VkResult( err ) ) );
         } else {
-            log::debug<ENABLE_DEBUG_OUTPUT>( "swapchain image view {} created!",
-                                             i );
+            log::debug<DEBUG_OUTPUT_RENDERVK_CPP>(
+                "swapchain image view {} created!", i );
         }
     }
 }

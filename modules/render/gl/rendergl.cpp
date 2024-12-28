@@ -13,7 +13,7 @@
 #include "geometry/node.h"
 #include "camera/camera.h"
 
-#define ENABLE_DEBUG_OUTPUT true
+static constexpr bool DEBUG_OUTPUT_RENDERGL_CPP{ true };
 
 namespace tire {
 
@@ -164,7 +164,7 @@ void RenderGL::prepareShaders() {
     auto color = program.getUniformLocation( "color" );
     program.setVectorUniform( color, algebra::vector3f{ 0.9f, 0.2f, 0.5f } );
 
-    log::debug<ENABLE_DEBUG_OUTPUT>( "mat: {}, col: {}", matrix, color );
+    log::debug<DEBUG_OUTPUT_RENDERGL_CPP>( "mat: {}, col: {}", matrix, color );
 
     programs_.insert( std::pair{ gl::ShaderID::BASIC_COLOR, program } );
 }
