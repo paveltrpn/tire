@@ -70,5 +70,6 @@ void ShaderStorage::destroy( const std::string &name ) {
         return;
     }
     vkDestroyShaderModule( device_, module, nullptr );
+    modules_.erase( name );
 }
 }  // namespace tire::vk
