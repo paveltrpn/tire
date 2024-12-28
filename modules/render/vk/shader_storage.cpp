@@ -3,10 +3,10 @@
 #include <vector>
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "shader.h"
+#include "shader_storage.h"
 #include "log/log.h"
 
-static constexpr bool DEBUG_OUTPUT_SHADER_CPP{ false };
+static constexpr bool DEBUG_OUTPUT_SHADER_STORAGE_CPP{ false };
 
 namespace tire::vk {
 
@@ -51,8 +51,8 @@ void ShaderStorage::add( const std::string &path, const std::string &name ) {
             std::format( "failed to create shader module {} with code {}!",
                          name, string_VkResult( err ) ) );
     } else {
-        log::debug<DEBUG_OUTPUT_SHADER_CPP>( "shader module {} created!",
-                                             name );
+        log::debug<DEBUG_OUTPUT_SHADER_STORAGE_CPP>(
+            "shader module {} created!", name );
     }
 
     modules_[name] = module;
@@ -83,8 +83,8 @@ void ShaderStorage::destroy( const std::string &name ) {
 
 void ShaderStorage::list() {
     for ( const auto &key : modules_ ) {
-        log::debug<DEBUG_OUTPUT_SHADER_CPP>( "available shader module: \"{}\"",
-                                             std::get<0>( key ) );
+        log::debug<DEBUG_OUTPUT_SHADER_STORAGE_CPP>(
+            "available shader module: \"{}\"", std::get<0>( key ) );
     }
 }
 

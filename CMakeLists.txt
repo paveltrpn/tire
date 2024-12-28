@@ -66,10 +66,10 @@ add_library(render
     modules/render/vk/info.cpp
     modules/render/vk/main_loop.cpp
     modules/render/vk/node_list.cpp
-    modules/render/vk/shader/shader.h
-    modules/render/vk/shader/shader.cpp
-    modules/render/vk/pipeline/pipeline.h
-    modules/render/vk/pipeline/pipeline.cpp
+    modules/render/vk/shader_storage.h
+    modules/render/vk/shader_storage.cpp
+    modules/render/vk/pipeline.h
+    modules/render/vk/pipeline.cpp
 )
 target_link_libraries(render camera config geometry algebra)
 

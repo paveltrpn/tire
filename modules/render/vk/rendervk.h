@@ -14,8 +14,8 @@
 #include "config/config.h"
 #include "../render.h"
 #include "geometry/node.h"
-#include "shader/shader.h"
-#include "pipeline/pipeline.h"
+#include "shader_storage.h"
+#include "pipeline.h"
 
 namespace tire {
 
