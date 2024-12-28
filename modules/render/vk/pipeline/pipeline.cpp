@@ -111,22 +111,6 @@ void PiplineSimple::initFixed() {
     dynamicState_.dynamicStateCount =
         static_cast<uint32_t>( dynamicStates.size() );
     dynamicState_.pDynamicStates = dynamicStates.data();
-
-    // VkPipelineLayoutCreateInfo
-    pipelineLayoutInfo_.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    pipelineLayoutInfo_.setLayoutCount = 0;             // Optional
-    pipelineLayoutInfo_.pSetLayouts = nullptr;          // Optional
-    pipelineLayoutInfo_.pushConstantRangeCount = 0;     // Optional
-    pipelineLayoutInfo_.pPushConstantRanges = nullptr;  // Optional
-
-    const auto err = vkCreatePipelineLayout( device_, &pipelineLayoutInfo_,
-                                             nullptr, &pipelineLayout );
-    if ( err != VK_SUCCESS ) {
-        throw std::runtime_error( "failed to create pipeline layout!" );
-    } else {
-        log::debug<DEBUG_OUTPUT_PIPELINE_CPP>(
-            "simple pipeline layout created" );
-    }
 }
 
 void PiplineSimple::initProgable( VkShaderModule vert, VkShaderModule frag ) {
@@ -143,6 +127,60 @@ void PiplineSimple::initProgable( VkShaderModule vert, VkShaderModule frag ) {
     fragShaderStage_.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
     fragShaderStage_.module = frag;
     fragShaderStage_.pName = "main";
+}
+
+void PiplineSimple::initLayout() {
+    // VkPipelineLayoutCreateInfo
+    pipelineLayoutInfo_.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+    pipelineLayoutInfo_.setLayoutCount = 0;             // Optional
+    pipelineLayoutInfo_.pSetLayouts = nullptr;          // Optional
+    pipelineLayoutInfo_.pushConstantRangeCount = 0;     // Optional
+    pipelineLayoutInfo_.pPushConstantRanges = nullptr;  // Optional
+
+    const auto err = vkCreatePipelineLayout( device_, &pipelineLayoutInfo_,
+                                             nullptr, &pipelineLayout );
+    if ( err != VK_SUCCESS ) {
+        throw std::runtime_error( "failed to create pipeline layout!" );
+    } else {
+        log::debug<DEBUG_OUTPUT_PIPELINE_CPP>(
+            "simple pipeline layout created!" );
+    }
+}
+
+void PiplineSimple::initRenderPass( VkFormat swapChainImageFormat ) {
+    VkAttachmentDescription colorAttachment{};
+    colorAttachment.format = swapChainImageFormat;
+    colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+    colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+    colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+    colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+    colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+    VkAttachmentReference colorAttachmentRef{};
+    colorAttachmentRef.attachment = 0;
+    colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+    VkSubpassDescription subpass{};
+    subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+    subpass.colorAttachmentCount = 1;
+    subpass.pColorAttachments = &colorAttachmentRef;
+
+    VkRenderPassCreateInfo renderPassInfo{};
+    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+    renderPassInfo.attachmentCount = 1;
+    renderPassInfo.pAttachments = &colorAttachment;
+    renderPassInfo.subpassCount = 1;
+    renderPassInfo.pSubpasses = &subpass;
+
+    const auto err =
+        vkCreateRenderPass( device_, &renderPassInfo, nullptr, &renderPass );
+    if ( err != VK_SUCCESS ) {
+        throw std::runtime_error( "failed to create render pass!" );
+    } else {
+        log::debug<DEBUG_OUTPUT_PIPELINE_CPP>( "simple render pass created!" );
+    }
 }
 
 }  // namespace tire::vk

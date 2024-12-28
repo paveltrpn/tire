@@ -25,9 +25,8 @@ RenderVK::RenderVK()
         pickAndCreateDevice( 0 );
 
         // valid only after logical device creation
-        shaderStorage_ = std::make_unique<vk::ShaderStorage>( device_ );
-
         const auto basePath = Config::instance()->getBasePath().string();
+        shaderStorage_ = std::make_unique<vk::ShaderStorage>( device_ );
         shaderStorage_->add( basePath + "/assets/shaders/001_shader_vert.spv",
                              "001_shader_vert" );
         shaderStorage_->add( basePath + "/assets/shaders/001_shader_frag.spv",
@@ -35,6 +34,15 @@ RenderVK::RenderVK()
 
         createSwapchain();
         createImageViews();
+
+        pipelineSimple_ = std::make_unique<vk::PiplineSimple>( device_ );
+        pipelineSimple_->initFixed();
+        pipelineSimple_->initProgable(
+            shaderStorage_->get( "001_shader_vert" ),
+            shaderStorage_->get( "001_shader_frag" ) );
+        pipelineSimple_->initLayout();
+        pipelineSimple_->initRenderPass( swapChainImageFormat_ );
+
     } catch ( const std::runtime_error &e ) {
         throw std::runtime_error( e.what() );
     }
@@ -43,6 +51,7 @@ RenderVK::RenderVK()
 RenderVK::~RenderVK() {
     // preserve destruction order, only before logical device
     shaderStorage_.reset( nullptr );
+    pipelineSimple_.reset( nullptr );
 
     vkDestroySwapchainKHR( device_, swapChain_, nullptr );
     vkDestroySurfaceKHR( instance_, surface_, nullptr );

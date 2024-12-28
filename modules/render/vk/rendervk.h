@@ -83,6 +83,8 @@ private:
 
 private:
     std::unique_ptr<vk::ShaderStorage> shaderStorage_{};
+    std::unique_ptr<vk::PiplineSimple> pipelineSimple_{};
+
     // handles
     VkDebugUtilsMessengerEXT debugMessenger_{ VK_NULL_HANDLE };
     VkInstance instance_{ VK_NULL_HANDLE };
