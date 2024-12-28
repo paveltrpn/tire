@@ -73,6 +73,7 @@ private:
     void createSwapchain();
     void createImageViews();
     void createGraphicsPipeline();
+    void createFramebuffers();
 
     void displayExtensionProperties();
     void displayValidationLayerProperties();
@@ -117,6 +118,8 @@ private:
 
     VkFormat swapChainImageFormat_{};
     VkExtent2D swapChainExtent_{};
+
+    std::vector<VkFramebuffer> framebuffers_;
 };
 
 }  // namespace tire

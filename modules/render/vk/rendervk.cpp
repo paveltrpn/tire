@@ -44,6 +44,7 @@ RenderVK::RenderVK()
         pipelineSimple_->initRenderPass( swapChainImageFormat_ );
         pipelineSimple_->initPipeline();
 
+        createFramebuffers();
     } catch ( const std::runtime_error &e ) {
         throw std::runtime_error( e.what() );
     }
@@ -54,6 +55,9 @@ RenderVK::~RenderVK() {
     shaderStorage_.reset( nullptr );
     pipelineSimple_.reset( nullptr );
 
+    for ( auto framebuffer : framebuffers_ ) {
+        vkDestroyFramebuffer( device_, framebuffer, nullptr );
+    }
     vkDestroySwapchainKHR( device_, swapChain_, nullptr );
     vkDestroySurfaceKHR( instance_, surface_, nullptr );
     vkDestroyDevice( device_, nullptr );
@@ -692,7 +696,30 @@ void RenderVK::createImageViews() {
     }
 }
 
-void RenderVK::createGraphicsPipeline() {
+void RenderVK::createFramebuffers() {
+    framebuffers_.resize( swapChainImageViews_.size() );
+    for ( size_t i = 0; i < swapChainImageViews_.size(); i++ ) {
+        VkImageView attachments[] = { swapChainImageViews_[i] };
+        VkFramebufferCreateInfo framebufferInfo{};
+        framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+        framebufferInfo.renderPass = pipelineSimple_->getRenderPass();
+        framebufferInfo.attachmentCount = 1;
+        framebufferInfo.pAttachments = attachments;
+        framebufferInfo.width = swapChainExtent_.width;
+        framebufferInfo.height = swapChainExtent_.height;
+        framebufferInfo.layers = 1;
+
+        const auto err = vkCreateFramebuffer( device_, &framebufferInfo,
+                                              nullptr, &framebuffers_[i] );
+        if ( err != VK_SUCCESS ) {
+            throw std::runtime_error(
+                std::format( "failed to create framebuffer at {} with code {}!",
+                             i, string_VkResult( err ) ) );
+        } else {
+            log::debug<DEBUG_OUTPUT_RENDERVK_CPP>( "framebuffer {} created!",
+                                                   i );
+        }
+    }
 }
 
 }  // namespace tire

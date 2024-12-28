@@ -27,7 +27,8 @@ struct Pipeline {
     VkPipelineLayoutCreateInfo pipelineLayoutInfo_{};
     VkPipelineRenderingCreateInfo renderInfo_;
 
-    virtual VkPipeline get() = 0;
+    VkPipeline getPipeline() { return pipeline_; };
+    VkRenderPass getRenderPass() { return renderPass_; }
 
 protected:
     const VkDevice& device_;
@@ -46,8 +47,6 @@ struct PiplineSimple final : Pipeline {
     void initLayout();
     void initRenderPass( VkFormat swapChainImageFormat );
     void initPipeline();
-
-    VkPipeline get() override { return pipeline_; };
 
 private:
 };

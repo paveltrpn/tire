@@ -1,5 +1,5 @@
 
-
+#include <vulkan/vk_enum_string_helper.h>
 #include <vector>
 
 #include "pipeline.h"
@@ -142,7 +142,9 @@ void PiplineSimple::initLayout() {
     const auto err = vkCreatePipelineLayout( device_, &pipelineLayoutInfo_,
                                              nullptr, &pipelineLayout_ );
     if ( err != VK_SUCCESS ) {
-        throw std::runtime_error( "failed to create pipeline layout!" );
+        throw std::runtime_error(
+            std::format( "failed to create pipeline layout with code {}!",
+                         string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_PIPELINE_CPP>(
             "simple pipeline layout created!" );
@@ -179,7 +181,9 @@ void PiplineSimple::initRenderPass( VkFormat swapChainImageFormat ) {
     const auto err =
         vkCreateRenderPass( device_, &renderPassInfo, nullptr, &renderPass_ );
     if ( err != VK_SUCCESS ) {
-        throw std::runtime_error( "failed to create render pass!" );
+        throw std::runtime_error(
+            std::format( "failed to create render pass with code {}!",
+                         string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_PIPELINE_CPP>( "simple render pass created!" );
     }
@@ -211,7 +215,9 @@ void PiplineSimple::initPipeline() {
     const auto err = vkCreateGraphicsPipelines(
         device_, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline_ );
     if ( err != VK_SUCCESS ) {
-        throw std::runtime_error( "failed to create graphics pipeline!" );
+        throw std::runtime_error(
+            std::format( "failed to create graphics pipeline with code {}!",
+                         string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_PIPELINE_CPP>(
             "simple graphics pipeline created!" );
