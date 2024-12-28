@@ -4,6 +4,7 @@
 #include <vulkan/vk_enum_string_helper.h>
 
 #include "shader.h"
+#define ENABLE_DEBUG_OUTPUT
 #include "log/log.h"
 
 namespace tire::vk {
@@ -72,4 +73,11 @@ void ShaderStorage::destroy( const std::string &name ) {
     vkDestroyShaderModule( device_, module, nullptr );
     modules_.erase( name );
 }
+
+void ShaderStorage::list() {
+    for ( const auto &key : modules_ ) {
+        log::debug( "available shader module: \"{}\"", std::get<0>( key ) );
+    }
+}
+
 }  // namespace tire::vk

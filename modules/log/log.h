@@ -49,10 +49,12 @@ void info( std::format_string<Ts...> msg, Ts &&...args ) {
 
 template <typename... Ts>
 void debug( std::format_string<Ts...> msg, Ts &&...args ) {
+#ifdef ENABLE_DEBUG_OUTPUT
     constexpr char preamble[] = "\033[3;35m[debug] \033[0m";
     std::cout << preamble
               << std::vformat( msg.get(), std::make_format_args( args... ) )
               << "\n";
+#endif
 }
 
 template <typename... Ts>

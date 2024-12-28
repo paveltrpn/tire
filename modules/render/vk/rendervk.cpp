@@ -29,6 +29,7 @@ RenderVK::RenderVK()
                              "001_shader_vert" );
         shaderStorage_->add( basePath + "/assets/shaders/001_shader_frag.spv",
                              "001_shader_frag" );
+        shaderStorage_->list();
 
         createSwapchain();
         createImageViews();
