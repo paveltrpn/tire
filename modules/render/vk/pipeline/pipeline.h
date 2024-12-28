@@ -5,7 +5,11 @@
 
 namespace tire::vk {
 
-struct PipelineConfig final {
+struct Pipeline {
+    Pipeline( const VkDevice& device )
+        : device_{ device } {}
+    virtual ~Pipeline();
+
     VkPipelineShaderStageCreateInfo vertShaderStage_{};
     VkPipelineShaderStageCreateInfo fragShaderStage_{};
     VkPipelineVertexInputStateCreateInfo vertexInput_{};
@@ -20,22 +24,27 @@ struct PipelineConfig final {
     VkPipelineColorBlendAttachmentState colorBlendAttachment_{};
     VkPipelineColorBlendStateCreateInfo colorBlending_{};
     VkPipelineDynamicStateCreateInfo dynamicState_{};
-
-    VkPipelineLayout pipelineLayout{ VK_NULL_HANDLE };
     VkPipelineLayoutCreateInfo pipelineLayoutInfo_{};
-
     VkPipelineRenderingCreateInfo renderInfo_;
+
+    virtual VkPipeline get() = 0;
+
+protected:
+    const VkDevice& device_;
+    VkPipelineLayout pipelineLayout{ VK_NULL_HANDLE };
+    VkPipeline pipeline_{ VK_NULL_HANDLE };
 };
 
-struct Pipeline final {
-    Pipeline( const VkDevice& device )
-        : device_{ device } {}
+struct PiplineSimple final : Pipeline {
+    PiplineSimple( const VkDevice& device )
+        : Pipeline( device ) {}
 
-    ~Pipeline() {}
+    void initFixed();
+    void initProgable( VkShaderModule vert, VkShaderModule frag );
+
+    VkPipeline get() override { return pipeline_; };
 
 private:
-    const VkDevice& device_;
-    VkPipeline pipeline_{ VK_NULL_HANDLE };
 };
 
 }  // namespace tire::vk

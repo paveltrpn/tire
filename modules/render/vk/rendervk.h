@@ -15,6 +15,7 @@
 #include "../render.h"
 #include "geometry/node.h"
 #include "shader/shader.h"
+#include "pipeline/pipeline.h"
 
 namespace tire {
 

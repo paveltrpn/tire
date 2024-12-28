@@ -6,7 +6,7 @@
 #include "shader.h"
 #include "log/log.h"
 
-static constexpr bool DEBUG_OUTPUT_SHADER_CPP{ true };
+static constexpr bool DEBUG_OUTPUT_SHADER_CPP{ false };
 
 namespace tire::vk {
 

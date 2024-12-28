@@ -10,8 +10,8 @@
 
 #include "rendervk.h"
 #include "geometry/node.h"
-#include "log/log.h"
 
+#include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_RENDERVK_CPP{ true };
 
 namespace tire {
@@ -284,9 +284,9 @@ void RenderVK::initPhysicalDevices() {
         }
     }
 
+    log::info( " === collect physical device info..." );
     for ( const auto device : physicalDevices ) {
         // Collect physical devices and its properties
-        log::info( " === collect physical device info..." );
 
         VkPhysicalDeviceProperties devProps;
         vkGetPhysicalDeviceProperties( device, &devProps );
@@ -302,7 +302,8 @@ void RenderVK::initPhysicalDevices() {
         std::vector<VkQueueFamilyProperties> qfp( queueFamilyCount );
         vkGetPhysicalDeviceQueueFamilyProperties( device, &queueFamilyCount,
                                                   qfp.data() );
-        log::info( "device queue family count: {}", queueFamilyCount );
+        log::debug<DEBUG_OUTPUT_RENDERVK_CPP>( "device queue family count: {}",
+                                               queueFamilyCount );
 
         uint32_t extensionCount{};
         {
