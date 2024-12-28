@@ -21,6 +21,7 @@ RenderVK::RenderVK()
         createInstance();
         createSurface();
         initPhysicalDevices();
+
         pickAndCreateDevice( 0 );
 
         // valid only after logical device creation

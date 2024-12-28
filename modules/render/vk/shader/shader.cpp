@@ -21,6 +21,11 @@ ShaderStorage::~ShaderStorage() {
 }
 
 void ShaderStorage::add( const std::string &path, const std::string &name ) {
+    if ( device_ == VK_NULL_HANDLE ) {
+        throw std::runtime_error( std::format(
+            "can't use shaders before valid logical device is acquired!" ) );
+    }
+
     std::ifstream file( path, std::ios::ate | std::ios::binary );
     if ( !file.is_open() ) {
         throw std::runtime_error(
