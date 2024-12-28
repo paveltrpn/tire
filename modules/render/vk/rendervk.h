@@ -14,6 +14,7 @@
 #include "config/config.h"
 #include "../render.h"
 #include "geometry/node.h"
+#include "shader/shader.h"
 
 namespace tire {
 
@@ -80,6 +81,7 @@ private:
     void displaySurfaceCapabilities();
 
 private:
+    std::unique_ptr<vk::ShaderStorage> shaderStorage_{};
     // handles
     VkDebugUtilsMessengerEXT debugMessenger_{ VK_NULL_HANDLE };
     VkInstance instance_{ VK_NULL_HANDLE };
