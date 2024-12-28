@@ -31,9 +31,10 @@ struct Pipeline {
 
 protected:
     const VkDevice& device_;
+
     VkPipeline pipeline_{ VK_NULL_HANDLE };
-    VkPipelineLayout pipelineLayout{ VK_NULL_HANDLE };
-    VkRenderPass renderPass{ VK_NULL_HANDLE };
+    VkPipelineLayout pipelineLayout_{ VK_NULL_HANDLE };
+    VkRenderPass renderPass_{ VK_NULL_HANDLE };
 };
 
 struct PiplineSimple final : Pipeline {
@@ -44,6 +45,7 @@ struct PiplineSimple final : Pipeline {
     void initProgable( VkShaderModule vert, VkShaderModule frag );
     void initLayout();
     void initRenderPass( VkFormat swapChainImageFormat );
+    void initPipeline();
 
     VkPipeline get() override { return pipeline_; };
 

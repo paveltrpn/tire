@@ -9,7 +9,9 @@ static constexpr bool DEBUG_OUTPUT_PIPELINE_CPP{ true };
 namespace tire::vk {
 
 Pipeline::~Pipeline() {
-    vkDestroyPipelineLayout( device_, pipelineLayout, nullptr );
+    vkDestroyPipelineLayout( device_, pipelineLayout_, nullptr );
+    vkDestroyRenderPass( device_, renderPass_, nullptr );
+    vkDestroyPipeline( device_, pipeline_, nullptr );
 }
 
 void PiplineSimple::initFixed() {
@@ -138,7 +140,7 @@ void PiplineSimple::initLayout() {
     pipelineLayoutInfo_.pPushConstantRanges = nullptr;  // Optional
 
     const auto err = vkCreatePipelineLayout( device_, &pipelineLayoutInfo_,
-                                             nullptr, &pipelineLayout );
+                                             nullptr, &pipelineLayout_ );
     if ( err != VK_SUCCESS ) {
         throw std::runtime_error( "failed to create pipeline layout!" );
     } else {
@@ -175,11 +177,44 @@ void PiplineSimple::initRenderPass( VkFormat swapChainImageFormat ) {
     renderPassInfo.pSubpasses = &subpass;
 
     const auto err =
-        vkCreateRenderPass( device_, &renderPassInfo, nullptr, &renderPass );
+        vkCreateRenderPass( device_, &renderPassInfo, nullptr, &renderPass_ );
     if ( err != VK_SUCCESS ) {
         throw std::runtime_error( "failed to create render pass!" );
     } else {
         log::debug<DEBUG_OUTPUT_PIPELINE_CPP>( "simple render pass created!" );
+    }
+}
+
+void PiplineSimple::initPipeline() {
+    VkGraphicsPipelineCreateInfo pipelineInfo{};
+    pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+    pipelineInfo.stageCount = 2;
+
+    VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStage_,
+                                                       fragShaderStage_ };
+
+    pipelineInfo.pStages = shaderStages;
+    pipelineInfo.pVertexInputState = &vertexInput_;
+    pipelineInfo.pInputAssemblyState = &inputAssembly_;
+    pipelineInfo.pViewportState = &viewportState_;
+    pipelineInfo.pRasterizationState = &rasterizer_;
+    pipelineInfo.pMultisampleState = &multisampling_;
+    pipelineInfo.pDepthStencilState = nullptr;  // Optional
+    pipelineInfo.pColorBlendState = &colorBlending_;
+    pipelineInfo.pDynamicState = nullptr;  // Optional
+    pipelineInfo.layout = pipelineLayout_;
+    pipelineInfo.renderPass = renderPass_;
+    pipelineInfo.subpass = 0;
+    pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;  // Optional
+    pipelineInfo.basePipelineIndex = -1;               // Optional
+
+    const auto err = vkCreateGraphicsPipelines(
+        device_, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline_ );
+    if ( err != VK_SUCCESS ) {
+        throw std::runtime_error( "failed to create graphics pipeline!" );
+    } else {
+        log::debug<DEBUG_OUTPUT_PIPELINE_CPP>(
+            "simple graphics pipeline created!" );
     }
 }
 

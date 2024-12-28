@@ -42,6 +42,7 @@ RenderVK::RenderVK()
             shaderStorage_->get( "001_shader_frag" ) );
         pipelineSimple_->initLayout();
         pipelineSimple_->initRenderPass( swapChainImageFormat_ );
+        pipelineSimple_->initPipeline();
 
     } catch ( const std::runtime_error &e ) {
         throw std::runtime_error( e.what() );
