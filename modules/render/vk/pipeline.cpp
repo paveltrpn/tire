@@ -146,8 +146,7 @@ void PiplineSimple::initLayout() {
             std::format( "failed to create pipeline layout with code {}!",
                          string_VkResult( err ) ) );
     } else {
-        log::debug<DEBUG_OUTPUT_PIPELINE_CPP>(
-            "simple pipeline layout created!" );
+        log::info( "pipeline layout created!" );
     }
 }
 
@@ -185,7 +184,7 @@ void PiplineSimple::initRenderPass( VkFormat swapChainImageFormat ) {
             std::format( "failed to create render pass with code {}!",
                          string_VkResult( err ) ) );
     } else {
-        log::debug<DEBUG_OUTPUT_PIPELINE_CPP>( "simple render pass created!" );
+        log::info( "render pass created!" );
     }
 }
 
@@ -219,8 +218,7 @@ void PiplineSimple::initPipeline() {
             std::format( "failed to create graphics pipeline with code {}!",
                          string_VkResult( err ) ) );
     } else {
-        log::debug<DEBUG_OUTPUT_PIPELINE_CPP>(
-            "simple graphics pipeline created!" );
+        log::info( "graphics pipeline created!" );
     }
 }
 

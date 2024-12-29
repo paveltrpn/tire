@@ -8,17 +8,19 @@
 #include "point.h"
 #include "normal.h"
 #include "log/log.h"
+static constexpr bool DEBUG_OUTPUT_NODE_CPP{ false };
 
 #include "algebra/vector3.h"
 #include "algebra/matrix3.h"
 
 namespace tire {
+
 Node::Node( const Polytope &body ) {
     vertecies_ = body.getVertecies();
     indices_ = body.getIndices();
 
-    log::info( "appended vertecies:{}, indecies: {}", vertecies_.size(),
-               indices_.size() );
+    log::debug<DEBUG_OUTPUT_NODE_CPP>( "appended vertecies: {}, indecies: {}",
+                                       vertecies_.size(), indices_.size() );
 }
 
 std::shared_ptr<const Node> Node::asSharedPtr() const {
