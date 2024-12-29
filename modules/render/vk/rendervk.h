@@ -53,11 +53,12 @@ struct RenderVK final : Render {
     void appendToRenderList( std::shared_ptr<tire::Node> node ) override;
 
 private:
-    void initMainLoop() override;
+    void preLoop() override;
     void preFrame() override;
     void frame() override;
     void postFrame() override;
     void swapBuffers() override;
+    void postLoop() override;
 
     // pass std::nullopt to enable all available exensions
     std::vector<char *> makeExtensionsList(

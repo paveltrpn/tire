@@ -59,11 +59,12 @@ struct Render {
     }
 
 protected:
-    virtual void initMainLoop() = 0;
+    virtual void preLoop() = 0;
     virtual void preFrame() = 0;
     virtual void frame() = 0;
     virtual void postFrame() = 0;
     virtual void swapBuffers() = 0;
+    virtual void postLoop() = 0;
 
     [[nodiscard]] bool isExtensionSupported( const char *extList,
                                              const char *extension );

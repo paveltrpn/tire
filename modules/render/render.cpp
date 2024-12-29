@@ -166,9 +166,8 @@ void Render::run() {
         return;
     }
 
-    initMainLoop();
-
     XSelectInput( display_, window_, KeyPressMask | KeyReleaseMask );
+    preLoop();
     while ( run_ ) {
         while ( XPending( display_ ) ) {
             XEvent KeyEvent;
@@ -199,6 +198,7 @@ void Render::run() {
         postFrame();
         swapBuffers();
     }
+    postLoop();
 }
 
 }  // namespace tire

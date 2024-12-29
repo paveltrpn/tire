@@ -173,7 +173,7 @@ void RenderGL::prepareShaders() {
 // ================ core render work ===========================================
 // =============================================================================
 
-void RenderGL::initMainLoop() {
+void RenderGL::preLoop() {
     prepareShaders();
 
     gl::Shader basic_color = programs_[gl::ShaderID::BASIC_COLOR];
@@ -210,6 +210,8 @@ void RenderGL::postFrame() {
 void RenderGL::swapBuffers() {
     glXSwapBuffers( display_, window_ );
 };
+
+void RenderGL::postLoop(){};
 
 // =============================================================================
 // =============================================================================

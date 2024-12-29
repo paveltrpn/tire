@@ -52,11 +52,12 @@ private:
         return { (const char *)glGetString( GL_SHADING_LANGUAGE_VERSION ) };
     }
 
-    void initMainLoop() override;
+    void preLoop() override;
     void preFrame() override;
     void frame() override;
     void postFrame() override;
     void swapBuffers() override;
+    void postLoop() override;
 
     void setSwapInterval( int interval ) override;
 
