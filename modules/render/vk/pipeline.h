@@ -33,8 +33,8 @@ struct Pipeline {
     VkPipelineLayoutCreateInfo pipelineLayoutInfo_{};
     VkPipelineRenderingCreateInfo renderInfo_;
 
-    VkPipeline getPipeline() { return pipeline_; };
-    VkRenderPass getRenderPass() { return renderPass_; }
+    VkPipeline getPipeline() const { return pipeline_; };
+    VkRenderPass getRenderPass() const { return renderPass_; }
 
 protected:
     const VkDevice &device_;
