@@ -89,7 +89,7 @@ private:
     std::unique_ptr<vk::ShaderStorage> shaderStorage_{};
     std::unique_ptr<vk::PiplineSimple> pipelineSimple_{};
     std::unique_ptr<CommandPool> commandPool_{};
-    std::unique_ptr<CommandBuffer> cBuf_{};
+    std::vector<std::unique_ptr<CommandBuffer>> cBufs_{};
 
     // handles
     VkDebugUtilsMessengerEXT debugMessenger_{ VK_NULL_HANDLE };
@@ -102,9 +102,9 @@ private:
     std::vector<VkImage> swapChainImages_{};
     std::vector<VkImageView> swapChainImageViews_{};
     std::vector<VkFramebuffer> framebuffers_{};
-    VkSemaphore imageAvailableSemaphore_{ VK_NULL_HANDLE };
-    VkSemaphore renderFinishedSemaphore_{ VK_NULL_HANDLE };
-    VkFence inFlightFence_{ VK_NULL_HANDLE };
+    std::vector<VkSemaphore> imageAvailableSemaphores_{};
+    std::vector<VkSemaphore> renderFinishedSemaphores_{};
+    std::vector<VkFence> inFlightFences_{};
 
     // vulkan entities info
     std::vector<VkExtensionProperties> extensionProperties_{};
@@ -130,6 +130,8 @@ private:
 
     VkFormat swapChainImageFormat_{};
     VkExtent2D swapChainExtent_{};
+
+    uint32_t currentFrame_{ 0 };
 };
 
 }  // namespace tire
