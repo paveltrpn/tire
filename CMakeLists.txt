@@ -14,6 +14,14 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHED)
 include_directories("3rdparty")
 include_directories("modules")
 
+if (DEFINED ENV{LIBUV_DIR} AND NOT "$ENV{LIBUV_DIR}" STREQUAL "")
+    message("$LIBUV_DIR is set")
+    include_directories($ENV{LIBUV_DIR}/include)
+    link_directories($ENV{LIBUV_DIR}/build)
+else()
+    message("$LIBUV_DIR is not set")
+endif()
+
 find_package(Vulkan REQUIRED)
 
 add_library(log
@@ -108,8 +116,8 @@ add_library(geometry
 target_link_libraries(geometry algebra)
 
 add_subdirectory(test/window)
-target_link_libraries(gl_test PUBLIC log algebra camera config render X11 GL GLU Vulkan::Vulkan)
-target_link_libraries(vk_test PUBLIC log algebra camera config render X11 GL GLU Vulkan::Vulkan)
+target_link_libraries(gl_test PUBLIC log algebra camera config render X11 GL GLU Vulkan::Vulkan uv)
+target_link_libraries(vk_test PUBLIC log algebra camera config render X11 GL GLU Vulkan::Vulkan uv)
 
 add_subdirectory(test/wavefront)
 target_link_libraries(wavefront geometry)

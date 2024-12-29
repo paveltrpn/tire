@@ -11,6 +11,8 @@
 
 namespace tire {
 
+using namespace std::placeholders;
+
 Render::Render() {
     if ( !tire::Config::instance() ) {
         throw std::runtime_error( "instantiate config first!!!" );
@@ -18,9 +20,20 @@ Render::Render() {
 
     openDisplay();
     configureX11();
+
+    loop_ = static_cast<uv_loop_t *>( malloc( sizeof( uv_loop_t ) ) );
+    uv_loop_init( loop_ );
+    uv_idle_init( loop_, &idler_ );
+
+    // Every libuv handle has a void* data field. Here’s how you use it:
+    idler_.data = this;
+    uv_idle_start( &idler_, loop );
 }
 
 Render::~Render() {
+    uv_loop_close( loop_ );
+    free( loop_ );
+
     XDestroyWindow( display_, window_ );
     XFreeColormap( display_, colorMap_ );
     XCloseDisplay( display_ );
@@ -155,6 +168,41 @@ void Render::configureX11() {
     XMapWindow( display_, window_ );
 }
 
+void Render::loop( uv_idle_t *handle ) {
+    // Retrive "this" pointer previously saved in uv_idle_t->data member
+    auto self = static_cast<Render *>( handle->data );
+
+    while ( XPending( self->display_ ) ) {
+        XEvent KeyEvent;
+        XNextEvent( self->display_, &KeyEvent );
+        if ( KeyEvent.type == KeyPress ) {
+            auto keyEventCode = KeyEvent.xkey.keycode;
+            switch ( keyEventCode ) {
+                case 9: {  // == ESCAPE
+                    uv_idle_stop( handle );
+                    self->run_ = false;
+                    break;
+                }
+                default:
+                    break;
+            }
+
+        } else if ( KeyEvent.type == KeyRelease ) {
+            auto keyEventCode = KeyEvent.xkey.keycode;
+            switch ( keyEventCode ) {
+                default:
+                    break;
+            }
+        }
+    }
+    self->preFrame();
+
+    self->frame();
+
+    self->postFrame();
+    self->swapBuffers();
+}
+
 void Render::run() {
     if ( camera_ == nullptr ) {
         log::error( "how to render without camera???" );
@@ -167,37 +215,9 @@ void Render::run() {
     }
 
     XSelectInput( display_, window_, KeyPressMask | KeyReleaseMask );
+
     preLoop();
-    while ( run_ ) {
-        while ( XPending( display_ ) ) {
-            XEvent KeyEvent;
-            XNextEvent( display_, &KeyEvent );
-            if ( KeyEvent.type == KeyPress ) {
-                auto keyEventCode = KeyEvent.xkey.keycode;
-                switch ( keyEventCode ) {
-                    case 9: {  // == ESCAPE
-                        run_ = false;
-                        break;
-                    }
-                    default:
-                        break;
-                }
-
-            } else if ( KeyEvent.type == KeyRelease ) {
-                auto keyEventCode = KeyEvent.xkey.keycode;
-                switch ( keyEventCode ) {
-                    default:
-                        break;
-                }
-            }
-        }
-        preFrame();
-
-        frame();
-
-        postFrame();
-        swapBuffers();
-    }
+    uv_run( loop_, UV_RUN_DEFAULT );
     postLoop();
 }
 

@@ -5,11 +5,10 @@
 #include <list>
 #include <print>
 
-#include <GL/gl.h>
-#include <GL/glx.h>
-
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+
+#include "uv.h"
 
 #include "config/config.h"
 #include "geometry/node.h"
@@ -58,6 +57,9 @@ struct Render {
         camera_ = cameraPtr;
     }
 
+private:
+    static void loop( uv_idle_t *handle );
+
 protected:
     virtual void preLoop() = 0;
     virtual void preFrame() = 0;
@@ -72,6 +74,8 @@ protected:
 
 protected:
     bool run_{ true };
+    uv_loop_t *loop_{ nullptr };
+    uv_idle_t idler_;
 
     // X11
     Display *display_;
