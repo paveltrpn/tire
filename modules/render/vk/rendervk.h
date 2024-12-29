@@ -16,6 +16,7 @@
 #include "geometry/node.h"
 #include "shader_storage.h"
 #include "pipeline.h"
+#include "commands.h"
 
 namespace tire {
 
@@ -85,6 +86,7 @@ private:
 private:
     std::unique_ptr<vk::ShaderStorage> shaderStorage_{};
     std::unique_ptr<vk::PiplineSimple> pipelineSimple_{};
+    std::unique_ptr<CommandPool> commandPool_{};
 
     // handles
     VkDebugUtilsMessengerEXT debugMessenger_{ VK_NULL_HANDLE };
@@ -114,6 +116,9 @@ private:
         std::vector<VkExtensionProperties> extensions{};
         std::vector<VkQueueFamilyProperties> queueFamilyProperties{};
     };
+    uint32_t graphicsFamily_{};
+    uint32_t presentFamily_{};
+
     std::vector<PhysicalDevice> physicalDevices_{};
 
     VkFormat swapChainImageFormat_{};

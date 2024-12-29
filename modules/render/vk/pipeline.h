@@ -6,8 +6,14 @@
 namespace tire::vk {
 
 struct Pipeline {
-    Pipeline( const VkDevice& device )
+    Pipeline( const VkDevice &device )
         : device_{ device } {}
+
+    Pipeline( const Pipeline &other ) = delete;
+    Pipeline( Pipeline &&other ) = delete;
+    Pipeline &operator=( const Pipeline &other ) = delete;
+    Pipeline &operator=( Pipeline &&other ) = delete;
+
     virtual ~Pipeline();
 
     VkPipelineShaderStageCreateInfo vertShaderStage_{};
@@ -31,7 +37,7 @@ struct Pipeline {
     VkRenderPass getRenderPass() { return renderPass_; }
 
 protected:
-    const VkDevice& device_;
+    const VkDevice &device_;
 
     VkPipeline pipeline_{ VK_NULL_HANDLE };
     VkPipelineLayout pipelineLayout_{ VK_NULL_HANDLE };
@@ -39,7 +45,7 @@ protected:
 };
 
 struct PiplineSimple final : Pipeline {
-    PiplineSimple( const VkDevice& device )
+    PiplineSimple( const VkDevice &device )
         : Pipeline( device ) {}
 
     void initFixed();

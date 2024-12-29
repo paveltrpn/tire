@@ -43,8 +43,12 @@ RenderVK::RenderVK()
         pipelineSimple_->initLayout();
         pipelineSimple_->initRenderPass( swapChainImageFormat_ );
         pipelineSimple_->initPipeline();
+        pipelineSimple_->initFixed();
 
         createFramebuffers();
+
+        commandPool_ = std::make_unique<CommandPool>( device_ );
+        commandPool_->init( graphicsFamily_ );
     } catch ( const std::runtime_error &e ) {
         throw std::runtime_error( e.what() );
     }
@@ -54,6 +58,7 @@ RenderVK::~RenderVK() {
     // preserve destruction order, only before logical device
     shaderStorage_.reset( nullptr );
     pipelineSimple_.reset( nullptr );
+    commandPool_.reset( nullptr );
 
     for ( auto framebuffer : framebuffers_ ) {
         vkDestroyFramebuffer( device_, framebuffer, nullptr );
@@ -377,14 +382,12 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
             "picked physical device is not discrete GPU!" );
     }
 
-    uint32_t graphicsFamily{};
-    uint32_t presentFamily{};
     int i{};
     for ( const auto &queueFamily :
           physicalDevices_[id].queueFamilyProperties ) {
         // Condition: we need queue with VK_QUEUE_GRAPHICS_BIT
         if ( queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT ) {
-            graphicsFamily = i;
+            graphicsFamily_ = i;
         }
         VkBool32 presentSupport = false;
         // Condition: we need device that support surface presentation
@@ -402,19 +405,19 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
         }
 
         if ( presentSupport ) {
-            presentFamily = i;
+            presentFamily_ = i;
         }
         i++;
     }
 
     log::debug<DEBUG_OUTPUT_RENDERVK_CPP>( "graphics family: {}",
-                                           graphicsFamily );
+                                           graphicsFamily_ );
     log::debug<DEBUG_OUTPUT_RENDERVK_CPP>( "present family: {}",
-                                           presentFamily );
+                                           presentFamily_ );
 
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-    const std::set<uint32_t> uniqueQueueFamilies = { graphicsFamily,
-                                                     presentFamily };
+    const std::set<uint32_t> uniqueQueueFamilies = { graphicsFamily_,
+                                                     presentFamily_ };
 
     const float queuePriority{ 1.0f };
     for ( const uint32_t queueFamily : uniqueQueueFamilies ) {
@@ -461,8 +464,8 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
         }
     }
 
-    vkGetDeviceQueue( device_, graphicsFamily, 0, &graphicsQueue_ );
-    vkGetDeviceQueue( device_, presentFamily, 0, &presentQueue_ );
+    vkGetDeviceQueue( device_, graphicsFamily_, 0, &graphicsQueue_ );
+    vkGetDeviceQueue( device_, presentFamily_, 0, &presentQueue_ );
 
     // physical device surface capabilities
     {
