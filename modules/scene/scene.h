@@ -1,7 +1,6 @@
 
 #pragma once
 
-#include <list>
 #include <filesystem>
 #include "nlohmann/json.hpp"
 
@@ -18,18 +17,19 @@ struct Scene final {
     Scene &operator=( const Scene &other ) = delete;
     Scene &operator=( Scene &&other ) = delete;
 
-    ~Scene();
+    ~Scene() = default;
 
-    [[nodiscard]] Camera &getCamera() const { return *camera_.get(); };
+    [[nodiscard]] Camera &getCamera( size_t id ) const {
+        return *( camera_[id] ).get();
+    };
 
 private:
     void process();
-    void appendToRenderList( std::shared_ptr<tire::Node> node );
 
 private:
     nlohmann::json scene_;
-    std::list<std::shared_ptr<Node>> list_;
-    std::shared_ptr<Camera> camera_{ nullptr };
+    std::vector<std::shared_ptr<Node>> list_;
+    std::vector<std::shared_ptr<Camera>> camera_{};
 };
 
 }  // namespace tire

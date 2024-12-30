@@ -34,7 +34,10 @@
       "look_at_x": 1,
       "look_at_y": 0,
       "look_at_z": 0,
-      "fov": 45
+      "fov": 45,
+      "aspect" : 1,
+      "ncp" : 0.1,
+      "fcp" : 100
     }
   ]
 }

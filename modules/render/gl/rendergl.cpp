@@ -177,7 +177,7 @@ void RenderGL::prepareShaders() {
     auto matrix = program.getUniformLocation( "matrix" );
 
     program.setMatrixUniform( matrix, GL_FALSE,
-                              scene_->getCamera().getMatrix() );
+                              scene_->getCamera( 0 ).getMatrix() );
     auto color = program.getUniformLocation( "color" );
     program.setVectorUniform( color, algebra::vector3f{ 0.9f, 0.2f, 0.5f } );
 
