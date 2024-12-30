@@ -132,3 +132,6 @@ target_link_libraries(vk_test PUBLIC log algebra scene camera config render X11 
 
 add_subdirectory(test/wavefront)
 target_link_libraries(wavefront geometry)
+
+add_subdirectory(test/color)
+target_link_libraries(color image)
