@@ -19,8 +19,8 @@ struct Scene final {
 
     ~Scene() = default;
 
-    [[nodiscard]] Camera &getCamera( size_t id ) const {
-        return *( camera_[id] ).get();
+    [[nodiscard]] std::shared_ptr<Camera> getCamera( size_t id ) const {
+        return cameras_[id];
     };
 
 private:
@@ -29,7 +29,7 @@ private:
 private:
     nlohmann::json scene_;
     std::vector<std::shared_ptr<Node>> list_;
-    std::vector<std::shared_ptr<Camera>> camera_{};
+    std::vector<std::shared_ptr<Camera>> cameras_{};
 };
 
 }  // namespace tire

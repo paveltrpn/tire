@@ -177,7 +177,7 @@ void RenderGL::prepareShaders() {
     auto matrix = program.getUniformLocation( "matrix" );
 
     program.setMatrixUniform( matrix, GL_FALSE,
-                              scene_->getCamera( 0 ).getMatrix() );
+                              scene_->getCamera( 0 )->getMatrix() );
     auto color = program.getUniformLocation( "color" );
     program.setVectorUniform( color, algebra::vector3f{ 0.9f, 0.2f, 0.5f } );
 
@@ -210,25 +210,26 @@ void RenderGL::preFrame() {
 void RenderGL::frame() {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    glBindBuffer( GL_ARRAY_BUFFER, bufferObject_ );
+    //glBindBuffer( GL_ARRAY_BUFFER, bufferObject_ );
 
     // glEnableVertexAttribArray( 0 );
     // glBindVertexArray( vertexObject_ );
     // glDrawElements( GL_TRIANGLES, 12, GL_UNSIGNED_INT, (void *)0 );
     // glDisableVertexAttribArray( 0 );
 
-    glBindVertexArray( vertexObject_ );
-    glDrawArrays( GL_TRIANGLES, 0, 3 );
-};
+    //glBindVertexArray( vertexObject_ );
+    //glDrawArrays( GL_TRIANGLES, 0, 3 );
+}
 
 void RenderGL::postFrame() {
 }
 
 void RenderGL::swapBuffers() {
     glXSwapBuffers( display_, window_ );
-};
+}
 
-void RenderGL::postLoop(){};
+void RenderGL::postLoop() {
+}
 
 // =============================================================================
 // =============================================================================

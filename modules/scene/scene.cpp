@@ -82,6 +82,8 @@ void Scene::process() {
                 auto camera = std::make_shared<Perspective>(
                     Perspective{ fov, aspect, ncp, fcp } );
 
+                cameras_.push_back( camera );
+
                 log::debug<DEBUG_OUTPUT_SCENE_CPP>(
                     "perspective camera added to scene" );
             }
