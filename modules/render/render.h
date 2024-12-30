@@ -18,23 +18,6 @@
 
 namespace tire {
 
-namespace __detail {
-[[maybe_unused]] static void GLAPIENTRY MessageCallback(
-    GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
-    const GLchar *message, const void *userParam ) {
-    std::print( "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-                ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ), type,
-                severity, message );
-}
-
-static bool ctxErrorOccurred = false;
-[[maybe_unused]] static int ctxErrorHandler( Display *dpy, XErrorEvent *ev ) {
-    ctxErrorOccurred = true;
-    return 0;
-}
-
-}  // namespace __detail
-
 struct Render {
     Render();
 

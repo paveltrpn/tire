@@ -1,1 +1,40 @@
- 
+{
+  "objects": [
+    {
+      "type": "box",
+      "position_x": 0,
+      "position_y": 0,
+      "position_z": 0,
+      "rotation_x": 0,
+      "rotation_y": 0,
+      "rotation_z": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "scale_z": 1
+    },
+    {
+      "type": "box",
+      "position_x": 0,
+      "position_y": 0,
+      "position_z": 0,
+      "rotation_x": 0,
+      "rotation_y": 0,
+      "rotation_z": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "scale_z": 1
+    }
+  ],
+  "cameras": [
+    {
+      "type": "perspective",
+      "position_x": 0,
+      "position_y": 0,
+      "position_z": 0,
+      "look_at_x": 1,
+      "look_at_y": 0,
+      "look_at_z": 0,
+      "fov": 45
+    }
+  ]
+}
