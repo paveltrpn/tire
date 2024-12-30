@@ -4,7 +4,7 @@
 #include "algebra/vector3.h"
 #include "algebra/matrix4.h"
 
-namespace tire::camera {
+namespace tire {
 
 struct Camera {
     void setDirty();
@@ -64,4 +64,4 @@ private:
     float far_{};
 };
 
-}  // namespace tire::camera
+}  // namespace tire

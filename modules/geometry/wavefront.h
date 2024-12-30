@@ -6,13 +6,11 @@
 #include <map>
 #include <vector>
 
-#include "node.h"
+#include "scene/node.h"
 
-namespace tire
-{
+namespace tire {
 
-enum class ObjTokens
-{
+enum class ObjTokens {
     GEOMETRIC_VERTICES,
     TEXTURE_VERTICES,
     VERTEX_NORMALS,
@@ -91,14 +89,12 @@ static std::map<ObjTokens, std::string> tokens_ = {
 };
 
 struct WavefrontMtl final {
-    enum class MtlTokens
-    {};
+    enum class MtlTokens {};
 
     // using enum MtlTokens;
 };
 
 struct WavefrontObj final {
-
 public:
     WavefrontObj() = delete;
 
@@ -111,9 +107,11 @@ public:
     WavefrontObj &operator=( const WavefrontObj &rhs ) = delete;
     WavefrontObj &operator=( const WavefrontObj &&rhs ) = delete;
 
-    [[nodiscard]] std::shared_ptr<tire::Node> getAsNode( std::string_view path );
+    [[nodiscard]] std::shared_ptr<tire::Node> getAsNode(
+        std::string_view path );
 
-    friend std::ostream &operator<<( std::ostream &os, const WavefrontObj &rhs );
+    friend std::ostream &operator<<( std::ostream &os,
+                                     const WavefrontObj &rhs );
 
 private:
     void assertFilePath( std::string_view path );
@@ -133,4 +131,4 @@ private:
 
 std::ostream &operator<<( std::ostream &os, const WavefrontObj &rhs );
 
-} // namespace tire
+}  // namespace tire

@@ -166,6 +166,13 @@ void Render::configureX11() {
         display_, window_,
         cptr->get<std::string>( "application_name", "default" ).c_str() );
     XMapWindow( display_, window_ );
+
+    // pre run() call
+    XSelectInput( display_, window_, KeyPressMask | KeyReleaseMask );
+}
+
+void Render::scene( const std::filesystem::path &path ) {
+    scene_ = std::make_shared<Scene>( path );
 }
 
 void Render::loop( uv_idle_t *handle ) {
@@ -204,18 +211,6 @@ void Render::loop( uv_idle_t *handle ) {
 }
 
 void Render::run() {
-    if ( camera_ == nullptr ) {
-        log::error( "how to render without camera???" );
-        return;
-    }
-
-    if ( renderList_.empty() ) {
-        log::error( "render list is empty! nothing to render!!!" );
-        return;
-    }
-
-    XSelectInput( display_, window_, KeyPressMask | KeyReleaseMask );
-
     preLoop();
     uv_run( loop_, UV_RUN_DEFAULT );
     postLoop();

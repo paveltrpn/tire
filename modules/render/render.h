@@ -4,18 +4,17 @@
 #include <memory>
 #include <list>
 #include <print>
+#include <filesystem>
 
+#include <GL/glx.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
 #include "uv.h"
 
 #include "config/config.h"
-#include "geometry/node.h"
-#include "gl/shader.h"
-#include "gl/shader_sources.h"
+#include "scene/scene.h"
 #include "camera/camera.h"
-#include "node_list.h"
 
 namespace tire {
 
@@ -37,8 +36,6 @@ static bool ctxErrorOccurred = false;
 }  // namespace __detail
 
 struct Render {
-    using point_scalar_type = float;
-
     Render();
 
     Render( const Render &rhs ) = delete;
@@ -50,12 +47,9 @@ struct Render {
     virtual ~Render();
 
     virtual void displayRenderInfo() = 0;
-    void run();
 
-    virtual void appendToRenderList( std::shared_ptr<tire::Node> node ) = 0;
-    void addCamera( std::shared_ptr<tire::camera::Camera> cameraPtr ) {
-        camera_ = cameraPtr;
-    }
+    void scene( const std::filesystem::path &path );
+    void run();
 
 private:
     static void loop( uv_idle_t *handle );
@@ -89,14 +83,7 @@ protected:
     int width_{};
     int height_{};
 
-    // shader sources manager
-    ShaderDatabase shaderSourcesManager_{};
-
-    // render list
-    NodeList renderList_;
-
-    // cameras
-    std::shared_ptr<camera::Camera> camera_{ nullptr };
+    std::shared_ptr<Scene> scene_{};
 
 private:
     void openDisplay();

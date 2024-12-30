@@ -16,7 +16,8 @@
 
 #include "config/config.h"
 #include "../render.h"
-#include "geometry/node.h"
+#include "shader.h"
+#include "shader_sources.h"
 
 namespace tire {
 
@@ -27,8 +28,6 @@ struct RenderGL final : Render {
     ~RenderGL() override;
 
     void displayRenderInfo() override;
-
-    void appendToRenderList( std::shared_ptr<tire::Node> node ) override;
 
 private:
     void checkGlxVersion();
@@ -84,6 +83,9 @@ private:
     GLuint elementsObject_{};
 
     std::map<ShaderID, Shader> programs_;
+
+    // shader sources manager
+    ShaderDatabase shaderSourcesManager_{};
 };
 
 }  // namespace tire

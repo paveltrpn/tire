@@ -1,7 +1,7 @@
 
 #include "camera.h"
 
-namespace tire::camera {
+namespace tire {
 
 void Camera::setDirty() {
     dirty_ = true;
@@ -107,4 +107,4 @@ void Orthographic::update() {
     matrix_ = projection * rotation * algebra::transpose( offset );
 }
 
-}  // namespace tire::camera
+}  // namespace tire

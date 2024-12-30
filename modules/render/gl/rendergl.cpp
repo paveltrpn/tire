@@ -10,7 +10,6 @@
 
 #include "log/log.h"
 #include "rendergl.h"
-#include "geometry/node.h"
 #include "camera/camera.h"
 
 static constexpr bool DEBUG_OUTPUT_RENDERGL_CPP{ true };
@@ -160,7 +159,8 @@ void RenderGL::prepareShaders() {
 
     auto matrix = program.getUniformLocation( "matrix" );
 
-    program.setMatrixUniform( matrix, GL_FALSE, camera_->getMatrix() );
+    program.setMatrixUniform( matrix, GL_FALSE,
+                              scene_->getCamera().getMatrix() );
     auto color = program.getUniformLocation( "color" );
     program.setVectorUniform( color, algebra::vector3f{ 0.9f, 0.2f, 0.5f } );
 
@@ -216,7 +216,7 @@ void RenderGL::postLoop(){};
 // =============================================================================
 // =============================================================================
 // =============================================================================
-
+/*
 void RenderGL::appendToRenderList( std::shared_ptr<tire::Node> node ) {
     renderList_.push_back( node );
 
@@ -262,5 +262,5 @@ void RenderGL::appendToRenderList( std::shared_ptr<tire::Node> node ) {
     // glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void *)(24 * sizeof(float)));
     // glEnableVertexAttribArray(2);
 }
-
+*/
 }  // namespace tire

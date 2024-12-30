@@ -4,9 +4,9 @@
 #include <iterator>
 
 #include "node.h"
-#include "polytope.h"
-#include "point.h"
-#include "normal.h"
+#include "geometry/polytope.h"
+#include "geometry/point.h"
+#include "geometry/normal.h"
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_NODE_CPP{ false };
 

@@ -9,7 +9,6 @@
 #include <set>
 
 #include "rendervk.h"
-#include "geometry/node.h"
 
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_RENDERVK_CPP{ true };

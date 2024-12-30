@@ -6,9 +6,9 @@
 #include <iterator>
 #include <memory>
 
-#include "polytope.h"
-#include "point.h"
-#include "normal.h"
+#include "geometry/polytope.h"
+#include "geometry/point.h"
+#include "geometry/normal.h"
 
 #include "algebra/vector2.h"
 #include "algebra/vector3.h"

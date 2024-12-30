@@ -18,7 +18,7 @@ if (DEFINED ENV{NLOHMANN_JSON_DIR} AND NOT "$ENV{NLOHMANN_JSON_DIR}" STREQUAL ""
     message( "NLOHMANN_JSON_DIR is set to $ENV{NLOHMANN_JSON_DIR}")
     include_directories($ENV{NLOHMANN_JSON_DIR}/include)
 else()
-    message(FATAL_ERROR "NLOHMANN_JSON_DIR is not set")
+    message(SEND_ERROR "NLOHMANN_JSON_DIR is not set")
 endif()
 
 if (DEFINED ENV{LIBUV_DIR} AND NOT "$ENV{LIBUV_DIR}" STREQUAL "")
@@ -26,7 +26,7 @@ if (DEFINED ENV{LIBUV_DIR} AND NOT "$ENV{LIBUV_DIR}" STREQUAL "")
     include_directories($ENV{LIBUV_DIR}/include)
     link_directories($ENV{LIBUV_DIR}/build)
 else()
-    message(FATAL_ERROR "LIBUV_DIR is not set")
+    message(SEND_ERROR "LIBUV_DIR is not set")
 endif()
 
 find_package(Vulkan REQUIRED)
@@ -64,8 +64,6 @@ add_library(config
 add_library(render
     modules/render/render.cpp
     modules/render/render.h
-    modules/render/node_list.cpp
-    modules/render/node_list.h
     modules/render/gl/rendergl.cpp
     modules/render/gl/rendergl.h
     modules/render/gl/functions.cpp
@@ -80,7 +78,6 @@ add_library(render
     modules/render/vk/rendervk.h
     modules/render/vk/info.cpp
     modules/render/vk/main_loop.cpp
-    modules/render/vk/node_list.cpp
     modules/render/vk/shader_storage.h
     modules/render/vk/shader_storage.cpp
     modules/render/vk/pipeline.h
@@ -88,7 +85,7 @@ add_library(render
     modules/render/vk/commands.h
     modules/render/vk/commands.cpp
 )
-target_link_libraries(render camera config geometry algebra)
+target_link_libraries(render scene camera config geometry algebra)
 
 add_library(image)
 target_sources(image
@@ -107,8 +104,6 @@ add_library(camera
 target_link_libraries(camera algebra)
 
 add_library(geometry
-    modules/geometry/node.cpp
-    modules/geometry/node.h
     modules/geometry/transformations.cpp
     modules/geometry/transformations.h
     modules/geometry/point.cpp
@@ -122,9 +117,17 @@ add_library(geometry
 )
 target_link_libraries(geometry algebra)
 
+add_library(scene
+    modules/scene/scene.h
+    modules/scene/scene.cpp
+    modules/scene/node.cpp
+    modules/scene/node.h
+)
+target_link_libraries(scene algebra camera geometry)
+
 add_subdirectory(test/window)
-target_link_libraries(gl_test PUBLIC log algebra camera config render X11 GL GLU Vulkan::Vulkan uv)
-target_link_libraries(vk_test PUBLIC log algebra camera config render X11 GL GLU Vulkan::Vulkan uv)
+target_link_libraries(gl_test PUBLIC log algebra scene camera config render X11 GL GLU Vulkan::Vulkan uv)
+target_link_libraries(vk_test PUBLIC log algebra scene camera config render X11 GL GLU Vulkan::Vulkan uv)
 
 add_subdirectory(test/wavefront)
 target_link_libraries(wavefront geometry)

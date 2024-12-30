@@ -13,7 +13,6 @@
 
 #include "config/config.h"
 #include "../render.h"
-#include "geometry/node.h"
 #include "shader_storage.h"
 #include "pipeline.h"
 #include "commands.h"
@@ -50,7 +49,6 @@ struct RenderVK final : Render {
 
     void displayRenderInfo() override;
     void setSwapInterval( int interval ) override;
-    void appendToRenderList( std::shared_ptr<tire::Node> node ) override;
 
 private:
     void preLoop() override;
