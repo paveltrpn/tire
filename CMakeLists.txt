@@ -87,14 +87,15 @@ add_library(render
 )
 target_link_libraries(render scene camera config geometry algebra)
 
-add_library(image)
-target_sources(image
-  PUBLIC
-    FILE_SET CXX_MODULES FILES
-    modules/image/interface.cpp
+add_library(image
     modules/image/bmp.cpp
+    modules/image/bmp.h
     modules/image/tga.cpp
+    modules/image/tga.h
     modules/image/canvas.cpp
+    modules/image/canvas.h
+    modules/image/color.cpp
+    modules/image/color.h
 )
 
 add_library(camera
