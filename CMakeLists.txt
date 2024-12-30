@@ -11,15 +11,22 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHED)
 
-include_directories("3rdparty")
+
 include_directories("modules")
 
+if (DEFINED ENV{NLOHMANN_JSON_DIR} AND NOT "$ENV{NLOHMANN_JSON_DIR}" STREQUAL "")
+    message( "NLOHMANN_JSON_DIR is set to $ENV{NLOHMANN_JSON_DIR}")
+    include_directories($ENV{NLOHMANN_JSON_DIR}/include)
+else()
+    message(FATAL_ERROR "NLOHMANN_JSON_DIR is not set")
+endif()
+
 if (DEFINED ENV{LIBUV_DIR} AND NOT "$ENV{LIBUV_DIR}" STREQUAL "")
-    message("$LIBUV_DIR is set")
+    message("LIBUV_DIR is set to $ENV{LIBUV_DIR}")
     include_directories($ENV{LIBUV_DIR}/include)
     link_directories($ENV{LIBUV_DIR}/build)
 else()
-    message("$LIBUV_DIR is not set")
+    message(FATAL_ERROR "LIBUV_DIR is not set")
 endif()
 
 find_package(Vulkan REQUIRED)
