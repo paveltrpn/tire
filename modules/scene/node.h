@@ -15,6 +15,7 @@
 #include "algebra/matrix3.h"
 
 namespace tire {
+
 struct Node final : std::enable_shared_from_this<Node> {
     Node( const Polytope &body );
 
@@ -38,7 +39,6 @@ struct Node final : std::enable_shared_from_this<Node> {
 
 private:
     bool dirty_{ false };
-    bool useIndecies_{ false };
 
     std::vector<point3d> vertecies_;
     std::vector<unsigned int> indices_;
@@ -50,4 +50,5 @@ private:
     algebra::matrix3d rotation_{};
     algebra::matrix3d scale_{};
 };
+
 }  // namespace tire

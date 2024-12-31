@@ -29,8 +29,7 @@ struct Render {
     virtual ~Render();
 
     virtual void displayRenderInfo() = 0;
-
-    void scene( const std::filesystem::path &path );
+    virtual void scene( const std::filesystem::path &path ) = 0;
     void run();
 
 private:

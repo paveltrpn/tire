@@ -18,6 +18,7 @@
 #include "../render.h"
 #include "shader.h"
 #include "shader_sources.h"
+#include "scene.h"
 
 namespace tire {
 
@@ -51,6 +52,7 @@ private:
         return { (const char *)glGetString( GL_SHADING_LANGUAGE_VERSION ) };
     }
 
+    void scene( const std::filesystem::path &path ) override;
     void preLoop() override;
     void preFrame() override;
     void frame() override;
@@ -59,8 +61,6 @@ private:
     void postLoop() override;
 
     void setSwapInterval( int interval ) override;
-
-    void prepareShaders();
 
 private:
     // glx extensions section
@@ -78,9 +78,7 @@ private:
     // X11 OpenGL context
     GLXContext glContext_{ nullptr };
 
-    GLuint bufferObject_{};
-    GLuint vertexObject_{};
-    GLuint elementsObject_{};
+    std::shared_ptr<gl::Scene> scene_;
 
     std::map<ShaderID, Shader> programs_;
 

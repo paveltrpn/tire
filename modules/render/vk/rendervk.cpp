@@ -86,6 +86,10 @@ RenderVK::~RenderVK() {
     vkDestroyInstance( instance_, nullptr );
 };
 
+void RenderVK::scene( const std::filesystem::path &path ) {
+    scene_ = std::make_shared<vk::Scene>( path );
+}
+
 void RenderVK::setSwapInterval( int interval ){
 
 };

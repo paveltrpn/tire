@@ -1,10 +1,26 @@
 
 #pragma once
 
+#include <filesystem>
+#include <GL/gl.h>
+
 #include "scene/scene.h"
 
 namespace tire::gl {
 
-struct Scene final : tire::Scene {};
+struct SceneNodeBufferObjects final {
+    GLuint bufferObject{};
+    GLuint vertexObject{};
+    GLuint elementsObject{};
+};
+
+struct Scene final : tire::Scene {
+    Scene( const std::filesystem::path &fname );
+
+    void output();
+
+private:
+    std::vector<SceneNodeBufferObjects> buffersList_;
+};
 
 }  // namespace tire::gl

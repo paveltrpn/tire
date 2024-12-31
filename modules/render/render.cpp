@@ -171,10 +171,6 @@ void Render::configureX11() {
     XSelectInput( display_, window_, KeyPressMask | KeyReleaseMask );
 }
 
-void Render::scene( const std::filesystem::path &path ) {
-    scene_ = std::make_shared<Scene>( path );
-}
-
 void Render::loop( uv_idle_t *handle ) {
     // Retrive "this" pointer previously saved in uv_idle_t->data member
     auto self = static_cast<Render *>( handle->data );

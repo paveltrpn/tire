@@ -16,6 +16,7 @@
 #include "shader_storage.h"
 #include "pipeline.h"
 #include "commands.h"
+#include "scene.h"
 
 namespace tire {
 
@@ -51,6 +52,7 @@ struct RenderVK final : Render {
     void setSwapInterval( int interval ) override;
 
 private:
+    void scene( const std::filesystem::path &path ) override;
     void preLoop() override;
     void preFrame() override;
     void frame() override;
@@ -84,6 +86,8 @@ private:
     void displaySurfaceCapabilities();
 
 private:
+    std::shared_ptr<vk::Scene> scene_;
+
     std::unique_ptr<vk::ShaderStorage> shaderStorage_{};
     std::unique_ptr<vk::PiplineSimple> pipelineSimple_{};
     std::unique_ptr<CommandPool> commandPool_{};

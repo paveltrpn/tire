@@ -55,7 +55,7 @@ void Scene::process() {
                 scl.idtt();
                 node->setScale( scl );
 
-                list_.push_back( std::move( node ) );
+                nodeList_.push_back( std::move( node ) );
 
                 log::debug<DEBUG_OUTPUT_SCENE_CPP>( "box added to scene" );
             }

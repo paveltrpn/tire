@@ -10,7 +10,6 @@
 
 #include "log/log.h"
 #include "rendergl.h"
-#include "scene/camera.h"
 
 static constexpr bool DEBUG_OUTPUT_RENDERGL_CPP{ true };
 
@@ -164,71 +163,8 @@ void RenderGL::displayRenderInfo() {
                 getGLVersionString(), getGLSLVendorString() );
 }
 
-void RenderGL::prepareShaders() {
-    auto program = gl::Shader{};
-    program.link(
-        { { GL_VERTEX_SHADER,
-            shaderSourcesManager_.getVertexShader( "basic_color" ) },
-          { GL_FRAGMENT_SHADER,
-            shaderSourcesManager_.getFragmentShader( "basic_color" ) } } );
-
-    program.use();
-
-    auto matrix = program.getUniformLocation( "matrix" );
-
-    program.setMatrixUniform( matrix, GL_FALSE,
-                              scene_->getCamera( 0 )->getMatrix() );
-    auto color = program.getUniformLocation( "color" );
-    program.setVectorUniform( color, algebra::vector3f{ 0.9f, 0.2f, 0.5f } );
-
-    log::debug<DEBUG_OUTPUT_RENDERGL_CPP>( "mat: {}, col: {}", matrix, color );
-
-    programs_.insert( std::pair{ gl::ShaderID::BASIC_COLOR, program } );
-}
-
-// =============================================================================
-// ================ core render work ===========================================
-// =============================================================================
-
-void RenderGL::preLoop() {
-    prepareShaders();
-
-    gl::Shader basic_color = programs_[gl::ShaderID::BASIC_COLOR];
-
-    basic_color.use();
-};
-
-void RenderGL::preFrame() {
-    glViewport( 0, 0, width_, height_ );
-    glClearColor( 0, 0.5, 1, 1 );
-    glClear( GL_COLOR_BUFFER_BIT );
-
-    glEnable( GL_DEPTH_TEST );
-    glDepthFunc( GL_LESS );
-}
-
-void RenderGL::frame() {
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-    //glBindBuffer( GL_ARRAY_BUFFER, bufferObject_ );
-
-    // glEnableVertexAttribArray( 0 );
-    // glBindVertexArray( vertexObject_ );
-    // glDrawElements( GL_TRIANGLES, 12, GL_UNSIGNED_INT, (void *)0 );
-    // glDisableVertexAttribArray( 0 );
-
-    //glBindVertexArray( vertexObject_ );
-    //glDrawArrays( GL_TRIANGLES, 0, 3 );
-}
-
-void RenderGL::postFrame() {
-}
-
-void RenderGL::swapBuffers() {
-    glXSwapBuffers( display_, window_ );
-}
-
-void RenderGL::postLoop() {
+void RenderGL::scene( const std::filesystem::path &path ) {
+    scene_ = std::make_shared<gl::Scene>( path );
 }
 
 // =============================================================================
