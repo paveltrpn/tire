@@ -39,9 +39,6 @@ void Scene::output() {
         glBindVertexArray( buffersList_[i].elementsObject );
         glDrawElements( GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr );
         glDisableVertexAttribArray( 0 );
-
-        // glBindVertexArray( buffersList_[i].vertexObject );
-        // glDrawArrays( GL_TRIANGLES, 0, 3 );
     }
 }
 
