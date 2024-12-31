@@ -55,7 +55,7 @@ void Scene::process() {
                 scl.idtt();
                 node->setScale( scl );
 
-                list_.push_back( node );
+                list_.push_back( std::move( node ) );
 
                 log::debug<DEBUG_OUTPUT_SCENE_CPP>( "box added to scene" );
             }
@@ -82,7 +82,7 @@ void Scene::process() {
                 auto camera = std::make_shared<Perspective>(
                     Perspective{ fov, aspect, ncp, fcp } );
 
-                cameras_.push_back( camera );
+                cameras_.push_back( std::move( camera ) );
 
                 log::debug<DEBUG_OUTPUT_SCENE_CPP>(
                     "perspective camera added to scene" );

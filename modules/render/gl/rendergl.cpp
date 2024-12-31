@@ -10,13 +10,13 @@
 
 #include "log/log.h"
 #include "rendergl.h"
-#include "camera/camera.h"
+#include "scene/camera.h"
 
 static constexpr bool DEBUG_OUTPUT_RENDERGL_CPP{ true };
 
 namespace tire {
 
-namespace __detail {
+namespace __details {
 [[maybe_unused]] static void GLAPIENTRY MessageCallback(
     GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
     const GLchar *message, const void *userParam ) {
@@ -31,7 +31,7 @@ static bool ctxErrorOccurred = false;
     return 0;
 }
 
-}  // namespace __detail
+}  // namespace __details
 
 using namespace tire::gl;
 
@@ -98,9 +98,9 @@ void RenderGL::configureGl() {
     // glEnable(GL_DEBUG_OUTPUT);
     // glDebugMessageCallback(&MessageCallback, nullptr);
 
-    __detail::ctxErrorOccurred = false;
+    __details::ctxErrorOccurred = false;
     int ( *oldHandler )( Display *, XErrorEvent * ) =
-        XSetErrorHandler( &__detail::ctxErrorHandler );
+        XSetErrorHandler( &__details::ctxErrorHandler );
 
     // Check for the GLX_ARB_create_context extension string and the function.
     // If either is not present, use GLX 1.3 context creation method.
@@ -112,11 +112,11 @@ void RenderGL::configureGl() {
         context_attribs[1] = 3;
         context_attribs[3] = 0;
     } else {
-        // or use user defined context version with 3.3 by default
+        // or use user defined context version with 4.6 by default
         context_attribs[1] =
-            configHandle->get<int>( "use_context_version_major", 3 );
+            configHandle->get<int>( "use_context_version_major", 4 );
         context_attribs[3] =
-            configHandle->get<int>( "use_context_version_minor", 3 );
+            configHandle->get<int>( "use_context_version_minor", 6 );
     }
     context_attribs[4] = GLX_CONTEXT_PROFILE_MASK_ARB;
     context_attribs[5] = GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
@@ -126,7 +126,7 @@ void RenderGL::configureGl() {
                                              context_attribs.data() );
 
     // error ocured
-    if ( __detail::ctxErrorOccurred && glContext_ ) {
+    if ( __details::ctxErrorOccurred && glContext_ ) {
         throw std::runtime_error( "can't create modern OpenGL context!" );
     }
 
@@ -136,7 +136,7 @@ void RenderGL::configureGl() {
     // Restore the original error handler
     XSetErrorHandler( oldHandler );
 
-    if ( __detail::ctxErrorOccurred || !glContext_ ) {
+    if ( __details::ctxErrorOccurred || !glContext_ ) {
         throw std::runtime_error( "failed to create an OpenGL context" );
     }
 

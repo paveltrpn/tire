@@ -5,11 +5,11 @@
 #include "nlohmann/json.hpp"
 
 #include "node.h"
-#include "camera/camera.h"
+#include "camera.h"
 
 namespace tire {
 
-struct Scene final {
+struct Scene {
     Scene( const std::filesystem::path &fname );
 
     Scene( const Scene &other ) = delete;
@@ -17,7 +17,7 @@ struct Scene final {
     Scene &operator=( const Scene &other ) = delete;
     Scene &operator=( Scene &&other ) = delete;
 
-    ~Scene() = default;
+    virtual ~Scene() = default;
 
     [[nodiscard]] std::shared_ptr<Camera> getCamera( size_t id ) const {
         return cameras_[id];
@@ -28,6 +28,8 @@ private:
 
 private:
     nlohmann::json scene_;
+
+protected:
     std::vector<std::shared_ptr<Node>> list_;
     std::vector<std::shared_ptr<Camera>> cameras_{};
 };

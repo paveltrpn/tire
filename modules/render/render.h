@@ -14,7 +14,6 @@
 
 #include "config/config.h"
 #include "scene/scene.h"
-#include "camera/camera.h"
 
 namespace tire {
 

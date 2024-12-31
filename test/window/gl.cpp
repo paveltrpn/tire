@@ -12,7 +12,7 @@ int main( int argc, char **argv ) {
         new tire::Config{ "test/window/config.json" };
 
         rndr = std::make_unique<tire::RenderGL>();
-        // rndr->displayRenderInfo();
+        rndr->displayRenderInfo();
 
         auto configPtr = tire::Config::instance();
 

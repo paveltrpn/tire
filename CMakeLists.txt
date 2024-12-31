@@ -74,6 +74,8 @@ add_library(render
     modules/render/gl/buffer.h
     modules/render/gl/shader_sources.cpp
     modules/render/gl/shader_sources.h
+    modules/render/gl/scene.h
+    modules/render/gl/scene.cpp
     modules/render/vk/rendervk.cpp
     modules/render/vk/rendervk.h
     modules/render/vk/info.cpp
@@ -84,8 +86,10 @@ add_library(render
     modules/render/vk/pipeline.cpp
     modules/render/vk/commands.h
     modules/render/vk/commands.cpp
+    modules/render/vk/scene.h
+    modules/render/vk/scene.cpp
 )
-target_link_libraries(render scene camera config geometry algebra)
+target_link_libraries(render scene config geometry algebra)
 
 add_library(image
     modules/image/bmp.cpp
@@ -97,12 +101,6 @@ add_library(image
     modules/image/color.cpp
     modules/image/color.h
 )
-
-add_library(camera
-    modules/camera/camera.h
-    modules/camera/camera.cpp
-)
-target_link_libraries(camera algebra)
 
 add_library(geometry
     modules/geometry/transformations.cpp
@@ -123,12 +121,14 @@ add_library(scene
     modules/scene/scene.cpp
     modules/scene/node.cpp
     modules/scene/node.h
+    modules/scene/camera.h
+    modules/scene/camera.cpp
 )
-target_link_libraries(scene algebra camera geometry)
+target_link_libraries(scene algebra geometry)
 
 add_subdirectory(test/window)
-target_link_libraries(gl_test PUBLIC log algebra scene camera config render X11 GL GLU Vulkan::Vulkan uv)
-target_link_libraries(vk_test PUBLIC log algebra scene camera config render X11 GL GLU Vulkan::Vulkan uv)
+target_link_libraries(gl_test PUBLIC log algebra scene config render X11 GL GLU Vulkan::Vulkan uv)
+target_link_libraries(vk_test PUBLIC log algebra scene config render X11 GL GLU Vulkan::Vulkan uv)
 
 add_subdirectory(test/wavefront)
 target_link_libraries(wavefront geometry)

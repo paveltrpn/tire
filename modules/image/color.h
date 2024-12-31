@@ -4,6 +4,9 @@
 #include <string>
 #include <array>
 #include <map>
+#include <concepts>
+#include <type_traits>
+
 #include "log/log.h"
 
 namespace tire {
@@ -80,6 +83,11 @@ struct Rgba {
 };
 
 template <typename T>
+concept ColorValue = (std::unsigned_integral<T> &&
+                      std::is_same_v<T, uint8_t>) ||
+                     ( std::floating_point<T> && std::is_same_v<T, float> );
+
+template <ColorValue T>
 struct Color {
     using value_type = T;
     using char_type = uint8_t;
@@ -102,7 +110,8 @@ protected:
         const auto length = letters.length();
         size_t l{};
 
-        if ( ( length < 7 ) || ( ( length % 2 ) == 0 ) || ( length > 9 ) ) {
+        if ( ( length == 1 ) || ( length < 7 ) || ( ( length % 2 ) == 0 ) ||
+             ( length > 9 ) ) {
             log::warning( "broken color hex string!" );
             return { 255, 255, 255, 255 };
         }
@@ -140,10 +149,10 @@ struct Colorf final : Color<float> {
             try {
                 const auto& hex = __details::htmlColors.at( str );
                 const auto [r, g, b, a] = charFromHex( hex );
-                r_ = r / 255.0;
-                g_ = g / 255.0;
-                b_ = b / 255.0;
-                a_ = a / 255.0;
+                r_ = r / 255.0f;
+                g_ = g / 255.0f;
+                b_ = b / 255.0f;
+                a_ = a / 255.0f;
             } catch ( std::out_of_range& e ) {
                 log::warning( "there is no color {}", str );
                 r_ = g_ = b_ = a_ = 1.0f;

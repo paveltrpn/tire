@@ -2,6 +2,7 @@
   "objects": [
     {
       "type": "box",
+      "color" : "royalblue",
       "position_x": 0,
       "position_y": 0,
       "position_z": 0,
@@ -14,6 +15,7 @@
     },
     {
       "type": "box",
+      "color" : "crimson",
       "position_x": 0,
       "position_y": 0,
       "position_z": 0,
