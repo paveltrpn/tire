@@ -12,6 +12,7 @@ static constexpr bool DEBUG_OUTPUT_NODE_CPP{ false };
 
 #include "algebra/vector3.h"
 #include "algebra/matrix3.h"
+#include "algebra/matrix4.h"
 
 namespace tire {
 
@@ -56,45 +57,40 @@ unsigned int *Node::indeciesData() {
     return indices_.data();
 }
 
-void Node::setOffset( algebra::vector3f offst ) {
-    offset_ = offst;
-    dirty_ = true;
+void Node::setPivotOffset( algebra::vector3f offst ) {
+    offset_ = algebra::translate( offst.x(), offst.y(), offst.z() );
 }
 
-void Node::setRotate( algebra::matrix3f rtn ) {
-    rotation_ = rtn;
-    dirty_ = true;
+void Node::setPivotRotation( algebra::vector3f rtn ) {
+    rotation_ = algebra::rotate( rtn.x(), rtn.y(), rtn.z() );
 }
 
-void Node::setScale( algebra::matrix3f scl ) {
-    scale_ = scl;
-    dirty_ = true;
+void Node::setPivotScale( algebra::vector3f scl ) {
+    scale_ = algebra::scale( scl.x(), scl.y(), scl.z() );
 }
 
-void Node::applyMove() {
-    if ( dirty_ ) {
-        for ( auto i = 0; i < vertecies_.size(); ++i ) {
-            vertecies_[i].move( offset_ );
-        }
-        dirty_ = false;
+void Node::setMomentum( algebra::vector3f rtn ) {
+    momentum_ = algebra::rotate( rtn.x(), rtn.y(), rtn.z() );
+}
+
+void Node::applyPivotTransormations() {
+    algebra::matrix4f totalRotation;
+    if ( useMomentum_ ) {
+        totalRotation = rotation_ * momentum_;
+    } else {
+        totalRotation = rotation_;
+    }
+    const auto transform = offset_ * totalRotation * scale_;
+    for ( auto i = 0; i < vertecies_.size(); ++i ) {
+        vertecies_[i].transform( transform );
     }
 }
 
-void Node::applyRotate() {
-    if ( dirty_ ) {
-        for ( auto i = 0; i < vertecies_.size(); ++i ) {
-            vertecies_[i].transform( rotation_ );
-        }
-        dirty_ = false;
-    }
-}
-
-void Node::applyScale() {
-    if ( dirty_ ) {
-        for ( auto i = 0; i < vertecies_.size(); ++i ) {
-            //vertecies_[i].transform( scale_ );
-        }
-        dirty_ = false;
+void Node::applyInversePivotTransormations() {
+    const auto transform = offset_ * rotation_ * scale_;
+    const auto inverseTransform = transform.inverse();
+    for ( auto i = 0; i < vertecies_.size(); ++i ) {
+        vertecies_[i].transform( inverseTransform );
     }
 }
 

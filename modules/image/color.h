@@ -139,6 +139,9 @@ struct Colorf final : Color<float> {
     using value_type = Color<float>::value_type;
     using char_type = Color<float>::char_type;
 
+    Colorf()
+        : Color{} {}
+
     Colorf( const std::string& str )
         : Color{} {
         if ( str.starts_with( "#" ) ) {
@@ -166,6 +169,9 @@ struct Colorf final : Color<float> {
 struct Colori final : Color<uint8_t> {
     using value_type = Color<uint8_t>::value_type;
     using char_type = Color<uint8_t>::char_type;
+
+    Colori()
+        : Color{} {}
 
     Colori( const std::string& str )
         : Color{} {

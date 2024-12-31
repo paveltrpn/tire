@@ -440,6 +440,108 @@ struct matrix4 final : public matrix_sqr_base<T, 4> {
         ( *this )[14] = 0.0f;
         ( *this )[15] = 1.0f;
     }
+
+    self inverse() const {
+        self inv;
+        value_type det;
+
+        inv[0] =
+            _data[5] * _data[10] * _data[15] -
+            _data[5] * _data[11] * _data[14] - _data[9] * _data[6] * _data[15] +
+            _data[9] * _data[7] * _data[14] + _data[13] * _data[6] * _data[11] -
+            _data[13] * _data[7] * _data[10];
+
+        inv[4] =
+            -_data[4] * _data[10] * _data[15] +
+            _data[4] * _data[11] * _data[14] + _data[8] * _data[6] * _data[15] -
+            _data[8] * _data[7] * _data[14] - _data[12] * _data[6] * _data[11] +
+            _data[12] * _data[7] * _data[10];
+
+        inv[8] =
+            _data[4] * _data[9] * _data[15] - _data[4] * _data[11] * _data[13] -
+            _data[8] * _data[5] * _data[15] + _data[8] * _data[7] * _data[13] +
+            _data[12] * _data[5] * _data[11] - _data[12] * _data[7] * _data[9];
+
+        inv[12] =
+            -_data[4] * _data[9] * _data[14] +
+            _data[4] * _data[10] * _data[13] + _data[8] * _data[5] * _data[14] -
+            _data[8] * _data[6] * _data[13] - _data[12] * _data[5] * _data[10] +
+            _data[12] * _data[6] * _data[9];
+
+        inv[1] =
+            -_data[1] * _data[10] * _data[15] +
+            _data[1] * _data[11] * _data[14] + _data[9] * _data[2] * _data[15] -
+            _data[9] * _data[3] * _data[14] - _data[13] * _data[2] * _data[11] +
+            _data[13] * _data[3] * _data[10];
+
+        inv[5] =
+            _data[0] * _data[10] * _data[15] -
+            _data[0] * _data[11] * _data[14] - _data[8] * _data[2] * _data[15] +
+            _data[8] * _data[3] * _data[14] + _data[12] * _data[2] * _data[11] -
+            _data[12] * _data[3] * _data[10];
+
+        inv[9] =
+            -_data[0] * _data[9] * _data[15] +
+            _data[0] * _data[11] * _data[13] + _data[8] * _data[1] * _data[15] -
+            _data[8] * _data[3] * _data[13] - _data[12] * _data[1] * _data[11] +
+            _data[12] * _data[3] * _data[9];
+
+        inv[13] =
+            _data[0] * _data[9] * _data[14] - _data[0] * _data[10] * _data[13] -
+            _data[8] * _data[1] * _data[14] + _data[8] * _data[2] * _data[13] +
+            _data[12] * _data[1] * _data[10] - _data[12] * _data[2] * _data[9];
+
+        inv[2] =
+            _data[1] * _data[6] * _data[15] - _data[1] * _data[7] * _data[14] -
+            _data[5] * _data[2] * _data[15] + _data[5] * _data[3] * _data[14] +
+            _data[13] * _data[2] * _data[7] - _data[13] * _data[3] * _data[6];
+
+        inv[6] =
+            -_data[0] * _data[6] * _data[15] + _data[0] * _data[7] * _data[14] +
+            _data[4] * _data[2] * _data[15] - _data[4] * _data[3] * _data[14] -
+            _data[12] * _data[2] * _data[7] + _data[12] * _data[3] * _data[6];
+
+        inv[10] =
+            _data[0] * _data[5] * _data[15] - _data[0] * _data[7] * _data[13] -
+            _data[4] * _data[1] * _data[15] + _data[4] * _data[3] * _data[13] +
+            _data[12] * _data[1] * _data[7] - _data[12] * _data[3] * _data[5];
+
+        inv[14] =
+            -_data[0] * _data[5] * _data[14] + _data[0] * _data[6] * _data[13] +
+            _data[4] * _data[1] * _data[14] - _data[4] * _data[2] * _data[13] -
+            _data[12] * _data[1] * _data[6] + _data[12] * _data[2] * _data[5];
+
+        inv[3] =
+            -_data[1] * _data[6] * _data[11] + _data[1] * _data[7] * _data[10] +
+            _data[5] * _data[2] * _data[11] - _data[5] * _data[3] * _data[10] -
+            _data[9] * _data[2] * _data[7] + _data[9] * _data[3] * _data[6];
+
+        inv[7] =
+            _data[0] * _data[6] * _data[11] - _data[0] * _data[7] * _data[10] -
+            _data[4] * _data[2] * _data[11] + _data[4] * _data[3] * _data[10] +
+            _data[8] * _data[2] * _data[7] - _data[8] * _data[3] * _data[6];
+
+        inv[11] =
+            -_data[0] * _data[5] * _data[11] + _data[0] * _data[7] * _data[9] +
+            _data[4] * _data[1] * _data[11] - _data[4] * _data[3] * _data[9] -
+            _data[8] * _data[1] * _data[7] + _data[8] * _data[3] * _data[5];
+
+        inv[15] =
+            _data[0] * _data[5] * _data[10] - _data[0] * _data[6] * _data[9] -
+            _data[4] * _data[1] * _data[10] + _data[4] * _data[2] * _data[9] +
+            _data[8] * _data[1] * _data[6] - _data[8] * _data[2] * _data[5];
+
+        det = _data[0] * inv[0] + _data[1] * inv[4] + _data[2] * inv[8] +
+              _data[3] * inv[12];
+
+        if ( det == 0 ) return {};
+
+        det = 1.0 / det;
+
+        for ( int i = 0; i < 16; i++ ) inv[i] *= det;
+
+        return inv;
+    }
 };
 
 template <typename T>
@@ -474,6 +576,13 @@ template <typename T>
 matrix4<T> rotate( vector3<T> ax, T phi ) {
     matrix4<T> rt;
     rt.axis_angle( ax, phi );
+    return rt;
+}
+
+template <typename T>
+matrix4<T> scale( T dx, T dy, T dz ) {
+    matrix4<T> rt;
+    rt.scale( { dx, dy, dz } );
     return rt;
 }
 

@@ -9,6 +9,8 @@ static constexpr bool DEBUG_OUTPUT_SCENE_CPP{ true };
 
 namespace tire {
 
+const Box Scene::box = Box{};
+
 Scene::Scene( const std::filesystem::path &fname ) {
     const auto path = std::filesystem::path{ fname };
     std::ifstream file{ path };
@@ -27,6 +29,8 @@ Scene::Scene( const std::filesystem::path &fname ) {
         throw std::runtime_error(
             std::format( "file not found: {}\n", path.string() ) );
     }
+
+    // Parse json. Collect objects, cameras, lights and other scene entities
     process();
 }
 
@@ -35,24 +39,25 @@ void Scene::process() {
         const auto objects = scene_["objects"];
         for ( const auto &item : objects ) {
             const auto &type = item["type"];
-            const std::array<float, 3> defPosition = item["def_position"];
-            const std::array<float, 3> defRotation = item["def_rotation"];
-            const std::array<float, 3> defScale = item["def_scale"];
+            const auto &colorName = item["color"];
+            const std::array<float, 3> pivotPosition = item["pivot_position"];
+            const std::array<float, 3> pivotRotation = item["pivot_rotation"];
+            const std::array<float, 3> pivotScale = item["pivot_scale"];
+            const bool useMomentum = item["use_momentum"];
+            const std::array<float, 3> momentum = item["momentum"];
             if ( type == "box" ) {
                 auto node = std::make_shared<Node>( Box{} );
 
-                algebra::matrix3f rtn;
-                rtn.rotation( defRotation[0], defRotation[1], defRotation[2] );
-                node->setRotate( rtn );
-                node->applyRotate();
-
-                algebra::matrix3f scl;
-                scl.idtt();
-                node->setScale( scl );
-
-                node->setOffset( algebra::vector3f{
-                    defPosition[0], defPosition[1], defPosition[2] } );
-                node->applyMove();
+                node->setColor( colorName );
+                node->setUseMomentum( useMomentum );
+                node->setMomentum( { momentum[0], momentum[1], momentum[2] } );
+                node->setPivotScale(
+                    { pivotScale[0], pivotScale[1], pivotScale[2] } );
+                node->setPivotRotation(
+                    { pivotRotation[0], pivotRotation[1], pivotRotation[2] } );
+                node->setPivotOffset(
+                    { pivotPosition[0], pivotPosition[1], pivotPosition[2] } );
+                node->applyPivotTransormations();
 
                 nodeList_.push_back( std::move( node ) );
 

@@ -27,6 +27,7 @@ private:
     void process();
 
 private:
+    static const Box box;
     nlohmann::json scene_;
 
 protected:

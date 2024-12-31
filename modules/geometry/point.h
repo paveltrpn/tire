@@ -3,6 +3,7 @@
 
 #include "algebra/vector3.h"
 #include "algebra/matrix3.h"
+#include "algebra/matrix4.h"
 
 namespace tire {
 template <typename T>
@@ -11,7 +12,7 @@ struct point3 {
     using self = point3<scalar_type>;
     using vec_type = algebra::vector3<scalar_type>;
     using mat3_type = algebra::matrix3<scalar_type>;
-    using mat4_type = algebra::matrix3<scalar_type>;
+    using mat4_type = algebra::matrix4<scalar_type>;
 
     point3()
         : pos_{} {}
@@ -28,6 +29,7 @@ struct point3 {
 
     void move( vec_type offst ) { pos_.plus( offst ); }
     void transform( mat3_type mtrx ) { pos_ = mtrx.mult_vector3( pos_ ); }
+    void transform( mat4_type mtrx ) { pos_ = mtrx.mult_vector3( pos_ ); }
 
 private:
     vec_type pos_;
