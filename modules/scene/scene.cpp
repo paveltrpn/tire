@@ -40,17 +40,19 @@ void Scene::process() {
             const std::array<float, 3> defScale = item["def_scale"];
             if ( type == "box" ) {
                 auto node = std::make_shared<Node>( Box{} );
-                node->setOffset( algebra::vector3f{
-                    defPosition[0], defPosition[1], defPosition[2] } );
+
                 algebra::matrix3f rtn;
                 rtn.rotation( defRotation[0], defRotation[1], defRotation[2] );
                 node->setRotate( rtn );
+                node->applyRotate();
+
                 algebra::matrix3f scl;
                 scl.idtt();
                 node->setScale( scl );
 
+                node->setOffset( algebra::vector3f{
+                    defPosition[0], defPosition[1], defPosition[2] } );
                 node->applyMove();
-                //node->applyRotate();
 
                 nodeList_.push_back( std::move( node ) );
 
