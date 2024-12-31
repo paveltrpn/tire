@@ -35,27 +35,28 @@ void Scene::process() {
         const auto objects = scene_["objects"];
         for ( const auto &item : objects ) {
             const auto &type = item["type"];
-            const auto &position_x = item["position_x"];
-            const auto &position_y = item["position_y"];
-            const auto &position_z = item["position_z"];
-            const auto &rotation_x = item["rotation_x"];
-            const auto &rotation_y = item["rotation_y"];
-            const auto &rotation_z = item["rotation_z"];
-            const auto &scale_x = item["scale_x"];
-            const auto &scale_y = item["scale_y"];
-            const auto &scale_z = item["scale_z"];
+            const float &position_x = item["position_x"];
+            const float &position_y = item["position_y"];
+            const float &position_z = item["position_z"];
+            const float &rotation_x = item["rotation_x"];
+            const float &rotation_y = item["rotation_y"];
+            const float &rotation_z = item["rotation_z"];
+            const float &scale_x = item["scale_x"];
+            const float &scale_y = item["scale_y"];
+            const float &scale_z = item["scale_z"];
             if ( type == "box" ) {
                 auto node = std::make_shared<Node>( Box{} );
                 node->setOffset(
-                    algebra::vector3d{ position_x, position_y, position_z } );
-                algebra::matrix3d rtn;
+                    algebra::vector3f{ position_x, position_y, position_z } );
+                algebra::matrix3f rtn;
                 rtn.rotation( rotation_x, rotation_y, rotation_z );
                 node->setRotate( rtn );
-                algebra::matrix3d scl;
+                algebra::matrix3f scl;
                 scl.idtt();
                 node->setScale( scl );
 
-                node->applyRotate();
+                node->applyMove();
+                //node->applyRotate();
 
                 nodeList_.push_back( std::move( node ) );
 

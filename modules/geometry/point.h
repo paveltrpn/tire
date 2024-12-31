@@ -4,9 +4,9 @@
 #include "algebra/vector3.h"
 #include "algebra/matrix3.h"
 
-namespace tire
-{
-template <typename T> struct point3 {
+namespace tire {
+template <typename T>
+struct point3 {
     using scalar_type = T;
     using self = point3<scalar_type>;
     using vec_type = algebra::vector3<scalar_type>;
@@ -23,14 +23,11 @@ template <typename T> struct point3 {
         : pos_{ rhs } {}
 
     scalar_type x() { return pos_.x(); }
-
     scalar_type y() { return pos_.y(); }
-
     scalar_type z() { return pos_.z(); }
 
     void move( vec_type offst ) { pos_.plus( offst ); }
-
-    void transform( mat3_type mtrx ) { pos_ = mtrx.mult( pos_ ); }
+    void transform( mat3_type mtrx ) { pos_ = mtrx.mult_vector3( pos_ ); }
 
 private:
     vec_type pos_;
@@ -39,4 +36,4 @@ private:
 using point3l = point3<long long>;
 using point3f = point3<float>;
 using point3d = point3<double>;
-} // namespace tire
+}  // namespace tire

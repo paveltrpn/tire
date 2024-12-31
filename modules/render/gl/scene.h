@@ -9,9 +9,9 @@
 namespace tire::gl {
 
 struct SceneNodeBufferObjects final {
-    GLuint bufferObject{};
-    GLuint vertexObject{};
-    GLuint elementsObject{};
+    GLuint vertexArray{};
+    GLuint vertexBuffer{};
+    GLuint elementsBuffer{};
     long long trianglesCount{};
 };
 

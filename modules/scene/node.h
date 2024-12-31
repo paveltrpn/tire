@@ -23,19 +23,18 @@ struct Node final : std::enable_shared_from_this<Node> {
     std::shared_ptr<Node> asSharedPtr();
 
     size_t verteciesCount() const;
-    size_t verteciesArraySize() const;
-
     size_t indeciesCount() const;
+    size_t verteciesArraySize() const;
     size_t indeciesArraySize() const;
+    point3f *verteciesData();
+    unsigned int *indeciesData();
 
     long long getTrianglesCount() { return trianglesCount_; };
 
-    point3d *verteciesData();
-    unsigned int *indeciesData();
-
-    void setOffset( algebra::vector3d offst );
-    void setRotate( algebra::matrix3d rtn );
-    void setScale( algebra::matrix3d scl );
+    void setOffset( algebra::vector3f offst );
+    void setRotate( algebra::matrix3f rtn );
+    void setScale( algebra::matrix3f scl );
+    void applyMove();
     void applyRotate();
     void applyScale();
 
@@ -44,15 +43,15 @@ private:
 
     long long trianglesCount_{};
 
-    std::vector<point3d> vertecies_;
+    std::vector<point3f> vertecies_;
     std::vector<unsigned int> indices_;
     std::vector<algebra::vector3f> colors_;
     std::vector<algebra::vector2f> texCoords_;
     std::vector<normald> normals_;
 
-    algebra::vector3d offset_{};
-    algebra::matrix3d rotation_{};
-    algebra::matrix3d scale_{};
+    algebra::vector3f offset_{};
+    algebra::matrix3f rotation_{};
+    algebra::matrix3f scale_{};
 };
 
 }  // namespace tire

@@ -4,10 +4,10 @@
 
 #include "vector.h"
 
-namespace tire::algebra
-{
+namespace tire::algebra {
 
-template <typename T> struct vector3 : vector_base<T, 3> {
+template <typename T>
+struct vector3 : vector_base<T, 3> {
     using base_type = vector_base<T, 3>;
     using base_type::data_;
     using typename base_type::self;
@@ -32,9 +32,7 @@ template <typename T> struct vector3 : vector_base<T, 3> {
     }
 
     value_type x() { return data_[0]; }
-
     value_type y() { return data_[1]; }
-
     value_type z() { return data_[2]; }
 };
 
@@ -42,4 +40,4 @@ using vector3l = vector3<long long>;
 using vector3f = vector3<float>;
 using vector3d = vector3<double>;
 
-} // namespace tire::algebra
+}  // namespace tire::algebra

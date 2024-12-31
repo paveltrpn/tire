@@ -99,6 +99,8 @@ struct Color {
         , g_{ g }
         , b_{ b } {};
 
+    virtual ~Color() = default;
+
     value_type r() { return r_; };
     value_type g() { return g_; };
     value_type b() { return b_; };
