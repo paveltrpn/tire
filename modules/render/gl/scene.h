@@ -12,6 +12,7 @@ struct SceneNodeBufferObjects final {
     GLuint bufferObject{};
     GLuint vertexObject{};
     GLuint elementsObject{};
+    long long trianglesCount{};
 };
 
 struct Scene final : tire::Scene {
