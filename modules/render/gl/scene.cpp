@@ -37,7 +37,8 @@ void Scene::output() {
 
         glEnableVertexAttribArray( 0 );
         glBindVertexArray( buffersList_[i].elementsObject );
-        glDrawElements( GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr );
+        glDrawElements( GL_TRIANGLES, nodeList_[i]->getTrianglesCount(),
+                        GL_UNSIGNED_INT, nullptr );
         glDisableVertexAttribArray( 0 );
     }
 }

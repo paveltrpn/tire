@@ -18,6 +18,7 @@ namespace tire {
 Node::Node( const Polytope &body ) {
     vertecies_ = body.getVertecies();
     indices_ = body.getIndices();
+    trianglesCount_ = body.getTrianglesCount();
 
     log::debug<DEBUG_OUTPUT_NODE_CPP>( "appended vertecies: {}, indecies: {}",
                                        vertecies_.size(), indices_.size() );

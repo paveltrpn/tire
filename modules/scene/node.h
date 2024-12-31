@@ -28,6 +28,8 @@ struct Node final : std::enable_shared_from_this<Node> {
     size_t indeciesCount() const;
     size_t indeciesArraySize() const;
 
+    long long getTrianglesCount() { return trianglesCount_; };
+
     point3d *verteciesData();
     unsigned int *indeciesData();
 
@@ -39,6 +41,8 @@ struct Node final : std::enable_shared_from_this<Node> {
 
 private:
     bool dirty_{ false };
+
+    long long trianglesCount_{};
 
     std::vector<point3d> vertecies_;
     std::vector<unsigned int> indices_;
