@@ -1,6 +1,6 @@
 
 #include <fstream>
-
+#include <array>
 #include "geometry/polytope.h"
 
 #include "log/log.h"
@@ -35,21 +35,15 @@ void Scene::process() {
         const auto objects = scene_["objects"];
         for ( const auto &item : objects ) {
             const auto &type = item["type"];
-            const float &position_x = item["position_x"];
-            const float &position_y = item["position_y"];
-            const float &position_z = item["position_z"];
-            const float &rotation_x = item["rotation_x"];
-            const float &rotation_y = item["rotation_y"];
-            const float &rotation_z = item["rotation_z"];
-            const float &scale_x = item["scale_x"];
-            const float &scale_y = item["scale_y"];
-            const float &scale_z = item["scale_z"];
+            const std::array<float, 3> defPosition = item["def_position"];
+            const std::array<float, 3> defRotation = item["def_rotation"];
+            const std::array<float, 3> defScale = item["def_scale"];
             if ( type == "box" ) {
                 auto node = std::make_shared<Node>( Box{} );
-                node->setOffset(
-                    algebra::vector3f{ position_x, position_y, position_z } );
+                node->setOffset( algebra::vector3f{
+                    defPosition[0], defPosition[1], defPosition[2] } );
                 algebra::matrix3f rtn;
-                rtn.rotation( rotation_x, rotation_y, rotation_z );
+                rtn.rotation( defRotation[0], defRotation[1], defRotation[2] );
                 node->setRotate( rtn );
                 algebra::matrix3f scl;
                 scl.idtt();
@@ -72,19 +66,15 @@ void Scene::process() {
         for ( const auto &item : cameras ) {
             const auto &type = item["type"];
             if ( type == "perspective" ) {
-                const auto &position_x = item["position_x"];
-                const auto &position_y = item["position_y"];
-                const auto &position_z = item["position_z"];
-                const auto &look_at_x = item["look_at_x"];
-                const auto &look_at_y = item["look_at_y"];
-                const auto &look_at_z = item["look_at_z"];
+                const std::array<float, 3> position = item["position"];
+                const std::array<float, 3> lookAt = item["look_at"];
                 const auto &fov = item["fov"];
                 const auto &aspect = item["aspect"];
                 const auto &ncp = item["ncp"];
                 const auto &fcp = item["fcp"];
                 auto camera = std::make_shared<Perspective>(
                     Perspective{ fov, aspect, ncp, fcp } );
-                camera->move( { position_x, position_y, position_z } );
+                camera->move( { position[0], position[1], position[2] } );
                 cameras_.push_back( std::move( camera ) );
 
                 log::debug<DEBUG_OUTPUT_SCENE_CPP>(
