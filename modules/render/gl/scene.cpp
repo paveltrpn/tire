@@ -45,6 +45,16 @@ Scene::Scene( const std::filesystem::path &fname )
     }
 }
 
+void Scene::submit() {
+    for ( size_t i{}; i < buffersList_.size(); ++i ) {
+        glBindBuffer( GL_ARRAY_BUFFER, buffersList_[i].vertexBuffer );
+        void *ptr = glMapBuffer( GL_ARRAY_BUFFER, GL_WRITE_ONLY );
+        memcpy( ptr, nodeList_[i]->verteciesData(),
+                nodeList_[i]->verteciesArraySize() );
+        glUnmapBuffer( GL_ARRAY_BUFFER );
+    }
+}
+
 void Scene::output() {
     for ( size_t i{}; i < buffersList_.size(); ++i ) {
         // glEnableVertexAttribArray( 0 );

@@ -32,6 +32,7 @@ void RenderGL::preLoop() {
 };
 
 void RenderGL::preFrame() {
+    scene_->traverse();
 }
 
 void RenderGL::frame() {
@@ -44,6 +45,7 @@ void RenderGL::frame() {
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
+    scene_->submit();
     scene_->output();
 }
 

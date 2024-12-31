@@ -23,6 +23,8 @@ struct Scene {
         return cameras_[id];
     };
 
+    void traverse();
+
 private:
     void process();
 

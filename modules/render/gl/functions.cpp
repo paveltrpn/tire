@@ -45,6 +45,9 @@ PFNGLDELETEBUFFERSPROC glDeleteBuffers{ nullptr };
 PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArrays{ nullptr };
 PFNGLDRAWELEMENTSPROC glDrawElements{ nullptr };
 
+PFNGLMAPBUFFERPROC glMapBuffer{ nullptr };
+PFNGLUNMAPBUFFERPROC glUnmapBuffer{ nullptr };
+
 void init() {
     // shaders
     glCreateProgram =
@@ -153,6 +156,15 @@ void init() {
         reinterpret_cast<const GLubyte *>( "glDrawElements" ) ) );
     if ( !glDrawElements )
         log::error( "can't get glDrawElements function address!" );
+
+    glMapBuffer = reinterpret_cast<PFNGLMAPBUFFERPROC>( glXGetProcAddress(
+        reinterpret_cast<const GLubyte *>( "glMapBuffer" ) ) );
+    if ( !glMapBuffer ) log::error( "can't get glMapBuffer function address!" );
+
+    glUnmapBuffer = reinterpret_cast<PFNGLUNMAPBUFFERPROC>( glXGetProcAddress(
+        reinterpret_cast<const GLubyte *>( "glUnmapBuffer" ) ) );
+    if ( !glUnmapBuffer )
+        log::error( "can't get glUnmapBuffer function address!" );
 }
 
 }  // namespace tire::gl

@@ -47,6 +47,9 @@ extern PFNGLDELETEBUFFERSPROC glDeleteBuffers;
 extern PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArrays;
 extern PFNGLDRAWELEMENTSPROC glDrawElements;
 
+extern PFNGLMAPBUFFERPROC glMapBuffer;
+extern PFNGLUNMAPBUFFERPROC glUnmapBuffer;
+
 void init();
 
 }  // namespace tire::gl

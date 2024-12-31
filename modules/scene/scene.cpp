@@ -9,8 +9,6 @@ static constexpr bool DEBUG_OUTPUT_SCENE_CPP{ true };
 
 namespace tire {
 
-const Box Scene::box = Box{};
-
 Scene::Scene( const std::filesystem::path &fname ) {
     const auto path = std::filesystem::path{ fname };
     std::ifstream file{ path };
@@ -96,6 +94,12 @@ void Scene::process() {
     // } else {
     //     throw std::runtime_error( "there is can't be scene without lights!" );
     // }
+}
+
+void Scene::traverse() {
+    for ( auto &node : nodeList_ ) {
+        node->applyPivotTransormations();
+    }
 }
 
 }  // namespace tire

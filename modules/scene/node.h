@@ -50,10 +50,11 @@ private:
 
     long long trianglesCount_{};
 
+    std::vector<point3f> defaultVertecies_;
     std::vector<point3f> vertecies_;
+    std::vector<normald> normals_;
     std::vector<unsigned int> indices_;
     std::vector<algebra::vector2f> texCoords_;
-    std::vector<normald> normals_;
 
     Colorf color_{};
 

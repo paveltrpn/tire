@@ -18,6 +18,7 @@ struct SceneNodeBufferObjects final {
 struct Scene final : tire::Scene {
     Scene( const std::filesystem::path &fname );
 
+    void submit();
     void output();
 
 private:

@@ -17,7 +17,7 @@ static constexpr bool DEBUG_OUTPUT_NODE_CPP{ false };
 namespace tire {
 
 Node::Node( const Polytope &body ) {
-    vertecies_ = body.getVertecies();
+    defaultVertecies_ = vertecies_ = body.getVertecies();
     indices_ = body.getIndices();
     trianglesCount_ = body.getTrianglesCount();
 
@@ -74,14 +74,16 @@ void Node::setMomentum( algebra::vector3f rtn ) {
 }
 
 void Node::applyPivotTransormations() {
-    algebra::matrix4f totalRotation;
+    algebra::matrix4f totalRotation{};
     if ( useMomentum_ ) {
-        totalRotation = rotation_ * momentum_;
+        totalRotation = momentum_ * rotation_;
     } else {
         totalRotation = rotation_;
     }
     const auto transform = offset_ * totalRotation * scale_;
+
     for ( auto i = 0; i < vertecies_.size(); ++i ) {
+        vertecies_[i] = defaultVertecies_[i];
         vertecies_[i].transform( transform );
     }
 }
