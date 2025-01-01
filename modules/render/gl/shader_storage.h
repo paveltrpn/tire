@@ -2,9 +2,53 @@
 #pragma once
 
 #include <map>
+#include <filesystem>
+
 #include <GL/gl.h>
 
+#include "algebra/concepts.h"
+#include "algebra/vector2.h"
+#include "algebra/vector3.h"
+#include "algebra/vector4.h"
+#include "algebra/matrix2.h"
+#include "algebra/matrix3.h"
+#include "algebra/matrix4.h"
+
 namespace tire::gl {
+
+struct Program final {
+    Program() = default;
+    ~Program();
+
+    void initVertexStage( const std::filesystem::path &path );
+    void initTesselationControlStage( const std::filesystem::path &path );
+    void initTesselationEvaluationStage( const std::filesystem::path &path );
+    void initGeometryStage( const std::filesystem::path &path );
+    void initComputeStage( const std::filesystem::path &path );
+    void initFragmentStage( const std::filesystem::path &path );
+
+    void link();
+    void use();
+    GLuint program() { return program_; };
+
+private:
+    std::string readSource( const std::filesystem::path &path );
+    GLuint compileStage( GLenum stage, std::string_view source );
+
+private:
+    // program, linked against some shader stages
+    GLuint program_{};
+
+    // shader stages
+    GLuint vertex_{};
+    GLuint tesselationControl_{};
+    GLuint tesselationEvaluation_{};
+    GLuint geometry_{};
+    GLuint fragment_{};
+    GLuint compute_{};
+};
+
+// ============================================================================
 
 struct ShaderStorage final {
     ShaderStorage() = default;
@@ -14,15 +58,65 @@ struct ShaderStorage final {
     ShaderStorage &operator=( const ShaderStorage &other ) = delete;
     ShaderStorage &operator=( ShaderStorage &&other ) = delete;
 
-    ~ShaderStorage();
+    ~ShaderStorage() = default;
 
-    void add();
+    void add( const std::string &name, Program program );
     void use( const std::string &name );
     void destroy( const std::string &name );
 
+    GLuint getUniformLocation( const std::string &name, const std::string &id );
+
+    template <algebra::VectorFloat T>
+    void setVectorUniform( GLint location, T value ) {
+        if constexpr ( std::is_same_v<T, algebra::vector2f> ) {
+            glUniform2fv( location, 1, value.data() );
+        } else if constexpr ( std::is_same_v<T, algebra::vector3f> ) {
+            glUniform3fv( location, 1, value.data() );
+        } else if constexpr ( std::is_same_v<typename T::value_type, float> &&
+                              T::size == 4 ) {
+            glUniform4fv( location, 1, value.data() );
+        } else if constexpr ( std::is_same_v<typename T::value_type, int> &&
+                              T::size == 2 ) {
+            glUniform2iv( location, 1, value.data() );
+        } else if constexpr ( std::is_same_v<typename T::value_type, int> &&
+                              T::size == 3 ) {
+            glUniform3iv( location, 1, value.data() );
+        } else if constexpr ( std::is_same_v<typename T::value_type, int> &&
+                              T::size == 4 ) {
+            glUniform4iv( location, 1, value.data() );
+        } else if constexpr ( std::is_same_v<typename T::value_type,
+                                             unsigned int> &&
+                              T::size == 2 ) {
+            glUniform2uiv( location, 1, value.data() );
+        } else if constexpr ( std::is_same_v<typename T::value_type,
+                                             unsigned int> &&
+                              T::size == 3 ) {
+            glUniform3uiv( location, 1, value.data() );
+        } else if constexpr ( std::is_same_v<typename T::value_type,
+                                             unsigned int> &&
+                              T::size == 4 ) {
+            glUniform4uiv( location, 1, value.data() );
+        }
+    }
+
+    // only declaration now
+    template <algebra::MatrixDouble T>
+    void setMatrixUniform( GLuint location, GLboolean transpose, T value );
+
+    template <algebra::MatrixFloat T>
+    void setMatrixUniform( GLuint location, GLboolean transpose, T value ) {
+        if constexpr ( std::is_same_v<T, algebra::matrix2f> ) {
+            glUniformMatrix2fv( location, 1, transpose, value.data() );
+        } else if constexpr ( std::is_same_v<T, algebra::matrix3f> ) {
+            glUniformMatrix3fv( location, 1, transpose, value.data() );
+        } else if constexpr ( std::is_same_v<T, algebra::matrix4f> ) {
+            glUniformMatrix4fv( location, 1, transpose, value.data() );
+        }
+    }
+
 private:
     // "program name (string id)" - "shader program id"
-    std::map<std::string, GLuint> programs_;
+    std::map<std::string, Program> programs_;
 };
 
 }  // namespace tire::gl

@@ -147,6 +147,8 @@ void RenderGL::configureGl() {
     }
 
     glXMakeCurrent( display_, window_, glContext_ );
+
+    glEnable( GL_DEBUG_OUTPUT );
 }
 
 void RenderGL::setupDebugMessages() {

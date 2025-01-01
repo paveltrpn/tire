@@ -6,6 +6,7 @@ static constexpr bool DEBUG_OUTPUT_MAIN_LOOP_GL_CPP{ true };
 namespace tire {
 
 void RenderGL::preLoop() {
+    /*
     auto program = gl::Shader{};
     program.link(
         { { GL_VERTEX_SHADER,
@@ -29,6 +30,31 @@ void RenderGL::preLoop() {
     gl::Shader basic_color = programs_[gl::ShaderID::BASIC_COLOR];
 
     basic_color.use();
+*/
+    const auto basePath = Config::instance()->getBasePath();
+    gl::Program program{};
+
+    program.initVertexStage( basePath / "assets" / "shaders" /
+                             "test_vertex.glsl" );
+    program.initFragmentStage( basePath / "assets" / "shaders" /
+                               "test_fragment.glsl" );
+    program.link();
+
+    shaderStorage_.add( "main", program );
+    shaderStorage_.use( "main" );
+
+    auto matrix = shaderStorage_.getUniformLocation( "main", "matrix" );
+
+    shaderStorage_.setMatrixUniform( matrix, GL_FALSE,
+                                     scene_->getCamera( 0 )->getMatrix() );
+    auto color = shaderStorage_.getUniformLocation( "main", "color" );
+    shaderStorage_.setVectorUniform( color,
+                                     algebra::vector3f{ 0.9f, 0.2f, 0.5f } );
+
+    log::debug<DEBUG_OUTPUT_MAIN_LOOP_GL_CPP>( "mat: {}, col: {}", matrix,
+                                               color );
+
+    shaderStorage_.use( "main" );
 };
 
 void RenderGL::preFrame() {

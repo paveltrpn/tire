@@ -28,7 +28,7 @@ Scene::Scene( const std::filesystem::path &fname ) {
         }
     } else {
         throw std::runtime_error(
-            std::format( "file not found: {}\n", path.string() ) );
+            std::format( "file not found: {}\n", path.filename().string() ) );
     }
 
     // Parse json. Collect objects, cameras, lights and other scene entities

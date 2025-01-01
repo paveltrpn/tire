@@ -18,6 +18,7 @@
 #include "../render.h"
 #include "shader.h"
 #include "shader_sources.h"
+#include "shader_storage.h"
 #include "scene.h"
 
 namespace tire {
@@ -84,6 +85,7 @@ private:
 
     // shader sources manager
     ShaderDatabase shaderSourcesManager_{};
+    gl::ShaderStorage shaderStorage_{};
 };
 
 }  // namespace tire
