@@ -39,7 +39,7 @@ void RenderGL::preLoop() {
     program.initFragmentStage( basePath / "assets" / "shaders" /
                                "test_fragment.glsl" );
     program.link();
-
+    program.use();  // SIC!!!
     shaderStorage_.add( "main", program );
     shaderStorage_.use( "main" );
 
@@ -53,8 +53,6 @@ void RenderGL::preLoop() {
 
     log::debug<DEBUG_OUTPUT_MAIN_LOOP_GL_CPP>( "mat: {}, col: {}", matrix,
                                                color );
-
-    shaderStorage_.use( "main" );
 };
 
 void RenderGL::preFrame() {

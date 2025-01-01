@@ -80,11 +80,6 @@ private:
     GLXContext glContext_{ nullptr };
 
     std::shared_ptr<gl::Scene> scene_;
-
-    std::map<ShaderID, Shader> programs_;
-
-    // shader sources manager
-    ShaderDatabase shaderSourcesManager_{};
     gl::ShaderStorage shaderStorage_{};
 };
 
