@@ -77,6 +77,8 @@ add_library(render
     modules/render/gl/shader_sources.h
     modules/render/gl/scene.h
     modules/render/gl/scene.cpp
+    modules/render/gl/shader_storage.h
+    modules/render/gl/shader_storage.cpp
     modules/render/vk/rendervk.cpp
     modules/render/vk/rendervk.h
     modules/render/vk/info.cpp

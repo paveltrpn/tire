@@ -5,8 +5,7 @@
 
 #include "shader_storage.h"
 #include "log/log.h"
-
-static constexpr bool DEBUG_OUTPUT_SHADER_STORAGE_CPP{ false };
+static constexpr bool DEBUG_OUTPUT_SHADER_STORAGE_VK_CPP{ false };
 
 namespace tire::vk {
 
@@ -51,7 +50,7 @@ void ShaderStorage::add( const std::string &path, const std::string &name ) {
             std::format( "failed to create shader module {} with code {}!",
                          name, string_VkResult( err ) ) );
     } else {
-        log::debug<DEBUG_OUTPUT_SHADER_STORAGE_CPP>(
+        log::debug<DEBUG_OUTPUT_SHADER_STORAGE_VK_CPP>(
             "shader module {} created!", name );
     }
 
@@ -83,7 +82,7 @@ void ShaderStorage::destroy( const std::string &name ) {
 
 void ShaderStorage::list() {
     for ( const auto &key : modules_ ) {
-        log::debug<DEBUG_OUTPUT_SHADER_STORAGE_CPP>(
+        log::debug<DEBUG_OUTPUT_SHADER_STORAGE_VK_CPP>(
             "available shader module: \"{}\"", std::get<0>( key ) );
     }
 }
