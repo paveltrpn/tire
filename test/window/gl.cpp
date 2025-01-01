@@ -16,7 +16,7 @@ int main( int argc, char **argv ) {
 
         auto configPtr = tire::Config::instance();
 
-        rndr->scene( configPtr->getBasePath() / "assets" / "scene.json" );
+        rndr->scene( configPtr->getBasePath() / "assets" / "two_cubes.json" );
         rndr->run();
     } catch ( const std::exception &e ) {
         tire::log::error( "caught exception: {}", e.what() );
