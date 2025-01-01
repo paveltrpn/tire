@@ -11,6 +11,9 @@ namespace tire {
 
 Scene::Scene( const std::filesystem::path &fname ) {
     const auto path = std::filesystem::path{ fname };
+
+    log::info( "loading scene from file {}", fname.filename().string() );
+
     std::ifstream file{ path };
     if ( file ) {
         try {
