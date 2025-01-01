@@ -9,13 +9,13 @@ static constexpr bool DEBUG_OUTPUT_SHADER_PROGRAM_GL_CPP{ true };
 
 namespace tire::gl {
 
-void Program::clear() {
+void ProgramBase::clear() {
     for ( const auto handle : stages_ ) {
         glDeleteProgram( handle );
     }
 }
 
-void Program::link() {
+void ProgramBase::link() {
     program_ = glCreateProgram();
 
     for ( const auto handle : stages_ ) {
@@ -37,11 +37,11 @@ void Program::link() {
     }
 }
 
-void Program::use() {
+void ProgramBase::use() {
     glUseProgram( program_ );
 }
 
-std::string Program::readSource( const std::filesystem::path &path ) {
+std::string ProgramBase::readSource( const std::filesystem::path &path ) {
     log::debug<DEBUG_OUTPUT_SHADER_PROGRAM_GL_CPP>( "loading shader file {}",
                                                     path.filename().string() );
     std::ifstream file;
@@ -67,7 +67,7 @@ std::string Program::readSource( const std::filesystem::path &path ) {
     return str;
 }
 
-GLuint Program::compileStage( GLenum stage, std::string_view source ) {
+GLuint ProgramBase::compileStage( GLenum stage, std::string_view source ) {
     const GLuint shHandle = glCreateShader( stage );
     const char *c_str = source.data();
 
@@ -90,7 +90,7 @@ GLuint Program::compileStage( GLenum stage, std::string_view source ) {
     }
 }
 
-GLuint Program::getUniformLocation( const std::string &id ) {
+GLuint ProgramBase::getUniformLocation( const std::string &id ) {
     const auto location = glGetUniformLocation( program_, id.c_str() );
 
     if ( location == GL_INVALID_VALUE ) {

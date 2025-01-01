@@ -9,22 +9,23 @@ static constexpr bool DEBUG_OUTPUT_SHADER_STORAGE_GL_CPP{ true };
 
 namespace tire::gl {
 
-void ShaderStorage::add( const std::string &name, Program program ) {
+void ShaderStorage::add( const std::string &name, const ProgramType &program ) {
     programs_[name] = program;
 }
 
 void ShaderStorage::use( const std::string &name ) {
-    programs_[name].use();
+    std::visit( []( auto &&arg ) { arg.use(); }, programs_[name] );
 }
 
 void ShaderStorage::destroy( const std::string &name ) {
-    Program program;
+    ProgramType program;
     try {
         program = programs_.at( name );
     } catch ( std::out_of_range &e ) {
         log::warning( "shader program {} not exist!", name );
         return;
     }
+    std::visit( []( auto &&arg ) { arg.clear(); }, programs_[name] );
     programs_.erase( name );
 }
 

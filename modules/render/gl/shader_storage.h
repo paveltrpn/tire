@@ -3,11 +3,17 @@
 
 #include <map>
 #include <filesystem>
+#include <variant>
+
 #include <GL/gl.h>
 
 #include "program.h"
 
 namespace tire::gl {
+
+using ProgramType =
+    std::variant<Program<ProgramTagType::SIMPLE>, Program<ProgramTagType::TWO>,
+                 Program<ProgramTagType::THREE>>;
 
 struct ShaderStorage final {
     ShaderStorage() = default;
@@ -19,13 +25,13 @@ struct ShaderStorage final {
 
     ~ShaderStorage() = default;
 
-    void add( const std::string &name, Program program );
+    void add( const std::string &name, const ProgramType &program );
     void use( const std::string &name );
     void destroy( const std::string &name );
 
 private:
     // "program name (string id)" - "shader program id"
-    std::map<std::string, Program> programs_;
+    std::map<std::string, ProgramType> programs_;
 };
 
 }  // namespace tire::gl

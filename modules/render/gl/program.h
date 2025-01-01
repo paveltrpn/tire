@@ -15,6 +15,8 @@
 
 namespace tire::gl {
 
+enum class ProgramTagType { SIMPLE, TWO, THREE };
+
 template <GLuint Opt>
 concept ShaderStage = ( Opt == GL_VERTEX_SHADER ) ||
                       ( Opt == GL_FRAGMENT_SHADER ) ||
@@ -23,9 +25,9 @@ concept ShaderStage = ( Opt == GL_VERTEX_SHADER ) ||
                       ( Opt == GL_TESS_CONTROL_SHADER ) ||
                       ( Opt == GL_TESS_EVALUATION_SHADER );
 
-struct Program {
-    Program() = default;
-    ~Program() = default;
+struct ProgramBase {
+    ProgramBase() = default;
+    ~ProgramBase() = default;
 
     template <GLuint stageT>
     requires ShaderStage<stageT> void init(
@@ -100,5 +102,17 @@ private:
     GLuint program_{};
     std::vector<GLuint> stages_{};
 };
+
+template <ProgramTagType T>
+struct Program : ProgramBase {};
+
+template <>
+struct Program<ProgramTagType::SIMPLE> : ProgramBase {};
+
+template <>
+struct Program<ProgramTagType::TWO> : ProgramBase {};
+
+template <>
+struct Program<ProgramTagType::THREE> : ProgramBase {};
 
 }  // namespace tire::gl
