@@ -14,7 +14,7 @@ void RenderGL::preLoop() {
     program.initFragmentStage( basePath / "assets" / "shaders" /
                                "test_fragment.glsl" );
     program.link();
-    program.use();  // SIC!!!
+
     shaderStorage_.add( "main", program );
     shaderStorage_.use( "main" );
 
