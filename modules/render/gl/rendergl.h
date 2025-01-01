@@ -17,7 +17,6 @@
 #include "config/config.h"
 #include "../render.h"
 #include "shader.h"
-#include "shader_sources.h"
 #include "shader_storage.h"
 #include "scene.h"
 

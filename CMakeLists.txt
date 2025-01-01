@@ -73,8 +73,6 @@ add_library(render
     modules/render/gl/shader.h
     modules/render/gl/buffer.cpp
     modules/render/gl/buffer.h
-    modules/render/gl/shader_sources.cpp
-    modules/render/gl/shader_sources.h
     modules/render/gl/scene.h
     modules/render/gl/scene.cpp
     modules/render/gl/shader_storage.h
