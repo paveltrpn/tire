@@ -2,21 +2,22 @@
 #pragma once
 
 #include <filesystem>
+#include <vector>
 
 #include <GL/gl.h>
 
 namespace tire::gl {
 
-struct Program final {
+struct Program {
     Program() = default;
     ~Program() = default;
 
-    void initVertexStage( const std::filesystem::path &path );
-    void initTesselationControlStage( const std::filesystem::path &path );
-    void initTesselationEvaluationStage( const std::filesystem::path &path );
-    void initGeometryStage( const std::filesystem::path &path );
-    void initComputeStage( const std::filesystem::path &path );
-    void initFragmentStage( const std::filesystem::path &path );
+    template <GLuint stageT>
+    void init( const std::filesystem::path &path ) {
+        const auto &sourceString = readSource( path );
+        const auto stage = compileStage( stageT, sourceString );
+        stages_.push_back( stage );
+    }
 
     void link();
     void use();
@@ -31,14 +32,7 @@ private:
 private:
     // program, linked against some shader stages
     GLuint program_{};
-
-    // shader stages
-    GLuint vertex_{};
-    GLuint tesselationControl_{};
-    GLuint tesselationEvaluation_{};
-    GLuint geometry_{};
-    GLuint fragment_{};
-    GLuint compute_{};
+    std::vector<GLuint> stages_{};
 };
 
 }  // namespace tire::gl

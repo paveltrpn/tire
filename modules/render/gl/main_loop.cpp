@@ -9,10 +9,10 @@ void RenderGL::preLoop() {
     const auto basePath = Config::instance()->getBasePath();
     gl::Program program{};
 
-    program.initVertexStage( basePath / "assets" / "shaders" /
-                             "test_vertex.glsl" );
-    program.initFragmentStage( basePath / "assets" / "shaders" /
-                               "test_fragment.glsl" );
+    program.init<GL_VERTEX_SHADER>( basePath / "assets" / "shaders" /
+                                    "test_vertex.glsl" );
+    program.init<GL_FRAGMENT_SHADER>( basePath / "assets" / "shaders" /
+                                      "test_fragment.glsl" );
     program.link();
 
     shaderStorage_.add( "main", program );

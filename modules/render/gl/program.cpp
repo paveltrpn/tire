@@ -10,19 +10,17 @@ static constexpr bool DEBUG_OUTPUT_SHADER_PROGRAM_GL_CPP{ true };
 namespace tire::gl {
 
 void Program::clear() {
-    glDeleteProgram( vertex_ );
-    glDeleteProgram( tesselationControl_ );
-    glDeleteProgram( tesselationEvaluation_ );
-    glDeleteProgram( geometry_ );
-    glDeleteProgram( fragment_ );
-    glDeleteProgram( compute_ );
-    glDeleteProgram( program_ );
+    for ( const auto handle : stages_ ) {
+        glDeleteProgram( handle );
+    }
 }
 
 void Program::link() {
     program_ = glCreateProgram();
-    glAttachShader( program_, vertex_ );
-    glAttachShader( program_, fragment_ );
+
+    for ( const auto handle : stages_ ) {
+        glAttachShader( program_, handle );
+    }
 
     glLinkProgram( program_ );
 
@@ -41,38 +39,6 @@ void Program::link() {
 
 void Program::use() {
     glUseProgram( program_ );
-}
-
-void Program::initVertexStage( const std::filesystem::path &path ) {
-    const auto &sourceString = readSource( path );
-    vertex_ = compileStage( GL_VERTEX_SHADER, sourceString );
-}
-
-void Program::initTesselationControlStage( const std::filesystem::path &path ) {
-    const auto &sourceString = readSource( path );
-    tesselationControl_ = compileStage( GL_TESS_CONTROL_SHADER, sourceString );
-}
-
-void Program::initTesselationEvaluationStage(
-    const std::filesystem::path &path ) {
-    const auto &sourceString = readSource( path );
-    tesselationEvaluation_ =
-        compileStage( GL_TESS_EVALUATION_SHADER, sourceString );
-}
-
-void Program::initGeometryStage( const std::filesystem::path &path ) {
-    const auto &sourceString = readSource( path );
-    geometry_ = compileStage( GL_GEOMETRY_SHADER, sourceString );
-}
-
-void Program::initComputeStage( const std::filesystem::path &path ) {
-    const auto &sourceString = readSource( path );
-    compute_ = compileStage( GL_COMPUTE_SHADER, sourceString );
-}
-
-void Program::initFragmentStage( const std::filesystem::path &path ) {
-    const auto &sourceString = readSource( path );
-    fragment_ = compileStage( GL_FRAGMENT_SHADER, sourceString );
 }
 
 std::string Program::readSource( const std::filesystem::path &path ) {
