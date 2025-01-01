@@ -50,9 +50,12 @@ private:
 
     long long trianglesCount_{};
 
+    // Store default object vertecies and normal instead of inverse transformations
     std::vector<point3f> defaultVertecies_;
     std::vector<point3f> vertecies_;
+    std::vector<normald> defaultNormals_;
     std::vector<normald> normals_;
+
     std::vector<unsigned int> indices_;
     std::vector<algebra::vector2f> texCoords_;
 

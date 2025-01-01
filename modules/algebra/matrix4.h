@@ -561,7 +561,7 @@ matrix4<T> translate( T dx, T dy, T dz ) {
 template <typename T>
 matrix4<T> translate( vector3<T> &offset ) {
     matrix4<T> rt{};
-    rt.translate( offset.x(), offset.y(), offset.z() );
+    rt.translate( offset );
     return rt;
 }
 

@@ -7,8 +7,7 @@
 
 #include "log/log.h"
 
-namespace tire
-{
+namespace tire {
 
 struct ShaderDatabase final {
     ShaderDatabase() {
@@ -21,7 +20,7 @@ void main() {
 })foo";
 
         vertexShaderSources_["basic_color"] = R"foo(
-#version 330 core
+#version 450 core
 layout (location = 0) in vec3 pos;
 out vec3 outColor;
 uniform mat4 matrix;
@@ -32,7 +31,7 @@ void main() {
 };)foo";
 
         fragmentShaderSources_["basic_color"] = R"foo(
-#version 330 core
+#version 450 core
 out vec4 FragColor;
 in vec3 outColor;
 void main() {
@@ -48,7 +47,8 @@ void main() {
         if ( vertexShaderSources_.contains( shaderId ) ) {
             return vertexShaderSources_[shaderId];
         } else {
-            log::warning( "can't find vertex shader source with id: {}", shaderId );
+            log::warning( "can't find vertex shader source with id: {}",
+                          shaderId );
             return vertexShaderSources_["default"];
         }
     }
@@ -56,7 +56,8 @@ void main() {
         if ( fragmentShaderSources_.contains( shaderId ) ) {
             return fragmentShaderSources_[shaderId];
         } else {
-            log::warning( "can't find fragment shader source with id: {}", shaderId );
+            log::warning( "can't find fragment shader source with id: {}",
+                          shaderId );
             return fragmentShaderSources_["default"];
         }
     }
@@ -66,4 +67,4 @@ private:
     std::map<std::string, std::string> fragmentShaderSources_;
 };
 
-} // namespace tire
+}  // namespace tire

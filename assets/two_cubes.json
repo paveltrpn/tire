@@ -18,8 +18,12 @@
         1,
         1
       ],
-      "use_momentum":true,
-      "momentum":[0.15,0.3,0.01]
+      "use_momentum": true,
+      "momentum": [
+        -0.15,
+        0.3,
+        0.01
+      ]
     },
     {
       "type": "box",
@@ -39,8 +43,12 @@
         1,
         1
       ],
-      "use_momentum":true,
-      "momentum":[0.3,0.15,0.2]
+      "use_momentum": true,
+      "momentum": [
+        0.3,
+        -0.15,
+        0.2
+      ]
     }
   ],
   "cameras": [
