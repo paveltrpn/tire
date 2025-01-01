@@ -14,17 +14,15 @@ void RenderGL::preLoop() {
     program.init<GL_FRAGMENT_SHADER>( basePath / "assets" / "shaders" /
                                       "test_fragment.glsl" );
     program.link();
+    program.use();
+    auto matrix = program.getUniformLocation( "matrix" );
+    program.setMatrixUniform( matrix, GL_FALSE,
+                              scene_->getCamera( 0 )->getMatrix() );
+    auto color = program.getUniformLocation( "color" );
+    program.setVectorUniform( color, algebra::vector3f{ 0.9f, 0.2f, 0.5f } );
 
     shaderStorage_.add( "main", program );
     shaderStorage_.use( "main" );
-
-    auto matrix = shaderStorage_.getUniformLocation( "main", "matrix" );
-
-    shaderStorage_.setMatrixUniform( matrix, GL_FALSE,
-                                     scene_->getCamera( 0 )->getMatrix() );
-    auto color = shaderStorage_.getUniformLocation( "main", "color" );
-    shaderStorage_.setVectorUniform( color,
-                                     algebra::vector3f{ 0.9f, 0.2f, 0.5f } );
 
     log::debug<DEBUG_OUTPUT_MAIN_LOOP_GL_CPP>( "mat: {}, col: {}", matrix,
                                                color );

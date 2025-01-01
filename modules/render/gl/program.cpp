@@ -89,4 +89,19 @@ GLuint Program::compileStage( GLenum stage, std::string_view source ) {
         return shHandle;
     }
 }
+
+GLuint Program::getUniformLocation( const std::string &id ) {
+    const auto location = glGetUniformLocation( program_, id.c_str() );
+
+    if ( location == GL_INVALID_VALUE ) {
+        log::warning( "uniform location error - invalid value" );
+    }
+
+    if ( location == GL_INVALID_OPERATION ) {
+        log::warning( "uniform location error - invalid operation" );
+    }
+
+    return location;
+}
+
 }  // namespace tire::gl

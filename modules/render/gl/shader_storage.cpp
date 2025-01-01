@@ -28,20 +28,4 @@ void ShaderStorage::destroy( const std::string &name ) {
     programs_.erase( name );
 }
 
-GLuint ShaderStorage::getUniformLocation( const std::string &name,
-                                          const std::string &id ) {
-    const auto program = programs_[name].program();
-    const auto location = glGetUniformLocation( program, id.c_str() );
-
-    if ( location == GL_INVALID_VALUE ) {
-        log::warning( "uniform location error - invalid value" );
-    }
-
-    if ( location == GL_INVALID_OPERATION ) {
-        log::warning( "uniform location error - invalid operation" );
-    }
-
-    return location;
-}
-
 }  // namespace tire::gl
