@@ -69,8 +69,6 @@ add_library(render
     modules/render/gl/main_loop.cpp
     modules/render/gl/functions.cpp
     modules/render/gl/functions.h
-    modules/render/gl/shader.cpp
-    modules/render/gl/shader.h
     modules/render/gl/buffer.cpp
     modules/render/gl/buffer.h
     modules/render/gl/scene.h
