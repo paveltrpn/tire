@@ -5,6 +5,8 @@
 #include <vector>
 #include <GL/gl.h>
 
+#include "functions.h"
+
 #include "algebra/concepts.h"
 #include "algebra/vector2.h"
 #include "algebra/vector3.h"
@@ -13,9 +15,8 @@
 #include "algebra/matrix3.h"
 #include "algebra/matrix4.h"
 
+#include "image/color.h"
 namespace tire::gl {
-
-enum class ProgramTagType { SIMPLE, TWO, THREE };
 
 template <GLuint Opt>
 concept ShaderStage = ( Opt == GL_VERTEX_SHADER ) ||
@@ -36,6 +37,8 @@ struct ProgramBase {
         const auto stage = compileStage( stageT, sourceString );
         stages_.push_back( stage );
     }
+
+    virtual void findUniforms() = 0;
 
     void link();
     void use();
@@ -97,22 +100,62 @@ private:
     std::string readSource( const std::filesystem::path &path );
     GLuint compileStage( GLenum stage, std::string_view source );
 
-private:
+protected:
     // program, linked against some shader stages
     GLuint program_{};
+
+private:
     std::vector<GLuint> stages_{};
 };
+
+// Shader program type tags, describes few shader program
+// possible "kinds".
+struct ProgramColorTag {};
+struct ProgramTextureTag {};
+
+template <typename T>
+concept ProgramTagType =
+    std::is_same_v<T, ProgramColorTag> || std::is_same_v<T, ProgramTextureTag>;
 
 template <ProgramTagType T>
 struct Program : ProgramBase {};
 
 template <>
-struct Program<ProgramTagType::SIMPLE> : ProgramBase {};
+struct Program<ProgramColorTag> : ProgramBase {
+    using type_tag = ProgramColorTag;
+
+    void findUniforms() override {
+        glUseProgram( program_ );
+        viewMatrixLocation_ = getUniformLocation( "view_matrix" );
+        colorLocation_ = getUniformLocation( "color" );
+        glUseProgram( 0 );
+    };
+
+    void setViewMatrix( const algebra::matrix4f &matrix ) {
+        setMatrixUniform( viewMatrixLocation_, GL_FALSE, matrix );
+    };
+
+    void setColor( Colorf color ) {
+        setVectorUniform(
+            colorLocation_,
+            algebra::vector3f{ color.r(), color.g(), color.b() } );
+    };
+
+private:
+    GLuint viewMatrixLocation_{};
+    GLuint colorLocation_{};
+};
 
 template <>
-struct Program<ProgramTagType::TWO> : ProgramBase {};
+struct Program<ProgramTextureTag> : ProgramBase {
+    using type_tag = ProgramColorTag;
 
-template <>
-struct Program<ProgramTagType::THREE> : ProgramBase {};
+    void findUniforms() override {
+        viewMatrixLocation_ = getUniformLocation( "view_matrix" );
+    };
+
+private:
+    GLuint viewMatrixLocation_{};
+};
 
 }  // namespace tire::gl

@@ -34,6 +34,7 @@ struct Node final : std::enable_shared_from_this<Node> {
     long long getTrianglesCount() { return trianglesCount_; };
 
     void setColor( const std::string &name ) { color_ = Colorf{ name }; }
+    Colorf color() const { return color_; };
 
     void setPivotOffset( algebra::vector3f offst );
     void setPivotRotation( algebra::vector3f rtn );

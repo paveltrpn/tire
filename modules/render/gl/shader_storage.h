@@ -12,8 +12,7 @@
 namespace tire::gl {
 
 using ProgramType =
-    std::variant<Program<ProgramTagType::SIMPLE>, Program<ProgramTagType::TWO>,
-                 Program<ProgramTagType::THREE>>;
+    std::variant<Program<ProgramColorTag>, Program<ProgramTextureTag>>;
 
 struct ShaderStorage final {
     ShaderStorage() = default;
@@ -30,7 +29,7 @@ struct ShaderStorage final {
     void destroy( const std::string &name );
 
 private:
-    // "program name (string id)" - "shader program id"
+    // "program name (string id)" - "shader program"
     std::map<std::string, ProgramType> programs_;
 };
 

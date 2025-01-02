@@ -1,6 +1,7 @@
 
 #include "scene.h"
 #include "functions.h"
+#include "config/config.h"
 
 namespace tire::gl {
 
@@ -45,6 +46,17 @@ Scene::Scene( const std::filesystem::path &fname )
     }
 }
 
+void Scene::initPrograms() {
+    const auto basePath = Config::instance()->getBasePath();
+
+    colorProgram_.init<GL_VERTEX_SHADER>( basePath / "assets" / "shaders" /
+                                          "color_vertex.glsl" );
+    colorProgram_.init<GL_FRAGMENT_SHADER>( basePath / "assets" / "shaders" /
+                                            "color_fragment.glsl" );
+    colorProgram_.link();
+    colorProgram_.findUniforms();
+}
+
 void Scene::submit() {
     for ( size_t i{}; i < buffersList_.size(); ++i ) {
         glBindBuffer( GL_ARRAY_BUFFER, buffersList_[i].vertexBuffer );
@@ -56,6 +68,7 @@ void Scene::submit() {
 }
 
 void Scene::output() {
+    colorProgram_.use();
     for ( size_t i{}; i < buffersList_.size(); ++i ) {
         // glEnableVertexAttribArray( 0 );
         // glBindBuffer( GL_ARRAY_BUFFER,
@@ -71,6 +84,9 @@ void Scene::output() {
         //glNormalPointer(GL_FLOAT, 0, (void*)sizeof(vertices));
         //glColorPointer(3, GL_FLOAT, 0, (void*)(sizeof(vertices)+sizeof(normals)));
         //glVertexPointer( 3, GL_FLOAT, 0, 0 );
+
+        colorProgram_.setColor( nodeList_[i]->color() );
+        colorProgram_.setViewMatrix( getCamera( 0 )->getMatrix() );
 
         glBindVertexArray( buffersList_[i].vertexArray );
         glDrawElements( GL_TRIANGLES, nodeList_[i]->indeciesCount(),

@@ -16,8 +16,6 @@
 
 #include "config/config.h"
 #include "../render.h"
-#include "shader.h"
-#include "shader_storage.h"
 #include "scene.h"
 
 namespace tire {
@@ -79,7 +77,6 @@ private:
     GLXContext glContext_{ nullptr };
 
     std::shared_ptr<gl::Scene> scene_;
-    gl::ShaderStorage shaderStorage_{};
 };
 
 }  // namespace tire
