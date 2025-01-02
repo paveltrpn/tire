@@ -10,7 +10,7 @@
 
 namespace tire {
 
-tga::tga( std::string_view fname ) {
+Tga::Tga( std::string_view fname ) {
     std::ifstream fileStream;
     unsigned char BlockInfo, isPacked, R, G, B, A;
     unsigned int NumPixels;
@@ -18,7 +18,6 @@ tga::tga( std::string_view fname ) {
 
     fileStream.open( fname, std::ifstream::binary );
     if ( !fileStream ) {
-        log::error( "error opening file: {}", fname );
         throw std::runtime_error( "file not found" );
     }
 
@@ -105,23 +104,23 @@ tga::tga( std::string_view fname ) {
     fileStream.close();
 }
 
-tga::~tga() {
+Tga::~Tga() {
     delete[] decompressed_;
 }
 
-size_t tga::widht() {
+size_t Tga::widht() {
     return sTGAHeader_.width;
 }
 
-size_t tga::height() {
+size_t Tga::height() {
     return sTGAHeader_.height;
 }
 
-size_t tga::chanels() {
+size_t Tga::chanels() {
     return sTGAHeader_.bits / 8;
 }
 
-uint8_t *tga::data() {
+uint8_t *Tga::data() {
     return decompressed_;
 }
 

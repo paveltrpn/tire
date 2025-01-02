@@ -84,10 +84,10 @@ static unsigned char bitextract( const unsigned int byte,
     return ( byte & mask ) >> maskPadding;
 }
 
-struct bmp {
-    bmp( std::string_view fname );
+struct Bmp {
+    Bmp( std::string_view fname );
 
-    ~bmp();
+    ~Bmp();
 
     size_t width();
     size_t height();

@@ -44,11 +44,8 @@ void ProgramBase::use() {
 std::string ProgramBase::readSource( const std::filesystem::path &path ) {
     log::debug<DEBUG_OUTPUT_SHADER_PROGRAM_GL_CPP>( "loading shader file {}",
                                                     path.filename().string() );
-    std::ifstream file;
-    file.exceptions( std::ifstream::badbit );
-    try {
-        file.open( path );
-    } catch ( const std::ifstream::failure &e ) {
+    std::ifstream file{ path };
+    if ( !file ) {
         throw std::runtime_error(
             std::format( "file not found: {}\n", path.filename().string() ) );
     }

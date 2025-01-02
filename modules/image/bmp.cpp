@@ -1,13 +1,14 @@
 
+#include <format>
+
 #include "bmp.h"
 
 namespace tire {
 
-bmp::bmp( std::string_view fname ) {
+Bmp::Bmp( std::string_view fname ) {
     std::ifstream fileStream( fname.data(), std::ifstream::binary );
     if ( !fileStream ) {
-        std::cout << "Error opening file '" << fname << "." << std::endl;
-        // return 0;
+        throw std::runtime_error( "file not found" );
     }
 
     // заголовк изображения
@@ -167,23 +168,23 @@ bmp::bmp( std::string_view fname ) {
     fileStream.close();
 }
 
-bmp::~bmp() {
+Bmp::~Bmp() {
     delete[] decompressed_;
 };
 
-size_t bmp::width() {
+size_t Bmp::width() {
     return infoHeader_.biWidth;
 }
 
-size_t bmp::height() {
+size_t Bmp::height() {
     return infoHeader_.biHeight;
 }
 
-size_t bmp::chanels() {
+size_t Bmp::chanels() {
     return infoHeader_.biBitCount / 8;
 }
 
-uint8_t *bmp::data() {
+uint8_t *Bmp::data() {
     return decompressed_;
 }
 

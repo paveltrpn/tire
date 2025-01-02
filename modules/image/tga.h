@@ -29,10 +29,10 @@ struct STGAHeader {
 };
 #pragma pack( pop )
 
-struct tga {
-    tga( std::string_view fname );
+struct Tga {
+    Tga( std::string_view fname );
 
-    ~tga();
+    ~Tga();
 
     size_t widht();
     size_t height();

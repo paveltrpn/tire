@@ -113,6 +113,7 @@ private:
 // possible "kinds".
 struct ProgramColorTag {};
 struct ProgramTextureTag {};
+struct ProgramFlatlightTag {};
 
 template <typename T>
 concept ProgramTagType =
