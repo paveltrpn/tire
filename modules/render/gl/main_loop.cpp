@@ -7,6 +7,10 @@ namespace tire {
 
 void RenderGL::preLoop() {
     scene_->initPrograms();
+
+    const auto backgroundColor = Colorf( "darksalmon" );
+    glClearColor( backgroundColor.r(), backgroundColor.g(), backgroundColor.b(),
+                  1 );
 };
 
 void RenderGL::preFrame() {
@@ -15,7 +19,7 @@ void RenderGL::preFrame() {
 
 void RenderGL::frame() {
     glViewport( 0, 0, width_, height_ );
-    glClearColor( 0, 0.5, 1, 1 );
+
     glClear( GL_COLOR_BUFFER_BIT );
 
     glEnable( GL_DEPTH_TEST );

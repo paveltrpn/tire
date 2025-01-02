@@ -101,10 +101,10 @@ struct Color {
 
     virtual ~Color() = default;
 
-    value_type r() { return r_; };
-    value_type g() { return g_; };
-    value_type b() { return b_; };
-    value_type a() { return a_; };
+    value_type r() const { return r_; };
+    value_type g() const { return g_; };
+    value_type b() const { return b_; };
+    value_type a() const { return a_; };
 
 protected:
     std::array<char_type, 4> charFromHex( std::string_view letters ) {
