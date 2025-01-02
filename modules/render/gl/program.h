@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <vector>
 #include <GL/gl.h>
+#include <type_traits>
 
 #include "functions.h"
 
@@ -116,6 +117,12 @@ struct ProgramTextureTag {};
 template <typename T>
 concept ProgramTagType =
     std::is_same_v<T, ProgramColorTag> || std::is_same_v<T, ProgramTextureTag>;
+
+template <typename T>
+concept ProgramBaseChild =
+    std::is_base_of_v<T, ProgramBase> &&requires( T child ) {
+    typename T::type_tag;
+};
 
 template <ProgramTagType T>
 struct Program : ProgramBase {};

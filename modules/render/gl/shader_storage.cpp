@@ -14,7 +14,15 @@ void ShaderStorage::add( const std::string &name, const ProgramType &program ) {
 }
 
 void ShaderStorage::use( const std::string &name ) {
-    std::visit( []( auto &&arg ) { arg.use(); }, programs_[name] );
+    std::visit(
+        []( auto &&arg ) {
+            using T = std::decay_t<decltype( arg )>;
+            if constexpr ( std::is_same_v<typename T::type_tag,
+                                          ProgramColorTag> ) {
+            } else if constexpr ( requires( T a ) { a.use(); } )
+                arg.use();
+        },
+        programs_[name] );
 }
 
 void ShaderStorage::destroy( const std::string &name ) {
