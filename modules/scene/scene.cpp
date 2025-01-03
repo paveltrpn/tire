@@ -47,7 +47,8 @@ void Scene::process() {
             const bool useMomentum = item["use_momentum"];
             const std::array<float, 3> momentum = item["momentum"];
             if ( type == "box" ) {
-                auto node = std::make_shared<Node>( Box{} );
+                auto shapePtr = new BoxData{};
+                auto node = std::make_shared<Node>( shapePtr );
 
                 node->setColor( colorName );
                 node->setUseMomentum( useMomentum );

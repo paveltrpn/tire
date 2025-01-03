@@ -19,7 +19,7 @@
 namespace tire {
 
 struct Node final : std::enable_shared_from_this<Node> {
-    Node( const Polytope &body );
+    Node( PolytopeData *body );
 
     std::shared_ptr<const Node> asSharedPtr() const;
     std::shared_ptr<Node> asSharedPtr();
@@ -28,10 +28,8 @@ struct Node final : std::enable_shared_from_this<Node> {
     size_t indeciesCount() const;
     size_t verteciesArraySize() const;
     size_t indeciesArraySize() const;
-    point3f *verteciesData();
-    unsigned int *indeciesData();
-
-    long long getTrianglesCount() { return trianglesCount_; };
+    const point3f *verteciesData();
+    const unsigned int *indeciesData();
 
     void setColor( const std::string &name ) { color_ = Colorf{ name }; }
     Colorf color() const { return color_; };
@@ -44,21 +42,14 @@ struct Node final : std::enable_shared_from_this<Node> {
     void setMomentum( algebra::vector3f rtn );
 
     void applyPivotTransormations();
-    void applyInversePivotTransormations();
 
 private:
     bool dirty_{ false };
 
-    long long trianglesCount_{};
-
-    // Store default object vertecies and normal instead of inverse transformations
-    std::vector<point3f> defaultVertecies_;
-    std::vector<point3f> vertecies_;
-    std::vector<normald> defaultNormals_;
-    std::vector<normald> normals_;
-
-    std::vector<unsigned int> indices_;
-    std::vector<algebra::vector2f> texCoords_;
+    PolytopeData *shapeData_{};
+    std::vector<point3f> localVertecies_{};
+    std::vector<unsigned int> localIndecies{};
+    std::vector<normald> localNormals_{};
 
     Colorf color_{};
 

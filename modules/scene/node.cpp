@@ -16,13 +16,12 @@ static constexpr bool DEBUG_OUTPUT_NODE_CPP{ false };
 
 namespace tire {
 
-Node::Node( const Polytope &body ) {
-    defaultVertecies_ = vertecies_ = body.getVertecies();
-    indices_ = body.getIndices();
-    trianglesCount_ = body.getTrianglesCount();
-
-    log::debug<DEBUG_OUTPUT_NODE_CPP>( "appended vertecies: {}, indecies: {}",
-                                       vertecies_.size(), indices_.size() );
+Node::Node( PolytopeData *body ) {
+    shapeData_ = body;
+    localVertecies_.reserve( shapeData_->verteciesCount() );
+    localIndecies = shapeData_->indices();
+    // log::debug<DEBUG_OUTPUT_NODE_CPP>( "appended vertecies: {}, indecies: {}",
+    //                                    vertecies_.size(), indices_.size() );
 }
 
 std::shared_ptr<const Node> Node::asSharedPtr() const {
@@ -34,7 +33,7 @@ std::shared_ptr<Node> Node::asSharedPtr() {
 }
 
 size_t Node::verteciesCount() const {
-    return vertecies_.size();
+    return shapeData_->verteciesCount();
 }
 
 size_t Node::verteciesArraySize() const {
@@ -42,19 +41,19 @@ size_t Node::verteciesArraySize() const {
 }
 
 size_t Node::indeciesCount() const {
-    return indices_.size();
+    return shapeData_->indiciesCount();
 }
 
 size_t Node::indeciesArraySize() const {
     return indeciesCount() * sizeof( unsigned int );
 }
 
-point3f *Node::verteciesData() {
-    return vertecies_.data();
+const point3f *Node::verteciesData() {
+    return localVertecies_.data();
 }
 
-unsigned int *Node::indeciesData() {
-    return indices_.data();
+const unsigned int *Node::indeciesData() {
+    return localIndecies.data();
 }
 
 void Node::setPivotOffset( algebra::vector3f offst ) {
@@ -82,17 +81,10 @@ void Node::applyPivotTransormations() {
     }
     const auto transform = offset_ * totalRotation * scale_;
 
-    for ( auto i = 0; i < vertecies_.size(); ++i ) {
-        vertecies_[i] = defaultVertecies_[i];
-        vertecies_[i].transform( transform );
-    }
-}
-
-void Node::applyInversePivotTransormations() {
-    const auto transform = offset_ * rotation_ * scale_;
-    const auto inverseTransform = transform.inverse();
-    for ( auto i = 0; i < vertecies_.size(); ++i ) {
-        vertecies_[i].transform( inverseTransform );
+    const auto vertecies = shapeData_->vertecies();
+    for ( auto i = 0; i < vertecies.size(); ++i ) {
+        localVertecies_[i] = vertecies[i];
+        localVertecies_[i].transform( transform );
     }
 }
 

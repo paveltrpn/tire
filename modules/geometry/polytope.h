@@ -7,35 +7,71 @@
 
 namespace tire {
 
-struct Polytope {
-    Polytope() = default;
+struct PolytopeData {
+    [[nodiscard]] virtual size_t verteciesCount() const = 0;
+    [[nodiscard]] virtual size_t indiciesCount() const = 0;
+    [[nodiscard]] virtual const point3f* verteciesData() const = 0;
+    [[nodiscard]] virtual const unsigned int* indiciesData() const = 0;
+    [[nodiscard]] virtual const std::vector<point3f>& vertecies() const = 0;
+    [[nodiscard]] virtual const std::vector<unsigned int>& indices() const = 0;
+};
 
-    [[nodiscard]] std::vector<point3f> getVertecies() const {
+struct BoxData final : PolytopeData {
+    [[nodiscard]] size_t verteciesCount() const override {
+        return vertecies_.size();
+    };
+
+    [[nodiscard]] size_t indiciesCount() const override {
+        return indices_.size();
+    };
+
+    [[nodiscard]] const point3f* verteciesData() const override {
+        return vertecies_.data();
+    };
+
+    [[nodiscard]] const unsigned int* indiciesData() const override {
+        return indices_.data();
+    }
+
+    [[nodiscard]] const std::vector<point3f>& vertecies() const override {
         return vertecies_;
     };
 
-    [[nodiscard]] std::vector<unsigned int> getIndices() const {
+    [[nodiscard]] const std::vector<unsigned int>& indices() const override {
         return indices_;
-    };
+    }
 
-    [[nodiscard]] long long getTrianglesCount() const {
-        return trianglesCount_;
-    };
-
-    virtual ~Polytope() = default;
-
-protected:
-    long long trianglesCount_{};
-    std::vector<point3f> vertecies_;
-    std::vector<unsigned int> indices_;
+    static const std::vector<point3f> vertecies_;
+    static const std::vector<unsigned int> indices_;
 };
 
-struct Box final : Polytope {
-    Box();
-};
+struct SphereData final : PolytopeData {
+    [[nodiscard]] size_t verteciesCount() const override {
+        return vertecies_.size();
+    };
 
-struct Sphere final : Polytope {
-    Sphere();
+    [[nodiscard]] size_t indiciesCount() const override {
+        return indices_.size();
+    };
+
+    [[nodiscard]] const point3f* verteciesData() const override {
+        return vertecies_.data();
+    };
+
+    [[nodiscard]] const unsigned int* indiciesData() const override {
+        return indices_.data();
+    }
+
+    [[nodiscard]] const std::vector<point3f>& vertecies() const override {
+        return vertecies_;
+    };
+
+    [[nodiscard]] const std::vector<unsigned int>& indices() const override {
+        return indices_;
+    }
+
+    static const std::vector<point3f> vertecies_;
+    static const std::vector<unsigned int> indices_;
 };
 
 }  // namespace tire
