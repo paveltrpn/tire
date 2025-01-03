@@ -32,14 +32,19 @@ struct point3 {
         pos.plus( offst );
         return pos;
     }
+
     void moveThis( vec_type offst ) { pos_.plus( offst ); }
+
     [[nodiscard]] self transform( mat3_type mtrx ) const {
         return mtrx.mult_vector3( pos_ );
     }
+
     void transformThis( mat3_type mtrx ) { pos_ = mtrx.mult_vector3( pos_ ); }
+
     [[nodiscard]] self transform( mat4_type mtrx ) const {
         return mtrx.mult_vector3( pos_ );
     }
+
     void transformThis( mat4_type mtrx ) { pos_ = mtrx.mult_vector3( pos_ ); }
 
 private:

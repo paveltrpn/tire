@@ -9,7 +9,7 @@
 
 namespace tire {
 
-template <typename T = float>
+template <typename T>
 struct normal {
     using scalar_type = T;
     using self = normal<scalar_type>;
@@ -17,11 +17,9 @@ struct normal {
     using mat3_type = algebra::matrix3<scalar_type>;
     using mat4_type = algebra::matrix4<scalar_type>;
 
-    scalar_type x() { return normal_.x(); }
-
-    scalar_type y() { return normal_.y(); }
-
-    scalar_type z() { return normal_.z(); }
+    [[nodiscard]] scalar_type x() const { return normal_.x(); }
+    [[nodiscard]] scalar_type y() const { return normal_.y(); }
+    [[nodiscard]] scalar_type z() const { return normal_.z(); }
 
     // scalar_type dot(vec_type rhs) {
     //     return normal_.dot(rhs);
@@ -39,11 +37,31 @@ struct normal {
     //     normal_.normalize();
     // }
 
-    // void transform(mat3_type rhs) {
-    //     auto i = rhs.inverse();
-    //     auto ti = i.transpose();
-    //     normal_ = ti.mult(normal_);
-    // }
+    [[nodiscard]] self transform( mat3_type mtrx ) const {
+        auto normal = normal_;
+        auto i = mtrx.inverse();
+        auto ti = i.transpose();
+        return mtrx.mult_vector3( normal );
+    }
+
+    void transformThis( mat3_type mtrx ) {
+        auto i = mtrx.inverse();
+        auto ti = i.transpose();
+        normal_ = ti.mult_vector3( normal_ );
+    }
+
+    [[nodiscard]] self transform( mat4_type mtrx ) const {
+        auto normal = normal_;
+        auto i = mtrx.inverse();
+        auto ti = i.transpose();
+        return mtrx.mult_vector3( normal );
+    }
+
+    void transformThis( mat4_type mtrx ) {
+        auto i = mtrx.inverse();
+        auto ti = i.transpose();
+        normal_ = ti.mult_vector3( normal_ );
+    }
 
 private:
     vec_type normal_;
