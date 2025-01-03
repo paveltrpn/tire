@@ -80,8 +80,7 @@ void Node::applyPivotTransormations() {
 
     const auto vertecies = shapeData_->vertecies();
     for ( auto i = 0; i < vertecies.size(); ++i ) {
-        localVertecies_[i] = vertecies[i];
-        localVertecies_[i].transform( transform );
+        localVertecies_[i] = vertecies[i].transform( transform );
     }
 }
 
