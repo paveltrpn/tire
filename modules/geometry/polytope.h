@@ -3,7 +3,9 @@
 
 #include <vector>
 
+#include "algebra/vector2.h"
 #include "point.h"
+#include "normal.h"
 
 namespace tire {
 
@@ -12,66 +14,101 @@ struct PolytopeData {
     [[nodiscard]] virtual size_t indiciesCount() const = 0;
     [[nodiscard]] virtual const point3f* verteciesData() const = 0;
     [[nodiscard]] virtual const unsigned int* indiciesData() const = 0;
+    [[nodiscard]] virtual const normalf* normalsData() const = 0;
+    [[nodiscard]] virtual const algebra::vector2f* texData() const = 0;
     [[nodiscard]] virtual const std::vector<point3f>& vertecies() const = 0;
     [[nodiscard]] virtual const std::vector<unsigned int>& indices() const = 0;
+    [[nodiscard]] virtual const std::vector<normalf>& normals() const = 0;
 };
+
+// ==========================================================================
 
 struct BoxData final : PolytopeData {
-    [[nodiscard]] size_t verteciesCount() const override {
+    [[nodiscard]] size_t verteciesCount() const final {
         return vertecies_.size();
     };
 
-    [[nodiscard]] size_t indiciesCount() const override {
+    [[nodiscard]] size_t indiciesCount() const final {
         return indices_.size();
     };
 
-    [[nodiscard]] const point3f* verteciesData() const override {
+    [[nodiscard]] const point3f* verteciesData() const final {
         return vertecies_.data();
     };
 
-    [[nodiscard]] const unsigned int* indiciesData() const override {
+    [[nodiscard]] const unsigned int* indiciesData() const final {
         return indices_.data();
     }
 
-    [[nodiscard]] const std::vector<point3f>& vertecies() const override {
+    [[nodiscard]] const normalf* normalsData() const final {
+        return normals_.data();
+    }
+
+    [[nodiscard]] const algebra::vector2f* texData() const final {
+        return tex_.data();
+    }
+
+    [[nodiscard]] const std::vector<point3f>& vertecies() const final {
         return vertecies_;
     };
 
-    [[nodiscard]] const std::vector<unsigned int>& indices() const override {
+    [[nodiscard]] const std::vector<unsigned int>& indices() const final {
         return indices_;
+    }
+
+    [[nodiscard]] const std::vector<normalf>& normals() const final {
+        return normals_;
     }
 
     static const std::vector<point3f> vertecies_;
     static const std::vector<unsigned int> indices_;
+    static const std::vector<normalf> normals_;
+    static const std::vector<algebra::vector2f> tex_;
 };
 
+// ==========================================================================
+
 struct SphereData final : PolytopeData {
-    [[nodiscard]] size_t verteciesCount() const override {
+    [[nodiscard]] size_t verteciesCount() const final {
         return vertecies_.size();
     };
 
-    [[nodiscard]] size_t indiciesCount() const override {
+    [[nodiscard]] size_t indiciesCount() const final {
         return indices_.size();
     };
 
-    [[nodiscard]] const point3f* verteciesData() const override {
+    [[nodiscard]] const point3f* verteciesData() const final {
         return vertecies_.data();
     };
 
-    [[nodiscard]] const unsigned int* indiciesData() const override {
+    [[nodiscard]] const unsigned int* indiciesData() const final {
         return indices_.data();
     }
 
-    [[nodiscard]] const std::vector<point3f>& vertecies() const override {
+    [[nodiscard]] const normalf* normalsData() const final {
+        return normals_.data();
+    }
+
+    [[nodiscard]] const algebra::vector2f* texData() const final {
+        return tex_.data();
+    }
+
+    [[nodiscard]] const std::vector<point3f>& vertecies() const final {
         return vertecies_;
     };
 
-    [[nodiscard]] const std::vector<unsigned int>& indices() const override {
+    [[nodiscard]] const std::vector<unsigned int>& indices() const final {
         return indices_;
+    }
+
+    [[nodiscard]] const std::vector<normalf>& normals() const final {
+        return normals_;
     }
 
     static const std::vector<point3f> vertecies_;
     static const std::vector<unsigned int> indices_;
+    static const std::vector<normalf> normals_;
+    static const std::vector<algebra::vector2f> tex_;
 };
 
 }  // namespace tire

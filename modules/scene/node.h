@@ -19,7 +19,7 @@
 namespace tire {
 
 struct Node final : std::enable_shared_from_this<Node> {
-    Node( PolytopeData *body );
+    Node( std::shared_ptr<PolytopeData> body );
 
     std::shared_ptr<const Node> asSharedPtr() const;
     std::shared_ptr<Node> asSharedPtr();
@@ -46,9 +46,8 @@ struct Node final : std::enable_shared_from_this<Node> {
 private:
     bool dirty_{ false };
 
-    PolytopeData *shapeData_{};
+    std::shared_ptr<PolytopeData> shapeData_{};
     std::vector<point3f> localVertecies_{};
-    std::vector<unsigned int> localIndecies{};
     std::vector<normald> localNormals_{};
 
     Colorf color_{};

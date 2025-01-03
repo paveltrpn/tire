@@ -12,6 +12,12 @@ const std::vector<unsigned int> BoxData::indices_{
     4, 2, 0, 2, 7, 3, 6, 5, 7, 1, 7, 5, 0, 3, 1, 4, 1, 5,
     4, 6, 2, 2, 6, 7, 6, 4, 5, 1, 3, 7, 0, 2, 3, 4, 0, 1 };
 
+const std::vector<normalf> BoxData::normals_ = {};
+
+const std::vector<algebra::vector2f> BoxData::tex_ = {};
+
+// ==========================================================================
+
 const std::vector<point3f> SphereData::vertecies_ = {
     { 0.000000, -1.000000, 0.000000 },   { 0.723607, -0.447220, 0.525725 },
     { -0.276388, -0.447220, 0.850649 },  { -0.894426, -0.447216, 0.000000 },
@@ -74,5 +80,9 @@ const std::vector<unsigned int> SphereData::indices_ = {
     74, 16, 6,  75, 17, 62, 75, 6,  26, 75, 16, 6,  76, 14, 5,  76, 17, 62, 76,
     14, 5,  77, 1,  63, 77, 17, 62, 77, 13, 3,  78, 15, 18, 78, 3,  17, 78, 13,
     3,  79, 14, 2,  79, 15, 18, 79, 14, 2,  80, 2,  4,  80, 15, 18, 80 };
+
+const std::vector<normalf> SphereData::normals_ = {};
+
+const std::vector<algebra::vector2f> SphereData::tex_ = {};
 
 }  // namespace tire

@@ -7,10 +7,10 @@
 #include "algebra/matrix3.h"
 #include "algebra/matrix4.h"
 
-namespace tire
-{
+namespace tire {
 
-template <typename T = float> struct normal {
+template <typename T = float>
+struct normal {
     using scalar_type = T;
     using self = normal<scalar_type>;
     using vec_type = algebra::vector3<scalar_type>;
@@ -50,5 +50,7 @@ private:
 };
 
 using normall = normal<long long>;
+using normalf = normal<float>;
 using normald = normal<double>;
-} // namespace tire
+
+}  // namespace tire

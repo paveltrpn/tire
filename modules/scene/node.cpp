@@ -16,12 +16,9 @@ static constexpr bool DEBUG_OUTPUT_NODE_CPP{ false };
 
 namespace tire {
 
-Node::Node( PolytopeData *body ) {
-    shapeData_ = body;
+Node::Node( std::shared_ptr<PolytopeData> body ) {
+    shapeData_ = std::move( body );
     localVertecies_.reserve( shapeData_->verteciesCount() );
-    localIndecies = shapeData_->indices();
-    // log::debug<DEBUG_OUTPUT_NODE_CPP>( "appended vertecies: {}, indecies: {}",
-    //                                    vertecies_.size(), indices_.size() );
 }
 
 std::shared_ptr<const Node> Node::asSharedPtr() const {
@@ -53,7 +50,7 @@ const point3f *Node::verteciesData() {
 }
 
 const unsigned int *Node::indeciesData() {
-    return localIndecies.data();
+    return shapeData_->indiciesData();
 }
 
 void Node::setPivotOffset( algebra::vector3f offst ) {
