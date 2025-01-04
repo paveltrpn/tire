@@ -113,11 +113,12 @@ private:
 // possible "kinds".
 struct ProgramColorTag {};
 struct ProgramTextureTag {};
-struct ProgramFlatlightTag {};
+struct ProgramFlatShadeTag {};
 
 template <typename T>
-concept ProgramTagType =
-    std::is_same_v<T, ProgramColorTag> || std::is_same_v<T, ProgramTextureTag>;
+concept ProgramTagType = std::is_same_v<T, ProgramColorTag> ||
+                         std::is_same_v<T, ProgramTextureTag> ||
+                         std::is_same_v<T, ProgramFlatShadeTag>;
 
 template <typename T>
 concept ProgramBaseChild =
@@ -157,6 +158,18 @@ private:
 template <>
 struct Program<ProgramTextureTag> : ProgramBase {
     using type_tag = ProgramColorTag;
+
+    void findUniforms() override {
+        viewMatrixLocation_ = getUniformLocation( "view_matrix" );
+    };
+
+private:
+    GLuint viewMatrixLocation_{};
+};
+
+template <>
+struct Program<ProgramFlatShadeTag> : ProgramBase {
+    using type_tag = ProgramFlatShadeTag;
 
     void findUniforms() override {
         viewMatrixLocation_ = getUniformLocation( "view_matrix" );

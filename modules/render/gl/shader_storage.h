@@ -12,7 +12,8 @@
 namespace tire::gl {
 
 using ProgramType =
-    std::variant<Program<ProgramColorTag>, Program<ProgramTextureTag>>;
+    std::variant<Program<ProgramColorTag>, Program<ProgramTextureTag>,
+                 Program<ProgramFlatShadeTag>>;
 
 struct ShaderStorage final {
     ShaderStorage() = default;

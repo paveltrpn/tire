@@ -19,6 +19,7 @@ namespace tire {
 Node::Node( std::shared_ptr<PolytopeData> body ) {
     shapeData_ = std::move( body );
     localVertecies_.reserve( shapeData_->verteciesCount() );
+    localNormals_.reserve( shapeData_->verteciesCount() );
 }
 
 std::shared_ptr<const Node> Node::asSharedPtr() const {
@@ -37,20 +38,24 @@ size_t Node::verteciesArraySize() const {
     return verteciesCount() * 3 * sizeof( float );
 }
 
-size_t Node::indeciesCount() const {
-    return shapeData_->indiciesCount();
-}
+size_t Node::normalsArraySize() const {
+    return verteciesCount() * 3 * sizeof( float );
+};
 
-size_t Node::indeciesArraySize() const {
-    return indeciesCount() * sizeof( unsigned int );
-}
+size_t Node::texcrdsArraySize() const {
+    return verteciesCount() * 2 * sizeof( float );
+};
 
 const point3f *Node::verteciesData() {
     return localVertecies_.data();
 }
 
-const unsigned int *Node::indeciesData() {
-    return shapeData_->indiciesData();
+const normalf *Node::normalsData() {
+    return localNormals_.data();
+}
+
+const algebra::vector2f *Node::texcrdsData() {
+    return shapeData_->texcrdsData();
 }
 
 void Node::setPivotOffset( algebra::vector3f offst ) {
@@ -79,8 +84,10 @@ void Node::applyPivotTransormations() {
     const auto transform = offset_ * totalRotation * scale_;
 
     const auto vertecies = shapeData_->vertecies();
+    const auto normals = shapeData_->normals();
     for ( auto i = 0; i < vertecies.size(); ++i ) {
         localVertecies_[i] = vertecies[i].transform( transform );
+        localNormals_[i] = normals[i].transform( transform );
     }
 }
 

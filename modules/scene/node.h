@@ -25,11 +25,14 @@ struct Node final : std::enable_shared_from_this<Node> {
     std::shared_ptr<Node> asSharedPtr();
 
     size_t verteciesCount() const;
-    size_t indeciesCount() const;
+
     size_t verteciesArraySize() const;
-    size_t indeciesArraySize() const;
+    size_t normalsArraySize() const;
+    size_t texcrdsArraySize() const;
+
     const point3f *verteciesData();
-    const unsigned int *indeciesData();
+    const normalf *normalsData();
+    const algebra::vector2f *texcrdsData();
 
     void setColor( const std::string &name ) { color_ = Colorf{ name }; }
     Colorf color() const { return color_; };
@@ -48,7 +51,7 @@ private:
 
     std::shared_ptr<PolytopeData> shapeData_{};
     std::vector<point3f> localVertecies_{};
-    std::vector<normald> localNormals_{};
+    std::vector<normalf> localNormals_{};
 
     Colorf color_{};
 

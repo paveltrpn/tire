@@ -13,8 +13,8 @@ namespace tire::gl {
 struct SceneNodeBufferObjects final {
     GLuint vertexArray{};
     GLuint vertexBuffer{};
-    GLuint elementsBuffer{};
-    long long trianglesCount{};
+    GLuint normalBuffer{};
+    GLuint texcrdBuffer{};
 };
 
 struct Scene final : tire::Scene {
@@ -29,7 +29,8 @@ private:
     std::vector<SceneNodeBufferObjects> buffersList_;
 
     gl::Program<ProgramColorTag> colorProgram_{};
-    gl::Program<ProgramTextureTag> TextureProgram_{};
+    gl::Program<ProgramFlatShadeTag> flatshadeProgram_{};
+    gl::Program<ProgramTextureTag> textureProgram_{};
 
     gl::ShaderStorage shaderStorage_{};
 };
