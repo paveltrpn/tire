@@ -385,7 +385,7 @@ struct matrix4 final {
 
         ( *this )[0] = offset[0];
         ( *this )[5] = offset[1];
-        ( *this )[11] = offset[2];
+        ( *this )[10] = offset[2];
     }
 
     void translate( const vector3<value_type> &offset ) {
