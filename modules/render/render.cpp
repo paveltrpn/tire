@@ -184,18 +184,17 @@ void Render::loop( uv_idle_t *handle ) {
     auto self = static_cast<Render *>( handle->data );
 
     while ( XPending( self->display_ ) ) {
-        XEvent KeyEvent;
-        XNextEvent( self->display_, &KeyEvent );
-        if ( KeyEvent.type == KeyPress ) {
-            auto keyEventCode = KeyEvent.xkey.keycode;
+        XEvent event;
+        XNextEvent( self->display_, &event );
+        if ( event.type == KeyPress ) {
+            auto keyEventCode = event.xkey.keycode;
             switch ( keyEventCode ) {
                 case 9: {  // == ESCAPE
                     uv_idle_stop( handle );
                     self->run_ = false;
                     break;
                 }
-                case 38: {
-                    std::cout << "a pressed";
+                case 38: {  // == 'a'
                     break;
                 }
                 default: {
@@ -204,8 +203,8 @@ void Render::loop( uv_idle_t *handle ) {
             }
             // Force immidiate output to stdout
             std::cout << std::flush;
-        } else if ( KeyEvent.type == KeyRelease ) {
-            auto keyEventCode = KeyEvent.xkey.keycode;
+        } else if ( event.type == KeyRelease ) {
+            auto keyEventCode = event.xkey.keycode;
             switch ( keyEventCode ) {
                 default: {
                     break;

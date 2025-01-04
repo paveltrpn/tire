@@ -76,6 +76,56 @@
       ]
     },
     {
+      "type": "diamond",
+      "color": "deepskyblue",
+      "pivot_position": [
+        2.4,
+        -2.2,
+        -3
+      ],
+      "pivot_rotation": [
+        0,
+        0,
+        0
+      ],
+      "pivot_scale": [
+        3,
+        3,
+        3
+      ],
+      "use_momentum": true,
+      "momentum": [
+        0.25,
+        -0.51,
+        0.1
+      ]
+    },
+    {
+      "type": "diamond",
+      "color": "olive",
+      "pivot_position": [
+        -2.4,
+        2,
+        -2
+      ],
+      "pivot_rotation": [
+        0,
+        0,
+        0
+      ],
+      "pivot_scale": [
+        2,
+        2,
+        2
+      ],
+      "use_momentum": true,
+      "momentum": [
+        -0.3,
+        0.4,
+        0.12
+      ]
+    },
+    {
       "type": "box",
       "color": "crimson",
       "pivot_position": [
@@ -98,6 +148,31 @@
         0.3,
         -0.15,
         0.2
+      ]
+    },
+    {
+      "type": "box",
+      "color": "darkgray",
+      "pivot_position": [
+        0,
+        0,
+        -30
+      ],
+      "pivot_rotation": [
+        0,
+        0,
+        0
+      ],
+      "pivot_scale": [
+        25,
+        25,
+        25
+      ],
+      "use_momentum": true,
+      "momentum": [
+        0.2,
+        0.1,
+        -0.1
       ]
     }
   ],
