@@ -22,13 +22,13 @@ Scene::Scene( const std::filesystem::path &fname )
         glEnableVertexAttribArray( 0 );
         glBindBuffer( GL_ARRAY_BUFFER, buf.vertexBuffer );
         glBufferData( GL_ARRAY_BUFFER, nodeList_[i]->verteciesArraySize(),
-                      nodeList_[i]->verteciesData(), GL_STATIC_DRAW );
+                      nodeList_[i]->verteciesData(), GL_DYNAMIC_DRAW );
         glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
 
         glEnableVertexAttribArray( 1 );
         glBindBuffer( GL_ARRAY_BUFFER, buf.normalBuffer );
         glBufferData( GL_ARRAY_BUFFER, nodeList_[i]->normalsArraySize(),
-                      nodeList_[i]->normalsData(), GL_STATIC_DRAW );
+                      nodeList_[i]->normalsData(), GL_DYNAMIC_DRAW );
         glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
 
         glEnableVertexAttribArray( 2 );
@@ -61,13 +61,13 @@ void Scene::initPrograms() {
     flatshadeProgram_.findUniforms();
     flatshadeProgram_.use();
     flatshadeProgram_.setLightcolor( { 1.0f, 1.0f, 1.0f } );
-    flatshadeProgram_.setLightpos( { 0.0f, 10.0f, 0.0f } );
+    flatshadeProgram_.setLightpos( { 10.0f, 0.0f, 0.0f } );
 }
 
 void Scene::submit() {
-    for ( size_t i{}; i < buffersList_.size(); ++i ) {
+    for ( size_t i = 0; const auto &buffer : buffersList_ ) {
         {
-            glBindBuffer( GL_ARRAY_BUFFER, buffersList_[i].vertexBuffer );
+            glBindBuffer( GL_ARRAY_BUFFER, buffer.vertexBuffer );
             void *ptr = glMapBuffer( GL_ARRAY_BUFFER, GL_WRITE_ONLY );
             memcpy( ptr, nodeList_[i]->verteciesData(),
                     nodeList_[i]->verteciesArraySize() );
@@ -75,18 +75,19 @@ void Scene::submit() {
         }
 
         {
-            glBindBuffer( GL_ARRAY_BUFFER, buffersList_[i].normalBuffer );
+            glBindBuffer( GL_ARRAY_BUFFER, buffer.normalBuffer );
             void *ptr = glMapBuffer( GL_ARRAY_BUFFER, GL_WRITE_ONLY );
             memcpy( ptr, nodeList_[i]->normalsData(),
                     nodeList_[i]->normalsArraySize() );
             glUnmapBuffer( GL_ARRAY_BUFFER );
         }
+        ++i;
     }
 }
 
 void Scene::output() {
     flatshadeProgram_.use();
-    for ( size_t i{}; i < buffersList_.size(); ++i ) {
+    for ( size_t i = 0; const auto &buffer : buffersList_ ) {
         // glEnableVertexAttribArray( 0 );
         // glBindBuffer( GL_ARRAY_BUFFER,
         // buffersList_[i].vertexBuffer );  // for vertex attributes
@@ -105,13 +106,15 @@ void Scene::output() {
         flatshadeProgram_.setViewMatrix( getCamera( 0 )->getMatrix() );
         flatshadeProgram_.setColor( nodeList_[i]->color() );
 
-        glBindVertexArray( buffersList_[i].vertexArray );
+        glBindVertexArray( buffer.vertexArray );
         glDrawArrays( GL_TRIANGLES, 0, nodeList_[i]->verteciesCount() );
         glBindVertexArray( 0 );
 
         // glDisableVertexAttribArray( 0 );
         // glBindBuffer( GL_ARRAY_BUFFER, 0 );
         // glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+
+        ++i;
     }
 }
 

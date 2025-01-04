@@ -60,7 +60,7 @@ struct normal {
     [[nodiscard]] self transform( mat4_type mtrx ) const {
         auto i = mtrx.inverse();
         i.transposeSelf();
-        return i.mult_vector3( normal_ );
+        return mtrx.mult_vector3( normal_ );
     }
 
     void transformThis( mat4_type mtrx ) {
@@ -70,7 +70,7 @@ struct normal {
     }
 
 private:
-    vec_type normal_;
+    vec_type normal_{};
 };
 
 using normall = normal<long long>;

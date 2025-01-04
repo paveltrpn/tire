@@ -97,7 +97,7 @@ void Scene::process() {
                 const std::array<float, 3> position = item["position"];
                 const std::array<float, 3> lookAt = item["look_at"];
                 const auto &fov = item["fov"];
-                const auto &aspect = item["aspect"];
+                const auto &aspect = 16.0f / 9.0f;  //item["aspect"];
                 const auto &ncp = item["ncp"];
                 const auto &fcp = item["fcp"];
                 auto camera = std::make_shared<Perspective>(

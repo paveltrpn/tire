@@ -31,9 +31,9 @@ struct vector3 : vector_base<T, 3> {
         ( *this )[2] = rhs[2];
     }
 
-    value_type x() { return data_[0]; }
-    value_type y() { return data_[1]; }
-    value_type z() { return data_[2]; }
+    value_type x() const { return data_[0]; }
+    value_type y() const { return data_[1]; }
+    value_type z() const { return data_[2]; }
 };
 
 using vector3l = vector3<long long>;

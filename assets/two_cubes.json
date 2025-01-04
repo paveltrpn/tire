@@ -64,9 +64,9 @@
         0
       ],
       "pivot_scale": [
-        1.2,
-        2,
-        1.2
+        1.8,
+        2.2,
+        1.8
       ],
       "use_momentum": true,
       "momentum": [

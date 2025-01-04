@@ -75,18 +75,22 @@ void Node::setMomentum( algebra::vector3f rtn ) {
 }
 
 void Node::applyPivotTransormations() {
-    algebra::matrix4f totalRotation{};
     if ( useMomentum_ ) {
-        totalRotation = momentum_ * rotation_;
-    } else {
-        totalRotation = rotation_;
+        rotation_.multiply( momentum_ );
     }
-    const auto transform = offset_ * totalRotation * scale_;
+
+    // const auto transform = offset_ * totalRotation * scale_;+
+    algebra::matrix4f transform{};
+    transform.multiply( offset_ );
+    transform.multiply( rotation_ );
+    transform.multiply( scale_ );
     const auto vertecies = shapeData_->vertecies();
     const auto normals = shapeData_->normals();
     for ( auto i = 0; i < vertecies.size(); ++i ) {
         localVertecies_[i] = vertecies[i].transform( transform );
-        localNormals_[i] = normals[i].transform( totalRotation );
+        localNormals_[i] = normals[i].transform( rotation_ );
+        // std::cout << localNormals_[i].x() << " " << localNormals_[i].y() << " "
+        // << localNormals_[i].z() << "\n";
     }
 }
 
