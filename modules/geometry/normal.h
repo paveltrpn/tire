@@ -48,26 +48,26 @@ struct normal {
     [[nodiscard]] self transform( mat3_type mtrx ) const {
         auto normal = normal_;
         auto i = mtrx.inverse();
-        i.transpose();
+        i.transposeSelf();
         return i.mult_vector3( normal );
     }
 
     void transformThis( mat3_type mtrx ) {
         auto i = mtrx.inverse();
-        i.transpose();
+        i.transposeSelf();
         normal_ = i.mult_vector3( normal_ );
     }
 
     [[nodiscard]] self transform( mat4_type mtrx ) const {
         auto normal = normal_;
         auto i = mtrx.inverse();
-        i.transpose();
+        i.transposeSelf();
         return i.mult_vector3( normal );
     }
 
     void transformThis( mat4_type mtrx ) {
         auto i = mtrx.inverse();
-        i.transpose();
+        i.transposeSelf();
         normal_ = i.mult_vector3( normal_ );
     }
 

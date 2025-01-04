@@ -83,7 +83,8 @@ void Perspective::update() {
     auto offset = algebra::translate( position_ );
     auto rotation = algebra::rotate( yaw_, pitch_, roll_ );
 
-    matrix_ = algebra::transpose( offset ) * rotation * projection;
+    offset.transposeSelf();
+    matrix_ = offset * rotation * projection;
 }
 
 Orthographic::Orthographic( float left, float right, float bottom, float top,
@@ -104,7 +105,8 @@ void Orthographic::update() {
     auto offset = algebra::translate( position_ );
     auto rotation = algebra::rotate( yaw_, pitch_, roll_ );
 
-    matrix_ = projection * rotation * algebra::transpose( offset );
+    offset.transposeSelf();
+    matrix_ = projection * rotation * offset;
 }
 
 }  // namespace tire

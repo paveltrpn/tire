@@ -6,8 +6,8 @@
 #include <cmath>
 #include <concepts>
 #include <numbers>
+#include <mdspan>
 
-#include "matrix.h"
 #include "vector3.h"
 #include "vector4.h"
 
@@ -22,58 +22,106 @@ constexpr T degToRad( T deg ) {
 }
 
 template <typename T>
-struct matrix4 final : public matrix_sqr_base<T, 4> {
-    using base_type = matrix_sqr_base<T, 4>;
-    using typename base_type::value_type;
+struct matrix4 final {
+    using value_type = T;
     using self = matrix4<value_type>;
-    // Introduce name _data from matrix_sqr_base namespace because of parent type is template.
-    using base_type::_data;
+    using reference = value_type &;
+    using const_reference = const value_type &;
+    using pointer = value_type *;
+    using const_pointer = const value_type *;
 
     matrix4() { idtt(); }
 
     matrix4( std::initializer_list<value_type> list ) {
         for ( auto i = 0; const auto e : list ) {
-            _data[i] = e;
+            data_[i] = e;
             ++i;
         }
     }
 
+    // row-wise indexing operator
+    [[nodiscard]] reference operator[]( size_t i, size_t j ) {
+        return std::mdspan( data_.data(), 4, 4 )[i, j];
+    }
+
+    [[nodiscard]] const_reference operator[]( size_t i, size_t j ) const {
+        return std::mdspan( data_.data(), 4, 4 )[i, j];
+    }
+
+    [[nodiscard]] reference operator[]( size_t index ) { return data_[index]; }
+
+    [[nodiscard]] const_reference operator[]( size_t index ) const {
+        return data_[index];
+    }
+
+    [[nodiscard]] size_t size() { return data_.size(); }
+
+    [[nodiscard]] pointer data() { return data_.data(); }
+
+    [[nodiscard]] const_pointer data() const { return data_.data(); }
+
     void zero() {
-        _data[0] = T{};
-        _data[1] = T{};
-        _data[2] = T{};
-        _data[3] = T{};
-        _data[4] = T{};
-        _data[5] = T{};
-        _data[6] = T{};
-        _data[7] = T{};
-        _data[8] = T{};
-        _data[9] = T{};
-        _data[10] = T{};
-        _data[11] = T{};
-        _data[12] = T{};
-        _data[13] = T{};
-        _data[14] = T{};
-        _data[15] = T{};
+        data_[0] = T{};
+        data_[1] = T{};
+        data_[2] = T{};
+        data_[3] = T{};
+        data_[4] = T{};
+        data_[5] = T{};
+        data_[6] = T{};
+        data_[7] = T{};
+        data_[8] = T{};
+        data_[9] = T{};
+        data_[10] = T{};
+        data_[11] = T{};
+        data_[12] = T{};
+        data_[13] = T{};
+        data_[14] = T{};
+        data_[15] = T{};
     }
 
     void idtt() {
-        _data[0] = T{ 1 };
-        _data[1] = T{};
-        _data[2] = T{};
-        _data[3] = T{};
-        _data[4] = T{};
-        _data[5] = T{ 1 };
-        _data[6] = T{};
-        _data[7] = T{};
-        _data[8] = T{};
-        _data[9] = T{};
-        _data[10] = T{ 1 };
-        _data[11] = T{};
-        _data[12] = T{};
-        _data[13] = T{};
-        _data[14] = T{};
-        _data[15] = T{ 1 };
+        data_[0] = T{ 1 };
+        data_[1] = T{};
+        data_[2] = T{};
+        data_[3] = T{};
+        data_[4] = T{};
+        data_[5] = T{ 1 };
+        data_[6] = T{};
+        data_[7] = T{};
+        data_[8] = T{};
+        data_[9] = T{};
+        data_[10] = T{ 1 };
+        data_[11] = T{};
+        data_[12] = T{};
+        data_[13] = T{};
+        data_[14] = T{};
+        data_[15] = T{ 1 };
+    }
+
+    [[nodiscard]] self transpose() {
+        value_type tmp;
+        auto rt = *this;
+
+        for ( size_t i = 0; i < 4; ++i ) {
+            for ( size_t j = 0; j < i; ++j ) {
+                tmp = rt[j, i];
+                rt[j, i] = rt[i, j];
+                rt[i, j] = tmp;
+            }
+        }
+
+        return rt;
+    }
+
+    void transposeSelf() {
+        value_type tmp;
+        for ( size_t i = 0; i < 4; ++i ) {
+            for ( size_t j = 0; j < i; ++j ) {
+                tmp = ( *this )[j, i];
+                ( *this )[j, i] = ( *this )[i, j];
+                ( *this )[i, j] = tmp;
+            }
+        }
     }
 
     void multiply( const self &rhs ) {
@@ -446,102 +494,103 @@ struct matrix4 final : public matrix_sqr_base<T, 4> {
         value_type det;
 
         inv[0] =
-            _data[5] * _data[10] * _data[15] -
-            _data[5] * _data[11] * _data[14] - _data[9] * _data[6] * _data[15] +
-            _data[9] * _data[7] * _data[14] + _data[13] * _data[6] * _data[11] -
-            _data[13] * _data[7] * _data[10];
+            data_[5] * data_[10] * data_[15] -
+            data_[5] * data_[11] * data_[14] - data_[9] * data_[6] * data_[15] +
+            data_[9] * data_[7] * data_[14] + data_[13] * data_[6] * data_[11] -
+            data_[13] * data_[7] * data_[10];
 
         inv[4] =
-            -_data[4] * _data[10] * _data[15] +
-            _data[4] * _data[11] * _data[14] + _data[8] * _data[6] * _data[15] -
-            _data[8] * _data[7] * _data[14] - _data[12] * _data[6] * _data[11] +
-            _data[12] * _data[7] * _data[10];
+            -data_[4] * data_[10] * data_[15] +
+            data_[4] * data_[11] * data_[14] + data_[8] * data_[6] * data_[15] -
+            data_[8] * data_[7] * data_[14] - data_[12] * data_[6] * data_[11] +
+            data_[12] * data_[7] * data_[10];
 
         inv[8] =
-            _data[4] * _data[9] * _data[15] - _data[4] * _data[11] * _data[13] -
-            _data[8] * _data[5] * _data[15] + _data[8] * _data[7] * _data[13] +
-            _data[12] * _data[5] * _data[11] - _data[12] * _data[7] * _data[9];
+            data_[4] * data_[9] * data_[15] - data_[4] * data_[11] * data_[13] -
+            data_[8] * data_[5] * data_[15] + data_[8] * data_[7] * data_[13] +
+            data_[12] * data_[5] * data_[11] - data_[12] * data_[7] * data_[9];
 
         inv[12] =
-            -_data[4] * _data[9] * _data[14] +
-            _data[4] * _data[10] * _data[13] + _data[8] * _data[5] * _data[14] -
-            _data[8] * _data[6] * _data[13] - _data[12] * _data[5] * _data[10] +
-            _data[12] * _data[6] * _data[9];
+            -data_[4] * data_[9] * data_[14] +
+            data_[4] * data_[10] * data_[13] + data_[8] * data_[5] * data_[14] -
+            data_[8] * data_[6] * data_[13] - data_[12] * data_[5] * data_[10] +
+            data_[12] * data_[6] * data_[9];
 
         inv[1] =
-            -_data[1] * _data[10] * _data[15] +
-            _data[1] * _data[11] * _data[14] + _data[9] * _data[2] * _data[15] -
-            _data[9] * _data[3] * _data[14] - _data[13] * _data[2] * _data[11] +
-            _data[13] * _data[3] * _data[10];
+            -data_[1] * data_[10] * data_[15] +
+            data_[1] * data_[11] * data_[14] + data_[9] * data_[2] * data_[15] -
+            data_[9] * data_[3] * data_[14] - data_[13] * data_[2] * data_[11] +
+            data_[13] * data_[3] * data_[10];
 
         inv[5] =
-            _data[0] * _data[10] * _data[15] -
-            _data[0] * _data[11] * _data[14] - _data[8] * _data[2] * _data[15] +
-            _data[8] * _data[3] * _data[14] + _data[12] * _data[2] * _data[11] -
-            _data[12] * _data[3] * _data[10];
+            data_[0] * data_[10] * data_[15] -
+            data_[0] * data_[11] * data_[14] - data_[8] * data_[2] * data_[15] +
+            data_[8] * data_[3] * data_[14] + data_[12] * data_[2] * data_[11] -
+            data_[12] * data_[3] * data_[10];
 
         inv[9] =
-            -_data[0] * _data[9] * _data[15] +
-            _data[0] * _data[11] * _data[13] + _data[8] * _data[1] * _data[15] -
-            _data[8] * _data[3] * _data[13] - _data[12] * _data[1] * _data[11] +
-            _data[12] * _data[3] * _data[9];
+            -data_[0] * data_[9] * data_[15] +
+            data_[0] * data_[11] * data_[13] + data_[8] * data_[1] * data_[15] -
+            data_[8] * data_[3] * data_[13] - data_[12] * data_[1] * data_[11] +
+            data_[12] * data_[3] * data_[9];
 
         inv[13] =
-            _data[0] * _data[9] * _data[14] - _data[0] * _data[10] * _data[13] -
-            _data[8] * _data[1] * _data[14] + _data[8] * _data[2] * _data[13] +
-            _data[12] * _data[1] * _data[10] - _data[12] * _data[2] * _data[9];
+            data_[0] * data_[9] * data_[14] - data_[0] * data_[10] * data_[13] -
+            data_[8] * data_[1] * data_[14] + data_[8] * data_[2] * data_[13] +
+            data_[12] * data_[1] * data_[10] - data_[12] * data_[2] * data_[9];
 
         inv[2] =
-            _data[1] * _data[6] * _data[15] - _data[1] * _data[7] * _data[14] -
-            _data[5] * _data[2] * _data[15] + _data[5] * _data[3] * _data[14] +
-            _data[13] * _data[2] * _data[7] - _data[13] * _data[3] * _data[6];
+            data_[1] * data_[6] * data_[15] - data_[1] * data_[7] * data_[14] -
+            data_[5] * data_[2] * data_[15] + data_[5] * data_[3] * data_[14] +
+            data_[13] * data_[2] * data_[7] - data_[13] * data_[3] * data_[6];
 
         inv[6] =
-            -_data[0] * _data[6] * _data[15] + _data[0] * _data[7] * _data[14] +
-            _data[4] * _data[2] * _data[15] - _data[4] * _data[3] * _data[14] -
-            _data[12] * _data[2] * _data[7] + _data[12] * _data[3] * _data[6];
+            -data_[0] * data_[6] * data_[15] + data_[0] * data_[7] * data_[14] +
+            data_[4] * data_[2] * data_[15] - data_[4] * data_[3] * data_[14] -
+            data_[12] * data_[2] * data_[7] + data_[12] * data_[3] * data_[6];
 
         inv[10] =
-            _data[0] * _data[5] * _data[15] - _data[0] * _data[7] * _data[13] -
-            _data[4] * _data[1] * _data[15] + _data[4] * _data[3] * _data[13] +
-            _data[12] * _data[1] * _data[7] - _data[12] * _data[3] * _data[5];
+            data_[0] * data_[5] * data_[15] - data_[0] * data_[7] * data_[13] -
+            data_[4] * data_[1] * data_[15] + data_[4] * data_[3] * data_[13] +
+            data_[12] * data_[1] * data_[7] - data_[12] * data_[3] * data_[5];
 
         inv[14] =
-            -_data[0] * _data[5] * _data[14] + _data[0] * _data[6] * _data[13] +
-            _data[4] * _data[1] * _data[14] - _data[4] * _data[2] * _data[13] -
-            _data[12] * _data[1] * _data[6] + _data[12] * _data[2] * _data[5];
+            -data_[0] * data_[5] * data_[14] + data_[0] * data_[6] * data_[13] +
+            data_[4] * data_[1] * data_[14] - data_[4] * data_[2] * data_[13] -
+            data_[12] * data_[1] * data_[6] + data_[12] * data_[2] * data_[5];
 
         inv[3] =
-            -_data[1] * _data[6] * _data[11] + _data[1] * _data[7] * _data[10] +
-            _data[5] * _data[2] * _data[11] - _data[5] * _data[3] * _data[10] -
-            _data[9] * _data[2] * _data[7] + _data[9] * _data[3] * _data[6];
+            -data_[1] * data_[6] * data_[11] + data_[1] * data_[7] * data_[10] +
+            data_[5] * data_[2] * data_[11] - data_[5] * data_[3] * data_[10] -
+            data_[9] * data_[2] * data_[7] + data_[9] * data_[3] * data_[6];
 
         inv[7] =
-            _data[0] * _data[6] * _data[11] - _data[0] * _data[7] * _data[10] -
-            _data[4] * _data[2] * _data[11] + _data[4] * _data[3] * _data[10] +
-            _data[8] * _data[2] * _data[7] - _data[8] * _data[3] * _data[6];
+            data_[0] * data_[6] * data_[11] - data_[0] * data_[7] * data_[10] -
+            data_[4] * data_[2] * data_[11] + data_[4] * data_[3] * data_[10] +
+            data_[8] * data_[2] * data_[7] - data_[8] * data_[3] * data_[6];
 
         inv[11] =
-            -_data[0] * _data[5] * _data[11] + _data[0] * _data[7] * _data[9] +
-            _data[4] * _data[1] * _data[11] - _data[4] * _data[3] * _data[9] -
-            _data[8] * _data[1] * _data[7] + _data[8] * _data[3] * _data[5];
+            -data_[0] * data_[5] * data_[11] + data_[0] * data_[7] * data_[9] +
+            data_[4] * data_[1] * data_[11] - data_[4] * data_[3] * data_[9] -
+            data_[8] * data_[1] * data_[7] + data_[8] * data_[3] * data_[5];
 
         inv[15] =
-            _data[0] * _data[5] * _data[10] - _data[0] * _data[6] * _data[9] -
-            _data[4] * _data[1] * _data[10] + _data[4] * _data[2] * _data[9] +
-            _data[8] * _data[1] * _data[6] - _data[8] * _data[2] * _data[5];
+            data_[0] * data_[5] * data_[10] - data_[0] * data_[6] * data_[9] -
+            data_[4] * data_[1] * data_[10] + data_[4] * data_[2] * data_[9] +
+            data_[8] * data_[1] * data_[6] - data_[8] * data_[2] * data_[5];
 
-        det = _data[0] * inv[0] + _data[1] * inv[4] + _data[2] * inv[8] +
-              _data[3] * inv[12];
+        det = data_[0] * inv[0] + data_[1] * inv[4] + data_[2] * inv[8] +
+              data_[3] * inv[12];
 
         if ( det == 0 ) return {};
-
         det = 1.0 / det;
-
         for ( int i = 0; i < 16; i++ ) inv[i] *= det;
 
         return inv;
     }
+
+private:
+    std::array<T, 16> data_{};
 };
 
 template <typename T>

@@ -81,7 +81,7 @@ void Node::applyPivotTransormations() {
     } else {
         totalRotation = rotation_;
     }
-    const auto transform = offset_ * totalRotation * scale_;
+    const auto transform = offset_ * totalRotation;
     const auto vertecies = shapeData_->vertecies();
     const auto normals = shapeData_->normals();
     for ( auto i = 0; i < vertecies.size(); ++i ) {

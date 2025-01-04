@@ -37,14 +37,7 @@ Scene::Scene( const std::filesystem::path &fname )
                       nodeList_[i]->texcrdsData(), GL_STATIC_DRAW );
         glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 0, nullptr );
 
-        // vertex texture coords
-        // glEnableVertexAttribArray( 2 );
-        // glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 0, nullptr );
-
         // glBindVertexArray( 0 );
-
-        // glEnableVertexAttribArray( buf.vertexObject );
-        // glVertexAttribPointer( 0, 3, GL_FLOAT, false, 0, nullptr );
 
         buffersList_.push_back( buf );
     }
