@@ -151,14 +151,22 @@ void Render::configureX11() {
     width_ = cptr->get<int>( "window_width", 320 );
     height_ = cptr->get<int>( "window_height", 240 );
 
-    window_ = XCreateWindow( display_, RootWindow( display_, vi->screen ),
-                             posx_, posy_, width_, height_, 0, vi->depth,
-                             InputOutput, vi->visual,
-                             CWBorderPixel | CWColormap | CWEventMask, &swa );
+    window_ =
+        XCreateWindow( display_, RootWindow( display_, vi->screen ), 0, 0,
+                       width_, height_, 0, vi->depth, InputOutput, vi->visual,
+                       CWBorderPixel | CWColormap | CWEventMask, &swa );
 
     if ( !window_ ) {
         throw std::runtime_error( "failed to create window" );
     }
+
+    // Forbid to resize window by borders drag
+    XSizeHints *size_hints = XAllocSizeHints();
+    size_hints->flags = PMinSize | PMaxSize;
+    size_hints->min_width = size_hints->max_width = width_;
+    size_hints->min_height = size_hints->max_height = height_;
+    XSetWMNormalHints( display_, window_, size_hints );
+    XFree( size_hints );
 
     XFree( vi );
 
@@ -186,15 +194,22 @@ void Render::loop( uv_idle_t *handle ) {
                     self->run_ = false;
                     break;
                 }
-                default:
+                case 38: {
+                    std::cout << "a pressed";
                     break;
+                }
+                default: {
+                    break;
+                }
             }
-
+            // Force immidiate output to stdout
+            std::cout << std::flush;
         } else if ( KeyEvent.type == KeyRelease ) {
             auto keyEventCode = KeyEvent.xkey.keycode;
             switch ( keyEventCode ) {
-                default:
+                default: {
                     break;
+                }
             }
         }
     }
