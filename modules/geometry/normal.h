@@ -46,10 +46,9 @@ struct normal {
     // }
 
     [[nodiscard]] self transform( mat3_type mtrx ) const {
-        auto normal = normal_;
         auto i = mtrx.inverse();
         i.transposeSelf();
-        return i.mult_vector3( normal );
+        return i.mult_vector3( normal_ );
     }
 
     void transformThis( mat3_type mtrx ) {
@@ -59,10 +58,9 @@ struct normal {
     }
 
     [[nodiscard]] self transform( mat4_type mtrx ) const {
-        auto normal = normal_;
         auto i = mtrx.inverse();
         i.transposeSelf();
-        return i.mult_vector3( normal );
+        return i.mult_vector3( normal_ );
     }
 
     void transformThis( mat4_type mtrx ) {

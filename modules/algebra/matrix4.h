@@ -179,9 +179,7 @@ struct matrix4 final {
     }
 
     self operator*( const self &rhs ) {
-        auto tmp{ *this };
-        tmp.multiply( rhs );
-        *this = tmp;
+        ( *this ).multiply( rhs );
         return *this;
     }
 
