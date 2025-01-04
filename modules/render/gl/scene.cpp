@@ -31,13 +31,11 @@ Scene::Scene( const std::filesystem::path &fname )
                       nodeList_[i]->normalsData(), GL_STATIC_DRAW );
         glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
 
-        // glBindBuffer( GL_ARRAY_BUFFER, buf.texcrdBuffer );
-        // glBufferData( GL_ARRAY_BUFFER, nodeList_[i]->texcrdsArraySize(),
-        // nodeList_[i]->texcrdsData(), GL_STATIC_DRAW );
-
-        // vertex positions
-
-        // vertex normals
+        glEnableVertexAttribArray( 2 );
+        glBindBuffer( GL_ARRAY_BUFFER, buf.texcrdBuffer );
+        glBufferData( GL_ARRAY_BUFFER, nodeList_[i]->texcrdsArraySize(),
+                      nodeList_[i]->texcrdsData(), GL_STATIC_DRAW );
+        glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 0, nullptr );
 
         // vertex texture coords
         // glEnableVertexAttribArray( 2 );
@@ -70,7 +68,7 @@ void Scene::initPrograms() {
     flatshadeProgram_.findUniforms();
     flatshadeProgram_.use();
     flatshadeProgram_.setLightcolor( { 1.0f, 1.0f, 1.0f } );
-    flatshadeProgram_.setLightpos( { 0.0f, 0.0f, -10.0f } );
+    flatshadeProgram_.setLightpos( { 0.0f, 10.0f, 0.0f } );
 }
 
 void Scene::submit() {

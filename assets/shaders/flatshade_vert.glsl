@@ -14,7 +14,6 @@ void main()
 {
     vec3 ambientLight = vec3(0.3, 0.3, 0.3);
     vec3 directionalVector = normalize(lightpos);
-
     float directional = max(dot(nrm.xyz, directionalVector), 0.0);
     vLighting = ambientLight + (lightcolor * directional);
     gl_Position = view_matrix * vec4(pos, 1.0);
