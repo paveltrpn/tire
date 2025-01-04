@@ -172,11 +172,40 @@ struct Program<ProgramFlatShadeTag> : ProgramBase {
     using type_tag = ProgramFlatShadeTag;
 
     void findUniforms() override {
+        glUseProgram( program_ );
         viewMatrixLocation_ = getUniformLocation( "view_matrix" );
+        colorLocation_ = getUniformLocation( "color" );
+        lightposLocation_ = getUniformLocation( "lightpos" );
+        lightcolorLocation_ = getUniformLocation( "lightcolor" );
+        glUseProgram( 0 );
+    };
+
+    void setViewMatrix( const algebra::matrix4f &matrix ) {
+        setMatrixUniform( viewMatrixLocation_, GL_FALSE, matrix );
+    };
+
+    void setColor( Colorf color ) {
+        setVectorUniform(
+            colorLocation_,
+            algebra::vector3f{ color.r(), color.g(), color.b() } );
+    };
+
+    void setLightpos( algebra::vector3f pos ) {
+        setVectorUniform( lightposLocation_,
+                          algebra::vector3f{ pos.x(), pos.y(), pos.z() } );
+    };
+
+    void setLightcolor( Colorf color ) {
+        setVectorUniform(
+            lightcolorLocation_,
+            algebra::vector3f{ color.r(), color.g(), color.b() } );
     };
 
 private:
     GLuint viewMatrixLocation_{};
+    GLuint colorLocation_{};
+    GLuint lightposLocation_{};
+    GLuint lightcolorLocation_{};
 };
 
 }  // namespace tire::gl

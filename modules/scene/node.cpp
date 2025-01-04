@@ -82,12 +82,11 @@ void Node::applyPivotTransormations() {
         totalRotation = rotation_;
     }
     const auto transform = offset_ * totalRotation * scale_;
-
     const auto vertecies = shapeData_->vertecies();
     const auto normals = shapeData_->normals();
     for ( auto i = 0; i < vertecies.size(); ++i ) {
         localVertecies_[i] = vertecies[i].transform( transform );
-        localNormals_[i] = normals[i].transform( transform );
+        localNormals_[i] = normals[i].transform( totalRotation );
     }
 }
 

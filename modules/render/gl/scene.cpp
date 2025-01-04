@@ -19,24 +19,26 @@ Scene::Scene( const std::filesystem::path &fname )
         glGenBuffers( 1, &buf.texcrdBuffer );
 
         glBindVertexArray( buf.vertexArray );
+        glEnableVertexAttribArray( 0 );
         glBindBuffer( GL_ARRAY_BUFFER, buf.vertexBuffer );
         glBufferData( GL_ARRAY_BUFFER, nodeList_[i]->verteciesArraySize(),
                       nodeList_[i]->verteciesData(), GL_STATIC_DRAW );
+        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
 
-        // glBindBuffer( GL_ARRAY_BUFFER, buf.normalBuffer );
-        // glBufferData( GL_ARRAY_BUFFER, nodeList_[i]->normalsArraySize(),
-        // nodeList_[i]->normalsData(), GL_STATIC_DRAW );
+        glEnableVertexAttribArray( 1 );
+        glBindBuffer( GL_ARRAY_BUFFER, buf.normalBuffer );
+        glBufferData( GL_ARRAY_BUFFER, nodeList_[i]->normalsArraySize(),
+                      nodeList_[i]->normalsData(), GL_STATIC_DRAW );
+        glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
 
         // glBindBuffer( GL_ARRAY_BUFFER, buf.texcrdBuffer );
         // glBufferData( GL_ARRAY_BUFFER, nodeList_[i]->texcrdsArraySize(),
         // nodeList_[i]->texcrdsData(), GL_STATIC_DRAW );
 
         // vertex positions
-        glEnableVertexAttribArray( 0 );
-        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
+
         // vertex normals
-        // glEnableVertexAttribArray( 1 );
-        // glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
+
         // vertex texture coords
         // glEnableVertexAttribArray( 2 );
         // glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 0, nullptr );
@@ -66,6 +68,9 @@ void Scene::initPrograms() {
         basePath / "assets" / "shaders" / "flatshade_frag.glsl" );
     flatshadeProgram_.link();
     flatshadeProgram_.findUniforms();
+    flatshadeProgram_.use();
+    flatshadeProgram_.setLightcolor( { 1.0f, 1.0f, 1.0f } );
+    flatshadeProgram_.setLightpos( { 0.0f, 0.0f, -10.0f } );
 }
 
 void Scene::submit() {
@@ -78,18 +83,18 @@ void Scene::submit() {
             glUnmapBuffer( GL_ARRAY_BUFFER );
         }
 
-        // {
-        // glBindBuffer( GL_ARRAY_BUFFER, buffersList_[i].normalBuffer );
-        // void *ptr = glMapBuffer( GL_ARRAY_BUFFER, GL_WRITE_ONLY );
-        // memcpy( ptr, nodeList_[i]->normalsData(),
-        // nodeList_[i]->normalsArraySize() );
-        // glUnmapBuffer( GL_ARRAY_BUFFER );
-        // }
+        {
+            glBindBuffer( GL_ARRAY_BUFFER, buffersList_[i].normalBuffer );
+            void *ptr = glMapBuffer( GL_ARRAY_BUFFER, GL_WRITE_ONLY );
+            memcpy( ptr, nodeList_[i]->normalsData(),
+                    nodeList_[i]->normalsArraySize() );
+            glUnmapBuffer( GL_ARRAY_BUFFER );
+        }
     }
 }
 
 void Scene::output() {
-    colorProgram_.use();
+    flatshadeProgram_.use();
     for ( size_t i{}; i < buffersList_.size(); ++i ) {
         // glEnableVertexAttribArray( 0 );
         // glBindBuffer( GL_ARRAY_BUFFER,
@@ -97,7 +102,7 @@ void Scene::output() {
         // glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, buffersList_[i].elementsBuffer );
         //glBindVertexArray( buffersList_[i].vertexObject );
         // enable vertex arrays
-        //glEnableClientState(GL_NORMAL_ARRAY);
+        //glEnableClientState( GL_NORMAL_ARRAY );
         //glEnableClientState(GL_COLOR_ARRAY);
         //glEnableClientState( GL_VERTEX_ARRAY );
 
@@ -106,8 +111,8 @@ void Scene::output() {
         //glColorPointer(3, GL_FLOAT, 0, (void*)(sizeof(vertices)+sizeof(normals)));
         //glVertexPointer( 3, GL_FLOAT, 0, 0 );
 
-        colorProgram_.setColor( nodeList_[i]->color() );
-        colorProgram_.setViewMatrix( getCamera( 0 )->getMatrix() );
+        flatshadeProgram_.setViewMatrix( getCamera( 0 )->getMatrix() );
+        flatshadeProgram_.setColor( nodeList_[i]->color() );
 
         glBindVertexArray( buffersList_[i].vertexArray );
         glDrawArrays( GL_TRIANGLES, 0, nodeList_[i]->verteciesCount() );

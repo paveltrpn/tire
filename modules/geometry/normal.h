@@ -25,9 +25,9 @@ struct normal {
     normal( vec_type rhs )
         : normal_{ rhs } {}
 
-    [[nodiscard]] scalar_type x() const { return normal_.x(); }
-    [[nodiscard]] scalar_type y() const { return normal_.y(); }
-    [[nodiscard]] scalar_type z() const { return normal_.z(); }
+    [[nodiscard]] scalar_type x() const { return normal_[0]; }
+    [[nodiscard]] scalar_type y() const { return normal_[1]; }
+    [[nodiscard]] scalar_type z() const { return normal_[2]; }
 
     // scalar_type dot(vec_type rhs) {
     //     return normal_.dot(rhs);

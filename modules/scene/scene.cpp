@@ -46,6 +46,7 @@ void Scene::process() {
             const std::array<float, 3> pivotScale = item["pivot_scale"];
             const bool useMomentum = item["use_momentum"];
             const std::array<float, 3> momentum = item["momentum"];
+
             if ( type == "box" ) {
                 auto shapePtr = std::make_shared<BoxData>();
                 auto node = std::make_shared<Node>( shapePtr );
@@ -64,6 +65,24 @@ void Scene::process() {
                 nodeList_.push_back( std::move( node ) );
 
                 log::debug<DEBUG_OUTPUT_SCENE_CPP>( "box added to scene" );
+            } else if ( type == "frame" ) {
+                auto shapePtr = std::make_shared<FrameData>();
+                auto node = std::make_shared<Node>( shapePtr );
+
+                node->setColor( colorName );
+                node->setUseMomentum( useMomentum );
+                node->setMomentum( { momentum[0], momentum[1], momentum[2] } );
+                node->setPivotScale(
+                    { pivotScale[0], pivotScale[1], pivotScale[2] } );
+                node->setPivotRotation(
+                    { pivotRotation[0], pivotRotation[1], pivotRotation[2] } );
+                node->setPivotOffset(
+                    { pivotPosition[0], pivotPosition[1], pivotPosition[2] } );
+                node->applyPivotTransormations();
+
+                nodeList_.push_back( std::move( node ) );
+
+                log::debug<DEBUG_OUTPUT_SCENE_CPP>( "frame added to scene" );
             }
         }
     } else {

@@ -142,6 +142,12 @@ struct Colorf final : Color<float> {
     Colorf()
         : Color{} {}
 
+    Colorf( float r, float g, float b )
+        : Color{ r, g, b, 1.0f } {}
+
+    Colorf( float r, float g, float b, float a )
+        : Color{ r, g, b, a } {}
+
     Colorf( const std::string& str )
         : Color{} {
         if ( str.starts_with( "#" ) ) {
