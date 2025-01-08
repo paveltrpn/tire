@@ -37,13 +37,14 @@ Scene::Scene( const std::filesystem::path &fname )
                       nodeList_[i]->texcrdsData(), GL_STATIC_DRAW );
         glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 0, nullptr );
 
-        // glBindVertexArray( 0 );
-
         glGenTextures( 1, &buf.texture );
         glBindTexture( GL_TEXTURE_2D, buf.texture );
 
         const auto [width, height] = nodeList_[i]->textureSize();
         const auto data = nodeList_[i]->textureData();
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                         GL_LINEAR_MIPMAP_LINEAR );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
         glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
                       GL_UNSIGNED_BYTE, data );
         glGenerateMipmap( GL_TEXTURE_2D );
