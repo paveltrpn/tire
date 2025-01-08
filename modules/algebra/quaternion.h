@@ -2,11 +2,12 @@
 #pragma once
 
 #include <array>
+#include "algebra/concepts.h"
 
-namespace tire::algebra
-{
+namespace tire::algebra {
 
-template <typename T> struct quaternion_base {
+template <typename T>
+requires Algebraic<T> struct quaternion_base {
     using value_type = T;
     using reference = value_type &;
     using const_reference = const value_type &;
@@ -60,16 +61,22 @@ template <typename T> struct quaternion_base {
     };
 
     quaternion_base operator+( const quaternion_base &rhs ) {
-        return quaternion_base{ data_[0] + rhs[0], data_[1] + rhs[1], data_[2] + rhs[2], data_[3] + rhs[3] };
+        return quaternion_base{ data_[0] + rhs[0], data_[1] + rhs[1],
+                                data_[2] + rhs[2], data_[3] + rhs[3] };
     }
 
-    quaternion_base operator+=( const quaternion_base &rhs ) { return *this + rhs; }
+    quaternion_base operator+=( const quaternion_base &rhs ) {
+        return *this + rhs;
+    }
 
     quaternion_base operator-( const quaternion_base &rhs ) {
-        return quaternion_base{ data_[0] - rhs[0], data_[1] - rhs[1], data_[2] - rhs[2], data_[3] - rhs[3] };
+        return quaternion_base{ data_[0] - rhs[0], data_[1] - rhs[1],
+                                data_[2] - rhs[2], data_[3] - rhs[3] };
     }
 
-    quaternion_base operator-=( const quaternion_base &rhs ) { return *this - rhs; }
+    quaternion_base operator-=( const quaternion_base &rhs ) {
+        return *this - rhs;
+    }
 
     quaternion_base &operator=( quaternion_base &&rhs ) = delete;
 
@@ -84,6 +91,7 @@ private:
 };
 
 using quaternionl = quaternion_base<long long>;
+using quaternionf = quaternion_base<float>;
 using quaterniond = quaternion_base<double>;
 
-} // namespace tire::algebra
+}  // namespace tire::algebra

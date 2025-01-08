@@ -5,10 +5,12 @@
 #include <cmath>
 #include <array>
 
-namespace tire::algebra
-{
+#include "algebra/concepts.h"
 
-template <typename T, size_t size> struct vector_base {
+namespace tire::algebra {
+
+template <typename T, size_t size>
+requires Algebraic<T> struct vector_base {
     using self = vector_base<T, size>;
     using value_type = T;
     using reference = value_type &;
@@ -27,28 +29,27 @@ template <typename T, size_t size> struct vector_base {
 
     [[nodiscard]] reference operator[]( size_t index ) { return data_[index]; }
 
-    [[nodiscard]] const_reference operator[]( size_t index ) const { return data_[index]; }
+    [[nodiscard]] const_reference operator[]( size_t index ) const {
+        return data_[index];
+    }
 
     void plus( const self &b ) {
-        for ( size_t i = 0; i < size; ++i )
-            data_[i] += b.data_[i];
+        for ( size_t i = 0; i < size; ++i ) data_[i] += b.data_[i];
     };
 
     void minus( const self &b ) {
-        for ( size_t i = 0; i < size; ++i )
-            data_[i] -= b.data_[i];
+        for ( size_t i = 0; i < size; ++i ) data_[i] -= b.data_[i];
     };
 
-    template <typename U> void scale( U factor ) {
-        for ( size_t i = 0; i < size; ++i )
-            data_[i] *= factor;
+    template <typename U>
+    void scale( U factor ) {
+        for ( size_t i = 0; i < size; ++i ) data_[i] *= factor;
     }
 
     value_type dot( const self &b ) const {
         value_type rt{};
 
-        for ( size_t i = 0; i < size; ++i )
-            rt += data_[i] * b.data_[i];
+        for ( size_t i = 0; i < size; ++i ) rt += data_[i] * b.data_[i];
 
         return rt;
     }
@@ -87,4 +88,4 @@ protected:
     std::array<value_type, size> data_;
 };
 
-} // namespace tire::algebra
+}  // namespace tire::algebra
