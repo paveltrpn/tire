@@ -7,12 +7,13 @@
 
 #include <array>
 
+#include "algebra/concepts.h"
 #include "vector.h"
 
 namespace tire::algebra {
 
 template <typename T, size_t row, size_t column>
-struct matrix_base {
+requires Algebraic<T> struct matrix_base {
     using self = matrix_base<T, row, column>;
     using value_type = T;
     using reference = value_type &;
@@ -50,7 +51,7 @@ protected:
 };
 
 template <typename T, size_t rng>
-struct matrix_sqr_base : matrix_base<T, rng, rng> {
+requires Algebraic<T> struct matrix_sqr_base : matrix_base<T, rng, rng> {
     using base_type = matrix_base<T, rng, rng>;
     using self = matrix_sqr_base<T, rng>;
     using value_type = T;

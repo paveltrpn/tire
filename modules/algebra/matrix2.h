@@ -4,11 +4,12 @@
 #include <cstddef>
 #include <initializer_list>
 #include <mdspan>
+#include "algebra/concepts.h"
 
 namespace tire::algebra {
 
 template <typename T>
-struct matrix2 final {
+requires Algebraic<T> struct matrix2 final {
     using value_type = T;
     using self = matrix2<value_type>;
     using reference = value_type &;

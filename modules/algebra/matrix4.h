@@ -8,6 +8,7 @@
 #include <numbers>
 #include <mdspan>
 
+#include "algebra/concepts.h"
 #include "vector3.h"
 #include "vector4.h"
 
@@ -22,7 +23,7 @@ constexpr T degToRad( T deg ) {
 }
 
 template <typename T>
-struct matrix4 final {
+requires Algebraic<T> struct matrix4 final {
     using value_type = T;
     using self = matrix4<value_type>;
     using reference = value_type &;

@@ -6,12 +6,13 @@
 #include <cmath>
 #include <mdspan>
 
+#include "algebra/concepts.h"
 #include "vector3.h"
 
 namespace tire::algebra {
 
 template <typename T>
-struct matrix3 final {
+requires Algebraic<T> struct matrix3 final {
     using value_type = T;
     using self = matrix3<value_type>;
     using reference = value_type &;

@@ -1,12 +1,13 @@
 
 #pragma once
 
+#include "algebra/concepts.h"
 #include "vector.h"
 
-namespace tire::algebra
-{
+namespace tire::algebra {
 
-template <typename T> struct vector2 : vector_base<T, 2> {
+template <typename T>
+requires Algebraic<T> struct vector2 : vector_base<T, 2> {
     using base_type = vector_base<T, 2>;
     using base_type::data_;
     using typename base_type::self;
@@ -36,4 +37,4 @@ using vector2l = vector2<long long>;
 using vector2f = vector2<float>;
 using vector2d = vector2<double>;
 
-} // namespace tire::algebra
+}  // namespace tire::algebra

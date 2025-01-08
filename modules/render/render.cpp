@@ -175,14 +175,12 @@ void Render::configureX11() {
         cptr->get<std::string>( "application_name", "default" ).c_str() );
     XMapWindow( display_, window_ );
 
-    // pre run() call
     XSelectInput( display_, window_, KeyPressMask | KeyReleaseMask );
 }
 
 void Render::loop( uv_idle_t *handle ) {
     // Retrive "this" pointer previously saved in uv_idle_t->data member
     auto self = static_cast<Render *>( handle->data );
-
     while ( XPending( self->display_ ) ) {
         XEvent event;
         XNextEvent( self->display_, &event );
@@ -213,9 +211,7 @@ void Render::loop( uv_idle_t *handle ) {
         }
     }
     self->preFrame();
-
     self->frame();
-
     self->postFrame();
     self->swapBuffers();
 }

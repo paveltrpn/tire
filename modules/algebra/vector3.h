@@ -1,13 +1,13 @@
 
-
 #pragma once
 
+#include "algebra/concepts.h"
 #include "vector.h"
 
 namespace tire::algebra {
 
 template <typename T>
-struct vector3 : vector_base<T, 3> {
+requires Algebraic<T> struct vector3 : vector_base<T, 3> {
     using base_type = vector_base<T, 3>;
     using base_type::data_;
     using typename base_type::self;
