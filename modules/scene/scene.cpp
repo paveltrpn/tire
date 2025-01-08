@@ -6,6 +6,7 @@
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_SCENE_CPP{ true };
 #include "scene.h"
+#include "config/config.h"
 
 namespace tire {
 
@@ -36,6 +37,7 @@ Scene::Scene( const std::filesystem::path &fname ) {
 }
 
 void Scene::process() {
+    const auto basePath = Config::instance()->getBasePath();
     if ( scene_.contains( "objects" ) ) {
         const auto objects = scene_["objects"];
         for ( const auto &item : objects ) {
@@ -46,7 +48,7 @@ void Scene::process() {
             const std::array<float, 3> pivotScale = item["pivot_scale"];
             const bool useMomentum = item["use_momentum"];
             const std::array<float, 3> momentum = item["momentum"];
-
+            const auto textureFile = item["texture_diffuse"];
             if ( type == "box" ) {
                 auto shapePtr = std::make_shared<BoxData>();
                 auto node = std::make_shared<Node>( shapePtr );
@@ -61,6 +63,9 @@ void Scene::process() {
                 node->setPivotOffset(
                     { pivotPosition[0], pivotPosition[1], pivotPosition[2] } );
                 node->applyPivotTransormations();
+
+                node->setTextureImage(
+                    { basePath / "assets" / "textures" / textureFile } );
 
                 nodeList_.push_back( std::move( node ) );
 
@@ -80,6 +85,9 @@ void Scene::process() {
                     { pivotPosition[0], pivotPosition[1], pivotPosition[2] } );
                 node->applyPivotTransormations();
 
+                node->setTextureImage(
+                    { basePath / "assets" / "textures" / textureFile } );
+
                 nodeList_.push_back( std::move( node ) );
 
                 log::debug<DEBUG_OUTPUT_SCENE_CPP>( "frame added to scene" );
@@ -97,6 +105,9 @@ void Scene::process() {
                 node->setPivotOffset(
                     { pivotPosition[0], pivotPosition[1], pivotPosition[2] } );
                 node->applyPivotTransormations();
+
+                node->setTextureImage(
+                    { basePath / "assets" / "textures" / textureFile } );
 
                 nodeList_.push_back( std::move( node ) );
 

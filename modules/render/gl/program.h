@@ -163,6 +163,10 @@ struct Program<ProgramTextureTag> : ProgramBase {
         viewMatrixLocation_ = getUniformLocation( "view_matrix" );
     };
 
+    void setViewMatrix( const algebra::matrix4f &matrix ) {
+        setMatrixUniform( viewMatrixLocation_, GL_FALSE, matrix );
+    };
+
 private:
     GLuint viewMatrixLocation_{};
 };

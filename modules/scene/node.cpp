@@ -74,6 +74,18 @@ void Node::setMomentum( algebra::vector3f rtn ) {
     momentum_ = algebra::rotate( rtn.x(), rtn.y(), rtn.z() );
 }
 
+void Node::setTextureImage( const std::string &file ) {
+    textureImage_ = std::make_unique<Tga>( file );
+}
+
+std::pair<int, int> Node::textureSize() {
+    return { textureImage_->widht(), textureImage_->height() };
+}
+
+const uint8_t *Node::textureData() {
+    return textureImage_->data();
+}
+
 void Node::applyPivotTransormations() {
     if ( useMomentum_ ) {
         rotation_.multiply( momentum_ );

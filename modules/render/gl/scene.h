@@ -15,6 +15,7 @@ struct SceneNodeBufferObjects final {
     GLuint vertexBuffer{};
     GLuint normalBuffer{};
     GLuint texcrdBuffer{};
+    GLuint texture{};
 };
 
 struct Scene final : tire::Scene {

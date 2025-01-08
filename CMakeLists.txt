@@ -127,7 +127,7 @@ add_library(scene
     modules/scene/camera.h
     modules/scene/camera.cpp
 )
-target_link_libraries(scene algebra geometry)
+target_link_libraries(scene image algebra geometry)
 
 add_subdirectory(test/window)
 target_link_libraries(gl_test PUBLIC log algebra scene config render X11 GL GLU Vulkan::Vulkan uv)

@@ -15,6 +15,7 @@
 #include "algebra/matrix3.h"
 
 #include "image/color.h"
+#include "image/tga.h"
 
 namespace tire {
 
@@ -44,6 +45,10 @@ struct Node final : std::enable_shared_from_this<Node> {
     bool useMomentum() { return useMomentum_; }
     void setMomentum( algebra::vector3f rtn );
 
+    void setTextureImage( const std::string &file );
+    std::pair<int, int> textureSize();
+    const uint8_t *textureData();
+
     void applyPivotTransormations();
 
 private:
@@ -60,6 +65,8 @@ private:
     algebra::matrix4f scale_{};
     bool useMomentum_{};
     algebra::matrix4f momentum_{};
+
+    std::unique_ptr<Tga> textureImage_;
 };
 
 }  // namespace tire

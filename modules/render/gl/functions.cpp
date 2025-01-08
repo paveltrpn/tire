@@ -48,6 +48,8 @@ PFNGLDRAWELEMENTSPROC glDrawElements{ nullptr };
 PFNGLMAPBUFFERPROC glMapBuffer{ nullptr };
 PFNGLUNMAPBUFFERPROC glUnmapBuffer{ nullptr };
 
+PFNGLGENERATEMIPMAPPROC glGenerateMipmap{ nullptr };
+
 void init() {
     // shaders
     glCreateProgram =
@@ -165,6 +167,12 @@ void init() {
         reinterpret_cast<const GLubyte *>( "glUnmapBuffer" ) ) );
     if ( !glUnmapBuffer )
         log::error( "can't get glUnmapBuffer function address!" );
+
+    glGenerateMipmap =
+        reinterpret_cast<PFNGLGENERATEMIPMAPPROC>( glXGetProcAddress(
+            reinterpret_cast<const GLubyte *>( "glGenerateMipmap" ) ) );
+    if ( !glGenerateMipmap )
+        log::error( "can't get glGenerateMipmap function address!" );
 }
 
 }  // namespace tire::gl

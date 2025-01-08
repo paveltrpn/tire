@@ -50,6 +50,8 @@ extern PFNGLDRAWELEMENTSPROC glDrawElements;
 extern PFNGLMAPBUFFERPROC glMapBuffer;
 extern PFNGLUNMAPBUFFERPROC glUnmapBuffer;
 
+extern PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
+
 void init();
 
 }  // namespace tire::gl

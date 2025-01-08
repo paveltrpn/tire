@@ -3,6 +3,7 @@
     {
       "type": "box",
       "color": "lightcoral",
+      "texture_diffuse": "texture.tga",
       "pivot_position": [
         -1,
         0,
@@ -28,6 +29,7 @@
     {
       "type": "frame",
       "color": "royalblue",
+      "texture_diffuse": "texture.tga",
       "pivot_position": [
         0,
         1.6,
@@ -53,6 +55,7 @@
     {
       "type": "frame",
       "color": "greenyellow",
+      "texture_diffuse": "brick.tga",
       "pivot_position": [
         0,
         -1.2,
@@ -78,6 +81,7 @@
     {
       "type": "diamond",
       "color": "deepskyblue",
+      "texture_diffuse": "texture.tga",
       "pivot_position": [
         2.4,
         -2.2,
@@ -103,6 +107,7 @@
     {
       "type": "diamond",
       "color": "olive",
+      "texture_diffuse": "texture.tga",
       "pivot_position": [
         -2.4,
         2,
@@ -128,6 +133,7 @@
     {
       "type": "box",
       "color": "crimson",
+      "texture_diffuse": "texture.tga",
       "pivot_position": [
         1,
         0,
@@ -153,6 +159,7 @@
     {
       "type": "box",
       "color": "darkgray",
+      "texture_diffuse": "brick.tga",
       "pivot_position": [
         0,
         0,

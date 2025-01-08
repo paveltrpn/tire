@@ -7,6 +7,7 @@
 
 #include "tga.h"
 #include "log/log.h"
+static constexpr bool DEBUG_OUTPUT_IMAGE_TGA_CPP{ false };
 
 namespace tire {
 
@@ -18,7 +19,8 @@ Tga::Tga( std::string_view fname ) {
 
     fileStream.open( fname, std::ifstream::binary );
     if ( !fileStream ) {
-        throw std::runtime_error( "file not found" );
+        throw std::runtime_error(
+            std::format( "file \"{}\" not found", std::string{ fname } ) );
     }
 
     fileStream.read( reinterpret_cast<char *>( &sTGAHeader_ ),

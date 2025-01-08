@@ -39,6 +39,15 @@ Scene::Scene( const std::filesystem::path &fname )
 
         // glBindVertexArray( 0 );
 
+        glGenTextures( 1, &buf.texture );
+        glBindTexture( GL_TEXTURE_2D, buf.texture );
+
+        const auto [width, height] = nodeList_[i]->textureSize();
+        const auto data = nodeList_[i]->textureData();
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+                      GL_UNSIGNED_BYTE, data );
+        glGenerateMipmap( GL_TEXTURE_2D );
+
         buffersList_.push_back( buf );
     }
 }
@@ -53,6 +62,8 @@ void Scene::initPrograms() {
     colorProgram_.link();
     colorProgram_.findUniforms();
 
+    // ===========================================================================
+
     flatshadeProgram_.init<GL_VERTEX_SHADER>( basePath / "assets" / "shaders" /
                                               "flatshade_vert.glsl" );
     flatshadeProgram_.init<GL_FRAGMENT_SHADER>(
@@ -62,6 +73,15 @@ void Scene::initPrograms() {
     flatshadeProgram_.use();
     flatshadeProgram_.setLightcolor( { 1.0f, 1.0f, 1.0f } );
     flatshadeProgram_.setLightpos( { 10.0f, 0.0f, 5.0f } );
+
+    // ===========================================================================
+
+    textureProgram_.init<GL_VERTEX_SHADER>( basePath / "assets" / "shaders" /
+                                            "diffuse_texture_vert.glsl" );
+    textureProgram_.init<GL_FRAGMENT_SHADER>( basePath / "assets" / "shaders" /
+                                              "diffuse_texture_frag.glsl" );
+    textureProgram_.link();
+    textureProgram_.findUniforms();
 }
 
 void Scene::submit() {
@@ -86,7 +106,7 @@ void Scene::submit() {
 }
 
 void Scene::output() {
-    flatshadeProgram_.use();
+    textureProgram_.use();
     for ( size_t i = 0; const auto &buffer : buffersList_ ) {
         // glEnableVertexAttribArray( 0 );
         // glBindBuffer( GL_ARRAY_BUFFER,
@@ -103,9 +123,10 @@ void Scene::output() {
         //glColorPointer(3, GL_FLOAT, 0, (void*)(sizeof(vertices)+sizeof(normals)));
         //glVertexPointer( 3, GL_FLOAT, 0, 0 );
 
-        flatshadeProgram_.setViewMatrix( getCamera( 0 )->getMatrix() );
-        flatshadeProgram_.setColor( nodeList_[i]->color() );
+        textureProgram_.setViewMatrix( getCamera( 0 )->getMatrix() );
+        //flatshadeProgram_.setColor( nodeList_[i]->color() );
 
+        glBindTexture( GL_TEXTURE_2D, buffer.texture );
         glBindVertexArray( buffer.vertexArray );
         glDrawArrays( GL_TRIANGLES, 0, nodeList_[i]->verteciesCount() );
         glBindVertexArray( 0 );
