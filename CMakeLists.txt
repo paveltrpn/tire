@@ -127,7 +127,7 @@ add_library(scene
     modules/scene/camera.h
     modules/scene/camera.cpp
 )
-target_link_libraries(scene image algebra geometry)
+target_link_libraries(scene io image algebra geometry)
 
 add_library(io
     modules/io/async.h

@@ -12,7 +12,7 @@
 namespace tire {
 
 struct Scene {
-    Scene( const std::filesystem::path &fname, const uv_loop_t *loop );
+    Scene( const std::filesystem::path &fname, uv_loop_t *loop );
 
     Scene( const Scene &other ) = delete;
     Scene( Scene &&other ) = delete;

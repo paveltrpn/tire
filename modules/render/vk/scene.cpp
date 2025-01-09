@@ -3,7 +3,7 @@
 
 namespace tire::vk {
 
-Scene::Scene( const std::filesystem::path &fname, const uv_loop_t *loop )
+Scene::Scene( const std::filesystem::path &fname, uv_loop_t *loop )
     : tire::Scene{ fname, loop } {
 }
 
