@@ -3,14 +3,16 @@
 
 #include <filesystem>
 #include "nlohmann/json.hpp"
+#include "uv.h"
 
+#include "io/factory.h"
 #include "node.h"
 #include "camera.h"
 
 namespace tire {
 
 struct Scene {
-    Scene( const std::filesystem::path &fname );
+    Scene( const std::filesystem::path &fname, const uv_loop_t *loop );
 
     Scene( const Scene &other ) = delete;
     Scene( Scene &&other ) = delete;
@@ -32,6 +34,8 @@ private:
     nlohmann::json scene_;
 
 protected:
+    std::shared_ptr<io::Factory> io_;
+
     std::vector<std::shared_ptr<Node>> nodeList_;
     std::vector<std::shared_ptr<Camera>> cameras_{};
 };

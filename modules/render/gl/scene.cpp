@@ -5,8 +5,8 @@
 
 namespace tire::gl {
 
-Scene::Scene( const std::filesystem::path &fname )
-    : tire::Scene{ fname } {
+Scene::Scene( const std::filesystem::path &fname, const uv_loop_t *loop )
+    : tire::Scene{ fname, loop } {
     const auto nodeListSize = nodeList_.size();
     buffersList_.reserve( nodeListSize );
 

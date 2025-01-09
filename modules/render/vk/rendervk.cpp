@@ -87,7 +87,7 @@ RenderVK::~RenderVK() {
 };
 
 void RenderVK::scene( const std::filesystem::path &path ) {
-    scene_ = std::make_shared<vk::Scene>( path );
+    scene_ = std::make_shared<vk::Scene>( path, loop_ );
 }
 
 void RenderVK::setSwapInterval( int interval ){

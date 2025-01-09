@@ -3,6 +3,7 @@
 
 #include <filesystem>
 #include <GL/gl.h>
+#include "uv.h"
 
 #include "scene/scene.h"
 #include "shader_storage.h"
@@ -19,7 +20,7 @@ struct SceneNodeBufferObjects final {
 };
 
 struct Scene final : tire::Scene {
-    Scene( const std::filesystem::path &fname );
+    Scene( const std::filesystem::path &fname, const uv_loop_t *loop );
 
     void initPrograms();
 

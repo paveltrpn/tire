@@ -10,8 +10,10 @@ static constexpr bool DEBUG_OUTPUT_SCENE_CPP{ true };
 
 namespace tire {
 
-Scene::Scene( const std::filesystem::path &fname ) {
+Scene::Scene( const std::filesystem::path &fname, const uv_loop_t *loop ) {
     const auto path = std::filesystem::path{ fname };
+
+    io_ = std::make_shared<io::Factory>( loop );
 
     log::info( "loading scene from file {}", fname.filename().string() );
 

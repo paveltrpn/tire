@@ -129,9 +129,18 @@ add_library(scene
 )
 target_link_libraries(scene image algebra geometry)
 
+add_library(io
+    modules/io/async.h
+    modules/io/file.h
+    modules/io/file.cpp
+    modules/io/factory.h
+    modules/io/factory.cpp
+)
+target_link_libraries(io)
+
 add_subdirectory(test/window)
-target_link_libraries(gl_test PUBLIC log algebra scene config render X11 GL GLU Vulkan::Vulkan uv)
-target_link_libraries(vk_test PUBLIC log algebra scene config render X11 GL GLU Vulkan::Vulkan uv)
+target_link_libraries(gl_test PUBLIC log io algebra scene config render X11 GL GLU Vulkan::Vulkan uv)
+target_link_libraries(vk_test PUBLIC log io algebra scene config render X11 GL GLU Vulkan::Vulkan uv)
 
 add_subdirectory(test/wavefront)
 target_link_libraries(wavefront geometry)

@@ -7,6 +7,8 @@
 #include <array>
 
 #include "log/log.h"
+static constexpr bool DEBUG_OUTPUT_RENDER_CPP{ true };
+
 #include "render.h"
 
 namespace tire {
@@ -22,12 +24,30 @@ Render::Render() {
     configureX11();
 
     loop_ = static_cast<uv_loop_t *>( malloc( sizeof( uv_loop_t ) ) );
-    uv_loop_init( loop_ );
+    {
+        const auto res = uv_loop_init( loop_ );
+        if ( res != 0 ) {
+            throw std::runtime_error(
+                std::format( "uv loop init failed with code {}", res ) );
+        } else {
+            log::debug<DEBUG_OUTPUT_RENDER_CPP>( "uv loop init success" );
+        }
+    }
+
     uv_idle_init( loop_, &idler_ );
 
     // Every libuv handle has a void* data field. Here’s how you use it:
     idler_.data = this;
-    uv_idle_start( &idler_, loop );
+
+    {
+        const auto res = uv_idle_start( &idler_, loop );
+        if ( res != 0 ) {
+            throw std::runtime_error(
+                std::format( "uv idle start failed with code {}", res ) );
+        } else {
+            log::debug<DEBUG_OUTPUT_RENDER_CPP>( "uv idle started" );
+        }
+    }
 }
 
 Render::~Render() {
@@ -218,7 +238,12 @@ void Render::loop( uv_idle_t *handle ) {
 
 void Render::run() {
     preLoop();
-    uv_run( loop_, UV_RUN_DEFAULT );
+
+    const auto res = uv_run( loop_, UV_RUN_DEFAULT );
+    if ( res != 0 ) {
+        log::error( "uv run end with error {}", res );
+    }
+
     postLoop();
 }
 
