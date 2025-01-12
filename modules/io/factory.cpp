@@ -23,4 +23,14 @@ void Factory::testFileOpen( std::string_view path ) {
     uv_fs_open( loop_, &openReq, path.data(), O_RDONLY, 0, onOpen );
 }
 
+static void timerCallback( uv_timer_t *handle ) {
+    log::info( "timer triggered..." );
+}
+
+void Factory::testTimerEvent( long long timeout ) {
+    static uv_timer_t timer_req;
+    uv_timer_init( loop_, &timer_req );
+    uv_timer_start( &timer_req, timerCallback, timeout, 0 );
+}
+
 }  // namespace tire::io

@@ -34,7 +34,8 @@ private:
     nlohmann::json scene_;
 
 protected:
-    std::shared_ptr<io::Factory> io_;
+    // Object, that perform IO operations through libuv
+    std::shared_ptr<io::Factory> io_{};
 
     std::vector<std::shared_ptr<Node>> nodeList_;
     std::vector<std::shared_ptr<Camera>> cameras_{};

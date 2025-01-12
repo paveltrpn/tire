@@ -208,8 +208,16 @@ void Render::loop( uv_idle_t *handle ) {
             auto keyEventCode = event.xkey.keycode;
             switch ( keyEventCode ) {
                 case 9: {  // == ESCAPE
+                    // Just stop render loop, not whole uv event loop
                     uv_idle_stop( handle );
+
+                    // This will stop uv event loop and may
+                    // cause uv_run() return code != 1 if
+                    // not all event pendings got finished
+                    uv_stop( self->loop_ );
+
                     self->run_ = false;
+
                     break;
                 }
                 case 38: {  // == 'a'

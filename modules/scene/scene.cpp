@@ -14,8 +14,10 @@ Scene::Scene( const std::filesystem::path &fname, uv_loop_t *loop ) {
     const auto path = std::filesystem::path{ fname };
 
     io_ = std::make_shared<io::Factory>( loop );
+    // remove
     io_->testFileOpen( path.string() );
-
+    io_->testTimerEvent( 2000 );
+    // ======
     log::info( "loading scene from file {}", fname.filename().string() );
 
     std::ifstream file{ path };

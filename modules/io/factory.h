@@ -12,6 +12,7 @@ struct Factory final {
         : loop_{ loop } {}
 
     void testFileOpen( std::string_view path );
+    void testTimerEvent( long long timeout );
 
 private:
     // Non owning libuv main loop handle.
