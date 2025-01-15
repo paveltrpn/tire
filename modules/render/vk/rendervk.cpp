@@ -69,8 +69,8 @@ RenderVK::RenderVK()
 
 RenderVK::~RenderVK() {
     //commandPool_.reset( nullptr );
-    for ( auto i = 0; i < cBufs_.size(); ++i ) {
-        cBufs_[i].release();
+    for ( auto &buf : cBufs_ ) {
+        buf.release();
     }
 
     for ( auto i = 0; i < 2; i++ ) {

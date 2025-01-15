@@ -1,4 +1,6 @@
 
+#include <array>
+
 #include <vulkan/vk_enum_string_helper.h>
 
 #include "swapchain.h"
@@ -21,14 +23,14 @@ Swapchain::~Swapchain() {
 
 void Swapchain::createSwapchain( const vk::Device *device,
                                  const vk::Surface *surface ) {
-    const auto extent =
-        VkExtent2D{ device->surfaceCapabilities().currentExtent.width,
-                    device->surfaceCapabilities().currentExtent.height };
+    const auto configPtr = Config::instance();
+    const auto extent = VkExtent2D{
+        static_cast<uint32_t>( configPtr->get<int>( "window_width" ) ),
+        static_cast<uint32_t>( configPtr->get<int>( "window_height" ) ) };
 
-    VkSurfaceFormatKHR surfaceFormat =
-        device->surfaceFormat( 0 );  // TODO: choose wisely
-    VkPresentModeKHR presentMode =
-        device->presentMode( 0 );  // TODO: choose wisely
+    const auto surfaceFormat =
+        device->surfaceFormat( 0 );                     // TODO: choose wisely
+    const auto presentMode = device->presentMode( 0 );  // TODO: choose wisely
 
     const auto surfaceCapabilities = device->surfaceCapabilities();
     // However, simply sticking to this minimum means that we may sometimes have
@@ -55,13 +57,14 @@ void Swapchain::createSwapchain( const vk::Device *device,
     createInfo.imageArrayLayers = 1;
     createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-    uint32_t graphicsFamily{ device->graphicsFamily() };
-    uint32_t presentFamily{ device->presentFamily() };
-    uint32_t queueFamilyIndices[] = { graphicsFamily, presentFamily };
+    const uint32_t graphicsFamily{ device->graphicsFamily() };
+    const uint32_t presentFamily{ device->presentFamily() };
+    std::array<uint32_t, 2> queueFamilyIndices = { graphicsFamily,
+                                                   presentFamily };
     if ( graphicsFamily != presentFamily ) {
         createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
         createInfo.queueFamilyIndexCount = 2;
-        createInfo.pQueueFamilyIndices = queueFamilyIndices;
+        createInfo.pQueueFamilyIndices = queueFamilyIndices.data();
     } else {
         createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
         createInfo.queueFamilyIndexCount = 0;      // Optional
@@ -156,12 +159,12 @@ void Swapchain::createFramebuffers( const vk::Device *device,
                                     const vk::Pipeline *pipeline ) {
     framebuffers_.resize( swapChainImageViews_.size() );
     for ( size_t i = 0; i < swapChainImageViews_.size(); i++ ) {
-        VkImageView attachments[] = { swapChainImageViews_[i] };
+        std::array<VkImageView, 1> attachments = { swapChainImageViews_[i] };
         VkFramebufferCreateInfo framebufferInfo{};
         framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
         framebufferInfo.renderPass = pipeline->getRenderPass();
         framebufferInfo.attachmentCount = 1;
-        framebufferInfo.pAttachments = attachments;
+        framebufferInfo.pAttachments = attachments.data();
         framebufferInfo.width = swapChainExtent_.width;
         framebufferInfo.height = swapChainExtent_.height;
         framebufferInfo.layers = 1;
