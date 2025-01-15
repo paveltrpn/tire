@@ -18,7 +18,7 @@ struct Surface final {
 
     ~Surface();
 
-    [[nodiscard]] VkSurfaceKHR surface() const;
+    [[nodiscard]] VkSurfaceKHR handle() const;
 
 private:
     const VkInstance instance_;

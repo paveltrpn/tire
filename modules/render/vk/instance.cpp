@@ -230,7 +230,7 @@ std::vector<char *> Instance::makeValidationLayersList(
     return rt;
 }
 
-VkInstance Instance::instance() const {
+VkInstance Instance::handle() const {
     return instance_;
 }
 

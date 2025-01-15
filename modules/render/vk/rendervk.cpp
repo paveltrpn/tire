@@ -19,16 +19,16 @@ RenderVK::RenderVK()
     try {
         instance_ = std::make_unique<vk::Instance>();
         surface_ = std::make_unique<vk::Surface>( display_, window_,
-                                                  instance_->instance() );
-        device_ = std::make_unique<vk::Device>( instance_->instance(),
-                                                surface_->surface() );
+                                                  instance_->handle() );
+        device_ = std::make_unique<vk::Device>( instance_->handle(),
+                                                surface_->handle() );
 
         device_->pickAndCreateDevice( instance_.get(), 0 );
 
         // valid only after logical device creation
         const auto basePath = Config::instance()->getBasePath().string();
         shaderStorage_ =
-            std::make_unique<vk::ShaderStorage>( device_->device() );
+            std::make_unique<vk::ShaderStorage>( device_->handle() );
         shaderStorage_->add( basePath + "/assets/shaders/001_shader_vert.spv",
                              "001_shader_vert" );
         shaderStorage_->add( basePath + "/assets/shaders/001_shader_frag.spv",
@@ -39,7 +39,7 @@ RenderVK::RenderVK()
         swapchain_->createImageViews( device_.get() );
 
         pipelineSimple_ =
-            std::make_unique<vk::PiplineSimple>( device_->device() );
+            std::make_unique<vk::PiplineSimple>( device_->handle() );
         pipelineSimple_->initFixed();
         pipelineSimple_->initProgable(
             shaderStorage_->get( "001_shader_vert" ),
@@ -51,13 +51,13 @@ RenderVK::RenderVK()
 
         swapchain_->createFramebuffers( device_.get(), pipelineSimple_.get() );
 
-        commandPool_ = std::make_unique<vk::CommandPool>( device_->device() );
+        commandPool_ = std::make_unique<vk::CommandPool>( device_->handle() );
         commandPool_->init( device_->graphicsFamily() );
 
         cBufs_.reserve( 2 );
         for ( auto i = 0; i < cBufs_.capacity(); ++i ) {
             cBufs_.push_back( std::make_unique<vk::CommandBuffer>(
-                device_->device(), commandPool_.get() ) );
+                device_->handle(), commandPool_.get() ) );
         }
 
         createSyncObjects();
@@ -74,11 +74,11 @@ RenderVK::~RenderVK() {
     }
 
     for ( auto i = 0; i < 2; i++ ) {
-        vkDestroySemaphore( device_->device(), imageAvailableSemaphores_[i],
+        vkDestroySemaphore( device_->handle(), imageAvailableSemaphores_[i],
                             nullptr );
-        vkDestroySemaphore( device_->device(), renderFinishedSemaphores_[i],
+        vkDestroySemaphore( device_->handle(), renderFinishedSemaphores_[i],
                             nullptr );
-        vkDestroyFence( device_->device(), inFlightFences_[i], nullptr );
+        vkDestroyFence( device_->handle(), inFlightFences_[i], nullptr );
     }
 };
 
@@ -104,11 +104,11 @@ void RenderVK::createSyncObjects() {
     fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
     for ( size_t i = 0; i < 2; i++ ) {
-        if ( vkCreateSemaphore( device_->device(), &semaphoreInfo, nullptr,
+        if ( vkCreateSemaphore( device_->handle(), &semaphoreInfo, nullptr,
                                 &imageAvailableSemaphores_[i] ) != VK_SUCCESS ||
-             vkCreateSemaphore( device_->device(), &semaphoreInfo, nullptr,
+             vkCreateSemaphore( device_->handle(), &semaphoreInfo, nullptr,
                                 &renderFinishedSemaphores_[i] ) != VK_SUCCESS ||
-             vkCreateFence( device_->device(), &fenceInfo, nullptr,
+             vkCreateFence( device_->handle(), &fenceInfo, nullptr,
                             &inFlightFences_[i] ) != VK_SUCCESS ) {
             throw std::runtime_error( "failed to create semaphores!" );
         }

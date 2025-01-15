@@ -11,7 +11,7 @@ static constexpr bool DEBUG_OUTPUT_SWAPCHAINVK_CPP{ true };
 namespace tire::vk {
 
 Swapchain::Swapchain( const vk::Device *device )
-    : device_{ device->device() } {
+    : device_{ device->handle() } {
 }
 
 Swapchain::~Swapchain() {
@@ -48,7 +48,7 @@ void Swapchain::createSwapchain( const vk::Device *device,
 
     VkSwapchainCreateInfoKHR createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    createInfo.surface = surface->surface();
+    createInfo.surface = surface->handle();
 
     createInfo.minImageCount = imageCount;
     createInfo.imageFormat = surfaceFormat.format;
@@ -78,7 +78,7 @@ void Swapchain::createSwapchain( const vk::Device *device,
     createInfo.oldSwapchain = VK_NULL_HANDLE;
 
     {
-        const auto err = vkCreateSwapchainKHR( device->device(), &createInfo,
+        const auto err = vkCreateSwapchainKHR( device->handle(), &createInfo,
                                                nullptr, &swapchain_ );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error(
@@ -93,7 +93,7 @@ void Swapchain::createSwapchain( const vk::Device *device,
     uint32_t swapchainImageCount{};
     {
         const auto err = vkGetSwapchainImagesKHR(
-            device->device(), swapchain_, &swapchainImageCount, nullptr );
+            device->handle(), swapchain_, &swapchainImageCount, nullptr );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error( std::format(
                 "failed to get swapchain images count with code {}\n!",
@@ -108,7 +108,7 @@ void Swapchain::createSwapchain( const vk::Device *device,
 
     {
         const auto err =
-            vkGetSwapchainImagesKHR( device->device(), swapchain_, &imageCount,
+            vkGetSwapchainImagesKHR( device->handle(), swapchain_, &imageCount,
                                      swapChainImages_.data() );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error(
@@ -142,7 +142,7 @@ void Swapchain::createImageViews( const vk::Device *device ) {
         createInfo.subresourceRange.baseArrayLayer = 0;
         createInfo.subresourceRange.layerCount = 1;
 
-        const auto err = vkCreateImageView( device->device(), &createInfo,
+        const auto err = vkCreateImageView( device->handle(), &createInfo,
                                             nullptr, &swapChainImageViews_[i] );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error( std::format(
@@ -170,7 +170,7 @@ void Swapchain::createFramebuffers( const vk::Device *device,
         framebufferInfo.layers = 1;
 
         const auto err = vkCreateFramebuffer(
-            device->device(), &framebufferInfo, nullptr, &framebuffers_[i] );
+            device->handle(), &framebufferInfo, nullptr, &framebuffers_[i] );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error(
                 std::format( "failed to create framebuffer at {} with code {}!",

@@ -115,7 +115,7 @@ Device::~Device() {
     vkDestroyDevice( device_, nullptr );
 }
 
-VkDevice Device::device() const {
+VkDevice Device::handle() const {
     return device_;
 }
 

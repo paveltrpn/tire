@@ -18,7 +18,7 @@ struct Instance final {
 
     ~Instance();
 
-    [[nodiscard]] VkInstance instance() const;
+    [[nodiscard]] VkInstance handle() const;
     [[nodiscard]] std::pair<uint32_t, char *const *const> validationLayersInfo()
         const;
 

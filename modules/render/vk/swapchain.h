@@ -27,7 +27,7 @@ struct Swapchain final {
     void createFramebuffers( const vk::Device *device,
                              const vk::Pipeline *pipeline );
 
-    [[nodiscard]] VkSwapchainKHR swapchain() const { return swapchain_; }
+    [[nodiscard]] VkSwapchainKHR handle() const { return swapchain_; }
     [[nodiscard]] VkFormat imageFormat() const {
         return swapChainImageFormat_;
     };
