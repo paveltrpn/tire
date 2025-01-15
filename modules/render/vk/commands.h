@@ -6,7 +6,7 @@
 
 #include "pipeline.h"
 
-namespace tire {
+namespace tire::vk {
 
 struct CommandPool final {
     CommandPool( const VkDevice &device )
@@ -49,4 +49,4 @@ private:
     VkCommandBuffer commandBuffer_{ VK_NULL_HANDLE };
 };
 
-}  // namespace tire
+}  // namespace tire::vk

@@ -51,12 +51,12 @@ RenderVK::RenderVK()
 
         swapchain_->createFramebuffers( device_.get(), pipelineSimple_.get() );
 
-        commandPool_ = std::make_unique<CommandPool>( device_->device() );
+        commandPool_ = std::make_unique<vk::CommandPool>( device_->device() );
         commandPool_->init( device_->graphicsFamily() );
 
         cBufs_.reserve( 2 );
         for ( auto i = 0; i < cBufs_.capacity(); ++i ) {
-            cBufs_.push_back( std::make_unique<CommandBuffer>(
+            cBufs_.push_back( std::make_unique<vk::CommandBuffer>(
                 device_->device(), commandPool_.get() ) );
         }
 

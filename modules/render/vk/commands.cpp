@@ -6,7 +6,7 @@ static constexpr bool DEBUG_OUTPUT_COMMAND_POOL_CPP{ true };
 
 #include "commands.h"
 
-namespace tire {
+namespace tire::vk {
 
 void CommandPool::init( uint32_t queueFamilyIndex ) {
     VkCommandPoolCreateInfo poolInfo{};
@@ -131,4 +131,4 @@ void CommandBuffer::submit( const std::vector<VkSemaphore> &waitSemaphores,
     }
 }
 
-}  // namespace tire
+}  // namespace tire::vk
