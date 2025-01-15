@@ -1,6 +1,5 @@
 CompileFlags:
   CompilationDatabase: ./build/
-  Add: -I/mnt/main_disk/vulkansdk_1.3.296.0/x86_64/include
  
 Hover:
   ShowAKA: Yes

@@ -11,38 +11,16 @@
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 
+#include "instance.h"
+#include "pipeline.h"
+#include "commands.h"
+
 #include "config/config.h"
 #include "../render.h"
 #include "shader_storage.h"
-#include "pipeline.h"
-#include "commands.h"
 #include "scene.h"
 
 namespace tire {
-
-static VKAPI_ATTR VkBool32 VKAPI_CALL
-debugCallback( VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-               VkDebugUtilsMessageTypeFlagsEXT messageType,
-               const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
-               void *pUserData ) {
-    std::print( R"(validation layer debug:		{}
-)",
-                pCallbackData->pMessage );
-    return VK_FALSE;
-}
-
-static VkResult vkCreateDebugUtilsMessenger(
-    VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo,
-    const VkAllocationCallbacks *pAllocator,
-    VkDebugUtilsMessengerEXT *pDebugMessenger ) {
-    auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
-        instance, "vkCreateDebugUtilsMessengerEXT" );
-    if ( func != nullptr ) {
-        return func( instance, pCreateInfo, pAllocator, pDebugMessenger );
-    } else {
-        return VK_ERROR_EXTENSION_NOT_PRESENT;
-    }
-}
 
 struct RenderVK final : Render {
     RenderVK();
@@ -60,14 +38,6 @@ private:
     void swapBuffers() override;
     void postLoop() override;
 
-    // pass std::nullopt to enable all available exensions
-    std::vector<char *> makeExtensionsList(
-        std::optional<std::vector<std::string>> list );
-    // pass std::nullopt to enable all available validation layers.
-    std::vector<char *> makeValidationLayersList(
-        std::optional<std::vector<std::string>> list );
-
-    void createInstance();
     void initPhysicalDevices();
     void pickAndCreateDevice(
         size_t id );  // TODO: make physical device pick smarter
@@ -78,8 +48,6 @@ private:
     void createFramebuffers();
     void createSyncObjects();
 
-    void displayExtensionProperties();
-    void displayValidationLayerProperties();
     void displayPhysicalDeviceProperties( size_t id );
     void displayPhysicalDeviceFeatures( size_t id );
     void displayPhysicalDeviceFamiliesProperties( size_t id );
@@ -88,14 +56,13 @@ private:
 private:
     std::shared_ptr<vk::Scene> scene_;
 
+    std::unique_ptr<vk::Instance> instance_{};
     std::unique_ptr<vk::ShaderStorage> shaderStorage_{};
     std::unique_ptr<vk::PiplineSimple> pipelineSimple_{};
     std::unique_ptr<CommandPool> commandPool_{};
     std::vector<std::unique_ptr<CommandBuffer>> cBufs_{};
 
     // handles
-    VkDebugUtilsMessengerEXT debugMessenger_{ VK_NULL_HANDLE };
-    VkInstance instance_{ VK_NULL_HANDLE };
     VkSurfaceKHR surface_{ VK_NULL_HANDLE };
     VkDevice device_{ VK_NULL_HANDLE };
     VkQueue graphicsQueue_{ VK_NULL_HANDLE };
@@ -107,12 +74,6 @@ private:
     std::vector<VkSemaphore> imageAvailableSemaphores_{};
     std::vector<VkSemaphore> renderFinishedSemaphores_{};
     std::vector<VkFence> inFlightFences_{};
-
-    // vulkan entities info
-    std::vector<VkExtensionProperties> extensionProperties_{};
-    std::vector<VkLayerProperties> layerProperties_{};
-    std::vector<char *> validationLayersNames_{};
-    std::vector<char *> extensionsNames_{};
 
     VkSurfaceCapabilitiesKHR surfaceCapabilities_{};
     std::vector<VkSurfaceFormatKHR> surfaceFormats_{};

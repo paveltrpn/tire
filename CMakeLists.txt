@@ -4,15 +4,24 @@ set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_COMPILER clang++)
 add_compile_options(-stdlib=libc++)
 add_link_options(-stdlib=libc++)
+set(CMAKE_BUILD_TYPE Debug)
 
 project (tiny_render)
 
 set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHED)
-
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON )
 
 include_directories("modules")
+#include_directories($ENV{NLOHMANN_JSON_DIR}/include)
+#include_directories($ENV{LIBUV_DIR}/include)
+#include_directories($ENV{VULKAN_SDK}/include)
+
+if (DEFINED ENV{VULKAN_SDK} AND NOT "$ENV{VULKAN_SDK}" STREQUAL "")
+    message( "VULKAN_SDK is set to $ENV{VULKAN_SDK}")
+    include_directories($ENV{VULKAN_SDK}/include)
+else()
+    message(SEND_ERROR "VULKAN_SDK is not set")
+endif()
 
 if (DEFINED ENV{NLOHMANN_JSON_DIR} AND NOT "$ENV{NLOHMANN_JSON_DIR}" STREQUAL "")
     message( "NLOHMANN_JSON_DIR is set to $ENV{NLOHMANN_JSON_DIR}")
@@ -81,6 +90,10 @@ add_library(render
     modules/render/gl/texture.cpp
     modules/render/vk/rendervk.cpp
     modules/render/vk/rendervk.h
+    modules/render/vk/instance.cpp
+    modules/render/vk/instance.h
+    modules/render/vk/surface.cpp
+    modules/render/vk/surface.h
     modules/render/vk/info.cpp
     modules/render/vk/main_loop.cpp
     modules/render/vk/shader_storage.h

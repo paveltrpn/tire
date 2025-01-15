@@ -7,40 +7,10 @@
 namespace tire {
 
 void RenderVK::displayRenderInfo() {
-    displayExtensionProperties();
-    displayValidationLayerProperties();
-
     for ( size_t i = 0; i < physicalDevices_.size(); ++i ) {
         displayPhysicalDeviceProperties( i );
         displayPhysicalDeviceFeatures( i );
         displayPhysicalDeviceFamiliesProperties( i );
-    }
-}
-
-void RenderVK::displayExtensionProperties() {
-    std::print(
-        R"(Instance extensions count: {}
-==========================
-)",
-        extensionProperties_.size() );
-    for ( auto &prop : extensionProperties_ ) {
-        std::print( R"(	{} | revision: {}
-)",
-                    prop.extensionName, prop.specVersion );
-    }
-}
-
-void RenderVK::displayValidationLayerProperties() {
-    std::print(
-        R"(Layers count: {}
-=============
-)",
-        layerProperties_.size() );
-    for ( auto &layer : layerProperties_ ) {
-        std::print( R"(	{} | specVersion: {}
-	{}
-)",
-                    layer.layerName, layer.specVersion, layer.description );
     }
 }
 
