@@ -31,7 +31,7 @@ Surface::~Surface() {
     vkDestroySurfaceKHR( instance_, surface_, nullptr );
 }
 
-VkSurfaceKHR Surface::surface() {
+VkSurfaceKHR Surface::surface() const {
     return surface_;
 }
 

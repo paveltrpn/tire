@@ -13,7 +13,7 @@
 
 #include "instance.h"
 #include "surface.h"
-
+#include "device.h"
 #include "pipeline.h"
 #include "commands.h"
 
@@ -28,7 +28,7 @@ struct RenderVK final : Render {
     RenderVK();
     ~RenderVK() override;
 
-    void displayRenderInfo() override;
+    void displayRenderInfo() override{};
     void setSwapInterval( int interval ) override;
 
 private:
@@ -40,25 +40,18 @@ private:
     void swapBuffers() override;
     void postLoop() override;
 
-    void initPhysicalDevices();
-    void pickAndCreateDevice(
-        size_t id );  // TODO: make physical device pick smarter
     void createSwapchain();
     void createImageViews();
     void createGraphicsPipeline();
     void createFramebuffers();
     void createSyncObjects();
 
-    void displayPhysicalDeviceProperties( size_t id );
-    void displayPhysicalDeviceFeatures( size_t id );
-    void displayPhysicalDeviceFamiliesProperties( size_t id );
-    void displaySurfaceCapabilities();
-
 private:
     std::shared_ptr<vk::Scene> scene_;
 
     std::unique_ptr<vk::Instance> instance_{};
     std::unique_ptr<vk::Surface> surface_{};
+    std::unique_ptr<vk::Device> device_{};
 
     std::unique_ptr<vk::ShaderStorage> shaderStorage_{};
     std::unique_ptr<vk::PiplineSimple> pipelineSimple_{};
@@ -66,9 +59,7 @@ private:
     std::vector<std::unique_ptr<CommandBuffer>> cBufs_{};
 
     // handles
-    VkDevice device_{ VK_NULL_HANDLE };
-    VkQueue graphicsQueue_{ VK_NULL_HANDLE };
-    VkQueue presentQueue_{ VK_NULL_HANDLE };
+
     VkSwapchainKHR swapChain_{ VK_NULL_HANDLE };
     std::vector<VkImage> swapChainImages_{};
     std::vector<VkImageView> swapChainImageViews_{};
@@ -76,22 +67,6 @@ private:
     std::vector<VkSemaphore> imageAvailableSemaphores_{};
     std::vector<VkSemaphore> renderFinishedSemaphores_{};
     std::vector<VkFence> inFlightFences_{};
-
-    VkSurfaceCapabilitiesKHR surfaceCapabilities_{};
-    std::vector<VkSurfaceFormatKHR> surfaceFormats_{};
-    std::vector<VkPresentModeKHR> presentModes_{};
-
-    struct PhysicalDevice {
-        VkPhysicalDevice device{ VK_NULL_HANDLE };
-        VkPhysicalDeviceProperties properties{};
-        VkPhysicalDeviceFeatures features{};
-        std::vector<VkExtensionProperties> extensions{};
-        std::vector<VkQueueFamilyProperties> queueFamilyProperties{};
-    };
-    uint32_t graphicsFamily_{};
-    uint32_t presentFamily_{};
-
-    std::vector<PhysicalDevice> physicalDevices_{};
 
     VkFormat swapChainImageFormat_{};
     VkExtent2D swapChainExtent_{};

@@ -230,16 +230,16 @@ std::vector<char *> Instance::makeValidationLayersList(
     return rt;
 }
 
-VkInstance Instance::instance() {
+VkInstance Instance::instance() const {
     return instance_;
 }
 
-std::pair<uint32_t, char *const *const> Instance::validationLayersInfo() {
+std::pair<uint32_t, char *const *const> Instance::validationLayersInfo() const {
     return std::make_pair( validationLayersNames_.size(),
                            validationLayersNames_.data() );
 }
 
-void Instance::info() {
+void Instance::info() const {
     std::print(
         R"(Instance extensions count: {}
 ==========================

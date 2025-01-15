@@ -19,16 +19,17 @@ void RenderVK::frame() {
 
     // cause deadlock
 #define ONE_SECOND 1000000000
-    const auto waitFenceResult = vkWaitForFences(
-        device_, 1, &inFlightFences_[currentFrame_], VK_TRUE, ONE_SECOND );
+    const auto waitFenceResult =
+        vkWaitForFences( device_->device(), 1, &inFlightFences_[currentFrame_],
+                         VK_TRUE, ONE_SECOND );
     log::debug<true>( "wait fences result = {}",
                       string_VkResult( waitFenceResult ) );
 
-    vkResetFences( device_, 1, &inFlightFences_[currentFrame_] );
+    vkResetFences( device_->device(), 1, &inFlightFences_[currentFrame_] );
 
     uint32_t imageIndex;
     const auto result = vkAcquireNextImageKHR(
-        device_, swapChain_, UINT64_MAX,
+        device_->device(), swapChain_, UINT64_MAX,
         imageAvailableSemaphores_[currentFrame_], VK_NULL_HANDLE, &imageIndex );
     if ( result == VK_ERROR_OUT_OF_DATE_KHR ) {
         return;
@@ -42,7 +43,7 @@ void RenderVK::frame() {
     cBufs_[currentFrame_]->submit( { imageAvailableSemaphores_[currentFrame_] },
                                    { renderFinishedSemaphores_[currentFrame_] },
                                    inFlightFences_[currentFrame_],
-                                   graphicsQueue_ );
+                                   device_->graphicsQueue() );
     VkPresentInfoKHR presentInfo{};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     presentInfo.waitSemaphoreCount = 1;
@@ -56,8 +57,8 @@ void RenderVK::frame() {
     presentInfo.pImageIndices = &imageIndex;
     presentInfo.pResults = nullptr;
 
-    vkQueuePresentKHR( presentQueue_, &presentInfo );
-    vkResetFences( device_, 1, &inFlightFences_[currentFrame_] );
+    vkQueuePresentKHR( device_->presentQueue(), &presentInfo );
+    vkResetFences( device_->device(), 1, &inFlightFences_[currentFrame_] );
 
     currentFrame_ = ( currentFrame_ + 1 ) % 2;
 };
@@ -73,7 +74,7 @@ void RenderVK::swapBuffers(){
 void RenderVK::postLoop() {
     // we should wait for the logical device to finish operations
     // before exiting mainLoop and destroying the window
-    vkDeviceWaitIdle( device_ );
+    vkDeviceWaitIdle( device_->device() );
 };
 
 }  // namespace tire

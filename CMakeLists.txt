@@ -94,7 +94,8 @@ add_library(render
     modules/render/vk/instance.h
     modules/render/vk/surface.cpp
     modules/render/vk/surface.h
-    modules/render/vk/info.cpp
+    modules/render/vk/device.cpp
+    modules/render/vk/device.h
     modules/render/vk/main_loop.cpp
     modules/render/vk/shader_storage.h
     modules/render/vk/shader_storage.cpp

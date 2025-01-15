@@ -18,11 +18,11 @@ struct Instance final {
 
     ~Instance();
 
-    [[nodiscard]] VkInstance instance();
-    [[nodiscard]] std::pair<uint32_t, char *const *const>
-    validationLayersInfo();
+    [[nodiscard]] VkInstance instance() const;
+    [[nodiscard]] std::pair<uint32_t, char *const *const> validationLayersInfo()
+        const;
 
-    void info();
+    void info() const;
 
 private:
     // pass std::nullopt to enable all available exensions
