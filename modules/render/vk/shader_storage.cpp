@@ -9,7 +9,7 @@ static constexpr bool DEBUG_OUTPUT_SHADER_STORAGE_VK_CPP{ false };
 
 namespace tire::vk {
 
-ShaderStorage::ShaderStorage( const VkDevice &device )
+ShaderStorage::ShaderStorage( const VkDevice device )
     : device_{ device } {
 }
 

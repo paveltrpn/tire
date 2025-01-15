@@ -6,7 +6,7 @@
 namespace tire::vk {
 
 struct Pipeline {
-    Pipeline( const VkDevice &device )
+    Pipeline( const VkDevice device )
         : device_{ device } {}
 
     Pipeline( const Pipeline &other ) = delete;
@@ -37,7 +37,7 @@ struct Pipeline {
     VkRenderPass getRenderPass() const { return renderPass_; }
 
 protected:
-    const VkDevice &device_;
+    const VkDevice device_;
 
     VkPipeline pipeline_{ VK_NULL_HANDLE };
     VkPipelineLayout pipelineLayout_{ VK_NULL_HANDLE };

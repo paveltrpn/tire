@@ -6,7 +6,7 @@
 namespace tire::vk {
 
 struct ShaderStorage final {
-    ShaderStorage( const VkDevice &device );
+    ShaderStorage( const VkDevice device );
 
     ShaderStorage( const ShaderStorage &other ) = delete;
     ShaderStorage( ShaderStorage &&other ) = delete;
@@ -22,7 +22,7 @@ struct ShaderStorage final {
 
 private:
     // non owning
-    const VkDevice &device_;
+    const VkDevice device_;
     std::map<std::string, VkShaderModule> modules_{};
 };
 

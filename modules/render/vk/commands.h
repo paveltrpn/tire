@@ -9,7 +9,7 @@
 namespace tire::vk {
 
 struct CommandPool final {
-    CommandPool( const VkDevice &device )
+    CommandPool( const VkDevice device )
         : device_{ device } {};
 
     CommandPool( const CommandPool &other ) = delete;
@@ -20,10 +20,10 @@ struct CommandPool final {
     ~CommandPool() { vkDestroyCommandPool( device_, commandPool_, nullptr ); }
 
     void init( uint32_t queueFamilyIndex );
-    VkCommandPool get() const { return commandPool_; }
+    [[nodiscard]] VkCommandPool get() const { return commandPool_; }
 
 private:
-    const VkDevice &device_{ VK_NULL_HANDLE };
+    const VkDevice device_{ VK_NULL_HANDLE };
     VkCommandPool commandPool_{ VK_NULL_HANDLE };
 };
 
@@ -45,7 +45,7 @@ struct CommandBuffer final {
                  VkFence fence, VkQueue queue );
 
 private:
-    const VkDevice &device_{ VK_NULL_HANDLE };
+    const VkDevice device_{ VK_NULL_HANDLE };
     VkCommandBuffer commandBuffer_{ VK_NULL_HANDLE };
 };
 
