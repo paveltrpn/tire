@@ -12,6 +12,8 @@
 #include <vulkan/vulkan_core.h>
 
 #include "instance.h"
+#include "surface.h"
+
 #include "pipeline.h"
 #include "commands.h"
 
@@ -41,7 +43,6 @@ private:
     void initPhysicalDevices();
     void pickAndCreateDevice(
         size_t id );  // TODO: make physical device pick smarter
-    void createSurface();
     void createSwapchain();
     void createImageViews();
     void createGraphicsPipeline();
@@ -57,13 +58,14 @@ private:
     std::shared_ptr<vk::Scene> scene_;
 
     std::unique_ptr<vk::Instance> instance_{};
+    std::unique_ptr<vk::Surface> surface_{};
+
     std::unique_ptr<vk::ShaderStorage> shaderStorage_{};
     std::unique_ptr<vk::PiplineSimple> pipelineSimple_{};
     std::unique_ptr<CommandPool> commandPool_{};
     std::vector<std::unique_ptr<CommandBuffer>> cBufs_{};
 
     // handles
-    VkSurfaceKHR surface_{ VK_NULL_HANDLE };
     VkDevice device_{ VK_NULL_HANDLE };
     VkQueue graphicsQueue_{ VK_NULL_HANDLE };
     VkQueue presentQueue_{ VK_NULL_HANDLE };

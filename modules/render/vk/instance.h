@@ -16,6 +16,8 @@ struct Instance final {
     Instance &operator=( const Instance &other ) = delete;
     Instance &operator=( Instance &&other ) = delete;
 
+    ~Instance();
+
     [[nodiscard]] VkInstance instance();
     [[nodiscard]] std::pair<uint32_t, char *const *const>
     validationLayersInfo();

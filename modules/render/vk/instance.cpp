@@ -114,6 +114,10 @@ Instance::Instance() {
     }
 }
 
+Instance::~Instance() {
+    vkDestroyInstance( instance_, nullptr );
+}
+
 // pass std::nullopt to enable all available exensions
 std::vector<char *> Instance::makeExtensionsList(
     std::optional<std::vector<std::string>> list ) {

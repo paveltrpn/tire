@@ -18,8 +18,9 @@ RenderVK::RenderVK()
     : Render{} {
     try {
         instance_ = std::make_unique<vk::Instance>();
+        surface_ = std::make_unique<vk::Surface>( display_, window_,
+                                                  instance_->instance() );
 
-        createSurface();
         initPhysicalDevices();
 
         pickAndCreateDevice( 0 );
@@ -82,9 +83,7 @@ RenderVK::~RenderVK() {
         vkDestroyFramebuffer( device_, framebuffer, nullptr );
     }
     vkDestroySwapchainKHR( device_, swapChain_, nullptr );
-    vkDestroySurfaceKHR( instance_->instance(), surface_, nullptr );
     vkDestroyDevice( device_, nullptr );
-    vkDestroyInstance( instance_->instance(), nullptr );
 };
 
 void RenderVK::scene( const std::filesystem::path &path ) {
@@ -219,7 +218,8 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
         VkBool32 presentSupport = false;
         // Condition: we need device that support surface presentation
         const auto err = vkGetPhysicalDeviceSurfaceSupportKHR(
-            physicalDevices_[id].device, i, surface_, &presentSupport );
+            physicalDevices_[id].device, i, surface_->surface(),
+            &presentSupport );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error(
                 std::format( "failed to get device surface support for "
@@ -297,7 +297,8 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
     // physical device surface capabilities
     {
         const auto err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-            physicalDevices_[id].device, surface_, &surfaceCapabilities_ );
+            physicalDevices_[id].device, surface_->surface(),
+            &surfaceCapabilities_ );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error( std::format(
                 "failed to obtain surface capabilities with code {}!\n",
@@ -312,7 +313,8 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
     uint32_t formatCount;
     {
         const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR(
-            physicalDevices_[id].device, surface_, &formatCount, nullptr );
+            physicalDevices_[id].device, surface_->surface(), &formatCount,
+            nullptr );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error(
                 std::format( "failed to obtain physical device surface formats "
@@ -331,7 +333,7 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
 
     {
         const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR(
-            physicalDevices_[id].device, surface_, &formatCount,
+            physicalDevices_[id].device, surface_->surface(), &formatCount,
             surfaceFormats_.data() );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error( std::format(
@@ -348,7 +350,8 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
     uint32_t presentModeCount;
     {
         const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR(
-            physicalDevices_[id].device, surface_, &presentModeCount, nullptr );
+            physicalDevices_[id].device, surface_->surface(), &presentModeCount,
+            nullptr );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error(
                 std::format( "failed to obtain physical device present modes "
@@ -367,7 +370,7 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
 
     {
         const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR(
-            physicalDevices_[id].device, surface_, &presentModeCount,
+            physicalDevices_[id].device, surface_->surface(), &presentModeCount,
             presentModes_.data() );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error(
@@ -381,22 +384,6 @@ void RenderVK::pickAndCreateDevice( size_t id ) {
     }
 
     // displaySurfaceCapabilities();
-}
-
-void RenderVK::createSurface() {
-    VkXlibSurfaceCreateInfoKHR xlibSurfInfo{};
-    xlibSurfInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    xlibSurfInfo.dpy = display_;
-    xlibSurfInfo.window = window_;
-    const auto err = vkCreateXlibSurfaceKHR(
-        instance_->instance(), &xlibSurfInfo, nullptr, &surface_ );
-    if ( err != VK_SUCCESS ) {
-        throw std::runtime_error(
-            std::format( "failed to create xlib surface with code {}\n!",
-                         string_VkResult( err ) ) );
-    } else {
-        log::info( "vulkan xlib surface created!" );
-    }
 }
 
 void RenderVK::createSwapchain() {
@@ -420,7 +407,7 @@ void RenderVK::createSwapchain() {
 
     VkSwapchainCreateInfoKHR createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    createInfo.surface = surface_;
+    createInfo.surface = surface_->surface();
 
     createInfo.minImageCount = imageCount;
     createInfo.imageFormat = surfaceFormat.format;
