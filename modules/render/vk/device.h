@@ -6,11 +6,12 @@
 #include <vulkan/vulkan_core.h>
 
 #include "instance.h"
+#include "surface.h"
 
 namespace tire::vk {
 
 struct Device final {
-    Device( VkInstance instance, VkSurfaceKHR surface );
+    Device( const vk::Instance *instance, const vk::Surface *surface );
 
     Device( const Device &other ) = delete;
     Device( Device &&other ) = delete;
@@ -57,8 +58,8 @@ private:
     };
 
 private:
-    const VkInstance instance_{ VK_NULL_HANDLE };
-    const VkSurfaceKHR surface_{ VK_NULL_HANDLE };
+    const vk::Instance *instance_{};
+    const vk::Surface *surface_{};
 
     VkDevice device_{ VK_NULL_HANDLE };
     std::vector<PhysicalDevice> physicalDevices_{};

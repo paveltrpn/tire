@@ -18,10 +18,10 @@ RenderVK::RenderVK()
     : Render{} {
     try {
         instance_ = std::make_unique<vk::Instance>();
-        surface_ = std::make_unique<vk::Surface>( display_, window_,
-                                                  instance_->handle() );
-        device_ = std::make_unique<vk::Device>( instance_->handle(),
-                                                surface_->handle() );
+        surface_ =
+            std::make_unique<vk::Surface>( display_, window_, instance_.get() );
+        device_ =
+            std::make_unique<vk::Device>( instance_.get(), surface_.get() );
 
         device_->pickAndCreateDevice( instance_.get(), 0 );
 
@@ -34,9 +34,10 @@ RenderVK::RenderVK()
         shaderStorage_->add( basePath + "/assets/shaders/001_shader_frag.spv",
                              "001_shader_frag" );
 
-        swapchain_ = std::make_unique<vk::Swapchain>( device_.get() );
-        swapchain_->createSwapchain( device_.get(), surface_.get() );
-        swapchain_->createImageViews( device_.get() );
+        swapchain_ =
+            std::make_unique<vk::Swapchain>( device_.get(), surface_.get() );
+        swapchain_->createSwapchain();
+        swapchain_->createImageViews();
 
         pipelineSimple_ =
             std::make_unique<vk::PiplineSimple>( device_->handle() );
@@ -49,7 +50,7 @@ RenderVK::RenderVK()
         pipelineSimple_->initPipeline();
         pipelineSimple_->initFixed();
 
-        swapchain_->createFramebuffers( device_.get(), pipelineSimple_.get() );
+        swapchain_->createFramebuffers( pipelineSimple_.get() );
 
         commandPool_ = std::make_unique<vk::CommandPool>( device_->handle() );
         commandPool_->init( device_->graphicsFamily() );

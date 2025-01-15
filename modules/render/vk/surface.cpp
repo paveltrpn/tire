@@ -10,14 +10,15 @@ static constexpr bool DEBUG_OUTPUT_SURFACEVK_CPP{ true };
 
 namespace tire::vk {
 
-Surface::Surface( Display *display, Window window, VkInstance instance )
+Surface::Surface( Display *display, Window window,
+                  const vk::Instance *instance )
     : instance_{ instance } {
     VkXlibSurfaceCreateInfoKHR xlibSurfInfo_{};
     xlibSurfInfo_.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
     xlibSurfInfo_.dpy = display;
     xlibSurfInfo_.window = window;
-    const auto err =
-        vkCreateXlibSurfaceKHR( instance_, &xlibSurfInfo_, nullptr, &surface_ );
+    const auto err = vkCreateXlibSurfaceKHR(
+        instance_->handle(), &xlibSurfInfo_, nullptr, &surface_ );
     if ( err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create xlib surface with code {}\n!",
@@ -28,7 +29,7 @@ Surface::Surface( Display *display, Window window, VkInstance instance )
 }
 
 Surface::~Surface() {
-    vkDestroySurfaceKHR( instance_, surface_, nullptr );
+    vkDestroySurfaceKHR( instance_->handle(), surface_, nullptr );
 }
 
 VkSurfaceKHR Surface::handle() const {

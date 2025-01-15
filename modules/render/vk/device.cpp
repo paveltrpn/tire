@@ -9,14 +9,14 @@ static constexpr bool DEBUG_OUTPUT_DEVICEVK_CPP{ true };
 
 namespace tire::vk {
 
-Device::Device( VkInstance instance, VkSurfaceKHR surface )
+Device::Device( const vk::Instance *instance, const vk::Surface *surface )
     : instance_{ instance }
     , surface_{ surface } {
     uint32_t devCount{};
 
     {
-        const auto err =
-            vkEnumeratePhysicalDevices( instance_, &devCount, nullptr );
+        const auto err = vkEnumeratePhysicalDevices( instance_->handle(),
+                                                     &devCount, nullptr );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error(
                 std::format( "can't enumerate physical devices with code: {}\n",
@@ -34,8 +34,8 @@ Device::Device( VkInstance instance, VkSurfaceKHR surface )
     std::vector<VkPhysicalDevice> physicalDevices( devCount );
 
     {
-        const auto err = vkEnumeratePhysicalDevices( instance_, &devCount,
-                                                     physicalDevices.data() );
+        const auto err = vkEnumeratePhysicalDevices(
+            instance_->handle(), &devCount, physicalDevices.data() );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error(
                 std::format( "can't acquire physical devices with code: {}\n",
@@ -143,7 +143,8 @@ void Device::pickAndCreateDevice( const vk::Instance *instance, size_t id ) {
         VkBool32 presentSupport = false;
         // Condition: we need device that support surface presentation
         const auto err = vkGetPhysicalDeviceSurfaceSupportKHR(
-            physicalDevices_[id].device, i, surface_, &presentSupport );
+            physicalDevices_[id].device, i, surface_->handle(),
+            &presentSupport );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error(
                 std::format( "failed to get device surface support for "
@@ -221,7 +222,8 @@ void Device::pickAndCreateDevice( const vk::Instance *instance, size_t id ) {
     // physical device surface capabilities
     {
         const auto err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-            physicalDevices_[id].device, surface_, &surfaceCapabilities_ );
+            physicalDevices_[id].device, surface_->handle(),
+            &surfaceCapabilities_ );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error( std::format(
                 "failed to obtain surface capabilities with code {}!\n",
@@ -236,7 +238,8 @@ void Device::pickAndCreateDevice( const vk::Instance *instance, size_t id ) {
     uint32_t formatCount;
     {
         const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR(
-            physicalDevices_[id].device, surface_, &formatCount, nullptr );
+            physicalDevices_[id].device, surface_->handle(), &formatCount,
+            nullptr );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error(
                 std::format( "failed to obtain physical device surface formats "
@@ -255,7 +258,7 @@ void Device::pickAndCreateDevice( const vk::Instance *instance, size_t id ) {
 
     {
         const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR(
-            physicalDevices_[id].device, surface_, &formatCount,
+            physicalDevices_[id].device, surface_->handle(), &formatCount,
             surfaceFormats_.data() );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error( std::format(
@@ -272,7 +275,8 @@ void Device::pickAndCreateDevice( const vk::Instance *instance, size_t id ) {
     uint32_t presentModeCount;
     {
         const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR(
-            physicalDevices_[id].device, surface_, &presentModeCount, nullptr );
+            physicalDevices_[id].device, surface_->handle(), &presentModeCount,
+            nullptr );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error(
                 std::format( "failed to obtain physical device present modes "
@@ -291,7 +295,7 @@ void Device::pickAndCreateDevice( const vk::Instance *instance, size_t id ) {
 
     {
         const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR(
-            physicalDevices_[id].device, surface_, &presentModeCount,
+            physicalDevices_[id].device, surface_->handle(), &presentModeCount,
             presentModes_.data() );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error(

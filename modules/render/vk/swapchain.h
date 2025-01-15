@@ -12,7 +12,7 @@
 namespace tire::vk {
 
 struct Swapchain final {
-    Swapchain( const vk::Device *device );
+    Swapchain( const vk::Device *device, const vk::Surface *surface );
 
     Swapchain( const Swapchain &other ) = delete;
     Swapchain( Swapchain &&other ) = delete;
@@ -21,11 +21,9 @@ struct Swapchain final {
 
     ~Swapchain();
 
-    void createSwapchain( const vk::Device *device,
-                          const vk::Surface *surface );
-    void createImageViews( const vk::Device *device );
-    void createFramebuffers( const vk::Device *device,
-                             const vk::Pipeline *pipeline );
+    void createSwapchain();
+    void createImageViews();
+    void createFramebuffers( const vk::Pipeline *pipeline );
 
     [[nodiscard]] VkSwapchainKHR handle() const { return swapchain_; }
     [[nodiscard]] VkFormat imageFormat() const {
@@ -37,7 +35,8 @@ struct Swapchain final {
     };
 
 private:
-    const VkDevice device_;
+    const vk::Device *device_{};
+    const vk::Surface *surface_{};
 
     VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
 

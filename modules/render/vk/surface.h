@@ -6,10 +6,12 @@
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 
+#include "instance.h"
+
 namespace tire::vk {
 
 struct Surface final {
-    Surface( Display *display, Window window, VkInstance instance );
+    Surface( Display *display, Window window, const vk::Instance *instance );
 
     Surface( const Surface &other ) = delete;
     Surface( Surface &&other ) = delete;
@@ -21,7 +23,7 @@ struct Surface final {
     [[nodiscard]] VkSurfaceKHR handle() const;
 
 private:
-    const VkInstance instance_;
+    const vk::Instance *instance_{};
     VkSurfaceKHR surface_{ VK_NULL_HANDLE };
 };
 

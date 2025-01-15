@@ -10,29 +10,29 @@ static constexpr bool DEBUG_OUTPUT_SWAPCHAINVK_CPP{ true };
 
 namespace tire::vk {
 
-Swapchain::Swapchain( const vk::Device *device )
-    : device_{ device->handle() } {
+Swapchain::Swapchain( const vk::Device *device, const vk::Surface *surface )
+    : device_{ device }
+    , surface_{ surface } {
 }
 
 Swapchain::~Swapchain() {
     for ( auto framebuffer : framebuffers_ ) {
-        vkDestroyFramebuffer( device_, framebuffer, nullptr );
+        vkDestroyFramebuffer( device_->handle(), framebuffer, nullptr );
     }
-    vkDestroySwapchainKHR( device_, swapchain_, nullptr );
+    vkDestroySwapchainKHR( device_->handle(), swapchain_, nullptr );
 }
 
-void Swapchain::createSwapchain( const vk::Device *device,
-                                 const vk::Surface *surface ) {
+void Swapchain::createSwapchain() {
     const auto configPtr = Config::instance();
     const auto extent = VkExtent2D{
         static_cast<uint32_t>( configPtr->get<int>( "window_width" ) ),
         static_cast<uint32_t>( configPtr->get<int>( "window_height" ) ) };
 
     const auto surfaceFormat =
-        device->surfaceFormat( 0 );                     // TODO: choose wisely
-    const auto presentMode = device->presentMode( 0 );  // TODO: choose wisely
+        device_->surfaceFormat( 0 );                     // TODO: choose wisely
+    const auto presentMode = device_->presentMode( 0 );  // TODO: choose wisely
 
-    const auto surfaceCapabilities = device->surfaceCapabilities();
+    const auto surfaceCapabilities = device_->surfaceCapabilities();
     // However, simply sticking to this minimum means that we may sometimes have
     // to wait on the driver to complete internal operations before we can acquire
     // another image to render to. Therefore it is recommended to request at least one
@@ -48,7 +48,7 @@ void Swapchain::createSwapchain( const vk::Device *device,
 
     VkSwapchainCreateInfoKHR createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    createInfo.surface = surface->handle();
+    createInfo.surface = surface_->handle();
 
     createInfo.minImageCount = imageCount;
     createInfo.imageFormat = surfaceFormat.format;
@@ -57,8 +57,8 @@ void Swapchain::createSwapchain( const vk::Device *device,
     createInfo.imageArrayLayers = 1;
     createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-    const uint32_t graphicsFamily{ device->graphicsFamily() };
-    const uint32_t presentFamily{ device->presentFamily() };
+    const uint32_t graphicsFamily{ device_->graphicsFamily() };
+    const uint32_t presentFamily{ device_->presentFamily() };
     std::array<uint32_t, 2> queueFamilyIndices = { graphicsFamily,
                                                    presentFamily };
     if ( graphicsFamily != presentFamily ) {
@@ -78,7 +78,7 @@ void Swapchain::createSwapchain( const vk::Device *device,
     createInfo.oldSwapchain = VK_NULL_HANDLE;
 
     {
-        const auto err = vkCreateSwapchainKHR( device->handle(), &createInfo,
+        const auto err = vkCreateSwapchainKHR( device_->handle(), &createInfo,
                                                nullptr, &swapchain_ );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error(
@@ -93,7 +93,7 @@ void Swapchain::createSwapchain( const vk::Device *device,
     uint32_t swapchainImageCount{};
     {
         const auto err = vkGetSwapchainImagesKHR(
-            device->handle(), swapchain_, &swapchainImageCount, nullptr );
+            device_->handle(), swapchain_, &swapchainImageCount, nullptr );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error( std::format(
                 "failed to get swapchain images count with code {}\n!",
@@ -108,7 +108,7 @@ void Swapchain::createSwapchain( const vk::Device *device,
 
     {
         const auto err =
-            vkGetSwapchainImagesKHR( device->handle(), swapchain_, &imageCount,
+            vkGetSwapchainImagesKHR( device_->handle(), swapchain_, &imageCount,
                                      swapChainImages_.data() );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error(
@@ -124,7 +124,7 @@ void Swapchain::createSwapchain( const vk::Device *device,
     swapChainExtent_ = extent;
 }
 
-void Swapchain::createImageViews( const vk::Device *device ) {
+void Swapchain::createImageViews() {
     swapChainImageViews_.resize( swapChainImages_.size() );
     for ( size_t i = 0; i < swapChainImages_.size(); i++ ) {
         VkImageViewCreateInfo createInfo{};
@@ -142,7 +142,7 @@ void Swapchain::createImageViews( const vk::Device *device ) {
         createInfo.subresourceRange.baseArrayLayer = 0;
         createInfo.subresourceRange.layerCount = 1;
 
-        const auto err = vkCreateImageView( device->handle(), &createInfo,
+        const auto err = vkCreateImageView( device_->handle(), &createInfo,
                                             nullptr, &swapChainImageViews_[i] );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error( std::format(
@@ -155,8 +155,7 @@ void Swapchain::createImageViews( const vk::Device *device ) {
     }
 }
 
-void Swapchain::createFramebuffers( const vk::Device *device,
-                                    const vk::Pipeline *pipeline ) {
+void Swapchain::createFramebuffers( const vk::Pipeline *pipeline ) {
     framebuffers_.resize( swapChainImageViews_.size() );
     for ( size_t i = 0; i < swapChainImageViews_.size(); i++ ) {
         std::array<VkImageView, 1> attachments = { swapChainImageViews_[i] };
@@ -170,7 +169,7 @@ void Swapchain::createFramebuffers( const vk::Device *device,
         framebufferInfo.layers = 1;
 
         const auto err = vkCreateFramebuffer(
-            device->handle(), &framebufferInfo, nullptr, &framebuffers_[i] );
+            device_->handle(), &framebufferInfo, nullptr, &framebuffers_[i] );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error(
                 std::format( "failed to create framebuffer at {} with code {}!",
