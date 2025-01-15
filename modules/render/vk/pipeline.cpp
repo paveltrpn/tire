@@ -5,6 +5,7 @@
 #include "pipeline.h"
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_PIPELINE_CPP{ true };
+#include "config/config.h"
 
 namespace tire::vk {
 
@@ -29,17 +30,24 @@ void PiplineSimple::initFixed() {
     inputAssembly_.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
     inputAssembly_.primitiveRestartEnable = VK_FALSE;
 
+    const auto configPtr = Config::instance();
+    const auto width =
+        static_cast<float>( configPtr->get<int>( "window_width" ) );
+    const auto height =
+        static_cast<float>( configPtr->get<int>( "window_height" ) );
+
     // VkViewport
     viewport_.x = 0.0f;
     viewport_.y = 0.0f;
-    viewport_.width = static_cast<float>( 800 );   // swapChainExtent.width;
-    viewport_.height = static_cast<float>( 600 );  // swapChainExtent.height;
+    viewport_.width = width;
+    viewport_.height = height;
     viewport_.minDepth = 0.0f;
     viewport_.maxDepth = 1.0f;
 
     // VkRect2D
     scissor_.offset = { 0, 0 };
-    scissor_.extent = { 800, 600 };  //swapChainExtent;
+    scissor_.extent = { static_cast<uint32_t>( width ),
+                        static_cast<uint32_t>( height ) };  //swapChainExtent;
 
     // VkPipelineViewportStateCreateInfo
     viewportState_.sType =

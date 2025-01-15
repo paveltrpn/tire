@@ -6,8 +6,8 @@ LIBS 	 :=
 RM       := rm -f
 
 SOURCES_DIR := shaders
-SRCS := $(SOURCES_DIR)/001_shader_vert.glsl \
-	$(SOURCES_DIR)/001_shader_frag.glsl \
+SRCS := $(SOURCES_DIR)/vk_simple_tri_vert.glsl \
+	$(SOURCES_DIR)/vk_simple_tri_frag.glsl \
 	$(SOURCES_DIR)/fsSource-006.glsl \
 	$(SOURCES_DIR)/fsSource.glsl \
 	$(SOURCES_DIR)/vsSource-006.glsl \
@@ -20,10 +20,10 @@ $(info SHADERS MAKEFILE)
 
 all: $(SPVS)
 
-$(SOURCES_DIR)/001_shader_vert.spv: $(SOURCES_DIR)/001_shader_vert.glsl
+$(SOURCES_DIR)/vk_simple_tri_vert.spv: $(SOURCES_DIR)/vk_simple_tri_vert.glsl
 	$(CC) $(FLAGS) -fshader-stage=vertex $< -o $@
 
-$(SOURCES_DIR)/001_shader_frag.spv: $(SOURCES_DIR)/001_shader_frag.glsl
+$(SOURCES_DIR)/vk_simple_tri_frag.spv: $(SOURCES_DIR)/vk_simple_tri_frag.glsl
 	$(CC) $(FLAGS) -fshader-stage=fragment $< -o $@
 
 $(SOURCES_DIR)/fsSource-006.spv: $(SOURCES_DIR)/fsSource-006.glsl

@@ -15,15 +15,15 @@ void RenderVK::preFrame(){
 };
 
 void RenderVK::frame() {
-    log::debug<true>( "currentFrame = {}", currentFrame_ );
+    //log::debug<true>( "currentFrame = {}", currentFrame_ );
 
     // cause deadlock
 #define ONE_SECOND 1000000000
     const auto waitFenceResult =
         vkWaitForFences( device_->handle(), 1, &inFlightFences_[currentFrame_],
                          VK_TRUE, ONE_SECOND );
-    log::debug<true>( "wait fences result = {}",
-                      string_VkResult( waitFenceResult ) );
+    // log::debug<true>( "wait fences result = {}",
+    //                   string_VkResult( waitFenceResult ) );
 
     vkResetFences( device_->handle(), 1, &inFlightFences_[currentFrame_] );
 

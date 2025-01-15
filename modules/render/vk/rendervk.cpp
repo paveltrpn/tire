@@ -29,10 +29,12 @@ RenderVK::RenderVK()
         const auto basePath = Config::instance()->getBasePath().string();
         shaderStorage_ =
             std::make_unique<vk::ShaderStorage>( device_->handle() );
-        shaderStorage_->add( basePath + "/assets/shaders/001_shader_vert.spv",
-                             "001_shader_vert" );
-        shaderStorage_->add( basePath + "/assets/shaders/001_shader_frag.spv",
-                             "001_shader_frag" );
+        shaderStorage_->add(
+            basePath + "/assets/shaders/vk_simple_tri_vert.spv",
+            "001_shader_vert" );
+        shaderStorage_->add(
+            basePath + "/assets/shaders/vk_simple_tri_frag.spv",
+            "001_shader_frag" );
 
         swapchain_ =
             std::make_unique<vk::Swapchain>( device_.get(), surface_.get() );
