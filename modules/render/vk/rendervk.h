@@ -14,6 +14,7 @@
 #include "instance.h"
 #include "surface.h"
 #include "device.h"
+#include "swapchain.h"
 #include "pipeline.h"
 #include "commands.h"
 
@@ -40,10 +41,7 @@ private:
     void swapBuffers() override;
     void postLoop() override;
 
-    void createSwapchain();
-    void createImageViews();
     void createGraphicsPipeline();
-    void createFramebuffers();
     void createSyncObjects();
 
 private:
@@ -52,24 +50,15 @@ private:
     std::unique_ptr<vk::Instance> instance_{};
     std::unique_ptr<vk::Surface> surface_{};
     std::unique_ptr<vk::Device> device_{};
-
+    std::unique_ptr<vk::Swapchain> swapchain_{};
     std::unique_ptr<vk::ShaderStorage> shaderStorage_{};
     std::unique_ptr<vk::PiplineSimple> pipelineSimple_{};
     std::unique_ptr<CommandPool> commandPool_{};
     std::vector<std::unique_ptr<CommandBuffer>> cBufs_{};
 
-    // handles
-
-    VkSwapchainKHR swapChain_{ VK_NULL_HANDLE };
-    std::vector<VkImage> swapChainImages_{};
-    std::vector<VkImageView> swapChainImageViews_{};
-    std::vector<VkFramebuffer> framebuffers_{};
     std::vector<VkSemaphore> imageAvailableSemaphores_{};
     std::vector<VkSemaphore> renderFinishedSemaphores_{};
     std::vector<VkFence> inFlightFences_{};
-
-    VkFormat swapChainImageFormat_{};
-    VkExtent2D swapChainExtent_{};
 
     uint32_t currentFrame_{ 0 };
 };

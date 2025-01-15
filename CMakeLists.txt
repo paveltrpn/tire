@@ -105,6 +105,8 @@ add_library(render
     modules/render/vk/commands.cpp
     modules/render/vk/scene.h
     modules/render/vk/scene.cpp
+    modules/render/vk/swapchain.h
+    modules/render/vk/swapchain.cpp
 )
 target_link_libraries(render scene config geometry algebra)
 

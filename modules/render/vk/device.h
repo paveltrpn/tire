@@ -21,6 +21,7 @@ struct Device final {
 
     [[nodiscard]] VkDevice device() const;
     [[nodiscard]] uint32_t graphicsFamily() const { return graphicsFamily_; };
+    [[nodiscard]] uint32_t presentFamily() const { return presentFamily_; };
     [[nodiscard]] VkSurfaceFormatKHR surfaceFormat( size_t id ) const {
         return surfaceFormats_[id];
     };

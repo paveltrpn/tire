@@ -29,7 +29,7 @@ void RenderVK::frame() {
 
     uint32_t imageIndex;
     const auto result = vkAcquireNextImageKHR(
-        device_->device(), swapChain_, UINT64_MAX,
+        device_->device(), swapchain_->swapchain(), UINT64_MAX,
         imageAvailableSemaphores_[currentFrame_], VK_NULL_HANDLE, &imageIndex );
     if ( result == VK_ERROR_OUT_OF_DATE_KHR ) {
         return;
@@ -38,8 +38,8 @@ void RenderVK::frame() {
     }
 
     cBufs_[currentFrame_]->reset();
-    cBufs_[currentFrame_]->beginRenderPassCommand( framebuffers_[imageIndex],
-                                                   pipelineSimple_.get() );
+    cBufs_[currentFrame_]->beginRenderPassCommand(
+        swapchain_->framebuffer( imageIndex ), pipelineSimple_.get() );
     cBufs_[currentFrame_]->submit( { imageAvailableSemaphores_[currentFrame_] },
                                    { renderFinishedSemaphores_[currentFrame_] },
                                    inFlightFences_[currentFrame_],
@@ -51,7 +51,7 @@ void RenderVK::frame() {
         renderFinishedSemaphores_[currentFrame_] };
     presentInfo.pWaitSemaphores = signalSemaphores;
 
-    VkSwapchainKHR swapChains[] = { swapChain_ };
+    VkSwapchainKHR swapChains[] = { swapchain_->swapchain() };
     presentInfo.swapchainCount = 1;
     presentInfo.pSwapchains = swapChains;
     presentInfo.pImageIndices = &imageIndex;
