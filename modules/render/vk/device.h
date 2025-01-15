@@ -39,7 +39,6 @@ struct Device final {
     [[nodiscard]] VkQueue presentQueue() const { return presentQueue_; };
 
     void pickAndCreateDevice(
-        const vk::Instance *instance,
         size_t id );  // TODO: make physical device pick smarter
 
     void displayRenderInfo();

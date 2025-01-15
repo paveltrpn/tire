@@ -23,7 +23,7 @@ RenderVK::RenderVK()
         device_ =
             std::make_unique<vk::Device>( instance_.get(), surface_.get() );
 
-        device_->pickAndCreateDevice( instance_.get(), 0 );
+        device_->pickAndCreateDevice( 0 );
 
         // valid only after logical device creation
         const auto basePath = Config::instance()->getBasePath().string();

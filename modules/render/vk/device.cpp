@@ -119,7 +119,7 @@ VkDevice Device::handle() const {
     return device_;
 }
 
-void Device::pickAndCreateDevice( const vk::Instance *instance, size_t id ) {
+void Device::pickAndCreateDevice( size_t id ) {
     // Create a new device instance. A logical device is created as a connection to a physical device.
     // Check is physical device suitable, can be done acoording to
     // physical devices properties and physical device queue families properies
@@ -196,7 +196,7 @@ void Device::pickAndCreateDevice( const vk::Instance *instance, size_t id ) {
     deviceCreateInfo.ppEnabledExtensionNames = elist.data();
 
     if ( Config::instance()->get<bool>( "enable_validation_layers" ) ) {
-        const auto [size, data] = instance->validationLayersInfo();
+        const auto [size, data] = instance_->validationLayersInfo();
         deviceCreateInfo.enabledLayerCount = static_cast<uint32_t>( size );
         deviceCreateInfo.ppEnabledLayerNames = data;
     } else {
