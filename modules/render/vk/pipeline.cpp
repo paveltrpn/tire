@@ -23,12 +23,16 @@ void PiplineSimple::initFixed() {
     vertexInput_.pVertexBindingDescriptions = nullptr;  // Optional
     vertexInput_.vertexAttributeDescriptionCount = 0;
     vertexInput_.pVertexAttributeDescriptions = nullptr;
+    vertexInput_.pNext = nullptr;
+    vertexInput_.flags = 0;
 
     // VkPipelineInputAssemblyStateCreateInfo
     inputAssembly_.sType =
         VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
     inputAssembly_.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
     inputAssembly_.primitiveRestartEnable = VK_FALSE;
+    inputAssembly_.pNext = nullptr;
+    inputAssembly_.flags = 0;
 
     const auto configPtr = Config::instance();
     const auto width =
@@ -56,6 +60,8 @@ void PiplineSimple::initFixed() {
     viewportState_.pViewports = &viewport_;
     viewportState_.scissorCount = 1;
     viewportState_.pScissors = &scissor_;
+    viewportState_.pNext = nullptr;
+    viewportState_.flags = 0;
 
     // VkPipelineRasterizationStateCreateInfo
     rasterizer_.sType =
@@ -70,6 +76,8 @@ void PiplineSimple::initFixed() {
     rasterizer_.depthBiasConstantFactor = 0.0f;  // Optional
     rasterizer_.depthBiasClamp = 0.0f;           // Optional
     rasterizer_.depthBiasSlopeFactor = 0.0f;     // Optional
+    rasterizer_.pNext = nullptr;
+    rasterizer_.flags = 0;
 
     // VkPipelineMultisampleStateCreateInfo
     multisampling_.sType =
@@ -80,6 +88,8 @@ void PiplineSimple::initFixed() {
     multisampling_.pSampleMask = nullptr;             // Optional
     multisampling_.alphaToCoverageEnable = VK_FALSE;  // Optional
     multisampling_.alphaToOneEnable = VK_FALSE;       // Optional
+    multisampling_.pNext = nullptr;
+    multisampling_.flags = 0;
 
     // VkPipelineColorBlendAttachmentState
     colorBlendAttachment_.colorWriteMask =
@@ -112,6 +122,8 @@ void PiplineSimple::initFixed() {
     colorBlending_.blendConstants[1] = 0.0f;  // Optional
     colorBlending_.blendConstants[2] = 0.0f;  // Optional
     colorBlending_.blendConstants[3] = 0.0f;  // Optional
+    colorBlending_.pNext = nullptr;
+    colorBlending_.flags = 0;
 
     // VkPipelineDynamicStateCreateInfo
     std::vector<VkDynamicState> dynamicStates = { VK_DYNAMIC_STATE_VIEWPORT,
@@ -121,6 +133,8 @@ void PiplineSimple::initFixed() {
     dynamicState_.dynamicStateCount =
         static_cast<uint32_t>( dynamicStates.size() );
     dynamicState_.pDynamicStates = dynamicStates.data();
+    dynamicState_.pNext = nullptr;
+    dynamicState_.flags = 0;
 }
 
 void PiplineSimple::initProgable( VkShaderModule vert, VkShaderModule frag ) {

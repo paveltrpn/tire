@@ -161,7 +161,7 @@ void Swapchain::createFramebuffers( const vk::Pipeline *pipeline ) {
         std::array<VkImageView, 1> attachments = { swapChainImageViews_[i] };
         VkFramebufferCreateInfo framebufferInfo{};
         framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-        framebufferInfo.renderPass = pipeline->getRenderPass();
+        framebufferInfo.renderPass = pipeline->renderpass();
         framebufferInfo.attachmentCount = 1;
         framebufferInfo.pAttachments = attachments.data();
         framebufferInfo.width = swapChainExtent_.width;

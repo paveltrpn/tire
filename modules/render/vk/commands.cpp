@@ -68,7 +68,7 @@ void CommandBuffer::beginRenderPassCommand( VkFramebuffer framebuffer,
 
     VkRenderPassBeginInfo renderPassInfo{};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassInfo.renderPass = pipeline->getRenderPass();
+    renderPassInfo.renderPass = pipeline->renderpass();
     renderPassInfo.framebuffer = framebuffer;
     renderPassInfo.renderArea.offset = { 0, 0 };
     renderPassInfo.renderArea.extent = VkExtent2D{ 800, 600 };
@@ -81,7 +81,7 @@ void CommandBuffer::beginRenderPassCommand( VkFramebuffer framebuffer,
                           VK_SUBPASS_CONTENTS_INLINE );
 
     vkCmdBindPipeline( commandBuffer_, VK_PIPELINE_BIND_POINT_GRAPHICS,
-                       pipeline->getPipeline() );
+                       pipeline->pipeline() );
 
     // vertexCount: Even though we don’t have a vertex buffer, we technically
     // still have 3 vertices to draw.
