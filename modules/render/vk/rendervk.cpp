@@ -26,7 +26,8 @@ RenderVK::RenderVK()
         device_->pickAndCreateDevice( 0 );
 
         // valid only after logical device creation
-        const auto basePath = Config::instance()->getBasePath().string();
+        const auto configHandle = Config::instance();
+        const auto basePath = configHandle->getBasePath().string();
         shaderStorage_ = std::make_unique<vk::ShaderStorage>( device_.get() );
         shaderStorage_->add(
             basePath + "/assets/shaders/vk_simple_tri_vert.spv",
@@ -37,7 +38,11 @@ RenderVK::RenderVK()
 
         swapchain_ =
             std::make_unique<vk::Swapchain>( device_.get(), surface_.get() );
-        swapchain_->createSwapchain();
+        const auto extent = VkExtent2D{
+            static_cast<uint32_t>( configHandle->get<int>( "window_width" ) ),
+            static_cast<uint32_t>(
+                configHandle->get<int>( "window_height" ) ) };
+        swapchain_->createSwapchain( extent );
         swapchain_->createImageViews();
 
         pipelineSimple_ = std::make_unique<vk::PiplineSimple>( device_.get() );

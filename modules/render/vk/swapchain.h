@@ -21,7 +21,7 @@ struct Swapchain final {
 
     ~Swapchain();
 
-    void createSwapchain();
+    void createSwapchain( VkExtent2D extent );
     void createImageViews();
     void createFramebuffers( const vk::Pipeline *pipeline );
 
