@@ -34,6 +34,8 @@ struct Swapchain final {
         return framebuffers_[id];
     };
 
+    [[nodiscard]] VkExtent2D extent() const { return swapChainExtent_; }
+
 private:
     const vk::Device *device_{};
     const vk::Surface *surface_{};

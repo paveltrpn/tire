@@ -24,7 +24,7 @@ Swapchain::~Swapchain() {
 
 void Swapchain::createSwapchain() {
     const auto configPtr = Config::instance();
-    const auto extent = VkExtent2D{
+    swapChainExtent_ = VkExtent2D{
         static_cast<uint32_t>( configPtr->get<int>( "window_width" ) ),
         static_cast<uint32_t>( configPtr->get<int>( "window_height" ) ) };
 
@@ -53,7 +53,7 @@ void Swapchain::createSwapchain() {
     createInfo.minImageCount = imageCount;
     createInfo.imageFormat = surfaceFormat.format;
     createInfo.imageColorSpace = surfaceFormat.colorSpace;
-    createInfo.imageExtent = extent;
+    createInfo.imageExtent = swapChainExtent_;
     createInfo.imageArrayLayers = 1;
     createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
@@ -121,7 +121,6 @@ void Swapchain::createSwapchain() {
     }
 
     swapChainImageFormat_ = surfaceFormat.format;
-    swapChainExtent_ = extent;
 }
 
 void Swapchain::createImageViews() {

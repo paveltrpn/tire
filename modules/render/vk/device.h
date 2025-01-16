@@ -60,7 +60,9 @@ private:
     const vk::Instance *instance_{};
     const vk::Surface *surface_{};
 
+    // All app logical device handle
     VkDevice device_{ VK_NULL_HANDLE };
+    // System wide available physical devices
     std::vector<PhysicalDevice> physicalDevices_{};
 
     uint32_t graphicsFamily_{};
