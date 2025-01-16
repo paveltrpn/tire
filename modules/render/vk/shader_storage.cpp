@@ -9,13 +9,14 @@ static constexpr bool DEBUG_OUTPUT_SHADER_STORAGE_VK_CPP{ false };
 
 namespace tire::vk {
 
-ShaderStorage::ShaderStorage( const VkDevice device )
+ShaderStorage::ShaderStorage( const vk::Device *device )
     : device_{ device } {
 }
 
 ShaderStorage::~ShaderStorage() {
     for ( const auto &module : modules_ ) {
-        vkDestroyShaderModule( device_, std::get<1>( module ), nullptr );
+        vkDestroyShaderModule( device_->handle(), std::get<1>( module ),
+                               nullptr );
     }
 }
 
@@ -43,8 +44,8 @@ void ShaderStorage::add( const std::string &path, const std::string &name ) {
     createInfo.pCode = reinterpret_cast<const uint32_t *>( buffer.data() );
 
     VkShaderModule module;
-    const auto err =
-        vkCreateShaderModule( device_, &createInfo, nullptr, &module );
+    const auto err = vkCreateShaderModule( device_->handle(), &createInfo,
+                                           nullptr, &module );
     if ( err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create shader module {} with code {}!",
@@ -76,7 +77,7 @@ void ShaderStorage::destroy( const std::string &name ) {
         log::warning( "module {} not exist!", name );
         return;
     }
-    vkDestroyShaderModule( device_, module, nullptr );
+    vkDestroyShaderModule( device_->handle(), module, nullptr );
     modules_.erase( name );
 }
 

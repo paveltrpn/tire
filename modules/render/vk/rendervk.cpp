@@ -27,8 +27,7 @@ RenderVK::RenderVK()
 
         // valid only after logical device creation
         const auto basePath = Config::instance()->getBasePath().string();
-        shaderStorage_ =
-            std::make_unique<vk::ShaderStorage>( device_->handle() );
+        shaderStorage_ = std::make_unique<vk::ShaderStorage>( device_.get() );
         shaderStorage_->add(
             basePath + "/assets/shaders/vk_simple_tri_vert.spv",
             "001_shader_vert" );
@@ -41,8 +40,7 @@ RenderVK::RenderVK()
         swapchain_->createSwapchain();
         swapchain_->createImageViews();
 
-        pipelineSimple_ =
-            std::make_unique<vk::PiplineSimple>( device_->handle() );
+        pipelineSimple_ = std::make_unique<vk::PiplineSimple>( device_.get() );
         pipelineSimple_->initFixed();
         pipelineSimple_->initProgable(
             shaderStorage_->get( "001_shader_vert" ),
@@ -54,13 +52,13 @@ RenderVK::RenderVK()
 
         swapchain_->createFramebuffers( pipelineSimple_.get() );
 
-        commandPool_ = std::make_unique<vk::CommandPool>( device_->handle() );
+        commandPool_ = std::make_unique<vk::CommandPool>( device_.get() );
         commandPool_->init( device_->graphicsFamily() );
 
         cBufs_.reserve( 2 );
         for ( auto i = 0; i < cBufs_.capacity(); ++i ) {
             cBufs_.push_back( std::make_unique<vk::CommandBuffer>(
-                device_->handle(), commandPool_.get() ) );
+                device_.get(), commandPool_.get() ) );
         }
 
         createSyncObjects();

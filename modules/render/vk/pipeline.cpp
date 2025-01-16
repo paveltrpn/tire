@@ -10,9 +10,9 @@ static constexpr bool DEBUG_OUTPUT_PIPELINE_CPP{ true };
 namespace tire::vk {
 
 Pipeline::~Pipeline() {
-    vkDestroyPipelineLayout( device_, pipelineLayout_, nullptr );
-    vkDestroyRenderPass( device_, renderPass_, nullptr );
-    vkDestroyPipeline( device_, pipeline_, nullptr );
+    vkDestroyPipelineLayout( device_->handle(), pipelineLayout_, nullptr );
+    vkDestroyRenderPass( device_->handle(), renderPass_, nullptr );
+    vkDestroyPipeline( device_->handle(), pipeline_, nullptr );
 }
 
 void PiplineSimple::initFixed() {
@@ -161,8 +161,8 @@ void PiplineSimple::initLayout() {
     pipelineLayoutInfo_.pushConstantRangeCount = 0;     // Optional
     pipelineLayoutInfo_.pPushConstantRanges = nullptr;  // Optional
 
-    const auto err = vkCreatePipelineLayout( device_, &pipelineLayoutInfo_,
-                                             nullptr, &pipelineLayout_ );
+    const auto err = vkCreatePipelineLayout(
+        device_->handle(), &pipelineLayoutInfo_, nullptr, &pipelineLayout_ );
     if ( err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create pipeline layout with code {}!",
@@ -199,8 +199,8 @@ void PiplineSimple::initRenderPass( VkFormat swapChainImageFormat ) {
     renderPassInfo.subpassCount = 1;
     renderPassInfo.pSubpasses = &subpass;
 
-    const auto err =
-        vkCreateRenderPass( device_, &renderPassInfo, nullptr, &renderPass_ );
+    const auto err = vkCreateRenderPass( device_->handle(), &renderPassInfo,
+                                         nullptr, &renderPass_ );
     if ( err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create render pass with code {}!",
@@ -233,8 +233,9 @@ void PiplineSimple::initPipeline() {
     pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;  // Optional
     pipelineInfo.basePipelineIndex = -1;               // Optional
 
-    const auto err = vkCreateGraphicsPipelines(
-        device_, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline_ );
+    const auto err =
+        vkCreateGraphicsPipelines( device_->handle(), VK_NULL_HANDLE, 1,
+                                   &pipelineInfo, nullptr, &pipeline_ );
     if ( err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create graphics pipeline with code {}!",

@@ -3,10 +3,12 @@
 #include <map>
 #include <vulkan/vulkan.h>
 
+#include "device.h"
+
 namespace tire::vk {
 
 struct ShaderStorage final {
-    ShaderStorage( const VkDevice device );
+    ShaderStorage( const vk::Device *device );
 
     ShaderStorage( const ShaderStorage &other ) = delete;
     ShaderStorage( ShaderStorage &&other ) = delete;
@@ -22,7 +24,8 @@ struct ShaderStorage final {
 
 private:
     // non owning
-    const VkDevice device_;
+    const vk::Device *device_;
+
     std::map<std::string, VkShaderModule> modules_{};
 };
 

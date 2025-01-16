@@ -14,8 +14,8 @@ void CommandPool::init( uint32_t queueFamilyIndex ) {
     poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     poolInfo.queueFamilyIndex = queueFamilyIndex;
 
-    const auto err =
-        vkCreateCommandPool( device_, &poolInfo, nullptr, &commandPool_ );
+    const auto err = vkCreateCommandPool( device_->handle(), &poolInfo, nullptr,
+                                          &commandPool_ );
     if ( err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create command pool woth code {}!",
@@ -27,7 +27,8 @@ void CommandPool::init( uint32_t queueFamilyIndex ) {
 
 // =======================================================================
 
-CommandBuffer::CommandBuffer( const VkDevice &device, const CommandPool *pool )
+CommandBuffer::CommandBuffer( const vk::Device *device,
+                              const CommandPool *pool )
     : device_{ device } {
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -35,8 +36,8 @@ CommandBuffer::CommandBuffer( const VkDevice &device, const CommandPool *pool )
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandBufferCount = 1;
 
-    const auto err =
-        vkAllocateCommandBuffers( device, &allocInfo, &commandBuffer_ );
+    const auto err = vkAllocateCommandBuffers( device_->handle(), &allocInfo,
+                                               &commandBuffer_ );
     if ( err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to allocate command buffers with code {}!",
