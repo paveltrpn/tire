@@ -79,8 +79,9 @@ void CommandBuffer::beginRenderPassCommand( VkFramebuffer framebuffer,
                     static_cast<uint32_t>( pipeline->viewport_.height ) };
 
     const auto clearColor = Colorf{ "darkblue" };
-    VkClearValue clearColorValue = { { { clearColor.r(), clearColor.g(),
-                                         clearColor.b(), clearColor.a() } } };
+    const VkClearValue clearColorValue = {
+        { { clearColor.r(), clearColor.g(), clearColor.b(),
+            clearColor.a() } } };
     renderPassInfo.clearValueCount = 1;
     renderPassInfo.pClearValues = &clearColorValue;
 
@@ -101,7 +102,7 @@ void CommandBuffer::beginRenderPassCommand( VkFramebuffer framebuffer,
 
     // firstInstance: Used as an offset for instanced rendering, defines the
     // lowest value of gl_InstanceIndex.
-    vkCmdDraw( commandBuffer_, 3, 1, 0, 0 );
+    vkCmdDraw( commandBuffer_, 9, 3, 0, 0 );
 
     vkCmdEndRenderPass( commandBuffer_ );
 
