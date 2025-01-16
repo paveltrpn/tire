@@ -4,6 +4,8 @@
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_COMMAND_POOL_CPP{ true };
 
+#include "image/color.h"
+
 #include "commands.h"
 
 namespace tire::vk {
@@ -72,11 +74,15 @@ void CommandBuffer::beginRenderPassCommand( VkFramebuffer framebuffer,
     renderPassInfo.renderPass = pipeline->renderpass();
     renderPassInfo.framebuffer = framebuffer;
     renderPassInfo.renderArea.offset = { 0, 0 };
-    renderPassInfo.renderArea.extent = VkExtent2D{ 800, 600 };
+    renderPassInfo.renderArea.extent =
+        VkExtent2D{ static_cast<uint32_t>( pipeline->viewport_.width ),
+                    static_cast<uint32_t>( pipeline->viewport_.height ) };
 
-    VkClearValue clearColor = { { { 0.0f, 0.0f, 0.0f, 1.0f } } };
+    const auto clearColor = Colorf{ "darkblue" };
+    VkClearValue clearColorValue = { { { clearColor.r(), clearColor.g(),
+                                         clearColor.b(), clearColor.a() } } };
     renderPassInfo.clearValueCount = 1;
-    renderPassInfo.pClearValues = &clearColor;
+    renderPassInfo.pClearValues = &clearColorValue;
 
     vkCmdBeginRenderPass( commandBuffer_, &renderPassInfo,
                           VK_SUBPASS_CONTENTS_INLINE );
