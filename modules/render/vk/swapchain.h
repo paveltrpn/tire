@@ -46,6 +46,9 @@ private:
     std::vector<VkImageView> swapChainImageViews_{};
     std::vector<VkFramebuffer> framebuffers_{};
     VkFormat swapChainImageFormat_{};
+
+    // Application wide viewport render area size, use
+    // it anywhere when viewport size is needed
     VkExtent2D swapChainExtent_{};
 };
 

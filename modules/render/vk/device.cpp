@@ -271,6 +271,11 @@ void Device::pickAndCreateDevice( size_t id ) {
         }
     }
 
+    // This format will be used across application, in
+    // swapchain in particular. Make choose liitle wiser in future
+#define CHOSEN_SURFACE_FORMAT 0
+    surfaceFormat_ = surfaceFormats_[CHOSEN_SURFACE_FORMAT];
+
     // physical device present modes
     uint32_t presentModeCount;
     {
@@ -308,7 +313,10 @@ void Device::pickAndCreateDevice( size_t id ) {
         }
     }
 
-    // displaySurfaceCapabilities();
+    // This present mode will be used across application, in
+    // swapchain in particular. Make choose liitle wiser in future
+#define CHOSEN_PRESENT_MODE 0
+    presentMode_ = presentModes_[CHOSEN_PRESENT_MODE];
 }
 
 void Device::displayRenderInfo() {

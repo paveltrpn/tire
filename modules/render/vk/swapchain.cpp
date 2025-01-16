@@ -28,9 +28,8 @@ void Swapchain::createSwapchain() {
         static_cast<uint32_t>( configPtr->get<int>( "window_width" ) ),
         static_cast<uint32_t>( configPtr->get<int>( "window_height" ) ) };
 
-    const auto surfaceFormat =
-        device_->surfaceFormat( 0 );                     // TODO: choose wisely
-    const auto presentMode = device_->presentMode( 0 );  // TODO: choose wisely
+    const auto surfaceFormat = device_->surfaceFormat();
+    const auto presentMode = device_->presentMode();
 
     const auto surfaceCapabilities = device_->surfaceCapabilities();
     // However, simply sticking to this minimum means that we may sometimes have

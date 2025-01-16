@@ -23,13 +23,11 @@ struct Device final {
     [[nodiscard]] VkDevice handle() const;
     [[nodiscard]] uint32_t graphicsFamily() const { return graphicsFamily_; };
     [[nodiscard]] uint32_t presentFamily() const { return presentFamily_; };
-    [[nodiscard]] VkSurfaceFormatKHR surfaceFormat( size_t id ) const {
-        return surfaceFormats_[id];
+    [[nodiscard]] VkSurfaceFormatKHR surfaceFormat() const {
+        return surfaceFormat_;
     };
 
-    [[nodiscard]] VkPresentModeKHR presentMode( size_t id ) const {
-        return presentModes_[id];
-    };
+    [[nodiscard]] VkPresentModeKHR presentMode() const { return presentMode_; };
 
     [[nodiscard]] VkSurfaceCapabilitiesKHR surfaceCapabilities() const {
         return surfaceCapabilities_;
@@ -74,6 +72,9 @@ private:
     VkSurfaceCapabilitiesKHR surfaceCapabilities_{};
     std::vector<VkSurfaceFormatKHR> surfaceFormats_{};
     std::vector<VkPresentModeKHR> presentModes_{};
+
+    VkSurfaceFormatKHR surfaceFormat_{};
+    VkPresentModeKHR presentMode_{};
 };
 
 }  // namespace tire::vk
