@@ -49,9 +49,10 @@ void PiplineSimple::initFixed() {
     viewport_.maxDepth = 1.0f;
 
     // VkRect2D
-    scissor_.offset = { 0, 0 };
-    scissor_.extent = { static_cast<uint32_t>( width ),
-                        static_cast<uint32_t>( height ) };  //swapChainExtent;
+    scissor_.offset = { .x = 0, .y = 0 };
+    scissor_.extent = {
+        .width = static_cast<uint32_t>( width ),
+        .height = static_cast<uint32_t>( height ) };  //swapChainExtent;
 
     // VkPipelineViewportStateCreateInfo
     viewportState_.sType =

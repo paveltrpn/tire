@@ -9,8 +9,7 @@
 namespace tire::vk {
 
 struct CommandPool final {
-    CommandPool( const vk::Device *device )
-        : device_{ device } {};
+    CommandPool( const vk::Device *device );
 
     CommandPool( const CommandPool &other ) = delete;
     CommandPool( CommandPool &&other ) = delete;
@@ -21,12 +20,16 @@ struct CommandPool final {
         vkDestroyCommandPool( device_->handle(), commandPool_, nullptr );
     }
 
-    void init( uint32_t queueFamilyIndex );
-    [[nodiscard]] VkCommandPool get() const { return commandPool_; }
+    [[nodiscard]] VkCommandPool handle() const { return commandPool_; }
 
 private:
     const vk::Device *device_{};
+
+    // Vulkan etity handles
     VkCommandPool commandPool_{ VK_NULL_HANDLE };
+
+    // Vulkan related structures
+    VkCommandPoolCreateInfo poolInfo_{};
 };
 
 // =======================================================================

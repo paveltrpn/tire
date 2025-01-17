@@ -33,9 +33,11 @@ private:
         std::optional<std::vector<std::string>> list );
 
 private:
+    // Vulkan etity handles
     VkInstance instance_{ VK_NULL_HANDLE };
     VkDebugUtilsMessengerEXT debugMessenger_{ VK_NULL_HANDLE };
 
+    // Vulkan related structures
     std::vector<char *> validationLayersNames_{};
     std::vector<char *> extensionsNames_{};
 

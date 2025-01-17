@@ -10,14 +10,14 @@ static constexpr bool DEBUG_OUTPUT_COMMAND_POOL_CPP{ true };
 
 namespace tire::vk {
 
-void CommandPool::init( uint32_t queueFamilyIndex ) {
-    VkCommandPoolCreateInfo poolInfo{};
-    poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-    poolInfo.queueFamilyIndex = queueFamilyIndex;
+CommandPool::CommandPool( const vk::Device *device )
+    : device_{ device } {
+    poolInfo_.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    poolInfo_.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+    poolInfo_.queueFamilyIndex = device->graphicsFamily();
 
-    const auto err = vkCreateCommandPool( device_->handle(), &poolInfo, nullptr,
-                                          &commandPool_ );
+    const auto err = vkCreateCommandPool( device_->handle(), &poolInfo_,
+                                          nullptr, &commandPool_ );
     if ( err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create command pool woth code {}!",
@@ -34,7 +34,7 @@ CommandBuffer::CommandBuffer( const vk::Device *device,
     : device_{ device } {
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocInfo.commandPool = pool->get();
+    allocInfo.commandPool = pool->handle();
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandBufferCount = 1;
 
@@ -73,10 +73,10 @@ void CommandBuffer::beginRenderPassCommand( VkFramebuffer framebuffer,
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassInfo.renderPass = pipeline->renderpass();
     renderPassInfo.framebuffer = framebuffer;
-    renderPassInfo.renderArea.offset = { 0, 0 };
-    renderPassInfo.renderArea.extent =
-        VkExtent2D{ static_cast<uint32_t>( pipeline->viewport_.width ),
-                    static_cast<uint32_t>( pipeline->viewport_.height ) };
+    renderPassInfo.renderArea.offset = { .x = 0, .y = 0 };
+    renderPassInfo.renderArea.extent = VkExtent2D{
+        .width = static_cast<uint32_t>( pipeline->viewport_.width ),
+        .height = static_cast<uint32_t>( pipeline->viewport_.height ) };
 
     const auto clearColor = Colorf{ "darkblue" };
     const VkClearValue clearColorValue = {
@@ -121,11 +121,11 @@ void CommandBuffer::submit( const std::vector<VkSemaphore> &waitSemaphores,
                             VkFence fence, VkQueue queue ) {
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    VkPipelineStageFlags waitStages[] = {
+    std::array<VkPipelineStageFlags, 1> waitStages = {
         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
     submitInfo.waitSemaphoreCount = 1;
     submitInfo.pWaitSemaphores = waitSemaphores.data();
-    submitInfo.pWaitDstStageMask = waitStages;
+    submitInfo.pWaitDstStageMask = waitStages.data();
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffer_;
     submitInfo.signalSemaphoreCount = 1;

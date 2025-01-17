@@ -24,6 +24,8 @@ struct Surface final {
 
 private:
     const vk::Instance *instance_{};
+
+    // Vulkan etity handles
     VkSurfaceKHR surface_{ VK_NULL_HANDLE };
 };
 

@@ -40,6 +40,7 @@ private:
     const vk::Device *device_{};
     const vk::Surface *surface_{};
 
+    // Vulkan etity handles
     VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
 
     std::vector<VkImage> swapChainImages_{};
