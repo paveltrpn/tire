@@ -15,8 +15,8 @@
 #include "surface.h"
 #include "device.h"
 #include "swapchain.h"
-#include "pipeline.h"
-#include "commands.h"
+#include "pipelines/pipeline.h"
+#include "commands/commands.h"
 #include "command_pool.h"
 
 #include "config/config.h"

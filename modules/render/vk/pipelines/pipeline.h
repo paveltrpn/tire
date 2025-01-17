@@ -3,8 +3,8 @@
 
 #include <vulkan/vulkan.h>
 
-#include "device.h"
-#include "shader_storage.h"
+#include "../device.h"
+#include "../shader_storage.h"
 
 namespace tire::vk {
 
@@ -20,9 +20,11 @@ struct Pipeline {
     virtual ~Pipeline();
 
     [[nodiscard]] VkPipeline pipeline() const { return pipeline_; };
+
     [[nodiscard]] VkPipelineLayout pipelineLayout() const {
         return pipelineLayout_;
     };
+
     [[nodiscard]] VkRenderPass renderpass() const { return renderPass_; }
 
 protected:

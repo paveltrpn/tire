@@ -7,7 +7,7 @@
 
 #include "device.h"
 #include "surface.h"
-#include "pipeline.h"
+#include "pipelines/pipeline.h"
 
 namespace tire::vk {
 

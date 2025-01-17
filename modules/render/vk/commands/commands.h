@@ -4,8 +4,8 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-#include "pipeline.h"
-#include "command_pool.h"
+#include "../pipelines/pipeline.h"
+#include "../command_pool.h"
 
 namespace tire::vk {
 

@@ -99,10 +99,10 @@ add_library(render
     modules/render/vk/main_loop.cpp
     modules/render/vk/shader_storage.h
     modules/render/vk/shader_storage.cpp
-    modules/render/vk/pipeline.h
-    modules/render/vk/pipeline.cpp
-    modules/render/vk/commands.h
-    modules/render/vk/commands.cpp
+    modules/render/vk/pipelines/pipeline.h
+    modules/render/vk/pipelines/pipeline.cpp
+    modules/render/vk/commands/commands.h
+    modules/render/vk/commands/commands.cpp
     modules/render/vk/scene.h
     modules/render/vk/scene.cpp
     modules/render/vk/swapchain.h
