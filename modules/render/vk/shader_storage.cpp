@@ -20,8 +20,8 @@ ShaderStorage::~ShaderStorage() {
     }
 }
 
-void ShaderStorage::add( const std::string &path, const std::string &name ) {
-    if ( device_ == VK_NULL_HANDLE ) {
+void ShaderStorage::add( const std::filesystem::path &path ) {
+    if ( device_->handle() == VK_NULL_HANDLE ) {
         throw std::runtime_error( std::format(
             "can't use shaders before valid logical device is acquired!" ) );
     }
@@ -29,8 +29,10 @@ void ShaderStorage::add( const std::string &path, const std::string &name ) {
     std::ifstream file( path, std::ios::ate | std::ios::binary );
     if ( !file.is_open() ) {
         throw std::runtime_error(
-            std::format( "failed to open file {}!", path ) );
+            std::format( "failed to open file {}!", path.string() ) );
     }
+
+    const auto name = path.stem().string();
 
     size_t fileSize = (size_t)file.tellg();
     std::vector<char> buffer( fileSize );

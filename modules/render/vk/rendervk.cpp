@@ -29,12 +29,10 @@ RenderVK::RenderVK()
         const auto configHandle = Config::instance();
         const auto basePath = configHandle->getBasePath().string();
         shaderStorage_ = std::make_unique<vk::ShaderStorage>( device_.get() );
-        shaderStorage_->add(
-            basePath + "/assets/shaders/vk_simple_tri_vert.spv",
-            "001_shader_vert" );
-        shaderStorage_->add(
-            basePath + "/assets/shaders/vk_simple_tri_frag.spv",
-            "001_shader_frag" );
+        shaderStorage_->add( std::filesystem::path{
+            basePath + "/assets/shaders/vk_simple_tri_vert.spv" } );
+        shaderStorage_->add( basePath +
+                             "/assets/shaders/vk_simple_tri_frag.spv" );
 
         swapchain_ =
             std::make_unique<vk::Swapchain>( device_.get(), surface_.get() );
@@ -44,8 +42,8 @@ RenderVK::RenderVK()
         pipelineSimple_ = std::make_unique<vk::PiplineSimple>( device_.get() );
         pipelineSimple_->initFixed();
         pipelineSimple_->initProgable(
-            shaderStorage_->get( "001_shader_vert" ),
-            shaderStorage_->get( "001_shader_frag" ) );
+            shaderStorage_->get( "vk_simple_tri_vert" ),
+            shaderStorage_->get( "vk_simple_tri_frag" ) );
         pipelineSimple_->initLayout();
         pipelineSimple_->initRenderPass();
         pipelineSimple_->initPipeline();

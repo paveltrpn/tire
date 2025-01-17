@@ -1,6 +1,8 @@
 #pragma once
 
 #include <map>
+#include <filesystem>
+
 #include <vulkan/vulkan.h>
 
 #include "device.h"
@@ -17,7 +19,7 @@ struct ShaderStorage final {
 
     ~ShaderStorage();
 
-    void add( const std::string &path, const std::string &name );
+    void add( const std::filesystem::path &path );
     VkShaderModule get( const std::string &name );
     void destroy( const std::string &name );
     void list();
