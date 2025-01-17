@@ -60,14 +60,8 @@ void CommandBuffer::beginRenderPassCommand( VkFramebuffer framebuffer,
     beginInfo.flags = 0;                   // Optional
     beginInfo.pInheritanceInfo = nullptr;  // Optional
 
-    {
-        const auto err = vkBeginCommandBuffer( commandBuffer_, &beginInfo );
-        if ( err != VK_SUCCESS ) {
-            throw std::runtime_error( std::format(
-                "failed to begin recording command buffer with code {}!",
-                string_VkResult( err ) ) );
-        }
-    }
+    // NOTE: omit return code control
+    vkBeginCommandBuffer( commandBuffer_, &beginInfo );
 
     VkRenderPassBeginInfo renderPassInfo{};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -104,14 +98,8 @@ void CommandBuffer::beginRenderPassCommand( VkFramebuffer framebuffer,
 
     vkCmdEndRenderPass( commandBuffer_ );
 
-    {
-        const auto err = vkEndCommandBuffer( commandBuffer_ );
-        if ( err != VK_SUCCESS ) {
-            throw std::runtime_error(
-                std::format( "failed to record command buffer with code {}!",
-                             string_VkResult( err ) ) );
-        }
-    }
+    // NOTE: omit return code control
+    vkEndCommandBuffer( commandBuffer_ );
 }
 
 void CommandBuffer::submit( const std::vector<VkSemaphore> &waitSemaphores,
