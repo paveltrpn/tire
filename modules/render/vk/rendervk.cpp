@@ -62,7 +62,7 @@ RenderVK::RenderVK()
         commandPool_ = std::make_unique<vk::CommandPool>( device_.get() );
 
         // Create command buffers for each frame
-        cBufs_.reserve( 2 );
+        cBufs_.reserve( 3 );
         for ( auto i = 0; i < cBufs_.capacity(); ++i ) {
             cBufs_.push_back( std::make_unique<vk::CommandBuffer>(
                 device_.get(), commandPool_.get() ) );
@@ -81,7 +81,7 @@ RenderVK::~RenderVK() {
         buf.release();
     }
 
-    for ( auto i = 0; i < 2; i++ ) {
+    for ( auto i = 0; i < 3; i++ ) {
         vkDestroySemaphore( device_->handle(), imageAvailableSemaphores_[i],
                             nullptr );
         vkDestroySemaphore( device_->handle(), renderFinishedSemaphores_[i],
@@ -99,9 +99,9 @@ void RenderVK::setSwapInterval( int interval ){
 };
 
 void RenderVK::createSyncObjects() {
-    imageAvailableSemaphores_.resize( 2 );
-    renderFinishedSemaphores_.resize( 2 );
-    inFlightFences_.resize( 2 );
+    imageAvailableSemaphores_.resize( 3 );
+    renderFinishedSemaphores_.resize( 3 );
+    inFlightFences_.resize( 3 );
 
     VkSemaphoreCreateInfo semaphoreInfo{};
     semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -111,7 +111,7 @@ void RenderVK::createSyncObjects() {
     fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-    for ( size_t i = 0; i < 2; i++ ) {
+    for ( size_t i = 0; i < 3; i++ ) {
         if ( vkCreateSemaphore( device_->handle(), &semaphoreInfo, nullptr,
                                 &imageAvailableSemaphores_[i] ) != VK_SUCCESS ||
              vkCreateSemaphore( device_->handle(), &semaphoreInfo, nullptr,

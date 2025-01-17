@@ -42,6 +42,9 @@ void Swapchain::createSwapchain() {
         imageCount = surfaceCapabilities.maxImageCount;
     }
 
+    log::debug<DEBUG_OUTPUT_SWAPCHAINVK_CPP>(
+        "vulkan swapchain surface capabilities image count: {}", imageCount );
+
     VkSwapchainCreateInfoKHR createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     createInfo.surface = surface_->handle();
@@ -86,18 +89,26 @@ void Swapchain::createSwapchain() {
     }
 
     // swapchain images itself
-    uint32_t swapchainImageCount{};
     {
         const auto err = vkGetSwapchainImagesKHR(
-            device_->handle(), swapchain_, &swapchainImageCount, nullptr );
+            device_->handle(), swapchain_, &swapchainImageCount_, nullptr );
         if ( err != VK_SUCCESS ) {
             throw std::runtime_error( std::format(
                 "failed to get swapchain images count with code {}\n!",
                 string_VkResult( err ) ) );
         } else {
             log::debug<DEBUG_OUTPUT_SWAPCHAINVK_CPP>(
-                "vulkan swapchain images count: {}", swapchainImageCount );
+                "vulkan swapchain images count: {}", swapchainImageCount_ );
         }
+    }
+
+    // Check image count from sourface capabilities and (possible?) swapchain
+    // swapchain image count acquired from vulkan
+    if ( swapchainImageCount_ != imageCount ) {
+        log::warning(
+            "surface capabilities image count {} is not equal to swapchain "
+            "image count {}...",
+            imageCount, swapchainImageCount_ );
     }
 
     swapChainImages_.resize( imageCount );

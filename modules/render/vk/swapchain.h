@@ -35,10 +35,15 @@ struct Swapchain final {
     };
 
     [[nodiscard]] VkExtent2D extent() const { return swapChainExtent_; }
+    [[nodiscard]] uint32_t swapchainImageCount() const {
+        return swapchainImageCount_;
+    };
 
 private:
     const vk::Device *device_{};
     const vk::Surface *surface_{};
+
+    uint32_t swapchainImageCount_{};
 
     // Vulkan entity handles
     VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
