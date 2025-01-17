@@ -24,7 +24,7 @@ RenderVK::RenderVK()
         surface_ =
             std::make_unique<vk::Surface>( display_, window_, instance_.get() );
 
-        // Crete logical device (and obtain physical devices), (application wide)
+        // Crete logical device and obtain physical devices (application wide)
         device_ =
             std::make_unique<vk::Device>( instance_.get(), surface_.get() );
         device_->pickAndCreateDevice( 0 );

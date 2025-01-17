@@ -17,6 +17,7 @@
 #include "swapchain.h"
 #include "pipeline.h"
 #include "commands.h"
+#include "command_pool.h"
 
 #include "config/config.h"
 #include "../render.h"
