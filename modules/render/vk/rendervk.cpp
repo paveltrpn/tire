@@ -43,7 +43,8 @@ RenderVK::RenderVK()
         pipelineSimple_->initFixed();
         pipelineSimple_->initProgable(
             shaderStorage_->get( "vk_simple_tri_vert" ),
-            shaderStorage_->get( "vk_simple_tri_frag" ) );
+            shaderStorage_->get( "vk_simple_tri_frag" ), VK_NULL_HANDLE,
+            VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE );
         pipelineSimple_->initLayout();
         pipelineSimple_->initRenderPass();
         pipelineSimple_->initPipeline();
