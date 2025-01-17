@@ -34,25 +34,20 @@ void PiplineSimple::initFixed() {
     inputAssembly_.pNext = nullptr;
     inputAssembly_.flags = 0;
 
-    const auto configPtr = Config::instance();
-    const auto width =
-        static_cast<float>( configPtr->get<int>( "window_width" ) );
-    const auto height =
-        static_cast<float>( configPtr->get<int>( "window_height" ) );
+    const auto width = device_->extent().width;
+    const auto height = device_->extent().height;
 
     // VkViewport
     viewport_.x = 0.0f;
     viewport_.y = 0.0f;
-    viewport_.width = width;
-    viewport_.height = height;
+    viewport_.width = static_cast<float>( width );
+    viewport_.height = static_cast<float>( height );
     viewport_.minDepth = 0.0f;
     viewport_.maxDepth = 1.0f;
 
     // VkRect2D
     scissor_.offset = { .x = 0, .y = 0 };
-    scissor_.extent = {
-        .width = static_cast<uint32_t>( width ),
-        .height = static_cast<uint32_t>( height ) };  //swapChainExtent;
+    scissor_.extent = { .width = width, .height = height };  //swapChainExtent;
 
     // VkPipelineViewportStateCreateInfo
     viewportState_.sType =
@@ -129,7 +124,7 @@ void PiplineSimple::initFixed() {
     // VkPipelineDynamicStateCreateInfo
     std::vector<VkDynamicState> dynamicStates = { VK_DYNAMIC_STATE_VIEWPORT,
                                                   VK_DYNAMIC_STATE_LINE_WIDTH };
-    VkPipelineDynamicStateCreateInfo dynamicState{};
+    VkPipelineDynamicStateCreateInfo dynamicState;
     dynamicState_.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
     dynamicState_.dynamicStateCount =
         static_cast<uint32_t>( dynamicStates.size() );
@@ -173,9 +168,10 @@ void PiplineSimple::initLayout() {
     }
 }
 
-void PiplineSimple::initRenderPass( VkFormat swapChainImageFormat ) {
+void PiplineSimple::initRenderPass() {
     VkAttachmentDescription colorAttachment{};
-    colorAttachment.format = swapChainImageFormat;
+    // Same as swapchain image format
+    colorAttachment.format = device_->surfaceFormat().format;
     colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
     colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;

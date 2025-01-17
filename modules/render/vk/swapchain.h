@@ -21,7 +21,7 @@ struct Swapchain final {
 
     ~Swapchain();
 
-    void createSwapchain( VkExtent2D extent );
+    void createSwapchain();
     void createImageViews();
     void createFramebuffers( const vk::Pipeline *pipeline );
 
@@ -40,7 +40,7 @@ private:
     const vk::Device *device_{};
     const vk::Surface *surface_{};
 
-    // Vulkan etity handles
+    // Vulkan entity handles
     VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
 
     std::vector<VkImage> swapChainImages_{};

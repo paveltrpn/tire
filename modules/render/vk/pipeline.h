@@ -18,6 +18,18 @@ struct Pipeline {
 
     virtual ~Pipeline();
 
+    [[nodiscard]] VkPipeline pipeline() const { return pipeline_; };
+    [[nodiscard]] VkRenderPass renderpass() const { return renderPass_; }
+
+protected:
+    const vk::Device *device_;
+
+    // Vulkan entity handles
+    VkPipeline pipeline_{ VK_NULL_HANDLE };
+    VkPipelineLayout pipelineLayout_{ VK_NULL_HANDLE };
+    VkRenderPass renderPass_{ VK_NULL_HANDLE };
+
+    // Vulkan related structures
     VkPipelineShaderStageCreateInfo vertShaderStage_{};
     VkPipelineShaderStageCreateInfo fragShaderStage_{};
     VkPipelineVertexInputStateCreateInfo vertexInput_{};
@@ -34,16 +46,6 @@ struct Pipeline {
     VkPipelineDynamicStateCreateInfo dynamicState_{};
     VkPipelineLayoutCreateInfo pipelineLayoutInfo_{};
     VkPipelineRenderingCreateInfo renderInfo_;
-
-    [[nodiscard]] VkPipeline pipeline() const { return pipeline_; };
-    [[nodiscard]] VkRenderPass renderpass() const { return renderPass_; }
-
-protected:
-    const vk::Device *device_;
-
-    VkPipeline pipeline_{ VK_NULL_HANDLE };
-    VkPipelineLayout pipelineLayout_{ VK_NULL_HANDLE };
-    VkRenderPass renderPass_{ VK_NULL_HANDLE };
 };
 
 struct PiplineSimple final : Pipeline {
@@ -53,7 +55,7 @@ struct PiplineSimple final : Pipeline {
     void initFixed();
     void initProgable( VkShaderModule vert, VkShaderModule frag );
     void initLayout();
-    void initRenderPass( VkFormat swapChainImageFormat );
+    void initRenderPass();
     void initPipeline();
 };
 

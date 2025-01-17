@@ -38,11 +38,7 @@ RenderVK::RenderVK()
 
         swapchain_ =
             std::make_unique<vk::Swapchain>( device_.get(), surface_.get() );
-        const auto extent = VkExtent2D{
-            static_cast<uint32_t>( configHandle->get<int>( "window_width" ) ),
-            static_cast<uint32_t>(
-                configHandle->get<int>( "window_height" ) ) };
-        swapchain_->createSwapchain( extent );
+        swapchain_->createSwapchain();
         swapchain_->createImageViews();
 
         pipelineSimple_ = std::make_unique<vk::PiplineSimple>( device_.get() );
@@ -51,7 +47,7 @@ RenderVK::RenderVK()
             shaderStorage_->get( "001_shader_vert" ),
             shaderStorage_->get( "001_shader_frag" ) );
         pipelineSimple_->initLayout();
-        pipelineSimple_->initRenderPass( swapchain_->imageFormat() );
+        pipelineSimple_->initRenderPass();
         pipelineSimple_->initPipeline();
         pipelineSimple_->initFixed();
 

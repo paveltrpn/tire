@@ -74,9 +74,7 @@ void CommandBuffer::beginRenderPassCommand( VkFramebuffer framebuffer,
     renderPassInfo.renderPass = pipeline->renderpass();
     renderPassInfo.framebuffer = framebuffer;
     renderPassInfo.renderArea.offset = { .x = 0, .y = 0 };
-    renderPassInfo.renderArea.extent = VkExtent2D{
-        .width = static_cast<uint32_t>( pipeline->viewport_.width ),
-        .height = static_cast<uint32_t>( pipeline->viewport_.height ) };
+    renderPassInfo.renderArea.extent = device_->extent();
 
     const auto clearColor = Colorf{ "darkblue" };
     const VkClearValue clearColorValue = {

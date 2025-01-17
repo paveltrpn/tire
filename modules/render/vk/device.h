@@ -36,6 +36,8 @@ struct Device final {
     [[nodiscard]] VkQueue graphicsQueue() const { return graphicsQueue_; };
     [[nodiscard]] VkQueue presentQueue() const { return presentQueue_; };
 
+    [[nodiscard]] VkExtent2D extent() const { return currentExtent_; };
+
     void pickAndCreateDevice(
         size_t id );  // TODO: make physical device pick smarter
 
@@ -75,6 +77,9 @@ private:
 
     VkSurfaceFormatKHR surfaceFormat_{};
     VkPresentModeKHR presentMode_{};
+
+    // Current application window extent
+    VkExtent2D currentExtent_{};
 };
 
 }  // namespace tire::vk

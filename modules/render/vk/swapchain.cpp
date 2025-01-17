@@ -22,9 +22,8 @@ Swapchain::~Swapchain() {
     vkDestroySwapchainKHR( device_->handle(), swapchain_, nullptr );
 }
 
-void Swapchain::createSwapchain( VkExtent2D extent ) {
-    const auto configPtr = Config::instance();
-    swapChainExtent_ = extent;
+void Swapchain::createSwapchain() {
+    swapChainExtent_ = device_->extent();
 
     const auto surfaceFormat = device_->surfaceFormat();
     const auto presentMode = device_->presentMode();

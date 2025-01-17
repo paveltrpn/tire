@@ -234,6 +234,11 @@ void Device::pickAndCreateDevice( size_t id ) {
         }
     }
 
+    // Application window size (extent) givet at startup.
+    // NOTE: What i have to do with this when application window
+    // have ben resized??
+    currentExtent_ = surfaceCapabilities_.currentExtent;
+
     // physical device surface formats
     uint32_t formatCount;
     {
@@ -272,7 +277,8 @@ void Device::pickAndCreateDevice( size_t id ) {
     }
 
     // This format will be used across application, in
-    // swapchain in particular. Make choose liitle wiser in future
+    // swapchain in particular.
+    // NOTE: Make choose liitle wiser in future
 #define CHOSEN_SURFACE_FORMAT 0
     surfaceFormat_ = surfaceFormats_[CHOSEN_SURFACE_FORMAT];
 
@@ -314,7 +320,8 @@ void Device::pickAndCreateDevice( size_t id ) {
     }
 
     // This present mode will be used across application, in
-    // swapchain in particular. Make choose liitle wiser in future
+    // swapchain in particular.
+    // NOTE: Make choose liitle wiser in future
 #define CHOSEN_PRESENT_MODE 0
     presentMode_ = presentModes_[CHOSEN_PRESENT_MODE];
 }
