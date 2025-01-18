@@ -17,25 +17,35 @@ enum class ShaderStageType {
     TESSELATION_CTRL,
     COMPUTE,
     GEOMETRY,
-    RAYTACING
+    RAYGEN
 };
 
-static constexpr std::string vertex_stage_suffix{ "_vert" };
-static constexpr std::string fragment_stage_suffix{ "_frag" };
-static constexpr std::string tessctrl_stage_suffix{ "_tessctrl" };
-static constexpr std::string tesseval_stage_suffix{ "_tesseval" };
-static constexpr std::string geometry_stage_suffix{ "_geometry" };
-static constexpr std::string compute_stage_suffix{ "_compute" };
-static constexpr std::string raytrace_stage_suffix{ "_raytrace" };
+static constexpr std::string vertex_stage_suffix{ "VERTEX" };
+static constexpr std::string fragment_stage_suffix{ "FRAGMENT" };
+static constexpr std::string tesseval_stage_suffix{ "TESSEVAL" };
+static constexpr std::string tessctrl_stage_suffix{ "TESSCTRL" };
+static constexpr std::string geometry_stage_suffix{ "GEOMETRY" };
+static constexpr std::string compute_stage_suffix{ "COMPUTE" };
+static constexpr std::string raygen_stage_suffix{ "RAYGEN" };
 
-template <ShaderStageType Opt>
-concept ShaderStage = ( Opt == ShaderStageType::VERTEX ) ||
-                      ( Opt == ShaderStageType::FRAGMENT ) ||
-                      ( Opt == ShaderStageType::TESSELATION_EVAL ) ||
-                      ( Opt == ShaderStageType::TESSELATION_CTRL ) ||
-                      ( Opt == ShaderStageType::COMPUTE ) ||
-                      ( Opt == ShaderStageType::GEOMETRY ) ||
-                      ( Opt == ShaderStageType::RAYTACING );
+template <ShaderStageType Stage>
+concept ShaderStage = ( Stage == ShaderStageType::VERTEX ) ||
+                      ( Stage == ShaderStageType::FRAGMENT ) ||
+                      ( Stage == ShaderStageType::TESSELATION_EVAL ) ||
+                      ( Stage == ShaderStageType::TESSELATION_CTRL ) ||
+                      ( Stage == ShaderStageType::GEOMETRY ) ||
+                      ( Stage == ShaderStageType::COMPUTE ) ||
+                      ( Stage == ShaderStageType::RAYGEN );
+
+static const std::map<ShaderStageType, std::string> StagesSuffixMap = {
+    { ShaderStageType::VERTEX, vertex_stage_suffix },
+    { ShaderStageType::FRAGMENT, fragment_stage_suffix },
+    { ShaderStageType::TESSELATION_EVAL, tesseval_stage_suffix },
+    { ShaderStageType::TESSELATION_CTRL, tessctrl_stage_suffix },
+    { ShaderStageType::GEOMETRY, geometry_stage_suffix },
+    { ShaderStageType::COMPUTE, compute_stage_suffix },
+    { ShaderStageType::RAYGEN, raygen_stage_suffix },
+};
 
 struct ShaderStorage final {
     ShaderStorage( const vk::Device *device );
@@ -52,40 +62,32 @@ struct ShaderStorage final {
 
     [[nodiscard]] VkShaderModule get( const std::string &name );
 
-    template <ShaderStageType T>
-    requires ShaderStage<T> [[nodiscard]] VkShaderModule get() const {
-        std::string suffix{};
-        if constexpr ( T == ShaderStageType::VERTEX ) {
-            suffix = vertex_stage_suffix;
-        } else if ( T == ShaderStageType::FRAGMENT ) {
-            suffix = fragment_stage_suffix;
-        } else if ( T == ShaderStageType::TESSELATION_EVAL ) {
-            suffix = tessctrl_stage_suffix;
-        } else if ( T == ShaderStageType::TESSELATION_CTRL ) {
-            suffix = tesseval_stage_suffix;
-        } else if ( T == ShaderStageType::COMPUTE ) {
-            suffix = compute_stage_suffix;
-        } else if ( T == ShaderStageType::GEOMETRY ) {
-            suffix = geometry_stage_suffix;
-        } else if ( T == ShaderStageType::RAYTACING ) {
-            suffix = raytrace_stage_suffix;
-        }
+    template <ShaderStageType Stage>
+    requires ShaderStage<Stage> [[nodiscard]] VkShaderModule get() const {
+        // We sure that "std::map<>::at() return proper value because
+        // of concept keep invariant
+        const std::string suffix = StagesSuffixMap.at( Stage );
 
         for ( const auto &item : modules_ ) {
             const auto [name, module] = item;
-            if ( name.contains( suffix ) ) {
+            if ( name.ends_with( suffix ) ) {
                 return module;
             }
         }
 
         log::warning(
-            "vk::ShaderStorage: shader module with suffix {} not found!",
+            "vk::ShaderStorage: shader module with suffix \"{}\" not found!",
             suffix );
+
         return VK_NULL_HANDLE;
     }
 
     void destroy( const std::string &name );
     void list();
+
+private:
+    bool checkStageExist( const std::string stageSuffix );
+    bool isValidName( const std::string name );
 
 private:
     const vk::Device *device_;

@@ -202,8 +202,7 @@ void PiplineSimple::initProgable() {
     raygenShaderStage_.pNext = nullptr;
     raygenShaderStage_.flags = 0;
     raygenShaderStage_.stage = VK_SHADER_STAGE_RAYGEN_BIT_KHR;
-    raygenShaderStage_.module =
-        shaderStorage_->get<ShaderStageType::RAYTACING>();
+    raygenShaderStage_.module = shaderStorage_->get<ShaderStageType::RAYGEN>();
     ;
     raygenShaderStage_.pName = "main";
 }

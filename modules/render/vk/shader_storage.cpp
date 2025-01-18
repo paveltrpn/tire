@@ -1,5 +1,6 @@
 
 #include <fstream>
+#include <algorithm>
 #include <vector>
 #include <vulkan/vk_enum_string_helper.h>
 
@@ -34,12 +35,60 @@ void ShaderStorage::add( const std::filesystem::path &path ) {
 
     const auto name = path.stem().string();
 
+    // Shader file name must contain "vulkan shader stage attribute"
+    // suffix - i.e. something from set "VERTEX", "FRAGMENT" etc.
+    if ( !isValidName( name ) ) {
+        throw std::runtime_error( std::format(
+            "vk::ShaderStorage: shader file name \"{}\" not satisfies naming "
+            "convention",
+            name ) );
+    }
+
+    // Check if shader module with name exist in modules map
+    if ( modules_.contains( name ) ) {
+        log::warning(
+            "vk::ShaderStorage: shader module with name \"{}\" exist, no need "
+            "to "
+            "replace it",
+            name );
+        return;
+    }
+
+    // Split given string by seperator
+    auto split = []( const std::string &string, const char *sep ) {
+        std::vector<std::string> list;
+        std::string::size_type start{ 0 };
+        std::string::size_type end;
+
+        while ( ( end = string.find( sep, start ) ) != std::string::npos ) {
+            if ( start != end )
+                list.push_back( string.substr( start, end - start ) );
+            start = end + 1;
+        }
+
+        if ( start != string.size() ) list.push_back( string.substr( start ) );
+
+        return list;
+    };
+
+    // Check if same shader stage already occupied
+    const auto suffix = split( name, "_" ).back();
+    if ( checkStageExist( suffix ) ) {
+        log::warning(
+            "vk::ShaderStorage: shader module for stage \"{}\" exist, no need "
+            "to "
+            "replace it",
+            suffix );
+    }
+
+    // Read SPIRV file from disk
     const size_t fileSize = (size_t)file.tellg();
     std::vector<char> buffer( fileSize );
     file.seekg( 0 );
     file.read( buffer.data(), fileSize );
     file.close();
 
+    // Create vulkan shader module
     VkShaderModuleCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     createInfo.codeSize = buffer.size();
@@ -100,6 +149,31 @@ void ShaderStorage::fill( const std::vector<std::filesystem::path> &files ) {
     for ( const auto &item : files ) {
         add( item );
     }
+}
+
+bool ShaderStorage::checkStageExist( const std::string stageSuffix ) {
+    // Find shader stage module name in modules_ which have certain suffix
+    const auto end = modules_.cend();
+    const auto it = std::find_if(
+        modules_.cbegin(), end,
+        [id = stageSuffix]( std::pair<std::string, VkShaderModule> item ) {
+            return std::get<0>( item ).ends_with( id );
+        } );
+
+    return it != end;
+}
+
+bool ShaderStorage::isValidName( const std::string name ) {
+    // Finds out that given shader file name contains somthing from
+    // shader stage suffix set ("VERTEX", "FRAGMENT" etc.)
+    const auto end = StagesSuffixMap.cend();
+    const auto it = std::find_if(
+        StagesSuffixMap.cbegin(), end,
+        [id = name]( std::pair<ShaderStageType, std::string> item ) {
+            return id.ends_with( std::get<1>( item ) );
+        } );
+
+    return it != end;
 }
 
 }  // namespace tire::vk

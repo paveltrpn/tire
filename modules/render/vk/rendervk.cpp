@@ -34,8 +34,8 @@ RenderVK::RenderVK()
         const auto basePath = configHandle->getBasePath().string();
         shaderStorage_ = std::make_unique<vk::ShaderStorage>( device_.get() );
         shaderStorage_->fill(
-            { basePath + "/assets/shaders/vk_simple_tri_vert.spv",
-              basePath + "/assets/shaders/vk_simple_tri_frag.spv" } );
+            { basePath + "/assets/shaders/vk_simple_tri_VERTEX.spv",
+              basePath + "/assets/shaders/vk_simple_tri_FRAGMENT.spv" } );
 
         // Create swapchain (application wide)
         swapchain_ =
