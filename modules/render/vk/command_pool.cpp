@@ -14,14 +14,15 @@ CommandPool::CommandPool( const vk::Device *device )
     poolInfo_.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     poolInfo_.queueFamilyIndex = device->graphicsFamily();
 
-    const auto err = vkCreateCommandPool( device_->handle(), &poolInfo_,
-                                          nullptr, &commandPool_ );
-    if ( err != VK_SUCCESS ) {
+    if ( const auto err = vkCreateCommandPool( device_->handle(), &poolInfo_,
+                                               nullptr, &commandPool_ );
+         err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create command pool woth code {}!",
                          string_VkResult( err ) ) );
     } else {
-        log::debug<DEBUG_OUTPUT_COMMAND_POOL_CPP>( "command pool created!" );
+        log::debug<DEBUG_OUTPUT_COMMAND_POOL_CPP>(
+            "vk::CommandPool: command pool created!" );
     }
 }
 

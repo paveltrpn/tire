@@ -18,9 +18,9 @@ CommandBuffer::CommandBuffer( const vk::Device *device,
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandBufferCount = 1;
 
-    const auto err = vkAllocateCommandBuffers( device_->handle(), &allocInfo,
-                                               &commandBuffer_ );
-    if ( err != VK_SUCCESS ) {
+    if ( const auto err = vkAllocateCommandBuffers(
+             device_->handle(), &allocInfo, &commandBuffer_ );
+         err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to allocate command buffers with code {}!",
                          string_VkResult( err ) ) );
@@ -97,8 +97,8 @@ void CommandBuffer::submit( const std::vector<VkSemaphore> &waitSemaphores,
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores.data();
 
-    const auto err = vkQueueSubmit( queue, 1, &submitInfo, fence );
-    if ( err != VK_SUCCESS ) {
+    if ( const auto err = vkQueueSubmit( queue, 1, &submitInfo, fence );
+         err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to submit draw command buffer with code {}!",
                          string_VkResult( err ) ) );

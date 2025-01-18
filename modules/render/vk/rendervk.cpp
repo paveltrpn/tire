@@ -68,6 +68,9 @@ RenderVK::RenderVK()
                 device_.get(), commandPool_.get() ) );
         }
 
+        present_ =
+            std::make_unique<vk::Present>( device_.get(), swapchain_.get() );
+
         // Create synchronize objects
         createSyncObjects();
 

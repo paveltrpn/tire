@@ -14,17 +14,16 @@ Device::Device( const vk::Instance *instance, const vk::Surface *surface )
     , surface_{ surface } {
     uint32_t devCount{};
 
-    {
-        const auto err = vkEnumeratePhysicalDevices( instance_->handle(),
-                                                     &devCount, nullptr );
-        if ( err != VK_SUCCESS ) {
-            throw std::runtime_error(
-                std::format( "can't enumerate physical devices with code: {}\n",
-                             string_VkResult( err ) ) );
-        } else {
-            log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-                "physical devices enumerate success, count: {}", devCount );
-        }
+    if ( const auto err = vkEnumeratePhysicalDevices( instance_->handle(),
+                                                      &devCount, nullptr );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error(
+            std::format( "can't enumerate physical devices with code: {}\n",
+                         string_VkResult( err ) ) );
+    } else {
+        log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
+            "vk::Device: physical devices enumerate success, count: {}",
+            devCount );
     }
 
     if ( devCount == 0 ) {
@@ -33,20 +32,18 @@ Device::Device( const vk::Instance *instance, const vk::Surface *surface )
 
     std::vector<VkPhysicalDevice> physicalDevices( devCount );
 
-    {
-        const auto err = vkEnumeratePhysicalDevices(
-            instance_->handle(), &devCount, physicalDevices.data() );
-        if ( err != VK_SUCCESS ) {
-            throw std::runtime_error(
-                std::format( "can't acquire physical devices with code: {}\n",
-                             string_VkResult( err ) ) );
-        } else {
-            log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-                "physical devices acquire success" );
-        }
+    if ( const auto err = vkEnumeratePhysicalDevices(
+             instance_->handle(), &devCount, physicalDevices.data() );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error(
+            std::format( "can't acquire physical devices with code: {}\n",
+                         string_VkResult( err ) ) );
+    } else {
+        log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
+            "vk::Device: physical devices acquire success" );
     }
 
-    log::info( " === collect physical device info..." );
+    log::info( "vk::Device: collect physical device info..." );
     for ( const auto device : physicalDevices ) {
         // Collect physical devices and its properties
 
@@ -64,42 +61,40 @@ Device::Device( const vk::Instance *instance, const vk::Surface *surface )
         std::vector<VkQueueFamilyProperties> qfp( queueFamilyCount );
         vkGetPhysicalDeviceQueueFamilyProperties( device, &queueFamilyCount,
                                                   qfp.data() );
-        log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>( "device queue family count: {}",
-                                               queueFamilyCount );
+        log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
+            "vk::Device: device queue family count: {}", queueFamilyCount );
 
         uint32_t extensionCount{};
-        {
-            const auto err = vkEnumerateDeviceExtensionProperties(
-                device, nullptr, &extensionCount, nullptr );
-            if ( err != VK_SUCCESS ) {
-                throw std::runtime_error(
-                    std::format( "can't enumerate physical device extensions "
-                                 "with code: {}\n",
-                                 string_VkResult( err ) ) );
-            } else {
-                log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-                    "physical device extensions enumerated for device: {}, "
-                    "count: {}",
-                    devProps.deviceName, extensionCount );
-            }
+        if ( const auto err = vkEnumerateDeviceExtensionProperties(
+                 device, nullptr, &extensionCount, nullptr );
+             err != VK_SUCCESS ) {
+            throw std::runtime_error(
+                std::format( "can't enumerate physical device extensions "
+                             "with code: {}\n",
+                             string_VkResult( err ) ) );
+        } else {
+            log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
+                "vk::Device: physical device extensions enumerated for "
+                "device: {}, "
+                "count: {}",
+                devProps.deviceName, extensionCount );
         }
 
         std::vector<VkExtensionProperties> availableExtensions(
             extensionCount );
 
-        {
-            const auto err = vkEnumerateDeviceExtensionProperties(
-                device, nullptr, &extensionCount, availableExtensions.data() );
-            if ( err != VK_SUCCESS ) {
-                throw std::runtime_error(
-                    std::format( "can't acquire physical device extensions "
-                                 "with code: {}\n",
-                                 string_VkResult( err ) ) );
-            } else {
-                log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-                    "physical device extensions acquired for device: {}",
-                    devProps.deviceName );
-            }
+        if ( const auto err = vkEnumerateDeviceExtensionProperties(
+                 device, nullptr, &extensionCount, availableExtensions.data() );
+             err != VK_SUCCESS ) {
+            throw std::runtime_error(
+                std::format( "can't acquire physical device extensions "
+                             "with code: {}\n",
+                             string_VkResult( err ) ) );
+        } else {
+            log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
+                "vk::Device: physical device extensions acquired for device: "
+                "{}",
+                devProps.deviceName );
         }
 
         physicalDevices_.emplace_back(
@@ -140,19 +135,20 @@ void Device::pickAndCreateDevice( size_t id ) {
         if ( queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT ) {
             graphicsFamily_ = i;
         }
+
         VkBool32 presentSupport = false;
         // Condition: we need device that support surface presentation
-        const auto err = vkGetPhysicalDeviceSurfaceSupportKHR(
-            physicalDevices_[id].device, i, surface_->handle(),
-            &presentSupport );
-        if ( err != VK_SUCCESS ) {
+        if ( const auto err = vkGetPhysicalDeviceSurfaceSupportKHR(
+                 physicalDevices_[id].device, i, surface_->handle(),
+                 &presentSupport );
+             err != VK_SUCCESS ) {
             throw std::runtime_error(
                 std::format( "failed to get device surface support for "
                              "presentation with code {}!\n",
                              string_VkResult( err ) ) );
         } else {
             log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-                "device surface support for "
+                "vk::Device: device surface support for "
                 "presentation acquire success!" );
         }
 
@@ -162,9 +158,9 @@ void Device::pickAndCreateDevice( size_t id ) {
         i++;
     }
 
-    log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>( "graphics family: {}",
+    log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>( "vk::Device: graphics family: {}",
                                            graphicsFamily_ );
-    log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>( "present family: {}",
+    log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>( "vk::Device: present family: {}",
                                            presentFamily_ );
 
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
@@ -204,34 +200,33 @@ void Device::pickAndCreateDevice( size_t id ) {
     }
 
     // Create a logical device
-    {
-        const auto err = vkCreateDevice( physicalDevices_[id].device,
-                                         &deviceCreateInfo, nullptr, &device_ );
-        if ( err != VK_SUCCESS ) {
-            throw std::runtime_error(
-                std::format( "failed to create logical device with code {}!\n",
-                             string_VkResult( err ) ) );
-        } else {
-            log::info( "logical device create success!" );
-        }
+    if ( const auto err =
+             vkCreateDevice( physicalDevices_[id].device, &deviceCreateInfo,
+                             nullptr, &device_ );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error(
+            std::format( "failed to create logical device with code {}!\n",
+                         string_VkResult( err ) ) );
+    } else {
+        log::info( "vk::Device: logical device create success!" );
     }
 
     vkGetDeviceQueue( device_, graphicsFamily_, 0, &graphicsQueue_ );
     vkGetDeviceQueue( device_, presentFamily_, 0, &presentQueue_ );
 
     // physical device surface capabilities
-    {
-        const auto err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-            physicalDevices_[id].device, surface_->handle(),
-            &surfaceCapabilities_ );
-        if ( err != VK_SUCCESS ) {
-            throw std::runtime_error( std::format(
-                "failed to obtain surface capabilities with code {}!\n",
-                string_VkResult( err ) ) );
-        } else {
-            log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-                "physical device surface capabilities acquire success!" );
-        }
+
+    if ( const auto err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+             physicalDevices_[id].device, surface_->handle(),
+             &surfaceCapabilities_ );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error( std::format(
+            "failed to obtain surface capabilities with code {}!\n",
+            string_VkResult( err ) ) );
+    } else {
+        log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
+            "vk::Device: physical device surface capabilities acquire "
+            "success!" );
     }
 
     // Application window size (extent) givet at startup.
@@ -241,39 +236,36 @@ void Device::pickAndCreateDevice( size_t id ) {
 
     // physical device surface formats
     uint32_t formatCount;
-    {
-        const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR(
-            physicalDevices_[id].device, surface_->handle(), &formatCount,
-            nullptr );
-        if ( err != VK_SUCCESS ) {
-            throw std::runtime_error(
-                std::format( "failed to obtain physical device surface formats "
-                             "count with code {}!\n",
-                             string_VkResult( err ) ) );
-        } else {
-            log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-                "physical device surface formats count obtain success, "
-                "count: "
-                "{}",
-                formatCount );
-        }
+    if ( const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR(
+             physicalDevices_[id].device, surface_->handle(), &formatCount,
+             nullptr );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error(
+            std::format( "failed to obtain physical device surface formats "
+                         "count with code {}!\n",
+                         string_VkResult( err ) ) );
+    } else {
+        log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
+            "vk::Device: physical device surface formats count obtain success, "
+            "count: "
+            "{}",
+            formatCount );
     }
 
     surfaceFormats_.resize( formatCount );
 
-    {
-        const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR(
-            physicalDevices_[id].device, surface_->handle(), &formatCount,
-            surfaceFormats_.data() );
-        if ( err != VK_SUCCESS ) {
-            throw std::runtime_error( std::format(
-                "failed to acquire physical device surface formats "
-                "count with code {}!\n",
-                string_VkResult( err ) ) );
-        } else {
-            log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-                "physical device surface formats acquire success!" );
-        }
+    if ( const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR(
+             physicalDevices_[id].device, surface_->handle(), &formatCount,
+             surfaceFormats_.data() );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error(
+            std::format( "failed to acquire physical device surface formats "
+                         "count with code {}!\n",
+                         string_VkResult( err ) ) );
+    } else {
+        log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
+            "vk::Device: physical device surface formats acquire "
+            "success!" );
     }
 
     // This format will be used across application, in
@@ -284,39 +276,35 @@ void Device::pickAndCreateDevice( size_t id ) {
 
     // physical device present modes
     uint32_t presentModeCount;
-    {
-        const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR(
-            physicalDevices_[id].device, surface_->handle(), &presentModeCount,
-            nullptr );
-        if ( err != VK_SUCCESS ) {
-            throw std::runtime_error(
-                std::format( "failed to obtain physical device present modes "
-                             "count with code {}!\n",
-                             string_VkResult( err ) ) );
-        } else {
-            log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-                "physical device present modes count obtain success, "
-                "count: "
-                "{}",
-                presentModeCount );
-        }
+    if ( const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR(
+             physicalDevices_[id].device, surface_->handle(), &presentModeCount,
+             nullptr );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error(
+            std::format( "failed to obtain physical device present modes "
+                         "count with code {}!\n",
+                         string_VkResult( err ) ) );
+    } else {
+        log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
+            "vk::Device: physical device present modes count obtain success, "
+            "count: "
+            "{}",
+            presentModeCount );
     }
 
     presentModes_.resize( presentModeCount );
 
-    {
-        const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR(
-            physicalDevices_[id].device, surface_->handle(), &presentModeCount,
-            presentModes_.data() );
-        if ( err != VK_SUCCESS ) {
-            throw std::runtime_error(
-                std::format( "failed to acquire physical device present modes "
-                             "with code {}!\n",
-                             string_VkResult( err ) ) );
-        } else {
-            log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-                "physical device present modes acquire success!" );
-        }
+    if ( const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR(
+             physicalDevices_[id].device, surface_->handle(), &presentModeCount,
+             presentModes_.data() );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error(
+            std::format( "failed to acquire physical device present modes "
+                         "with code {}!\n",
+                         string_VkResult( err ) ) );
+    } else {
+        log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
+            "vk::Device: physical device present modes acquire success!" );
     }
 
     // This present mode will be used across application, in

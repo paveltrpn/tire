@@ -18,21 +18,24 @@ void RenderVK::frame() {
     //log::debug<true>( "currentFrame = {}", currentFrame_ );
 
 #define ONE_SECOND 1000000000
-    const auto waitFenceResult = vkWaitForFences(
+    const auto res = vkWaitForFences(
         device_->handle(), 1, &inFlightFences_[currentFrame_], VK_TRUE, 0 );
-    if ( waitFenceResult != VK_SUCCESS ) {
-        log::warning( "wait for fences fail! may be deadlock?" );
+    if ( res != VK_SUCCESS ) {
+        log::warning( "wait for fences result {}, is it normal?",
+                      string_VkResult( res ) );
     }
 
     // NOTE: omit return code check
     vkResetFences( device_->handle(), 1, &inFlightFences_[currentFrame_] );
 
-    uint32_t imageIndex;
+    uint32_t imageIndex{};
 
     // NOTE: omit return code check
     vkAcquireNextImageKHR( device_->handle(), swapchain_->handle(), UINT64_MAX,
                            imageAvailableSemaphores_[currentFrame_],
                            VK_NULL_HANDLE, &imageIndex );
+
+    // log::debug<true>( "next image is {}", imageIndex );
 
     cBufs_[currentFrame_]->reset();
     cBufs_[currentFrame_]->beginRenderPassCommand(
@@ -41,6 +44,8 @@ void RenderVK::frame() {
                                    { renderFinishedSemaphores_[currentFrame_] },
                                    inFlightFences_[currentFrame_],
                                    device_->graphicsQueue() );
+
+    /*
     VkPresentInfoKHR presentInfo{};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     presentInfo.waitSemaphoreCount = 1;
@@ -53,9 +58,9 @@ void RenderVK::frame() {
     presentInfo.pSwapchains = swapChains;
     presentInfo.pImageIndices = &imageIndex;
     presentInfo.pResults = nullptr;
+    */
+    present_->present( renderFinishedSemaphores_[currentFrame_], &imageIndex );
 
-    // NOTE: omit return code check
-    vkQueuePresentKHR( device_->presentQueue(), &presentInfo );
     // NOTE: omit return code check
     vkResetFences( device_->handle(), 1, &inFlightFences_[currentFrame_] );
 

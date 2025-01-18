@@ -1,4 +1,4 @@
- 
+
 #pragma once
 
 #include <vulkan/vulkan.h>
@@ -9,7 +9,7 @@
 namespace tire::vk {
 
 struct Present final {
-    Present(const vk::Device *device, const vk::Swapchain *wapchain);
+    Present( const vk::Device *device, const vk::Swapchain *swapchain );
 
     Present( const Present &other ) = delete;
     Present( Present &&other ) = delete;
@@ -18,6 +18,8 @@ struct Present final {
 
     ~Present() = default;
 
+    void present( const VkSemaphore semaphore, uint32_t *imageIndex );
+
 private:
     const vk::Device *device_{};
     const vk::Swapchain *swapchain_{};
@@ -25,4 +27,4 @@ private:
     VkPresentInfoKHR presentInfo_{};
 };
 
-}
+}  // namespace tire::vk

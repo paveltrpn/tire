@@ -89,10 +89,9 @@ Instance::Instance() {
     instanceCreateInfo.ppEnabledExtensionNames = extensionsNames_.data();
 
     // instance creation
-    const auto err =
-        vkCreateInstance( &instanceCreateInfo, nullptr, &instance_ );
-
-    if ( err != VK_SUCCESS ) {
+    if ( const auto err =
+             vkCreateInstance( &instanceCreateInfo, nullptr, &instance_ );
+         err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "can't create vk instance with code: {}\n",
                          string_VkResult( err ) ) );
@@ -101,9 +100,9 @@ Instance::Instance() {
     }
 
     if ( configPtr->get<bool>( "enable_validation_layers" ) ) {
-        const auto err = vkCreateDebugUtilsMessenger(
-            instance_, &dbgCreateInfo_, nullptr, &debugMessenger_ );
-        if ( err != VK_SUCCESS ) {
+        if ( const auto err = vkCreateDebugUtilsMessenger(
+                 instance_, &dbgCreateInfo_, nullptr, &debugMessenger_ );
+             err != VK_SUCCESS ) {
             throw std::runtime_error(
                 std::format( "failed to set up debug messenger with code {}!\n",
                              string_VkResult( err ) ) );
@@ -124,33 +123,29 @@ std::vector<char *> Instance::makeExtensionsList(
     std::vector<char *> rt{};
     uint32_t extCount{};
 
-    {
-        const auto err = vkEnumerateInstanceExtensionProperties(
-            nullptr, &extCount, nullptr );
-        if ( err != VK_SUCCESS ) {
-            throw std::runtime_error(
-                std::format( "can't enumerate instance extension "
-                             "properties with code: {}\n",
-                             string_VkResult( err ) ) );
-        } else {
-            log::debug<DEBUG_OUTPUT_INSTANCEVK_CPP>(
-                "instance extension properties value: {}", extCount );
-        }
+    if ( const auto err = vkEnumerateInstanceExtensionProperties(
+             nullptr, &extCount, nullptr );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error(
+            std::format( "can't enumerate instance extension "
+                         "properties with code: {}\n",
+                         string_VkResult( err ) ) );
+    } else {
+        log::debug<DEBUG_OUTPUT_INSTANCEVK_CPP>(
+            "instance extension properties value: {}", extCount );
     }
 
     extensionProperties_.resize( extCount );
 
-    {
-        const auto err = vkEnumerateInstanceExtensionProperties(
-            nullptr, &extCount, extensionProperties_.data() );
-        if ( err != VK_SUCCESS ) {
-            throw std::runtime_error(
-                std::format( "can't acquire instance extension properties "
-                             "with code: {}\n",
-                             string_VkResult( err ) ) );
-        } else {
-            log::info( "instance extension properties aquired" );
-        }
+    if ( const auto err = vkEnumerateInstanceExtensionProperties(
+             nullptr, &extCount, extensionProperties_.data() );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error(
+            std::format( "can't acquire instance extension properties "
+                         "with code: {}\n",
+                         string_VkResult( err ) ) );
+    } else {
+        log::info( "instance extension properties aquired" );
     }
 
     if ( list ) {
@@ -183,31 +178,27 @@ std::vector<char *> Instance::makeValidationLayersList(
     std::vector<char *> rt{};
     uint32_t layerCount;
 
-    {
-        const auto err =
-            vkEnumerateInstanceLayerProperties( &layerCount, nullptr );
-        if ( err != VK_SUCCESS ) {
-            throw std::runtime_error( std::format(
-                "can't enumerate instance layer properties with code: {}\n",
-                string_VkResult( err ) ) );
-        } else {
-            log::debug<DEBUG_OUTPUT_INSTANCEVK_CPP>(
-                "instance layer properties value: {}", layerCount );
-        }
+    if ( const auto err =
+             vkEnumerateInstanceLayerProperties( &layerCount, nullptr );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error( std::format(
+            "can't enumerate instance layer properties with code: {}\n",
+            string_VkResult( err ) ) );
+    } else {
+        log::debug<DEBUG_OUTPUT_INSTANCEVK_CPP>(
+            "instance layer properties value: {}", layerCount );
     }
 
     layerProperties_.resize( layerCount );
 
-    {
-        const auto err = vkEnumerateInstanceLayerProperties(
-            &layerCount, layerProperties_.data() );
-        if ( err != VK_SUCCESS ) {
-            throw std::runtime_error( std::format(
-                "can't acquire instance layer properties with code: {}\n",
-                string_VkResult( err ) ) );
-        } else {
-            log::info( "instance layer properties acquired" );
-        }
+    if ( const auto err = vkEnumerateInstanceLayerProperties(
+             &layerCount, layerProperties_.data() );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error( std::format(
+            "can't acquire instance layer properties with code: {}\n",
+            string_VkResult( err ) ) );
+    } else {
+        log::info( "instance layer properties acquired" );
     }
 
     if ( list ) {

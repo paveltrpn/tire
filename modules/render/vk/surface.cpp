@@ -17,9 +17,10 @@ Surface::Surface( Display *display, Window window,
     xlibSurfInfo_.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
     xlibSurfInfo_.dpy = display;
     xlibSurfInfo_.window = window;
-    const auto err = vkCreateXlibSurfaceKHR(
-        instance_->handle(), &xlibSurfInfo_, nullptr, &surface_ );
-    if ( err != VK_SUCCESS ) {
+
+    if ( const auto err = vkCreateXlibSurfaceKHR(
+             instance_->handle(), &xlibSurfInfo_, nullptr, &surface_ );
+         err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create xlib surface with code {}\n!",
                          string_VkResult( err ) ) );

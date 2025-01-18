@@ -18,6 +18,7 @@
 #include "pipelines/pipeline.h"
 #include "commands/commands.h"
 #include "command_pool.h"
+#include "present.h"
 
 #include "config/config.h"
 #include "../render.h"
@@ -56,6 +57,7 @@ private:
     std::unique_ptr<vk::PiplineSimple> pipelineSimple_{};
     std::unique_ptr<vk::CommandPool> commandPool_{};
     std::vector<std::unique_ptr<vk::CommandBuffer>> cBufs_{};
+    std::unique_ptr<vk::Present> present_{};
 
     std::vector<VkSemaphore> imageAvailableSemaphores_{};
     std::vector<VkSemaphore> renderFinishedSemaphores_{};
