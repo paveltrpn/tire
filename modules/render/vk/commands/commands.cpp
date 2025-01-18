@@ -40,7 +40,7 @@ void CommandBuffer::beginRenderPassCommand( VkFramebuffer framebuffer,
     beginInfo.flags = 0;                   // Optional
     beginInfo.pInheritanceInfo = nullptr;  // Optional
 
-    // NOTE: omit return code control
+    // NOTE: omit return code check
     vkBeginCommandBuffer( commandBuffer_, &beginInfo );
 
     VkRenderPassBeginInfo renderPassInfo{};
@@ -63,6 +63,25 @@ void CommandBuffer::beginRenderPassCommand( VkFramebuffer framebuffer,
     vkCmdBindPipeline( commandBuffer_, VK_PIPELINE_BIND_POINT_GRAPHICS,
                        pipeline->pipeline() );
 
+    // Dynamic viewport. No performance penalty.
+    // Take out work from pipeline creation.
+    const auto width = device_->extent().width;
+    const auto height = device_->extent().height;
+
+    VkViewport viewport{};
+    viewport.x = 0.0f;
+    viewport.y = 0.0f;
+    viewport.width = static_cast<float>( width );
+    viewport.height = static_cast<float>( height );
+    viewport.minDepth = 0.0f;
+    viewport.maxDepth = 1.0f;
+    vkCmdSetViewport( commandBuffer_, 0, 1, &viewport );
+
+    VkRect2D scissor{};
+    scissor.offset = { .x = 0, .y = 0 };
+    scissor.extent = { .width = width, .height = height };
+    vkCmdSetScissor( commandBuffer_, 0, 1, &scissor );
+
     // vertexCount: Even though we don’t have a vertex buffer, we technically
     // still have 3 vertices to draw.
 
@@ -78,7 +97,7 @@ void CommandBuffer::beginRenderPassCommand( VkFramebuffer framebuffer,
 
     vkCmdEndRenderPass( commandBuffer_ );
 
-    // NOTE: omit return code control
+    // NOTE: omit return code check
     vkEndCommandBuffer( commandBuffer_ );
 }
 
@@ -97,12 +116,8 @@ void CommandBuffer::submit( const std::vector<VkSemaphore> &waitSemaphores,
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores.data();
 
-    if ( const auto err = vkQueueSubmit( queue, 1, &submitInfo, fence );
-         err != VK_SUCCESS ) {
-        throw std::runtime_error(
-            std::format( "failed to submit draw command buffer with code {}!",
-                         string_VkResult( err ) ) );
-    }
+    // NOTE: omit return code check
+    vkQueueSubmit( queue, 1, &submitInfo, fence );
 }
 
 }  // namespace tire::vk

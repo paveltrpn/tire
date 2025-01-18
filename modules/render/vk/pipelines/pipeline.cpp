@@ -34,6 +34,7 @@ void PiplineSimple::initFixed() {
     inputAssembly_.pNext = nullptr;
     inputAssembly_.flags = 0;
 
+    /*
     const auto width = device_->extent().width;
     const auto height = device_->extent().height;
 
@@ -58,6 +59,7 @@ void PiplineSimple::initFixed() {
     viewportState_.pScissors = &scissor_;
     viewportState_.pNext = nullptr;
     viewportState_.flags = 0;
+    */
 
     // VkPipelineRasterizationStateCreateInfo
     rasterizer_.sType =
@@ -274,7 +276,7 @@ void PiplineSimple::initPipeline() {
     pipelineInfo.pStages = shaderStages;
     pipelineInfo.pVertexInputState = &vertexInput_;
     pipelineInfo.pInputAssemblyState = &inputAssembly_;
-    pipelineInfo.pViewportState = &viewportState_;
+    pipelineInfo.pViewportState = nullptr;  //&viewportState_;
     pipelineInfo.pRasterizationState = &rasterizer_;
     pipelineInfo.pMultisampleState = &multisampling_;
     pipelineInfo.pDepthStencilState = nullptr;  // Optional
