@@ -34,7 +34,7 @@ void ShaderStorage::add( const std::filesystem::path &path ) {
 
     const auto name = path.stem().string();
 
-    size_t fileSize = (size_t)file.tellg();
+    const size_t fileSize = (size_t)file.tellg();
     std::vector<char> buffer( fileSize );
     file.seekg( 0 );
     file.read( buffer.data(), fileSize );
@@ -46,15 +46,15 @@ void ShaderStorage::add( const std::filesystem::path &path ) {
     createInfo.pCode = reinterpret_cast<const uint32_t *>( buffer.data() );
 
     VkShaderModule module;
-    const auto err = vkCreateShaderModule( device_->handle(), &createInfo,
-                                           nullptr, &module );
-    if ( err != VK_SUCCESS ) {
+    if ( const auto err = vkCreateShaderModule( device_->handle(), &createInfo,
+                                                nullptr, &module );
+         err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create shader module {} with code {}!",
                          name, string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_SHADER_STORAGE_VK_CPP>(
-            "shader module {} created!", name );
+            "vk::ShaderStorage: shader module {} created!", name );
     }
 
     modules_[name] = module;
@@ -87,6 +87,18 @@ void ShaderStorage::list() {
     for ( const auto &key : modules_ ) {
         log::debug<DEBUG_OUTPUT_SHADER_STORAGE_VK_CPP>(
             "available shader module: \"{}\"", std::get<0>( key ) );
+    }
+}
+
+void ShaderStorage::fill( const std::vector<std::filesystem::path> &files ) {
+    if ( files.size() < 2 ) {
+        throw std::runtime_error( std::format(
+            "vk::ShaderStorage: pipeline shader storage must "
+            "contains at least vertex and fragment shader stages!" ) );
+    }
+
+    for ( const auto &item : files ) {
+        add( item );
     }
 }
 

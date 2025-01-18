@@ -9,8 +9,9 @@
 namespace tire::vk {
 
 struct Pipeline {
-    Pipeline( const vk::Device *device )
-        : device_{ device } {}
+    Pipeline( const vk::Device *device, const vk::ShaderStorage *storage )
+        : device_{ device }
+        , shaderStorage_{ storage } {}
 
     Pipeline( const Pipeline &other ) = delete;
     Pipeline( Pipeline &&other ) = delete;
@@ -26,6 +27,9 @@ struct Pipeline {
     };
 
     [[nodiscard]] VkRenderPass renderpass() const { return renderPass_; }
+
+private:
+    void fillShaderStorage( std::vector<std::filesystem::path> files );
 
 protected:
     const vk::Device *device_;
@@ -62,14 +66,11 @@ protected:
 };
 
 struct PiplineSimple final : Pipeline {
-    PiplineSimple( const vk::Device *device )
-        : Pipeline( device ) {}
+    PiplineSimple( const vk::Device *device, const vk::ShaderStorage *storage )
+        : Pipeline( device, storage ) {}
 
     void initFixed();
-    void initProgable( VkShaderModule vert, VkShaderModule frag,
-                       VkShaderModule tessctrl, VkShaderModule tesseval,
-                       VkShaderModule geom, VkShaderModule compute,
-                       VkShaderModule raygen );
+    void initProgable();
     void initLayout();
     void initRenderPass();
     void initPipeline();

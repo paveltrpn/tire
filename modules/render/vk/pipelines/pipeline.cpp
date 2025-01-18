@@ -133,18 +133,14 @@ void PiplineSimple::initFixed() {
     dynamicState_.flags = 0;
 }
 
-void PiplineSimple::initProgable( VkShaderModule vert, VkShaderModule frag,
-                                  VkShaderModule tessctrl,
-                                  VkShaderModule tesseval, VkShaderModule geom,
-                                  VkShaderModule compute,
-                                  VkShaderModule raygen ) {
+void PiplineSimple::initProgable() {
     // VkPipelineShaderStageCreateInfo
     vertShaderStage_.sType =
         VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     vertShaderStage_.pNext = nullptr;
     vertShaderStage_.flags = 0;
     vertShaderStage_.stage = VK_SHADER_STAGE_VERTEX_BIT;
-    vertShaderStage_.module = vert;
+    vertShaderStage_.module = shaderStorage_->get<ShaderStageType::VERTEX>();
     vertShaderStage_.pName = "main";
 
     // VkPipelineShaderStageCreateInfo
@@ -153,7 +149,8 @@ void PiplineSimple::initProgable( VkShaderModule vert, VkShaderModule frag,
     vertShaderStage_.pNext = nullptr;
     vertShaderStage_.flags = 0;
     fragShaderStage_.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-    fragShaderStage_.module = frag;
+    fragShaderStage_.module = shaderStorage_->get<ShaderStageType::FRAGMENT>();
+    ;
     fragShaderStage_.pName = "main";
 
     // VkPipelineShaderStageCreateInfo
@@ -162,7 +159,9 @@ void PiplineSimple::initProgable( VkShaderModule vert, VkShaderModule frag,
     tessctrlShaderStage_.pNext = nullptr;
     tessctrlShaderStage_.flags = 0;
     tessctrlShaderStage_.stage = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
-    tessctrlShaderStage_.module = tessctrl;
+    tessctrlShaderStage_.module =
+        shaderStorage_->get<ShaderStageType::TESSELATION_CTRL>();
+    ;
     tessctrlShaderStage_.pName = "main";
 
     // VkPipelineShaderStageCreateInfo
@@ -171,7 +170,9 @@ void PiplineSimple::initProgable( VkShaderModule vert, VkShaderModule frag,
     tessevalShaderStage_.pNext = nullptr;
     tessevalShaderStage_.flags = 0;
     tessevalShaderStage_.stage = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
-    tessevalShaderStage_.module = tesseval;
+    tessevalShaderStage_.module =
+        shaderStorage_->get<ShaderStageType::TESSELATION_EVAL>();
+    ;
     tessevalShaderStage_.pName = "main";
 
     // VkPipelineShaderStageCreateInfo
@@ -180,7 +181,8 @@ void PiplineSimple::initProgable( VkShaderModule vert, VkShaderModule frag,
     geomShaderStage_.pNext = nullptr;
     geomShaderStage_.flags = 0;
     geomShaderStage_.stage = VK_SHADER_STAGE_GEOMETRY_BIT;
-    geomShaderStage_.module = geom;
+    geomShaderStage_.module = shaderStorage_->get<ShaderStageType::GEOMETRY>();
+    ;
     geomShaderStage_.pName = "main";
 
     // VkPipelineShaderStageCreateInfo
@@ -189,7 +191,9 @@ void PiplineSimple::initProgable( VkShaderModule vert, VkShaderModule frag,
     computeShaderStage_.pNext = nullptr;
     computeShaderStage_.flags = 0;
     computeShaderStage_.stage = VK_SHADER_STAGE_COMPUTE_BIT;
-    computeShaderStage_.module = compute;
+    computeShaderStage_.module =
+        shaderStorage_->get<ShaderStageType::COMPUTE>();
+    ;
     computeShaderStage_.pName = "main";
 
     // VkPipelineShaderStageCreateInfo
@@ -198,7 +202,9 @@ void PiplineSimple::initProgable( VkShaderModule vert, VkShaderModule frag,
     raygenShaderStage_.pNext = nullptr;
     raygenShaderStage_.flags = 0;
     raygenShaderStage_.stage = VK_SHADER_STAGE_RAYGEN_BIT_KHR;
-    raygenShaderStage_.module = raygen;
+    raygenShaderStage_.module =
+        shaderStorage_->get<ShaderStageType::RAYTACING>();
+    ;
     raygenShaderStage_.pName = "main";
 }
 
