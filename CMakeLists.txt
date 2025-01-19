@@ -48,6 +48,7 @@ add_library(log
 add_compile_definitions(ENABLE_DEBUG_OUTPUT=false)
 add_compile_definitions(ENABLE_WARNING_OUTPUT=true)
 add_compile_definitions(ENABLE_INFO_OUTPUT=true)
+add_compile_definitions(ENABLE_NOTICE_OUTPUT=true)
 add_compile_definitions(ENABLE_ERROR_OUTPUT=true)
 set_target_properties(log PROPERTIES LINKER_LANGUAGE CXX)
 
