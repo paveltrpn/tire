@@ -43,13 +43,14 @@ RenderVK::RenderVK()
         swapchain_->createSwapchain();
         swapchain_->createImageViews();
 
+        renderpass_ = std::make_unique<vk::RenderpassSimple>( device_.get() );
+
         // Create pipeline (maybe add more)
         pipelineSimple_ = std::make_unique<vk::PiplineSimple>(
-            device_.get(), shaderStorage_.get() );
+            device_.get(), shaderStorage_.get(), renderpass_.get() );
         pipelineSimple_->initFixed();
         pipelineSimple_->initProgable();
         pipelineSimple_->initLayout();
-        pipelineSimple_->initRenderPass();
         pipelineSimple_->initPipeline();
         pipelineSimple_->initFixed();
 
