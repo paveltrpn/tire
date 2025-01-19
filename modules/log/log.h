@@ -42,7 +42,7 @@ namespace tire::log {
 template <bool enable = false, typename... Ts>
 void info( std::format_string<Ts...> msg, Ts &&...args ) {
     if constexpr ( enable || ENABLE_INFO_OUTPUT ) {
-        constexpr char preamble[] = "\033[3;32m[info] \033[0m";
+        constexpr char preamble[] = "\033[3;32m[info] \033[0m\t\t";
         std::cout << preamble
                   << std::vformat( msg.get(), std::make_format_args( args... ) )
                   << "\n";
@@ -52,7 +52,7 @@ void info( std::format_string<Ts...> msg, Ts &&...args ) {
 template <bool enable, typename... Ts>
 void debug( std::format_string<Ts...> msg, Ts &&...args ) {
     if constexpr ( enable || ENABLE_DEBUG_OUTPUT ) {
-        constexpr char preamble[] = "\033[3;35m[debug] \033[0m";
+        constexpr char preamble[] = "\033[3;35m[debug] \033[0m\t";
         std::cout << preamble
                   << std::vformat( msg.get(), std::make_format_args( args... ) )
                   << "\n";
@@ -62,7 +62,7 @@ void debug( std::format_string<Ts...> msg, Ts &&...args ) {
 template <bool enable = false, typename... Ts>
 void warning( std::format_string<Ts...> msg, Ts &&...args ) {
     if constexpr ( enable || ENABLE_WARNING_OUTPUT ) {
-        constexpr char preamble[] = "\033[3;33m[warning] \033[0m";
+        constexpr char preamble[] = "\033[3;33m[warning] \033[0m\t";
         std::cout << preamble
                   << std::vformat( msg.get(), std::make_format_args( args... ) )
                   << "\n";
@@ -72,7 +72,7 @@ void warning( std::format_string<Ts...> msg, Ts &&...args ) {
 template <bool enable = false, typename... Ts>
 void error( std::format_string<Ts...> msg, Ts &&...args ) {
     if constexpr ( enable || ENABLE_ERROR_OUTPUT ) {
-        constexpr char preamble[] = "\033[3;31m[error] \033[0m";
+        constexpr char preamble[] = "\033[3;31m[error] \033[0m\t";
         std::cout << preamble
                   << std::vformat( msg.get(), std::make_format_args( args... ) )
                   << "\n";

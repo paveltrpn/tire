@@ -49,7 +49,7 @@ Device::Device( const vk::Instance *instance, const vk::Surface *surface )
 
         VkPhysicalDeviceProperties devProps;
         vkGetPhysicalDeviceProperties( device, &devProps );
-        log::info( "device name: {}", devProps.deviceName );
+        log::info( "vk::Device: name: {}", devProps.deviceName );
 
         VkPhysicalDeviceFeatures devFeatures;
         vkGetPhysicalDeviceFeatures( device, &devFeatures );
@@ -119,7 +119,8 @@ void Device::pickAndCreateDevice( size_t id ) {
     // Check is physical device suitable, can be done acoording to
     // physical devices properties and physical device queue families properies
 
-    log::info( "pick device: {}", physicalDevices_[id].properties.deviceName );
+    log::info( "vk::Device: pick {}",
+               physicalDevices_[id].properties.deviceName );
 
     // Condition: we pick discreete GPU
     const auto &deviceProps = physicalDevices_[id].properties;
@@ -273,6 +274,10 @@ void Device::pickAndCreateDevice( size_t id ) {
     // NOTE: Make choose liitle wiser in future
 #define CHOSEN_SURFACE_FORMAT 0
     surfaceFormat_ = surfaceFormats_[CHOSEN_SURFACE_FORMAT];
+
+    log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
+        "vk::Device: device format is {}",
+        string_VkFormat( surfaceFormat_.format ) );
 
     // physical device present modes
     uint32_t presentModeCount;
