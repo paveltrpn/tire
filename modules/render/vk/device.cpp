@@ -22,7 +22,7 @@ Device::Device( const vk::Instance *instance, const vk::Surface *surface )
                          string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-            "vk::Device: physical devices enumerate success, count: {}",
+            "vk::Device === physical devices enumerate success, count: {}",
             devCount );
     }
 
@@ -40,16 +40,16 @@ Device::Device( const vk::Instance *instance, const vk::Surface *surface )
                          string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-            "vk::Device: physical devices acquire success" );
+            "vk::Device === physical devices acquire success" );
     }
 
-    log::info( "vk::Device: collect physical device info..." );
+    log::info( "vk::Device === collect physical device info..." );
     for ( const auto device : physicalDevices ) {
         // Collect physical devices and its properties
 
         VkPhysicalDeviceProperties devProps;
         vkGetPhysicalDeviceProperties( device, &devProps );
-        log::info( "vk::Device: name: {}", devProps.deviceName );
+        log::info( "vk::Device === name: {}", devProps.deviceName );
 
         VkPhysicalDeviceFeatures devFeatures;
         vkGetPhysicalDeviceFeatures( device, &devFeatures );
@@ -62,7 +62,7 @@ Device::Device( const vk::Instance *instance, const vk::Surface *surface )
         vkGetPhysicalDeviceQueueFamilyProperties( device, &queueFamilyCount,
                                                   qfp.data() );
         log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-            "vk::Device: device queue family count: {}", queueFamilyCount );
+            "vk::Device === device queue family count: {}", queueFamilyCount );
 
         uint32_t extensionCount{};
         if ( const auto err = vkEnumerateDeviceExtensionProperties(
@@ -74,7 +74,7 @@ Device::Device( const vk::Instance *instance, const vk::Surface *surface )
                              string_VkResult( err ) ) );
         } else {
             log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-                "vk::Device: physical device extensions enumerated for "
+                "vk::Device === physical device extensions enumerated for "
                 "device: {}, "
                 "count: {}",
                 devProps.deviceName, extensionCount );
@@ -92,7 +92,8 @@ Device::Device( const vk::Instance *instance, const vk::Surface *surface )
                              string_VkResult( err ) ) );
         } else {
             log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-                "vk::Device: physical device extensions acquired for device: "
+                "vk::Device === physical device extensions acquired for "
+                "device: "
                 "{}",
                 devProps.deviceName );
         }
@@ -119,7 +120,7 @@ void Device::pickAndCreateDevice( size_t id ) {
     // Check is physical device suitable, can be done acoording to
     // physical devices properties and physical device queue families properies
 
-    log::info( "vk::Device: pick {}",
+    log::info( "vk::Device === pick {}",
                physicalDevices_[id].properties.deviceName );
 
     // Condition: we pick discreete GPU
@@ -149,7 +150,7 @@ void Device::pickAndCreateDevice( size_t id ) {
                              string_VkResult( err ) ) );
         } else {
             log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-                "vk::Device: device surface support for "
+                "vk::Device === device surface support for "
                 "presentation acquire success!" );
         }
 
@@ -159,9 +160,9 @@ void Device::pickAndCreateDevice( size_t id ) {
         i++;
     }
 
-    log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>( "vk::Device: graphics family: {}",
+    log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>( "vk::Device === graphics family: {}",
                                            graphicsFamily_ );
-    log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>( "vk::Device: present family: {}",
+    log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>( "vk::Device === present family: {}",
                                            presentFamily_ );
 
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
@@ -209,7 +210,7 @@ void Device::pickAndCreateDevice( size_t id ) {
             std::format( "failed to create logical device with code {}!\n",
                          string_VkResult( err ) ) );
     } else {
-        log::info( "vk::Device: logical device create success!" );
+        log::info( "vk::Device === logical device create success!" );
     }
 
     vkGetDeviceQueue( device_, graphicsFamily_, 0, &graphicsQueue_ );
@@ -226,7 +227,7 @@ void Device::pickAndCreateDevice( size_t id ) {
             string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-            "vk::Device: physical device surface capabilities acquire "
+            "vk::Device === physical device surface capabilities acquire "
             "success!" );
     }
 
@@ -247,7 +248,8 @@ void Device::pickAndCreateDevice( size_t id ) {
                          string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-            "vk::Device: physical device surface formats count obtain success, "
+            "vk::Device === physical device surface formats count obtain "
+            "success, "
             "count: "
             "{}",
             formatCount );
@@ -265,7 +267,7 @@ void Device::pickAndCreateDevice( size_t id ) {
                          string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-            "vk::Device: physical device surface formats acquire "
+            "vk::Device === physical device surface formats acquire "
             "success!" );
     }
 
@@ -276,7 +278,7 @@ void Device::pickAndCreateDevice( size_t id ) {
     surfaceFormat_ = surfaceFormats_[CHOSEN_SURFACE_FORMAT];
 
     log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-        "vk::Device: device format is {}",
+        "vk::Device === device format is {}",
         string_VkFormat( surfaceFormat_.format ) );
 
     // physical device present modes
@@ -291,7 +293,8 @@ void Device::pickAndCreateDevice( size_t id ) {
                          string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-            "vk::Device: physical device present modes count obtain success, "
+            "vk::Device === physical device present modes count obtain "
+            "success, "
             "count: "
             "{}",
             presentModeCount );
@@ -309,7 +312,7 @@ void Device::pickAndCreateDevice( size_t id ) {
                          string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-            "vk::Device: physical device present modes acquire success!" );
+            "vk::Device === physical device present modes acquire success!" );
     }
 
     // This present mode will be used across application, in

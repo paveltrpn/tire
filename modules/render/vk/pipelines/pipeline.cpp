@@ -219,7 +219,7 @@ void PiplineSimple::initLayout() {
             std::format( "failed to create pipeline layout with code {}!",
                          string_VkResult( err ) ) );
     } else {
-        log::info( "vk::PipelineSimple: pipeline layout created!" );
+        log::info( "vk::PipelineSimple === pipeline layout created!" );
     }
 }
 
@@ -258,7 +258,7 @@ void PiplineSimple::initRenderPass() {
             std::format( "failed to create render pass with code {}!",
                          string_VkResult( err ) ) );
     } else {
-        log::info( "vk::PipelineSimple: render pass created!" );
+        log::info( "vk::PipelineSimple === render pass created!" );
     }
 }
 
@@ -296,7 +296,7 @@ void PiplineSimple::initPipeline() {
             std::format( "failed to create graphics pipeline with code {}!",
                          string_VkResult( err ) ) );
     } else {
-        log::info( "vk::Pipeline: graphics pipeline created!" );
+        log::info( "vk::PipelineSimple === graphics pipeline created!" );
     }
 }
 

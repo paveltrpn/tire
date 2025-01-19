@@ -39,7 +39,7 @@ void ShaderStorage::add( const std::filesystem::path &path ) {
     // suffix - i.e. something from set "VERTEX", "FRAGMENT" etc.
     if ( !isValidName( name ) ) {
         throw std::runtime_error( std::format(
-            "vk::ShaderStorage: shader file name \"{}\" not satisfies naming "
+            "vk::ShaderStorage == shader file name \"{}\" not satisfies naming "
             "convention",
             name ) );
     }
@@ -47,7 +47,8 @@ void ShaderStorage::add( const std::filesystem::path &path ) {
     // Check if shader module with name exist in modules map
     if ( modules_.contains( name ) ) {
         log::warning(
-            "vk::ShaderStorage: shader module with name \"{}\" exist, no need "
+            "vk::ShaderStorage == shader module with name \"{}\" exist, no "
+            "need "
             "to "
             "replace it",
             name );
@@ -75,7 +76,8 @@ void ShaderStorage::add( const std::filesystem::path &path ) {
     const auto suffix = split( name, "_" ).back();
     if ( checkStageExist( suffix ) ) {
         log::warning(
-            "vk::ShaderStorage: shader module for stage \"{}\" exist, no need "
+            "vk::ShaderStorage == shader module for stage \"{}\" exist, no "
+            "need "
             "to "
             "replace it",
             suffix );
@@ -103,7 +105,7 @@ void ShaderStorage::add( const std::filesystem::path &path ) {
                          name, string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_SHADER_STORAGE_VK_CPP>(
-            "vk::ShaderStorage: shader module {} created!", name );
+            "vk::ShaderStorage == shader module {} created!", name );
     }
 
     modules_[name] = module;
@@ -142,7 +144,7 @@ void ShaderStorage::list() {
 void ShaderStorage::fill( const std::vector<std::filesystem::path> &files ) {
     if ( files.size() < 2 ) {
         throw std::runtime_error( std::format(
-            "vk::ShaderStorage: pipeline shader storage must "
+            "vk::ShaderStorage == pipeline shader storage must "
             "contains at least vertex and fragment shader stages!" ) );
     }
 

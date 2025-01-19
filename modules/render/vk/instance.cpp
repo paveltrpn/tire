@@ -96,7 +96,7 @@ Instance::Instance() {
             std::format( "can't create vk instance with code: {}\n",
                          string_VkResult( err ) ) );
     } else {
-        log::info( "vulkan instance created!" );
+        log::info( "vk::Instance === vulkan instance created!" );
     }
 
     if ( configPtr->get<bool>( "enable_validation_layers" ) ) {
@@ -132,7 +132,7 @@ std::vector<char *> Instance::makeExtensionsList(
                          string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_INSTANCEVK_CPP>(
-            "instance extension properties value: {}", extCount );
+            "vk::Instance === extension properties value: {}", extCount );
     }
 
     extensionProperties_.resize( extCount );
@@ -145,7 +145,7 @@ std::vector<char *> Instance::makeExtensionsList(
                          "with code: {}\n",
                          string_VkResult( err ) ) );
     } else {
-        log::info( "instance extension properties aquired" );
+        log::info( "vk::Instance === extension properties aquired" );
     }
 
     if ( list ) {
@@ -186,7 +186,7 @@ std::vector<char *> Instance::makeValidationLayersList(
             string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_INSTANCEVK_CPP>(
-            "instance layer properties value: {}", layerCount );
+            "vk::Instance === layer properties value: {}", layerCount );
     }
 
     layerProperties_.resize( layerCount );
@@ -198,7 +198,7 @@ std::vector<char *> Instance::makeValidationLayersList(
             "can't acquire instance layer properties with code: {}\n",
             string_VkResult( err ) ) );
     } else {
-        log::info( "instance layer properties acquired" );
+        log::info( "vk::Instance === layer properties acquired" );
     }
 
     if ( list ) {

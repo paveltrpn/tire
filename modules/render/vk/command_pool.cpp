@@ -22,7 +22,7 @@ CommandPool::CommandPool( const vk::Device *device )
                          string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_COMMAND_POOL_CPP>(
-            "vk::CommandPool: command pool created!" );
+            "vk::CommandPool === command pool created!" );
     }
 }
 

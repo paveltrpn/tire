@@ -30,7 +30,8 @@ Render::Render() {
             throw std::runtime_error(
                 std::format( "uv loop init failed with code {}", res ) );
         } else {
-            log::debug<DEBUG_OUTPUT_RENDER_CPP>( "uv loop init success" );
+            log::debug<DEBUG_OUTPUT_RENDER_CPP>(
+                "Render === uv loop init success" );
         }
     }
 
@@ -45,7 +46,7 @@ Render::Render() {
             throw std::runtime_error(
                 std::format( "uv idle start failed with code {}", res ) );
         } else {
-            log::debug<DEBUG_OUTPUT_RENDER_CPP>( "uv idle started" );
+            log::debug<DEBUG_OUTPUT_RENDER_CPP>( "Render === uv idle started" );
         }
     }
 }
@@ -60,11 +61,12 @@ Render::~Render() {
 }
 
 void Render::openDisplay() {
-    log::info( "open X11 display..." );
     display_ = XOpenDisplay( nullptr );
 
     if ( !display_ ) {
         throw std::runtime_error( "failed to open X display" );
+    } else {
+        log::info( "Render === open X11 display" );
     }
 }
 
@@ -97,7 +99,7 @@ bool Render::isExtensionSupported( const char *extList,
 }
 
 void Render::configureX11() {
-    log::info( "begin configure X11..." );
+    log::info( "Render === begin configure X11..." );
 
     // Get a matching FB config
     constexpr std::array<int, 23> visual_attribs = {
@@ -117,7 +119,7 @@ void Render::configureX11() {
     }
 
     // Pick the FB config/visual with the most samples per pixel
-    log::info( "getting XVisualInfos..." );
+    log::info( "Render === getting XVisualInfos..." );
     int best_fbc = -1, worst_fbc = -1, best_num_samp = -1, worst_num_samp = 999;
 
     for ( auto i = 0; i < fbcount; ++i ) {
@@ -151,7 +153,7 @@ void Render::configureX11() {
 
     // Get a visual
     XVisualInfo *vi = glXGetVisualFromFBConfig( display_, bestFbc_ );
-    log::info( "chosen visual ID: {}", vi->visualid );
+    log::info( "Render === chosen visual ID: {}", vi->visualid );
 
     // create colormap
     XSetWindowAttributes swa;
@@ -162,9 +164,6 @@ void Render::configureX11() {
     swa.event_mask = StructureNotifyMask;
 
     // create window
-
-    log::info( "create a X11 window..." );
-
     auto cptr = Config::instance();
     posx_ = cptr->get<int>( "window_pos_x", 100 );
     posy_ = cptr->get<int>( "window_pos_y", 100 );
@@ -178,6 +177,8 @@ void Render::configureX11() {
 
     if ( !window_ ) {
         throw std::runtime_error( "failed to create window" );
+    } else {
+        log::info( "Render === X11 window created" );
     }
 
     // Forbid to resize window by borders drag
@@ -249,7 +250,7 @@ void Render::run() {
 
     const auto res = uv_run( loop_, UV_RUN_DEFAULT );
     if ( res != 0 ) {
-        log::error( "uv run end with error {}", res );
+        log::warning( "Render === uv run end with code {}", res );
     }
 
     postLoop();

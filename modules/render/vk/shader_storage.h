@@ -119,7 +119,7 @@ struct ShaderStorage final {
         }
 
         log::warning(
-            "vk::ShaderStorage: shader module with suffix \"{}\" not found!",
+            "vk::ShaderStorage == shader module with suffix \"{}\" not found!",
             suffix );
 
         return VK_NULL_HANDLE;

@@ -25,7 +25,8 @@ CommandBuffer::CommandBuffer( const vk::Device *device,
             std::format( "failed to allocate command buffers with code {}!",
                          string_VkResult( err ) ) );
     } else {
-        log::debug<DEBUG_OUTPUT_COMMAND_POOL_CPP>( "command buffer created!" );
+        log::debug<DEBUG_OUTPUT_COMMAND_POOL_CPP>(
+            "vk::CommandBuffer === created!" );
     };
 }
 

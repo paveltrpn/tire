@@ -25,7 +25,7 @@ Surface::Surface( Display *display, Window window,
             std::format( "failed to create xlib surface with code {}\n!",
                          string_VkResult( err ) ) );
     } else {
-        log::info( "vulkan xlib surface created!" );
+        log::info( "vk::Surface === xlib surface created!" );
     }
 }
 
