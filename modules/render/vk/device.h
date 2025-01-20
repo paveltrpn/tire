@@ -38,8 +38,7 @@ struct Device final {
 
     [[nodiscard]] VkExtent2D extent() const { return currentExtent_; };
 
-    void pickAndCreateDevice(
-        size_t id );  // TODO: make physical device pick smarter
+    void pickAndCreateDevice();
 
     void displayRenderInfo();
     void displayPhysicalDeviceProperties( size_t id );

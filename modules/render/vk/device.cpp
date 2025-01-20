@@ -115,24 +115,31 @@ VkDevice Device::handle() const {
     return device_;
 }
 
-void Device::pickAndCreateDevice( size_t id ) {
+void Device::pickAndCreateDevice() {
     // Create a new device instance. A logical device is created as a connection to a physical device.
     // Check is physical device suitable, can be done acoording to
     // physical devices properties and physical device queue families properies
 
-    log::info( "vk::Device === pick {}",
-               physicalDevices_[id].properties.deviceName );
-
+    int pickedPhysicalDeviceId{ -1 };
     // Condition: we pick discreete GPU
-    const auto &deviceProps = physicalDevices_[id].properties;
-    if ( !( deviceProps.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU ) ) {
-        throw std::runtime_error(
-            "picked physical device is not discrete GPU!" );
+    for ( auto i{ 0 }; const auto &physicalDevice : physicalDevices_ ) {
+        const auto &deviceProps = physicalDevice.properties;
+        if ( ( deviceProps.deviceType ==
+               VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU ) ) {
+            pickedPhysicalDeviceId = i;
+            log::info( "vk::Device === pick {}",
+                       physicalDevices_[pickedPhysicalDeviceId]
+                           .properties.deviceName );
+            break;
+        } else {
+            throw std::runtime_error( "no discreet physical devices found!" );
+        }
+        ++i;
     }
 
-    int i{};
-    for ( const auto &queueFamily :
-          physicalDevices_[id].queueFamilyProperties ) {
+    for ( auto i{ 0 };
+          const auto &queueFamily :
+          physicalDevices_[pickedPhysicalDeviceId].queueFamilyProperties ) {
         // Condition: we need queue with VK_QUEUE_GRAPHICS_BIT
         if ( queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT ) {
             graphicsFamily_ = i;
@@ -141,8 +148,8 @@ void Device::pickAndCreateDevice( size_t id ) {
         VkBool32 presentSupport = false;
         // Condition: we need device that support surface presentation
         if ( const auto err = vkGetPhysicalDeviceSurfaceSupportKHR(
-                 physicalDevices_[id].device, i, surface_->handle(),
-                 &presentSupport );
+                 physicalDevices_[pickedPhysicalDeviceId].device, i,
+                 surface_->handle(), &presentSupport );
              err != VK_SUCCESS ) {
             throw std::runtime_error(
                 std::format( "failed to get device surface support for "
@@ -157,7 +164,7 @@ void Device::pickAndCreateDevice( size_t id ) {
         if ( presentSupport ) {
             presentFamily_ = i;
         }
-        i++;
+        ++i;
     }
 
     log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>( "vk::Device === graphics family: {}",
@@ -185,7 +192,8 @@ void Device::pickAndCreateDevice( size_t id ) {
     deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
     deviceCreateInfo.queueCreateInfoCount =
         static_cast<uint32_t>( queueCreateInfos.size() );
-    deviceCreateInfo.pEnabledFeatures = &physicalDevices_[id].features;
+    deviceCreateInfo.pEnabledFeatures =
+        &physicalDevices_[pickedPhysicalDeviceId].features;
 
     std::vector<const char *> desiredExtensionsList{};
     desiredExtensionsList.emplace_back( "VK_KHR_swapchain" );
@@ -193,6 +201,11 @@ void Device::pickAndCreateDevice( size_t id ) {
     desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_pipeline" );
     desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_maintenance1" );
     desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_position_fetch" );
+    desiredExtensionsList.emplace_back( "VK_KHR_acceleration_structure" );
+    desiredExtensionsList.emplace_back( "VK_EXT_descriptor_indexing" );
+    desiredExtensionsList.emplace_back( "VK_KHR_maintenance3" );
+    desiredExtensionsList.emplace_back( "VK_KHR_buffer_device_address" );
+    desiredExtensionsList.emplace_back( "VK_KHR_deferred_host_operations" );
 
     deviceCreateInfo.enabledExtensionCount =
         static_cast<uint32_t>( desiredExtensionsList.size() );
@@ -208,8 +221,8 @@ void Device::pickAndCreateDevice( size_t id ) {
 
     // Create a logical device
     if ( const auto err =
-             vkCreateDevice( physicalDevices_[id].device, &deviceCreateInfo,
-                             nullptr, &device_ );
+             vkCreateDevice( physicalDevices_[pickedPhysicalDeviceId].device,
+                             &deviceCreateInfo, nullptr, &device_ );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create logical device with code {}!\n",
@@ -224,8 +237,8 @@ void Device::pickAndCreateDevice( size_t id ) {
     // physical device surface capabilities
 
     if ( const auto err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-             physicalDevices_[id].device, surface_->handle(),
-             &surfaceCapabilities_ );
+             physicalDevices_[pickedPhysicalDeviceId].device,
+             surface_->handle(), &surfaceCapabilities_ );
          err != VK_SUCCESS ) {
         throw std::runtime_error( std::format(
             "failed to obtain surface capabilities with code {}!\n",
@@ -244,8 +257,8 @@ void Device::pickAndCreateDevice( size_t id ) {
     // physical device surface formats
     uint32_t formatCount;
     if ( const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR(
-             physicalDevices_[id].device, surface_->handle(), &formatCount,
-             nullptr );
+             physicalDevices_[pickedPhysicalDeviceId].device,
+             surface_->handle(), &formatCount, nullptr );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to obtain physical device surface formats "
@@ -263,8 +276,8 @@ void Device::pickAndCreateDevice( size_t id ) {
     surfaceFormats_.resize( formatCount );
 
     if ( const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR(
-             physicalDevices_[id].device, surface_->handle(), &formatCount,
-             surfaceFormats_.data() );
+             physicalDevices_[pickedPhysicalDeviceId].device,
+             surface_->handle(), &formatCount, surfaceFormats_.data() );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to acquire physical device surface formats "
@@ -289,8 +302,8 @@ void Device::pickAndCreateDevice( size_t id ) {
     // physical device present modes
     uint32_t presentModeCount;
     if ( const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR(
-             physicalDevices_[id].device, surface_->handle(), &presentModeCount,
-             nullptr );
+             physicalDevices_[pickedPhysicalDeviceId].device,
+             surface_->handle(), &presentModeCount, nullptr );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to obtain physical device present modes "
@@ -308,8 +321,8 @@ void Device::pickAndCreateDevice( size_t id ) {
     presentModes_.resize( presentModeCount );
 
     if ( const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR(
-             physicalDevices_[id].device, surface_->handle(), &presentModeCount,
-             presentModes_.data() );
+             physicalDevices_[pickedPhysicalDeviceId].device,
+             surface_->handle(), &presentModeCount, presentModes_.data() );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to acquire physical device present modes "

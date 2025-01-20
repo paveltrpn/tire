@@ -27,7 +27,7 @@ RenderVK::RenderVK()
         // Create logical device and obtain physical devices (application wide)
         device_ =
             std::make_unique<vk::Device>( instance_.get(), surface_.get() );
-        device_->pickAndCreateDevice( 0 );
+        device_->pickAndCreateDevice();
 
         const auto configHandle = Config::instance();
         const auto basePath = configHandle->getBasePath().string();
