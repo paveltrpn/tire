@@ -130,7 +130,6 @@ void PiplineSimple::initFixed() {
     // VkPipelineDynamicStateCreateInfo
     std::vector<VkDynamicState> dynamicStates = { VK_DYNAMIC_STATE_VIEWPORT,
                                                   VK_DYNAMIC_STATE_LINE_WIDTH };
-    VkPipelineDynamicStateCreateInfo dynamicState;
     dynamicState_.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
     dynamicState_.dynamicStateCount =
         static_cast<uint32_t>( dynamicStates.size() );
@@ -163,17 +162,17 @@ void PiplineSimple::initProgable(
 }
 
 VkPipelineLayout PiplineSimple::initLayout() {
-    // VkPipelineLayoutCreateInfo
-    pipelineLayoutInfo_.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    pipelineLayoutInfo_.setLayoutCount = 0;             // Optional
-    pipelineLayoutInfo_.pSetLayouts = nullptr;          // Optional
-    pipelineLayoutInfo_.pushConstantRangeCount = 0;     // Optional
-    pipelineLayoutInfo_.pPushConstantRanges = nullptr;  // Optional
+    VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+    pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+    pipelineLayoutInfo.setLayoutCount = 0;             // Optional
+    pipelineLayoutInfo.pSetLayouts = nullptr;          // Optional
+    pipelineLayoutInfo.pushConstantRangeCount = 0;     // Optional
+    pipelineLayoutInfo.pPushConstantRanges = nullptr;  // Optional
 
     VkPipelineLayout layout{ VK_NULL_HANDLE };
 
     if ( const auto err = vkCreatePipelineLayout(
-             device_->handle(), &pipelineLayoutInfo_, nullptr, &layout );
+             device_->handle(), &pipelineLayoutInfo, nullptr, &layout );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create pipeline layout with code {}!",

@@ -46,8 +46,6 @@ protected:
 
     VkPipelineVertexInputStateCreateInfo vertexInput_{};
     VkPipelineInputAssemblyStateCreateInfo inputAssembly_{};
-    VkViewport viewport_{};
-    VkRect2D scissor_{};
     VkFormat colorAttachmentformat_{};
     VkPipelineViewportStateCreateInfo viewportState_{};
     VkPipelineRasterizationStateCreateInfo rasterizer_{};
@@ -56,7 +54,7 @@ protected:
     VkPipelineColorBlendAttachmentState colorBlendAttachment_{};
     VkPipelineColorBlendStateCreateInfo colorBlending_{};
     VkPipelineDynamicStateCreateInfo dynamicState_{};
-    VkPipelineLayoutCreateInfo pipelineLayoutInfo_{};
+
     VkPipelineRenderingCreateInfo renderInfo_;
 };
 
