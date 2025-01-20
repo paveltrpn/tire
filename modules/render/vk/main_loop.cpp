@@ -15,31 +15,25 @@ void RenderVK::preFrame(){
 };
 
 void RenderVK::frame() {
-    //log::debug<true>( "currentFrame = {}", currentFrame_ );
+    const auto [iaSem, rfSem, ifFnc] = presentSync_->get( currentFrame_ );
 
 #define ONE_SECOND 1000000000
     // NOTE: omit return code check
-    vkWaitForFences( device_->handle(), 1, &inFlightFences_[currentFrame_],
-                     VK_TRUE, 0 );
+    vkWaitForFences( device_->handle(), 1, &ifFnc, VK_TRUE, 0 );
 
     // NOTE: omit return code check
-    vkResetFences( device_->handle(), 1, &inFlightFences_[currentFrame_] );
+    vkResetFences( device_->handle(), 1, &ifFnc );
 
     uint32_t imageIndex{};
 
     // NOTE: omit return code check
     vkAcquireNextImageKHR( device_->handle(), swapchain_->handle(), UINT64_MAX,
-                           imageAvailableSemaphores_[currentFrame_],
-                           VK_NULL_HANDLE, &imageIndex );
-
-    // log::debug<true>( "next image is {}", imageIndex );
+                           iaSem, VK_NULL_HANDLE, &imageIndex );
 
     cBufs_[currentFrame_]->reset();
     cBufs_[currentFrame_]->prepare( swapchain_->framebuffer( imageIndex ),
                                     pipelineSimple_.get() );
-    cBufs_[currentFrame_]->submit( { imageAvailableSemaphores_[currentFrame_] },
-                                   { renderFinishedSemaphores_[currentFrame_] },
-                                   inFlightFences_[currentFrame_] );
+    cBufs_[currentFrame_]->submit( { iaSem }, { rfSem }, ifFnc );
 
     /*
     VkPresentInfoKHR presentInfo{};
@@ -55,10 +49,10 @@ void RenderVK::frame() {
     presentInfo.pImageIndices = &imageIndex;
     presentInfo.pResults = nullptr;
     */
-    present_->present( renderFinishedSemaphores_[currentFrame_], &imageIndex );
+    present_->present( rfSem, &imageIndex );
 
     // NOTE: omit return code check
-    vkResetFences( device_->handle(), 1, &inFlightFences_[currentFrame_] );
+    vkResetFences( device_->handle(), 1, &ifFnc );
 
     currentFrame_ = ( currentFrame_ + 1 ) % 3;
 };

@@ -63,25 +63,11 @@ RenderVK::RenderVK()
         present_ =
             std::make_unique<vk::Present>( device_.get(), swapchain_.get() );
 
-        // Create synchronize objects
-        createSyncObjects();
+        presentSync_ =
+            std::make_unique<vk::PresentSynchronization<3>>( device_.get() );
 
     } catch ( const std::runtime_error &e ) {
         throw std::runtime_error( e.what() );
-    }
-};
-
-RenderVK::~RenderVK() {
-    for ( auto &buf : cBufs_ ) {
-        buf.release();
-    }
-
-    for ( auto i = 0; i < 3; i++ ) {
-        vkDestroySemaphore( device_->handle(), imageAvailableSemaphores_[i],
-                            nullptr );
-        vkDestroySemaphore( device_->handle(), renderFinishedSemaphores_[i],
-                            nullptr );
-        vkDestroyFence( device_->handle(), inFlightFences_[i], nullptr );
     }
 };
 
@@ -92,29 +78,5 @@ void RenderVK::scene( const std::filesystem::path &path ) {
 void RenderVK::setSwapInterval( int interval ){
 
 };
-
-void RenderVK::createSyncObjects() {
-    imageAvailableSemaphores_.resize( 3 );
-    renderFinishedSemaphores_.resize( 3 );
-    inFlightFences_.resize( 3 );
-
-    VkSemaphoreCreateInfo semaphoreInfo{};
-    semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-
-    VkFenceCreateInfo fenceInfo{};
-    fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-
-    for ( size_t i = 0; i < 3; i++ ) {
-        if ( vkCreateSemaphore( device_->handle(), &semaphoreInfo, nullptr,
-                                &imageAvailableSemaphores_[i] ) != VK_SUCCESS ||
-             vkCreateSemaphore( device_->handle(), &semaphoreInfo, nullptr,
-                                &renderFinishedSemaphores_[i] ) != VK_SUCCESS ||
-             vkCreateFence( device_->handle(), &fenceInfo, nullptr,
-                            &inFlightFences_[i] ) != VK_SUCCESS ) {
-            throw std::runtime_error( "failed to create semaphores!" );
-        }
-    }
-}
 
 }  // namespace tire

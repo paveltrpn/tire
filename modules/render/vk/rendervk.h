@@ -28,7 +28,7 @@ namespace tire {
 
 struct RenderVK final : Render {
     RenderVK();
-    ~RenderVK() override;
+    ~RenderVK() override = default;
 
     void displayRenderInfo() override{};
     void setSwapInterval( int interval ) override;
@@ -58,10 +58,7 @@ private:
         std::unique_ptr<vk::RenderCommandBufferBase<vk::RenderFromShader>>>
         cBufs_{};
     std::unique_ptr<vk::Present> present_{};
-
-    std::vector<VkSemaphore> imageAvailableSemaphores_{};
-    std::vector<VkSemaphore> renderFinishedSemaphores_{};
-    std::vector<VkFence> inFlightFences_{};
+    std::unique_ptr<vk::PresentSynchronization<3>> presentSync_{};
 
     uint32_t currentFrame_{ 0 };
 };
