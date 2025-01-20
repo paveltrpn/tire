@@ -20,17 +20,17 @@ struct Pipeline {
     virtual ~Pipeline();
 
     [[nodiscard]] VkPipeline pipeline() const { return pipeline_; };
-
-    [[nodiscard]] VkPipelineLayout pipelineLayout() const {
-        return pipelineLayout_;
-    };
-
     [[nodiscard]] VkRenderPass renderpass() const {
         return renderpass_->handle();
     }
 
-private:
-    void fillShaderStorage( std::vector<std::filesystem::path> files );
+    virtual void initFixed() = 0;
+    virtual void initProgable(
+        const std::vector<std::filesystem::path> &files ) = 0;
+    virtual void initPipeline() = 0;
+
+protected:
+    [[nodiscard]] virtual VkPipelineLayout initLayout() = 0;
 
 protected:
     const vk::Device *device_;
@@ -39,16 +39,10 @@ protected:
 
     // Vulkan entity handles
     VkPipeline pipeline_{ VK_NULL_HANDLE };
-    VkPipelineLayout pipelineLayout_{ VK_NULL_HANDLE };
 
     // Vulkan related structures
     VkPipelineShaderStageCreateInfo vertShaderStage_{};
     VkPipelineShaderStageCreateInfo fragShaderStage_{};
-    VkPipelineShaderStageCreateInfo tessctrlShaderStage_{};
-    VkPipelineShaderStageCreateInfo tessevalShaderStage_{};
-    VkPipelineShaderStageCreateInfo geomShaderStage_{};
-    VkPipelineShaderStageCreateInfo computeShaderStage_{};
-    VkPipelineShaderStageCreateInfo raygenShaderStage_{};
 
     VkPipelineVertexInputStateCreateInfo vertexInput_{};
     VkPipelineInputAssemblyStateCreateInfo inputAssembly_{};
@@ -70,10 +64,13 @@ struct PiplineSimple final : Pipeline {
     PiplineSimple( const vk::Device *device )
         : Pipeline( device ) {}
 
-    void initFixed();
-    void initProgable( const std::vector<std::filesystem::path> &files );
-    void initLayout();
-    void initPipeline();
+    void initFixed() override;
+    void initProgable(
+        const std::vector<std::filesystem::path> &files ) override;
+    void initPipeline() override;
+
+private:
+    VkPipelineLayout initLayout() override;
 };
 
 }  // namespace tire::vk

@@ -16,7 +16,6 @@ Pipeline::Pipeline( const vk::Device *device )
 }
 
 Pipeline::~Pipeline() {
-    vkDestroyPipelineLayout( device_->handle(), pipelineLayout_, nullptr );
     vkDestroyPipeline( device_->handle(), pipeline_, nullptr );
 }
 
@@ -161,57 +160,9 @@ void PiplineSimple::initProgable(
     fragShaderStage_.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
     fragShaderStage_.module = shaderStorage_->get<ShaderStageType::FRAGMENT>();
     fragShaderStage_.pName = "main";
-
-    // VkPipelineShaderStageCreateInfo
-    tessctrlShaderStage_.sType =
-        VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    tessctrlShaderStage_.pNext = nullptr;
-    tessctrlShaderStage_.flags = 0;
-    tessctrlShaderStage_.stage = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
-    tessctrlShaderStage_.module =
-        shaderStorage_->get<ShaderStageType::TESSELATION_CTRL>();
-    tessctrlShaderStage_.pName = "main";
-
-    // VkPipelineShaderStageCreateInfo
-    tessevalShaderStage_.sType =
-        VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    tessevalShaderStage_.pNext = nullptr;
-    tessevalShaderStage_.flags = 0;
-    tessevalShaderStage_.stage = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
-    tessevalShaderStage_.module =
-        shaderStorage_->get<ShaderStageType::TESSELATION_EVAL>();
-    tessevalShaderStage_.pName = "main";
-
-    // VkPipelineShaderStageCreateInfo
-    geomShaderStage_.sType =
-        VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    geomShaderStage_.pNext = nullptr;
-    geomShaderStage_.flags = 0;
-    geomShaderStage_.stage = VK_SHADER_STAGE_GEOMETRY_BIT;
-    geomShaderStage_.module = shaderStorage_->get<ShaderStageType::GEOMETRY>();
-    geomShaderStage_.pName = "main";
-
-    // VkPipelineShaderStageCreateInfo
-    computeShaderStage_.sType =
-        VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    computeShaderStage_.pNext = nullptr;
-    computeShaderStage_.flags = 0;
-    computeShaderStage_.stage = VK_SHADER_STAGE_COMPUTE_BIT;
-    computeShaderStage_.module =
-        shaderStorage_->get<ShaderStageType::COMPUTE>();
-    computeShaderStage_.pName = "main";
-
-    // VkPipelineShaderStageCreateInfo
-    raygenShaderStage_.sType =
-        VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    raygenShaderStage_.pNext = nullptr;
-    raygenShaderStage_.flags = 0;
-    raygenShaderStage_.stage = VK_SHADER_STAGE_RAYGEN_BIT_KHR;
-    raygenShaderStage_.module = shaderStorage_->get<ShaderStageType::RAYGEN>();
-    raygenShaderStage_.pName = "main";
 }
 
-void PiplineSimple::initLayout() {
+VkPipelineLayout PiplineSimple::initLayout() {
     // VkPipelineLayoutCreateInfo
     pipelineLayoutInfo_.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipelineLayoutInfo_.setLayoutCount = 0;             // Optional
@@ -219,9 +170,10 @@ void PiplineSimple::initLayout() {
     pipelineLayoutInfo_.pushConstantRangeCount = 0;     // Optional
     pipelineLayoutInfo_.pPushConstantRanges = nullptr;  // Optional
 
-    if ( const auto err =
-             vkCreatePipelineLayout( device_->handle(), &pipelineLayoutInfo_,
-                                     nullptr, &pipelineLayout_ );
+    VkPipelineLayout layout{ VK_NULL_HANDLE };
+
+    if ( const auto err = vkCreatePipelineLayout(
+             device_->handle(), &pipelineLayoutInfo_, nullptr, &layout );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create pipeline layout with code {}!",
@@ -229,6 +181,8 @@ void PiplineSimple::initLayout() {
     } else {
         log::info( "vk::PipelineSimple === pipeline layout created!" );
     }
+
+    return layout;
 }
 
 void PiplineSimple::initPipeline() {
@@ -237,12 +191,10 @@ void PiplineSimple::initPipeline() {
     pipelineInfo.stageCount = 2;
 
     // NOTE: Will vulkan ignore nullptr shader stages?
-    VkPipelineShaderStageCreateInfo shaderStages[] = {
-        vertShaderStage_,     fragShaderStage_, tessctrlShaderStage_,
-        tessevalShaderStage_, geomShaderStage_, computeShaderStage_,
-        raygenShaderStage_ };
+    std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages = {
+        vertShaderStage_, fragShaderStage_ };
 
-    pipelineInfo.pStages = shaderStages;
+    pipelineInfo.pStages = shaderStages.data();
     pipelineInfo.pVertexInputState = &vertexInput_;
     pipelineInfo.pInputAssemblyState = &inputAssembly_;
     pipelineInfo.pViewportState = nullptr;  //&viewportState_;
@@ -251,7 +203,10 @@ void PiplineSimple::initPipeline() {
     pipelineInfo.pDepthStencilState = nullptr;  // Optional
     pipelineInfo.pColorBlendState = &colorBlending_;
     pipelineInfo.pDynamicState = nullptr;  // Optional
-    pipelineInfo.layout = pipelineLayout_;
+
+    const auto layout = initLayout();
+    pipelineInfo.layout = layout;
+
     pipelineInfo.renderPass = renderpass_->handle();
     pipelineInfo.subpass = 0;
     pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;  // Optional
@@ -267,6 +222,11 @@ void PiplineSimple::initPipeline() {
     } else {
         log::info( "vk::PipelineSimple === graphics pipeline created!" );
     }
+
+    // There is no need to store this handle after pipeline creation and pass
+    // it to pipeline itself. It can be safeley removed after pipeline creation
+    // and pipelines thoose uses this pipeline layout stay valid.
+    vkDestroyPipelineLayout( device_->handle(), layout, nullptr );
 }
 
 }  // namespace tire::vk

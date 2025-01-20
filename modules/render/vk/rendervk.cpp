@@ -29,7 +29,6 @@ RenderVK::RenderVK()
             std::make_unique<vk::Device>( instance_.get(), surface_.get() );
         device_->pickAndCreateDevice( 0 );
 
-        // Load shaders
         const auto configHandle = Config::instance();
         const auto basePath = configHandle->getBasePath().string();
 
@@ -45,7 +44,6 @@ RenderVK::RenderVK()
         pipelineSimple_->initProgable(
             { basePath + "/assets/shaders/vk_simple_tri_VERTEX.spv",
               basePath + "/assets/shaders/vk_simple_tri_FRAGMENT.spv" } );
-        pipelineSimple_->initLayout();
         pipelineSimple_->initPipeline();
 
         swapchain_->createFramebuffers( pipelineSimple_.get() );
