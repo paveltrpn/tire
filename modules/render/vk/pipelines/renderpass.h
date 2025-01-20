@@ -11,9 +11,9 @@
 
 namespace tire::vk {
 
-template <typename Derived>
 struct RenderpassBase {
-    friend Derived;
+    RenderpassBase( const RenderpassBase &other ) = delete;
+    RenderpassBase( RenderpassBase &&other ) = delete;
 
     RenderpassBase &operator=( const RenderpassBase &other ) = delete;
     RenderpassBase &operator=( RenderpassBase &&other ) = delete;
@@ -24,25 +24,22 @@ struct RenderpassBase {
 
     [[nodiscard]] VkRenderPass handle() const { return renderPass_; }
 
-    void init() {
-        const auto self = static_cast<Derived *>( this );
+    template <typename Self>
+    void init( this Self &&self ) {
         self->init();
     };
 
-private:
+protected:
     RenderpassBase( const vk::Device *device )
         : device_{ device } {}
-
-    RenderpassBase( const RenderpassBase &other ) = delete;
-    RenderpassBase( RenderpassBase &&other ) = delete;
 
 protected:
     const vk::Device *device_;
     VkRenderPass renderPass_{ VK_NULL_HANDLE };
 };
 
-struct RenderpassSimple : RenderpassBase<RenderpassSimple> {
-    using base_class = RenderpassBase<RenderpassSimple>;
+struct RenderpassSimple : RenderpassBase {
+    using base_class = RenderpassBase;
 
     RenderpassSimple( const vk::Device *device )
         : base_class{ device } {

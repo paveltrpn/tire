@@ -12,11 +12,11 @@ namespace tire::vk {
 CommandBuffer::CommandBuffer( const vk::Device *device,
                               const CommandPool *pool )
     : device_{ device } {
-    VkCommandBufferAllocateInfo allocInfo{};
-    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocInfo.commandPool = pool->handle();
-    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocInfo.commandBufferCount = 1;
+    VkCommandBufferAllocateInfo allocInfo{
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+        .commandPool = pool->handle(),
+        .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+        .commandBufferCount = 1 };
 
     if ( const auto err = vkAllocateCommandBuffers(
              device_->handle(), &allocInfo, &commandBuffer_ );
@@ -36,27 +36,25 @@ void CommandBuffer::reset() {
 
 void CommandBuffer::beginRenderPassCommand( VkFramebuffer framebuffer,
                                             const vk::Pipeline *pipeline ) {
-    VkCommandBufferBeginInfo beginInfo{};
-    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    beginInfo.flags = 0;                   // Optional
-    beginInfo.pInheritanceInfo = nullptr;  // Optional
-
+    const VkCommandBufferBeginInfo beginInfo{
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+        .flags = 0,
+        .pInheritanceInfo = nullptr };
     // NOTE: omit return code check
     vkBeginCommandBuffer( commandBuffer_, &beginInfo );
-
-    VkRenderPassBeginInfo renderPassInfo{};
-    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassInfo.renderPass = pipeline->renderpass();
-    renderPassInfo.framebuffer = framebuffer;
-    renderPassInfo.renderArea.offset = { .x = 0, .y = 0 };
-    renderPassInfo.renderArea.extent = device_->extent();
 
     const auto clearColor = Colorf{ "darkblue" };
     const VkClearValue clearColorValue = {
         { { clearColor.r(), clearColor.g(), clearColor.b(),
             clearColor.a() } } };
-    renderPassInfo.clearValueCount = 1;
-    renderPassInfo.pClearValues = &clearColorValue;
+    const VkRenderPassBeginInfo renderPassInfo{
+        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+        .renderPass = pipeline->renderpass(),
+        .framebuffer = framebuffer,
+        .renderArea.offset{ .x = 0, .y = 0 },
+        .renderArea.extent = device_->extent(),
+        .clearValueCount = 1,
+        .pClearValues = &clearColorValue };
 
     vkCmdBeginRenderPass( commandBuffer_, &renderPassInfo,
                           VK_SUBPASS_CONTENTS_INLINE );
@@ -69,18 +67,16 @@ void CommandBuffer::beginRenderPassCommand( VkFramebuffer framebuffer,
     const auto width = device_->extent().width;
     const auto height = device_->extent().height;
 
-    VkViewport viewport{};
-    viewport.x = 0.0f;
-    viewport.y = 0.0f;
-    viewport.width = static_cast<float>( width );
-    viewport.height = static_cast<float>( height );
-    viewport.minDepth = 0.0f;
-    viewport.maxDepth = 1.0f;
+    const VkViewport viewport{ .x = 0.0f,
+                               .y = 0.0f,
+                               .width = static_cast<float>( width ),
+                               .height = static_cast<float>( height ),
+                               .minDepth = 0.0f,
+                               .maxDepth = 1.0f };
     vkCmdSetViewport( commandBuffer_, 0, 1, &viewport );
 
-    VkRect2D scissor{};
-    scissor.offset = { .x = 0, .y = 0 };
-    scissor.extent = { .width = width, .height = height };
+    const VkRect2D scissor{ { .x = 0, .y = 0 },
+                            { .width = width, .height = height } };
     vkCmdSetScissor( commandBuffer_, 0, 1, &scissor );
 
     // vertexCount: Even though we don’t have a vertex buffer, we technically
@@ -105,17 +101,16 @@ void CommandBuffer::beginRenderPassCommand( VkFramebuffer framebuffer,
 void CommandBuffer::submit( const std::vector<VkSemaphore> &waitSemaphores,
                             const std::vector<VkSemaphore> &signalSemaphores,
                             VkFence fence, VkQueue queue ) {
-    VkSubmitInfo submitInfo{};
-    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     std::array<VkPipelineStageFlags, 1> waitStages = {
         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-    submitInfo.waitSemaphoreCount = 1;
-    submitInfo.pWaitSemaphores = waitSemaphores.data();
-    submitInfo.pWaitDstStageMask = waitStages.data();
-    submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &commandBuffer_;
-    submitInfo.signalSemaphoreCount = 1;
-    submitInfo.pSignalSemaphores = signalSemaphores.data();
+    VkSubmitInfo submitInfo{ .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+                             .waitSemaphoreCount = 1,
+                             .pWaitSemaphores = waitSemaphores.data(),
+                             .pWaitDstStageMask = waitStages.data(),
+                             .commandBufferCount = 1,
+                             .pCommandBuffers = &commandBuffer_,
+                             .signalSemaphoreCount = 1,
+                             .pSignalSemaphores = signalSemaphores.data() };
 
     // NOTE: omit return code check
     vkQueueSubmit( queue, 1, &submitInfo, fence );
