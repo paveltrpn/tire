@@ -115,11 +115,11 @@ VkDevice Device::handle() const {
     return device_;
 }
 
+// Create a new device instance. A logical device is created as a connection to a physical device.
+// Check is physical device suitable, can be done acoording to
+// physical devices properties and physical device queue families properies
 void Device::pickAndCreateDevice() {
-    // Create a new device instance. A logical device is created as a connection to a physical device.
-    // Check is physical device suitable, can be done acoording to
-    // physical devices properties and physical device queue families properies
-
+    // Check which devices available on machine
     int discreetGpuId{ -1 };
     int integratedGpuId{ -1 };
     int otherGpuId{ -1 };
@@ -170,44 +170,54 @@ void Device::pickAndCreateDevice() {
     log::info( "vk::Device === pick {}",
                physicalDevices_[pickedPhysicalDeviceId].properties.deviceName );
 
+    // Choose queue family with VK_QUEUE_GRAPHICS_BIT
     for ( auto i{ 0 };
           const auto &queueFamily :
           physicalDevices_[pickedPhysicalDeviceId].queueFamilyProperties ) {
-        // Condition: we need queue with VK_QUEUE_GRAPHICS_BIT
         if ( queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT ) {
-            graphicsFamily_ = i;
-        }
-
-        VkBool32 presentSupport = false;
-        // Condition: we need device that support surface presentation
-        if ( const auto err = vkGetPhysicalDeviceSurfaceSupportKHR(
-                 physicalDevices_[pickedPhysicalDeviceId].device, i,
-                 surface_->handle(), &presentSupport );
-             err != VK_SUCCESS ) {
-            throw std::runtime_error(
-                std::format( "failed to get device surface support for "
-                             "presentation with code {}!\n",
-                             string_VkResult( err ) ) );
-        } else {
-            log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-                "vk::Device === device surface support for "
-                "presentation acquire success!" );
-        }
-
-        if ( presentSupport ) {
-            presentFamily_ = i;
+            graphicsFamilyQueueId_ = i;
+            break;
         }
         ++i;
     }
 
+    if ( graphicsFamilyQueueId_ == UINT_MAX ) {
+        throw std::runtime_error(
+            "failed to get device with queue family that "
+            "VK_QUEUE_GRAPHICS_BIT" );
+    }
+
+    // Check if picked queue family (with VK_QUEUE_GRAPHICS_BIT) support present.
+    // May exist other queue family that not support VK_QUEUE_GRAPHICS_BIT but support
+    // present and we can use it to present, but now we just check "can present" property
+    // on coosed one and if not we terminate.
+    VkBool32 presentSupport = false;
+    if ( const auto err = vkGetPhysicalDeviceSurfaceSupportKHR(
+             physicalDevices_[pickedPhysicalDeviceId].device,
+             graphicsFamilyQueueId_, surface_->handle(), &presentSupport );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error(
+            std::format( "failed to get device surface support for "
+                         "presentation with code {}!\n",
+                         string_VkResult( err ) ) );
+    }
+
+    if ( presentSupport ) {
+        presentSupportQueueId_ = graphicsFamilyQueueId_;
+    } else {
+        throw std::runtime_error(
+            "queue with VK_QUEUE_GRAPHICS_BIT not support present! Maybe check "
+            "another queue family?" );
+    }
+
     log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>( "vk::Device === graphics family: {}",
-                                           graphicsFamily_ );
+                                           graphicsFamilyQueueId_ );
     log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>( "vk::Device === present family: {}",
-                                           presentFamily_ );
+                                           presentSupportQueueId_ );
 
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-    const std::set<uint32_t> uniqueQueueFamilies = { graphicsFamily_,
-                                                     presentFamily_ };
+    const std::set<uint32_t> uniqueQueueFamilies = { graphicsFamilyQueueId_,
+                                                     presentSupportQueueId_ };
 
     const float queuePriority{ 1.0f };
     for ( const uint32_t queueFamily : uniqueQueueFamilies ) {
@@ -230,15 +240,15 @@ void Device::pickAndCreateDevice() {
 
     std::vector<const char *> desiredExtensionsList{};
     desiredExtensionsList.emplace_back( "VK_KHR_swapchain" );
-    // desiredExtensionsList.emplace_back( "VK_KHR_ray_query" );
-    // desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_pipeline" );
-    // desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_maintenance1" );
-    // desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_position_fetch" );
-    // desiredExtensionsList.emplace_back( "VK_KHR_acceleration_structure" );
-    // desiredExtensionsList.emplace_back( "VK_EXT_descriptor_indexing" );
-    // desiredExtensionsList.emplace_back( "VK_KHR_maintenance3" );
-    // desiredExtensionsList.emplace_back( "VK_KHR_buffer_device_address" );
-    // desiredExtensionsList.emplace_back( "VK_KHR_deferred_host_operations" );
+    desiredExtensionsList.emplace_back( "VK_KHR_ray_query" );
+    desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_pipeline" );
+    desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_maintenance1" );
+    desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_position_fetch" );
+    desiredExtensionsList.emplace_back( "VK_KHR_acceleration_structure" );
+    desiredExtensionsList.emplace_back( "VK_EXT_descriptor_indexing" );
+    desiredExtensionsList.emplace_back( "VK_KHR_maintenance3" );
+    desiredExtensionsList.emplace_back( "VK_KHR_buffer_device_address" );
+    desiredExtensionsList.emplace_back( "VK_KHR_deferred_host_operations" );
 
     deviceCreateInfo.enabledExtensionCount =
         static_cast<uint32_t>( desiredExtensionsList.size() );
@@ -264,8 +274,8 @@ void Device::pickAndCreateDevice() {
         log::info( "vk::Device === logical device create success!" );
     }
 
-    vkGetDeviceQueue( device_, graphicsFamily_, 0, &graphicsQueue_ );
-    vkGetDeviceQueue( device_, presentFamily_, 0, &presentQueue_ );
+    vkGetDeviceQueue( device_, graphicsFamilyQueueId_, 0, &graphicsQueue_ );
+    vkGetDeviceQueue( device_, presentSupportQueueId_, 0, &presentQueue_ );
 
     // physical device surface capabilities
 
@@ -322,9 +332,9 @@ void Device::pickAndCreateDevice() {
             "success!" );
     }
 
-    // This format will be used across application, in
-    // swapchain in particular.
-    // NOTE: Make choose liitle wiser in future
+// This format will be used across application, in
+// swapchain in particular.
+// NOTE: Make choose liitle wiser in future
 #define CHOSEN_SURFACE_FORMAT 0
     surfaceFormat_ = surfaceFormats_[CHOSEN_SURFACE_FORMAT];
 
@@ -366,9 +376,9 @@ void Device::pickAndCreateDevice() {
             "vk::Device === physical device present modes acquire success!" );
     }
 
-    // This present mode will be used across application, in
-    // swapchain in particular.
-    // NOTE: Make choose liitle wiser in future
+// This present mode will be used across application, in
+// swapchain in particular.
+// NOTE: Make choose liitle wiser in future
 #define CHOSEN_PRESENT_MODE 0
     presentMode_ = presentModes_[CHOSEN_PRESENT_MODE];
 }

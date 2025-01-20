@@ -21,8 +21,12 @@ struct Device final {
     ~Device();
 
     [[nodiscard]] VkDevice handle() const;
-    [[nodiscard]] uint32_t graphicsFamily() const { return graphicsFamily_; };
-    [[nodiscard]] uint32_t presentFamily() const { return presentFamily_; };
+    [[nodiscard]] uint32_t graphicsFamily() const {
+        return graphicsFamilyQueueId_;
+    };
+    [[nodiscard]] uint32_t presentFamily() const {
+        return presentSupportQueueId_;
+    };
     [[nodiscard]] VkSurfaceFormatKHR surfaceFormat() const {
         return surfaceFormat_;
     };
@@ -64,8 +68,8 @@ private:
     // System wide available physical devices
     std::vector<PhysicalDevice> physicalDevices_{};
 
-    uint32_t graphicsFamily_{};
-    uint32_t presentFamily_{};
+    uint32_t graphicsFamilyQueueId_{ UINT32_MAX };
+    uint32_t presentSupportQueueId_{ UINT32_MAX };
 
     VkQueue graphicsQueue_{ VK_NULL_HANDLE };
     VkQueue presentQueue_{ VK_NULL_HANDLE };
