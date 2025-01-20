@@ -187,14 +187,19 @@ void Device::pickAndCreateDevice( size_t id ) {
         static_cast<uint32_t>( queueCreateInfos.size() );
     deviceCreateInfo.pEnabledFeatures = &physicalDevices_[id].features;
 
-    // Condition: we need device that support swapchain extension
-    std::vector<const char *> elist = { "VK_KHR_swapchain" };
+    std::vector<const char *> desiredExtensionsList{};
+    desiredExtensionsList.emplace_back( "VK_KHR_swapchain" );
+    desiredExtensionsList.emplace_back( "VK_KHR_ray_query" );
+    desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_pipeline" );
+    desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_maintenance1" );
+    desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_position_fetch" );
+
     deviceCreateInfo.enabledExtensionCount =
-        static_cast<uint32_t>( elist.size() );
-    deviceCreateInfo.ppEnabledExtensionNames = elist.data();
+        static_cast<uint32_t>( desiredExtensionsList.size() );
+    deviceCreateInfo.ppEnabledExtensionNames = desiredExtensionsList.data();
 
     if ( Config::instance()->get<bool>( "enable_validation_layers" ) ) {
-        const auto [size, data] = instance_->validationLayersInfo();
+        const auto [size, data] = instance_->validationLayers();
         deviceCreateInfo.enabledLayerCount = static_cast<uint32_t>( size );
         deviceCreateInfo.ppEnabledLayerNames = data;
     } else {

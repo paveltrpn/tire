@@ -68,19 +68,39 @@ Instance::Instance() {
             VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
             VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT );
 
+    uint32_t layersCount;
+    if ( const auto err =
+             vkEnumerateInstanceLayerProperties( &layersCount, nullptr );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error( std::format(
+            "can't enumerate instance layer properties with code: {}\n",
+            string_VkResult( err ) ) );
+    } else {
+        log::debug<DEBUG_OUTPUT_INSTANCEVK_CPP>(
+            "vk::Instance === layer properties value: {}", layersCount );
+    }
+
+    layerProperties_.resize( layersCount );
+
+    if ( const auto err = vkEnumerateInstanceLayerProperties(
+             &layersCount, layerProperties_.data() );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error( std::format(
+            "can't acquire instance layer properties with code: {}\n",
+            string_VkResult( err ) ) );
+    } else {
+        log::info( "vk::Instance === layer properties acquired" );
+    }
+
     // Vulkan vlidation layers list to enable
-    std::vector<std::string> desiredValidationLayerList{};
     // vllist.push_back( "VK_LAYER_INTEL_nullhw" ); // cause crash on device creation
-    desiredValidationLayerList.emplace_back( "VK_LAYER_MESA_overlay" );
-    desiredValidationLayerList.emplace_back( "VK_LAYER_NV_optimus" );
-    desiredValidationLayerList.emplace_back(
+    desiredValidationLayerList_.emplace_back( "VK_LAYER_MESA_overlay" );
+    desiredValidationLayerList_.emplace_back( "VK_LAYER_NV_optimus" );
+    desiredValidationLayerList_.emplace_back(
         "VK_LAYER_VALVE_steam_fossilize_64" );
-    desiredValidationLayerList.emplace_back(
+    desiredValidationLayerList_.emplace_back(
         "VK_LAYER_VALVE_steam_overlay_64" );
     // desiredInstanceValidationLayerList.push_back( "VK_LAYER_KHRONOS_validation" ); // not supported
-
-    acquiredValidationLayers_ =
-        makeValidationLayersList( desiredValidationLayerList );
 
     const std::vector<VkValidationFeatureEnableEXT>
         validationFeatureEnableList = {
@@ -120,28 +140,52 @@ Instance::Instance() {
 
     if ( configPtr->get<bool>( "enable_validation_layers" ) ) {
         instanceCreateInfo.enabledLayerCount =
-            static_cast<uint32_t>( acquiredValidationLayers_.size() );
+            static_cast<uint32_t>( desiredValidationLayerList_.size() );
         instanceCreateInfo.ppEnabledLayerNames =
-            acquiredValidationLayers_.data();
+            desiredValidationLayerList_.data();
         instanceCreateInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT
                                         *)&debugUtilsMessengerCreateInfo;
     }
 
+    uint32_t extCount{};
+    if ( const auto err = vkEnumerateInstanceExtensionProperties(
+             nullptr, &extCount, nullptr );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error(
+            std::format( "can't enumerate instance extension "
+                         "properties with code: {}\n",
+                         string_VkResult( err ) ) );
+    } else {
+        log::debug<DEBUG_OUTPUT_INSTANCEVK_CPP>(
+            "vk::Instance === extension properties value: {}", extCount );
+    }
+
+    extensionProperties_.resize( extCount );
+
+    if ( const auto err = vkEnumerateInstanceExtensionProperties(
+             nullptr, &extCount, extensionProperties_.data() );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error(
+            std::format( "can't acquire instance extension properties "
+                         "with code: {}\n",
+                         string_VkResult( err ) ) );
+    } else {
+        log::info( "vk::Instance === extension properties aquired" );
+    }
+
     // Vulkan instance extensions list
-    std::vector<std::string> desiredInstanceExtensionsList{};
+    std::vector<const char *> desiredInstanceExtensionsList{};
     desiredInstanceExtensionsList.emplace_back( "VK_KHR_surface" );
     desiredInstanceExtensionsList.emplace_back( "VK_KHR_xlib_surface" );
-    desiredInstanceExtensionsList.emplace_back( "VK_EXT_debug_report" );
-    desiredInstanceExtensionsList.emplace_back( "VK_EXT_debug_utils" );
+    desiredInstanceExtensionsList.emplace_back(
+        VK_EXT_DEBUG_REPORT_EXTENSION_NAME );
     desiredInstanceExtensionsList.emplace_back(
         VK_EXT_DEBUG_UTILS_EXTENSION_NAME );
-    const auto aquiredInstanceExtensions =
-        makeExtensionsList( desiredInstanceExtensionsList );
 
     instanceCreateInfo.enabledExtensionCount =
-        static_cast<uint32_t>( aquiredInstanceExtensions.size() );
+        static_cast<uint32_t>( desiredInstanceExtensionsList.size() );
     instanceCreateInfo.ppEnabledExtensionNames =
-        aquiredInstanceExtensions.data();
+        desiredInstanceExtensionsList.data();
 
     // instance creation
     if ( const auto err =
@@ -173,117 +217,13 @@ Instance::~Instance() {
     vkDestroyInstance( instance_, nullptr );
 }
 
-// pass std::nullopt to enable all available exensions
-std::vector<char *> Instance::makeExtensionsList(
-    std::optional<std::vector<std::string>> list ) {
-    std::vector<char *> rt{};
-    uint32_t extCount{};
-
-    if ( const auto err = vkEnumerateInstanceExtensionProperties(
-             nullptr, &extCount, nullptr );
-         err != VK_SUCCESS ) {
-        throw std::runtime_error(
-            std::format( "can't enumerate instance extension "
-                         "properties with code: {}\n",
-                         string_VkResult( err ) ) );
-    } else {
-        log::debug<DEBUG_OUTPUT_INSTANCEVK_CPP>(
-            "vk::Instance === extension properties value: {}", extCount );
-    }
-
-    extensionProperties_.resize( extCount );
-
-    if ( const auto err = vkEnumerateInstanceExtensionProperties(
-             nullptr, &extCount, extensionProperties_.data() );
-         err != VK_SUCCESS ) {
-        throw std::runtime_error(
-            std::format( "can't acquire instance extension properties "
-                         "with code: {}\n",
-                         string_VkResult( err ) ) );
-    } else {
-        log::info( "vk::Instance === extension properties aquired" );
-    }
-
-    if ( list ) {
-        for ( const auto &name : list.value() ) {
-            auto res = std::find_if( extensionProperties_.begin(),
-                                     extensionProperties_.end(),
-                                     [name]( auto &ep ) -> bool {
-                                         return ep.extensionName == name;
-                                     } );
-            if ( res != extensionProperties_.end() ) {
-                rt.push_back( ( *res ).extensionName );
-            } else {
-                std::print( "extension \"{}\" not supported\n", name );
-            }
-        }
-    } else {
-        for ( auto &ep : extensionProperties_ ) {
-            rt.push_back( ep.extensionName );
-        }
-    }
-
-    return rt;
-}
-
-// pass std::nullopt to enable all avaible validation layers.
-// may cause instance creation error, for example:
-// "Requested layer "VK_LAYER_VALVE_steam_overlay_32" was wrong bit-type!"
-std::vector<char *> Instance::makeValidationLayersList(
-    std::optional<std::vector<std::string>> list ) {
-    std::vector<char *> rt{};
-    uint32_t layerCount;
-
-    if ( const auto err =
-             vkEnumerateInstanceLayerProperties( &layerCount, nullptr );
-         err != VK_SUCCESS ) {
-        throw std::runtime_error( std::format(
-            "can't enumerate instance layer properties with code: {}\n",
-            string_VkResult( err ) ) );
-    } else {
-        log::debug<DEBUG_OUTPUT_INSTANCEVK_CPP>(
-            "vk::Instance === layer properties value: {}", layerCount );
-    }
-
-    layerProperties_.resize( layerCount );
-
-    if ( const auto err = vkEnumerateInstanceLayerProperties(
-             &layerCount, layerProperties_.data() );
-         err != VK_SUCCESS ) {
-        throw std::runtime_error( std::format(
-            "can't acquire instance layer properties with code: {}\n",
-            string_VkResult( err ) ) );
-    } else {
-        log::info( "vk::Instance === layer properties acquired" );
-    }
-
-    if ( list ) {
-        for ( const auto &name : list.value() ) {
-            auto res = std::find_if(
-                layerProperties_.begin(), layerProperties_.end(),
-                [name]( auto &lp ) -> bool { return lp.layerName == name; } );
-            if ( res != layerProperties_.end() ) {
-                rt.push_back( ( *res ).layerName );
-            } else {
-                std::print( "validation layer \"{}\" not supported\n", name );
-            }
-        }
-    } else {
-        for ( auto &lp : layerProperties_ ) {
-            rt.push_back( lp.layerName );
-        }
-    }
-
-    return rt;
-}
-
 VkInstance Instance::handle() const {
     return instance_;
 }
 
-std::pair<uint32_t, char *const *const> Instance::validationLayersInfo() const {
-    return std::make_pair( acquiredValidationLayers_.size(),
-                           acquiredValidationLayers_.data() );
+std::pair<uint32_t, char const *const *> Instance::validationLayers() const {
+    return std::make_pair( desiredValidationLayerList_.size(),
+                           desiredValidationLayerList_.data() );
 }
 
 void Instance::info() const {

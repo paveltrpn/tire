@@ -19,26 +19,17 @@ struct Instance final {
     ~Instance();
 
     [[nodiscard]] VkInstance handle() const;
-    [[nodiscard]] std::pair<uint32_t, char *const *const> validationLayersInfo()
+    [[nodiscard]] std::pair<uint32_t, char const *const *> validationLayers()
         const;
 
     void info() const;
-
-private:
-    // pass std::nullopt to enable all available exensions
-    std::vector<char *> makeExtensionsList(
-        std::optional<std::vector<std::string>> list );
-
-    // pass std::nullopt to enable all available validation layers.
-    std::vector<char *> makeValidationLayersList(
-        std::optional<std::vector<std::string>> list );
 
 private:
     // Vulkan etity handles
     VkInstance instance_{ VK_NULL_HANDLE };
     VkDebugUtilsMessengerEXT debugMessenger_{ VK_NULL_HANDLE };
 
-    std::vector<char *> acquiredValidationLayers_{};
+    std::vector<const char *> desiredValidationLayerList_{};
 
     std::vector<VkExtensionProperties> extensionProperties_{};
     std::vector<VkLayerProperties> layerProperties_{};
