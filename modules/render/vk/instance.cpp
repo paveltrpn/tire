@@ -68,15 +68,19 @@ Instance::Instance() {
             VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
             VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT );
 
-    std::vector<std::string> vllist{};
-    // vllist.push_back( "VK_LAYER_INTEL_nullhw" );
-    vllist.emplace_back( "VK_LAYER_MESA_overlay" );
-    vllist.emplace_back( "VK_LAYER_NV_optimus" );
-    vllist.emplace_back( "VK_LAYER_VALVE_steam_fossilize_64" );
-    vllist.emplace_back( "VK_LAYER_VALVE_steam_overlay_64" );
-    // vllist.push_back( "VK_LAYER_KHRONOS_validation" );
+    // Vulkan vlidation layers list to enable
+    std::vector<std::string> desiredValidationLayerList{};
+    // vllist.push_back( "VK_LAYER_INTEL_nullhw" ); // cause crash on device creation
+    desiredValidationLayerList.emplace_back( "VK_LAYER_MESA_overlay" );
+    desiredValidationLayerList.emplace_back( "VK_LAYER_NV_optimus" );
+    desiredValidationLayerList.emplace_back(
+        "VK_LAYER_VALVE_steam_fossilize_64" );
+    desiredValidationLayerList.emplace_back(
+        "VK_LAYER_VALVE_steam_overlay_64" );
+    // desiredInstanceValidationLayerList.push_back( "VK_LAYER_KHRONOS_validation" ); // not supported
 
-    validationLayersNames_ = makeValidationLayersList( vllist );
+    acquiredValidationLayers_ =
+        makeValidationLayersList( desiredValidationLayerList );
 
     const std::vector<VkValidationFeatureEnableEXT>
         validationFeatureEnableList = {
@@ -116,24 +120,28 @@ Instance::Instance() {
 
     if ( configPtr->get<bool>( "enable_validation_layers" ) ) {
         instanceCreateInfo.enabledLayerCount =
-            static_cast<uint32_t>( validationLayersNames_.size() );
-        instanceCreateInfo.ppEnabledLayerNames = validationLayersNames_.data();
+            static_cast<uint32_t>( acquiredValidationLayers_.size() );
+        instanceCreateInfo.ppEnabledLayerNames =
+            acquiredValidationLayers_.data();
         instanceCreateInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT
                                         *)&debugUtilsMessengerCreateInfo;
     }
 
-    // extensions
-    std::vector<std::string> eplist{};
-    eplist.emplace_back( "VK_KHR_surface" );
-    eplist.emplace_back( "VK_KHR_xlib_surface" );
-    eplist.emplace_back( "VK_EXT_debug_report" );
-    eplist.emplace_back( "VK_EXT_debug_utils" );
-    eplist.emplace_back( VK_EXT_DEBUG_UTILS_EXTENSION_NAME );
-    extensionsNames_ = makeExtensionsList( eplist );
+    // Vulkan instance extensions list
+    std::vector<std::string> desiredInstanceExtensionsList{};
+    desiredInstanceExtensionsList.emplace_back( "VK_KHR_surface" );
+    desiredInstanceExtensionsList.emplace_back( "VK_KHR_xlib_surface" );
+    desiredInstanceExtensionsList.emplace_back( "VK_EXT_debug_report" );
+    desiredInstanceExtensionsList.emplace_back( "VK_EXT_debug_utils" );
+    desiredInstanceExtensionsList.emplace_back(
+        VK_EXT_DEBUG_UTILS_EXTENSION_NAME );
+    const auto aquiredInstanceExtensions =
+        makeExtensionsList( desiredInstanceExtensionsList );
 
     instanceCreateInfo.enabledExtensionCount =
-        static_cast<uint32_t>( extensionsNames_.size() );
-    instanceCreateInfo.ppEnabledExtensionNames = extensionsNames_.data();
+        static_cast<uint32_t>( aquiredInstanceExtensions.size() );
+    instanceCreateInfo.ppEnabledExtensionNames =
+        aquiredInstanceExtensions.data();
 
     // instance creation
     if ( const auto err =
@@ -274,8 +282,8 @@ VkInstance Instance::handle() const {
 }
 
 std::pair<uint32_t, char *const *const> Instance::validationLayersInfo() const {
-    return std::make_pair( validationLayersNames_.size(),
-                           validationLayersNames_.data() );
+    return std::make_pair( acquiredValidationLayers_.size(),
+                           acquiredValidationLayers_.data() );
 }
 
 void Instance::info() const {

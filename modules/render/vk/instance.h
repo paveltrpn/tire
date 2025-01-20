@@ -28,6 +28,7 @@ private:
     // pass std::nullopt to enable all available exensions
     std::vector<char *> makeExtensionsList(
         std::optional<std::vector<std::string>> list );
+
     // pass std::nullopt to enable all available validation layers.
     std::vector<char *> makeValidationLayersList(
         std::optional<std::vector<std::string>> list );
@@ -37,9 +38,7 @@ private:
     VkInstance instance_{ VK_NULL_HANDLE };
     VkDebugUtilsMessengerEXT debugMessenger_{ VK_NULL_HANDLE };
 
-    // Vulkan related structures
-    std::vector<char *> validationLayersNames_{};
-    std::vector<char *> extensionsNames_{};
+    std::vector<char *> acquiredValidationLayers_{};
 
     std::vector<VkExtensionProperties> extensionProperties_{};
     std::vector<VkLayerProperties> layerProperties_{};
