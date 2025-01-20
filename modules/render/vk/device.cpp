@@ -221,22 +221,13 @@ void Device::pickAndCreateDevice() {
 
     const float queuePriority{ 1.0f };
     for ( const uint32_t queueFamily : uniqueQueueFamilies ) {
-        VkDeviceQueueCreateInfo queueCreateInfo{};
-        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueCreateInfo.queueFamilyIndex = queueFamily;
-        queueCreateInfo.queueCount = 1;
-        queueCreateInfo.pQueuePriorities = &queuePriority;
+        VkDeviceQueueCreateInfo queueCreateInfo{
+            .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+            .queueFamilyIndex = queueFamily,
+            .queueCount = 1,
+            .pQueuePriorities = &queuePriority };
         queueCreateInfos.push_back( queueCreateInfo );
     }
-
-    VkDeviceCreateInfo deviceCreateInfo{};
-
-    deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-    deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
-    deviceCreateInfo.queueCreateInfoCount =
-        static_cast<uint32_t>( queueCreateInfos.size() );
-    deviceCreateInfo.pEnabledFeatures =
-        &physicalDevices_[pickedPhysicalDeviceId].features;
 
     std::vector<const char *> desiredExtensionsList{};
     desiredExtensionsList.emplace_back( "VK_KHR_swapchain" );
@@ -250,6 +241,13 @@ void Device::pickAndCreateDevice() {
     desiredExtensionsList.emplace_back( "VK_KHR_buffer_device_address" );
     desiredExtensionsList.emplace_back( "VK_KHR_deferred_host_operations" );
 
+    VkDeviceCreateInfo deviceCreateInfo{};
+    deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
+    deviceCreateInfo.queueCreateInfoCount =
+        static_cast<uint32_t>( queueCreateInfos.size() );
+    deviceCreateInfo.pEnabledFeatures =
+        &physicalDevices_[pickedPhysicalDeviceId].features;
     deviceCreateInfo.enabledExtensionCount =
         static_cast<uint32_t>( desiredExtensionsList.size() );
     deviceCreateInfo.ppEnabledExtensionNames = desiredExtensionsList.data();

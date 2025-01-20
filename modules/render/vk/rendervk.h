@@ -54,7 +54,9 @@ private:
     std::unique_ptr<vk::Swapchain> swapchain_{};
     std::unique_ptr<vk::PiplineSimple> pipelineSimple_{};
     std::unique_ptr<vk::CommandPool> commandPool_{};
-    std::vector<std::unique_ptr<vk::CommandBuffer>> cBufs_{};
+    std::vector<
+        std::unique_ptr<vk::RenderCommandBufferBase<vk::RenderFromShader>>>
+        cBufs_{};
     std::unique_ptr<vk::Present> present_{};
 
     std::vector<VkSemaphore> imageAvailableSemaphores_{};

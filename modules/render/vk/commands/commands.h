@@ -9,24 +9,73 @@
 
 namespace tire::vk {
 
-struct CommandBuffer final {
-    CommandBuffer( const vk::Device *device, const CommandPool *pool );
+struct RenderFromShader;
 
-    CommandBuffer( const CommandBuffer &other ) = delete;
-    CommandBuffer( CommandBuffer &&other ) = delete;
-    CommandBuffer &operator=( const CommandBuffer &other ) = delete;
-    CommandBuffer &operator=( CommandBuffer &&other ) = delete;
+template <typename Derived>
+struct RenderCommandBufferBase {
+    RenderCommandBufferBase( const vk::Device *device, const CommandPool *pool )
+        : device_{ device } {
+        const VkCommandBufferAllocateInfo allocInfo{
+            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+            .commandPool = pool->handle(),
+            .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+            .commandBufferCount = 1 };
 
-    void reset();
-    void beginRenderPassCommand( VkFramebuffer framebuffer,
-                                 const vk::Pipeline *pipeline );
+        if ( const auto err = vkAllocateCommandBuffers(
+                 device_->handle(), &allocInfo, &commandBuffer_ );
+             err != VK_SUCCESS ) {
+            throw std::runtime_error(
+                std::format( "failed to allocate command buffers with code {}!",
+                             string_VkResult( err ) ) );
+        } else {
+            // log::debug<DEBUG_OUTPUT_COMMAND_POOL_CPP>(
+            // "vk::CommandBuffer === created!" );
+        };
+    }
+
+    RenderCommandBufferBase( const RenderCommandBufferBase &other ) = delete;
+    RenderCommandBufferBase( RenderCommandBufferBase &&other ) = delete;
+    RenderCommandBufferBase &operator=( const RenderCommandBufferBase &other ) =
+        delete;
+    RenderCommandBufferBase &operator=( RenderCommandBufferBase &&other ) =
+        delete;
+
+    void reset() {
+        auto self = static_cast<Derived *>( this );
+        self->reset();
+    }
+
+    void prepare( VkFramebuffer framebuffer, const vk::Pipeline *pipeline ) {
+        auto self = static_cast<Derived *>( this );
+        self->prepare( framebuffer, pipeline );
+    }
+
     void submit( const std::vector<VkSemaphore> &waitSemaphores,
                  const std::vector<VkSemaphore> &signalSemaphores,
-                 VkFence fence, VkQueue queue );
+                 VkFence fence ) {
+        auto self = static_cast<Derived *>( this );
+        self->submit( waitSemaphores, signalSemaphores, fence );
+    }
 
-private:
+protected:
     const vk::Device *device_{};
     VkCommandBuffer commandBuffer_{ VK_NULL_HANDLE };
+};
+
+// ==========================================================================
+
+struct RenderFromShader final : RenderCommandBufferBase<RenderFromShader> {
+    friend RenderCommandBufferBase;
+
+    RenderFromShader( const vk::Device *device, const CommandPool *pool )
+        : RenderCommandBufferBase<RenderFromShader>( device, pool ){};
+
+private:
+    void reset();
+    void prepare( VkFramebuffer framebuffer, const vk::Pipeline *pipeline );
+    void submit( const std::vector<VkSemaphore> &waitSemaphores,
+                 const std::vector<VkSemaphore> &signalSemaphores,
+                 VkFence fence );
 };
 
 }  // namespace tire::vk

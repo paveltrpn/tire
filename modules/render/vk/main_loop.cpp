@@ -35,12 +35,11 @@ void RenderVK::frame() {
     // log::debug<true>( "next image is {}", imageIndex );
 
     cBufs_[currentFrame_]->reset();
-    cBufs_[currentFrame_]->beginRenderPassCommand(
-        swapchain_->framebuffer( imageIndex ), pipelineSimple_.get() );
+    cBufs_[currentFrame_]->prepare( swapchain_->framebuffer( imageIndex ),
+                                    pipelineSimple_.get() );
     cBufs_[currentFrame_]->submit( { imageAvailableSemaphores_[currentFrame_] },
                                    { renderFinishedSemaphores_[currentFrame_] },
-                                   inFlightFences_[currentFrame_],
-                                   device_->graphicsQueue() );
+                                   inFlightFences_[currentFrame_] );
 
     /*
     VkPresentInfoKHR presentInfo{};

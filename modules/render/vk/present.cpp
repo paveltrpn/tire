@@ -9,22 +9,24 @@ namespace tire::vk {
 Present::Present( const vk::Device *device, const vk::Swapchain *swapchain )
     : device_{ device }
     , swapchain_{ swapchain } {
-    presentInfo_.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-    presentInfo_.waitSemaphoreCount = 1;
-    presentInfo_.pResults = nullptr;
 }
 
 void Present::present( const VkSemaphore semaphore, uint32_t *imageIndex ) {
-    VkSwapchainKHR swapChains[] = { swapchain_->handle() };
-    presentInfo_.swapchainCount = 1;
-    presentInfo_.pSwapchains = swapChains;
+    std::array<VkSwapchainKHR, 1> swapChains = { swapchain_->handle() };
+    std::array<VkSemaphore, 1> signalSemaphores = { semaphore };
 
-    VkSemaphore signalSemaphores[] = { semaphore };
-    presentInfo_.pWaitSemaphores = signalSemaphores;
-    presentInfo_.pImageIndices = imageIndex;
+    const VkPresentInfoKHR presentInfo{
+        .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+        .pNext = nullptr,
+        .waitSemaphoreCount = 1,
+        .pWaitSemaphores = signalSemaphores.data(),
+        .swapchainCount = 1,
+        .pSwapchains = swapChains.data(),
+        .pImageIndices = imageIndex,
+        .pResults = nullptr };
 
     if ( const auto res =
-             vkQueuePresentKHR( device_->presentQueue(), &presentInfo_ );
+             vkQueuePresentKHR( device_->presentQueue(), &presentInfo );
          res != VK_SUCCESS ) {
         log::warning( "queue present result {}, is it normal?",
                       string_VkResult( res ) );

@@ -9,33 +9,14 @@ static constexpr bool DEBUG_OUTPUT_COMMAND_POOL_CPP{ true };
 
 namespace tire::vk {
 
-CommandBuffer::CommandBuffer( const vk::Device *device,
-                              const CommandPool *pool )
-    : device_{ device } {
-    VkCommandBufferAllocateInfo allocInfo{
-        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-        .commandPool = pool->handle(),
-        .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-        .commandBufferCount = 1 };
+// ==========================================================================
 
-    if ( const auto err = vkAllocateCommandBuffers(
-             device_->handle(), &allocInfo, &commandBuffer_ );
-         err != VK_SUCCESS ) {
-        throw std::runtime_error(
-            std::format( "failed to allocate command buffers with code {}!",
-                         string_VkResult( err ) ) );
-    } else {
-        log::debug<DEBUG_OUTPUT_COMMAND_POOL_CPP>(
-            "vk::CommandBuffer === created!" );
-    };
-}
-
-void CommandBuffer::reset() {
+void RenderFromShader::reset() {
     vkResetCommandBuffer( commandBuffer_, 0 );
 }
 
-void CommandBuffer::beginRenderPassCommand( VkFramebuffer framebuffer,
-                                            const vk::Pipeline *pipeline ) {
+void RenderFromShader::prepare( VkFramebuffer framebuffer,
+                                const vk::Pipeline *pipeline ) {
     const VkCommandBufferBeginInfo beginInfo{
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
         .flags = 0,
@@ -47,12 +28,14 @@ void CommandBuffer::beginRenderPassCommand( VkFramebuffer framebuffer,
     const VkClearValue clearColorValue = {
         { { clearColor.r(), clearColor.g(), clearColor.b(),
             clearColor.a() } } };
+
     const VkRenderPassBeginInfo renderPassInfo{
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+        .pNext = nullptr,
         .renderPass = pipeline->renderpass(),
         .framebuffer = framebuffer,
-        .renderArea.offset{ .x = 0, .y = 0 },
-        .renderArea.extent = device_->extent(),
+        .renderArea = { .offset = { .x = 0, .y = 0 },
+                        .extent = { device_->extent() } },
         .clearValueCount = 1,
         .pClearValues = &clearColorValue };
 
@@ -98,9 +81,9 @@ void CommandBuffer::beginRenderPassCommand( VkFramebuffer framebuffer,
     vkEndCommandBuffer( commandBuffer_ );
 }
 
-void CommandBuffer::submit( const std::vector<VkSemaphore> &waitSemaphores,
-                            const std::vector<VkSemaphore> &signalSemaphores,
-                            VkFence fence, VkQueue queue ) {
+void RenderFromShader::submit( const std::vector<VkSemaphore> &waitSemaphores,
+                               const std::vector<VkSemaphore> &signalSemaphores,
+                               VkFence fence ) {
     std::array<VkPipelineStageFlags, 1> waitStages = {
         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
     VkSubmitInfo submitInfo{ .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -113,7 +96,7 @@ void CommandBuffer::submit( const std::vector<VkSemaphore> &waitSemaphores,
                              .pSignalSemaphores = signalSemaphores.data() };
 
     // NOTE: omit return code check
-    vkQueueSubmit( queue, 1, &submitInfo, fence );
+    vkQueueSubmit( device_->graphicsQueue(), 1, &submitInfo, fence );
 }
 
 }  // namespace tire::vk

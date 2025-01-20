@@ -23,8 +23,6 @@ struct Present final {
 private:
     const vk::Device *device_{};
     const vk::Swapchain *swapchain_{};
-
-    VkPresentInfoKHR presentInfo_{};
 };
 
 }  // namespace tire::vk

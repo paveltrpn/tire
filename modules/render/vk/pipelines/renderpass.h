@@ -38,7 +38,9 @@ protected:
     VkRenderPass renderPass_{ VK_NULL_HANDLE };
 };
 
-struct RenderpassSimple : RenderpassBase {
+// ==========================================================================
+
+struct RenderpassSimple final : RenderpassBase {
     using base_class = RenderpassBase;
 
     RenderpassSimple( const vk::Device *device )

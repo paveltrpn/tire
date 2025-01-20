@@ -54,8 +54,10 @@ RenderVK::RenderVK()
         // Create command buffers for each frame
         cBufs_.reserve( 3 );
         for ( auto i = 0; i < cBufs_.capacity(); ++i ) {
-            cBufs_.push_back( std::make_unique<vk::CommandBuffer>(
-                device_.get(), commandPool_.get() ) );
+            cBufs_.push_back(
+                std::make_unique<
+                    vk::RenderCommandBufferBase<vk::RenderFromShader>>(
+                    device_.get(), commandPool_.get() ) );
         }
 
         present_ =
