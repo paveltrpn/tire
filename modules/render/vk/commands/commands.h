@@ -57,9 +57,13 @@ struct RenderCommandBufferBase {
         self->submit( waitSemaphores, signalSemaphores, fence );
     }
 
+    void setVerteciesCount( uint32_t count ) { verteciesCount_ = count; };
+
 protected:
     const vk::Device *device_{};
     VkCommandBuffer commandBuffer_{ VK_NULL_HANDLE };
+
+    uint32_t verteciesCount_{};
 };
 
 // ==========================================================================

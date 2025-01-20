@@ -6,10 +6,16 @@ static constexpr bool DEBUG_OUTPUT_COMMAND_POOL_CPP{ true };
 
 #include "image/color.h"
 #include "commands.h"
+#include "algebra/matrix4.h"
 
 namespace tire::vk {
 
 // ==========================================================================
+
+struct TransformPushConstants {
+    algebra::matrix4f view;
+    algebra::matrix4f rtn;
+};
 
 void RenderFromShader::reset() {
     vkResetCommandBuffer( commandBuffer_, 0 );
@@ -62,6 +68,21 @@ void RenderFromShader::prepare( VkFramebuffer framebuffer,
                             { .width = width, .height = height } };
     vkCmdSetScissor( commandBuffer_, 0, 1, &scissor );
 
+    static float factor{ 0.0f };
+    auto projection = algebra::perspective<float>(
+        45.0f, static_cast<float>( width ) / static_cast<float>( height ), 0.01,
+        100.0 );
+    auto offset = algebra::translate<float>( 0.0f, 0.f, -2.0f );
+    offset.transposeSelf();
+    TransformPushConstants transform{};
+    transform.view = offset * projection;
+    // transform.view[1, 1] *= -1;
+    transform.rtn = algebra::rotate<float>( factor, 40, 9 );
+    factor += 0.3;
+    vkCmdPushConstants( commandBuffer_, pipeline->layout(),
+                        VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( transform ),
+                        &transform );
+
     // vertexCount: Even though we don’t have a vertex buffer, we technically
     // still have 3 vertices to draw.
 
@@ -73,7 +94,7 @@ void RenderFromShader::prepare( VkFramebuffer framebuffer,
 
     // firstInstance: Used as an offset for instanced rendering, defines the
     // lowest value of gl_InstanceIndex.
-    vkCmdDraw( commandBuffer_, 9, 3, 0, 0 );
+    vkCmdDraw( commandBuffer_, verteciesCount_, 3, 0, 0 );
 
     vkCmdEndRenderPass( commandBuffer_ );
 

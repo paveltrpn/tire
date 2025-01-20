@@ -29,9 +29,10 @@ void RenderVK::frame() {
     vkAcquireNextImageKHR( device_->handle(), swapchain_->handle(), UINT64_MAX,
                            iaSem, VK_NULL_HANDLE, &imageIndex );
 
+    cBufs_[currentFrame_]->setVerteciesCount( 36 );
     cBufs_[currentFrame_]->reset();
     cBufs_[currentFrame_]->prepare( swapchain_->framebuffer( imageIndex ),
-                                    pipelineSimple_.get() );
+                                    piplineMatrixReady.get() );
     cBufs_[currentFrame_]->submit( { iaSem }, { rfSem }, ifFnc );
 
     present_->present( rfSem, &imageIndex );

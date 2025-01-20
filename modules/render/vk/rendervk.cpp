@@ -13,7 +13,10 @@
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_RENDERVK_CPP{ true };
 
+#include "algebra/matrix4.h"
+
 namespace tire {
+
 RenderVK::RenderVK()
     : Render{} {
     try {
@@ -47,10 +50,10 @@ RenderVK::RenderVK()
         piplineMatrixReady =
             std::make_unique<vk::PiplineMatrixReady>( device_.get() );
         piplineMatrixReady->initPipeline(
-            { basePath + "/assets/shaders/vk_simple_tri_VERTEX.spv",
-              basePath + "/assets/shaders/vk_simple_tri_FRAGMENT.spv" } );
+            { basePath + "/assets/shaders/vk_simple_box_VERTEX.spv",
+              basePath + "/assets/shaders/vk_simple_box_FRAGMENT.spv" } );
 
-        swapchain_->createFramebuffers( pipelineSimple_.get() );
+        swapchain_->createFramebuffers( piplineMatrixReady.get() );
 
         // Create command pool (application wide)
         commandPool_ = std::make_unique<vk::CommandPool>( device_.get() );

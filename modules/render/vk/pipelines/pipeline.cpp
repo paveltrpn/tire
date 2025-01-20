@@ -92,7 +92,7 @@ void Pipeline::initPipeline( const std::vector<std::filesystem::path> &files ) {
         .dynamicStateCount = static_cast<uint32_t>( dynamicStates.size() ),
         .pDynamicStates = dynamicStates.data() };
 
-    const auto layout = initLayout();
+    layout_ = initLayout();
     shaderStorage_->fill( files );
 
     const VkPipelineShaderStageCreateInfo vertShaderStage{
@@ -127,7 +127,7 @@ void Pipeline::initPipeline( const std::vector<std::filesystem::path> &files ) {
         .pDepthStencilState = nullptr,
         .pColorBlendState = &colorBlending,
         .pDynamicState = nullptr,
-        .layout = layout,
+        .layout = layout_,
         .renderPass = renderpass_->handle(),
         .subpass = 0,
         .basePipelineHandle = VK_NULL_HANDLE,
@@ -141,13 +141,13 @@ void Pipeline::initPipeline( const std::vector<std::filesystem::path> &files ) {
             std::format( "failed to create graphics pipeline with code {}!",
                          string_VkResult( err ) ) );
     } else {
-        log::info( "vk::PipelineSimple === graphics pipeline created!" );
+        log::info( "vk::Pipeline === graphics pipeline created!" );
     }
 
     // There is no need to store this handle after pipeline creation and pass
     // it to pipeline itself. It can be safeley removed after pipeline creation
     // and pipelines thoose uses this pipeline layout stay valid.
-    vkDestroyPipelineLayout( device_->handle(), layout, nullptr );
+    // vkDestroyPipelineLayout( device_->handle(), layout, nullptr );
 }
 
 // =====================================================================================
@@ -178,12 +178,18 @@ VkPipelineLayout PiplineSimple::initLayout() {
 // =====================================================================================
 
 VkPipelineLayout PiplineMatrixReady::initLayout() {
+    //setup push constants
+    VkPushConstantRange viewRtnMatrix{
+        .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+        .offset = 0,
+        .size = ( sizeof( float ) * 16 * 2 ) + 4 };  // two matrix4f
+
     const VkPipelineLayoutCreateInfo pipelineLayoutInfo{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
         .setLayoutCount = 0,
         .pSetLayouts = nullptr,
-        .pushConstantRangeCount = 0,
-        .pPushConstantRanges = nullptr };
+        .pushConstantRangeCount = 1,
+        .pPushConstantRanges = &viewRtnMatrix };
 
     VkPipelineLayout layout{ VK_NULL_HANDLE };
 
@@ -194,7 +200,7 @@ VkPipelineLayout PiplineMatrixReady::initLayout() {
             std::format( "failed to create pipeline layout with code {}!",
                          string_VkResult( err ) ) );
     } else {
-        log::info( "vk::PipelineSimple === pipeline layout created!" );
+        log::info( "vk::PipelineMatrixReady === pipeline layout created!" );
     }
 
     return layout;

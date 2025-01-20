@@ -20,6 +20,7 @@ struct Pipeline {
     virtual ~Pipeline();
 
     [[nodiscard]] VkPipeline pipeline() const { return pipeline_; };
+    [[nodiscard]] VkPipelineLayout layout() const { return layout_; };
     [[nodiscard]] VkRenderPass renderpass() const {
         return renderpass_->handle();
     }
@@ -36,6 +37,7 @@ protected:
     std::unique_ptr<vk::RenderpassBase> renderpass_;
 
     VkPipeline pipeline_{ VK_NULL_HANDLE };
+    VkPipelineLayout layout_{ VK_NULL_HANDLE };
 };
 
 // =====================================================================================

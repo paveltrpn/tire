@@ -53,8 +53,8 @@ private:
     std::unique_ptr<vk::Device> device_{};
     std::unique_ptr<vk::Swapchain> swapchain_{};
 
-    std::unique_ptr<vk::PiplineSimple> pipelineSimple_{};
-    std::unique_ptr<vk::PiplineMatrixReady> piplineMatrixReady{};
+    std::unique_ptr<vk::Pipeline> pipelineSimple_{};
+    std::unique_ptr<vk::Pipeline> piplineMatrixReady{};
 
     std::unique_ptr<vk::CommandPool> commandPool_{};
     std::vector<
