@@ -44,6 +44,12 @@ RenderVK::RenderVK()
             { basePath + "/assets/shaders/vk_simple_tri_VERTEX.spv",
               basePath + "/assets/shaders/vk_simple_tri_FRAGMENT.spv" } );
 
+        piplineMatrixReady =
+            std::make_unique<vk::PiplineMatrixReady>( device_.get() );
+        piplineMatrixReady->initPipeline(
+            { basePath + "/assets/shaders/vk_simple_tri_VERTEX.spv",
+              basePath + "/assets/shaders/vk_simple_tri_FRAGMENT.spv" } );
+
         swapchain_->createFramebuffers( pipelineSimple_.get() );
 
         // Create command pool (application wide)

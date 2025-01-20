@@ -128,20 +128,20 @@ void Swapchain::createSwapchain() {
 void Swapchain::createImageViews() {
     swapChainImageViews_.resize( swapChainImages_.size() );
     for ( size_t i = 0; i < swapChainImages_.size(); i++ ) {
-        VkImageViewCreateInfo createInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-        createInfo.image = swapChainImages_[i];
-        createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-        createInfo.format = swapChainImageFormat_;
-        createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-        createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-        createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-        createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-        createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        createInfo.subresourceRange.baseMipLevel = 0;
-        createInfo.subresourceRange.levelCount = 1;
-        createInfo.subresourceRange.baseArrayLayer = 0;
-        createInfo.subresourceRange.layerCount = 1;
+        const VkImageViewCreateInfo createInfo{
+            .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+            .image = swapChainImages_[i],
+            .viewType = VK_IMAGE_VIEW_TYPE_2D,
+            .format = swapChainImageFormat_,
+            .components = { VK_COMPONENT_SWIZZLE_IDENTITY,
+                            VK_COMPONENT_SWIZZLE_IDENTITY,
+                            VK_COMPONENT_SWIZZLE_IDENTITY,
+                            VK_COMPONENT_SWIZZLE_IDENTITY },
+            .subresourceRange = { .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+                                  .baseMipLevel = 0,
+                                  .levelCount = 1,
+                                  .baseArrayLayer = 0,
+                                  .layerCount = 1 } };
 
         if ( const auto err =
                  vkCreateImageView( device_->handle(), &createInfo, nullptr,
@@ -161,14 +161,14 @@ void Swapchain::createFramebuffers( const vk::Pipeline *pipeline ) {
     framebuffers_.resize( swapChainImageViews_.size() );
     for ( size_t i = 0; i < swapChainImageViews_.size(); i++ ) {
         std::array<VkImageView, 1> attachments = { swapChainImageViews_[i] };
-        VkFramebufferCreateInfo framebufferInfo{};
-        framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-        framebufferInfo.renderPass = pipeline->renderpass();
-        framebufferInfo.attachmentCount = 1;
-        framebufferInfo.pAttachments = attachments.data();
-        framebufferInfo.width = swapChainExtent_.width;
-        framebufferInfo.height = swapChainExtent_.height;
-        framebufferInfo.layers = 1;
+        const VkFramebufferCreateInfo framebufferInfo{
+            .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+            .renderPass = pipeline->renderpass(),
+            .attachmentCount = 1,
+            .pAttachments = attachments.data(),
+            .width = swapChainExtent_.width,
+            .height = swapChainExtent_.height,
+            .layers = 1 };
 
         if ( const auto err =
                  vkCreateFramebuffer( device_->handle(), &framebufferInfo,
