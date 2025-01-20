@@ -120,22 +120,55 @@ void Device::pickAndCreateDevice() {
     // Check is physical device suitable, can be done acoording to
     // physical devices properties and physical device queue families properies
 
-    int pickedPhysicalDeviceId{ -1 };
-    // Condition: we pick discreete GPU
+    int discreetGpuId{ -1 };
+    int integratedGpuId{ -1 };
+    int otherGpuId{ -1 };
+    int virtualGpuId{ -1 };
+    int cpuGpuId{ -1 };
     for ( auto i{ 0 }; const auto &physicalDevice : physicalDevices_ ) {
         const auto &deviceProps = physicalDevice.properties;
-        if ( ( deviceProps.deviceType ==
-               VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU ) ) {
-            pickedPhysicalDeviceId = i;
-            log::info( "vk::Device === pick {}",
-                       physicalDevices_[pickedPhysicalDeviceId]
-                           .properties.deviceName );
-            break;
-        } else {
-            throw std::runtime_error( "no discreet physical devices found!" );
+        switch ( physicalDevice.properties.deviceType ) {
+            case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU: {
+                discreetGpuId = i;
+                break;
+            }
+            case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU: {
+                integratedGpuId = i;
+                break;
+            }
+            case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU: {
+                virtualGpuId = i;
+                break;
+            }
+            case VK_PHYSICAL_DEVICE_TYPE_CPU: {
+                cpuGpuId = i;
+                break;
+            }
+            case VK_PHYSICAL_DEVICE_TYPE_OTHER: {
+                otherGpuId = i;
+                break;
+            }
+            default: {
+                break;
+            }
         }
         ++i;
     }
+
+    // First try to pick discreete GPU
+    int pickedPhysicalDeviceId{ -1 };
+    if ( discreetGpuId != -1 ) {
+        pickedPhysicalDeviceId = discreetGpuId;
+    } else if ( integratedGpuId != -1 ) {
+        pickedPhysicalDeviceId = integratedGpuId;
+    } else if ( cpuGpuId != -1 ) {
+        pickedPhysicalDeviceId = cpuGpuId;
+    } else {
+        throw std::runtime_error( "no suitable vulkan devices found! " );
+    }
+
+    log::info( "vk::Device === pick {}",
+               physicalDevices_[pickedPhysicalDeviceId].properties.deviceName );
 
     for ( auto i{ 0 };
           const auto &queueFamily :
@@ -197,15 +230,15 @@ void Device::pickAndCreateDevice() {
 
     std::vector<const char *> desiredExtensionsList{};
     desiredExtensionsList.emplace_back( "VK_KHR_swapchain" );
-    desiredExtensionsList.emplace_back( "VK_KHR_ray_query" );
-    desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_pipeline" );
-    desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_maintenance1" );
-    desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_position_fetch" );
-    desiredExtensionsList.emplace_back( "VK_KHR_acceleration_structure" );
-    desiredExtensionsList.emplace_back( "VK_EXT_descriptor_indexing" );
-    desiredExtensionsList.emplace_back( "VK_KHR_maintenance3" );
-    desiredExtensionsList.emplace_back( "VK_KHR_buffer_device_address" );
-    desiredExtensionsList.emplace_back( "VK_KHR_deferred_host_operations" );
+    // desiredExtensionsList.emplace_back( "VK_KHR_ray_query" );
+    // desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_pipeline" );
+    // desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_maintenance1" );
+    // desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_position_fetch" );
+    // desiredExtensionsList.emplace_back( "VK_KHR_acceleration_structure" );
+    // desiredExtensionsList.emplace_back( "VK_EXT_descriptor_indexing" );
+    // desiredExtensionsList.emplace_back( "VK_KHR_maintenance3" );
+    // desiredExtensionsList.emplace_back( "VK_KHR_buffer_device_address" );
+    // desiredExtensionsList.emplace_back( "VK_KHR_deferred_host_operations" );
 
     deviceCreateInfo.enabledExtensionCount =
         static_cast<uint32_t>( desiredExtensionsList.size() );
