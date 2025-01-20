@@ -24,10 +24,10 @@ struct Pipeline {
         return renderpass_->handle();
     }
 
-    virtual void initFixed() = 0;
+    virtual void initFixed();
     virtual void initProgable(
-        const std::vector<std::filesystem::path> &files ) = 0;
-    virtual void initPipeline() = 0;
+        const std::vector<std::filesystem::path> &files );
+    virtual void initPipeline();
 
 protected:
     [[nodiscard]] virtual VkPipelineLayout initLayout() = 0;
@@ -58,14 +58,21 @@ protected:
     VkPipelineRenderingCreateInfo renderInfo_;
 };
 
+// =====================================================================================
+
 struct PiplineSimple final : Pipeline {
     PiplineSimple( const vk::Device *device )
         : Pipeline( device ) {}
 
-    void initFixed() override;
-    void initProgable(
-        const std::vector<std::filesystem::path> &files ) override;
-    void initPipeline() override;
+private:
+    VkPipelineLayout initLayout() override;
+};
+
+// =====================================================================================
+
+struct PiplineMatrixReady final : Pipeline {
+    PiplineMatrixReady( const vk::Device *device )
+        : Pipeline( device ) {}
 
 private:
     VkPipelineLayout initLayout() override;

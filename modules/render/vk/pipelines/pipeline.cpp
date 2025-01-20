@@ -19,7 +19,7 @@ Pipeline::~Pipeline() {
     vkDestroyPipeline( device_->handle(), pipeline_, nullptr );
 }
 
-void PiplineSimple::initFixed() {
+void Pipeline::initFixed() {
     // VkPipelineVertexInputStateCreateInfo
     vertexInput_.sType =
         VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -138,8 +138,7 @@ void PiplineSimple::initFixed() {
     dynamicState_.flags = 0;
 }
 
-void PiplineSimple::initProgable(
-    const std::vector<std::filesystem::path> &files ) {
+void Pipeline::initProgable( const std::vector<std::filesystem::path> &files ) {
     shaderStorage_->fill( files );
 
     // VkPipelineShaderStageCreateInfo
@@ -161,55 +160,29 @@ void PiplineSimple::initProgable(
     fragShaderStage_.pName = "main";
 }
 
-VkPipelineLayout PiplineSimple::initLayout() {
-    VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-    pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    pipelineLayoutInfo.setLayoutCount = 0;             // Optional
-    pipelineLayoutInfo.pSetLayouts = nullptr;          // Optional
-    pipelineLayoutInfo.pushConstantRangeCount = 0;     // Optional
-    pipelineLayoutInfo.pPushConstantRanges = nullptr;  // Optional
-
-    VkPipelineLayout layout{ VK_NULL_HANDLE };
-
-    if ( const auto err = vkCreatePipelineLayout(
-             device_->handle(), &pipelineLayoutInfo, nullptr, &layout );
-         err != VK_SUCCESS ) {
-        throw std::runtime_error(
-            std::format( "failed to create pipeline layout with code {}!",
-                         string_VkResult( err ) ) );
-    } else {
-        log::info( "vk::PipelineSimple === pipeline layout created!" );
-    }
-
-    return layout;
-}
-
-void PiplineSimple::initPipeline() {
-    VkGraphicsPipelineCreateInfo pipelineInfo{};
-    pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-    pipelineInfo.stageCount = 2;
-
+void Pipeline::initPipeline() {
+    const auto layout = initLayout();
     // NOTE: Will vulkan ignore nullptr shader stages?
     std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages = {
         vertShaderStage_, fragShaderStage_ };
 
-    pipelineInfo.pStages = shaderStages.data();
-    pipelineInfo.pVertexInputState = &vertexInput_;
-    pipelineInfo.pInputAssemblyState = &inputAssembly_;
-    pipelineInfo.pViewportState = nullptr;  //&viewportState_;
-    pipelineInfo.pRasterizationState = &rasterizer_;
-    pipelineInfo.pMultisampleState = &multisampling_;
-    pipelineInfo.pDepthStencilState = nullptr;  // Optional
-    pipelineInfo.pColorBlendState = &colorBlending_;
-    pipelineInfo.pDynamicState = nullptr;  // Optional
-
-    const auto layout = initLayout();
-    pipelineInfo.layout = layout;
-
-    pipelineInfo.renderPass = renderpass_->handle();
-    pipelineInfo.subpass = 0;
-    pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;  // Optional
-    pipelineInfo.basePipelineIndex = -1;               // Optional
+    const VkGraphicsPipelineCreateInfo pipelineInfo{
+        .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+        .stageCount = 2,
+        .pStages = shaderStages.data(),
+        .pVertexInputState = &vertexInput_,
+        .pInputAssemblyState = &inputAssembly_,
+        .pViewportState = nullptr,
+        .pRasterizationState = &rasterizer_,
+        .pMultisampleState = &multisampling_,
+        .pDepthStencilState = nullptr,
+        .pColorBlendState = &colorBlending_,
+        .pDynamicState = nullptr,
+        .layout = layout,
+        .renderPass = renderpass_->handle(),
+        .subpass = 0,
+        .basePipelineHandle = VK_NULL_HANDLE,
+        .basePipelineIndex = -1 };
 
     if ( const auto err =
              vkCreateGraphicsPipelines( device_->handle(), VK_NULL_HANDLE, 1,
@@ -226,6 +199,56 @@ void PiplineSimple::initPipeline() {
     // it to pipeline itself. It can be safeley removed after pipeline creation
     // and pipelines thoose uses this pipeline layout stay valid.
     vkDestroyPipelineLayout( device_->handle(), layout, nullptr );
+}
+
+// =====================================================================================
+
+VkPipelineLayout PiplineSimple::initLayout() {
+    const VkPipelineLayoutCreateInfo pipelineLayoutInfo{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+        .setLayoutCount = 0,
+        .pSetLayouts = nullptr,
+        .pushConstantRangeCount = 0,
+        .pPushConstantRanges = nullptr };
+
+    VkPipelineLayout layout{ VK_NULL_HANDLE };
+
+    if ( const auto err = vkCreatePipelineLayout(
+             device_->handle(), &pipelineLayoutInfo, nullptr, &layout );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error(
+            std::format( "failed to create pipeline layout with code {}!",
+                         string_VkResult( err ) ) );
+    } else {
+        log::info( "vk::PipelineSimple === pipeline layout created!" );
+    }
+
+    return layout;
+}
+
+// =====================================================================================
+
+VkPipelineLayout PiplineMatrixReady::initLayout() {
+    const VkPipelineLayoutCreateInfo pipelineLayoutInfo{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+        .setLayoutCount = 0,
+        .pSetLayouts = nullptr,
+        .pushConstantRangeCount = 0,
+        .pPushConstantRanges = nullptr };
+
+    VkPipelineLayout layout{ VK_NULL_HANDLE };
+
+    if ( const auto err = vkCreatePipelineLayout(
+             device_->handle(), &pipelineLayoutInfo, nullptr, &layout );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error(
+            std::format( "failed to create pipeline layout with code {}!",
+                         string_VkResult( err ) ) );
+    } else {
+        log::info( "vk::PipelineSimple === pipeline layout created!" );
+    }
+
+    return layout;
 }
 
 }  // namespace tire::vk
