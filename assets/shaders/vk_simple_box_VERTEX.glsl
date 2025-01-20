@@ -42,11 +42,10 @@ vec3 normals[36] = vec3[](
 vec3 color = vec3( 1.0, 0.0, 0.0 );
 vec3 ambientLight = vec3( 0.3, 0.3, 0.3 );
 vec3 lightcolor = vec3( 1.0, 1.0, 1.0 );
+vec3 directionalVector = normalize( vec3( 0.0, 0.0, -5.0 ) );
 
 void main() {
-    vec3 directionalVector = normalize( vec3( 0.0, 0.0, -5.0 ) );
-    mat4 irtn = inverse( transformations.rtn );
-    vec4 nrmTransformed = irtn * vec4( normals[gl_VertexIndex], 0.0 );
+    vec4 nrmTransformed = inverse( transformations.rtn ) * vec4( normals[gl_VertexIndex], 0.0 );
     float directional =
         max( dot( nrmTransformed.xyz, directionalVector ), 0.0 );
     vLighting = ambientLight + ( lightcolor * directional );

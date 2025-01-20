@@ -83,17 +83,6 @@ void RenderFromShader::prepare( VkFramebuffer framebuffer,
                         VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( transform ),
                         &transform );
 
-    // vertexCount: Even though we don’t have a vertex buffer, we technically
-    // still have 3 vertices to draw.
-
-    // instanceCount: Used for instanced rendering, use 1 if you’re not doing
-    // that.
-
-    // firstVertex: Used as an offset into the vertex buffer, defines the lowest
-    // value of gl_VertexIndex.
-
-    // firstInstance: Used as an offset for instanced rendering, defines the
-    // lowest value of gl_InstanceIndex.
     vkCmdDraw( commandBuffer_, verteciesCount_, 3, 0, 0 );
 
     vkCmdEndRenderPass( commandBuffer_ );
