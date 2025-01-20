@@ -43,9 +43,6 @@ private:
 
     std::vector<VkExtensionProperties> extensionProperties_{};
     std::vector<VkLayerProperties> layerProperties_{};
-    VkApplicationInfo appInfo_{};
-    VkDebugUtilsMessengerCreateInfoEXT dbgCreateInfo_{};
-    VkInstanceCreateInfo instanceCreateInfo_{};
 };
 
 }  // namespace tire::vk

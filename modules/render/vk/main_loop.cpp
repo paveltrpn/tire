@@ -18,12 +18,9 @@ void RenderVK::frame() {
     //log::debug<true>( "currentFrame = {}", currentFrame_ );
 
 #define ONE_SECOND 1000000000
-    const auto res = vkWaitForFences(
-        device_->handle(), 1, &inFlightFences_[currentFrame_], VK_TRUE, 0 );
-    if ( res != VK_SUCCESS ) {
-        log::warning( "wait for fences result {}, is it normal?",
-                      string_VkResult( res ) );
-    }
+    // NOTE: omit return code check
+    vkWaitForFences( device_->handle(), 1, &inFlightFences_[currentFrame_],
+                     VK_TRUE, 0 );
 
     // NOTE: omit return code check
     vkResetFences( device_->handle(), 1, &inFlightFences_[currentFrame_] );
