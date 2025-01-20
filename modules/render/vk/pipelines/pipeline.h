@@ -35,7 +35,7 @@ protected:
 protected:
     const vk::Device *device_;
     std::unique_ptr<vk::ShaderStorage> shaderStorage_;
-    std::unique_ptr<vk::Renderpass> renderpass_;
+    std::unique_ptr<vk::RenderpassSimple> renderpass_;
 
     // Vulkan entity handles
     VkPipeline pipeline_{ VK_NULL_HANDLE };
