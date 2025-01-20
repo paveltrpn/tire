@@ -5,7 +5,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "device.h"
+#include "../device.h"
 #include "log/log.h"
 
 namespace tire::vk {

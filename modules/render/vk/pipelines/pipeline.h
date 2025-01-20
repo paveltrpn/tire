@@ -4,17 +4,13 @@
 #include <vulkan/vulkan.h>
 
 #include "../device.h"
-#include "../shader_storage.h"
-#include "../renderpasses/renderpass.h"
+#include "shader_storage.h"
+#include "renderpass.h"
 
 namespace tire::vk {
 
 struct Pipeline {
-    Pipeline( const vk::Device *device, const vk::ShaderStorage *storage,
-              const vk::Renderpass *renderpass )
-        : device_{ device }
-        , shaderStorage_{ storage }
-        , renderpass_{ renderpass } {}
+    Pipeline( const vk::Device *device );
 
     Pipeline( const Pipeline &other ) = delete;
     Pipeline( Pipeline &&other ) = delete;
@@ -38,8 +34,8 @@ private:
 
 protected:
     const vk::Device *device_;
-    const vk::ShaderStorage *shaderStorage_;
-    const vk::Renderpass *renderpass_;
+    std::unique_ptr<vk::ShaderStorage> shaderStorage_;
+    std::unique_ptr<vk::Renderpass> renderpass_;
 
     // Vulkan entity handles
     VkPipeline pipeline_{ VK_NULL_HANDLE };
@@ -71,12 +67,11 @@ protected:
 };
 
 struct PiplineSimple final : Pipeline {
-    PiplineSimple( const vk::Device *device, const vk::ShaderStorage *storage,
-                   const vk::Renderpass *renderpass )
-        : Pipeline( device, storage, renderpass ) {}
+    PiplineSimple( const vk::Device *device )
+        : Pipeline( device ) {}
 
     void initFixed();
-    void initProgable();
+    void initProgable( const std::vector<std::filesystem::path> &files );
     void initLayout();
     void initPipeline();
 };

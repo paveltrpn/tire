@@ -32,10 +32,6 @@ RenderVK::RenderVK()
         // Load shaders
         const auto configHandle = Config::instance();
         const auto basePath = configHandle->getBasePath().string();
-        shaderStorage_ = std::make_unique<vk::ShaderStorage>( device_.get() );
-        shaderStorage_->fill(
-            { basePath + "/assets/shaders/vk_simple_tri_VERTEX.spv",
-              basePath + "/assets/shaders/vk_simple_tri_FRAGMENT.spv" } );
 
         // Create swapchain (application wide)
         swapchain_ =
@@ -43,16 +39,14 @@ RenderVK::RenderVK()
         swapchain_->createSwapchain();
         swapchain_->createImageViews();
 
-        renderpass_ = std::make_unique<vk::RenderpassSimple>( device_.get() );
-
         // Create pipeline (maybe add more)
-        pipelineSimple_ = std::make_unique<vk::PiplineSimple>(
-            device_.get(), shaderStorage_.get(), renderpass_.get() );
+        pipelineSimple_ = std::make_unique<vk::PiplineSimple>( device_.get() );
         pipelineSimple_->initFixed();
-        pipelineSimple_->initProgable();
+        pipelineSimple_->initProgable(
+            { basePath + "/assets/shaders/vk_simple_tri_VERTEX.spv",
+              basePath + "/assets/shaders/vk_simple_tri_FRAGMENT.spv" } );
         pipelineSimple_->initLayout();
         pipelineSimple_->initPipeline();
-        pipelineSimple_->initFixed();
 
         swapchain_->createFramebuffers( pipelineSimple_.get() );
 

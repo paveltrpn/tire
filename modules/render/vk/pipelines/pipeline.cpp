@@ -9,6 +9,12 @@ static constexpr bool DEBUG_OUTPUT_PIPELINE_CPP{ true };
 
 namespace tire::vk {
 
+Pipeline::Pipeline( const vk::Device *device )
+    : device_{ device } {
+    shaderStorage_ = std::make_unique<vk::ShaderStorage>( device_ );
+    renderpass_ = std::make_unique<vk::RenderpassSimple>( device_ );
+}
+
 Pipeline::~Pipeline() {
     vkDestroyPipelineLayout( device_->handle(), pipelineLayout_, nullptr );
     vkDestroyPipeline( device_->handle(), pipeline_, nullptr );
@@ -134,7 +140,10 @@ void PiplineSimple::initFixed() {
     dynamicState_.flags = 0;
 }
 
-void PiplineSimple::initProgable() {
+void PiplineSimple::initProgable(
+    const std::vector<std::filesystem::path> &files ) {
+    shaderStorage_->fill( files );
+
     // VkPipelineShaderStageCreateInfo
     vertShaderStage_.sType =
         VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;

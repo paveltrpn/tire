@@ -98,14 +98,14 @@ add_library(render
     modules/render/vk/device.cpp
     modules/render/vk/device.h
     modules/render/vk/main_loop.cpp
-    modules/render/vk/shader_storage.h
-    modules/render/vk/shader_storage.cpp
+    modules/render/vk/pipelines/shader_storage.h
+    modules/render/vk/pipelines/shader_storage.cpp
     modules/render/vk/pipelines/pipeline.h
     modules/render/vk/pipelines/pipeline.cpp
+    modules/render/vk/pipelines/renderpass.h
+    modules/render/vk/pipelines/renderpass.cpp
     modules/render/vk/commands/commands.h
     modules/render/vk/commands/commands.cpp
-    modules/render/vk/renderpasses/renderpass.h
-    modules/render/vk/renderpasses/renderpass.cpp
     modules/render/vk/scene.h
     modules/render/vk/scene.cpp
     modules/render/vk/swapchain.h

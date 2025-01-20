@@ -17,13 +17,11 @@
 #include "swapchain.h"
 #include "pipelines/pipeline.h"
 #include "commands/commands.h"
-#include "renderpasses/renderpass.h"
 #include "command_pool.h"
 #include "present.h"
 
 #include "config/config.h"
 #include "../render.h"
-#include "shader_storage.h"
 #include "scene.h"
 
 namespace tire {
@@ -54,8 +52,6 @@ private:
     std::unique_ptr<vk::Surface> surface_{};
     std::unique_ptr<vk::Device> device_{};
     std::unique_ptr<vk::Swapchain> swapchain_{};
-    std::unique_ptr<vk::ShaderStorage> shaderStorage_{};
-    std::unique_ptr<vk::RenderpassSimple> renderpass_{};
     std::unique_ptr<vk::PiplineSimple> pipelineSimple_{};
     std::unique_ptr<vk::CommandPool> commandPool_{};
     std::vector<std::unique_ptr<vk::CommandBuffer>> cBufs_{};
