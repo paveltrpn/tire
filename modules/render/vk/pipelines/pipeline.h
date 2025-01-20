@@ -24,10 +24,8 @@ struct Pipeline {
         return renderpass_->handle();
     }
 
-    virtual void initFixed();
-    virtual void initProgable(
+    virtual void initPipeline(
         const std::vector<std::filesystem::path> &files );
-    virtual void initPipeline();
 
 protected:
     [[nodiscard]] virtual VkPipelineLayout initLayout() = 0;
@@ -37,25 +35,7 @@ protected:
     std::unique_ptr<vk::ShaderStorage> shaderStorage_;
     std::unique_ptr<vk::RenderpassBase> renderpass_;
 
-    // Vulkan entity handles
     VkPipeline pipeline_{ VK_NULL_HANDLE };
-
-    // Vulkan related structures
-    VkPipelineShaderStageCreateInfo vertShaderStage_{};
-    VkPipelineShaderStageCreateInfo fragShaderStage_{};
-
-    VkPipelineVertexInputStateCreateInfo vertexInput_{};
-    VkPipelineInputAssemblyStateCreateInfo inputAssembly_{};
-    VkFormat colorAttachmentformat_{};
-    VkPipelineViewportStateCreateInfo viewportState_{};
-    VkPipelineRasterizationStateCreateInfo rasterizer_{};
-    VkPipelineMultisampleStateCreateInfo multisampling_{};
-    VkPipelineDepthStencilStateCreateInfo depthAndStencil_{};
-    VkPipelineColorBlendAttachmentState colorBlendAttachment_{};
-    VkPipelineColorBlendStateCreateInfo colorBlending_{};
-    VkPipelineDynamicStateCreateInfo dynamicState_{};
-
-    VkPipelineRenderingCreateInfo renderInfo_;
 };
 
 // =====================================================================================

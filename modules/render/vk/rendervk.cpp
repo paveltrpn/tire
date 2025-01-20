@@ -40,11 +40,9 @@ RenderVK::RenderVK()
 
         // Create pipeline (maybe add more)
         pipelineSimple_ = std::make_unique<vk::PiplineSimple>( device_.get() );
-        pipelineSimple_->initFixed();
-        pipelineSimple_->initProgable(
+        pipelineSimple_->initPipeline(
             { basePath + "/assets/shaders/vk_simple_tri_VERTEX.spv",
               basePath + "/assets/shaders/vk_simple_tri_FRAGMENT.spv" } );
-        pipelineSimple_->initPipeline();
 
         swapchain_->createFramebuffers( pipelineSimple_.get() );
 
