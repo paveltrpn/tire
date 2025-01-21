@@ -1,6 +1,7 @@
 
 #include <vulkan/vulkan.h>
 #include <vulkan/vk_enum_string_helper.h>
+#include <span>
 
 #include "rendervk.h"
 
@@ -16,7 +17,7 @@ void RenderVK::preFrame(){
 
 void RenderVK::frame() {
     uint32_t imageIndex{};
-    const auto [iaSem, rfSem, ifFnc] = presentSync_->get( currentFrame_ );
+    auto [iaSem, rfSem, ifFnc] = presentSync_->get( currentFrame_ );
 
 #define ONE_SECOND 1000000000
     // NOTE: omit return code check
@@ -33,7 +34,7 @@ void RenderVK::frame() {
     cBufs_[currentFrame_]->reset();
     cBufs_[currentFrame_]->prepare( swapchain_->framebuffer( imageIndex ),
                                     piplineMatrixReady.get() );
-    cBufs_[currentFrame_]->submit( { iaSem }, { rfSem }, ifFnc );
+    cBufs_[currentFrame_]->submit( iaSem, rfSem, ifFnc );
 
     present_->present( rfSem, &imageIndex );
 

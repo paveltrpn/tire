@@ -52,7 +52,7 @@ void info( std::format_string<Ts...> msg, Ts &&...args ) {
 template <bool enable = false, typename... Ts>
 void notice( std::format_string<Ts...> msg, Ts &&...args ) {
     if constexpr ( enable || ENABLE_NOTICE_OUTPUT ) {
-        constexpr char preamble[] = "\036[3;32m[notice] \033[0m\t\t";
+        constexpr char preamble[] = "\033[3;36m[notice] \033[0m\t";
         std::cout << preamble
                   << std::vformat( msg.get(), std::make_format_args( args... ) )
                   << "\n";

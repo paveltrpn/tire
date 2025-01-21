@@ -91,19 +91,21 @@ void RenderFromShader::prepare( VkFramebuffer framebuffer,
     vkEndCommandBuffer( commandBuffer_ );
 }
 
-void RenderFromShader::submit( const std::vector<VkSemaphore> &waitSemaphores,
-                               const std::vector<VkSemaphore> &signalSemaphores,
-                               VkFence fence ) {
+void RenderFromShader::submit( VkSemaphore waitSemaphores,
+                               VkSemaphore signalSemaphores, VkFence fence ) {
     std::array<VkPipelineStageFlags, 1> waitStages = {
         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+    std::array<VkSemaphore, 1> waitsems{ waitSemaphores };
+    std::array<VkSemaphore, 1> sgnlsems{ signalSemaphores };
+
     VkSubmitInfo submitInfo{ .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
                              .waitSemaphoreCount = 1,
-                             .pWaitSemaphores = waitSemaphores.data(),
+                             .pWaitSemaphores = waitsems.data(),
                              .pWaitDstStageMask = waitStages.data(),
                              .commandBufferCount = 1,
                              .pCommandBuffers = &commandBuffer_,
                              .signalSemaphoreCount = 1,
-                             .pSignalSemaphores = signalSemaphores.data() };
+                             .pSignalSemaphores = sgnlsems.data() };
 
     // NOTE: omit return code check
     vkQueueSubmit( device_->graphicsQueue(), 1, &submitInfo, fence );

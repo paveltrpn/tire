@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <vector>
+#include <span>
 #include <vulkan/vulkan.h>
 
 #include "../pipelines/pipeline.h"
@@ -50,8 +50,7 @@ struct RenderCommandBufferBase {
         self->prepare( framebuffer, pipeline );
     }
 
-    void submit( const std::vector<VkSemaphore> &waitSemaphores,
-                 const std::vector<VkSemaphore> &signalSemaphores,
+    void submit( VkSemaphore waitSemaphores, VkSemaphore signalSemaphores,
                  VkFence fence ) {
         auto self = static_cast<Derived *>( this );
         self->submit( waitSemaphores, signalSemaphores, fence );
@@ -77,8 +76,7 @@ struct RenderFromShader final : RenderCommandBufferBase<RenderFromShader> {
 private:
     void reset();
     void prepare( VkFramebuffer framebuffer, const vk::Pipeline *pipeline );
-    void submit( const std::vector<VkSemaphore> &waitSemaphores,
-                 const std::vector<VkSemaphore> &signalSemaphores,
+    void submit( VkSemaphore waitSemaphores, VkSemaphore signalSemaphores,
                  VkFence fence );
 };
 

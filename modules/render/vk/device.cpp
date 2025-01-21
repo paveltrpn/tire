@@ -330,15 +330,10 @@ void Device::pickAndCreateDevice() {
             "success!" );
     }
 
-// This format will be used across application, in
-// swapchain in particular.
-// NOTE: Make choose liitle wiser in future
-#define CHOSEN_SURFACE_FORMAT 0
-    surfaceFormat_ = surfaceFormats_[CHOSEN_SURFACE_FORMAT];
-
-    log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
-        "vk::Device === device format is {}",
-        string_VkFormat( surfaceFormat_.format ) );
+    for ( const auto &item : surfaceFormats_ ) {
+        log::notice( "vk::Device === format: {}",
+                     string_VkFormat( item.format ) );
+    }
 
     // physical device present modes
     uint32_t presentModeCount;
@@ -374,11 +369,29 @@ void Device::pickAndCreateDevice() {
             "vk::Device === physical device present modes acquire success!" );
     }
 
-// This present mode will be used across application, in
-// swapchain in particular.
-// NOTE: Make choose liitle wiser in future
-#define CHOSEN_PRESENT_MODE 0
-    presentMode_ = presentModes_[CHOSEN_PRESENT_MODE];
+    for ( const auto &item : presentModes_ ) {
+        log::notice( "vk::Device === mode: {}",
+                     string_VkPresentModeKHR( item ) );
+    }
+
+#define CHOSEN_SURFACE_FORMAT 0
+    // This format will be used across application, in
+    // swapchain in particular.
+    // NOTE: Make choose liitle wiser in future
+    surfaceFormat_ = surfaceFormats_[CHOSEN_SURFACE_FORMAT];
+
+    log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
+        "vk::Device === format is {}",
+        string_VkFormat( surfaceFormat_.format ) );
+
+#define CHOSEN_PRESENT_MODE VK_PRESENT_MODE_FIFO_KHR
+    // This present mode will be used across application, in
+    // swapchain in particular.
+    presentMode_ = CHOSEN_PRESENT_MODE;  // presentModes_[0];
+
+    log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
+        "vk::Device === present mode is {}",
+        string_VkPresentModeKHR( presentMode_ ) );
 }
 
 void Device::displayRenderInfo() {
