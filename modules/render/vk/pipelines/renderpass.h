@@ -12,26 +12,22 @@
 namespace tire::vk {
 
 struct RenderpassBase {
+    RenderpassBase( const vk::Device *device )
+        : device_{ device } {}
+
     RenderpassBase( const RenderpassBase &other ) = delete;
     RenderpassBase( RenderpassBase &&other ) = delete;
 
     RenderpassBase &operator=( const RenderpassBase &other ) = delete;
     RenderpassBase &operator=( RenderpassBase &&other ) = delete;
 
-    ~RenderpassBase() {
+    virtual ~RenderpassBase() {
         vkDestroyRenderPass( device_->handle(), renderPass_, nullptr );
     };
 
     [[nodiscard]] VkRenderPass handle() const { return renderPass_; }
 
-    template <typename Self>
-    void init( this Self &&self ) {
-        self->init();
-    };
-
-protected:
-    RenderpassBase( const vk::Device *device )
-        : device_{ device } {}
+    virtual void init() = 0;
 
 protected:
     const vk::Device *device_;
@@ -48,7 +44,7 @@ struct RenderpassSimple final : RenderpassBase {
         init();
     }
 
-    void init();
+    void init() override;
 };
 
 }  // namespace tire::vk

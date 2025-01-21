@@ -377,7 +377,6 @@ void Device::pickAndCreateDevice() {
 #define CHOSEN_SURFACE_FORMAT 0
     // This format will be used across application, in
     // swapchain in particular.
-    // NOTE: Make choose liitle wiser in future
     surfaceFormat_ = surfaceFormats_[CHOSEN_SURFACE_FORMAT];
 
     log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
