@@ -2,7 +2,7 @@
 #include <vulkan/vk_enum_string_helper.h>
 
 #include "log/log.h"
-static constexpr bool DEBUG_OUTPUT_COMMAND_POOL_CPP{ true };
+static constexpr bool DEBUG_OUTPUT_COMMANDS_CPP{ true };
 
 #include "image/color.h"
 #include "commands.h"
@@ -98,14 +98,14 @@ void RenderFromShader::submit( VkSemaphore waitSemaphores,
     std::array<VkSemaphore, 1> waitsems{ waitSemaphores };
     std::array<VkSemaphore, 1> sgnlsems{ signalSemaphores };
 
-    VkSubmitInfo submitInfo{ .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-                             .waitSemaphoreCount = 1,
-                             .pWaitSemaphores = waitsems.data(),
-                             .pWaitDstStageMask = waitStages.data(),
-                             .commandBufferCount = 1,
-                             .pCommandBuffers = &commandBuffer_,
-                             .signalSemaphoreCount = 1,
-                             .pSignalSemaphores = sgnlsems.data() };
+    const VkSubmitInfo submitInfo{ .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+                                   .waitSemaphoreCount = 1,
+                                   .pWaitSemaphores = waitsems.data(),
+                                   .pWaitDstStageMask = waitStages.data(),
+                                   .commandBufferCount = 1,
+                                   .pCommandBuffers = &commandBuffer_,
+                                   .signalSemaphoreCount = 1,
+                                   .pSignalSemaphores = sgnlsems.data() };
 
     // NOTE: omit return code check
     vkQueueSubmit( device_->graphicsQueue(), 1, &submitInfo, fence );

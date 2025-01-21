@@ -57,9 +57,11 @@ private:
     std::unique_ptr<vk::Pipeline> piplineMatrixReady{};
 
     std::unique_ptr<vk::CommandPool> commandPool_{};
-    std::vector<
-        std::unique_ptr<vk::RenderCommandBufferBase<vk::RenderFromShader>>>
+
+    std::vector<std::unique_ptr<vk::DrawCommand<vk::RenderFromShader>>>
         cBufs_{};
+    std::unique_ptr<vk::DrawCommand<vk::DummyCommand>> dummyCmd_{};
+
     std::unique_ptr<vk::Present> present_{};
     std::unique_ptr<vk::PresentSynchronization<3>> presentSync_{};
 

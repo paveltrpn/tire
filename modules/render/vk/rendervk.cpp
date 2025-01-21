@@ -62,10 +62,12 @@ RenderVK::RenderVK()
         cBufs_.reserve( 3 );
         for ( auto i = 0; i < cBufs_.capacity(); ++i ) {
             cBufs_.push_back(
-                std::make_unique<
-                    vk::RenderCommandBufferBase<vk::RenderFromShader>>(
+                std::make_unique<vk::DrawCommand<vk::RenderFromShader>>(
                     device_.get(), commandPool_.get() ) );
         }
+
+        dummyCmd_ = std::make_unique<vk::DrawCommand<vk::DummyCommand>>(
+            device_.get(), commandPool_.get() );
 
         present_ =
             std::make_unique<vk::Present>( device_.get(), swapchain_.get() );
