@@ -8,6 +8,7 @@
 
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_RENDER_CPP{ true };
+#include "io/factory.h"
 
 #include "render.h"
 
@@ -34,6 +35,9 @@ Render::Render() {
                 "Render === uv loop init success" );
         }
     }
+
+    // IO Factory singleton explicit instatiation
+    new io::Factory{ loop_ };
 
     uv_idle_init( loop_, &idler_ );
 

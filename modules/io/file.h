@@ -3,14 +3,10 @@
 
 #include <print>
 
-#include "uv.h"
-
-#include "config/config.h"
+#include <uv.h>
 
 namespace tire::io {
 
-struct File {
-private:
-};
+void testFileOpen( std::string_view path );
 
 }  // namespace tire::io

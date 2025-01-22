@@ -158,6 +158,8 @@ add_library(io
     modules/io/file.cpp
     modules/io/factory.h
     modules/io/factory.cpp
+    modules/io/timer.h
+    modules/io/timer.cpp
 )
 target_link_libraries(io)
 

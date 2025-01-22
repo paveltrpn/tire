@@ -53,7 +53,8 @@ public:
             }
             instance_.reset( this );
         } else {
-            log::warning( "attempt to reinitialize config instance!" );
+            log::warning(
+                "Config === attempt to reinitialize Config instance!" );
         }
     }
 
@@ -111,7 +112,7 @@ public:
     static Config *instance() {
         if ( !instance_ ) {
             log::error(
-                "config global instance must be initialized explicitly!" );
+                "Config === global instance must be initialized explicitly!" );
         }
         return instance_.get();
     }

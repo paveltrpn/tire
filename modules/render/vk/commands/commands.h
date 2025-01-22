@@ -40,8 +40,9 @@ struct DrawCommand {
                               toBeFree.data() );
     }
 
-    // Method set propertis of "command" object that depends on external
-    // application parameters
+    // Overload for "DummyCommand".
+    // Args waits:
+    // @noparam
     template <typename... Args>
     requires( std::is_same_v<derived_type, DummyCommand> ) void setProperties(
         VkFramebuffer framebuffer, const vk::Pipeline *pipeline,
@@ -51,6 +52,9 @@ struct DrawCommand {
         impl()->setLocalState( args... );
     }
 
+    // Overload for "RenderFromShader".
+    // Args waits:
+    // @param count uint32_t - number of vertcies count to render
     template <typename... Args>
     requires( std::is_same_v<
               derived_type,
