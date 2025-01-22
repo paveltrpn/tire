@@ -7,8 +7,8 @@
 
 namespace tire {
 
-void RenderVK::preLoop(){
-
+void RenderVK::preLoop() {
+    log::notice( "render loop starts here..." );
 };
 
 void RenderVK::preFrame(){
@@ -17,7 +17,8 @@ void RenderVK::preFrame(){
 
 void RenderVK::frame() {
     uint32_t imageIndex{};
-    auto [iaSem, rfSem, ifFnc] = presentSync_->get( currentFrame_ );
+
+    const auto [iaSem, rfSem, ifFnc] = presentSync_->get( currentFrame_ );
 
 #define ONE_SECOND 1000000000
     // NOTE: omit return code check
@@ -29,10 +30,11 @@ void RenderVK::frame() {
     // NOTE: omit return code check
     vkAcquireNextImageKHR( device_->handle(), swapchain_->handle(), UINT64_MAX,
                            iaSem, VK_NULL_HANDLE, &imageIndex );
+    const auto currentFramebuffer = swapchain_->framebuffer( imageIndex );
 
     cBufs_[currentFrame_]->update( 36 );
     cBufs_[currentFrame_]->reset();
-    cBufs_[currentFrame_]->prepare( swapchain_->framebuffer( imageIndex ),
+    cBufs_[currentFrame_]->prepare( currentFramebuffer,
                                     piplineMatrixReady.get() );
     cBufs_[currentFrame_]->submit( iaSem, rfSem, ifFnc );
 

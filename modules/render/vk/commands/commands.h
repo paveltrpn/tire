@@ -2,6 +2,7 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
+#include <vulkan/vulkan_core.h>
 #include <type_traits>
 
 #include "../pipelines/pipeline.h"
@@ -21,16 +22,53 @@ struct DummyCommand;
  * 3) Swapchain->Framebuffer
  * 4) Synchronization
  */
-
 template <typename Derived>
 struct DrawCommand {
-    using value_type = Derived;
+    using derived_type = Derived;
 
+    DrawCommand( const DrawCommand &other ) = delete;
+    DrawCommand( DrawCommand &&other ) = delete;
+    DrawCommand &operator=( const DrawCommand &other ) = delete;
+    DrawCommand &operator=( DrawCommand &&other ) = delete;
+
+    ~DrawCommand() { clean(); }
+
+    void clean() {
+        std::array<VkCommandBuffer, 1> toBeFree{ commandBuffer_ };
+        vkFreeCommandBuffers( device_->handle(), pool_->handle(), 1,
+                              toBeFree.data() );
+    }
+
+    void reset() { impl()->reset_impl(); }
+
+    void prepare( VkFramebuffer framebuffer, const vk::Pipeline *pipeline ) {
+        impl()->prepare_impl( framebuffer, pipeline );
+    }
+
+    void submit( VkSemaphore waitSemaphores, VkSemaphore signalSemaphores,
+                 VkFence fence ) {
+        impl()->submit_impl( waitSemaphores, signalSemaphores, fence );
+    }
+
+    template <typename... Args>
+    requires( std::is_same_v<derived_type, DummyCommand> ) void update(
+        Args &&...args ) {
+        impl()->update_impl( args... );
+    }
+
+    template <typename... Args>
+    requires( std::is_same_v<derived_type, RenderFromShader> ) void update(
+        Args &&...args ) {
+        impl()->setVerteciesCount( args... );
+    }
+
+protected:
     DrawCommand( const vk::Device *device, const CommandPool *pool )
-        : device_{ device } {
+        : device_{ device }
+        , pool_{ pool } {
         const VkCommandBufferAllocateInfo allocInfo{
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-            .commandPool = pool->handle(),
+            .commandPool = pool_->handle(),
             .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
             .commandBufferCount = 1 };
 
@@ -46,43 +84,12 @@ struct DrawCommand {
         };
     }
 
-    DrawCommand( const DrawCommand &other ) = delete;
-    DrawCommand( DrawCommand &&other ) = delete;
-    DrawCommand &operator=( const DrawCommand &other ) = delete;
-    DrawCommand &operator=( DrawCommand &&other ) = delete;
-
-    void reset() {
-        auto self = static_cast<value_type *>( this );
-        self->reset();
-    }
-
-    void prepare( VkFramebuffer framebuffer, const vk::Pipeline *pipeline ) {
-        auto self = static_cast<value_type *>( this );
-        self->prepare( framebuffer, pipeline );
-    }
-
-    void submit( VkSemaphore waitSemaphores, VkSemaphore signalSemaphores,
-                 VkFence fence ) {
-        auto self = static_cast<value_type *>( this );
-        self->submit( waitSemaphores, signalSemaphores, fence );
-    }
-
-    template <typename... Args>
-    requires( std::is_same_v<value_type, DummyCommand> ) void update(
-        Args &&...args ) {
-        auto self = static_cast<value_type *>( this );
-        self->update( args... );
-    }
-
-    template <typename... Args>
-    requires( std::is_same_v<value_type, RenderFromShader> ) void update(
-        Args &&...args ) {
-        auto self = static_cast<value_type *>( this );
-        self->setVerteciesCount( args... );
-    }
+private:
+    derived_type *impl() { return static_cast<derived_type *>( this ); }
 
 protected:
     const vk::Device *device_{};
+    const vk::CommandPool *pool_{};
     VkCommandBuffer commandBuffer_{ VK_NULL_HANDLE };
 };
 
@@ -90,31 +97,35 @@ protected:
 
 struct DummyCommand final : DrawCommand<DummyCommand> {
     friend DrawCommand;
+    using base_type = DrawCommand<DummyCommand>;
+
+    DummyCommand( const vk::Device *device, const CommandPool *pool )
+        : base_type( device, pool ){};
 
 private:
-    DummyCommand( const vk::Device *device, const CommandPool *pool )
-        : DrawCommand<DummyCommand>( device, pool ){};
-
-    void reset(){};
-    void prepare( VkFramebuffer framebuffer, const vk::Pipeline *pipeline ){};
-    void submit( VkSemaphore waitSemaphores, VkSemaphore signalSemaphores,
-                 VkFence fence ){};
-    void update() { log::notice( "called from DummyCommand " ); }
+    void reset_impl(){};
+    void prepare_impl( VkFramebuffer framebuffer,
+                       const vk::Pipeline *pipeline ){};
+    void submit_impl( VkSemaphore waitSemaphores, VkSemaphore signalSemaphores,
+                      VkFence fence ){};
+    void update_impl() { log::notice( "called from DummyCommand " ); }
 };
 
 // ==========================================================================
 
 struct RenderFromShader final : DrawCommand<RenderFromShader> {
     friend DrawCommand;
+    using base_type = DrawCommand<RenderFromShader>;
+
+    RenderFromShader( const vk::Device *device, const CommandPool *pool )
+        : base_type( device, pool ){};
 
 private:
-    RenderFromShader( const vk::Device *device, const CommandPool *pool )
-        : DrawCommand<RenderFromShader>( device, pool ){};
-
-    void reset();
-    void prepare( VkFramebuffer framebuffer, const vk::Pipeline *pipeline );
-    void submit( VkSemaphore waitSemaphores, VkSemaphore signalSemaphores,
-                 VkFence fence );
+    void reset_impl();
+    void prepare_impl( VkFramebuffer framebuffer,
+                       const vk::Pipeline *pipeline );
+    void submit_impl( VkSemaphore waitSemaphores, VkSemaphore signalSemaphores,
+                      VkFence fence );
     void setVerteciesCount( uint32_t count ) { verteciesCount_ = count; };
 
 private:

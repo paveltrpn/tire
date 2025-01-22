@@ -17,12 +17,12 @@ struct TransformPushConstants {
     algebra::matrix4f rtn;
 };
 
-void RenderFromShader::reset() {
+void RenderFromShader::reset_impl() {
     vkResetCommandBuffer( commandBuffer_, 0 );
 }
 
-void RenderFromShader::prepare( VkFramebuffer framebuffer,
-                                const vk::Pipeline *pipeline ) {
+void RenderFromShader::prepare_impl( VkFramebuffer framebuffer,
+                                     const vk::Pipeline *pipeline ) {
     const VkCommandBufferBeginInfo beginInfo{
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
         .flags = 0,
@@ -76,7 +76,6 @@ void RenderFromShader::prepare( VkFramebuffer framebuffer,
     offset.transposeSelf();
     TransformPushConstants transform{};
     transform.view = offset * projection;
-    // transform.view[1, 1] *= -1;
     transform.rtn = algebra::rotate<float>( factor, 40, 9 );
     factor += 0.3;
     vkCmdPushConstants( commandBuffer_, pipeline->layout(),
@@ -91,8 +90,9 @@ void RenderFromShader::prepare( VkFramebuffer framebuffer,
     vkEndCommandBuffer( commandBuffer_ );
 }
 
-void RenderFromShader::submit( VkSemaphore waitSemaphores,
-                               VkSemaphore signalSemaphores, VkFence fence ) {
+void RenderFromShader::submit_impl( VkSemaphore waitSemaphores,
+                                    VkSemaphore signalSemaphores,
+                                    VkFence fence ) {
     std::array<VkPipelineStageFlags, 1> waitStages = {
         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
     std::array<VkSemaphore, 1> waitsems{ waitSemaphores };
