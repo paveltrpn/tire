@@ -113,7 +113,7 @@ protected:
 
         const auto cc = Colorf{ "darkblue" };
         clearColor_.color = { cc.r(), cc.g(), cc.b(), cc.a() },
-        clearColor_.depthStencil = { 0.0f };
+        clearColor_.depthStencil = { .depth = 0.0f, .stencil = 0 };
 
         width_ = device_->extent().width;
         height_ = device_->extent().height;

@@ -83,7 +83,7 @@ void Swapchain::createSwapchain() {
         throw std::runtime_error( std::format(
             "failed to create swapchain code {}\n!", string_VkResult( err ) ) );
     } else {
-        log::info( "vk::Device ===  vulkan swapchain created!" );
+        log::info( "vk::Swapchain ===  vulkan swapchain created!" );
     }
 
     // swapchain images itself
@@ -95,14 +95,15 @@ void Swapchain::createSwapchain() {
                          string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_SWAPCHAINVK_CPP>(
-            "vk::Device === images count: {}", swapchainImageCount_ );
+            "vk::Swapchain === images count: {}", swapchainImageCount_ );
     }
 
     // Check image count from sourface capabilities and (possible?) swapchain
     // swapchain image count acquired from vulkan
     if ( swapchainImageCount_ != imageCount ) {
         log::warning(
-            "vk::Device === surface capabilities image count {} is not equal "
+            "vk::Swapchain === surface capabilities image count {} is not "
+            "equal "
             "to swapchain "
             "image count {}...",
             imageCount, swapchainImageCount_ );
@@ -119,7 +120,7 @@ void Swapchain::createSwapchain() {
                          string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_SWAPCHAINVK_CPP>(
-            "vk::Device === images acquired!" );
+            "vk::Swapchain === images acquired!" );
     }
 
     swapChainImageFormat_ = surfaceFormat.format;
@@ -152,7 +153,7 @@ void Swapchain::createImageViews() {
                 string_VkResult( err ) ) );
         } else {
             log::debug<DEBUG_OUTPUT_SWAPCHAINVK_CPP>(
-                "vk::Device === image view {} created!", i );
+                "vk::Swapchain === image view {} created!", i );
         }
     }
 }
@@ -179,7 +180,7 @@ void Swapchain::createFramebuffers( const vk::Pipeline *pipeline ) {
                              i, string_VkResult( err ) ) );
         } else {
             log::debug<DEBUG_OUTPUT_SWAPCHAINVK_CPP>(
-                "vk::Device === framebuffer {} created!", i );
+                "vk::Swapchain === framebuffer {} created!", i );
         }
     }
 }
