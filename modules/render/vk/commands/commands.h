@@ -40,6 +40,8 @@ struct DrawCommand {
                               toBeFree.data() );
     }
 
+    // Method set propertis of "command" object that depends on external
+    // application parameters
     template <typename... Args>
     requires( std::is_same_v<derived_type, DummyCommand> ) void setProperties(
         VkFramebuffer framebuffer, const vk::Pipeline *pipeline,
@@ -146,7 +148,6 @@ private:
 
         // Dynamic viewport. No performance penalty.
         // Take out work from pipeline creation.
-
         const VkViewport viewport{ .x = 0.0f,
                                    .y = 0.0f,
                                    .width = static_cast<float>( width_ ),
@@ -161,16 +162,17 @@ private:
     }
 
 protected:
+    // Propertis set on "command" creation and stay same trough lifetime
     const vk::Device *device_{};
     const vk::CommandPool *pool_{};
     VkCommandBuffer commandBuffer_{ VK_NULL_HANDLE };
-
-    const vk::Pipeline *pipeline_{};
-    VkFramebuffer framebuffer_{};
-
     VkClearValue clearColor_{};
     uint32_t width_{};
     uint32_t height_{};
+
+    // Properties that can varies on each submit
+    const vk::Pipeline *pipeline_{};
+    VkFramebuffer framebuffer_{};
 };
 
 // ==========================================================================
@@ -201,6 +203,7 @@ private:
     void setLocalState( uint32_t count ) { verteciesCount_ = count; };
 
 private:
+    // Properties that can varies on each submit
     uint32_t verteciesCount_{};
 };
 
