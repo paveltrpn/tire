@@ -7,23 +7,30 @@
 
 #include "uv.h"
 
-namespace tire::io {
+namespace tire::event {
 
-struct Factory final {
-    Factory( uv_loop_t *loop )
+struct Context final {
+    Context( uv_loop_t *loop )
         : loop_{ loop } {
         if ( !instance_ ) {
             instance_.reset( this );
         } else {
             log::warning(
-                "io::Factory == attempt to reinitialize Factory instance!" );
+                "io::Context == attempt to reinitialize Context instance!" );
         }
     }
 
-    static const Factory *instance() {
+    Context( const Context &rhs ) = delete;
+    Context( Context &&rhs ) = delete;
+    Context &operator=( const Context &rhs ) = delete;
+    Context &operator=( Context &&rhs ) = delete;
+
+    ~Context() = default;
+
+    static const Context *instance() {
         if ( !instance_ ) {
             log::error(
-                "io::Factory == global instance must be initialized "
+                "io::Context == global instance must be initialized "
                 "explicitly!" );
         }
         return instance_.get();
@@ -35,10 +42,10 @@ private:
     [[nodiscard]] uv_loop_t *getLoop() const { return loop_; };
 
 private:
-    static std::unique_ptr<Factory> instance_;
+    static std::unique_ptr<Context> instance_;
 
     // Non owning libuv main loop handle.
-    // Used when "Factory" perform IO operations.
+    // Used when "Context" perform IO operations.
     uv_loop_t *loop_;
 };
 

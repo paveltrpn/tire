@@ -4,13 +4,13 @@
 #include <span>
 
 #include "rendervk.h"
-#include "io/timer.h"
+#include "event/timer.h"
 
 namespace tire {
 
 void RenderVK::preLoop() {
     log::notice( "render loop starts here..." );
-    io::testTimerEvent( 2000 );
+    event::testTimerEvent( 2000 );
 };
 
 void RenderVK::preFrame(){

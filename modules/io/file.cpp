@@ -1,5 +1,5 @@
 
-#include "factory.h"
+#include "../event/context.h"
 #include "file.h"
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_IO_FILE_CPP{ true };
@@ -20,7 +20,8 @@ static void onOpen( uv_fs_t *req ) {
 
 void testFileOpen( std::string_view path ) {
     static uv_fs_t openReq;
-    uv_fs_open( Factory::loop(), &openReq, path.data(), O_RDONLY, 0, onOpen );
+    uv_fs_open( event::Context::loop(), &openReq, path.data(), O_RDONLY, 0,
+                onOpen );
 }
 
 }  // namespace tire::io

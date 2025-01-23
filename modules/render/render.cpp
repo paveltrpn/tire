@@ -8,7 +8,7 @@
 
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_RENDER_CPP{ true };
-#include "io/factory.h"
+#include "event/context.h"
 
 #include "render.h"
 
@@ -36,8 +36,8 @@ Render::Render() {
         }
     }
 
-    // IO Factory singleton explicit instatiation
-    new io::Factory{ loop_ };
+    // Event Context singleton explicit instatiation
+    new event::Context{ loop_ };
 
     uv_idle_init( loop_, &idler_ );
 

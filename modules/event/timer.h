@@ -3,7 +3,7 @@
 
 #include <uv.h>
 
-namespace tire::io {
+namespace tire::event {
 
 void testTimerEvent( long long timeout );
 

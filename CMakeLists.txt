@@ -152,20 +152,24 @@ add_library(scene
 )
 target_link_libraries(scene io image algebra geometry)
 
+add_library(event
+    modules/event/async.h
+    modules/event/context.h
+    modules/event/context.cpp
+    modules/event/timer.h
+    modules/event/timer.cpp
+)
+target_link_libraries(event)
+
 add_library(io
-    modules/io/async.h
     modules/io/file.h
     modules/io/file.cpp
-    modules/io/factory.h
-    modules/io/factory.cpp
-    modules/io/timer.h
-    modules/io/timer.cpp
 )
-target_link_libraries(io)
+target_link_libraries(io event)
 
 add_subdirectory(test/window)
-target_link_libraries(gl_test PUBLIC log io algebra scene config render X11 GL GLU Vulkan::Vulkan uv)
-target_link_libraries(vk_test PUBLIC log io algebra scene config render X11 GL GLU Vulkan::Vulkan uv)
+target_link_libraries(gl_test PUBLIC log event io algebra scene config render X11 GL GLU Vulkan::Vulkan uv)
+target_link_libraries(vk_test PUBLIC log event io algebra scene config render X11 GL GLU Vulkan::Vulkan uv)
 
 add_subdirectory(test/wavefront)
 target_link_libraries(wavefront geometry)
