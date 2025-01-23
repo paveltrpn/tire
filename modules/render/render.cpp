@@ -173,7 +173,7 @@ void Render::configureX11() {
     XSelectInput( display_, window_, KeyPressMask | KeyReleaseMask );
 }
 
-void Render::loop( uv_idle_t *handle ) {
+void Render::loop( uv_timer_t *handle ) {
     // Retrive "this" pointer previously saved in uv_idle_t->data member
     auto self = static_cast<Render *>( handle->data );
     while ( XPending( self->display_ ) ) {
@@ -184,7 +184,7 @@ void Render::loop( uv_idle_t *handle ) {
             switch ( keyEventCode ) {
                 case 9: {  // == ESCAPE
                     // stop render loop
-                    uv_idle_stop( handle );
+                    uv_timer_stop( handle );
                     self->run_ = false;
                     break;
                 }

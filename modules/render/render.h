@@ -33,7 +33,7 @@ struct Render {
     void run();
 
 private:
-    static void loop( uv_idle_t *handle );
+    static void loop( uv_timer_t *handle );
 
 protected:
     virtual void preLoop() = 0;

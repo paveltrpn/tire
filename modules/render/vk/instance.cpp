@@ -96,7 +96,7 @@ Instance::Instance() {
     // vllist.push_back( "VK_LAYER_INTEL_nullhw" ); // cause crash on device creation
 
     // Show little fancy window with some useful info.
-    // desiredValidationLayerList_.emplace_back( "VK_LAYER_MESA_overlay" );
+    desiredValidationLayerList_.emplace_back( "VK_LAYER_MESA_overlay" );
     desiredValidationLayerList_.emplace_back( "VK_LAYER_NV_optimus" );
     desiredValidationLayerList_.emplace_back(
         "VK_LAYER_VALVE_steam_fossilize_64" );

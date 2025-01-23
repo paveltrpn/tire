@@ -54,7 +54,7 @@ struct Context final {
 
     static uv_loop_t *loop() { return instance()->getLoop(); }
 
-    static void render( tire::Render *renderContext, uv_idle_cb cb ) {
+    static void render( tire::Render *renderContext, uv_timer_cb cb ) {
         instance()->render_impl( renderContext, cb );
     }
     static void run() { instance()->run_impl(); }
@@ -63,25 +63,28 @@ struct Context final {
 private:
     [[nodiscard]] uv_loop_t *getLoop() const { return loop_; };
 
-    void render_impl( tire::Render *renderContext, uv_idle_cb cb ) {
-        uv_idle_init( loop_, &renderIdler_ );
-
+    void render_impl( tire::Render *renderContext, uv_timer_cb cb ) {
         // Every libuv handle has a void* data field. Here’s how you use it:
-        renderIdler_.data = renderContext;
-
+        renderTimer_.data = renderContext;
+        uv_timer_init( loop_, &renderTimer_ );
         {
-            const auto res = uv_idle_start( &renderIdler_, cb );
+// Use update interval that gives timer event more frequent then
+// monitor refresh rate with vsync enable
+#define UPDATE_INTERVAL 10
+            const auto res =
+                uv_timer_start( &renderTimer_, cb, 0, UPDATE_INTERVAL );
             if ( res != 0 ) {
                 throw std::runtime_error(
                     std::format( "uv idle start failed with code {}", res ) );
             } else {
                 log::debug<DEBUG_OUTPUT_EVENT_CONTEXT_H>(
-                    "event::Context === uv idle started" );
+                    "event::Context === uv render idle start" );
             }
         }
     }
 
     void run_impl() {
+        log::info( "event::Context === uv loop run..." );
         const auto res = uv_run( loop_, UV_RUN_DEFAULT );
         if ( res != 0 ) {
             log::warning( "event::Context === uv run end with code {}", res );
@@ -93,12 +96,13 @@ private:
         // cause uv_run() return code != 1 if
         // not all event pendings got finished
         uv_stop( loop_ );
+        log::info( "event::Context === uv loop stopped" );
     }
 
 private:
     static std::unique_ptr<Context> instance_;
     uv_loop_t *loop_{ nullptr };
-    uv_idle_t renderIdler_;
+    uv_timer_t renderTimer_;
 };
 
 }  // namespace tire::event
