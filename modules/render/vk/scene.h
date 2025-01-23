@@ -8,7 +8,7 @@
 namespace tire::vk {
 
 struct Scene final : tire::Scene {
-    Scene( const std::filesystem::path &fname, uv_loop_t *loop );
+    Scene( const std::filesystem::path &fname );
 };
 
 }  // namespace tire::vk

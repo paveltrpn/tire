@@ -166,7 +166,7 @@ void RenderGL::displayRenderInfo() {
 }
 
 void RenderGL::scene( const std::filesystem::path &path ) {
-    scene_ = std::make_shared<gl::Scene>( path, loop_ );
+    scene_ = std::make_shared<gl::Scene>( path );
 }
 
 }  // namespace tire

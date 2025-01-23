@@ -49,8 +49,6 @@ protected:
 
 protected:
     bool run_{ true };
-    uv_loop_t *loop_{ nullptr };
-    uv_idle_t idler_;
 
     // X11
     Display *display_;

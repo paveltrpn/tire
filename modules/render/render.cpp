@@ -24,41 +24,11 @@ Render::Render() {
     openDisplay();
     configureX11();
 
-    loop_ = static_cast<uv_loop_t *>( malloc( sizeof( uv_loop_t ) ) );
-    {
-        const auto res = uv_loop_init( loop_ );
-        if ( res != 0 ) {
-            throw std::runtime_error(
-                std::format( "uv loop init failed with code {}", res ) );
-        } else {
-            log::debug<DEBUG_OUTPUT_RENDER_CPP>(
-                "Render === uv loop init success" );
-        }
-    }
-
     // Event Context singleton explicit instatiation
-    new event::Context{ loop_ };
-
-    uv_idle_init( loop_, &idler_ );
-
-    // Every libuv handle has a void* data field. Here’s how you use it:
-    idler_.data = this;
-
-    {
-        const auto res = uv_idle_start( &idler_, loop );
-        if ( res != 0 ) {
-            throw std::runtime_error(
-                std::format( "uv idle start failed with code {}", res ) );
-        } else {
-            log::debug<DEBUG_OUTPUT_RENDER_CPP>( "Render === uv idle started" );
-        }
-    }
+    new event::Context{};
 }
 
 Render::~Render() {
-    uv_loop_close( loop_ );
-    free( loop_ );
-
     XDestroyWindow( display_, window_ );
     XFreeColormap( display_, colorMap_ );
     XCloseDisplay( display_ );
@@ -213,16 +183,9 @@ void Render::loop( uv_idle_t *handle ) {
             auto keyEventCode = event.xkey.keycode;
             switch ( keyEventCode ) {
                 case 9: {  // == ESCAPE
-                    // Just stop render loop, not whole uv event loop
+                    // stop render loop
                     uv_idle_stop( handle );
-
-                    // This will stop uv event loop and may
-                    // cause uv_run() return code != 1 if
-                    // not all event pendings got finished
-                    uv_stop( self->loop_ );
-
                     self->run_ = false;
-
                     break;
                 }
                 case 38: {  // == 'a'
@@ -250,14 +213,11 @@ void Render::loop( uv_idle_t *handle ) {
 }
 
 void Render::run() {
+    event::Context::render( this, Render::loop );
     preLoop();
-
-    const auto res = uv_run( loop_, UV_RUN_DEFAULT );
-    if ( res != 0 ) {
-        log::warning( "Render === uv run end with code {}", res );
-    }
-
+    event::Context::run();
     postLoop();
+    event::Context::stop();
 }
 
 }  // namespace tire
