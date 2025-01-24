@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <expected>
 #include <variant>
-
+#include <coroutine>
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 
@@ -23,6 +23,7 @@
 #include "config/config.h"
 #include "../render.h"
 #include "scene.h"
+#include "event/timer.h"
 
 #define FRAMES_IN_FLIGHT_COUNT 2
 
@@ -46,6 +47,14 @@ private:
 
     void createGraphicsPipeline();
     void createSyncObjects();
+
+private:
+    event::Task<void> executeByTimeOut( long long timeout ) {
+        co_await event::setTimeout( timeout );
+        log::notice( "test coroutine timer triggered once!!!" );
+        co_await event::setTimeout( timeout );
+        log::notice( "test coroutine timer triggered again!!!" );
+    };
 
 private:
     std::shared_ptr<vk::Scene> scene_;

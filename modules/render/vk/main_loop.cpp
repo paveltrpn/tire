@@ -11,6 +11,7 @@ namespace tire {
 void RenderVK::preLoop() {
     log::notice( "render loop starts here..." );
     event::testTimerEvent( 2000 );
+    executeByTimeOut( 1500 );
 };
 
 void RenderVK::preFrame(){

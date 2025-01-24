@@ -31,7 +31,7 @@ void Swapchain::createSwapchain() {
 
     const auto surfaceCapabilities = device_->surfaceCapabilities();
 
-    // Choose count of images to draw to.
+    // Choose count of images to draw in.
     uint32_t imageCount{};
     {
         // However, simply sticking to this minimum means that we may sometimes have
