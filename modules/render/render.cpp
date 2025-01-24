@@ -185,6 +185,7 @@ void Render::loop( uv_timer_t *handle ) {
                 case 9: {  // == ESCAPE
                     // stop render loop
                     uv_timer_stop( handle );
+                    event::Context::stop();
                     self->run_ = false;
                     break;
                 }
@@ -217,7 +218,6 @@ void Render::run() {
     preLoop();
     event::Context::run();
     postLoop();
-    event::Context::stop();
 }
 
 }  // namespace tire

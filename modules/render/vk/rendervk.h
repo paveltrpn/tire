@@ -50,10 +50,10 @@ private:
 
 private:
     event::Task<void> executeByTimeOut( long long timeout ) {
-        co_await event::setTimeout( timeout );
-        log::notice( "test coroutine timer triggered once!!!" );
-        co_await event::setTimeout( timeout );
-        log::notice( "test coroutine timer triggered again!!!" );
+        for ( auto i{ 0 }; i < 3; ++i ) {
+            co_await event::setTimeout( timeout );
+            log::notice( "test coroutine timer trigger at {} time!!!", i );
+        }
     };
 
 private:
