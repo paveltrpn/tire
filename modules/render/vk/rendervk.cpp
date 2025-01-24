@@ -59,7 +59,7 @@ RenderVK::RenderVK()
         commandPool_ = std::make_unique<vk::CommandPool>( device_.get() );
 
         // Create command buffers for each frame
-        cBufs_.reserve( 3 );
+        cBufs_.reserve( FRAMES_IN_FLIGHT_COUNT );
         for ( auto i = 0; i < cBufs_.capacity(); ++i ) {
             cBufs_.push_back( std::make_unique<vk::RenderFromShader>(
                 device_.get(), commandPool_.get() ) );
@@ -71,8 +71,9 @@ RenderVK::RenderVK()
         present_ =
             std::make_unique<vk::Present>( device_.get(), swapchain_.get() );
 
-        presentSync_ =
-            std::make_unique<vk::PresentSynchronization<3>>( device_.get() );
+        presentSync_ = std::make_unique<
+            vk::PresentSynchronization<FRAMES_IN_FLIGHT_COUNT>>(
+            device_.get() );
 
     } catch ( const std::runtime_error &e ) {
         throw std::runtime_error( e.what() );

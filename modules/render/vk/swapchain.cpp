@@ -3,6 +3,7 @@
 
 #include <vulkan/vk_enum_string_helper.h>
 
+#include "rendervk.h"
 #include "swapchain.h"
 #include "config/config.h"
 #include "log/log.h"
@@ -29,28 +30,40 @@ void Swapchain::createSwapchain() {
     const auto presentMode = device_->presentMode();
 
     const auto surfaceCapabilities = device_->surfaceCapabilities();
-    // However, simply sticking to this minimum means that we may sometimes have
-    // to wait on the driver to complete internal operations before we can acquire
-    // another image to render to. Therefore it is recommended to request at least one
-    // more image than the minimum:
-    uint32_t imageCount = surfaceCapabilities.minImageCount + 1;
 
-    // We should also make sure to not exceed the maximum number of images while
-    // doing this, where 0 is a special value that means that there is no maximum:
-    if ( surfaceCapabilities.maxImageCount > 0 &&
-         imageCount > surfaceCapabilities.maxImageCount ) {
-        imageCount = surfaceCapabilities.maxImageCount;
+    // Choose count of images to draw to.
+    uint32_t imageCount{};
+    {
+        // However, simply sticking to this minimum means that we may sometimes have
+        // to wait on the driver to complete internal operations before we can acquire
+        // another image to render to. Therefore it is recommended to request at least one
+        // more image than the minimum:
+        imageCount = surfaceCapabilities.minImageCount + 1;
+
+        // We should also make sure to not exceed the maximum number of images while
+        // doing this, where 0 is a special value that means that there is no maximum:
+        if ( surfaceCapabilities.maxImageCount > 0 &&
+             imageCount > surfaceCapabilities.maxImageCount ) {
+            imageCount = surfaceCapabilities.maxImageCount;
+        }
+
+        // Skip all logic above, just use to two images
+        imageCount = FRAMES_IN_FLIGHT_COUNT;
     }
 
     log::debug<DEBUG_OUTPUT_SWAPCHAINVK_CPP>(
-        "vk::Swapchain: vulkan swapchain surface capabilities image count: {}",
-        imageCount );
+        "vk::Swapchain: vulkan swapchain surface capabilities image count: {}, "
+        "with max is {}",
+        imageCount, surfaceCapabilities.maxImageCount );
 
     VkSwapchainCreateInfoKHR createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     createInfo.surface = surface_->handle();
 
+    // The implementation will either create the swapchain with at least
+    // that many images, or it will fail to create the swapchain.
     createInfo.minImageCount = imageCount;
+
     createInfo.imageFormat = surfaceFormat.format;
     createInfo.imageColorSpace = surfaceFormat.colorSpace;
     createInfo.imageExtent = swapChainExtent_;
@@ -86,7 +99,9 @@ void Swapchain::createSwapchain() {
         log::info( "vk::Swapchain ===  vulkan swapchain created!" );
     }
 
-    // swapchain images itself
+    // Get swapchain images count. Sudden, this number is
+    // equal to previously defined in VkSwapchainCreateInfoKHR.minImageCount.
+    // But we still try to get image count that way.
     if ( const auto err = vkGetSwapchainImagesKHR(
              device_->handle(), swapchain_, &swapchainImageCount_, nullptr );
          err != VK_SUCCESS ) {
@@ -95,18 +110,8 @@ void Swapchain::createSwapchain() {
                          string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_SWAPCHAINVK_CPP>(
-            "vk::Swapchain === images count: {}", swapchainImageCount_ );
-    }
-
-    // Check image count from sourface capabilities and (possible?) swapchain
-    // swapchain image count acquired from vulkan
-    if ( swapchainImageCount_ != imageCount ) {
-        log::warning(
-            "vk::Swapchain === surface capabilities image count {} is not "
-            "equal "
-            "to swapchain "
-            "image count {}...",
-            imageCount, swapchainImageCount_ );
+            "vk::Swapchain === swapchain images count: {}",
+            swapchainImageCount_ );
     }
 
     swapChainImages_.resize( imageCount );

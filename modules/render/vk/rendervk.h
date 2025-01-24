@@ -24,6 +24,8 @@
 #include "../render.h"
 #include "scene.h"
 
+#define FRAMES_IN_FLIGHT_COUNT 2
+
 namespace tire {
 
 struct RenderVK final : Render {
@@ -62,7 +64,8 @@ private:
     std::unique_ptr<vk::DummyCommand> dummyCmd_{};
 
     std::unique_ptr<vk::Present> present_{};
-    std::unique_ptr<vk::PresentSynchronization<3>> presentSync_{};
+    std::unique_ptr<vk::PresentSynchronization<FRAMES_IN_FLIGHT_COUNT>>
+        presentSync_{};
 
     uint32_t currentFrame_{ 0 };
 };

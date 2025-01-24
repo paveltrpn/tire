@@ -22,6 +22,7 @@ Checks: >
   -bugprone-suspicious-include,
   -bugprone-suspicious-memory-comparison,
   -bugprone-unused-return-value,
+  -bugprone-crtp-constructor-accessibility,
   -misc-misplaced-const,
   -misc-no-recursion,
   -misc-unused-parameters,
@@ -30,3 +31,4 @@ Checks: >
   -modernize-use-trailing-return-type,
   -modernize-use-constraints,
   -modernize-type-traits,
+  -modernize-macro-to-enum,
