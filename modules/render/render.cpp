@@ -8,9 +8,10 @@
 
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_RENDER_CPP{ true };
-#include "event/context.h"
 
 #include "render.h"
+
+import event;
 
 namespace tire {
 
@@ -174,7 +175,7 @@ void Render::configureX11() {
 }
 
 void Render::loop( uv_timer_t *handle ) {
-    // Retrive "this" pointer previously saved in uv_idle_t->data member
+    // Retrive "this" pointer previously saved in uv_handle_t->data member
     auto self = static_cast<Render *>( handle->data );
     while ( XPending( self->display_ ) ) {
         XEvent event;

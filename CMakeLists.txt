@@ -152,14 +152,15 @@ add_library(scene
 )
 target_link_libraries(scene io image algebra geometry)
 
-add_library(event
-    modules/event/async.h
-    modules/event/context.h
+add_library(event)
+target_sources(event
+  PUBLIC
+    FILE_SET CXX_MODULES FILES
+    modules/event/interface.cpp
+    modules/event/async.cpp
     modules/event/context.cpp
-    modules/event/timer.h
     modules/event/timer.cpp
 )
-target_link_libraries(event)
 
 add_library(io
     modules/io/file.h

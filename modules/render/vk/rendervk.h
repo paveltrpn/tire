@@ -23,7 +23,8 @@
 #include "config/config.h"
 #include "../render.h"
 #include "scene.h"
-#include "event/timer.h"
+
+import event;
 
 #define FRAMES_IN_FLIGHT_COUNT 2
 

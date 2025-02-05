@@ -4,7 +4,8 @@
 #include <span>
 
 #include "rendervk.h"
-#include "event/timer.h"
+
+import event;
 
 namespace tire {
 
