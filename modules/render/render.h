@@ -12,8 +12,9 @@
 
 #include "uv.h"
 
-#include "config/config.h"
 #include "scene/scene.h"
+
+import config;
 
 namespace tire {
 

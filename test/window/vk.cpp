@@ -3,8 +3,9 @@
 #include <filesystem>
 
 #include "log/log.h"
-#include "config/config.h"
 #include "render/vk/rendervk.h"
+
+import config;
 
 int main( int argc, char **argv ) {
     std::unique_ptr<tire::Render> rndr;

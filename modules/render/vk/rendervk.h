@@ -20,11 +20,11 @@
 #include "command_pool.h"
 #include "present.h"
 
-#include "config/config.h"
 #include "../render.h"
 #include "scene.h"
 
 import event;
+import config;
 
 #define FRAMES_IN_FLIGHT_COUNT 2
 
@@ -34,7 +34,7 @@ struct RenderVK final : Render {
     RenderVK();
     ~RenderVK() override = default;
 
-    void displayRenderInfo() override{};
+    void displayRenderInfo() override {};
     void setSwapInterval( int interval ) override;
 
 private:

@@ -3,9 +3,10 @@
 #include <vulkan/vk_enum_string_helper.h>
 
 #include "device.h"
-#include "config/config.h"
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_DEVICEVK_CPP{ true };
+
+import config;
 
 namespace tire::vk {
 

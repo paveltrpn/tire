@@ -5,7 +5,8 @@
 #include "pipeline.h"
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_PIPELINE_CPP{ true };
-#include "config/config.h"
+
+import config;
 
 namespace tire::vk {
 

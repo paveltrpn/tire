@@ -2,9 +2,10 @@
 #include <vulkan/vk_enum_string_helper.h>
 
 #include "instance.h"
-#include "config/config.h"
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_INSTANCEVK_CPP{ true };
+
+import config;
 
 namespace tire::vk {
 
@@ -62,7 +63,7 @@ Instance::Instance() {
         .apiVersion = VK_API_VERSION_1_0 };
 
     const auto debugUtilsMessageSeverityFlagBits =
-        ( VkDebugUtilsMessageSeverityFlagBitsEXT )(
+        (VkDebugUtilsMessageSeverityFlagBitsEXT)(
             // VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
             VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
             VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
@@ -120,7 +121,7 @@ Instance::Instance() {
         .pDisabledValidationFeatures = nullptr };
 
     const auto debugUtilsMessageTypeFlagBits =
-        ( VkDebugUtilsMessageTypeFlagBitsEXT )(
+        (VkDebugUtilsMessageTypeFlagBitsEXT)(
             // VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
             VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
             VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT );

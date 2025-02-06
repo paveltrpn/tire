@@ -66,8 +66,11 @@ add_library(algebra
 )
 set_target_properties(algebra PROPERTIES LINKER_LANGUAGE CXX)
 
-add_library(config
-    modules/config/config.h
+add_library(config)
+target_sources(config
+  PUBLIC
+    FILE_SET CXX_MODULES FILES
+    modules/config/interface.cpp
     modules/config/config.cpp
 )
 
@@ -150,7 +153,7 @@ add_library(scene
     modules/scene/camera.h
     modules/scene/camera.cpp
 )
-target_link_libraries(scene io image algebra geometry)
+target_link_libraries(scene config io image algebra geometry)
 
 add_library(event)
 target_sources(event
@@ -161,6 +164,7 @@ target_sources(event
     modules/event/context.cpp
     modules/event/timer.cpp
 )
+target_link_libraries(event config)
 
 add_library(io
     modules/io/file.h

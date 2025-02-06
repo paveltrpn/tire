@@ -14,9 +14,10 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#include "config/config.h"
 #include "../render.h"
 #include "scene.h"
+
+import config;
 
 namespace tire {
 

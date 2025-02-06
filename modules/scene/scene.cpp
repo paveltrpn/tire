@@ -6,7 +6,8 @@
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_SCENE_CPP{ true };
 #include "scene.h"
-#include "config/config.h"
+
+import config;
 
 namespace tire {
 

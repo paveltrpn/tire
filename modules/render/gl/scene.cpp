@@ -1,7 +1,8 @@
 
 #include "scene.h"
 #include "functions.h"
-#include "config/config.h"
+
+import config;
 
 namespace tire::gl {
 

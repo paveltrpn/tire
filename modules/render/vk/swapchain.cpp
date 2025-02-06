@@ -5,9 +5,10 @@
 
 #include "rendervk.h"
 #include "swapchain.h"
-#include "config/config.h"
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_SWAPCHAINVK_CPP{ true };
+
+import config;
 
 namespace tire::vk {
 
