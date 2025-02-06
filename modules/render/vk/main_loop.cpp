@@ -13,9 +13,10 @@ void RenderVK::preLoop() {
     log::notice( "render loop starts here..." );
     event::testTimerEvent( 1000 );
     executeByTimeOut( 1500 );
+    watchFile( "/mnt/main_disk/code/tiny_render/assets/default_cube.json" );
 };
 
-void RenderVK::preFrame(){
+void RenderVK::preFrame() {
 
 };
 
@@ -54,11 +55,11 @@ void RenderVK::frame() {
     currentFrame_ = ( currentFrame_ + 1 ) % FRAMES_IN_FLIGHT_COUNT;
 };
 
-void RenderVK::postFrame(){
+void RenderVK::postFrame() {
 
 };
 
-void RenderVK::swapBuffers(){
+void RenderVK::swapBuffers() {
 
 };
 

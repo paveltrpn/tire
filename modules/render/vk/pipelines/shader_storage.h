@@ -2,11 +2,11 @@
 
 #include <map>
 #include <filesystem>
-
+#include <span>
 #include <vulkan/vulkan.h>
 
 #include "../device.h"
-#include "log/log.h"
+#include "../../../log/log.h"
 
 namespace tire::vk {
 
@@ -47,22 +47,22 @@ static constexpr std::string subpassshading_stage_suffix{ "SUBPASSSHADING" };
 static constexpr std::string clusterculling_stage_suffix{ "CLUSTERCULLING" };
 
 template <ShaderStageType Stage>
-concept ShaderStage = ( Stage == ShaderStageType::VERTEX ) ||
-                      ( Stage == ShaderStageType::FRAGMENT ) ||
-                      ( Stage == ShaderStageType::TESSELATION_EVAL ) ||
-                      ( Stage == ShaderStageType::TESSELATION_CTRL ) ||
-                      ( Stage == ShaderStageType::GEOMETRY ) ||
-                      ( Stage == ShaderStageType::COMPUTE ) ||
-                      ( Stage == ShaderStageType::RAYGEN ) ||
-                      ( Stage == ShaderStageType::ANYHIT ) ||
-                      ( Stage == ShaderStageType::CLOSESTHIT ) ||
-                      ( Stage == ShaderStageType::MISS ) ||
-                      ( Stage == ShaderStageType::INTERSECTION ) ||
-                      ( Stage == ShaderStageType::CALLABLE ) ||
-                      ( Stage == ShaderStageType::TASK ) ||
-                      ( Stage == ShaderStageType::MESH ) ||
-                      ( Stage == ShaderStageType::SUBPASSSHADING ) ||
-                      ( Stage == ShaderStageType::CLUSTERCULLING );
+concept ShaderStage =
+    ( Stage == ShaderStageType::VERTEX ) ||
+    ( Stage == ShaderStageType::FRAGMENT ) ||
+    ( Stage == ShaderStageType::TESSELATION_EVAL ) ||
+    ( Stage == ShaderStageType::TESSELATION_CTRL ) ||
+    ( Stage == ShaderStageType::GEOMETRY ) ||
+    ( Stage == ShaderStageType::COMPUTE ) ||
+    ( Stage == ShaderStageType::RAYGEN ) ||
+    ( Stage == ShaderStageType::ANYHIT ) ||
+    ( Stage == ShaderStageType::CLOSESTHIT ) ||
+    ( Stage == ShaderStageType::MISS ) ||
+    ( Stage == ShaderStageType::INTERSECTION ) ||
+    ( Stage == ShaderStageType::CALLABLE ) ||
+    ( Stage == ShaderStageType::TASK ) || ( Stage == ShaderStageType::MESH ) ||
+    ( Stage == ShaderStageType::SUBPASSSHADING ) ||
+    ( Stage == ShaderStageType::CLUSTERCULLING );
 
 static const std::map<ShaderStageType, std::string> StagesSuffixMap = {
     { ShaderStageType::VERTEX, vertex_stage_suffix },
@@ -101,7 +101,10 @@ struct ShaderStorage final {
     // there is only one mudule for each stage and modules count
     // equal to vulkan shader stages types.
     void add( const std::filesystem::path &path );
+    void add( std::span<uint8_t> bytecode, const std::string &name );
     void fill( const std::vector<std::filesystem::path> &files );
+    void fill( const std::vector<std::pair<std::span<uint8_t>, std::string>>
+                   &sources );
 
     [[nodiscard]] VkShaderModule get( const std::string &name );
 
@@ -129,6 +132,7 @@ struct ShaderStorage final {
     void list();
 
 private:
+    void push( std::span<uint8_t> bytecode, const std::string &name );
     bool checkStageExist( const std::string stageSuffix );
     bool isValidName( const std::string name );
 

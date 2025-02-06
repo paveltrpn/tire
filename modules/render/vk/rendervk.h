@@ -24,6 +24,7 @@
 #include "scene.h"
 
 import event;
+import io;
 import config;
 
 #define FRAMES_IN_FLIGHT_COUNT 2
@@ -54,6 +55,13 @@ private:
         for ( auto i{ 0 }; i < 3; ++i ) {
             co_await event::setTimeout( timeout );
             log::notice( "test coroutine timer trigger at {} time!!!", i );
+        }
+    };
+
+    event::Task<void> watchFile( std::string path ) {
+        while ( true ) {
+            co_await io::watchForFile( path );
+            log::notice( "file  \"{}\" changed!!!", path );
         }
     };
 

@@ -166,8 +166,11 @@ target_sources(event
 )
 target_link_libraries(event config)
 
-add_library(io
-    modules/io/file.h
+add_library(io)
+target_sources(io
+  PUBLIC
+    FILE_SET CXX_MODULES FILES
+    modules/io/interface.cpp
     modules/io/file.cpp
 )
 target_link_libraries(io event)
