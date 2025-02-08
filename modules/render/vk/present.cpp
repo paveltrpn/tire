@@ -25,6 +25,10 @@ void Present::present( const VkSemaphore semaphore, uint32_t *imageIndex ) {
         .pImageIndices = imageIndex,
         .pResults = nullptr };
 
+    // May return VK_SUBOPTIMAL_KHR or even VK_ERROR_OUT_OF_DATE_KHR
+    // if current surface properties are no longer matched
+    // exactly or swap chain has become incompatible
+    // with the surface and can no longer be used for rendering
     if ( const auto res =
              vkQueuePresentKHR( device_->presentQueue(), &presentInfo );
          res != VK_SUCCESS ) {

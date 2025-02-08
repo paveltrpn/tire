@@ -17,6 +17,7 @@
 #include "swapchain.h"
 #include "pipelines/pipeline.h"
 #include "commands/commands.h"
+#include "buffers/vertex_buffer.h"
 #include "command_pool.h"
 #include "present.h"
 
@@ -61,13 +62,15 @@ private:
         bool isRenamed{ false };
         while ( !isRenamed ) {
             const auto res = co_await io::watchForFile( path );
-            isRenamed = ( res == UV_RENAME );
             // Wait for uv_fs_event_stop() to cancel next callback call
             co_await event::setTimeout( 100 );
             log::notice( "file  \"{}\" changed with code {}", path,
                          static_cast<int>( res ) );
+            if ( isRenamed = ( res == UV_RENAME ); isRenamed ) {
+                log::notice( "file  \"{}\" have been renamed, stop watching",
+                             path );
+            }
         }
-        log::notice( "file  \"{}\" have been renamed, stop watching", path );
     };
 
     event::Task<void> showLoopMerics() {

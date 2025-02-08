@@ -98,7 +98,7 @@ export {
         [[nodiscard]] bool await_ready() const noexcept { return false; }
 
         // Can be void, bool, coroutine_handle<>.
-        bool await_suspend(
+        void await_suspend(
             std::coroutine_handle<typename T::promise_type> handle ) noexcept {
             auto cb = []( uv_timer_t *timer ) {
                 auto handle = static_cast<
@@ -113,15 +113,13 @@ export {
                     "TimeoutAwaitable === coroutine destruction pending..." );
                 handle.destroy();
                 // Returns control to the caller/resumer of the current coroutine
-                return true;
+                return;
             }
 
             handle_ = handle;
             timer_.data = &handle_;
             uv_timer_init( loop_, &timer_ );
             uv_timer_start( &timer_, cb, timeout_, 0 );
-
-            return true;
         }
 
         void await_resume() const noexcept {}
@@ -140,7 +138,7 @@ export {
 
         [[nodiscard]] bool await_ready() const noexcept { return false; }
 
-        auto await_suspend(
+        void await_suspend(
             std::coroutine_handle<typename T::promise_type> handle ) noexcept {
             auto cb = []( uv_fs_event_t *watcher, const char *filename,
                           int events, int status ) {
@@ -149,6 +147,16 @@ export {
                 self->event_ = static_cast<uv_fs_event>( events );
                 self->handle_.resume();
             };
+
+            auto promise = handle.promise();
+            if ( promise.scheduleDestroy_ ) {
+                log::notice(
+                    "FilesystemWatchAwaitable === coroutine destruction "
+                    "pending..." );
+                handle.destroy();
+                return;
+            }
+
             watcher_.data = this;
             handle_ = handle;
             uv_fs_event_init( loop_, &watcher_ );

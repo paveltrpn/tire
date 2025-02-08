@@ -37,6 +37,10 @@ void RenderVK::frame() {
     vkResetFences( device_->handle(), 1, &ifFnc );
 
     // NOTE: omit return code check
+    // May return VK_SUBOPTIMAL_KHR or even VK_ERROR_OUT_OF_DATE_KHR
+    // if current surface properties are no longer matched
+    // exactly or swap chain has become incompatible
+    // with the surface and can no longer be used for rendering
     vkAcquireNextImageKHR( device_->handle(), swapchain_->handle(), UINT64_MAX,
                            iaSem, VK_NULL_HANDLE, &imageIndex );
 

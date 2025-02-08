@@ -109,6 +109,8 @@ add_library(render
     modules/render/vk/pipelines/renderpass.cpp
     modules/render/vk/commands/commands.h
     modules/render/vk/commands/commands.cpp
+    modules/render/vk/buffers/vertex_buffer.h
+    modules/render/vk/buffers/vertex_buffer.cpp
     modules/render/vk/scene.h
     modules/render/vk/scene.cpp
     modules/render/vk/swapchain.h

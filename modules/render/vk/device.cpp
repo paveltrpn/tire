@@ -171,7 +171,10 @@ void Device::pickAndCreateDevice() {
     log::info( "vk::Device === pick {}",
                physicalDevices_[pickedPhysicalDeviceId].properties.deviceName );
 
-    // Choose queue family with VK_QUEUE_GRAPHICS_BIT
+    // Choose queue family with VK_QUEUE_GRAPHICS_BIT.
+    // The good news is that
+    // any queue family with VK_QUEUE_GRAPHICS_BIT or VK_QUEUE_COMPUTE_BIT ca-
+    // pabilities already implicitly support VK_QUEUE_TRANSFER_BIT operations.
     for ( auto i{ 0 };
           const auto &queueFamily :
           physicalDevices_[pickedPhysicalDeviceId].queueFamilyProperties ) {
@@ -182,7 +185,7 @@ void Device::pickAndCreateDevice() {
         ++i;
     }
 
-    if ( graphicsFamilyQueueId_ == UINT_MAX ) {
+    if ( graphicsFamilyQueueId_ == UINT32_MAX ) {
         throw std::runtime_error(
             "failed to get device with queue family that "
             "VK_QUEUE_GRAPHICS_BIT" );
