@@ -133,8 +133,8 @@ struct ShaderStorage final {
 
 private:
     void push( std::span<uint8_t> bytecode, const std::string &name );
-    bool checkStageExist( const std::string stageSuffix );
-    bool isValidName( const std::string name );
+    bool checkStageExist( const std::string &stageSuffix );
+    bool isValidName( const std::string &name );
 
 private:
     const vk::Device *device_;

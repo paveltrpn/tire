@@ -5,6 +5,8 @@ module;
 #include <exception>
 #include <uv.h>
 
+#include "log/log.h"
+
 export module event:async;
 
 namespace tire::event {
@@ -19,7 +21,9 @@ export {
         using handle_type = std::coroutine_handle<promise_type>;
 
         struct promise_type {
-            Task get_return_object() { return {}; };
+            Task get_return_object() {
+                return Task<void>{ handle_type::from_promise( *this ) };
+            };
 
             auto initial_suspend() noexcept { return std::suspend_never{}; }
             auto final_suspend() noexcept { return std::suspend_never{}; }
@@ -29,7 +33,60 @@ export {
             }
 
             std::exception_ptr exception_{ nullptr };
+            bool scheduleDestroy_{ false };
         };
+
+        explicit Task( handle_type h )
+            : handle_( h ) {}
+
+        Task() = default;
+
+        Task( Task &&t ) noexcept
+            : handle_( t.handle_ ) {
+            t.handle_ = nullptr;
+        }
+
+        Task &operator=( Task &&other ) noexcept {
+            if ( std::addressof( other ) != this ) {
+                // Destroy this handle, but it allowed only when
+                // coroutine is suspended.
+                if ( handle_ ) {
+                    handle_.destroy();
+                }
+
+                handle_ = other.handle_;
+                other.handle_ = nullptr;
+            }
+
+            return *this;
+        }
+
+        Task( const Task & ) = delete;
+        Task &operator=( const Task & ) = delete;
+
+        ~Task() = default;
+
+        void detach() noexcept {
+            if ( empty() ) {
+                return;
+            }
+
+            if ( handle_ ) {
+                handle_.destroy();
+                handle_ = nullptr;
+            }
+        }
+
+        [[nodiscard]] constexpr bool empty() const noexcept {
+            return handle_ == nullptr;
+        }
+
+        constexpr explicit operator bool() const noexcept { return !empty(); }
+
+        void scheduleDestroy() { handle_.promise().scheduleDestroy_ = true; };
+
+    private:
+        handle_type handle_{ nullptr };
     };
 
     template <typename T>
@@ -40,8 +97,8 @@ export {
 
         [[nodiscard]] bool await_ready() const noexcept { return false; }
 
-        // can be void, bool, coroutine_handle<>
-        auto await_suspend(
+        // Can be void, bool, coroutine_handle<>.
+        bool await_suspend(
             std::coroutine_handle<typename T::promise_type> handle ) noexcept {
             auto cb = []( uv_timer_t *timer ) {
                 auto handle = static_cast<
@@ -49,10 +106,22 @@ export {
                     timer->data );
                 handle->resume();
             };
+
+            auto promise = handle.promise();
+            if ( promise.scheduleDestroy_ ) {
+                log::notice(
+                    "TimeoutAwaitable === coroutine destruction pending..." );
+                handle.destroy();
+                // Returns control to the caller/resumer of the current coroutine
+                return true;
+            }
+
             handle_ = handle;
             timer_.data = &handle_;
             uv_timer_init( loop_, &timer_ );
             uv_timer_start( &timer_, cb, timeout_, 0 );
+
+            return true;
         }
 
         void await_resume() const noexcept {}
@@ -74,29 +143,32 @@ export {
         auto await_suspend(
             std::coroutine_handle<typename T::promise_type> handle ) noexcept {
             auto cb = []( uv_fs_event_t *watcher, const char *filename,
-                          int events, int status ) mutable {
-                auto handle = static_cast<
-                    std::coroutine_handle<typename T::promise_type> *>(
-                    watcher->data );
-
-                handle->resume();
+                          int events, int status ) {
+                auto self =
+                    static_cast<FilesystemWatchAwaitable<T> *>( watcher->data );
+                self->event_ = static_cast<uv_fs_event>( events );
+                self->handle_.resume();
             };
+            watcher_.data = this;
             handle_ = handle;
-            watcher_.data = &handle_;
             uv_fs_event_init( loop_, &watcher_ );
+            // "Callback passed to uv_fs_event_start() which will be called repeatedly
+            // after the handle is started." therefore we need to stop them manually.
             uv_fs_event_start( &watcher_, cb, path_.c_str(), 0 );
         }
 
-        // NOTE: maybe const?
-        void await_resume() noexcept {
+        uv_fs_event await_resume() noexcept {
             // Stop the handle, the callback will no longer be called.
             uv_fs_event_stop( &watcher_ );
+            return event_;
+            // uv_close( reinterpret_cast<uv_handle_t *>( &watcher_ ), nullptr );
         }
 
         std::coroutine_handle<typename T::promise_type> handle_;
         uv_loop_t *loop_;
         std::string path_;
         uv_fs_event_t watcher_;
+        uv_fs_event event_{};
     };
 }
 }  // namespace tire::event

@@ -22,6 +22,7 @@
 
 #include "../render.h"
 #include "scene.h"
+#include "uv.h"
 
 import event;
 import io;
@@ -52,18 +53,29 @@ private:
 
 private:
     event::Task<void> executeByTimeOut( long long timeout ) {
-        for ( auto i{ 0 }; i < 3; ++i ) {
-            co_await event::setTimeout( timeout );
-            log::notice( "test coroutine timer trigger at {} time!!!", i );
-        }
+        co_await event::setTimeout( timeout );
+        log::notice( "test coroutine timer trigger" );
     };
 
     event::Task<void> watchFile( std::string path ) {
-        while ( true ) {
-            co_await io::watchForFile( path );
-            log::notice( "file  \"{}\" changed!!!", path );
+        bool isRenamed{ false };
+        while ( !isRenamed ) {
+            const auto res = co_await io::watchForFile( path );
+            isRenamed = ( res == UV_RENAME );
+            // Wait for uv_fs_event_stop() to cancel next callback call
+            co_await event::setTimeout( 100 );
+            log::notice( "file  \"{}\" changed with code {}", path,
+                         static_cast<int>( res ) );
         }
+        log::notice( "file  \"{}\" have been renamed, stop watching", path );
     };
+
+    event::Task<void> showLoopMerics() {
+        while ( true ) {
+            co_await event::setTimeout( 5000 );
+            event::Context::metrics();
+        }
+    }
 
 private:
     std::shared_ptr<vk::Scene> scene_;

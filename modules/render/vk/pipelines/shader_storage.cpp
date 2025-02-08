@@ -185,7 +185,7 @@ void ShaderStorage::list() {
     }
 }
 
-bool ShaderStorage::checkStageExist( const std::string stageSuffix ) {
+bool ShaderStorage::checkStageExist( const std::string &stageSuffix ) {
     // Find shader stage module name in modules_ which have certain suffix
     const auto end = modules_.cend();
     const auto it = std::find_if(
@@ -197,7 +197,7 @@ bool ShaderStorage::checkStageExist( const std::string stageSuffix ) {
     return it != end;
 }
 
-bool ShaderStorage::isValidName( const std::string name ) {
+bool ShaderStorage::isValidName( const std::string &name ) {
     // Finds out that given shader file name contains somthing from
     // shader stage suffix set ("VERTEX", "FRAGMENT" etc.)
     const auto end = StagesSuffixMap.cend();

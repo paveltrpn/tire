@@ -1,3 +1,4 @@
+#include "uv/version.h"
 module;
 
 #include <string>
@@ -23,8 +24,10 @@ export struct Context final {
                 throw std::runtime_error(
                     std::format( "uv loop init failed with code {}", res ) );
             } else {
-                log::debug<DEBUG_OUTPUT_EVENT_CONTEXT_H>(
-                    "event::Context === uv loop init success" );
+                log::info(
+                    "event::Context === uv loop init success, libuv version "
+                    "{}.{}",
+                    UV_VERSION_MAJOR, UV_VERSION_MINOR );
             }
 
             instance_.reset( this );
@@ -61,6 +64,8 @@ export struct Context final {
     }
     static void run() { instance()->run_impl(); }
     static void stop() { instance()->stop_impl(); }
+
+    static void metrics() { instance()->metrics_impl(); }
 
 private:
     [[nodiscard]] uv_loop_t *getLoop() const { return loop_; };
@@ -99,6 +104,14 @@ private:
         // not all event pendings got finished
         uv_stop( loop_ );
         log::info( "event::Context === uv loop stopped" );
+    }
+
+    void metrics_impl() {
+        uv_metrics_t metrics;
+        uv_metrics_info( loop_, &metrics );
+        log::info(
+            "uv metrics:\nloop_count = {}\nevents = {}\nevents_waiting = {}",
+            metrics.loop_count, metrics.events, metrics.events_waiting );
     }
 
 private:
