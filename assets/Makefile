@@ -10,6 +10,8 @@ SRCS := $(SOURCES_DIR)/vk_simple_tri_VERTEX.glsl \
 	$(SOURCES_DIR)/vk_simple_tri_FRAGMENT.glsl \
 	$(SOURCES_DIR)/vk_simple_box_VERTEX.glsl \
 	$(SOURCES_DIR)/vk_simple_box_FRAGMENT.glsl \
+	$(SOURCES_DIR)/vk_vertex_buffer_VERTEX.glsl \
+	$(SOURCES_DIR)/vk_vertex_buffer_FRAGMENT.glsl
 
 
 SPVS := $(SRCS:.glsl=.spv)
@@ -28,6 +30,12 @@ $(SOURCES_DIR)/vk_simple_box_VERTEX.spv: $(SOURCES_DIR)/vk_simple_box_VERTEX.gls
 	$(CC) $(FLAGS) -fshader-stage=vertex $< -o $@
 
 $(SOURCES_DIR)/vk_simple_box_FRAGMENT.spv: $(SOURCES_DIR)/vk_simple_box_FRAGMENT.glsl
+	$(CC) $(FLAGS) -fshader-stage=fragment $< -o $@
+
+$(SOURCES_DIR)/vk_vertex_buffer_VERTEX.spv: $(SOURCES_DIR)/vk_vertex_buffer_VERTEX.glsl
+	$(CC) $(FLAGS) -fshader-stage=vertex $< -o $@
+
+$(SOURCES_DIR)/vk_vertex_buffer_FRAGMENT.spv: $(SOURCES_DIR)/vk_vertex_buffer_FRAGMENT.glsl
 	$(CC) $(FLAGS) -fshader-stage=fragment $< -o $@
 
 clean:

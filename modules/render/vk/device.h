@@ -42,6 +42,9 @@ struct Device final {
 
     [[nodiscard]] VkExtent2D extent() const { return currentExtent_; };
 
+    [[nodiscard]] uint32_t memoryRequirements(
+        uint32_t typeFilter, VkMemoryPropertyFlags properties ) const;
+
     void pickAndCreateDevice();
 
     void displayRenderInfo();
@@ -67,6 +70,8 @@ private:
     VkDevice device_{ VK_NULL_HANDLE };
     // System wide available physical devices
     std::vector<PhysicalDevice> physicalDevices_{};
+
+    int pickedPhysicalDeviceId_{ -1 };
 
     uint32_t graphicsFamilyQueueId_{ UINT32_MAX };
     uint32_t presentSupportQueueId_{ UINT32_MAX };

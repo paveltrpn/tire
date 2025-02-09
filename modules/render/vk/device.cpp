@@ -157,19 +157,19 @@ void Device::pickAndCreateDevice() {
     }
 
     // First try to pick discreete GPU
-    int pickedPhysicalDeviceId{ -1 };
     if ( discreetGpuId != -1 ) {
-        pickedPhysicalDeviceId = discreetGpuId;
+        pickedPhysicalDeviceId_ = discreetGpuId;
     } else if ( integratedGpuId != -1 ) {
-        pickedPhysicalDeviceId = integratedGpuId;
+        pickedPhysicalDeviceId_ = integratedGpuId;
     } else if ( cpuGpuId != -1 ) {
-        pickedPhysicalDeviceId = cpuGpuId;
+        pickedPhysicalDeviceId_ = cpuGpuId;
     } else {
         throw std::runtime_error( "no suitable vulkan devices found! " );
     }
 
-    log::info( "vk::Device === pick {}",
-               physicalDevices_[pickedPhysicalDeviceId].properties.deviceName );
+    log::info(
+        "vk::Device === pick {}",
+        physicalDevices_[pickedPhysicalDeviceId_].properties.deviceName );
 
     // Choose queue family with VK_QUEUE_GRAPHICS_BIT.
     // The good news is that
@@ -177,7 +177,7 @@ void Device::pickAndCreateDevice() {
     // pabilities already implicitly support VK_QUEUE_TRANSFER_BIT operations.
     for ( auto i{ 0 };
           const auto &queueFamily :
-          physicalDevices_[pickedPhysicalDeviceId].queueFamilyProperties ) {
+          physicalDevices_[pickedPhysicalDeviceId_].queueFamilyProperties ) {
         if ( queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT ) {
             graphicsFamilyQueueId_ = i;
             break;
@@ -197,7 +197,7 @@ void Device::pickAndCreateDevice() {
     // on coosed one and if not we terminate.
     VkBool32 presentSupport = false;
     if ( const auto err = vkGetPhysicalDeviceSurfaceSupportKHR(
-             physicalDevices_[pickedPhysicalDeviceId].device,
+             physicalDevices_[pickedPhysicalDeviceId_].device,
              graphicsFamilyQueueId_, surface_->handle(), &presentSupport );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
@@ -251,7 +251,7 @@ void Device::pickAndCreateDevice() {
     deviceCreateInfo.queueCreateInfoCount =
         static_cast<uint32_t>( queueCreateInfos.size() );
     deviceCreateInfo.pEnabledFeatures =
-        &physicalDevices_[pickedPhysicalDeviceId].features;
+        &physicalDevices_[pickedPhysicalDeviceId_].features;
     deviceCreateInfo.enabledExtensionCount =
         static_cast<uint32_t>( desiredExtensionsList.size() );
     deviceCreateInfo.ppEnabledExtensionNames = desiredExtensionsList.data();
@@ -266,7 +266,7 @@ void Device::pickAndCreateDevice() {
 
     // Create a logical device
     if ( const auto err =
-             vkCreateDevice( physicalDevices_[pickedPhysicalDeviceId].device,
+             vkCreateDevice( physicalDevices_[pickedPhysicalDeviceId_].device,
                              &deviceCreateInfo, nullptr, &device_ );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
@@ -282,7 +282,7 @@ void Device::pickAndCreateDevice() {
     // physical device surface capabilities
 
     if ( const auto err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-             physicalDevices_[pickedPhysicalDeviceId].device,
+             physicalDevices_[pickedPhysicalDeviceId_].device,
              surface_->handle(), &surfaceCapabilities_ );
          err != VK_SUCCESS ) {
         throw std::runtime_error( std::format(
@@ -302,7 +302,7 @@ void Device::pickAndCreateDevice() {
     // physical device surface formats
     uint32_t formatCount;
     if ( const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR(
-             physicalDevices_[pickedPhysicalDeviceId].device,
+             physicalDevices_[pickedPhysicalDeviceId_].device,
              surface_->handle(), &formatCount, nullptr );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
@@ -321,7 +321,7 @@ void Device::pickAndCreateDevice() {
     surfaceFormats_.resize( formatCount );
 
     if ( const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR(
-             physicalDevices_[pickedPhysicalDeviceId].device,
+             physicalDevices_[pickedPhysicalDeviceId_].device,
              surface_->handle(), &formatCount, surfaceFormats_.data() );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
@@ -342,7 +342,7 @@ void Device::pickAndCreateDevice() {
     // physical device present modes
     uint32_t presentModeCount;
     if ( const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR(
-             physicalDevices_[pickedPhysicalDeviceId].device,
+             physicalDevices_[pickedPhysicalDeviceId_].device,
              surface_->handle(), &presentModeCount, nullptr );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
@@ -361,7 +361,7 @@ void Device::pickAndCreateDevice() {
     presentModes_.resize( presentModeCount );
 
     if ( const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR(
-             physicalDevices_[pickedPhysicalDeviceId].device,
+             physicalDevices_[pickedPhysicalDeviceId_].device,
              surface_->handle(), &presentModeCount, presentModes_.data() );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
@@ -395,6 +395,23 @@ void Device::pickAndCreateDevice() {
     log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
         "vk::Device === present mode is {}",
         string_VkPresentModeKHR( presentMode_ ) );
+}
+
+uint32_t Device::memoryRequirements( uint32_t typeFilter,
+                                     VkMemoryPropertyFlags properties ) const {
+    VkPhysicalDeviceMemoryProperties memProperties{};
+    vkGetPhysicalDeviceMemoryProperties(
+        physicalDevices_[pickedPhysicalDeviceId_].device, &memProperties );
+
+    for ( uint32_t i = 0; i < memProperties.memoryTypeCount; i++ ) {
+        if ( ( typeFilter & ( 1 << i ) ) &&
+             ( memProperties.memoryTypes[i].propertyFlags & properties ) ==
+                 properties ) {
+            return i;
+        }
+    }
+
+    throw std::runtime_error( "failed to find suitable memory type!" );
 }
 
 void Device::displayRenderInfo() {
