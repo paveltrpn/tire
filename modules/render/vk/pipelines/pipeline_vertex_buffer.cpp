@@ -1,18 +1,41 @@
 
 #include "pipeline.h"
+#include "algebra/vector3.h"
 
 namespace tire::vk {
 
 void PiplineVertexBuffer::initPipeline(
     const std::vector<std::filesystem::path> &files ) {
+    VkVertexInputBindingDescription bindingDescription{};
+    bindingDescription.stride = sizeof( algebra::vector3f );
+    bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+    bindingDescription.binding = 0;
+
+    std::array<VkVertexInputAttributeDescription, 1> attributeDescriptions{};
+    attributeDescriptions[0].binding = 0;
+    attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
+    attributeDescriptions[0].offset = 0;
+    attributeDescriptions[0].location = 0;
+
+    // attributeDescriptions[1].binding = 0;
+    // attributeDescriptions[1].location = 1;
+    // attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+    // attributeDescriptions[1].offset = offsetof( Vertex, color );
+
+    // float: VK_FORMAT_R32_SFLOAT
+    // vec2: VK_FORMAT_R32G32_SFLOAT
+    // vec3: VK_FORMAT_R32G32B32_SFLOAT
+    // vec4: VK_FORMAT_R32G32B32A32_SFLOAT
+
     const VkPipelineVertexInputStateCreateInfo vertexInput{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
         .pNext = nullptr,
         .flags = 0,
-        .vertexBindingDescriptionCount = 0,
-        .pVertexBindingDescriptions = nullptr,
-        .vertexAttributeDescriptionCount = 0,
-        .pVertexAttributeDescriptions = nullptr };
+        .vertexBindingDescriptionCount = 1,
+        .pVertexBindingDescriptions = &bindingDescription,
+        .vertexAttributeDescriptionCount =
+            static_cast<uint32_t>( attributeDescriptions.size() ),
+        .pVertexAttributeDescriptions = attributeDescriptions.data() };
 
     const VkPipelineInputAssemblyStateCreateInfo inputAssembly{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
@@ -126,7 +149,7 @@ void PiplineVertexBuffer::initPipeline(
             std::format( "failed to create graphics pipeline with code {}!",
                          string_VkResult( err ) ) );
     } else {
-        log::info( "vk::Pipeline === graphics pipeline created!" );
+        log::info( "vk::PiplineVertexBuffer === graphics pipeline created!" );
     }
 
     // There is no need to store this handle after pipeline creation and pass

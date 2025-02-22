@@ -89,7 +89,8 @@ private:
     std::unique_ptr<vk::Swapchain> swapchain_{};
 
     std::unique_ptr<vk::Pipeline> pipelineSimple_{};
-    std::unique_ptr<vk::Pipeline> piplineMatrixReady{};
+    std::unique_ptr<vk::Pipeline> piplineMatrixReady_{};
+    std::unique_ptr<vk::Pipeline> piplineVertexBuffer_{};
 
     std::unique_ptr<vk::CommandPool> commandPool_{};
 

@@ -47,7 +47,7 @@ void RenderVK::frame() {
     // NOTE: currentFrame_->imageIndex
     const auto currentFramebuffer = swapchain_->framebuffer( imageIndex );
     cBufs_[imageIndex]->setProperties( currentFramebuffer,
-                                       piplineMatrixReady.get(), 36 );
+                                       piplineMatrixReady_.get(), 36 );
     cBufs_[imageIndex]->reset();
     cBufs_[imageIndex]->bind();
     cBufs_[imageIndex]->submit( iaSem, rfSem, ifFnc );
