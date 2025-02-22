@@ -35,11 +35,8 @@ requires Algebraic<T> struct vector4 : vector_base<T, 4> {
     }
 
     value_type x() { return data_[0]; }
-
     value_type y() { return data_[1]; }
-
     value_type z() { return data_[2]; }
-
     value_type w() { return data_[3]; }
 };
 

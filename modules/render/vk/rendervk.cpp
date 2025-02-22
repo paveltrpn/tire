@@ -36,7 +36,7 @@ RenderVK::RenderVK()
         swapchain_->createSwapchain();
         swapchain_->createImageViews();
 
-        pipelineSimple_ = std::make_unique<vk::PiplineSimple>( device_.get() );
+        pipelineSimple_ = std::make_unique<vk::PipelineSimple>( device_.get() );
         pipelineSimple_->initPipeline(
             { basePath + "/assets/shaders/vk_simple_tri_VERTEX.spv",
               basePath + "/assets/shaders/vk_simple_tri_FRAGMENT.spv" } );

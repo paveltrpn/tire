@@ -26,7 +26,7 @@ struct Pipeline {
     }
 
     virtual void initPipeline(
-        const std::vector<std::filesystem::path> &files );
+        const std::vector<std::filesystem::path> &files ) = 0;
 
 protected:
     [[nodiscard]] virtual VkPipelineLayout initLayout() = 0;
@@ -42,9 +42,13 @@ protected:
 
 // =====================================================================================
 
-struct PiplineSimple final : Pipeline {
-    PiplineSimple( const vk::Device *device )
+struct PipelineSimple final : Pipeline {
+    PipelineSimple( const vk::Device *device )
         : Pipeline( device ) {}
+
+public:
+    void initPipeline(
+        const std::vector<std::filesystem::path> &files ) override;
 
 private:
     VkPipelineLayout initLayout() override;
@@ -55,6 +59,24 @@ private:
 struct PiplineMatrixReady final : Pipeline {
     PiplineMatrixReady( const vk::Device *device )
         : Pipeline( device ) {}
+
+public:
+    void initPipeline(
+        const std::vector<std::filesystem::path> &files ) override;
+
+private:
+    VkPipelineLayout initLayout() override;
+};
+
+// =====================================================================================
+
+struct PiplineVertexBuffer final : Pipeline {
+    PiplineVertexBuffer( const vk::Device *device )
+        : Pipeline( device ) {}
+
+public:
+    void initPipeline(
+        const std::vector<std::filesystem::path> &files ) override;
 
 private:
     VkPipelineLayout initLayout() override;

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "algebra/concepts.h"
+#include "concepts.h"
 #include "vector.h"
 
 namespace tire::algebra {
