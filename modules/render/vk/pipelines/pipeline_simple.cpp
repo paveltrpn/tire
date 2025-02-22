@@ -135,19 +135,13 @@ void PiplineMatrixReady::initPipeline(
     // vkDestroyPipelineLayout( device_->handle(), layout, nullptr );
 }
 
-VkPipelineLayout PiplineMatrixReady::initLayout() {
-    //setup push constants
-    VkPushConstantRange viewRtnMatrix{
-        .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-        .offset = 0,
-        .size = ( sizeof( float ) * 16 * 2 ) + 4 };  // two matrix4f
-
+VkPipelineLayout PipelineSimple::initLayout() {
     const VkPipelineLayoutCreateInfo pipelineLayoutInfo{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
         .setLayoutCount = 0,
         .pSetLayouts = nullptr,
-        .pushConstantRangeCount = 1,
-        .pPushConstantRanges = &viewRtnMatrix };
+        .pushConstantRangeCount = 0,
+        .pPushConstantRanges = nullptr };
 
     VkPipelineLayout layout{ VK_NULL_HANDLE };
 
@@ -158,7 +152,7 @@ VkPipelineLayout PiplineMatrixReady::initLayout() {
             std::format( "failed to create pipeline layout with code {}!",
                          string_VkResult( err ) ) );
     } else {
-        log::info( "vk::PipelineMatrixReady === pipeline layout created!" );
+        log::info( "vk::PipelineSimple === pipeline layout created!" );
     }
 
     return layout;

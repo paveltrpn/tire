@@ -159,12 +159,18 @@ void PiplineVertexBuffer::initPipeline(
 }
 
 VkPipelineLayout PiplineVertexBuffer::initLayout() {
+    //setup push constants
+    VkPushConstantRange viewRtnMatrix{
+        .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+        .offset = 0,
+        .size = ( sizeof( float ) * 16 * 2 ) + 4 };  // two matrix4f
+
     const VkPipelineLayoutCreateInfo pipelineLayoutInfo{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
         .setLayoutCount = 0,
         .pSetLayouts = nullptr,
-        .pushConstantRangeCount = 0,
-        .pPushConstantRanges = nullptr };
+        .pushConstantRangeCount = 1,
+        .pPushConstantRanges = &viewRtnMatrix };
 
     VkPipelineLayout layout{ VK_NULL_HANDLE };
 
@@ -175,7 +181,7 @@ VkPipelineLayout PiplineVertexBuffer::initLayout() {
             std::format( "failed to create pipeline layout with code {}!",
                          string_VkResult( err ) ) );
     } else {
-        log::info( "vk::PiplineVertexBuffer === pipeline layout created!" );
+        log::info( "vk::PipelineMatrixReady === pipeline layout created!" );
     }
 
     return layout;
