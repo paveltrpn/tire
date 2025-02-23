@@ -21,7 +21,7 @@ void RenderVK::preLoop() {
 };
 
 void RenderVK::preFrame() {
-
+    scene_->submit();
 };
 
 void RenderVK::frame() {
@@ -46,11 +46,13 @@ void RenderVK::frame() {
 
     // NOTE: currentFrame_->imageIndex
     const auto currentFramebuffer = swapchain_->framebuffer( imageIndex );
-    cBufs_[imageIndex]->setProperties( currentFramebuffer,
-                                       piplineMatrixReady_.get(), 36 );
-    cBufs_[imageIndex]->reset();
-    cBufs_[imageIndex]->bind();
-    cBufs_[imageIndex]->submit( iaSem, rfSem, ifFnc );
+    // cBufs_[imageIndex]->setProperties( currentFramebuffer,
+    //    piplineMatrixReady_.get(), 36 );
+    // cBufs_[imageIndex]->reset();
+    // cBufs_[imageIndex]->bind();
+    // cBufs_[imageIndex]->submit( iaSem, rfSem, ifFnc );
+
+    scene_->output( currentFramebuffer, imageIndex, iaSem, rfSem, ifFnc );
 
     present_->present( rfSem, &imageIndex );
 

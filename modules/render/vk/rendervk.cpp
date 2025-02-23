@@ -63,9 +63,6 @@ RenderVK::RenderVK()
                 device_.get(), commandPool_.get() ) );
         }
 
-        dummyCmd_ = std::make_unique<vk::DummyCommand>( device_.get(),
-                                                        commandPool_.get() );
-
         present_ =
             std::make_unique<vk::Present>( device_.get(), swapchain_.get() );
 
@@ -79,7 +76,8 @@ RenderVK::RenderVK()
 };
 
 void RenderVK::scene( const std::filesystem::path &path ) {
-    scene_ = std::make_shared<vk::Scene>( path );
+    scene_ = std::make_shared<vk::Scene>( path, device_.get(),
+                                          piplineVertexBuffer_.get() );
 }
 
 void RenderVK::setSwapInterval( int interval ) {

@@ -17,7 +17,7 @@ template <std::floating_point T>
 struct VertexBuffer final {
     using value_type = T;
 
-    VertexBuffer( const vk::Device *device, long long size )
+    VertexBuffer( const vk::Device *device, size_t size )
         : device_{ device }
         , size_{ size } {
         VkBufferCreateInfo bufferInfo{};
@@ -52,17 +52,17 @@ struct VertexBuffer final {
         vkBindBufferMemory( device_->handle(), buffer_, bufferMemory_, 0 );
     }
 
-    void populate( long long size, void *data ) {
+    void populate( const void *data ) {
         void *mapAddress;
-        vkMapMemory( device_->handle(), bufferMemory_, 0, size, 0,
+        vkMapMemory( device_->handle(), bufferMemory_, 0, size_, 0,
                      &mapAddress );
-        memcpy( data, data, (size_t)size );
+        memcpy( mapAddress, data, size_ );
         vkUnmapMemory( device_->handle(), bufferMemory_ );
     }
 
     VkBuffer buffer() { return buffer_; };
     VkDeviceMemory bufferMemory() { return bufferMemory_; };
-    long long size() { return size_; }
+    size_t size() { return size_; }
 
 private:
     void clean() {
@@ -75,7 +75,7 @@ private:
     VkBuffer buffer_{ VK_NULL_HANDLE };
     VkDeviceMemory bufferMemory_{ VK_NULL_HANDLE };
 
-    long long size_{};
+    size_t size_{};
 };
 
 }  // namespace tire::vk

@@ -95,7 +95,6 @@ private:
     std::unique_ptr<vk::CommandPool> commandPool_{};
 
     std::vector<std::unique_ptr<vk::RenderFromShader>> cBufs_{};
-    std::unique_ptr<vk::DummyCommand> dummyCmd_{};
 
     std::unique_ptr<vk::Present> present_{};
     std::unique_ptr<vk::PresentSynchronization<FRAMES_IN_FLIGHT_COUNT>>

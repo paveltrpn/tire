@@ -33,7 +33,7 @@ private:
     nlohmann::json scene_;
 
 protected:
-    std::vector<std::shared_ptr<Node>> nodeList_;
+    std::vector<std::shared_ptr<Node>> nodeList_{};
     std::vector<std::shared_ptr<Camera>> cameras_{};
 };
 

@@ -15,7 +15,7 @@ static constexpr bool DEBUG_OUTPUT_COMMANDS_H{ true };
 namespace tire::vk {
 
 struct RenderFromShader;
-struct DummyCommand;
+struct RenderFromBuffer;
 
 /* Command depends on:
  * 1) Device
@@ -40,18 +40,6 @@ struct DrawCommand {
                               toBeFree.data() );
     }
 
-    // Overload for "DummyCommand".
-    // Args waits:
-    // @noparam
-    template <typename... Args>
-    requires( std::is_same_v<derived_type, DummyCommand> ) void setProperties(
-        VkFramebuffer framebuffer, const vk::Pipeline *pipeline,
-        Args &&...args ) {
-        pipeline_ = pipeline;
-        framebuffer_ = framebuffer;
-        impl()->setLocalState( args... );
-    }
-
     // Overload for "RenderFromShader".
     // Args waits:
     // @param count uint32_t - number of vertcies count to render
@@ -59,6 +47,21 @@ struct DrawCommand {
     requires( std::is_same_v<
               derived_type,
               RenderFromShader> ) void setProperties( VkFramebuffer framebuffer,
+                                                      const vk::Pipeline
+                                                          *pipeline,
+                                                      Args &&...args ) {
+        pipeline_ = pipeline;
+        framebuffer_ = framebuffer;
+        impl()->setLocalState( args... );
+    }
+
+    // Overload for "RenderFromBuffer".
+    // Args waits:
+    // @param count uint32_t - number of vertcies count to render
+    template <typename... Args>
+    requires( std::is_same_v<
+              derived_type,
+              RenderFromBuffer> ) void setProperties( VkFramebuffer framebuffer,
                                                       const vk::Pipeline
                                                           *pipeline,
                                                       Args &&...args ) {
@@ -181,26 +184,12 @@ protected:
 
 // ==========================================================================
 
-struct DummyCommand final : DrawCommand<DummyCommand> {
-    friend DrawCommand;
-    using base_type = DrawCommand<DummyCommand>;
-
-    DummyCommand( const vk::Device *device, const CommandPool *pool )
-        : base_type( device, pool ){};
-
-private:
-    void bind_impl(){};
-    void setLocalState() { log::notice( "no local state in DummyCommand " ); }
-};
-
-// ==========================================================================
-
 struct RenderFromShader final : DrawCommand<RenderFromShader> {
     friend DrawCommand;
     using base_type = DrawCommand<RenderFromShader>;
 
     RenderFromShader( const vk::Device *device, const CommandPool *pool )
-        : base_type( device, pool ){};
+        : base_type( device, pool ) {};
 
 private:
     void bind_impl();
@@ -209,6 +198,28 @@ private:
 private:
     // Properties that can varies on each submit
     uint32_t verteciesCount_{};
+};
+
+// ==========================================================================
+
+struct RenderFromBuffer final : DrawCommand<RenderFromBuffer> {
+    friend DrawCommand;
+    using base_type = DrawCommand<RenderFromBuffer>;
+
+    RenderFromBuffer( const vk::Device *device, const CommandPool *pool )
+        : base_type( device, pool ) {};
+
+private:
+    void bind_impl();
+    void setLocalState( VkBuffer vertexBuffer, uint32_t count ) {
+        vertexBuffer_ = vertexBuffer;
+        verteciesCount_ = count;
+    };
+
+private:
+    // Properties that can varies on each submit
+    uint32_t verteciesCount_{};
+    VkBuffer vertexBuffer_{ VK_NULL_HANDLE };
 };
 
 }  // namespace tire::vk
