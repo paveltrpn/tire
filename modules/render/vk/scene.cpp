@@ -20,7 +20,7 @@ Scene::Scene( const std::filesystem::path &fname, const vk::Device *device,
     cBufs_.reserve( FRAMES_IN_FLIGHT_COUNT );
     for ( auto i = 0; i < cBufs_.capacity(); ++i ) {
         cBufs_.push_back( std::make_unique<vk::SceneRenderCommand>(
-            device_, pipeline_, commandPool_.get() ) );
+            device_, pipeline_, commandPool_.get(), nodeList_.size() ) );
     }
 
     // Create vulkan "vertex buffers"
@@ -45,21 +45,14 @@ void Scene::submit() {
 void Scene::output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
                     VkSemaphore waitSemaphore, VkSemaphore signalSemaphore,
                     VkFence fence ) {
-    cBufs_[imageIndex]->reset();
-    cBufs_[imageIndex]->begin( currentFramebuffer );
-    cBufs_[imageIndex]->pushConstants( getCamera( 0 )->getMatrix(),
-                                       algebra::vector3f{ 0.0f, 1.0f, 0.0f } );
-    std::vector<VkBuffer> buffers;
-    std::vector<VkDeviceSize> offsets;
-    uint32_t verteciesCount{};
-    offsets.push_back( 0 );
     for ( size_t i = 0; const auto &buffer : buffersList_ ) {
-        buffers.push_back( buffer->buffer() );
-        offsets.push_back( buffer->size() );
-        verteciesCount += buffer->size();
+        cBufs_[imageIndex]->reset( i );
+        cBufs_[imageIndex]->prepare( i, currentFramebuffer,
+                                     getCamera( 0 )->getMatrix(),
+                                     algebra::vector3f{ 0.0f, 1.0f, 0.0f },
+                                     buffer->buffer(), buffer->size() );
     }
-    cBufs_[imageIndex]->draw( buffers, offsets, verteciesCount );
-    cBufs_[imageIndex]->end( waitSemaphore, signalSemaphore, fence );
+    cBufs_[imageIndex]->submit( waitSemaphore, signalSemaphore, fence );
 }
 
 }  // namespace tire::vk

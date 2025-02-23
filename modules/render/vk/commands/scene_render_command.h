@@ -13,7 +13,7 @@
 namespace tire::vk {
 struct SceneRenderCommand final {
     SceneRenderCommand( const vk::Device *device, const vk::Pipeline *pipeline,
-                        const CommandPool *pool );
+                        const CommandPool *pool, int commandsCount );
 
     SceneRenderCommand( const SceneRenderCommand &other ) = delete;
     SceneRenderCommand( SceneRenderCommand &&other ) = delete;
@@ -24,21 +24,20 @@ struct SceneRenderCommand final {
 
     void clean();
 
-    void reset();
-    void begin( VkFramebuffer framebuffer );
-    void pushConstants( algebra::matrix4f view, algebra::vector3f color );
-    void draw( const std::vector<VkBuffer> &vertexBuffer,
-               const std::vector<VkDeviceSize> &verteciesOffsets,
-               uint32_t verteciesCount );
-    void end( VkSemaphore waitSemaphores, VkSemaphore signalSemaphores,
-              VkFence fence );
+    void reset( size_t id );
+
+    void prepare( size_t id, VkFramebuffer framebuffer, algebra::matrix4f view,
+                  algebra::vector3f color, VkBuffer vbo, uint32_t vCount );
+
+    void submit( VkSemaphore waitSemaphores, VkSemaphore signalSemaphores,
+                 VkFence fence );
 
 protected:
     // Propertis set on "command" creation and stay same trough lifetime
     const vk::Device *device_{};
     const vk::Pipeline *pipeline_{};
     const vk::CommandPool *pool_{};
-    VkCommandBuffer commandBuffer_{ VK_NULL_HANDLE };
+    std::vector<VkCommandBuffer> commandsRange_{ VK_NULL_HANDLE };
     VkClearValue clearColor_{};
     uint32_t width_{};
     uint32_t height_{};
