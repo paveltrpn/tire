@@ -1,4 +1,5 @@
 
+#include "render/vk/commands/scene_render_command.h"
 #include "rendervk.h"
 #include "scene.h"
 
@@ -13,7 +14,7 @@ Scene::Scene( const std::filesystem::path &fname, const vk::Device *device,
 
     cBufs_.reserve( FRAMES_IN_FLIGHT_COUNT );
     for ( auto i = 0; i < cBufs_.capacity(); ++i ) {
-        cBufs_.push_back( std::make_unique<vk::RenderFromBuffer>(
+        cBufs_.push_back( std::make_unique<vk::SceneRenderCommand>(
             device_, commandPool_.get() ) );
     }
 
@@ -38,13 +39,12 @@ void Scene::submit() {
 void Scene::output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
                     VkSemaphore waitSemaphore, VkSemaphore signalSemaphore,
                     VkFence fence ) {
+    cBufs_[imageIndex]->reset();
+    cBufs_[imageIndex]->begin( pipeline_, currentFramebuffer );
     for ( size_t i = 0; const auto &buffer : buffersList_ ) {
-        cBufs_[imageIndex]->setProperties( currentFramebuffer, pipeline_,
-                                           buffer->buffer(), buffer->size() );
-        cBufs_[imageIndex]->reset();
-        cBufs_[imageIndex]->bind();
-        cBufs_[imageIndex]->submit( waitSemaphore, signalSemaphore, fence );
+        cBufs_[imageIndex]->draw( buffer->buffer(), buffer->size() );
     }
+    cBufs_[imageIndex]->end( waitSemaphore, signalSemaphore, fence );
 }
 
 }  // namespace tire::vk

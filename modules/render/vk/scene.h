@@ -11,6 +11,7 @@
 #include "scene/scene.h"
 #include "command_pool.h"
 #include "commands/commands.h"
+#include "commands/scene_render_command.h"
 #include "buffers/vertex_buffer.h"
 #include "vulkan/vulkan_core.h"
 
@@ -30,7 +31,7 @@ private:
     const vk::Pipeline *pipeline_;
 
     std::unique_ptr<vk::CommandPool> commandPool_{};
-    std::vector<std::unique_ptr<vk::RenderFromBuffer>> cBufs_{};
+    std::vector<std::unique_ptr<vk::SceneRenderCommand>> cBufs_{};
     std::vector<std::shared_ptr<vk::VertexBuffer<float>>> buffersList_;
 };
 
