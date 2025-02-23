@@ -46,14 +46,15 @@ void Scene::submit() {
 void Scene::output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
                     VkSemaphore waitSemaphore, VkSemaphore signalSemaphore,
                     VkFence fence ) {
+#define OBJECT i
     for ( size_t i = 0; i < buffersList_.size(); ++i ) {
-        algebra::vector3f color = { nodeList_[i]->color().r(),
-                                    nodeList_[i]->color().g(),
-                                    nodeList_[i]->color().b() };
+        algebra::vector3f color = { nodeList_[OBJECT]->color().r(),
+                                    nodeList_[OBJECT]->color().g(),
+                                    nodeList_[OBJECT]->color().b() };
         cBufs_[imageIndex]->reset( i );
         cBufs_[imageIndex]->prepare(
             i, currentFramebuffer, getCamera( 0 )->getMatrix(), color,
-            buffersList_[i]->buffer(), buffersList_[i]->size() );
+            buffersList_[OBJECT]->buffer(), buffersList_[OBJECT]->size() );
     }
     cBufs_[imageIndex]->submit( waitSemaphore, signalSemaphore, fence );
 }
