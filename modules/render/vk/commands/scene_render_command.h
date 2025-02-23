@@ -7,7 +7,7 @@
 
 #include "../pipelines/pipeline.h"
 #include "../command_pool.h"
-
+#include "algebra/matrix4.h"
 #include "image/color.h"
 
 namespace tire::vk {
@@ -24,8 +24,11 @@ struct SceneRenderCommand final {
     void clean();
 
     void reset();
-    void begin( const vk::Pipeline *pipeline, VkFramebuffer framebuffer );
-    void draw( VkBuffer vertexBuffer, uint32_t verteciesCount );
+    void begin( const vk::Pipeline *pipeline, VkFramebuffer framebuffer,
+                algebra::matrix4f view );
+    void draw( const std::vector<VkBuffer> &vertexBuffer,
+               const std::vector<VkDeviceSize> &verteciesOffsets,
+               uint32_t verteciesCount );
     void end( VkSemaphore waitSemaphores, VkSemaphore signalSemaphores,
               VkFence fence );
 
@@ -37,9 +40,6 @@ protected:
     VkClearValue clearColor_{};
     uint32_t width_{};
     uint32_t height_{};
-
-    // Properties that can varies on each submit
-    const vk::Pipeline *pipeline_{};
 };
 
 }  // namespace tire::vk

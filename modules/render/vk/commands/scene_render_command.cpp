@@ -1,15 +1,10 @@
 
 #include "scene_render_command.h"
-#include "algebra/matrix4.h"
 
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_SCENE_RENDER_COMMAND_CPP{ true };
 
 namespace tire::vk {
-
-struct ViewMatrix {
-    algebra::matrix4f view;
-};
 
 SceneRenderCommand::SceneRenderCommand( const vk::Device *device,
                                         const CommandPool *pool )
@@ -51,9 +46,8 @@ void SceneRenderCommand::reset() {
 }
 
 void SceneRenderCommand::begin( const vk::Pipeline *pipeline,
-                                VkFramebuffer framebuffer ) {
-    pipeline_ = pipeline;
-
+                                VkFramebuffer framebuffer,
+                                algebra::matrix4f view ) {
     const VkCommandBufferBeginInfo beginInfo{
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
         .flags = 0,
@@ -64,7 +58,7 @@ void SceneRenderCommand::begin( const vk::Pipeline *pipeline,
     const VkRenderPassBeginInfo renderPassInfo{
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
         .pNext = nullptr,
-        .renderPass = pipeline_->renderpass(),
+        .renderPass = pipeline->renderpass(),
         .framebuffer = framebuffer,
         .renderArea = { .offset = { .x = 0, .y = 0 },
                         .extent = { device_->extent() } },
@@ -73,9 +67,6 @@ void SceneRenderCommand::begin( const vk::Pipeline *pipeline,
 
     vkCmdBeginRenderPass( commandBuffer_, &renderPassInfo,
                           VK_SUBPASS_CONTENTS_INLINE );
-
-    vkCmdBindPipeline( commandBuffer_, VK_PIPELINE_BIND_POINT_GRAPHICS,
-                       pipeline_->pipeline() );
 
     // Dynamic viewport. No performance penalty.
     // Take out work from pipeline creation.
@@ -91,23 +82,20 @@ void SceneRenderCommand::begin( const vk::Pipeline *pipeline,
                             { .width = width_, .height = height_ } };
     vkCmdSetScissor( commandBuffer_, 0, 1, &scissor );
 
-    auto projection = algebra::perspective<float>(
-        45.0f, static_cast<float>( width_ ) / static_cast<float>( height_ ),
-        0.01, 100.0 );
-    auto offset = algebra::translate<float>( 0.0f, 0.f, -10.0f );
-    offset.transposeSelf();
-    ViewMatrix view{};
-    view.view = offset * projection;
-
-    vkCmdPushConstants( commandBuffer_, pipeline_->layout(),
+    vkCmdBindPipeline( commandBuffer_, VK_PIPELINE_BIND_POINT_GRAPHICS,
+                       pipeline->pipeline() );
+    vkCmdPushConstants( commandBuffer_, pipeline->layout(),
                         VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( view ), &view );
 }
 
-void SceneRenderCommand::draw( VkBuffer vertexBuffer,
-                               uint32_t verteciesCount ) {
-    VkBuffer vertexBuffers[] = { vertexBuffer };
-    VkDeviceSize offsets[] = { 0 };
-    vkCmdBindVertexBuffers( commandBuffer_, 0, 1, vertexBuffers, offsets );
+void SceneRenderCommand::draw(
+    const std::vector<VkBuffer> &vertexBuffer,
+    const std::vector<VkDeviceSize> &verteciesOffsets,
+    uint32_t verteciesCount ) {
+    // VkBuffer vertexBuffers[] = { vertexBuffer };
+    // VkDeviceSize offsets[] = { 0 };
+    vkCmdBindVertexBuffers( commandBuffer_, 0, 1, vertexBuffer.data(),
+                            verteciesOffsets.data() );
     vkCmdDraw( commandBuffer_, verteciesCount, 3, 0, 0 );
 }
 

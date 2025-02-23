@@ -6,16 +6,23 @@ namespace tire::vk {
 
 void PiplineVertexBuffer::initPipeline(
     const std::vector<std::filesystem::path> &files ) {
-    VkVertexInputBindingDescription bindingDescription{};
-    bindingDescription.stride = sizeof( algebra::vector3f );
-    bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-    bindingDescription.binding = 0;
+    std::array<VkVertexInputBindingDescription, 2> bindingDescriptions{};
+    bindingDescriptions[0].stride = sizeof( algebra::vector3f );
+    bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+    bindingDescriptions[0].binding = 0;
+    bindingDescriptions[1].stride = sizeof( algebra::vector3f );
+    bindingDescriptions[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+    bindingDescriptions[1].binding = 0;
 
-    std::array<VkVertexInputAttributeDescription, 1> attributeDescriptions{};
+    std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
     attributeDescriptions[0].binding = 0;
     attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
     attributeDescriptions[0].offset = 0;
     attributeDescriptions[0].location = 0;
+    attributeDescriptions[1].binding = 1;
+    attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+    attributeDescriptions[1].offset = 0;
+    attributeDescriptions[1].location = 1;
 
     // attributeDescriptions[1].binding = 0;
     // attributeDescriptions[1].location = 1;
@@ -31,8 +38,8 @@ void PiplineVertexBuffer::initPipeline(
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
         .pNext = nullptr,
         .flags = 0,
-        .vertexBindingDescriptionCount = 1,
-        .pVertexBindingDescriptions = &bindingDescription,
+        .vertexBindingDescriptionCount = bindingDescriptions.size(),
+        .pVertexBindingDescriptions = bindingDescriptions.data(),
         .vertexAttributeDescriptionCount =
             static_cast<uint32_t>( attributeDescriptions.size() ),
         .pVertexAttributeDescriptions = attributeDescriptions.data() };
