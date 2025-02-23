@@ -1,6 +1,7 @@
 
 #include "pipeline.h"
 #include "algebra/vector3.h"
+#include "algebra/matrix4.h"
 
 namespace tire::vk {
 
@@ -167,17 +168,16 @@ void PiplineVertexBuffer::initPipeline(
 
 VkPipelineLayout PiplineVertexBuffer::initLayout() {
     //setup push constants
-    VkPushConstantRange viewRtnMatrix{
-        .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-        .offset = 0,
-        .size = ( sizeof( float ) * 16 * 2 ) + 4 };  // two matrix4f
+    VkPushConstantRange viewMatrix{ .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+                                    .offset = 0,
+                                    .size = sizeof( algebra::matrix4f ) };
 
     const VkPipelineLayoutCreateInfo pipelineLayoutInfo{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
         .setLayoutCount = 0,
         .pSetLayouts = nullptr,
         .pushConstantRangeCount = 1,
-        .pPushConstantRanges = &viewRtnMatrix };
+        .pPushConstantRanges = &viewMatrix };
 
     VkPipelineLayout layout{ VK_NULL_HANDLE };
 
