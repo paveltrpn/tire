@@ -39,18 +39,21 @@ void Scene::submit() {
     for ( size_t i = 0; auto &buffer : buffersList_ ) {
         buffer->populate(
             reinterpret_cast<const void *>( nodeList_[i]->verteciesData() ) );
+        ++i;
     }
 }
 
 void Scene::output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
                     VkSemaphore waitSemaphore, VkSemaphore signalSemaphore,
                     VkFence fence ) {
-    for ( size_t i = 0; const auto &buffer : buffersList_ ) {
+    for ( size_t i = 0; i < buffersList_.size(); ++i ) {
+        algebra::vector3f color = { nodeList_[i]->color().r(),
+                                    nodeList_[i]->color().g(),
+                                    nodeList_[i]->color().b() };
         cBufs_[imageIndex]->reset( i );
-        cBufs_[imageIndex]->prepare( i, currentFramebuffer,
-                                     getCamera( 0 )->getMatrix(),
-                                     algebra::vector3f{ 0.0f, 1.0f, 0.0f },
-                                     buffer->buffer(), buffer->size() );
+        cBufs_[imageIndex]->prepare(
+            i, currentFramebuffer, getCamera( 0 )->getMatrix(), color,
+            buffersList_[1]->buffer(), buffersList_[1]->size() );
     }
     cBufs_[imageIndex]->submit( waitSemaphore, signalSemaphore, fence );
 }

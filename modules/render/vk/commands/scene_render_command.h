@@ -13,7 +13,7 @@
 namespace tire::vk {
 struct SceneRenderCommand final {
     SceneRenderCommand( const vk::Device *device, const vk::Pipeline *pipeline,
-                        const CommandPool *pool, int commandsCount );
+                        const CommandPool *pool, uint32_t commandsCount );
 
     SceneRenderCommand( const SceneRenderCommand &other ) = delete;
     SceneRenderCommand( SceneRenderCommand &&other ) = delete;

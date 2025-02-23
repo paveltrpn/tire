@@ -14,7 +14,8 @@ namespace tire {
 Scene::Scene( const std::filesystem::path &fname ) {
     const auto path = std::filesystem::path{ fname };
 
-    log::info( "loading scene from file {}", fname.filename().string() );
+    log::info( "Scene === loading scene from file {}",
+               fname.filename().string() );
 
     std::ifstream file{ path };
     if ( file ) {
@@ -29,8 +30,8 @@ Scene::Scene( const std::filesystem::path &fname ) {
                 e.what(), e.id, e.byte );
         }
     } else {
-        throw std::runtime_error(
-            std::format( "file not found: {}\n", path.filename().string() ) );
+        throw std::runtime_error( std::format(
+            "Scene ===  file not found: {}\n", path.filename().string() ) );
     }
 
     // Parse json. Collect objects, cameras, lights and other scene entities
@@ -70,7 +71,8 @@ void Scene::process() {
 
                 nodeList_.push_back( std::move( node ) );
 
-                log::debug<DEBUG_OUTPUT_SCENE_CPP>( "box added to scene" );
+                log::debug<DEBUG_OUTPUT_SCENE_CPP>(
+                    "Scene === box added to scene" );
             } else if ( type == "frame" ) {
                 auto shapePtr = std::make_shared<FrameData>();
                 auto node = std::make_shared<Node>( shapePtr );
@@ -91,7 +93,8 @@ void Scene::process() {
 
                 nodeList_.push_back( std::move( node ) );
 
-                log::debug<DEBUG_OUTPUT_SCENE_CPP>( "frame added to scene" );
+                log::debug<DEBUG_OUTPUT_SCENE_CPP>(
+                    "Scene === frame added to scene" );
             } else if ( type == "diamond" ) {
                 auto shapePtr = std::make_shared<DiamondData>();
                 auto node = std::make_shared<Node>( shapePtr );
@@ -112,7 +115,8 @@ void Scene::process() {
 
                 nodeList_.push_back( std::move( node ) );
 
-                log::debug<DEBUG_OUTPUT_SCENE_CPP>( "frame added to scene" );
+                log::debug<DEBUG_OUTPUT_SCENE_CPP>(
+                    "Scene === diamond added to scene" );
             }
         }
     } else {
@@ -136,7 +140,7 @@ void Scene::process() {
                 cameras_.push_back( std::move( camera ) );
 
                 log::debug<DEBUG_OUTPUT_SCENE_CPP>(
-                    "perspective camera added to scene" );
+                    "Scene === perspective camera added to scene" );
             }
         }
     } else {

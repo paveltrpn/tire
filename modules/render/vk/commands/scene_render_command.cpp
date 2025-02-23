@@ -9,33 +9,30 @@ namespace tire::vk {
 SceneRenderCommand::SceneRenderCommand( const vk::Device *device,
                                         const vk::Pipeline *pipeline,
                                         const CommandPool *pool,
-                                        int commandsCount )
+                                        uint32_t commandsCount )
     : device_{ device }
     , pipeline_{ pipeline }
     , pool_{ pool } {
     commandsRange_.reserve( commandsCount );
-    for ( size_t i{ 0 }; i < commandsCount; ++i ) {
-        const VkCommandBufferAllocateInfo allocInfo{
-            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-            .commandPool = pool_->handle(),
-            .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-            .commandBufferCount = 1 };
+    const VkCommandBufferAllocateInfo allocInfo{
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+        .commandPool = pool_->handle(),
+        .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+        .commandBufferCount = commandsCount };
+    VkCommandBuffer buffer{ VK_NULL_HANDLE };
+    const auto err = vkAllocateCommandBuffers( device_->handle(), &allocInfo,
+                                               commandsRange_.data() );
+    if ( err != VK_SUCCESS ) {
+        throw std::runtime_error(
+            std::format( "failed to allocate command buffers with code {}!",
+                         string_VkResult( err ) ) );
+    } else {
+        log::debug<DEBUG_OUTPUT_SCENE_RENDER_COMMAND_CPP>(
+            "vk::SceneRenderCommand === buffer created!" );
+    };
 
-        VkCommandBuffer buffer{ VK_NULL_HANDLE };
-        if ( const auto err = vkAllocateCommandBuffers( device_->handle(),
-                                                        &allocInfo, &buffer );
-             err != VK_SUCCESS ) {
-            throw std::runtime_error(
-                std::format( "failed to allocate command buffers with code {}!",
-                             string_VkResult( err ) ) );
-        } else {
-            commandsRange_.push_back( buffer );
-            log::debug<DEBUG_OUTPUT_SCENE_RENDER_COMMAND_CPP>(
-                "vk::SceneRenderCommand === buffer created!" );
-        };
-    }
     const auto cc = Colorf{ "darkblue" };
-    clearColor_.color = { cc.r(), cc.g(), cc.b(), cc.a() },
+    clearColor_.color = { 0.1f, 0.1f, 0.1f, 1.0f },
     clearColor_.depthStencil = { .depth = 0.0f, .stencil = 0 };
 
     width_ = device_->extent().width;
