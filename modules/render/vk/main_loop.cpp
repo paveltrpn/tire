@@ -17,10 +17,11 @@ void RenderVK::preLoop() {
 
     event::testTimerEvent( 1000 );
     executeByTimeOut( 1500 );
-    watchFile( "/mnt/main_disk/code/tiny_render/assets/default_cube.json" );
+    watchFile( "/mnt/main_disk/code/tiny_render/assets/figures.json" );
 };
 
 void RenderVK::preFrame() {
+    scene_->traverse();
     scene_->submit();
 };
 

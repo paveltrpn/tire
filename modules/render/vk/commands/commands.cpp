@@ -62,7 +62,6 @@ void RenderFromBuffer::bind_impl() {
     VkDeviceSize offsets[] = { 0 };
     vkCmdBindVertexBuffers( commandBuffer_, 0, 1, vertexBuffers, offsets );
     vkCmdDraw( commandBuffer_, verteciesCount_, 3, 0, 0 );
-    // vkCmdDraw( commandBuffer_, verteciesCount_, 1, 0, 0 );
 
     vkCmdEndRenderPass( commandBuffer_ );
 
