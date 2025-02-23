@@ -47,12 +47,6 @@ RenderVK::RenderVK()
             { basePath + "/assets/shaders/vk_simple_box_VERTEX.spv",
               basePath + "/assets/shaders/vk_simple_box_FRAGMENT.spv" } );
 
-        piplineVertexBuffer_ =
-            std::make_unique<vk::PiplineVertexBuffer>( device_.get() );
-        piplineMatrixReady_->initPipeline(
-            { basePath + "/assets/shaders/vk_vertex_buffer_VERTEX.spv",
-              basePath + "/assets/shaders/vk_vertex_buffer_FRAGMENT.spv" } );
-
         swapchain_->createFramebuffers( piplineMatrixReady_.get() );
 
         commandPool_ = std::make_unique<vk::CommandPool>( device_.get() );
@@ -76,6 +70,15 @@ RenderVK::RenderVK()
 };
 
 void RenderVK::scene( const std::filesystem::path &path ) {
+    const auto configHandle = Config::instance();
+    const auto basePath = configHandle->getBasePath().string();
+
+    piplineVertexBuffer_ =
+        std::make_unique<vk::PiplineVertexBuffer>( device_.get() );
+    piplineVertexBuffer_->initPipeline(
+        { basePath + "/assets/shaders/vk_vertex_buffer_VERTEX.spv",
+          basePath + "/assets/shaders/vk_vertex_buffer_FRAGMENT.spv" } );
+
     scene_ = std::make_shared<vk::Scene>( path, device_.get(),
                                           piplineVertexBuffer_.get() );
 }

@@ -2,7 +2,8 @@
   "objects": [
     {
       "type": "box",
-      "color": "royalblue",
+      "color": "lightcoral",
+      "texture_diffuse": "texture.tga",
       "pivot_position": [
         0,
         0,
@@ -11,15 +12,19 @@
       "pivot_rotation": [
         0,
         0,
-        1
+        0
       ],
       "pivot_scale": [
         1,
         1,
-        2
+        1
       ],
-      "use_momentum":true,
-      "momentum":[0.15,0.3,0.01]
+      "use_momentum": true,
+      "momentum": [
+        -0.15,
+        0.3,
+        0.01
+      ]
     }
   ],
   "cameras": [
