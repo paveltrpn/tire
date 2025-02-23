@@ -20,11 +20,11 @@ requires Algebraic<T> struct vector4 : vector_base<T, 4> {
         data_[3] = T{};
     }
 
-    vector4( value_type x, value_type y, value_type z ) {
+    vector4( value_type x, value_type y, value_type z, value_type w ) {
         data_[0] = x;
         data_[1] = y;
         data_[2] = z;
-        data_[3] = z;
+        data_[3] = w;
     }
 
     vector4( const self &rhs ) {

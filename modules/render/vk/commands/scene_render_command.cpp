@@ -7,8 +7,10 @@ static constexpr bool DEBUG_OUTPUT_SCENE_RENDER_COMMAND_CPP{ true };
 namespace tire::vk {
 
 SceneRenderCommand::SceneRenderCommand( const vk::Device *device,
+                                        const vk::Pipeline *pipeline,
                                         const CommandPool *pool )
     : device_{ device }
+    , pipeline_{ pipeline }
     , pool_{ pool } {
     const VkCommandBufferAllocateInfo allocInfo{
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -45,9 +47,7 @@ void SceneRenderCommand::reset() {
     vkResetCommandBuffer( commandBuffer_, 0 );
 }
 
-void SceneRenderCommand::begin( const vk::Pipeline *pipeline,
-                                VkFramebuffer framebuffer,
-                                algebra::matrix4f view ) {
+void SceneRenderCommand::begin( VkFramebuffer framebuffer ) {
     const VkCommandBufferBeginInfo beginInfo{
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
         .flags = 0,
@@ -58,7 +58,7 @@ void SceneRenderCommand::begin( const vk::Pipeline *pipeline,
     const VkRenderPassBeginInfo renderPassInfo{
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
         .pNext = nullptr,
-        .renderPass = pipeline->renderpass(),
+        .renderPass = pipeline_->renderpass(),
         .framebuffer = framebuffer,
         .renderArea = { .offset = { .x = 0, .y = 0 },
                         .extent = { device_->extent() } },
@@ -83,9 +83,16 @@ void SceneRenderCommand::begin( const vk::Pipeline *pipeline,
     vkCmdSetScissor( commandBuffer_, 0, 1, &scissor );
 
     vkCmdBindPipeline( commandBuffer_, VK_PIPELINE_BIND_POINT_GRAPHICS,
-                       pipeline->pipeline() );
-    vkCmdPushConstants( commandBuffer_, pipeline->layout(),
+                       pipeline_->pipeline() );
+}
+
+void SceneRenderCommand::pushConstants( algebra::matrix4f view,
+                                        algebra::vector3f color ) {
+    vkCmdPushConstants( commandBuffer_, pipeline_->layout(),
                         VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( view ), &view );
+    vkCmdPushConstants( commandBuffer_, pipeline_->layout(),
+                        VK_SHADER_STAGE_VERTEX_BIT, sizeof( view ),
+                        sizeof( color ), &color );
 }
 
 void SceneRenderCommand::draw(
@@ -94,8 +101,8 @@ void SceneRenderCommand::draw(
     uint32_t verteciesCount ) {
     // VkBuffer vertexBuffers[] = { vertexBuffer };
     // VkDeviceSize offsets[] = { 0 };
-    vkCmdBindVertexBuffers( commandBuffer_, 0, 1, vertexBuffer.data(),
-                            verteciesOffsets.data() );
+    vkCmdBindVertexBuffers( commandBuffer_, 0, vertexBuffer.size(),
+                            vertexBuffer.data(), verteciesOffsets.data() );
     vkCmdDraw( commandBuffer_, verteciesCount, 3, 0, 0 );
 }
 

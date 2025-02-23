@@ -1,6 +1,7 @@
 
 #include <vector>
 
+#include "algebra/vector4.h"
 #include "render/vk/commands/scene_render_command.h"
 #include "rendervk.h"
 #include "vulkan/vulkan_core.h"
@@ -19,7 +20,7 @@ Scene::Scene( const std::filesystem::path &fname, const vk::Device *device,
     cBufs_.reserve( FRAMES_IN_FLIGHT_COUNT );
     for ( auto i = 0; i < cBufs_.capacity(); ++i ) {
         cBufs_.push_back( std::make_unique<vk::SceneRenderCommand>(
-            device_, commandPool_.get() ) );
+            device_, pipeline_, commandPool_.get() ) );
     }
 
     // Create vulkan "vertex buffers"
@@ -45,9 +46,9 @@ void Scene::output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
                     VkSemaphore waitSemaphore, VkSemaphore signalSemaphore,
                     VkFence fence ) {
     cBufs_[imageIndex]->reset();
-    cBufs_[imageIndex]->begin( pipeline_, currentFramebuffer,
-                               getCamera( 0 )->getMatrix() );
-
+    cBufs_[imageIndex]->begin( currentFramebuffer );
+    cBufs_[imageIndex]->pushConstants( getCamera( 0 )->getMatrix(),
+                                       algebra::vector3f{ 0.0f, 1.0f, 0.0f } );
     std::vector<VkBuffer> buffers;
     std::vector<VkDeviceSize> offsets;
     uint32_t verteciesCount{};

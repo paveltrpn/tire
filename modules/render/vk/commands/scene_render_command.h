@@ -12,7 +12,8 @@
 
 namespace tire::vk {
 struct SceneRenderCommand final {
-    SceneRenderCommand( const vk::Device *device, const CommandPool *pool );
+    SceneRenderCommand( const vk::Device *device, const vk::Pipeline *pipeline,
+                        const CommandPool *pool );
 
     SceneRenderCommand( const SceneRenderCommand &other ) = delete;
     SceneRenderCommand( SceneRenderCommand &&other ) = delete;
@@ -24,8 +25,8 @@ struct SceneRenderCommand final {
     void clean();
 
     void reset();
-    void begin( const vk::Pipeline *pipeline, VkFramebuffer framebuffer,
-                algebra::matrix4f view );
+    void begin( VkFramebuffer framebuffer );
+    void pushConstants( algebra::matrix4f view, algebra::vector3f color );
     void draw( const std::vector<VkBuffer> &vertexBuffer,
                const std::vector<VkDeviceSize> &verteciesOffsets,
                uint32_t verteciesCount );
@@ -35,6 +36,7 @@ struct SceneRenderCommand final {
 protected:
     // Propertis set on "command" creation and stay same trough lifetime
     const vk::Device *device_{};
+    const vk::Pipeline *pipeline_{};
     const vk::CommandPool *pool_{};
     VkCommandBuffer commandBuffer_{ VK_NULL_HANDLE };
     VkClearValue clearColor_{};
