@@ -8,6 +8,8 @@
 #include <type_traits>
 
 #include "log/log.h"
+#include "algebra/vector3.h"
+#include "algebra/vector4.h"
 
 namespace tire {
 
@@ -170,6 +172,9 @@ struct Colorf final : Color<float> {
             }
         }
     };
+
+    algebra::vector3f asVector3f() { return { r(), g(), b() }; };
+    algebra::vector4f asVector4f() { return { r(), g(), b(), a() }; }
 };
 
 struct Colori final : Color<uint8_t> {

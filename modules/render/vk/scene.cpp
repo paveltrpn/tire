@@ -48,9 +48,7 @@ void Scene::output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
                     VkFence fence ) {
 #define OBJECT 5
     for ( size_t i = 0; i < buffersList_.size(); ++i ) {
-        algebra::vector3f color = { nodeList_[OBJECT]->color().r(),
-                                    nodeList_[OBJECT]->color().g(),
-                                    nodeList_[OBJECT]->color().b() };
+        const auto color = nodeList_[OBJECT]->color().asVector3f();
         cBufs_[imageIndex]->reset( i );
         cBufs_[imageIndex]->prepare(
             i, currentFramebuffer, getCamera( 0 )->getMatrix(), color,
