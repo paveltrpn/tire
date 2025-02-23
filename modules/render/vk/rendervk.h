@@ -16,7 +16,6 @@
 #include "device.h"
 #include "swapchain.h"
 #include "pipelines/pipeline.h"
-#include "commands/commands.h"
 #include "buffers/vertex_buffer.h"
 #include "command_pool.h"
 #include "present.h"
@@ -88,13 +87,10 @@ private:
     std::unique_ptr<vk::Device> device_{};
     std::unique_ptr<vk::Swapchain> swapchain_{};
 
-    std::unique_ptr<vk::Pipeline> pipelineSimple_{};
     std::unique_ptr<vk::Pipeline> piplineMatrixReady_{};
     std::unique_ptr<vk::Pipeline> piplineVertexBuffer_{};
 
     std::unique_ptr<vk::CommandPool> commandPool_{};
-
-    std::vector<std::unique_ptr<vk::RenderFromShader>> cBufs_{};
 
     std::unique_ptr<vk::Present> present_{};
     std::unique_ptr<vk::PresentSynchronization<FRAMES_IN_FLIGHT_COUNT>>

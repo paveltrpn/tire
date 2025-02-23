@@ -36,11 +36,6 @@ RenderVK::RenderVK()
         swapchain_->createSwapchain();
         swapchain_->createImageViews();
 
-        pipelineSimple_ = std::make_unique<vk::PipelineSimple>( device_.get() );
-        pipelineSimple_->initPipeline(
-            { basePath + "/assets/shaders/vk_simple_tri_VERTEX.spv",
-              basePath + "/assets/shaders/vk_simple_tri_FRAGMENT.spv" } );
-
         piplineMatrixReady_ =
             std::make_unique<vk::PiplineMatrixReady>( device_.get() );
         piplineMatrixReady_->initPipeline(
@@ -50,12 +45,6 @@ RenderVK::RenderVK()
         swapchain_->createFramebuffers( piplineMatrixReady_.get() );
 
         commandPool_ = std::make_unique<vk::CommandPool>( device_.get() );
-
-        cBufs_.reserve( FRAMES_IN_FLIGHT_COUNT );
-        for ( auto i = 0; i < cBufs_.capacity(); ++i ) {
-            cBufs_.push_back( std::make_unique<vk::RenderFromShader>(
-                device_.get(), commandPool_.get() ) );
-        }
 
         present_ =
             std::make_unique<vk::Present>( device_.get(), swapchain_.get() );

@@ -46,7 +46,7 @@ void Scene::submit() {
 void Scene::output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
                     VkSemaphore waitSemaphore, VkSemaphore signalSemaphore,
                     VkFence fence ) {
-#define OBJECT i
+#define OBJECT 5
     for ( size_t i = 0; i < buffersList_.size(); ++i ) {
         algebra::vector3f color = { nodeList_[OBJECT]->color().r(),
                                     nodeList_[OBJECT]->color().g(),

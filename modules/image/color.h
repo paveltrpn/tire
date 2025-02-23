@@ -83,9 +83,9 @@ struct Rgba {
 };
 
 template <typename T>
-concept ColorValue = (std::unsigned_integral<T> &&
-                      std::is_same_v<T, uint8_t>) ||
-                     ( std::floating_point<T> && std::is_same_v<T, float> );
+concept ColorValue =
+    (std::unsigned_integral<T> && std::is_same_v<T, uint8_t>) ||
+    ( std::floating_point<T> && std::is_same_v<T, float> );
 
 template <ColorValue T>
 struct Color {
@@ -101,10 +101,10 @@ struct Color {
 
     virtual ~Color() = default;
 
-    value_type r() const { return r_; };
-    value_type g() const { return g_; };
-    value_type b() const { return b_; };
-    value_type a() const { return a_; };
+    [[nodiscard]] value_type r() const { return r_; };
+    [[nodiscard]] value_type g() const { return g_; };
+    [[nodiscard]] value_type b() const { return b_; };
+    [[nodiscard]] value_type a() const { return a_; };
 
 protected:
     std::array<char_type, 4> charFromHex( std::string_view letters ) {

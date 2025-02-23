@@ -40,22 +40,6 @@ protected:
     VkPipelineLayout layout_{ VK_NULL_HANDLE };
 };
 
-// =====================================================================================
-
-struct PipelineSimple final : Pipeline {
-    PipelineSimple( const vk::Device *device )
-        : Pipeline( device ) {}
-
-public:
-    void initPipeline(
-        const std::vector<std::filesystem::path> &files ) override;
-
-private:
-    VkPipelineLayout initLayout() override;
-};
-
-// =====================================================================================
-
 struct PiplineMatrixReady final : Pipeline {
     PiplineMatrixReady( const vk::Device *device )
         : Pipeline( device ) {}

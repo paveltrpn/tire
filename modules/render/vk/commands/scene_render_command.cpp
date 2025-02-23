@@ -32,7 +32,7 @@ SceneRenderCommand::SceneRenderCommand( const vk::Device *device,
     };
 
     const auto cc = Colorf{ "darkblue" };
-    clearColor_.color = { 0.1f, 0.1f, 0.1f, 1.0f },
+    clearColor_.color = { cc.r(), cc.g(), cc.b(), 1.0f },
     clearColor_.depthStencil = { .depth = 0.0f, .stencil = 0 };
 
     width_ = device_->extent().width;

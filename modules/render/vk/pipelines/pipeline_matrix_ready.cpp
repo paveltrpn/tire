@@ -3,7 +3,7 @@
 
 namespace tire::vk {
 
-void PipelineSimple::initPipeline(
+void PiplineMatrixReady::initPipeline(
     const std::vector<std::filesystem::path> &files ) {
     const VkPipelineVertexInputStateCreateInfo vertexInput{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
