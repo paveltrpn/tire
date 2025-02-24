@@ -51,7 +51,7 @@ void Scene::output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
         const auto color = nodeList_[OBJECT]->color().asVector3f();
         cBufs_[imageIndex]->reset( i );
         cBufs_[imageIndex]->prepare(
-            i, currentFramebuffer, getCamera( 0 )->getMatrix(), color,
+            i, currentFramebuffer, getCamera( 0 )->matrix(), color,
             buffersList_[OBJECT]->buffer(), buffersList_[OBJECT]->size() );
     }
     cBufs_[imageIndex]->submit( waitSemaphore, signalSemaphore, fence );

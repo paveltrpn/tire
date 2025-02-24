@@ -26,11 +26,11 @@ struct Node final : std::enable_shared_from_this<Node> {
     std::shared_ptr<Node> asSharedPtr();
 
     size_t verteciesCount() const;
-
     size_t verteciesArraySize() const;
     size_t normalsArraySize() const;
     size_t texcrdsArraySize() const;
 
+    //
     const point3f *verteciesData();
     const normalf *normalsData();
     const algebra::vector2f *texcrdsData();
@@ -52,8 +52,6 @@ struct Node final : std::enable_shared_from_this<Node> {
     void applyTransormations();
 
 private:
-    bool dirty_{ false };
-
     std::shared_ptr<PolytopeData> shapeData_{};
     std::vector<point3f> localVertecies_{};
     std::vector<normalf> localNormals_{};

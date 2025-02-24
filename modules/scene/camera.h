@@ -7,13 +7,8 @@
 namespace tire {
 
 struct Camera {
-    void setDirty();
+    algebra::matrix4f matrix();
 
-    void unSetDirty();
-
-    // recalculate projection matrix despite on _dirty flag
-    algebra::matrix4f forceGetMatrix();
-    algebra::matrix4f getMatrix();
     void move( const algebra::vector3f &offset );
     void rotate( float yawOffset, float pitchOffset, float rollOffset );
     void setPosition( const algebra::vector3f &pos );
@@ -23,7 +18,6 @@ private:
     virtual void update() = 0;
 
 protected:
-    bool dirty_{ false };
     algebra::matrix4f matrix_{};
     algebra::vector3f position_{};
     float yaw_{};
@@ -33,6 +27,7 @@ protected:
 
 struct Perspective final : Camera {
     Perspective( float fov, float aspect, float ncp, float fcp );
+
     void setFov( float fov );
     void setAspect( float aspect );
     void setNcp( float ncp );

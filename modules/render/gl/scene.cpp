@@ -15,10 +15,9 @@ Scene::Scene( const std::filesystem::path &fname )
         SceneNodeBufferObjects buf{};
 
         glGenVertexArrays( 1, &buf.vertexArray );
-        glGenBuffers( 1, &buf.vertexBuffer );
-        glGenBuffers( 1, &buf.normalBuffer );
-        glGenBuffers( 1, &buf.texcrdBuffer );
 
+        // Create object vertex buffer
+        glGenBuffers( 1, &buf.vertexBuffer );
         glBindVertexArray( buf.vertexArray );
         glEnableVertexAttribArray( 0 );
         glBindBuffer( GL_ARRAY_BUFFER, buf.vertexBuffer );
@@ -26,18 +25,23 @@ Scene::Scene( const std::filesystem::path &fname )
                       nodeList_[i]->verteciesData(), GL_DYNAMIC_DRAW );
         glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
 
+        // Create object normal buffer
+        glGenBuffers( 1, &buf.normalBuffer );
         glEnableVertexAttribArray( 1 );
         glBindBuffer( GL_ARRAY_BUFFER, buf.normalBuffer );
         glBufferData( GL_ARRAY_BUFFER, nodeList_[i]->normalsArraySize(),
                       nodeList_[i]->normalsData(), GL_DYNAMIC_DRAW );
         glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
 
+        // Create object texture coordinates buffer
+        glGenBuffers( 1, &buf.texcrdBuffer );
         glEnableVertexAttribArray( 2 );
         glBindBuffer( GL_ARRAY_BUFFER, buf.texcrdBuffer );
         glBufferData( GL_ARRAY_BUFFER, nodeList_[i]->texcrdsArraySize(),
                       nodeList_[i]->texcrdsData(), GL_STATIC_DRAW );
         glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 0, nullptr );
 
+        // Create Texture object
         glGenTextures( 1, &buf.texture );
         glBindTexture( GL_TEXTURE_2D, buf.texture );
 
@@ -50,40 +54,24 @@ Scene::Scene( const std::filesystem::path &fname )
                       GL_UNSIGNED_BYTE, data );
         glGenerateMipmap( GL_TEXTURE_2D );
 
+        // Store object buffers id's
         buffersList_.push_back( buf );
     }
-}
 
-void Scene::initPrograms() {
-    const auto basePath = Config::instance()->getBasePath();
+    // Load shaders
+    shaderStorage_.add( "flatshade" );
+    shaderStorage_.use( "flatshade" );
+    const Colorf lightColor = { 1.0f, 1.0f, 1.0f };
+    shaderStorage_.setVectorUniform(
+        "flatshade", "lightcolor",
+        algebra::vector3f{ lightColor.r(), lightColor.g(), lightColor.b() } );
 
-    colorProgram_.init<GL_VERTEX_SHADER>( basePath / "assets" / "shaders" /
-                                          "color_vert.glsl" );
-    colorProgram_.init<GL_FRAGMENT_SHADER>( basePath / "assets" / "shaders" /
-                                            "color_frag.glsl" );
-    colorProgram_.link();
-    colorProgram_.findUniforms();
+    shaderStorage_.setVectorUniform( "flatshade", "lightpos",
+                                     algebra::vector3f{ 10.0f, 0.0f, 5.0f } );
 
-    // ===========================================================================
+    // ========================================================================
 
-    flatshadeProgram_.init<GL_VERTEX_SHADER>( basePath / "assets" / "shaders" /
-                                              "flatshade_vert.glsl" );
-    flatshadeProgram_.init<GL_FRAGMENT_SHADER>(
-        basePath / "assets" / "shaders" / "flatshade_frag.glsl" );
-    flatshadeProgram_.link();
-    flatshadeProgram_.findUniforms();
-    flatshadeProgram_.use();
-    flatshadeProgram_.setLightcolor( { 1.0f, 1.0f, 1.0f } );
-    flatshadeProgram_.setLightpos( { 10.0f, 0.0f, 5.0f } );
-
-    // ===========================================================================
-
-    textureProgram_.init<GL_VERTEX_SHADER>( basePath / "assets" / "shaders" /
-                                            "diffuse_texture_vert.glsl" );
-    textureProgram_.init<GL_FRAGMENT_SHADER>( basePath / "assets" / "shaders" /
-                                              "diffuse_texture_frag.glsl" );
-    textureProgram_.link();
-    textureProgram_.findUniforms();
+    shaderStorage_.add( "diffuse_texture" );
 }
 
 void Scene::submit() {
@@ -107,35 +95,21 @@ void Scene::submit() {
     }
 }
 
-void Scene::output() {
-    textureProgram_.use();
+void Scene::draw() {
+    shaderStorage_.use( "diffuse_texture" );
+    shaderStorage_.setMatrixUniform( "diffuse_texture", "view_matrix", GL_FALSE,
+                                     getCamera( 0 )->matrix() );
+
     for ( size_t i = 0; const auto &buffer : buffersList_ ) {
-        // glEnableVertexAttribArray( 0 );
-        // glBindBuffer( GL_ARRAY_BUFFER,
-        // buffersList_[i].vertexBuffer );  // for vertex attributes
-        // glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, buffersList_[i].elementsBuffer );
-        //glBindVertexArray( buffersList_[i].vertexObject );
-        // enable vertex arrays
-        //glEnableClientState( GL_NORMAL_ARRAY );
-        //glEnableClientState(GL_COLOR_ARRAY);
-        //glEnableClientState( GL_VERTEX_ARRAY );
-
-        // before draw, specify vertex and index arrays with their offsets
-        //glNormalPointer(GL_FLOAT, 0, (void*)sizeof(vertices));
-        //glColorPointer(3, GL_FLOAT, 0, (void*)(sizeof(vertices)+sizeof(normals)));
-        //glVertexPointer( 3, GL_FLOAT, 0, 0 );
-
-        textureProgram_.setViewMatrix( getCamera( 0 )->getMatrix() );
-        //flatshadeProgram_.setColor( nodeList_[i]->color() );
+        // const Colorf bodyColor = nodeList_[i]->color();
+        // shaderStorage_.setVectorUniform(
+        // "flatshade", "color",
+        // algebra::vector3f{ bodyColor.r(), bodyColor.g(), bodyColor.b() } );
 
         glBindTexture( GL_TEXTURE_2D, buffer.texture );
         glBindVertexArray( buffer.vertexArray );
         glDrawArrays( GL_TRIANGLES, 0, nodeList_[i]->verteciesCount() );
         glBindVertexArray( 0 );
-
-        // glDisableVertexAttribArray( 0 );
-        // glBindBuffer( GL_ARRAY_BUFFER, 0 );
-        // glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
 
         ++i;
     }

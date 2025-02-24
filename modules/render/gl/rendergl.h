@@ -17,6 +17,7 @@
 
 #include "../render.h"
 #include "scene.h"
+#include "shader_storage.h"
 
 import event;
 import io;

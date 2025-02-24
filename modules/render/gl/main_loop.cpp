@@ -8,8 +8,6 @@ namespace tire {
 void RenderGL::preLoop() {
     showMetrics();
 
-    scene_->initPrograms();
-
     const auto backgroundColor = Colorf( "#0f0f0f" );
     glClearColor( backgroundColor.r(), backgroundColor.g(), backgroundColor.b(),
                   1.0f );
@@ -29,7 +27,7 @@ void RenderGL::frame() {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     scene_->submit();
-    scene_->output();
+    scene_->draw();
 }
 
 void RenderGL::postFrame() {

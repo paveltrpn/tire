@@ -90,8 +90,6 @@ add_library(render
     modules/render/gl/scene.cpp
     modules/render/gl/shader_storage.h
     modules/render/gl/shader_storage.cpp
-    modules/render/gl/program.h
-    modules/render/gl/program.cpp
     modules/render/gl/texture.h
     modules/render/gl/texture.cpp
     modules/render/vk/rendervk.cpp
