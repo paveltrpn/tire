@@ -12,50 +12,32 @@ Scene::Scene( const std::filesystem::path &fname )
     buffersList_.reserve( nodeListSize );
 
     for ( size_t i{}; i < nodeListSize; ++i ) {
-        SceneNodeBufferObjects buf{};
+        ObjectBuffer buffer{};
 
-        glGenVertexArrays( 1, &buf.vertexArray );
-
-        // Create object vertex buffer
-        glGenBuffers( 1, &buf.vertexBuffer );
-        glBindVertexArray( buf.vertexArray );
-        glEnableVertexAttribArray( 0 );
-        glBindBuffer( GL_ARRAY_BUFFER, buf.vertexBuffer );
-        glBufferData( GL_ARRAY_BUFFER, nodeList_[i]->verteciesArraySize(),
-                      nodeList_[i]->verteciesData(), GL_DYNAMIC_DRAW );
-        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
-
-        // Create object normal buffer
-        glGenBuffers( 1, &buf.normalBuffer );
-        glEnableVertexAttribArray( 1 );
-        glBindBuffer( GL_ARRAY_BUFFER, buf.normalBuffer );
-        glBufferData( GL_ARRAY_BUFFER, nodeList_[i]->normalsArraySize(),
-                      nodeList_[i]->normalsData(), GL_DYNAMIC_DRAW );
-        glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
-
-        // Create object texture coordinates buffer
-        glGenBuffers( 1, &buf.texcrdBuffer );
-        glEnableVertexAttribArray( 2 );
-        glBindBuffer( GL_ARRAY_BUFFER, buf.texcrdBuffer );
-        glBufferData( GL_ARRAY_BUFFER, nodeList_[i]->texcrdsArraySize(),
-                      nodeList_[i]->texcrdsData(), GL_STATIC_DRAW );
-        glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 0, nullptr );
+        buffer.generate();
+        buffer.startBinding();
+        buffer.bindVertexData( nodeList_[i]->verteciesArraySize(),
+                               nodeList_[i]->verteciesData() );
+        buffer.bindNormalData( nodeList_[i]->normalsArraySize(),
+                               nodeList_[i]->normalsData() );
+        buffer.bindTexcrdData( nodeList_[i]->texcrdsArraySize(),
+                               nodeList_[i]->texcrdsData() );
 
         // Create Texture object
-        glGenTextures( 1, &buf.texture );
-        glBindTexture( GL_TEXTURE_2D, buf.texture );
-
-        const auto [width, height] = nodeList_[i]->textureSize();
-        const auto data = nodeList_[i]->textureData();
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                         GL_LINEAR_MIPMAP_LINEAR );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-                      GL_UNSIGNED_BYTE, data );
-        glGenerateMipmap( GL_TEXTURE_2D );
+        // glGenTextures( 1, &buf.texture );
+        // glBindTexture( GL_TEXTURE_2D, buf.texture );
+        //
+        // const auto [width, height] = nodeList_[i]->textureSize();
+        // const auto data = nodeList_[i]->textureData();
+        // glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+        //  GL_LINEAR_MIPMAP_LINEAR );
+        // glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+        // glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+        //   GL_UNSIGNED_BYTE, data );
+        // glGenerateMipmap( GL_TEXTURE_2D );
 
         // Store object buffers id's
-        buffersList_.push_back( buf );
+        buffersList_.push_back( std::move( buffer ) );
     }
 
     // Load shaders
@@ -75,41 +57,28 @@ Scene::Scene( const std::filesystem::path &fname )
 }
 
 void Scene::submit() {
-    for ( size_t i = 0; const auto &buffer : buffersList_ ) {
-        {
-            glBindBuffer( GL_ARRAY_BUFFER, buffer.vertexBuffer );
-            void *ptr = glMapBuffer( GL_ARRAY_BUFFER, GL_WRITE_ONLY );
-            memcpy( ptr, nodeList_[i]->verteciesData(),
-                    nodeList_[i]->verteciesArraySize() );
-            glUnmapBuffer( GL_ARRAY_BUFFER );
-        }
-
-        {
-            glBindBuffer( GL_ARRAY_BUFFER, buffer.normalBuffer );
-            void *ptr = glMapBuffer( GL_ARRAY_BUFFER, GL_WRITE_ONLY );
-            memcpy( ptr, nodeList_[i]->normalsData(),
-                    nodeList_[i]->normalsArraySize() );
-            glUnmapBuffer( GL_ARRAY_BUFFER );
-        }
+    for ( size_t i = 0; auto &buffer : buffersList_ ) {
+        buffer.updateVertexData( nodeList_[i]->verteciesArraySize(),
+                                 nodeList_[i]->verteciesData() );
+        buffer.updateNormalsData( nodeList_[i]->normalsArraySize(),
+                                  nodeList_[i]->normalsData() );
         ++i;
     }
 }
 
 void Scene::draw() {
-    shaderStorage_.use( "diffuse_texture" );
-    shaderStorage_.setMatrixUniform( "diffuse_texture", "view_matrix", GL_FALSE,
+    shaderStorage_.use( "flatshade" );
+    shaderStorage_.setMatrixUniform( "flatshade", "view_matrix", GL_FALSE,
                                      getCamera( 0 )->matrix() );
 
-    for ( size_t i = 0; const auto &buffer : buffersList_ ) {
-        // const Colorf bodyColor = nodeList_[i]->color();
-        // shaderStorage_.setVectorUniform(
-        // "flatshade", "color",
-        // algebra::vector3f{ bodyColor.r(), bodyColor.g(), bodyColor.b() } );
+    for ( size_t i = 0; auto &buffer : buffersList_ ) {
+        const Colorf bodyColor = nodeList_[i]->color();
+        shaderStorage_.setVectorUniform(
+            "flatshade", "color",
+            algebra::vector3f{ bodyColor.r(), bodyColor.g(), bodyColor.b() } );
 
-        glBindTexture( GL_TEXTURE_2D, buffer.texture );
-        glBindVertexArray( buffer.vertexArray );
-        glDrawArrays( GL_TRIANGLES, 0, nodeList_[i]->verteciesCount() );
-        glBindVertexArray( 0 );
+        // glBindTexture( GL_TEXTURE_2D, buffer.texture );
+        buffer.draw();
 
         ++i;
     }

@@ -1,11 +1,10 @@
 
 #pragma once
 
-#include <filesystem>
 #include <GL/gl.h>
-#include "uv.h"
 
 #include "scene/scene.h"
+#include "buffers/object_buffer.h"
 #include "shader_storage.h"
 
 namespace tire::gl {
@@ -17,16 +16,7 @@ struct Scene final : tire::Scene {
     void draw();
 
 private:
-    // OpenGL side object entities data
-    struct SceneNodeBufferObjects final {
-        GLuint vertexArray{};
-        GLuint vertexBuffer{};
-        GLuint normalBuffer{};
-        GLuint texcrdBuffer{};
-        GLuint texture{};
-    };
-
-    std::vector<SceneNodeBufferObjects> buffersList_;
+    std::vector<ObjectBuffer> buffersList_;
     gl::ShaderStorage shaderStorage_{};
 };
 

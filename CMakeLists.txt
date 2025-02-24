@@ -84,8 +84,8 @@ add_library(render
     modules/render/gl/main_loop.cpp
     modules/render/gl/functions.cpp
     modules/render/gl/functions.h
-    modules/render/gl/buffer.cpp
-    modules/render/gl/buffer.h
+    modules/render/gl/buffers/object_buffer.cpp
+    modules/render/gl/buffers/object_buffer.h
     modules/render/gl/scene.h
     modules/render/gl/scene.cpp
     modules/render/gl/shader_storage.h
