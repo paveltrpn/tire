@@ -12,6 +12,7 @@
 
 #include "uv.h"
 
+#include "timer.h"
 #include "scene/scene.h"
 
 import config;
@@ -50,6 +51,7 @@ protected:
 
 protected:
     bool run_{ true };
+    Timer timer_{};
 
     // X11
     Display *display_;

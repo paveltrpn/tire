@@ -49,7 +49,7 @@ struct Node final : std::enable_shared_from_this<Node> {
     std::pair<int, int> textureSize();
     const uint8_t *textureData();
 
-    void applyPivotTransormations();
+    void applyTransormations();
 
 private:
     bool dirty_{ false };

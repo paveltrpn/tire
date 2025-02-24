@@ -65,7 +65,6 @@ void Scene::process() {
                     { pivotRotation[0], pivotRotation[1], pivotRotation[2] } );
                 node->setPivotOffset(
                     { pivotPosition[0], pivotPosition[1], pivotPosition[2] } );
-                node->applyPivotTransormations();
 
                 node->setTextureImage(
                     { basePath / "assets" / "textures" / textureFile } );
@@ -87,7 +86,6 @@ void Scene::process() {
                     { pivotRotation[0], pivotRotation[1], pivotRotation[2] } );
                 node->setPivotOffset(
                     { pivotPosition[0], pivotPosition[1], pivotPosition[2] } );
-                node->applyPivotTransormations();
 
                 node->setTextureImage(
                     { basePath / "assets" / "textures" / textureFile } );
@@ -109,7 +107,6 @@ void Scene::process() {
                     { pivotRotation[0], pivotRotation[1], pivotRotation[2] } );
                 node->setPivotOffset(
                     { pivotPosition[0], pivotPosition[1], pivotPosition[2] } );
-                node->applyPivotTransormations();
 
                 node->setTextureImage(
                     { basePath / "assets" / "textures" / textureFile } );
@@ -154,9 +151,12 @@ void Scene::process() {
     // }
 }
 
-void Scene::traverse() {
+void Scene::traverse( float duration ) {
+    // Update global time flow
+    frameDuration_ = duration;
+
     for ( auto &node : nodeList_ ) {
-        node->applyPivotTransormations();
+        node->applyTransormations();
     }
 }
 

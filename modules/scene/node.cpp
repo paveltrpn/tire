@@ -86,7 +86,7 @@ const uint8_t *Node::textureData() {
     return textureImage_->data();
 }
 
-void Node::applyPivotTransormations() {
+void Node::applyTransormations() {
     if ( useMomentum_ ) {
         rotation_.multiply( momentum_ );
     }
@@ -101,8 +101,6 @@ void Node::applyPivotTransormations() {
     for ( auto i = 0; i < vertecies.size(); ++i ) {
         localVertecies_[i] = vertecies[i].transform( transform );
         localNormals_[i] = normals[i].transform( rotation_ );
-        // std::cout << localNormals_[i].x() << " " << localNormals_[i].y() << " "
-        // << localNormals_[i].z() << "\n";
     }
 }
 

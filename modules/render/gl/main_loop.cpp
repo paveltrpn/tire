@@ -6,17 +6,22 @@ static constexpr bool DEBUG_OUTPUT_MAIN_LOOP_GL_CPP{ true };
 namespace tire {
 
 void RenderGL::preLoop() {
+    showMetrics();
+
     scene_->initPrograms();
 
     const auto backgroundColor = Colorf( "#0f0f0f" );
     glClearColor( backgroundColor.r(), backgroundColor.g(), backgroundColor.b(),
-                  1 );
+                  1.0f );
     glEnable( GL_DEPTH_TEST );
     glDepthFunc( GL_LESS );
 };
 
 void RenderGL::preFrame() {
-    scene_->traverse();
+    // Update global timer
+    timer_.update();
+    // Update scene objects
+    scene_->traverse( timer_.floatFrameDuration() );
 }
 
 void RenderGL::frame() {

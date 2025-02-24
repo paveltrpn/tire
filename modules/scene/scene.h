@@ -24,7 +24,7 @@ struct Scene {
         return cameras_[id];
     };
 
-    void traverse();
+    void traverse( float frameDuration );
 
 private:
     void process();
@@ -33,6 +33,8 @@ private:
     nlohmann::json scene_;
 
 protected:
+    float frameDuration_{};
+
     std::vector<std::shared_ptr<Node>> nodeList_{};
     std::vector<std::shared_ptr<Camera>> cameras_{};
 };

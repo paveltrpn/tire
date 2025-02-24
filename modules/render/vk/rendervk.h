@@ -72,10 +72,13 @@ private:
         }
     };
 
-    event::Task<void> showLoopMerics() {
+    event::Task<void> showMetrics() {
         while ( true ) {
-            co_await event::setTimeout( 5000 );
+            co_await event::setTimeout( 3000 );
             event::Context::metrics();
+            log::info( "average frame duration = {}",
+                       timer_.averageFrameDuration() );
+            timer_.resetFrameMetrics();
         }
     }
 

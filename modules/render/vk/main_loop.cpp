@@ -12,7 +12,7 @@ namespace tire {
 void RenderVK::preLoop() {
     log::notice( "render loop starts here..." );
 
-    auto handle = showLoopMerics();
+    auto handle = showMetrics();
     handle.scheduleDestroy();
 
     event::testTimerEvent( 1000 );
@@ -21,7 +21,10 @@ void RenderVK::preLoop() {
 };
 
 void RenderVK::preFrame() {
-    scene_->traverse();
+    // Update global timer
+    timer_.update();
+    // Update scene objects
+    scene_->traverse( timer_.floatFrameDuration() );
     scene_->submit();
 };
 

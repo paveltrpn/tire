@@ -77,6 +77,8 @@ target_sources(config
 add_library(render
     modules/render/render.cpp
     modules/render/render.h
+    modules/render/timer.cpp
+    modules/render/timer.h
     modules/render/gl/rendergl.cpp
     modules/render/gl/rendergl.h
     modules/render/gl/main_loop.cpp
@@ -122,7 +124,7 @@ add_library(render
     modules/render/vk/present.h
     modules/render/vk/present.cpp
 )
-target_link_libraries(render scene config geometry algebra)
+target_link_libraries(render scene config geometry algebra event)
 
 add_library(image
     modules/image/bmp.cpp
