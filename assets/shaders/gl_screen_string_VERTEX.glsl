@@ -6,13 +6,13 @@ layout (location = 2) in vec2 txc;
 out vec2 TexCoord;
 
 void main() {
-   float factor = 32;
-   float left =   -factor;
-   float right =   factor;
-   float top =     factor;
-   float bottom = -factor;
-   float Znear = -1;
-   float Zfar =   1;
+#define SIZE 32
+   float left     = -SIZE;
+   float right    =  SIZE;
+   float top      =  SIZE;
+   float bottom   = -SIZE;
+   float Znear    = -1;
+   float Zfar     =  1;
 
    mat4 orthomatrix;
    orthomatrix[0].x = 2.0/(right-left);

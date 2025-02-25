@@ -45,7 +45,8 @@ void ScreenStringBase::draw( const std::string& string ) {
     // Размер ячейки с символом в долях текстурных координат по вертикали
     float tc_gap_y = 1.0f / static_cast<float>( fontRowCount );
 
-    for ( size_t i = 0; i < string.length(); ++i ) {
+    size_t i{};
+    for ( ; i < string.length(); ++i ) {
         offset = ( glyph_quad_wdt + glyph_quad_gap ) * i;
 
         glyph_x = string[i] % fontColumnCount;
@@ -61,10 +62,10 @@ void ScreenStringBase::draw( const std::string& string ) {
         const algebra::vector2f bottomLeftVt = { ( offset + 0.0f ) + text_pos_x,
                                                  -glyph_quad_hgt + text_pos_y };
 
-        letterQuadsVertecies_[( i * 4 ) + 0] = topLeftVt;
-        letterQuadsVertecies_[( i * 4 ) + 1] = topRightVt;
-        letterQuadsVertecies_[( i * 4 ) + 2] = bottomRightVt;
-        letterQuadsVertecies_[( i * 4 ) + 3] = bottomLeftVt;
+        letterQuadsVertecies_[( ( bufferPos_ + i ) * 4 ) + 0] = topLeftVt;
+        letterQuadsVertecies_[( ( bufferPos_ + i ) * 4 ) + 1] = topRightVt;
+        letterQuadsVertecies_[( ( bufferPos_ + i ) * 4 ) + 2] = bottomRightVt;
+        letterQuadsVertecies_[( ( bufferPos_ + i ) * 4 ) + 3] = bottomLeftVt;
 
         const algebra::vector2f topLeftTc{ ( tc_gap_x * glyph_x ) + 0.0f,
                                            ( tc_gap_y * glyph_y ) + 0.0f };
@@ -78,13 +79,15 @@ void ScreenStringBase::draw( const std::string& string ) {
         const algebra::vector2f bottomLeftTc{
             ( tc_gap_x * glyph_x ) + 0.0f, ( tc_gap_y * glyph_y ) + tc_gap_y };
 
-        letterQuadsTexcrds_[( i * 4 ) + 0] = topLeftTc;
-        letterQuadsTexcrds_[( i * 4 ) + 1] = topRightTc;
-        letterQuadsTexcrds_[( i * 4 ) + 2] = bottomRightTc;
-        letterQuadsTexcrds_[( i * 4 ) + 3] = bottomLeftTc;
-
-        ++bufferPos_;
+        letterQuadsTexcrds_[( ( bufferPos_ + i ) * 4 ) + 0] = topLeftTc;
+        letterQuadsTexcrds_[( ( bufferPos_ + i ) * 4 ) + 1] = topRightTc;
+        letterQuadsTexcrds_[( ( bufferPos_ + i ) * 4 ) + 2] = bottomRightTc;
+        letterQuadsTexcrds_[( ( bufferPos_ + i ) * 4 ) + 3] = bottomLeftTc;
     }
+    // Save count of symbols that allready have been ocupied space in buffer,
+    // because there can be many of draw() calls before flush() that actualy
+    // render text geometry and sen all counter and buffers to zero
+    bufferPos_ = i;
 }
 
 }  // namespace tire
