@@ -6,6 +6,7 @@ static constexpr bool DEBUG_OUTPUT_MAIN_LOOP_GL_CPP{ true };
 namespace tire {
 
 void RenderGL::preLoop() {
+    // Start metrics logging coroutine
     showMetrics();
 
     const auto backgroundColor = Colorf( "#0f0f0f" );
