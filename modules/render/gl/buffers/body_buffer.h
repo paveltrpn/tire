@@ -12,12 +12,12 @@ namespace tire::gl {
 #define NORMAL_BUFFER 1
 #define TEXCRD_BUFFER 2
 
-struct ObjectBuffer final {
-    ObjectBuffer() = default;
+struct BodyBuffer final {
+    BodyBuffer() = default;
 
-    ObjectBuffer( const ObjectBuffer &other ) = delete;
+    BodyBuffer( const BodyBuffer &other ) = delete;
 
-    ObjectBuffer( ObjectBuffer &&other ) {
+    BodyBuffer( BodyBuffer &&other ) {
         this->verteciesCount_ = other.verteciesCount_;
         this->array_ = other.array_;
         this->buffers_ = other.buffers_;
@@ -29,9 +29,9 @@ struct ObjectBuffer final {
         other.buffers_[TEXCRD_BUFFER] = 0;
     };
 
-    ObjectBuffer &operator=( const ObjectBuffer &other ) = delete;
+    BodyBuffer &operator=( const BodyBuffer &other ) = delete;
 
-    ObjectBuffer &operator=( ObjectBuffer &&other ) noexcept {
+    BodyBuffer &operator=( BodyBuffer &&other ) noexcept {
         if ( &other != this ) {
             this->verteciesCount_ = other.verteciesCount_;
             this->array_ = other.array_;
@@ -47,7 +47,7 @@ struct ObjectBuffer final {
         return *this;
     };
 
-    ~ObjectBuffer() { clean(); };
+    ~BodyBuffer() { clean(); };
 
     void generate();
     void clean();

@@ -12,7 +12,7 @@ Scene::Scene( const std::filesystem::path &fname )
     buffersList_.reserve( nodeListSize );
 
     for ( size_t i{}; i < nodeListSize; ++i ) {
-        ObjectBuffer buffer{};
+        BodyBuffer buffer{};
 
         buffer.generate();
         buffer.startBinding();

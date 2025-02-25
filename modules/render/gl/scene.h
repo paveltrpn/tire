@@ -4,7 +4,7 @@
 #include <GL/gl.h>
 
 #include "scene/scene.h"
-#include "buffers/object_buffer.h"
+#include "buffers/body_buffer.h"
 #include "shader_storage.h"
 
 namespace tire::gl {
@@ -16,7 +16,7 @@ struct Scene final : tire::Scene {
     void draw();
 
 private:
-    std::vector<ObjectBuffer> buffersList_;
+    std::vector<BodyBuffer> buffersList_;
     gl::ShaderStorage shaderStorage_{};
 };
 
