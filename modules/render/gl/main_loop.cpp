@@ -12,8 +12,6 @@ void RenderGL::preLoop() {
     const auto backgroundColor = Colorf( "#0f0f0f" );
     glClearColor( backgroundColor.r(), backgroundColor.g(), backgroundColor.b(),
                   1.0f );
-    glEnable( GL_DEPTH_TEST );
-    glDepthFunc( GL_LESS );
 };
 
 void RenderGL::preFrame() {
@@ -27,8 +25,18 @@ void RenderGL::frame() {
     glViewport( 0, 0, width_, height_ );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
+    glEnable( GL_DEPTH_TEST );
+    glDepthFunc( GL_LESS );
+
+    glDisable( GL_TEXTURE_2D );
     scene_->submit();
     scene_->draw();
+
+    glDisable( GL_DEPTH_TEST );
+
+    screenString_->set_text_position( -2.0f, 0.0f );
+    screenString_->draw( std::format( "{}", timer_.averageFrameDuration() ) );
+    screenString_->flush( scene_->getCamera( 0 )->matrix() );
 }
 
 void RenderGL::postFrame() {

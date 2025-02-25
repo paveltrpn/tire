@@ -9,6 +9,7 @@
 #include <map>
 
 #include "log/log.h"
+#include "render/gl/screen_string.h"
 #include "rendergl.h"
 
 static constexpr bool DEBUG_OUTPUT_RENDERGL_CPP{ true };
@@ -41,6 +42,9 @@ RenderGL::RenderGL()
     configureGl();
     gl::init();
     setSwapInterval( 1 );
+
+    screenString_ =
+        std::make_unique<ScreenString>( "RobotoMono-1024-512-32-64-alpha.tga" );
 }
 
 RenderGL::~RenderGL() {

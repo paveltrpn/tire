@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 #include <iostream>
 #include <format>
@@ -18,6 +19,7 @@
 #include "../render.h"
 #include "scene.h"
 #include "shader_storage.h"
+#include "screen_string.h"
 
 import event;
 import io;
@@ -92,6 +94,7 @@ private:
     GLXContext glContext_{ nullptr };
 
     std::shared_ptr<gl::Scene> scene_;
+    std::unique_ptr<ScreenString> screenString_;
 };
 
 }  // namespace tire

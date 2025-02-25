@@ -17,7 +17,7 @@ struct BodyBuffer final {
 
     BodyBuffer( const BodyBuffer &other ) = delete;
 
-    BodyBuffer( BodyBuffer &&other ) {
+    BodyBuffer( BodyBuffer &&other ) noexcept {
         this->verteciesCount_ = other.verteciesCount_;
         this->array_ = other.array_;
         this->buffers_ = other.buffers_;

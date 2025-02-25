@@ -79,13 +79,19 @@ add_library(render
     modules/render/render.h
     modules/render/timer.cpp
     modules/render/timer.h
+    modules/render/screen_string_base.cpp
+    modules/render/screen_string_base.h
     modules/render/gl/rendergl.cpp
     modules/render/gl/rendergl.h
+    modules/render/gl/screen_string.cpp
+    modules/render/gl/screen_string.h
     modules/render/gl/main_loop.cpp
     modules/render/gl/functions.cpp
     modules/render/gl/functions.h
     modules/render/gl/buffers/body_buffer.cpp
     modules/render/gl/buffers/body_buffer.h
+    modules/render/gl/buffers/screen_string_buffer.cpp
+    modules/render/gl/buffers/screen_string_buffer.h
     modules/render/gl/scene.h
     modules/render/gl/scene.cpp
     modules/render/gl/shader_storage.h
