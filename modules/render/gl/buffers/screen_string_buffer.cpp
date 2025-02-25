@@ -2,6 +2,7 @@
 #include <cstring>
 
 #include "screen_string_buffer.h"
+#include <GL/glext.h>
 #include "render/gl/functions.h"
 
 namespace tire::gl {
@@ -32,7 +33,7 @@ void ScreenStringBuffer::bindVertexData( long size, const void *data ) {
 void ScreenStringBuffer::bindTexcrdData( long size, const void *data ) {
     glEnableVertexAttribArray( 2 );
     glBindBuffer( GL_ARRAY_BUFFER, buffers_[1] );
-    glBufferData( GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW );
     glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 0, nullptr );
 }
 

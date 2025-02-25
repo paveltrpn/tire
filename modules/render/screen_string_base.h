@@ -31,18 +31,21 @@ struct ScreenStringBase {
 
     void draw( const std::string& string );
 
-    virtual void flush( algebra::matrix4f view ) = 0;
+    virtual void flush() = 0;
 
 protected:
-#define LETTERS_COUNT 1024
+#define LETTERS_COUNT 512
     std::array<algebra::vector2f, LETTERS_COUNT * 4> letterQuadsVertecies_{};
     std::array<algebra::vector2f, LETTERS_COUNT * 4> letterQuadsTexcrds_{};
 
     std::unique_ptr<Tga> fontImage_{};
 
-    float glyph_quad_wdt{ 0.5f };
-    float glyph_quad_hgt{ 1.0f };
-    float glyph_quad_gap{ 0.1f };
+    float glyphScale_{ 2.5f };
+#define GLYPH_WIDTH 0.4f
+#define GLYPH_HEIGHT 1.55f
+    float glyph_quad_wdt{ GLYPH_WIDTH * glyphScale_ };
+    float glyph_quad_hgt{ GLYPH_HEIGHT * glyphScale_ };
+    float glyph_quad_gap{ 0.0f };
 
     float text_pos_x = { 0.0f };
     float text_pos_y = { 0.0f };
@@ -53,6 +56,9 @@ protected:
     // размера изображения на количество столбцов и строк соответственно.
     int32_t fontColumnCount{ 32 };  // Количество столбцов символов в шрифте
     int32_t fontRowCount{ 8 };      // Количество строк символов в шрифте
+
+    // Must be set to zero in flush()
+    size_t bufferPos_{};
 };
 
 }  // namespace tire

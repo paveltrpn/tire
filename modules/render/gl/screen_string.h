@@ -22,7 +22,7 @@ struct ScreenString final : ScreenStringBase {
     ScreenString& operator=( ScreenString& other ) = delete;
     ScreenString& operator=( ScreenString&& other ) = delete;
 
-    void flush( algebra::matrix4f view ) override;
+    void flush() override;
 
 private:
     ShaderStorage shaderStorage_;

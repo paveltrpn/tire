@@ -48,8 +48,8 @@ void ScreenStringBase::draw( const std::string& string ) {
     for ( size_t i = 0; i < string.length(); ++i ) {
         offset = ( glyph_quad_wdt + glyph_quad_gap ) * i;
 
-        glyph_x = 10;  //string[i] % fontColumnCount;
-        glyph_y = 1;   //( string[i] / fontRowCount ) - 1;
+        glyph_x = string[i] % fontColumnCount;
+        glyph_y = ( string[i] / fontColumnCount ) - 1;
 
         const algebra::vector2f topLeftVt = { ( offset + 0.0f ) + text_pos_x,
                                               0.0f + text_pos_y };
@@ -66,7 +66,7 @@ void ScreenStringBase::draw( const std::string& string ) {
         letterQuadsVertecies_[( i * 4 ) + 2] = bottomRightVt;
         letterQuadsVertecies_[( i * 4 ) + 3] = bottomLeftVt;
 
-        const algebra::vector2f topLeftTc{ ( tc_gap_x * glyph_x ),
+        const algebra::vector2f topLeftTc{ ( tc_gap_x * glyph_x ) + 0.0f,
                                            ( tc_gap_y * glyph_y ) + 0.0f };
 
         const algebra::vector2f topRightTc{ ( tc_gap_x * glyph_x ) + tc_gap_x,
@@ -76,12 +76,14 @@ void ScreenStringBase::draw( const std::string& string ) {
             ( tc_gap_y * glyph_y ) + tc_gap_y };
 
         const algebra::vector2f bottomLeftTc{
-            ( tc_gap_x * glyph_x ), ( tc_gap_y * glyph_y ) + tc_gap_y };
+            ( tc_gap_x * glyph_x ) + 0.0f, ( tc_gap_y * glyph_y ) + tc_gap_y };
 
         letterQuadsTexcrds_[( i * 4 ) + 0] = topLeftTc;
         letterQuadsTexcrds_[( i * 4 ) + 1] = topRightTc;
         letterQuadsTexcrds_[( i * 4 ) + 2] = bottomRightTc;
         letterQuadsTexcrds_[( i * 4 ) + 3] = bottomLeftTc;
+
+        ++bufferPos_;
     }
 }
 

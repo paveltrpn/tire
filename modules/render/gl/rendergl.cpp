@@ -44,7 +44,7 @@ RenderGL::RenderGL()
     setSwapInterval( 1 );
 
     screenString_ =
-        std::make_unique<ScreenString>( "RobotoMono-1024-512-32-64-alpha.tga" );
+        std::make_unique<ScreenString>( "RobotoMono-1024-512-32-64.tga" );
 }
 
 RenderGL::~RenderGL() {

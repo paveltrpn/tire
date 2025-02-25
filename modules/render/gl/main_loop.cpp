@@ -34,9 +34,9 @@ void RenderGL::frame() {
 
     glDisable( GL_DEPTH_TEST );
 
-    screenString_->set_text_position( -2.0f, 0.0f );
+    screenString_->set_text_position( -31.5f, 31.5f );
     screenString_->draw( std::format( "{}", timer_.averageFrameDuration() ) );
-    screenString_->flush( scene_->getCamera( 0 )->matrix() );
+    screenString_->flush();
 }
 
 void RenderGL::postFrame() {
