@@ -20,15 +20,15 @@ Scene::Scene( const std::filesystem::path &fname, const vk::Device *device,
     cBufs_.reserve( FRAMES_IN_FLIGHT_COUNT );
     for ( auto i = 0; i < cBufs_.capacity(); ++i ) {
         cBufs_.push_back( std::make_unique<vk::SceneRenderCommand>(
-            device_, pipeline_, commandPool_.get(), nodeList_.size() ) );
+            device_, pipeline_, commandPool_.get(), bodyList_.size() ) );
     }
 
     // Create vulkan "vertex buffers"
-    const auto nodeListSize = nodeList_.size();
+    const auto nodeListSize = bodyList_.size();
     buffersList_.reserve( nodeListSize );
     for ( size_t i{}; i < nodeListSize; ++i ) {
         auto buf = std::make_shared<vk::VertexBuffer<float>>(
-            device_, nodeList_[i]->verteciesArraySize() );
+            device_, bodyList_[i]->verteciesArraySize() );
 
         buffersList_.push_back( std::move( buf ) );
     }
@@ -38,7 +38,7 @@ void Scene::submit() {
     // Update data in vulkan "vertex" buffers, i.e. copy from CPU memory
     for ( size_t i = 0; auto &buffer : buffersList_ ) {
         buffer->populate(
-            reinterpret_cast<const void *>( nodeList_[i]->verteciesData() ) );
+            reinterpret_cast<const void *>( bodyList_[i]->verteciesData() ) );
         ++i;
     }
 }
@@ -48,7 +48,7 @@ void Scene::output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
                     VkFence fence ) {
 #define OBJECT 5
     for ( size_t i = 0; i < buffersList_.size(); ++i ) {
-        const auto color = nodeList_[OBJECT]->color().asVector3f();
+        const auto color = bodyList_[OBJECT]->color().asVector3f();
         cBufs_[imageIndex]->reset( i );
         cBufs_[imageIndex]->prepare(
             i, currentFramebuffer, getCamera( 0 )->matrix(), color,

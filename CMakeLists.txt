@@ -152,8 +152,8 @@ target_link_libraries(geometry algebra)
 add_library(scene
     modules/scene/scene.h
     modules/scene/scene.cpp
-    modules/scene/node.cpp
-    modules/scene/node.h
+    modules/scene/body.cpp
+    modules/scene/body.h
     modules/scene/camera.h
     modules/scene/camera.cpp
 )

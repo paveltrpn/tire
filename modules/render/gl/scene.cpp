@@ -8,7 +8,7 @@ namespace tire::gl {
 
 Scene::Scene( const std::filesystem::path &fname )
     : tire::Scene{ fname } {
-    const auto nodeListSize = nodeList_.size();
+    const auto nodeListSize = bodyList_.size();
     buffersList_.reserve( nodeListSize );
 
     for ( size_t i{}; i < nodeListSize; ++i ) {
@@ -16,12 +16,12 @@ Scene::Scene( const std::filesystem::path &fname )
 
         buffer.generate();
         buffer.startBinding();
-        buffer.bindVertexData( nodeList_[i]->verteciesArraySize(),
-                               nodeList_[i]->verteciesData() );
-        buffer.bindNormalData( nodeList_[i]->normalsArraySize(),
-                               nodeList_[i]->normalsData() );
-        buffer.bindTexcrdData( nodeList_[i]->texcrdsArraySize(),
-                               nodeList_[i]->texcrdsData() );
+        buffer.bindVertexData( bodyList_[i]->verteciesArraySize(),
+                               bodyList_[i]->verteciesData() );
+        buffer.bindNormalData( bodyList_[i]->normalsArraySize(),
+                               bodyList_[i]->normalsData() );
+        buffer.bindTexcrdData( bodyList_[i]->texcrdsArraySize(),
+                               bodyList_[i]->texcrdsData() );
 
         // Create Texture object
         // glGenTextures( 1, &buf.texture );
@@ -58,10 +58,10 @@ Scene::Scene( const std::filesystem::path &fname )
 
 void Scene::submit() {
     for ( size_t i = 0; auto &buffer : buffersList_ ) {
-        buffer.updateVertexData( nodeList_[i]->verteciesArraySize(),
-                                 nodeList_[i]->verteciesData() );
-        buffer.updateNormalsData( nodeList_[i]->normalsArraySize(),
-                                  nodeList_[i]->normalsData() );
+        buffer.updateVertexData( bodyList_[i]->verteciesArraySize(),
+                                 bodyList_[i]->verteciesData() );
+        buffer.updateNormalsData( bodyList_[i]->normalsArraySize(),
+                                  bodyList_[i]->normalsData() );
         ++i;
     }
 }
@@ -72,7 +72,7 @@ void Scene::draw() {
                                      getCamera( 0 )->matrix() );
 
     for ( size_t i = 0; auto &buffer : buffersList_ ) {
-        const Colorf bodyColor = nodeList_[i]->color();
+        const Colorf bodyColor = bodyList_[i]->color();
         shaderStorage_.setVectorUniform(
             "flatshade", "color",
             algebra::vector3f{ bodyColor.r(), bodyColor.g(), bodyColor.b() } );

@@ -6,7 +6,7 @@
 #include <map>
 #include <vector>
 
-#include "scene/node.h"
+#include "scene/body.h"
 
 namespace tire {
 
@@ -107,7 +107,7 @@ public:
     WavefrontObj &operator=( const WavefrontObj &rhs ) = delete;
     WavefrontObj &operator=( const WavefrontObj &&rhs ) = delete;
 
-    [[nodiscard]] std::shared_ptr<tire::Node> getAsNode(
+    [[nodiscard]] std::shared_ptr<tire::Body> getAsBody(
         std::string_view path );
 
     friend std::ostream &operator<<( std::ostream &os,

@@ -6,7 +6,6 @@
 #include <vector>
 
 #include "wavefront.h"
-#include "scene/node.h"
 
 namespace tire {
 
@@ -35,7 +34,7 @@ WavefrontObj::WavefrontObj( std::string_view path ) {
     }
 }
 
-std::shared_ptr<tire::Node> WavefrontObj::getAsNode( std::string_view path ) {
+std::shared_ptr<tire::Body> WavefrontObj::getAsBody( std::string_view path ) {
     return {};
 }
 

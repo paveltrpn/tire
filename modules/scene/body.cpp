@@ -3,7 +3,7 @@
 #include <initializer_list>
 #include <iterator>
 
-#include "node.h"
+#include "body.h"
 #include "geometry/polytope.h"
 #include "geometry/point.h"
 #include "geometry/normal.h"
@@ -16,77 +16,77 @@ static constexpr bool DEBUG_OUTPUT_NODE_CPP{ false };
 
 namespace tire {
 
-Node::Node( std::shared_ptr<PolytopeData> body ) {
+Body::Body( std::shared_ptr<PolytopeData> body ) {
     shapeData_ = std::move( body );
     localVertecies_.reserve( shapeData_->verteciesCount() );
     localNormals_.reserve( shapeData_->verteciesCount() );
 }
 
-std::shared_ptr<const Node> Node::asSharedPtr() const {
+std::shared_ptr<const Body> Body::asSharedPtr() const {
     return shared_from_this();
 }
 
-std::shared_ptr<Node> Node::asSharedPtr() {
+std::shared_ptr<Body> Body::asSharedPtr() {
     return shared_from_this();
 }
 
-size_t Node::verteciesCount() const {
+size_t Body::verteciesCount() const {
     return shapeData_->verteciesCount();
 }
 
-size_t Node::verteciesArraySize() const {
+size_t Body::verteciesArraySize() const {
     return verteciesCount() * 3 * sizeof( float );
 }
 
-size_t Node::normalsArraySize() const {
+size_t Body::normalsArraySize() const {
     return verteciesCount() * 3 * sizeof( float );
 };
 
-size_t Node::texcrdsArraySize() const {
+size_t Body::texcrdsArraySize() const {
     return verteciesCount() * 2 * sizeof( float );
 };
 
-const point3f *Node::verteciesData() {
+const point3f *Body::verteciesData() {
     return localVertecies_.data();
 }
 
-const normalf *Node::normalsData() {
+const normalf *Body::normalsData() {
     return localNormals_.data();
 }
 
-const algebra::vector2f *Node::texcrdsData() {
+const algebra::vector2f *Body::texcrdsData() {
     return shapeData_->texcrdsData();
 }
 
-void Node::setPivotOffset( algebra::vector3f offst ) {
+void Body::setPivotOffset( algebra::vector3f offst ) {
     offset_ = algebra::translate( offst.x(), offst.y(), offst.z() );
 }
 
-void Node::setPivotRotation( algebra::vector3f rtn ) {
+void Body::setPivotRotation( algebra::vector3f rtn ) {
     rotation_ = algebra::rotate( rtn.x(), rtn.y(), rtn.z() );
 }
 
-void Node::setPivotScale( algebra::vector3f scl ) {
+void Body::setPivotScale( algebra::vector3f scl ) {
     scale_ = algebra::scale( scl.x(), scl.y(), scl.z() );
 }
 
-void Node::setMomentum( algebra::vector3f rtn ) {
+void Body::setMomentum( algebra::vector3f rtn ) {
     momentum_ = algebra::rotate( rtn.x(), rtn.y(), rtn.z() );
 }
 
-void Node::setTextureImage( const std::string &file ) {
+void Body::setTextureImage( const std::string &file ) {
     textureImage_ = std::make_unique<Tga>( file );
 }
 
-std::pair<int, int> Node::textureSize() {
+std::pair<int, int> Body::textureSize() {
     return { textureImage_->widht(), textureImage_->height() };
 }
 
-const uint8_t *Node::textureData() {
+const uint8_t *Body::textureData() {
     return textureImage_->data();
 }
 
-void Node::applyTransormations() {
+void Body::applyTransormations() {
     if ( useMomentum_ ) {
         rotation_.multiply( momentum_ );
     }

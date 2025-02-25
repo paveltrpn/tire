@@ -54,7 +54,7 @@ void Scene::process() {
 
             if ( type == "box" ) {
                 auto shapePtr = std::make_shared<BoxData>();
-                auto node = std::make_shared<Node>( shapePtr );
+                auto node = std::make_shared<Body>( shapePtr );
 
                 node->setColor( colorName );
                 node->setUseMomentum( useMomentum );
@@ -69,13 +69,13 @@ void Scene::process() {
                 node->setTextureImage(
                     { basePath / "assets" / "textures" / textureFile } );
 
-                nodeList_.push_back( std::move( node ) );
+                bodyList_.push_back( std::move( node ) );
 
                 log::debug<DEBUG_OUTPUT_SCENE_CPP>(
                     "Scene === box added to scene" );
             } else if ( type == "frame" ) {
                 auto shapePtr = std::make_shared<FrameData>();
-                auto node = std::make_shared<Node>( shapePtr );
+                auto node = std::make_shared<Body>( shapePtr );
 
                 node->setColor( colorName );
                 node->setUseMomentum( useMomentum );
@@ -90,13 +90,13 @@ void Scene::process() {
                 node->setTextureImage(
                     { basePath / "assets" / "textures" / textureFile } );
 
-                nodeList_.push_back( std::move( node ) );
+                bodyList_.push_back( std::move( node ) );
 
                 log::debug<DEBUG_OUTPUT_SCENE_CPP>(
                     "Scene === frame added to scene" );
             } else if ( type == "diamond" ) {
                 auto shapePtr = std::make_shared<DiamondData>();
-                auto node = std::make_shared<Node>( shapePtr );
+                auto node = std::make_shared<Body>( shapePtr );
 
                 node->setColor( colorName );
                 node->setUseMomentum( useMomentum );
@@ -111,7 +111,7 @@ void Scene::process() {
                 node->setTextureImage(
                     { basePath / "assets" / "textures" / textureFile } );
 
-                nodeList_.push_back( std::move( node ) );
+                bodyList_.push_back( std::move( node ) );
 
                 log::debug<DEBUG_OUTPUT_SCENE_CPP>(
                     "Scene === diamond added to scene" );
@@ -155,7 +155,7 @@ void Scene::traverse( float duration ) {
     // Update global time flow
     frameDuration_ = duration;
 
-    for ( auto &node : nodeList_ ) {
+    for ( auto &node : bodyList_ ) {
         node->applyTransormations();
     }
 }

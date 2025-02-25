@@ -5,7 +5,7 @@
 #include "nlohmann/json.hpp"
 #include "uv.h"
 
-#include "node.h"
+#include "body.h"
 #include "camera.h"
 
 namespace tire {
@@ -35,7 +35,7 @@ private:
 protected:
     float frameDuration_{};
 
-    std::vector<std::shared_ptr<Node>> nodeList_{};
+    std::vector<std::shared_ptr<Body>> bodyList_{};
     std::vector<std::shared_ptr<Camera>> cameras_{};
 };
 

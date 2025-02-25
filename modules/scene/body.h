@@ -19,11 +19,11 @@
 
 namespace tire {
 
-struct Node final : std::enable_shared_from_this<Node> {
-    Node( std::shared_ptr<PolytopeData> body );
+struct Body final : std::enable_shared_from_this<Body> {
+    Body( std::shared_ptr<PolytopeData> body );
 
-    std::shared_ptr<const Node> asSharedPtr() const;
-    std::shared_ptr<Node> asSharedPtr();
+    std::shared_ptr<const Body> asSharedPtr() const;
+    std::shared_ptr<Body> asSharedPtr();
 
     size_t verteciesCount() const;
     size_t verteciesArraySize() const;
