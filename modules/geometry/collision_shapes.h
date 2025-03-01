@@ -12,6 +12,12 @@ template <typename T>
 struct CollisionShape {};
 
 template <typename T>
+struct AABoundingBox;
+
+template <typename T>
+struct OOBoundingBox;
+
+template <typename T>
 struct BoundingSphere final : CollisionShape<T> {
     using value_type = T;
 
@@ -20,6 +26,16 @@ struct BoundingSphere final : CollisionShape<T> {
 
     float radius() { return radius_; }
     vector3<value_type> position() { return position_; }
+
+    bool testBoundingSphere( const BoundingSphere<value_type> &other ) {
+        vector3<value_type> dif = position_ - other.position_;
+        value_type dist = dif * dif;
+        // Spheres intersect if squared distance is less than squared sum of radii
+        float radiusSum = radius_ + other.radius_;
+        return dist <= radiusSum * radiusSum;
+    }
+
+    bool testAABoundingBox( const AABoundingBox<value_type> &other ) {}
 
 private:
     value_type radius_{};
@@ -30,6 +46,16 @@ template <typename T>
 struct AABoundingBox final : CollisionShape<T> {
     using value_type = T;
 
+    bool testBoundingSphere( const BoundingSphere<value_type> &other ) {}
+    bool testAABoundingBox( const AABoundingBox<value_type> &other ) {
+        // Exit with no intersection if separated along an axis
+        if ( max_[0] < other.min_[0] || min_[0] > other.max_[0] ) return false;
+        if ( max_[1] < other.min_[1] || min_[1] > other.max_[1] ) return false;
+        if ( max_[2] < other.min_[2] || min_[2] > other.max_[2] ) return false;
+        // Overlapping on all axes means AABBs are intersecting
+        return true;
+    }
+
 private:
     vector3<value_type> min_{};
     vector3<value_type> max_{};
@@ -39,15 +65,10 @@ template <typename T>
 struct OOBoundingBox final : CollisionShape<T> {
     using value_type = T;
 
-    void setMin( vector3<value_type> value ) { min_ = value; }
-    void setMax( vector3<value_type> value ) { max_ = value; }
-
-    vector3<value_type> min() { return min_; };
-    vector3<value_type> max() { return max_; };
-
 private:
-    vector3<value_type> min_{};
-    vector3<value_type> max_{};
+    vector3<value_type> c;                 // OBB center point
+    std::array<vector3<value_type>, 3> u;  // Local x-, y-, and z-axes
+    vector3<value_type> e;  // Positive halfwidth extents of OBB along each axis
 };
 
 }  // namespace tire
