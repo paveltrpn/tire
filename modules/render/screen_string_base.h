@@ -8,6 +8,7 @@
 #include <GL/gl.h>
 
 #include "image/tga.h"
+#include "image/color.h"
 #include "algebra/vector2.h"
 #include "algebra/matrix4.h"
 
@@ -23,19 +24,24 @@ struct ScreenStringBase {
 
     virtual ~ScreenStringBase() = default;
 
-    void set_glyph_width( float size );
-    void set_glyph_height( float size );
-    void set_glyph_gap( float size );
-
+    void set_glyph_width( float value );
+    void set_glyph_height( float value );
+    void setGlyphScale( float value );
+    void set_glyph_gap( float value );
     void set_text_position( float x, float y );
+    void setColor( const Colorf& value );
+    void resetStringParapeters();
 
     void draw( const std::string& string );
 
     virtual void flush() = 0;
 
 protected:
+// Size of "Letters buffer" - this is the number of all characters
+// from all draw() calls that can one instance of this class operates
 #define LETTERS_COUNT 512
     std::array<algebra::vector2f, LETTERS_COUNT * 4> letterQuadsVertecies_{};
+    std::array<algebra::vector3f, LETTERS_COUNT * 4> letterQuadsColors_{};
     std::array<algebra::vector2f, LETTERS_COUNT * 4> letterQuadsTexcrds_{};
 
     std::unique_ptr<Tga> fontImage_{};
@@ -45,7 +51,8 @@ protected:
 #define GLYPH_HEIGHT 1.55f
     float glyph_quad_wdt{ GLYPH_WIDTH * glyphScale_ };
     float glyph_quad_hgt{ GLYPH_HEIGHT * glyphScale_ };
-    float glyph_quad_gap{ 0.0f };
+#define GLYPH_GAP 0.0f
+    float glyph_quad_gap{ GLYPH_GAP };
 
     float text_pos_x = { 0.0f };
     float text_pos_y = { 0.0f };
@@ -59,6 +66,8 @@ protected:
 
     // Must be set to zero in flush()
     size_t bufferPos_{};
+
+    Colorf color_{};
 };
 
 }  // namespace tire

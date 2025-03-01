@@ -16,7 +16,7 @@ void BodyBuffer::clean() {
     glDeleteBuffers( 3, buffers_.data() );
 }
 
-void BodyBuffer::startBinding() {
+void BodyBuffer::bind() {
     glBindVertexArray( array_ );
 }
 
@@ -57,10 +57,13 @@ void BodyBuffer::updateNormalsData( long size, const void *data ) {
     glUnmapBuffer( GL_ARRAY_BUFFER );
 }
 
+void BodyBuffer::release() {
+    glBindVertexArray( 0 );
+}
+
 void BodyBuffer::draw() {
     glBindVertexArray( array_ );
     glDrawArrays( GL_TRIANGLES, 0, verteciesCount_ );
-    glBindVertexArray( 0 );
 }
 
 }  // namespace tire::gl

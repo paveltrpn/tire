@@ -6,6 +6,7 @@
 #include "algebra/vector2.h"
 #include "point.h"
 #include "normal.h"
+#include "collision_shapes.h"
 
 namespace tire {
 

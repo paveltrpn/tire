@@ -52,13 +52,15 @@ struct BodyBuffer final {
     void generate();
     void clean();
 
-    void startBinding();
+    void bind();
     void bindVertexData( long size, const void *data );
     void bindNormalData( long size, const void *data );
     void bindTexcrdData( long size, const void *data );
 
     void updateVertexData( long size, const void *data );
     void updateNormalsData( long size, const void *data );
+
+    void release();
 
     void draw();
 

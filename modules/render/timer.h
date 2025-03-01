@@ -16,6 +16,9 @@ struct Timer final {
 
     ~Timer() = default;
 
+    /*
+     * @return - frame time in microseconds
+    **/
     long long frameDuration() { return frameDuration_; }
 
     float floatFrameDuration() {
@@ -38,6 +41,7 @@ struct Timer final {
 private:
     std::chrono::steady_clock timer_;
     std::chrono::time_point<decltype( timer_ )> lastTimePoint_{};
+    // In microseconds - 1/1000000s
     long long frameDuration_{};
 
     long long frameTimeAccumulator_{};

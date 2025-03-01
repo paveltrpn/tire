@@ -16,6 +16,7 @@ namespace tire {
 namespace __details {
 
 static const std::map<std::string, std::string> htmlColors{
+    { "white", "#FFFFFF" },
     { "powderblue", "#B0E0E6" },
     { "lightblue", "#ADD8E6" },
     { "lightskyblue", "#87CEFA" },

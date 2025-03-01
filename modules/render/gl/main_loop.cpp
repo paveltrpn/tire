@@ -34,10 +34,12 @@ void RenderGL::frame() {
 
     glDisable( GL_DEPTH_TEST );
 
+    screenString_->setColor( { "white" } );
     screenString_->set_text_position( -31.5f, 31.5f );
     screenString_->draw(
         std::format( "frame time = {}", timer_.averageFrameDuration() ) );
     screenString_->set_text_position( -31.5f, 28.5f );
+    screenString_->setColor( { "darkred" } );
     screenString_->draw(
         std::format( "fps = {}", 1000000 / timer_.averageFrameDuration() ) );
 

@@ -20,6 +20,7 @@ struct ScreenStringBuffer final {
         other.array_ = 0;
         other.buffers_[0] = 0;
         other.buffers_[1] = 0;
+        other.buffers_[2] = 0;
     };
 
     ScreenStringBuffer &operator=( const ScreenStringBuffer &other ) = delete;
@@ -34,6 +35,7 @@ struct ScreenStringBuffer final {
             other.array_ = 0;
             other.buffers_[0] = 0;
             other.buffers_[1] = 0;
+            other.buffers_[2] = 0;
         }
 
         return *this;
@@ -44,12 +46,16 @@ struct ScreenStringBuffer final {
     void generate();
     void clean();
 
-    void startBinding();
+    void bind();
     void bindVertexData( long size, const void *data );
     void bindTexcrdData( long size, const void *data );
+    void bindColorData( long size, const void *data );
 
     void updateVertexData( long size, const void *data );
     void updateTexcrdData( long size, const void *data );
+    void updateColorData( long size, const void *data );
+
+    void release();
 
     void draw();
 
@@ -57,7 +63,7 @@ private:
     GLuint verteciesCount_{};
 
     GLuint array_{ 0 };
-    std::array<GLuint, 2> buffers_{ 0 };
+    std::array<GLuint, 3> buffers_{ 0 };
 };
 
 }  // namespace tire::gl

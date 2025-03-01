@@ -2,8 +2,10 @@
 
 layout (location = 0) in vec2 pos;
 layout (location = 2) in vec2 txc;
+layout (location = 1) in vec3 clr;
 
 out vec2 TexCoord;
+out vec4 Color;
 
 void main() {
 #define SIZE 32
@@ -37,4 +39,5 @@ void main() {
 
    gl_Position = orthomatrix*vec4(pos, 0.0, 1.0);
    TexCoord = txc;
+   Color = vec4(clr, 1.0);
 };

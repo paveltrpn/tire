@@ -15,27 +15,14 @@ Scene::Scene( const std::filesystem::path &fname )
         BodyBuffer buffer{};
 
         buffer.generate();
-        buffer.startBinding();
+        buffer.bind();
         buffer.bindVertexData( bodyList_[i]->verteciesArraySize(),
                                bodyList_[i]->verteciesData() );
         buffer.bindNormalData( bodyList_[i]->normalsArraySize(),
                                bodyList_[i]->normalsData() );
         buffer.bindTexcrdData( bodyList_[i]->texcrdsArraySize(),
                                bodyList_[i]->texcrdsData() );
-
-        // Create Texture object
-        // glGenTextures( 1, &buf.texture );
-        // glBindTexture( GL_TEXTURE_2D, buf.texture );
-        //
-        // const auto [width, height] = nodeList_[i]->textureSize();
-        // const auto data = nodeList_[i]->textureData();
-        // glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-        //  GL_LINEAR_MIPMAP_LINEAR );
-        // glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-        // glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-        //   GL_UNSIGNED_BYTE, data );
-        // glGenerateMipmap( GL_TEXTURE_2D );
-
+        buffer.release();
         // Store object buffers id's
         buffersList_.push_back( std::move( buffer ) );
     }
@@ -79,7 +66,7 @@ void Scene::draw() {
 
         // glBindTexture( GL_TEXTURE_2D, buffer.texture );
         buffer.draw();
-
+        buffer.release();
         ++i;
     }
 }

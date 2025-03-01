@@ -12,9 +12,6 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON )
 
 include_directories("modules")
-#include_directories($ENV{NLOHMANN_JSON_DIR}/include)
-#include_directories($ENV{LIBUV_DIR}/include)
-#include_directories($ENV{VULKAN_SDK}/include)
 
 if (DEFINED ENV{VULKAN_SDK} AND NOT "$ENV{VULKAN_SDK}" STREQUAL "")
     message( "VULKAN_SDK is set to $ENV{VULKAN_SDK}")
@@ -38,7 +35,20 @@ else()
     message(SEND_ERROR "LIBUV_DIR is not set")
 endif()
 
+if (DEFINED ENV{BULLET3_DIR} AND NOT "$ENV{BULLET3_DIR}" STREQUAL "")
+    message("BULLET3_DIR is set to $ENV{BULLET3_DIR}")
+    include_directories($ENV{BULLET3_DIR}/include)
+    include_directories($ENV{BULLET3_DIR}/include/bullet)
+    link_directories($ENV{BULLET3_DIR}/lib)
+else()
+    message(SEND_ERROR "BULLET3_DIR is not set")
+endif()
+
+# set(BULLET_INCLUDE_DIR $ENV{BULLET3_DIR}/include)
+# set(BLA $ENV{BULLET3_DIR}/include)
+
 find_package(Vulkan REQUIRED)
+find_package(Bullet REQUIRED PATHS $ENV{BULLET3_DIR})
 
 add_library(log
     modules/log/log.h
@@ -128,7 +138,7 @@ add_library(render
     modules/render/vk/present.h
     modules/render/vk/present.cpp
 )
-target_link_libraries(render scene config geometry algebra event)
+target_link_libraries(render scene config geometry algebra event BulletDynamics BulletCollision LinearMath)
 
 add_library(image
     modules/image/bmp.cpp
@@ -152,12 +162,17 @@ add_library(geometry
     modules/geometry/wavefront.h
     modules/geometry/polytope.cpp
     modules/geometry/polytope.h
+    modules/geometry/collision_shapes.cpp
+    modules/geometry/collision_shapes.h
 )
 target_link_libraries(geometry algebra)
 
 add_library(scene
+    modules/scene/constants.h
     modules/scene/scene.h
     modules/scene/scene.cpp
+    modules/scene/physics_scene.h
+    modules/scene/physics_scene.cpp
     modules/scene/body.cpp
     modules/scene/body.h
     modules/scene/camera.h
@@ -186,8 +201,35 @@ target_sources(io
 target_link_libraries(io event)
 
 add_subdirectory(test/window)
-target_link_libraries(gl_test PUBLIC log event io algebra scene config render X11 GL GLU Vulkan::Vulkan uv)
-target_link_libraries(vk_test PUBLIC log event io algebra scene config render X11 GL GLU Vulkan::Vulkan uv)
+target_link_libraries(gl_test PUBLIC 
+    log 
+    event 
+    io 
+    algebra 
+    scene 
+    config 
+    render 
+    X11 
+    GL 
+    GLU 
+    Vulkan::Vulkan 
+    uv BulletDynamics BulletCollision LinearMath
+)
+
+target_link_libraries(vk_test PUBLIC 
+    log 
+    event 
+    io 
+    algebra 
+    scene 
+    config 
+    render 
+    X11 
+    GL 
+    GLU 
+    Vulkan::Vulkan 
+    uv BulletDynamics BulletCollision LinearMath
+)
 
 add_subdirectory(test/wavefront)
 target_link_libraries(wavefront geometry)
