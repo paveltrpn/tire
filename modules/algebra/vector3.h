@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <array>
 #include "concepts.h"
 #include "vector.h"
 
@@ -23,6 +24,12 @@ requires Algebraic<T> struct vector3 : vector_base<T, 3> {
         data_[0] = x;
         data_[1] = y;
         data_[2] = z;
+    }
+
+    vector3( const std::array<value_type, 3> &arr ) {
+        data_[0] = arr[0];
+        data_[1] = arr[1];
+        data_[2] = arr[2];
     }
 
     vector3( const self &rhs ) {

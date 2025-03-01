@@ -27,6 +27,13 @@ requires Algebraic<T> struct vector4 : vector_base<T, 4> {
         data_[3] = w;
     }
 
+    vector4( const std::array<value_type, 4> &arr ) {
+        data_[0] = arr[0];
+        data_[1] = arr[1];
+        data_[2] = arr[2];
+        data_[3] = arr[3];
+    }
+
     vector4( const self &rhs ) {
         ( *this )[0] = rhs[0];
         ( *this )[1] = rhs[1];

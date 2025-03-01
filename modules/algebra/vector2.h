@@ -23,6 +23,11 @@ requires Algebraic<T> struct vector2 : vector_base<T, 2> {
         data_[1] = y;
     }
 
+    vector2( const std::array<value_type, 2> &arr ) {
+        data_[0] = arr[0];
+        data_[1] = arr[1];
+    }
+
     vector2( const self &rhs ) {
         ( *this )[0] = rhs[0];
         ( *this )[1] = rhs[1];

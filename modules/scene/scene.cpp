@@ -58,13 +58,10 @@ void Scene::process() {
 
                 node->setColor( colorName );
                 node->setUseMomentum( useMomentum );
-                node->setMomentum( { momentum[0], momentum[1], momentum[2] } );
-                node->setPivotScale(
-                    { pivotScale[0], pivotScale[1], pivotScale[2] } );
-                node->setPivotRotation(
-                    { pivotRotation[0], pivotRotation[1], pivotRotation[2] } );
-                node->setPivotOffset(
-                    { pivotPosition[0], pivotPosition[1], pivotPosition[2] } );
+                node->setMomentum( { momentum } );
+                node->setPivotScale( { pivotScale } );
+                node->setPivotRotation( { pivotRotation } );
+                node->setPivotOffset( { pivotPosition } );
 
                 node->setTextureImage(
                     { basePath / "assets" / "textures" / textureFile } );
@@ -79,13 +76,10 @@ void Scene::process() {
 
                 node->setColor( colorName );
                 node->setUseMomentum( useMomentum );
-                node->setMomentum( { momentum[0], momentum[1], momentum[2] } );
-                node->setPivotScale(
-                    { pivotScale[0], pivotScale[1], pivotScale[2] } );
-                node->setPivotRotation(
-                    { pivotRotation[0], pivotRotation[1], pivotRotation[2] } );
-                node->setPivotOffset(
-                    { pivotPosition[0], pivotPosition[1], pivotPosition[2] } );
+                node->setMomentum( { momentum } );
+                node->setPivotScale( { pivotScale } );
+                node->setPivotRotation( { pivotRotation } );
+                node->setPivotOffset( { pivotPosition } );
 
                 node->setTextureImage(
                     { basePath / "assets" / "textures" / textureFile } );
@@ -100,13 +94,10 @@ void Scene::process() {
 
                 node->setColor( colorName );
                 node->setUseMomentum( useMomentum );
-                node->setMomentum( { momentum[0], momentum[1], momentum[2] } );
-                node->setPivotScale(
-                    { pivotScale[0], pivotScale[1], pivotScale[2] } );
-                node->setPivotRotation(
-                    { pivotRotation[0], pivotRotation[1], pivotRotation[2] } );
-                node->setPivotOffset(
-                    { pivotPosition[0], pivotPosition[1], pivotPosition[2] } );
+                node->setMomentum( { momentum } );
+                node->setPivotScale( { pivotScale } );
+                node->setPivotRotation( { pivotRotation } );
+                node->setPivotOffset( { pivotPosition } );
 
                 node->setTextureImage(
                     { basePath / "assets" / "textures" / textureFile } );
