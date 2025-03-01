@@ -9,6 +9,7 @@
 #include "geometry/polytope.h"
 #include "geometry/point.h"
 #include "geometry/normal.h"
+#include "geometry/collision_shapes.h"
 
 #include "algebra/vector2.h"
 #include "algebra/vector3.h"
@@ -35,6 +36,9 @@ struct Body final : std::enable_shared_from_this<Body> {
     const normalf *normalsData();
     const algebra::vector2f *texcrdsData();
 
+    void setBounding( CollisionShape<float> value ) { bounding_ = value; }
+    const CollisionShape<float> bounding() { return bounding_; };
+
     void setColor( const std::string &name ) { color_ = Colorf{ name }; }
     Colorf color() const { return color_; };
 
@@ -55,6 +59,8 @@ private:
     std::shared_ptr<PolytopeData> shapeData_{};
     std::vector<point3f> localVertecies_{};
     std::vector<normalf> localNormals_{};
+
+    CollisionShape<float> bounding_{};
 
     Colorf color_{};
 

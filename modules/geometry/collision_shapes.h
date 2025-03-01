@@ -5,33 +5,49 @@
 
 namespace tire {
 
-struct BoundingSphere {
+// NOTE: introduce namespace!
+using namespace algebra;
+
+template <typename T>
+struct CollisionShape {};
+
+template <typename T>
+struct BoundingSphere final : CollisionShape<T> {
+    using value_type = T;
+
     void setRadius( float value ) { radius_ = value; }
-    void setPosition( algebra::vector3f value ) { position_ = value; }
-    float radious() { return radius_; }
-    algebra::vector3f position() { return position_; }
+    void setPosition( vector3<value_type> value ) { position_ = value; }
+
+    float radius() { return radius_; }
+    vector3<value_type> position() { return position_; }
 
 private:
-    float radius_{};
-    algebra::vector3f position_{};
+    value_type radius_{};
+    vector3<value_type> position_{};
 };
 
-struct AABoundingBox {
+template <typename T>
+struct AABoundingBox final : CollisionShape<T> {
+    using value_type = T;
+
 private:
-    algebra::vector3f min_{};
-    algebra::vector3f max_{};
+    vector3<value_type> min_{};
+    vector3<value_type> max_{};
 };
 
-struct OOBoundingBox {
-    void setMin( algebra::vector3f value ) { min_ = value; }
-    void setMax( algebra::vector3f value ) { max_ = value; }
+template <typename T>
+struct OOBoundingBox final : CollisionShape<T> {
+    using value_type = T;
 
-    algebra::vector3f min() { return min_; };
-    algebra::vector3f max() { return max_; };
+    void setMin( vector3<value_type> value ) { min_ = value; }
+    void setMax( vector3<value_type> value ) { max_ = value; }
+
+    vector3<value_type> min() { return min_; };
+    vector3<value_type> max() { return max_; };
 
 private:
-    algebra::vector3f min_{};
-    algebra::vector3f max_{};
+    vector3<value_type> min_{};
+    vector3<value_type> max_{};
 };
 
 }  // namespace tire
