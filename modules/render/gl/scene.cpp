@@ -1,6 +1,7 @@
 
 #include "scene.h"
 #include "functions.h"
+#include "scene/physics_scene.h"
 
 import config;
 
@@ -56,7 +57,7 @@ void Scene::submit() {
 void Scene::draw() {
     shaderStorage_.use( "flatshade" );
     shaderStorage_.setMatrixUniform( "flatshade", "view_matrix", GL_FALSE,
-                                     getCamera( 0 )->matrix() );
+                                     camera()->matrix() );
 
     for ( size_t i = 0; auto &buffer : buffersList_ ) {
         const Colorf bodyColor = bodyList_[i]->color();

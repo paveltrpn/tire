@@ -50,9 +50,9 @@ void Scene::output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
     for ( size_t i = 0; i < buffersList_.size(); ++i ) {
         const auto color = bodyList_[OBJECT]->color().asVector3f();
         cBufs_[imageIndex]->reset( i );
-        cBufs_[imageIndex]->prepare(
-            i, currentFramebuffer, getCamera( 0 )->matrix(), color,
-            buffersList_[OBJECT]->buffer(), buffersList_[OBJECT]->size() );
+        cBufs_[imageIndex]->prepare( i, currentFramebuffer, camera()->matrix(),
+                                     color, buffersList_[OBJECT]->buffer(),
+                                     buffersList_[OBJECT]->size() );
     }
     cBufs_[imageIndex]->submit( waitSemaphore, signalSemaphore, fence );
 }

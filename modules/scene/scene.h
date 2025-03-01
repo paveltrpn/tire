@@ -20,8 +20,9 @@ struct Scene {
 
     virtual ~Scene() = default;
 
-    [[nodiscard]] std::shared_ptr<Camera> getCamera( size_t id ) const {
-        return cameras_[id];
+    void setActiveCamera( size_t id ) { activeCamera_ = id; };
+    [[nodiscard]] std::shared_ptr<Camera> camera() const {
+        return cameras_[activeCamera_];
     };
 
     void traverse( float frameDuration );
@@ -37,6 +38,8 @@ protected:
 
     std::vector<std::shared_ptr<Body>> bodyList_{};
     std::vector<std::shared_ptr<Camera>> cameras_{};
+
+    int activeCamera_{ 0 };
 };
 
 }  // namespace tire

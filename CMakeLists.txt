@@ -178,7 +178,7 @@ add_library(scene
     modules/scene/camera.h
     modules/scene/camera.cpp
 )
-target_link_libraries(scene config io image algebra geometry)
+target_link_libraries(scene config io image algebra geometry BulletDynamics BulletCollision LinearMath)
 
 add_library(event)
 target_sources(event

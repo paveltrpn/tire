@@ -3,6 +3,7 @@
 
 #include <GL/gl.h>
 
+#include "scene/physics_scene.h"
 #include "scene/scene.h"
 #include "buffers/body_buffer.h"
 #include "shader_storage.h"
