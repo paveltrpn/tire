@@ -5,8 +5,7 @@
 #include <memory>
 
 #include "nlohmann/json.hpp"
-#include "uv.h"
-#include "Jolt/Jolt.h"
+#include "jolt/adapter.h"
 
 #include "body.h"
 #include "camera.h"
