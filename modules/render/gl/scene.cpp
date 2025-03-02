@@ -8,7 +8,7 @@ import config;
 namespace tire::gl {
 
 Scene::Scene( const std::filesystem::path &fname )
-    : tire::Scene{ fname } {
+    : tire::PhysicsScene{ fname } {
     const auto nodeListSize = bodyList_.size();
     buffersList_.reserve( nodeListSize );
 

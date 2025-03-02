@@ -4,12 +4,9 @@
 #include <filesystem>
 #include <memory>
 
-#include <bullet/btBulletCollisionCommon.h>
-#include <bullet/btBulletDynamicsCommon.h>
-#include "BulletCollision/CollisionShapes/btCollisionShape.h"
-
 #include "nlohmann/json.hpp"
 #include "uv.h"
+#include "Jolt/Jolt.h"
 
 #include "body.h"
 #include "camera.h"
@@ -40,19 +37,12 @@ private:
 private:
     nlohmann::json scene_;
 
-    std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration_{};
-    std::unique_ptr<btCollisionDispatcher> dispatcher_{};
-    std::unique_ptr<btBroadphaseInterface> overlappingPairCache_{};
-    std::unique_ptr<btSequentialImpulseConstraintSolver> solver_{};
-    std::unique_ptr<btDiscreteDynamicsWorld> dynamicsWorld_{};
-
     int activeCamera_{ 0 };
 
 protected:
     float frameDuration_{};
 
     std::vector<std::shared_ptr<Body>> bodyList_{};
-    std::vector<btCollisionShape *> collisionShapesList_{};
     std::vector<std::shared_ptr<Camera>> cameras_{};
 };
 

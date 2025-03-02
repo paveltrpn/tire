@@ -66,9 +66,12 @@ struct OOBoundingBox final : CollisionShape<T> {
     using value_type = T;
 
 private:
-    vector3<value_type> c;                 // OBB center point
-    std::array<vector3<value_type>, 3> u;  // Local x-, y-, and z-axes
-    vector3<value_type> e;  // Positive halfwidth extents of OBB along each axis
+    // OOBB center point
+    vector3<value_type> center_{};
+    // Local x-, y-, and z-axes
+    std::array<vector3<value_type>, 3> local_{};
+    // Positive halfwidth extents of OBB along each axis
+    vector3<value_type> extents_{};
 };
 
 }  // namespace tire

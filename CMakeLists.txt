@@ -35,20 +35,15 @@ else()
     message(SEND_ERROR "LIBUV_DIR is not set")
 endif()
 
-if (DEFINED ENV{BULLET3_DIR} AND NOT "$ENV{BULLET3_DIR}" STREQUAL "")
-    message("BULLET3_DIR is set to $ENV{BULLET3_DIR}")
-    include_directories($ENV{BULLET3_DIR}/include)
-    include_directories($ENV{BULLET3_DIR}/include/bullet)
-    link_directories($ENV{BULLET3_DIR}/lib)
+if (DEFINED ENV{JOLT_PHYSICS_DIR} AND NOT "$ENV{JOLT_PHYSICS_DIR}" STREQUAL "")
+    message("JOLT_PHYSICS_DIR is set to $ENV{JOLT_PHYSICS_DIR}")
+    include_directories($ENV{JOLT_PHYSICS_DIR})
+    link_directories($ENV{JOLT_PHYSICS_DIR}/Build/Linux_Debug)
 else()
-    message(SEND_ERROR "BULLET3_DIR is not set")
+    message(SEND_ERROR "JOLT_PHYSICS_DIR is not set")
 endif()
 
-# set(BULLET_INCLUDE_DIR $ENV{BULLET3_DIR}/include)
-# set(BLA $ENV{BULLET3_DIR}/include)
-
 find_package(Vulkan REQUIRED)
-find_package(Bullet REQUIRED PATHS $ENV{BULLET3_DIR})
 
 add_library(log
     modules/log/log.h
@@ -138,7 +133,7 @@ add_library(render
     modules/render/vk/present.h
     modules/render/vk/present.cpp
 )
-target_link_libraries(render scene config geometry algebra event BulletDynamics BulletCollision LinearMath)
+target_link_libraries(render scene config geometry algebra event Jolt)
 
 add_library(image
     modules/image/bmp.cpp
@@ -178,7 +173,7 @@ add_library(scene
     modules/scene/camera.h
     modules/scene/camera.cpp
 )
-target_link_libraries(scene config io image algebra geometry BulletDynamics BulletCollision LinearMath)
+target_link_libraries(scene config io image algebra geometry Jolt)
 
 add_library(event)
 target_sources(event
@@ -213,7 +208,7 @@ target_link_libraries(gl_test PUBLIC
     GL 
     GLU 
     Vulkan::Vulkan 
-    uv BulletDynamics BulletCollision LinearMath
+    uv Jolt
 )
 
 target_link_libraries(vk_test PUBLIC 
@@ -228,7 +223,7 @@ target_link_libraries(vk_test PUBLIC
     GL 
     GLU 
     Vulkan::Vulkan 
-    uv BulletDynamics BulletCollision LinearMath
+    uv Jolt
 )
 
 add_subdirectory(test/wavefront)

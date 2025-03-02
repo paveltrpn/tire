@@ -42,33 +42,6 @@ PhysicsScene::PhysicsScene( const std::filesystem::path &fname ) {
 }
 
 void PhysicsScene::initPhysics() {
-    // collision configuration contains default setup for memory, collision setup. Advanced users
-    // can create their own configuration.
-    collisionConfiguration_ =
-        std::make_unique<btDefaultCollisionConfiguration>();
-
-    // use the default collision dispatcher. For parallel processing you can use a diffent
-    // dispatcher (see Extras/BulletMultiThreaded)
-    dispatcher_ = std::make_unique<btCollisionDispatcher>(
-        collisionConfiguration_.get() );
-
-    // btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
-    overlappingPairCache_ = std::make_unique<btDbvtBroadphase>();
-
-    // the default constraint solver. For parallel processing you can use a different solver (see
-    // Extras/BulletMultiThreaded)
-    solver_ = std::make_unique<btSequentialImpulseConstraintSolver>();
-
-    // debugDraw = new CDebugDraw;
-
-    dynamicsWorld_ = std::make_unique<btDiscreteDynamicsWorld>(
-        dispatcher_.get(), overlappingPairCache_.get(), solver_.get(),
-        collisionConfiguration_.get() );
-
-    // debugDraw->setDebugMode( btIDebugDraw::DBG_DrawWireframe );
-    // dynamicsWorld->setDebugDrawer( debugDraw );
-
-    dynamicsWorld_->setGravity( btVector3( 0, -10, 0 ) );
 }
 
 void PhysicsScene::initScene() {
