@@ -35,13 +35,14 @@ else()
     message(SEND_ERROR "LIBUV_DIR is not set")
 endif()
 
-if (DEFINED ENV{JOLT_PHYSICS_DIR} AND NOT "$ENV{JOLT_PHYSICS_DIR}" STREQUAL "")
-    message("JOLT_PHYSICS_DIR is set to $ENV{JOLT_PHYSICS_DIR}")
-    include_directories($ENV{JOLT_PHYSICS_DIR})
-    link_directories($ENV{JOLT_PHYSICS_DIR}/Build/Linux_Debug)
-else()
-    message(SEND_ERROR "JOLT_PHYSICS_DIR is not set")
-endif()
+# Today is no physics
+# if (DEFINED ENV{JOLT_PHYSICS_DIR} AND NOT "$ENV{JOLT_PHYSICS_DIR}" STREQUAL "")
+#     message("JOLT_PHYSICS_DIR is set to $ENV{JOLT_PHYSICS_DIR}")
+#     include_directories($ENV{JOLT_PHYSICS_DIR})
+#     link_directories($ENV{JOLT_PHYSICS_DIR}/Build/Linux_Release)
+# else()
+#     message(SEND_ERROR "JOLT_PHYSICS_DIR is not set")
+# endif()
 
 find_package(Vulkan REQUIRED)
 
@@ -133,7 +134,7 @@ add_library(render
     modules/render/vk/present.h
     modules/render/vk/present.cpp
 )
-target_link_libraries(render scene config geometry algebra event Jolt)
+target_link_libraries(render scene config geometry algebra event)
 
 add_library(image
     modules/image/bmp.cpp
@@ -168,14 +169,12 @@ add_library(scene
     modules/scene/scene.cpp
     modules/scene/physics_scene.h
     modules/scene/physics_scene.cpp
-    modules/scene/jolt/adapter.h
-    modules/scene/jolt/adapter.cpp
     modules/scene/body.cpp
     modules/scene/body.h
     modules/scene/camera.h
     modules/scene/camera.cpp
 )
-target_link_libraries(scene config io image algebra geometry Jolt)
+target_link_libraries(scene config io image algebra geometry)
 
 add_library(event)
 target_sources(event
@@ -210,7 +209,7 @@ target_link_libraries(gl_test PUBLIC
     GL 
     GLU 
     Vulkan::Vulkan 
-    uv Jolt
+    uv
 )
 
 target_link_libraries(vk_test PUBLIC 
@@ -225,7 +224,7 @@ target_link_libraries(vk_test PUBLIC
     GL 
     GLU 
     Vulkan::Vulkan 
-    uv Jolt
+    uv
 )
 
 add_subdirectory(test/wavefront)

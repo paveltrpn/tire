@@ -1,14 +1,13 @@
 
 #include "scene.h"
 #include "functions.h"
-#include "scene/physics_scene.h"
 
 import config;
 
 namespace tire::gl {
 
 Scene::Scene( const std::filesystem::path &fname )
-    : tire::PhysicsScene{ fname } {
+    : tire::Scene{ fname } {
     const auto nodeListSize = bodyList_.size();
     buffersList_.reserve( nodeListSize );
 

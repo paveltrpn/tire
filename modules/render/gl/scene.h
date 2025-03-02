@@ -10,7 +10,7 @@
 
 namespace tire::gl {
 
-struct Scene final : tire::PhysicsScene {
+struct Scene final : tire::Scene {
     Scene( const std::filesystem::path &fname );
 
     void submit();
