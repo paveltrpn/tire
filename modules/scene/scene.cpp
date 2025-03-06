@@ -6,6 +6,7 @@
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_SCENE_CPP{ true };
 #include "scene.h"
+#include "constants.h"
 
 import config;
 
@@ -40,73 +41,64 @@ Scene::Scene( const std::filesystem::path &fname ) {
 
 void Scene::process() {
     const auto basePath = Config::instance()->getBasePath();
-    if ( scene_.contains( "objects" ) ) {
-        const auto objects = scene_["objects"];
+    if ( scene_.contains( constants::scene::PARAM_OBJECTS ) ) {
+        const auto objects = scene_[constants::scene::PARAM_OBJECTS];
         for ( const auto &item : objects ) {
-            const auto &type = item["type"];
-            const auto &colorName = item["color"];
-            const std::array<float, 3> pivotPosition = item["pivot_position"];
-            const std::array<float, 3> pivotRotation = item["pivot_rotation"];
-            const std::array<float, 3> pivotScale = item["pivot_scale"];
-            const bool useMomentum = item["use_momentum"];
-            const std::array<float, 3> momentum = item["momentum"];
-            const auto textureFile = item["texture_diffuse"];
+            const auto &type = item[constants::scene::PARAM_OBJECT_TYPE];
 
-            if ( type == "box" ) {
+            // Body spatial information
+            const std::array<float, 3> position =
+                item[constants::scene::PARAM_OBJECT_POSITION];
+            const std::array<float, 3> orientaion =
+                item[constants::scene::PARAM_OBJECT_ORIENTATION];
+            const std::array<float, 3> scale =
+                item[constants::scene::PARAM_OBJECT_SCALE];
+            const std::array<float, 3> velosity =
+                item[constants::scene::PARAM_OBJECT_VELOCITY];
+            const std::array<float, 3> torque =
+                item[constants::scene::PARAM_OBJECT_TORQUE];
+
+            // Body material information
+            const auto &albedoColor =
+                item[constants::scene::PARAM_OBJECT_ALBEDO_COLOR];
+            const auto &albedoTextureFile =
+                item[constants::scene::PARAM_OBJECT_ALBEDO_TEXTURE];
+
+            // Body vertecies data
+            auto node = std::make_shared<Body>();
+            if ( type == constants::scene::PARAM_OBJECT_TYPE_BOX ) {
                 auto shapePtr = std::make_shared<BoxData>();
-                auto node = std::make_shared<Body>( shapePtr );
-
-                node->setColor( colorName );
-                node->setUseMomentum( useMomentum );
-                node->setMomentum( { momentum } );
-                node->setPivotScale( { pivotScale } );
-                node->setPivotRotation( { pivotRotation } );
-                node->setPivotOffset( { pivotPosition } );
-
-                node->setTextureImage(
-                    { basePath / "assets" / "textures" / textureFile } );
-
-                bodyList_.push_back( std::move( node ) );
-
+                node->setShapeData( std::move( shapePtr ) );
                 log::debug<DEBUG_OUTPUT_SCENE_CPP>(
-                    "Scene === box added to scene" );
-            } else if ( type == "frame" ) {
+                    "Scene === \"{}\" added to scene",
+                    constants::scene::PARAM_OBJECT_TYPE_BOX );
+            } else if ( type == constants::scene::PARAM_OBJECT_TYPE_FRAME ) {
                 auto shapePtr = std::make_shared<FrameData>();
-                auto node = std::make_shared<Body>( shapePtr );
-
-                node->setColor( colorName );
-                node->setUseMomentum( useMomentum );
-                node->setMomentum( { momentum } );
-                node->setPivotScale( { pivotScale } );
-                node->setPivotRotation( { pivotRotation } );
-                node->setPivotOffset( { pivotPosition } );
-
-                node->setTextureImage(
-                    { basePath / "assets" / "textures" / textureFile } );
-
-                bodyList_.push_back( std::move( node ) );
-
+                node->setShapeData( std::move( shapePtr ) );
                 log::debug<DEBUG_OUTPUT_SCENE_CPP>(
-                    "Scene === frame added to scene" );
-            } else if ( type == "diamond" ) {
+                    "Scene ===  \"{}\" added to scene",
+                    constants::scene::PARAM_OBJECT_TYPE_FRAME );
+            } else if ( type == constants::scene::PARAM_OBJECT_TYPE_DIAMOND ) {
                 auto shapePtr = std::make_shared<DiamondData>();
-                auto node = std::make_shared<Body>( shapePtr );
-
-                node->setColor( colorName );
-                node->setUseMomentum( useMomentum );
-                node->setMomentum( { momentum } );
-                node->setPivotScale( { pivotScale } );
-                node->setPivotRotation( { pivotRotation } );
-                node->setPivotOffset( { pivotPosition } );
-
-                node->setTextureImage(
-                    { basePath / "assets" / "textures" / textureFile } );
-
-                bodyList_.push_back( std::move( node ) );
-
+                node->setShapeData( std::move( shapePtr ) );
                 log::debug<DEBUG_OUTPUT_SCENE_CPP>(
-                    "Scene === diamond added to scene" );
+                    "Scene ===  \"{}\" added to scene",
+                    constants::scene::PARAM_OBJECT_TYPE_DIAMOND );
             }
+
+            // Set body properties
+            node->setPosition( position );
+            node->setOrientation( orientaion );
+            node->setScale( scale );
+            node->setVelocity( velosity );
+            node->setTorque( torque );
+
+            node->setAlbedoColor( albedoColor );
+            node->setAlbedoTextureImage(
+                { basePath / "assets" / "textures" / albedoTextureFile } );
+
+            // Append body to list
+            bodyList_.push_back( std::move( node ) );
         }
     } else {
         throw std::runtime_error( "there is can't be scene without objects!" );

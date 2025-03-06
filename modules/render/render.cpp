@@ -172,11 +172,15 @@ void Render::configureX11() {
     XMapWindow( display_, window_ );
 
     XSelectInput( display_, window_, KeyPressMask | KeyReleaseMask );
+
+    XMoveResizeWindow( display_, window_, posx_, posy_, width_, height_ );
 }
 
 void Render::loop( uv_timer_t *handle ) {
     // Retrive "this" pointer previously saved in uv_handle_t->data member
     auto self = static_cast<Render *>( handle->data );
+
+    // XLib event loop
     while ( XPending( self->display_ ) ) {
         XEvent event;
         XNextEvent( self->display_, &event );

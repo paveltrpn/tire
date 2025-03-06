@@ -20,57 +20,104 @@
 
 namespace tire {
 
-struct Body final : std::enable_shared_from_this<Body> {
-    Body( std::shared_ptr<PolytopeData> body );
+using namespace algebra;
 
-    std::shared_ptr<const Body> asSharedPtr() const;
-    std::shared_ptr<Body> asSharedPtr();
+struct Body final {
+    using float_type = float;
 
+    Body() = default;
+
+    void setShapeData( std::shared_ptr<PolytopeData> data );
+
+    [[nodiscard]]
     size_t verteciesCount() const;
+    [[nodiscard]]
     size_t verteciesArraySize() const;
+    [[nodiscard]]
     size_t normalsArraySize() const;
+    [[nodiscard]]
     size_t texcrdsArraySize() const;
 
     //
     const point3f *verteciesData();
     const normalf *normalsData();
-    const algebra::vector2f *texcrdsData();
+    const vector2f *texcrdsData();
 
     void setBounding( CollisionShape<float> value ) { bounding_ = value; }
     const CollisionShape<float> bounding() { return bounding_; };
 
-    void setColor( const std::string &name ) { color_ = Colorf{ name }; }
-    Colorf color() const { return color_; };
+    void setAlbedoColor( const std::string &name ) {
+        albedoColor_ = Colorf{ name };
+    }
 
-    void setPivotOffset( algebra::vector3f offst );
-    void setPivotRotation( algebra::vector3f rtn );
-    void setPivotScale( algebra::vector3f scl );
-    void setUseMomentum( bool use ) { useMomentum_ = use; }
-    bool useMomentum() { return useMomentum_; }
-    void setMomentum( algebra::vector3f rtn );
+    [[nodiscard]]
+    Colorf albedoColor() const {
+        return albedoColor_;
+    };
 
-    void setTextureImage( const std::string &file );
-    std::pair<int, int> textureSize();
-    const uint8_t *textureData();
+    void setPosition( vector3<float_type> value );
+    void setOrientation( vector3<float_type> value );
+    void setScale( vector3<float_type> value );
+    void setVelocity( vector3<float_type> value );
+    void setTorque( vector3<float_type> value );
 
+    [[nodiscard]]
+    vector3<float_type> position( vector3<float_type> value ) {
+        return position_;
+    }
+
+    [[nodiscard]]
+    vector3<float_type> orientation( vector3<float_type> value ) {
+        return orientation_;
+    }
+
+    [[nodiscard]]
+    vector3<float_type> scale( vector3<float_type> value ) {
+        return scale_;
+    }
+
+    [[nodiscard]]
+    vector3<float_type> velocity( vector3<float_type> value ) {
+        return velocity_;
+    }
+
+    [[nodiscard]]
+    vector3<float_type> torque( vector3<float_type> value ) {
+        return torque_;
+    }
+
+    void setAlbedoTextureImage( const std::string &file );
+    std::pair<int, int> albedoTextureSize();
+    const uint8_t *albedoTextureData();
+
+    // Calculate transformation matrix, apply this
+    // matrix to default geometry data and copy this data
+    // into local buffers
     void applyTransormations();
 
 private:
+    // Default body geometry data.
     std::shared_ptr<PolytopeData> shapeData_{};
+
+    // Buffers for local geometry data. This buffers fill
+    // every frame with geometry data taken from default
+    // shape data and transform according to actual spatial
+    // information
     std::vector<point3f> localVertecies_{};
     std::vector<normalf> localNormals_{};
 
-    CollisionShape<float> bounding_{};
+    CollisionShape<float_type> bounding_{};
 
-    Colorf color_{};
+    // Body spatial information
+    vector3<float_type> position_{};
+    vector3<float_type> orientation_{};
+    vector3<float_type> scale_{};
+    vector3<float_type> velocity_{};
+    vector3<float_type> torque_{};
 
-    algebra::matrix4f offset_{};
-    algebra::matrix4f rotation_{};
-    algebra::matrix4f scale_{};
-    bool useMomentum_{};
-    algebra::matrix4f momentum_{};
-
-    std::unique_ptr<Tga> textureImage_;
+    // Body material information
+    Colorf albedoColor_{};
+    std::unique_ptr<Tga> albedoTextureImage_;
 };
 
 }  // namespace tire

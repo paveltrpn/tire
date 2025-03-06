@@ -16,18 +16,10 @@ static constexpr bool DEBUG_OUTPUT_NODE_CPP{ false };
 
 namespace tire {
 
-Body::Body( std::shared_ptr<PolytopeData> body ) {
-    shapeData_ = std::move( body );
+void Body::setShapeData( std::shared_ptr<PolytopeData> data ) {
+    shapeData_ = std::move( data );
     localVertecies_.reserve( shapeData_->verteciesCount() );
     localNormals_.reserve( shapeData_->verteciesCount() );
-}
-
-std::shared_ptr<const Body> Body::asSharedPtr() const {
-    return shared_from_this();
-}
-
-std::shared_ptr<Body> Body::asSharedPtr() {
-    return shared_from_this();
 }
 
 size_t Body::verteciesCount() const {
@@ -58,49 +50,62 @@ const algebra::vector2f *Body::texcrdsData() {
     return shapeData_->texcrdsData();
 }
 
-void Body::setPivotOffset( algebra::vector3f offst ) {
-    offset_ = algebra::translate( offst.x(), offst.y(), offst.z() );
+void Body::setPosition( vector3<float_type> value ) {
+    position_ = value;
 }
 
-void Body::setPivotRotation( algebra::vector3f rtn ) {
-    rotation_ = algebra::rotate( rtn.x(), rtn.y(), rtn.z() );
+void Body::setOrientation( vector3<float_type> value ) {
+    orientation_ = value;
 }
 
-void Body::setPivotScale( algebra::vector3f scl ) {
-    scale_ = algebra::scale( scl.x(), scl.y(), scl.z() );
+void Body::setScale( vector3<float_type> value ) {
+    scale_ = value;
 }
 
-void Body::setMomentum( algebra::vector3f rtn ) {
-    momentum_ = algebra::rotate( rtn.x(), rtn.y(), rtn.z() );
+void Body::setVelocity( vector3<float_type> value ) {
+    velocity_ = value;
 }
 
-void Body::setTextureImage( const std::string &file ) {
-    textureImage_ = std::make_unique<Tga>( file );
+void Body::setTorque( vector3<float_type> value ) {
+    torque_ = value;
 }
 
-std::pair<int, int> Body::textureSize() {
-    return { textureImage_->widht(), textureImage_->height() };
+void Body::setAlbedoTextureImage( const std::string &file ) {
+    albedoTextureImage_ = std::make_unique<Tga>( file );
 }
 
-const uint8_t *Body::textureData() {
-    return textureImage_->data();
+std::pair<int, int> Body::albedoTextureSize() {
+    return { albedoTextureImage_->widht(), albedoTextureImage_->height() };
+}
+
+const uint8_t *Body::albedoTextureData() {
+    return albedoTextureImage_->data();
 }
 
 void Body::applyTransormations() {
-    if ( useMomentum_ ) {
-        rotation_.multiply( momentum_ );
-    }
+    // Update body spatial parameters
+    orientation_ += torque_;
+    position_ += velocity_;
 
-    // const auto transform = offset_ * totalRotation * scale_;+
+    // Make transformation matrix
+    const auto scale = algebra::scale( scale_.x(), scale_.y(), scale_.z() );
+    const auto rotation =
+        algebra::rotate( orientation_.x(), orientation_.y(), orientation_.z() );
+    const auto offset =
+        algebra::translate( position_.x(), position_.y(), position_.z() );
+
     algebra::matrix4f transform{};
-    transform.multiply( offset_ );
-    transform.multiply( rotation_ );
-    transform.multiply( scale_ );
-    const auto vertecies = shapeData_->vertecies();
-    const auto normals = shapeData_->normals();
-    for ( auto i = 0; i < vertecies.size(); ++i ) {
-        localVertecies_[i] = vertecies[i].transform( transform );
-        localNormals_[i] = normals[i].transform( rotation_ );
+    transform.multiply( offset );
+    transform.multiply( rotation );
+    transform.multiply( scale );
+
+    // Apply transformation matrix to default geometry data,
+    // and copy this data into local buffers.
+    for ( auto i = 0; i < shapeData_->verteciesCount(); ++i ) {
+        auto vertex = shapeData_->vertecies()[i];
+        localVertecies_[i] = vertex.transform( transform );
+        auto normal = shapeData_->normals()[i];
+        localNormals_[i] = normal.transform( rotation );
     }
 }
 

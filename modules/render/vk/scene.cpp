@@ -48,7 +48,7 @@ void Scene::output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
                     VkFence fence ) {
 #define OBJECT 5
     for ( size_t i = 0; i < buffersList_.size(); ++i ) {
-        const auto color = bodyList_[OBJECT]->color().asVector3f();
+        const auto color = bodyList_[OBJECT]->albedoColor().asVector3f();
         cBufs_[imageIndex]->reset( i );
         cBufs_[imageIndex]->prepare( i, currentFramebuffer, camera()->matrix(),
                                      color, buffersList_[OBJECT]->buffer(),

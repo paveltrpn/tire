@@ -92,10 +92,14 @@ std::vector<std::pair<std::string, GLenum>> ShaderStorage::scanForShaderFiles(
     std::vector<std::pair<std::string, GLenum>> retItem;
     for ( auto const &entry :
           std::filesystem::directory_iterator{ shaderFilesPath } ) {
+        // Take only "name" part of filename, i.e. except
+        // extension and path.
         const auto &fileName = entry.path().stem().string();
 
-        // Check if file contains shader file name template
-        if ( fileName.contains( std::format( "gl_{}", name ) ) ) {
+        // Check if file contains shader file name template.
+        // Name template is "gl_{name}_{type}".
+        if ( fileName.contains( std::format( "gl_{}_", name ) ) ) {
+            // Take suffix from name, i.e. _{type}
             const auto suffix = split( fileName, "_" ).back();
 
             // Obtain shader file stage type or throw error

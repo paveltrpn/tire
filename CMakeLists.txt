@@ -167,8 +167,6 @@ add_library(scene
     modules/scene/constants.h
     modules/scene/scene.h
     modules/scene/scene.cpp
-    modules/scene/physics_scene.h
-    modules/scene/physics_scene.cpp
     modules/scene/body.cpp
     modules/scene/body.h
     modules/scene/camera.h

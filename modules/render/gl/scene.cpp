@@ -1,6 +1,9 @@
 
 #include "scene.h"
+#include <GL/gl.h>
+#include <GL/glcorearb.h>
 #include "functions.h"
+#include "render/gl/texture.h"
 
 import config;
 
@@ -25,22 +28,45 @@ Scene::Scene( const std::filesystem::path &fname )
         buffer.release();
         // Store object buffers id's
         buffersList_.push_back( std::move( buffer ) );
+
+        gl::Texture texture{};
+
+        texture.generate();
+        texture.bind();
+        const auto &[tw, th] = bodyList_[i]->albedoTextureSize();
+        texture.load( tw, th, bodyList_[i]->albedoTextureData() );
+
+        texturesList_.push_back( std::move( texture ) );
     }
 
     // Load shaders
     shaderStorage_.add( "flatshade" );
     shaderStorage_.use( "flatshade" );
-    const Colorf lightColor = { 1.0f, 1.0f, 1.0f };
+    const Colorf lightColorFlatshade = { 1.0f, 1.0f, 1.0f };
     shaderStorage_.setVectorUniform(
         "flatshade", "lightcolor",
-        algebra::vector3f{ lightColor.r(), lightColor.g(), lightColor.b() } );
+        algebra::vector3f{ lightColorFlatshade.r(), lightColorFlatshade.g(),
+                           lightColorFlatshade.b() } );
 
     shaderStorage_.setVectorUniform( "flatshade", "lightpos",
                                      algebra::vector3f{ 10.0f, 0.0f, 5.0f } );
 
     // ========================================================================
 
-    shaderStorage_.add( "diffuse_texture" );
+    shaderStorage_.add( "diffuseTexture" );
+
+    // ========================================================================
+
+    shaderStorage_.add( "flatshadeTexture" );
+    shaderStorage_.use( "flatshadeTexture" );
+    const Colorf lightColorShadedTex = { 1.0f, 1.0f, 1.0f };
+    shaderStorage_.setVectorUniform(
+        "flatshadeTexture", "lightcolor",
+        algebra::vector3f{ lightColorShadedTex.r(), lightColorShadedTex.g(),
+                           lightColorShadedTex.b() } );
+
+    shaderStorage_.setVectorUniform( "flatshadeTexture", "lightpos",
+                                     algebra::vector3f{ 10.0f, 0.0f, 5.0f } );
 }
 
 void Scene::submit() {
@@ -54,17 +80,17 @@ void Scene::submit() {
 }
 
 void Scene::draw() {
-    shaderStorage_.use( "flatshade" );
-    shaderStorage_.setMatrixUniform( "flatshade", "view_matrix", GL_FALSE,
-                                     camera()->matrix() );
+    shaderStorage_.use( "flatshadeTexture" );
+    shaderStorage_.setMatrixUniform( "flatshadeTexture", "view_matrix",
+                                     GL_FALSE, camera()->matrix() );
 
     for ( size_t i = 0; auto &buffer : buffersList_ ) {
-        const Colorf bodyColor = bodyList_[i]->color();
+        const Colorf bodyColor = bodyList_[i]->albedoColor();
         shaderStorage_.setVectorUniform(
-            "flatshade", "color",
+            "flatshadeTexture", "color",
             algebra::vector3f{ bodyColor.r(), bodyColor.g(), bodyColor.b() } );
 
-        // glBindTexture( GL_TEXTURE_2D, buffer.texture );
+        texturesList_[i].bind();
         buffer.draw();
         buffer.release();
         ++i;

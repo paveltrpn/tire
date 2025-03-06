@@ -4,6 +4,8 @@
 #include <array>
 #include <GL/gl.h>
 
+#include "../texture.h"
+
 namespace tire::gl {
 
 #define OBJECT_DEFUALT 0
@@ -67,6 +69,7 @@ struct BodyBuffer final {
 private:
     GLuint verteciesCount_{};
 
+    // Body geometry information.
     // glDeleteBuffers() glDeleteVertexArrays() silently ignores 0's and names
     // that do not correspond to existing buffer objects.
     GLuint array_{ OBJECT_DEFUALT };
