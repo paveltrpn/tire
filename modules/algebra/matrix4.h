@@ -275,8 +275,7 @@ requires Algebraic<T> struct matrix4 final {
         ( *this )[15] = 0.0;
 
         if ( far >= std::numeric_limits<value_type>::epsilon() ) {
-            value_type nf;
-            nf = 1.0 / ( far - near );
+            value_type nf{ static_cast<value_type>( 1.0 ) / ( far - near ) };
             ( *this )[10] = -( far + near ) * nf;
             ( *this )[14] = -( 2.0 * far * near ) * nf;
         } else {

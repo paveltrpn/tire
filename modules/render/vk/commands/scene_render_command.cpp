@@ -72,10 +72,12 @@ void SceneRenderCommand::prepare( VkFramebuffer framebuffer,
 
     // Dynamic viewport. No performance penalty.
     // Take out work from pipeline creation.
+    // NOTE: Define negative viewport size to use same projection matrix as
+    // for OpenGL pipeline.
     const VkViewport viewport{ .x = 0.0f,
-                               .y = 0.0f,
+                               .y = static_cast<float>( height_ ),
                                .width = static_cast<float>( width_ ),
-                               .height = static_cast<float>( height_ ),
+                               .height = -static_cast<float>( height_ ),
                                .minDepth = 0.0f,
                                .maxDepth = 1.0f };
     vkCmdSetViewport( command_, 0, 1, &viewport );
