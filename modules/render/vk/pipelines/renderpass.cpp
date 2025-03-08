@@ -17,19 +17,19 @@ void RenderpassSimple::init() {
     colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
-    // Similar to swapchain creation depth format acquire!
-    //  const auto depthFormat = device_->findSupportedFormat(
-    //  { VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT,
-    // VK_FORMAT_D24_UNORM_S8_UINT },
-    // VK_IMAGE_TILING_OPTIMAL,
-    // VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT );
-    const auto depthFormat = VK_FORMAT_D32_SFLOAT;
+    //Similar to swapchain creation depth format acquire!
+    const auto depthFormat = device_->findSupportedFormat(
+        { VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT,
+          VK_FORMAT_D24_UNORM_S8_UINT },
+        VK_IMAGE_TILING_OPTIMAL,
+        VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT );
+    // const auto depthFormat = VK_FORMAT_D32_SFLOAT;
 
     VkAttachmentDescription depthAttachment{};
     depthAttachment.format = depthFormat;
     depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
     depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-    depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+    depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
     depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
     depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
