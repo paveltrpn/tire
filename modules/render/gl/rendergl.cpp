@@ -2,6 +2,7 @@
 
 #include <GL/glx.h>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <iostream>
 #include <format>
@@ -37,10 +38,15 @@ using namespace tire::gl;
 
 RenderGL::RenderGL()
     : Render{} {
-    checkGlxVersion();
-    initGlxExtensions();
-    configureGl();
-    gl::init();
+    try {
+        checkGlxVersion();
+        initGlxExtensions();
+        configureGl();
+        gl::init();
+    } catch ( std::runtime_error &e ) {
+        throw std::runtime_error( std::format( "{}", e.what() ) );
+    }
+
     setSwapInterval( 1 );
 
     screenString_ =

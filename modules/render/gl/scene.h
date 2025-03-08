@@ -19,6 +19,7 @@ struct Scene final : tire::Scene {
 private:
     std::vector<BodyBuffer> buffersList_;
     std::vector<gl::Texture> texturesList_{};
+
     gl::ShaderStorage shaderStorage_{};
 };
 
