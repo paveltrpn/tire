@@ -6,13 +6,15 @@
 #include <vulkan/vulkan_core.h>
 
 #include "device.h"
+#include "render/vk/command_pool.h"
 #include "surface.h"
 #include "pipelines/pipeline.h"
 
 namespace tire::vk {
 
 struct Swapchain final {
-    Swapchain( const vk::Device *device, const vk::Surface *surface );
+    Swapchain( const vk::Device *device, const vk::Surface *surface,
+               const vk::CommandPool *commandPool );
 
     Swapchain( const Swapchain &other ) = delete;
     Swapchain( Swapchain &&other ) = delete;
@@ -42,6 +44,7 @@ struct Swapchain final {
 private:
     const vk::Device *device_{};
     const vk::Surface *surface_{};
+    const vk::CommandPool *commandPool_{};
 
     uint32_t swapchainImageCount_{};
 
@@ -52,6 +55,11 @@ private:
     std::vector<VkImageView> swapChainImageViews_{};
     std::vector<VkFramebuffer> framebuffers_{};
     VkFormat swapChainImageFormat_{};
+
+    // Depth buffer
+    VkImage depthImage_;
+    VkDeviceMemory depthImageMemory_;
+    VkImageView depthImageView_;
 
     // Application wide viewport render area size, use
     // it anywhere when viewport size is needed

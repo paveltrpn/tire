@@ -1,4 +1,5 @@
 
+#include <cstddef>
 #include "pipeline.h"
 #include "algebra/vector3.h"
 #include "algebra/matrix4.h"
@@ -127,6 +128,19 @@ void PiplineVertexBuffer::initPipeline(
         .module = shaderStorage_->get<ShaderStageType::FRAGMENT>(),
         .pName = "main" };
 
+    VkPipelineDepthStencilStateCreateInfo depthStencil{};
+    depthStencil.sType =
+        VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+    depthStencil.depthTestEnable = VK_TRUE;
+    depthStencil.depthWriteEnable = VK_TRUE;
+    depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+    depthStencil.depthBoundsTestEnable = VK_FALSE;
+    depthStencil.minDepthBounds = 0.0f;
+    depthStencil.maxDepthBounds = 1.0f;
+    depthStencil.stencilTestEnable = VK_FALSE;
+    depthStencil.front = {};
+    depthStencil.back = {};
+
     // NOTE: Will vulkan ignore nullptr shader stages?
     const std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages{
         vertShaderStage, fragShaderStage };
@@ -140,7 +154,7 @@ void PiplineVertexBuffer::initPipeline(
         .pViewportState = nullptr,
         .pRasterizationState = &rasterizer,
         .pMultisampleState = &multisampling,
-        .pDepthStencilState = nullptr,
+        .pDepthStencilState = &depthStencil,
         .pColorBlendState = &colorBlending,
         .pDynamicState = nullptr,
         .layout = layout_,

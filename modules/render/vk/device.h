@@ -44,6 +44,9 @@ struct Device final {
 
     [[nodiscard]] uint32_t memoryRequirements(
         uint32_t typeFilter, VkMemoryPropertyFlags properties ) const;
+    [[nodiscard]] VkFormat findSupportedFormat(
+        const std::vector<VkFormat> &candidates, VkImageTiling tiling,
+        VkFormatFeatureFlags features ) const;
 
     void pickAndCreateDevice();
 

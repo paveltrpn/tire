@@ -31,8 +31,10 @@ RenderVK::RenderVK()
         const auto configHandle = Config::instance();
         const auto basePath = configHandle->getBasePath().string();
 
-        swapchain_ =
-            std::make_unique<vk::Swapchain>( device_.get(), surface_.get() );
+        commandPool_ = std::make_unique<vk::CommandPool>( device_.get() );
+
+        swapchain_ = std::make_unique<vk::Swapchain>(
+            device_.get(), surface_.get(), commandPool_.get() );
         swapchain_->createSwapchain();
         swapchain_->createImageViews();
 
@@ -43,8 +45,6 @@ RenderVK::RenderVK()
               basePath + "/assets/shaders/vk_simple_box_FRAGMENT.spv" } );
 
         swapchain_->createFramebuffers( piplineMatrixReady_.get() );
-
-        commandPool_ = std::make_unique<vk::CommandPool>( device_.get() );
 
         present_ =
             std::make_unique<vk::Present>( device_.get(), swapchain_.get() );

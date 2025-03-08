@@ -39,7 +39,7 @@ protected:
     VkCommandBuffer command_{ VK_NULL_HANDLE };
 
     // Background color value
-    VkClearValue clearColor_{};
+    std::array<VkClearValue, 2> clearValues_{};
 
     uint32_t width_{};
     uint32_t height_{};

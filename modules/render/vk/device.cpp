@@ -414,6 +414,26 @@ uint32_t Device::memoryRequirements( uint32_t typeFilter,
     throw std::runtime_error( "failed to find suitable memory type!" );
 }
 
+VkFormat Device::findSupportedFormat( const std::vector<VkFormat> &candidates,
+                                      VkImageTiling tiling,
+                                      VkFormatFeatureFlags features ) const {
+    for ( VkFormat format : candidates ) {
+        VkFormatProperties props;
+        vkGetPhysicalDeviceFormatProperties(
+            physicalDevices_[pickedPhysicalDeviceId_].device, format, &props );
+
+        if ( tiling == VK_IMAGE_TILING_LINEAR &&
+             ( props.linearTilingFeatures & features ) == features ) {
+            return format;
+        } else if ( tiling == VK_IMAGE_TILING_OPTIMAL &&
+                    ( props.optimalTilingFeatures & features ) == features ) {
+            return format;
+        }
+    }
+
+    throw std::runtime_error( "failed to find supported format!" );
+}
+
 void Device::displayRenderInfo() {
     for ( size_t i = 0; i < physicalDevices_.size(); ++i ) {
         displayPhysicalDeviceProperties( i );

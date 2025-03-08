@@ -31,8 +31,8 @@ SceneRenderCommand::SceneRenderCommand( const vk::Device *device,
     };
 
     const auto cc = Colorf{ "darkblue" };
-    clearColor_.color = { cc.r(), cc.g(), cc.b(), 1.0f },
-    clearColor_.depthStencil = { .depth = 0.0f, .stencil = 0 };
+    clearValues_[0].color = { { cc.r(), cc.g(), cc.b(), 1.0f } };
+    clearValues_[1].depthStencil = { .depth = 0.0f, .stencil = 0 };
 
     width_ = device_->extent().width;
     height_ = device_->extent().height;
@@ -62,8 +62,8 @@ void SceneRenderCommand::prepare( VkFramebuffer framebuffer,
         .framebuffer = framebuffer,
         .renderArea = { .offset = { .x = 0, .y = 0 },
                         .extent = { device_->extent() } },
-        .clearValueCount = 1,
-        .pClearValues = &clearColor_ };
+        .clearValueCount = static_cast<uint32_t>( clearValues_.size() ),
+        .pClearValues = clearValues_.data() };
 
     vkCmdBeginRenderPass( command_, &renderPassInfo,
                           VK_SUBPASS_CONTENTS_INLINE );
