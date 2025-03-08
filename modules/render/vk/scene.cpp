@@ -46,13 +46,12 @@ void Scene::submit() {
 void Scene::output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
                     VkSemaphore waitSemaphore, VkSemaphore signalSemaphore,
                     VkFence fence ) {
-#define OBJECT 5
-    for ( size_t i = 0; i < buffersList_.size(); ++i ) {
-        const auto color = bodyList_[OBJECT]->albedoColor().asVector3f();
-        cBufs_[imageIndex]->reset( i );
-        cBufs_[imageIndex]->prepare( i, currentFramebuffer, camera()->matrix(),
-                                     color, buffersList_[OBJECT]->buffer(),
-                                     buffersList_[OBJECT]->size() );
+    cBufs_[imageIndex]->reset();
+    cBufs_[imageIndex]->prepare( currentFramebuffer, camera()->matrix() );
+    for ( size_t object = 0; object < buffersList_.size(); ++object ) {
+        const auto color = bodyList_[object]->albedoColor().asVector3f();
+        cBufs_[imageIndex]->bindBuffer( color, buffersList_[object]->buffer(),
+                                        buffersList_[object]->size() );
     }
     cBufs_[imageIndex]->submit( waitSemaphore, signalSemaphore, fence );
 }

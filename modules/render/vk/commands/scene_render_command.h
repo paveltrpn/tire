@@ -23,12 +23,9 @@ struct SceneRenderCommand final {
     ~SceneRenderCommand() { clean(); }
 
     void clean();
-
-    void reset( size_t id );
-
-    void prepare( size_t id, VkFramebuffer framebuffer, algebra::matrix4f view,
-                  algebra::vector3f color, VkBuffer vbo, uint32_t vCount );
-
+    void reset();
+    void prepare( VkFramebuffer framebuffer, algebra::matrix4f view );
+    void bindBuffer( algebra::vector3f color, VkBuffer vbo, uint32_t vCount );
     void submit( VkSemaphore waitSemaphores, VkSemaphore signalSemaphores,
                  VkFence fence );
 
@@ -37,7 +34,7 @@ protected:
     const vk::Device *device_{};
     const vk::Pipeline *pipeline_{};
     const vk::CommandPool *pool_{};
-    std::vector<VkCommandBuffer> commandsRange_{ VK_NULL_HANDLE };
+    VkCommandBuffer command_{ VK_NULL_HANDLE };
     VkClearValue clearColor_{};
     uint32_t width_{};
     uint32_t height_{};
