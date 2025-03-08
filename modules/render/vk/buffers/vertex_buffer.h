@@ -17,12 +17,13 @@ template <std::floating_point T>
 struct VertexBuffer final {
     using value_type = T;
 
-    VertexBuffer( const vk::Device *device, size_t size )
+    VertexBuffer( const vk::Device *device, size_t verteciesCount )
         : device_{ device }
-        , size_{ size } {
+        , verteciesCount_{ verteciesCount } {
         VkBufferCreateInfo bufferInfo{};
         bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-        bufferInfo.size = sizeof( value_type ) * size_;
+        // Buffer size = sizeof(floating type) * vertecies count * three float coordinate
+        bufferInfo.size = sizeof( value_type ) * verteciesCount_ * 3;
         bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
         bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
@@ -54,15 +55,16 @@ struct VertexBuffer final {
 
     void populate( const void *data ) {
         void *mapAddress;
-        vkMapMemory( device_->handle(), bufferMemory_, 0, size_, 0,
+        vkMapMemory( device_->handle(), bufferMemory_, 0,
+                     sizeof( value_type ) * verteciesCount_ * 3, 0,
                      &mapAddress );
-        memcpy( mapAddress, data, size_ );
+        memcpy( mapAddress, data, sizeof( value_type ) * verteciesCount_ * 3 );
         vkUnmapMemory( device_->handle(), bufferMemory_ );
     }
 
     VkBuffer buffer() { return buffer_; };
     VkDeviceMemory bufferMemory() { return bufferMemory_; };
-    size_t size() { return size_; }
+    size_t verteciesCount() { return verteciesCount_; }
 
 private:
     void clean() {
@@ -75,7 +77,7 @@ private:
     VkBuffer buffer_{ VK_NULL_HANDLE };
     VkDeviceMemory bufferMemory_{ VK_NULL_HANDLE };
 
-    size_t size_{};
+    size_t verteciesCount_{};
 };
 
 }  // namespace tire::vk

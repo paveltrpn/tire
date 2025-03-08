@@ -3,6 +3,7 @@
 #include "pipeline.h"
 #include "algebra/vector3.h"
 #include "algebra/matrix4.h"
+#include "vulkan/vulkan_core.h"
 
 namespace tire::vk {
 
@@ -12,6 +13,7 @@ void PiplineVertexBuffer::initPipeline(
     bindingDescriptions[0].stride = sizeof( algebra::vector3f );
     bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
     bindingDescriptions[0].binding = 0;
+
     bindingDescriptions[1].stride = sizeof( algebra::vector3f );
     bindingDescriptions[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
     bindingDescriptions[1].binding = 0;
@@ -21,7 +23,8 @@ void PiplineVertexBuffer::initPipeline(
     attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
     attributeDescriptions[0].offset = 0;
     attributeDescriptions[0].location = 0;
-    attributeDescriptions[1].binding = 1;
+
+    attributeDescriptions[1].binding = 0;
     attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
     attributeDescriptions[1].offset = 0;
     attributeDescriptions[1].location = 1;
@@ -128,15 +131,19 @@ void PiplineVertexBuffer::initPipeline(
         .module = shaderStorage_->get<ShaderStageType::FRAGMENT>(),
         .pName = "main" };
 
+    // ====================================================================
+    // ============= DEPTH BUFER ==========================================
+    // ====================================================================
     VkPipelineDepthStencilStateCreateInfo depthStencil{};
     depthStencil.sType =
         VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-    depthStencil.depthTestEnable = VK_TRUE;
+    depthStencil.depthTestEnable = VK_FALSE;
     depthStencil.depthWriteEnable = VK_TRUE;
     depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+    // depthStencil.depthCompareOp = VK_COMPARE_OP_GREATER;
     depthStencil.depthBoundsTestEnable = VK_FALSE;
-    depthStencil.minDepthBounds = 0.0f;
-    depthStencil.maxDepthBounds = 1.0f;
+    // depthStencil.minDepthBounds = 0.0f;
+    // depthStencil.maxDepthBounds = 1.0f;
     depthStencil.stencilTestEnable = VK_FALSE;
     depthStencil.front = {};
     depthStencil.back = {};
@@ -155,6 +162,7 @@ void PiplineVertexBuffer::initPipeline(
         .pRasterizationState = &rasterizer,
         .pMultisampleState = &multisampling,
         .pDepthStencilState = &depthStencil,
+        // .pDepthStencilState = nullptr,
         .pColorBlendState = &colorBlending,
         .pDynamicState = nullptr,
         .layout = layout_,

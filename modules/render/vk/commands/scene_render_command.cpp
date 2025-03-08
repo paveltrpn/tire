@@ -30,6 +30,8 @@ SceneRenderCommand::SceneRenderCommand( const vk::Device *device,
             "vk::SceneRenderCommand === buffer created!" );
     };
 
+    // Note that the order of clearValues should be identical to the order of your
+    // attachments
     const auto cc = Colorf{ "darkblue" };
     clearValues_[0].color = { { cc.r(), cc.g(), cc.b(), 1.0f } };
     clearValues_[1].depthStencil = { .depth = 0.0f, .stencil = 0 };

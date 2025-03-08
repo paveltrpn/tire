@@ -252,7 +252,9 @@ void Swapchain::createSwapchain() {
 
     swapChainImageFormat_ = surfaceFormat.format;
 
+    //
     // Depth image cration
+    //
     auto createImage = [this]( uint32_t width, uint32_t height, VkFormat format,
                                VkImageTiling tiling, VkImageUsageFlags usage,
                                VkMemoryPropertyFlags properties, VkImage &image,
@@ -292,14 +294,18 @@ void Swapchain::createSwapchain() {
             throw std::runtime_error( "failed to allocate image memory!" );
         }
 
-        vkBindImageMemory( device_->handle(), image, imageMemory, 0 );
+        if ( vkBindImageMemory( device_->handle(), image, imageMemory, 0 ) !=
+             VK_SUCCESS ) {
+            throw std::runtime_error( "failed to bind image!" );
+        }
     };
 
-    const auto depthFormat = device_->findSupportedFormat(
-        { VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT,
-          VK_FORMAT_D24_UNORM_S8_UINT },
-        VK_IMAGE_TILING_OPTIMAL,
-        VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT );
+    //  const auto depthFormat = device_->findSupportedFormat(
+    //  { VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT,
+    // VK_FORMAT_D24_UNORM_S8_UINT },
+    // VK_IMAGE_TILING_OPTIMAL,
+    // VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT );
+    const auto depthFormat = VK_FORMAT_D32_SFLOAT;
 
     createImage(
         swapChainExtent_.width, swapChainExtent_.height, depthFormat,
@@ -332,9 +338,9 @@ void Swapchain::createSwapchain() {
     depthImageView_ =
         createImageView( depthImage_, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT );
 
-    transitionImageLayout( device_, commandPool_, depthImage_, depthFormat,
-                           VK_IMAGE_LAYOUT_UNDEFINED,
-                           VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL );
+    // transitionImageLayout( device_, commandPool_, depthImage_, depthFormat,
+    //    VK_IMAGE_LAYOUT_UNDEFINED,
+    //    VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL );
 }
 
 void Swapchain::createImageViews() {

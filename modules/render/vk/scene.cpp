@@ -28,8 +28,7 @@ Scene::Scene( const std::filesystem::path &fname, const vk::Device *device,
     buffersList_.reserve( nodeListSize );
     for ( size_t i{}; i < nodeListSize; ++i ) {
         auto buf = std::make_shared<vk::VertexBuffer<float>>(
-            device_, bodyList_[i]->verteciesArraySize() );
-
+            device_, bodyList_[i]->verteciesCount() );
         buffersList_.push_back( std::move( buf ) );
     }
 }
@@ -55,8 +54,9 @@ void Scene::output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
     // Record draw commands for all scene objects in command buffer
     for ( size_t object = 0; object < buffersList_.size(); ++object ) {
         const auto color = bodyList_[object]->albedoColor().asVector3f();
-        cBufs_[imageIndex]->bindBuffer( color, buffersList_[object]->buffer(),
-                                        buffersList_[object]->size() );
+        cBufs_[imageIndex]->bindBuffer(
+            color, buffersList_[object]->buffer(),
+            buffersList_[object]->verteciesCount() );
     }
 
     // Finalize command recording and submit command
