@@ -104,7 +104,9 @@ void PiplineVertexBuffer::initPipeline(
         .blendConstants = { 0.0f, 0.0f, 0.0f, 0.0f } };
 
     const std::vector<VkDynamicState> dynamicStates = {
-        VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_LINE_WIDTH };
+        VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR,
+        VK_DYNAMIC_STATE_LINE_WIDTH };
+
     const VkPipelineDynamicStateCreateInfo dynamicState{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
         .pNext = nullptr,
@@ -140,13 +142,18 @@ void PiplineVertexBuffer::initPipeline(
     depthStencil.depthTestEnable = VK_FALSE;
     depthStencil.depthWriteEnable = VK_TRUE;
     depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
-    // depthStencil.depthCompareOp = VK_COMPARE_OP_GREATER;
+    //depthStencil.depthCompareOp = VK_COMPARE_OP_GREATER;
     depthStencil.depthBoundsTestEnable = VK_FALSE;
-    // depthStencil.minDepthBounds = 0.0f;
-    // depthStencil.maxDepthBounds = 1.0f;
+    depthStencil.minDepthBounds = 0.0f;
+    depthStencil.maxDepthBounds = 1.0f;
     depthStencil.stencilTestEnable = VK_FALSE;
     depthStencil.front = {};
     depthStencil.back = {};
+
+    VkPipelineViewportStateCreateInfo viewportState{};
+    viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+    viewportState.viewportCount = 1;
+    viewportState.scissorCount = 1;
 
     // NOTE: Will vulkan ignore nullptr shader stages?
     const std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages{
@@ -158,13 +165,12 @@ void PiplineVertexBuffer::initPipeline(
         .pStages = shaderStages.data(),
         .pVertexInputState = &vertexInput,
         .pInputAssemblyState = &inputAssembly,
-        .pViewportState = nullptr,
+        .pViewportState = &viewportState,
         .pRasterizationState = &rasterizer,
         .pMultisampleState = &multisampling,
         .pDepthStencilState = &depthStencil,
-        // .pDepthStencilState = nullptr,
         .pColorBlendState = &colorBlending,
-        .pDynamicState = nullptr,
+        .pDynamicState = &dynamicState,
         .layout = layout_,
         .renderPass = renderpass_->handle(),
         .subpass = 0,
