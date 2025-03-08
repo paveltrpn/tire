@@ -46,13 +46,20 @@ void Scene::submit() {
 void Scene::output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
                     VkSemaphore waitSemaphore, VkSemaphore signalSemaphore,
                     VkFence fence ) {
+    // Reset scene command buffer
     cBufs_[imageIndex]->reset();
+
+    // Initialize scene command buffer
     cBufs_[imageIndex]->prepare( currentFramebuffer, camera()->matrix() );
+
+    // Record draw commands for all scene objects in command buffer
     for ( size_t object = 0; object < buffersList_.size(); ++object ) {
         const auto color = bodyList_[object]->albedoColor().asVector3f();
         cBufs_[imageIndex]->bindBuffer( color, buffersList_[object]->buffer(),
                                         buffersList_[object]->size() );
     }
+
+    // Finalize command recording and submit command
     cBufs_[imageIndex]->submit( waitSemaphore, signalSemaphore, fence );
 }
 

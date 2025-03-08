@@ -34,8 +34,13 @@ protected:
     const vk::Device *device_{};
     const vk::Pipeline *pipeline_{};
     const vk::CommandPool *pool_{};
+
+    // One command draw all objects
     VkCommandBuffer command_{ VK_NULL_HANDLE };
+
+    // Background color value
     VkClearValue clearColor_{};
+
     uint32_t width_{};
     uint32_t height_{};
 };
