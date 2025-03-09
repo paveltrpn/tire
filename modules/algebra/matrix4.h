@@ -290,21 +290,43 @@ requires Algebraic<T> struct matrix4 final {
         const auto degFov = degToRad( fov );
         value_type tanFovHalf =
             std::tan( static_cast<value_type>( 0.5 ) * degFov );
+        value_type focal = static_cast<value_type>( 1.0 ) / tanFovHalf;
+        value_type A = near / ( far - near );
+        value_type B = far * A;
 
-        ( *this )[0] = 1.0 / ( tanFovHalf * aspect );
+        ( *this )[0] = focal / aspect;
         ( *this )[1] = 0.0;
         ( *this )[2] = 0.0;
         ( *this )[3] = 0.0;
         ( *this )[4] = 0.0;
-        ( *this )[5] = 0.0;
-        ( *this )[6] = -1.0 / tanFovHalf;
+        ( *this )[5] = focal;
+        ( *this )[6] = 0.0;
         ( *this )[7] = 0.0;
         ( *this )[8] = 0.0;
-        ( *this )[9] = far / ( far - near );
-        ( *this )[11] = ( near * far ) / ( near - far );
+        ( *this )[9] = 0.0;
+        ( *this )[10] = A;
+        ( *this )[11] = B;
         ( *this )[12] = 0.0;
-        ( *this )[13] = 1.0;
+        ( *this )[13] = 0.0;
+        ( *this )[14] = -1.0;
         ( *this )[15] = 0.0;
+
+        // ( *this )[0] = ( aspect ) / ( tanFovHalf );
+        // ( *this )[1] = 0.0;
+        // ( *this )[2] = 0.0;
+        // ( *this )[3] = 0.0;
+        // ( *this )[4] = 0.0;
+        // ( *this )[5] = focal;
+        // ( *this )[6] = 0.0;
+        // ( *this )[7] = 0.0;
+        // ( *this )[8] = 0.0;
+        // ( *this )[9] = 0.0;
+        // ( *this )[10] = far / ( far - near );
+        // ( *this )[11] = -( near * far ) / ( far - near );
+        // ( *this )[12] = 0.0;
+        // ( *this )[13] = 0.0;
+        // ( *this )[14] = 1.0;
+        // ( *this )[15] = 0.0;
     }
 
     void lookAt( const vector3<value_type> &eye,

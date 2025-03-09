@@ -19,7 +19,7 @@ Scene::Scene( const std::filesystem::path &fname )
 
         buffer.generate();
         buffer.bind();
-        buffer.bindVertexData( bodyList_[i]->verteciesArraySize(),
+        buffer.bindVertexData( bodyList_[i]->verteciesCount(),
                                bodyList_[i]->verteciesData() );
         buffer.bindNormalData( bodyList_[i]->normalsArraySize(),
                                bodyList_[i]->normalsData() );
@@ -71,10 +71,12 @@ Scene::Scene( const std::filesystem::path &fname )
 
 void Scene::submit() {
     for ( size_t i = 0; auto &buffer : buffersList_ ) {
-        buffer.updateVertexData( bodyList_[i]->verteciesArraySize(),
-                                 bodyList_[i]->verteciesData() );
-        buffer.updateNormalsData( bodyList_[i]->normalsArraySize(),
-                                  bodyList_[i]->normalsData() );
+        buffer.updateVertexData(
+            bodyList_[i]->verteciesCount() * 3 * sizeof( float ),
+            bodyList_[i]->verteciesData() );
+        buffer.updateNormalsData(
+            bodyList_[i]->verteciesCount() * 3 * sizeof( float ),
+            bodyList_[i]->normalsData() );
         ++i;
     }
 }

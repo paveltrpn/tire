@@ -20,26 +20,29 @@ void BodyBuffer::bind() {
     glBindVertexArray( array_ );
 }
 
-void BodyBuffer::bindVertexData( long size, const void *data ) {
+void BodyBuffer::bindVertexData( long verteciesCount, const void *data ) {
     glEnableVertexAttribArray( 0 );
     glBindBuffer( GL_ARRAY_BUFFER, buffers_[VERTEX_BUFFER] );
-    glBufferData( GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, verteciesCount * 3 * sizeof( float ), data,
+                  GL_DYNAMIC_DRAW );
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
 
-    verteciesCount_ = size;
+    verteciesCount_ = verteciesCount;
 }
 
-void BodyBuffer::bindNormalData( long size, const void *data ) {
+void BodyBuffer::bindNormalData( long verteciesCount, const void *data ) {
     glEnableVertexAttribArray( 1 );
     glBindBuffer( GL_ARRAY_BUFFER, buffers_[NORMAL_BUFFER] );
-    glBufferData( GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, verteciesCount * 3 * sizeof( float ), data,
+                  GL_DYNAMIC_DRAW );
     glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
 }
 
-void BodyBuffer::bindTexcrdData( long size, const void *data ) {
+void BodyBuffer::bindTexcrdData( long verteciesCount, const void *data ) {
     glEnableVertexAttribArray( 2 );
     glBindBuffer( GL_ARRAY_BUFFER, buffers_[TEXCRD_BUFFER] );
-    glBufferData( GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, verteciesCount * 2 * sizeof( float ), data,
+                  GL_STATIC_DRAW );
     glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 0, nullptr );
 }
 

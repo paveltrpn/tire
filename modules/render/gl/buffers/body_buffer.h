@@ -55,9 +55,9 @@ struct BodyBuffer final {
     void clean();
 
     void bind();
-    void bindVertexData( long size, const void *data );
-    void bindNormalData( long size, const void *data );
-    void bindTexcrdData( long size, const void *data );
+    void bindVertexData( long verteciesCount, const void *data );
+    void bindNormalData( long verteciesCount, const void *data );
+    void bindTexcrdData( long verteciesCount, const void *data );
 
     void updateVertexData( long size, const void *data );
     void updateNormalsData( long size, const void *data );
