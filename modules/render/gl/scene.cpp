@@ -4,6 +4,7 @@
 #include <GL/glcorearb.h>
 #include "functions.h"
 #include "render/gl/texture.h"
+#include "scene/camera.h"
 
 import config;
 
@@ -84,7 +85,8 @@ void Scene::submit() {
 void Scene::draw() {
     shaderStorage_.use( "flatshadeTexture" );
     shaderStorage_.setMatrixUniform( "flatshadeTexture", "view_matrix",
-                                     GL_FALSE, camera()->matrix() );
+                                     GL_FALSE,
+                                     camera()->matrix<tire::OpenGLTag>() );
 
     for ( size_t i = 0; auto &buffer : buffersList_ ) {
         const Colorf bodyColor = bodyList_[i]->albedoColor();

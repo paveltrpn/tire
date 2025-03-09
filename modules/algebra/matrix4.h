@@ -42,11 +42,15 @@ requires Algebraic<T> struct matrix4 final {
 
     // row-wise indexing operator
     [[nodiscard]] reference operator[]( size_t i, size_t j ) {
-        return std::mdspan( data_.data(), 4, 4 )[i, j];
+        // NOTE: explicit std::mdspan template arguments!!!
+        return std::mdspan<value_type, std::extents<size_t, 4, 4>>(
+            data_.data(), 4, 4 )[i, j];
     }
 
     [[nodiscard]] const_reference operator[]( size_t i, size_t j ) const {
-        return std::mdspan( data_.data(), 4, 4 )[i, j];
+        // NOTE: explicit std::mdspan template arguments!!!
+        return std::mdspan<const value_type, std::extents<size_t, 4, 4>>(
+            data_.data(), 4, 4 )[i, j];
     }
 
     [[nodiscard]] reference operator[]( size_t index ) { return data_[index]; }
@@ -257,11 +261,11 @@ requires Algebraic<T> struct matrix4 final {
     void perspective( value_type fov, value_type aspect, value_type near,
                       value_type far ) {
         const auto radFov = degToRad( fov );
-        // value_type tanFovHalf =
-        // std::cos( static_cast<value_type>( 0.5 ) * radFov ) /
-        // std::sin( static_cast<value_type>( 0.5 ) * radFov );
         value_type tanFovHalf =
-            std::tan( static_cast<value_type>( 0.5 ) * radFov );
+            std::cos( static_cast<value_type>( 0.5 ) * radFov ) /
+            std::sin( static_cast<value_type>( 0.5 ) * radFov );
+        // value_type tanFovHalf =
+        // std::tan( static_cast<value_type>( 0.5 ) * radFov );
 
         ( *this )[0] = tanFovHalf / aspect;
         ( *this )[1] = 0.0;

@@ -4,6 +4,7 @@
 #include "algebra/vector4.h"
 #include "render/vk/commands/scene_render_command.h"
 #include "rendervk.h"
+#include "scene/camera.h"
 #include "vulkan/vulkan_core.h"
 #include "scene.h"
 
@@ -49,7 +50,8 @@ void Scene::output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
     cBufs_[imageIndex]->reset();
 
     // Initialize scene command buffer
-    cBufs_[imageIndex]->prepare( currentFramebuffer, camera()->matrix() );
+    cBufs_[imageIndex]->prepare( currentFramebuffer,
+                                 camera()->matrix<tire::VulkanTag>() );
 
     // Record draw commands for all scene objects in command buffer
     for ( size_t object = 0; object < buffersList_.size(); ++object ) {

@@ -21,7 +21,7 @@ struct Scene {
     virtual ~Scene() = default;
 
     void setActiveCamera( size_t id ) { activeCamera_ = id; };
-    [[nodiscard]] std::shared_ptr<Camera> camera() const {
+    [[nodiscard]] std::shared_ptr<Perspective> camera() const {
         return cameras_[activeCamera_];
     };
 
@@ -37,7 +37,7 @@ protected:
     float frameDuration_{};
 
     std::vector<std::shared_ptr<Body>> bodyList_{};
-    std::vector<std::shared_ptr<Camera>> cameras_{};
+    std::vector<std::shared_ptr<Perspective>> cameras_{};
 
     int activeCamera_{ 0 };
 };
