@@ -1,5 +1,6 @@
 
 #include "camera.h"
+#include "algebra/matrix4.h"
 
 namespace tire {
 

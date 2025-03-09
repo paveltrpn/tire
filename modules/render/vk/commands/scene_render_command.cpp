@@ -74,10 +74,16 @@ void SceneRenderCommand::prepare( VkFramebuffer framebuffer,
     // Take out work from pipeline creation.
     // NOTE: Define negative viewport size to use same projection matrix as
     // for OpenGL pipeline.
+    // const VkViewport viewport{ .x = 0.0f,
+    //    .y = static_cast<float>( height_ ),
+    //    .width = static_cast<float>( width_ ),
+    //    .height = -static_cast<float>( height_ ),
+    //    .minDepth = 0.0f,
+    //    .maxDepth = 1.0f };
     const VkViewport viewport{ .x = 0.0f,
-                               .y = static_cast<float>( height_ ),
+                               .y = 0.0f,
                                .width = static_cast<float>( width_ ),
-                               .height = -static_cast<float>( height_ ),
+                               .height = static_cast<float>( height_ ),
                                .minDepth = 0.0f,
                                .maxDepth = 1.0f };
     vkCmdSetViewport( command_, 0, 1, &viewport );
@@ -121,14 +127,15 @@ void SceneRenderCommand::submit( VkSemaphore waitSemaphores,
         .waitSemaphoreCount = 1,
         .pWaitSemaphores = waitsems.data(),
         .pWaitDstStageMask = waitStages.data(),
-        .commandBufferCount = static_cast<uint32_t>( 1 ),
+        .commandBufferCount = static_cast<uint32_t>( commands.size() ),
         .pCommandBuffers = commands.data(),
         .signalSemaphoreCount = 1,
         .pSignalSemaphores = sgnlsems.data() };
 
     // NOTE: omit return code check
-    vkQueueSubmit( device_->graphicsQueue(), static_cast<uint32_t>( 1 ),
-                   &submitInfo, fence );
+    vkQueueSubmit( device_->graphicsQueue(),
+                   static_cast<uint32_t>( commands.size() ), &submitInfo,
+                   fence );
 }
 
 }  // namespace tire::vk

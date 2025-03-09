@@ -254,10 +254,11 @@ requires Algebraic<T> struct matrix4 final {
         ( *this )[15] = 1.0;
     }
 
-    void perspective( value_type fovy, value_type aspect, value_type near,
+    void perspective( value_type fov, value_type aspect, value_type near,
                       value_type far ) {
-        value_type h = std::cos( static_cast<value_type>( 0.5 ) * fovy ) /
-                       std::sin( static_cast<value_type>( 0.5 ) * fovy );
+        const auto degFov = degToRad( fov );
+        value_type h = std::cos( static_cast<value_type>( 0.5 ) * degFov ) /
+                       std::sin( static_cast<value_type>( 0.5 ) * degFov );
 
         ( *this )[0] = h / aspect;
         ( *this )[1] = 0.0;
@@ -282,6 +283,28 @@ requires Algebraic<T> struct matrix4 final {
             ( *this )[10] = -1.0;
             ( *this )[14] = -2.0 * near;
         }
+    }
+
+    void vperspective( value_type fov, value_type aspect, value_type near,
+                       value_type far ) {
+        const auto degFov = degToRad( fov );
+        value_type tanFovHalf =
+            std::tan( static_cast<value_type>( 0.5 ) * degFov );
+
+        ( *this )[0] = 1.0 / ( tanFovHalf * aspect );
+        ( *this )[1] = 0.0;
+        ( *this )[2] = 0.0;
+        ( *this )[3] = 0.0;
+        ( *this )[4] = 0.0;
+        ( *this )[5] = 0.0;
+        ( *this )[6] = -1.0 / tanFovHalf;
+        ( *this )[7] = 0.0;
+        ( *this )[8] = 0.0;
+        ( *this )[9] = far / ( far - near );
+        ( *this )[11] = ( near * far ) / ( near - far );
+        ( *this )[12] = 0.0;
+        ( *this )[13] = 1.0;
+        ( *this )[15] = 0.0;
     }
 
     void lookAt( const vector3<value_type> &eye,
@@ -637,6 +660,13 @@ template <typename T>
 matrix4<T> perspective( float fov, float aspect, float ncp, float fcp ) {
     matrix4<T> rt;
     rt.perspective( fov, aspect, ncp, fcp );
+    return rt;
+}
+
+template <typename T>
+matrix4<T> vperspective( float fov, float aspect, float ncp, float fcp ) {
+    matrix4<T> rt;
+    rt.vperspective( fov, aspect, ncp, fcp );
     return rt;
 }
 

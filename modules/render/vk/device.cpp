@@ -19,7 +19,7 @@ Device::Device( const vk::Instance *instance, const vk::Surface *surface )
                                                       &devCount, nullptr );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
-            std::format( "can't enumerate physical devices with code: {}\n",
+            std::format( "can't enumerate physical devices with code: \n",
                          string_VkResult( err ) ) );
     } else {
         log::debug<DEBUG_OUTPUT_DEVICEVK_CPP>(
