@@ -60,11 +60,11 @@ void PiplineVertexBuffer::initPipeline(
         .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
         .pNext = nullptr,
         .flags = 0,
-        .depthClampEnable = VK_FALSE,
+        .depthClampEnable = VK_TRUE,
         .rasterizerDiscardEnable = VK_FALSE,
         .polygonMode = VK_POLYGON_MODE_FILL,
-        .cullMode = VK_CULL_MODE_BACK_BIT,
-        .frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE,
+        .cullMode = VK_CULL_MODE_NONE,
+        .frontFace = VK_FRONT_FACE_CLOCKWISE,
         .depthBiasEnable = VK_FALSE,
         .depthBiasConstantFactor = 0.0f,
         .depthBiasClamp = 0.0f,
@@ -141,8 +141,8 @@ void PiplineVertexBuffer::initPipeline(
         VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
     depthStencil.depthTestEnable = VK_TRUE;
     depthStencil.depthWriteEnable = VK_TRUE;
-    //depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
-    depthStencil.depthCompareOp = VK_COMPARE_OP_GREATER_OR_EQUAL;
+    // depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+    depthStencil.depthCompareOp = VK_COMPARE_OP_GREATER;
     depthStencil.depthBoundsTestEnable = VK_FALSE;
     depthStencil.minDepthBounds = 0.0f;
     depthStencil.maxDepthBounds = 1.0f;

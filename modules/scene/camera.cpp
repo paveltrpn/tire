@@ -53,7 +53,7 @@ void Perspective::setFcp( float fcp ) {
 }
 
 void Perspective::update() {
-    auto projection = algebra::perspective<float>( fov_, aspect_, ncp_, fcp_ );
+    auto projection = algebra::vperspective<float>( fov_, aspect_, ncp_, fcp_ );
     auto offset = algebra::translate( position_ );
     auto rotation = algebra::rotate( yaw_, pitch_, roll_ );
 

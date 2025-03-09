@@ -256,16 +256,19 @@ requires Algebraic<T> struct matrix4 final {
 
     void perspective( value_type fov, value_type aspect, value_type near,
                       value_type far ) {
-        const auto degFov = degToRad( fov );
-        value_type h = std::cos( static_cast<value_type>( 0.5 ) * degFov ) /
-                       std::sin( static_cast<value_type>( 0.5 ) * degFov );
+        const auto radFov = degToRad( fov );
+        // value_type tanFovHalf =
+        // std::cos( static_cast<value_type>( 0.5 ) * radFov ) /
+        // std::sin( static_cast<value_type>( 0.5 ) * radFov );
+        value_type tanFovHalf =
+            std::tan( static_cast<value_type>( 0.5 ) * radFov );
 
-        ( *this )[0] = h / aspect;
+        ( *this )[0] = tanFovHalf / aspect;
         ( *this )[1] = 0.0;
         ( *this )[2] = 0.0;
         ( *this )[3] = 0.0;
         ( *this )[4] = 0.0;
-        ( *this )[5] = h;
+        ( *this )[5] = tanFovHalf;
         ( *this )[6] = 0.0;
         ( *this )[7] = 0.0;
         ( *this )[8] = 0.0;
@@ -287,46 +290,33 @@ requires Algebraic<T> struct matrix4 final {
 
     void vperspective( value_type fov, value_type aspect, value_type near,
                        value_type far ) {
-        const auto degFov = degToRad( fov );
+        const auto radFov = degToRad( fov );
         value_type tanFovHalf =
-            std::tan( static_cast<value_type>( 0.5 ) * degFov );
+            std::tan( static_cast<value_type>( 0.5 ) * radFov );
+        // value_type tanFovHalf =
+        // std::sin( static_cast<value_type>( 0.5 ) * radFov ) /
+        // std::cos( static_cast<value_type>( 0.5 ) * radFov );
         value_type focal = static_cast<value_type>( 1.0 ) / tanFovHalf;
-        value_type A = near / ( far - near );
-        value_type B = far * A;
 
         ( *this )[0] = focal / aspect;
         ( *this )[1] = 0.0;
         ( *this )[2] = 0.0;
         ( *this )[3] = 0.0;
+
         ( *this )[4] = 0.0;
-        ( *this )[5] = focal;
+        ( *this )[5] = -focal;
         ( *this )[6] = 0.0;
         ( *this )[7] = 0.0;
+
         ( *this )[8] = 0.0;
         ( *this )[9] = 0.0;
-        ( *this )[10] = A;
-        ( *this )[11] = B;
+        ( *this )[10] = far / ( near - far );
+        ( *this )[11] = -1.0;
+
         ( *this )[12] = 0.0;
         ( *this )[13] = 0.0;
-        ( *this )[14] = -1.0;
+        ( *this )[14] = ( near * far ) / ( near - far );
         ( *this )[15] = 0.0;
-
-        // ( *this )[0] = ( aspect ) / ( tanFovHalf );
-        // ( *this )[1] = 0.0;
-        // ( *this )[2] = 0.0;
-        // ( *this )[3] = 0.0;
-        // ( *this )[4] = 0.0;
-        // ( *this )[5] = focal;
-        // ( *this )[6] = 0.0;
-        // ( *this )[7] = 0.0;
-        // ( *this )[8] = 0.0;
-        // ( *this )[9] = 0.0;
-        // ( *this )[10] = far / ( far - near );
-        // ( *this )[11] = -( near * far ) / ( far - near );
-        // ( *this )[12] = 0.0;
-        // ( *this )[13] = 0.0;
-        // ( *this )[14] = 1.0;
-        // ( *this )[15] = 0.0;
     }
 
     void lookAt( const vector3<value_type> &eye,
