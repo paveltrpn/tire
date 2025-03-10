@@ -7,6 +7,7 @@
 #include <concepts>
 #include <numbers>
 #include <mdspan>
+#include <type_traits>
 
 #include "algebra/concepts.h"
 #include "vector3.h"
@@ -261,33 +262,50 @@ requires Algebraic<T> struct matrix4 final {
     void perspective( value_type fov, value_type aspect, value_type near,
                       value_type far ) {
         const auto radFov = degToRad( fov );
-        value_type tanFovHalf =
-            std::cos( static_cast<value_type>( 0.5 ) * radFov ) /
-            std::sin( static_cast<value_type>( 0.5 ) * radFov );
+
+        value_type tanFovHalf{};
+
+        // NOTE: GNU related function sincos()
+        // Choose sincos() function according to value_type.
+        //
+        // Focal distance as inverted tangent (1/tan(fov)) can be obtained
+        // as inverted tangent calculation (ctg(x)) - cos(fov)/sin(fov) instead of normal
+        // tan(x) = sin(x)/cos(x).
+        if constexpr ( std::is_same_v<value_type, double> ) {
+            double sinFov{}, cosFov{};
+            sincos( static_cast<value_type>( 0.5 ) * radFov, &sinFov, &cosFov );
+            tanFovHalf = cosFov / sinFov;
+        } else if constexpr ( std::is_same_v<value_type, float> ) {
+            float sinFov{}, cosFov{};
+            sincosf( static_cast<value_type>( 0.5 ) * radFov, &sinFov,
+                     &cosFov );
+            tanFovHalf = cosFov / sinFov;
+        }
+
         // value_type tanFovHalf =
         // std::tan( static_cast<value_type>( 0.5 ) * radFov );
 
         ( *this )[0] = tanFovHalf / aspect;
-        ( *this )[1] = 0.0;
-        ( *this )[2] = 0.0;
-        ( *this )[3] = 0.0;
-        ( *this )[4] = 0.0;
+        ( *this )[1] = value_type{ 0 };
+        ( *this )[2] = value_type{ 0 };
+        ( *this )[3] = value_type{ 0 };
+        ( *this )[4] = value_type{ 0 };
         ( *this )[5] = tanFovHalf;
-        ( *this )[6] = 0.0;
-        ( *this )[7] = 0.0;
-        ( *this )[8] = 0.0;
-        ( *this )[9] = 0.0;
-        ( *this )[11] = -1.0;
-        ( *this )[12] = 0.0;
-        ( *this )[13] = 0.0;
-        ( *this )[15] = 0.0;
+        ( *this )[6] = value_type{ 0 };
+        ( *this )[7] = value_type{ 0 };
+        ( *this )[8] = value_type{ 0 };
+        ( *this )[9] = value_type{ 0 };
+        ( *this )[11] = value_type{ -1 };
+        ( *this )[12] = value_type{ 0 };
+        ( *this )[13] = value_type{ 0 };
+        ( *this )[15] = value_type{ 0 };
 
         if ( far >= std::numeric_limits<value_type>::epsilon() ) {
             value_type nf{ static_cast<value_type>( 1.0 ) / ( far - near ) };
             ( *this )[10] = -( far + near ) * nf;
             ( *this )[14] = -( 2.0 * far * near ) * nf;
         } else {
-            ( *this )[10] = -1.0;
+            ( *this )[10] = value_type{ -1 };
             ( *this )[14] = -2.0 * near;
         }
     }
@@ -295,50 +313,67 @@ requires Algebraic<T> struct matrix4 final {
     void vperspective( value_type fov, value_type aspect, value_type near,
                        value_type far ) {
         const auto radFov = degToRad( fov );
-        value_type tanFovHalf =
-            std::tan( static_cast<value_type>( 0.5 ) * radFov );
+
+        value_type focal{};
+
+        // NOTE: GNU related function sincos()
+        // Choose sincos() function according to value_type.
+        //
+        // Focal distance as inverted tangent (1/tan(fov)) can be obtained
+        // as inverted tangent calculation (ctg(x)) - cos(fov)/sin(fov) instead of normal
+        // tan(x) = sin(x)/cos(x).
+        if constexpr ( std::is_same_v<value_type, double> ) {
+            double sinFov{}, cosFov{};
+            sincos( static_cast<value_type>( 0.5 ) * radFov, &sinFov, &cosFov );
+            focal = cosFov / sinFov;
+        } else if constexpr ( std::is_same_v<value_type, float> ) {
+            float sinFov{}, cosFov{};
+            sincosf( static_cast<value_type>( 0.5 ) * radFov, &sinFov,
+                     &cosFov );
+            focal = cosFov / sinFov;
+        }
+
         // value_type tanFovHalf =
-        // std::sin( static_cast<value_type>( 0.5 ) * radFov ) /
-        // std::cos( static_cast<value_type>( 0.5 ) * radFov );
-        value_type focal = static_cast<value_type>( 1.0 ) / tanFovHalf;
+        // std::tan( static_cast<value_type>( 0.5 ) * radFov );
+        // value_type focal = static_cast<value_type>( 1.0 ) / tanFovHalf;
 
         ( *this )[0] = focal / aspect;
-        ( *this )[1] = 0.0;
-        ( *this )[2] = 0.0;
-        ( *this )[3] = 0.0;
+        ( *this )[1] = value_type{ 0 };
+        ( *this )[2] = value_type{ 0 };
+        ( *this )[3] = value_type{ 0 };
 
-        ( *this )[4] = 0.0;
+        ( *this )[4] = value_type{ 0 };
         ( *this )[5] = -focal;
-        ( *this )[6] = 0.0;
-        ( *this )[7] = 0.0;
+        ( *this )[6] = value_type{ 0 };
+        ( *this )[7] = value_type{ 0 };
 
-        ( *this )[8] = 0.0;
-        ( *this )[9] = 0.0;
+        ( *this )[8] = value_type{ 0 };
+        ( *this )[9] = value_type{ 0 };
         ( *this )[10] = far / ( near - far );
-        ( *this )[11] = -1.0;
+        ( *this )[11] = value_type{ -1 };
 
-        ( *this )[12] = 0.0;
-        ( *this )[13] = 0.0;
+        ( *this )[12] = value_type{ 0 };
+        ( *this )[13] = value_type{ 0 };
         ( *this )[14] = ( near * far ) / ( near - far );
-        ( *this )[15] = 0.0;
+        ( *this )[15] = value_type{ 0 };
     }
 
     void lookAt( const vector3<value_type> &eye,
-                 const vector3<value_type> &center,
+                 const vector3<value_type> &target,
                  const vector3<value_type> &up ) {
         vector3<value_type> eyeDir;
 
         constexpr value_type floatEps =
             std::numeric_limits<value_type>::epsilon();
-        if ( std::fabs( eye[0] - center[0] ) < floatEps &&
-             std::fabs( eye[1] - center[1] ) < floatEps &&
-             std::fabs( eye[2] - center[2] ) < floatEps ) {
+        if ( std::fabs( eye[0] - target[0] ) < floatEps &&
+             std::fabs( eye[1] - target[1] ) < floatEps &&
+             std::fabs( eye[2] - target[2] ) < floatEps ) {
             return;
         }
 
-        value_type z0 = eye[0] - center[0];
-        value_type z1 = eye[1] - center[1];
-        value_type z2 = eye[2] - center[2];
+        value_type z0 = eye[0] - target[0];
+        value_type z1 = eye[1] - target[1];
+        value_type z2 = eye[2] - target[2];
 
         value_type len = 1.0 / std::hypot( z0, z1, z2 );
         z0 *= len;
