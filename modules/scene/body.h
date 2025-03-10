@@ -9,7 +9,7 @@
 #include "geometry/polytope.h"
 #include "geometry/point.h"
 #include "geometry/normal.h"
-#include "geometry/collision_shapes.h"
+#include "geometry/bounding_volumes.h"
 
 #include "algebra/vector2.h"
 #include "algebra/vector3.h"
@@ -43,8 +43,8 @@ struct Body final {
     const normalf *normalsData();
     const vector2f *texcrdsData();
 
-    void setBounding( CollisionShape<float> value ) { bounding_ = value; }
-    const CollisionShape<float> bounding() { return bounding_; };
+    void setBounding( BoundingVolume<float> value ) { bounding_ = value; }
+    const BoundingVolume<float> bounding() { return bounding_; };
 
     void setAlbedoColor( const std::string &name ) {
         albedoColor_ = Colorf{ name };
@@ -106,7 +106,7 @@ private:
     std::vector<point3f> localVertecies_{};
     std::vector<normalf> localNormals_{};
 
-    CollisionShape<float_type> bounding_{};
+    BoundingVolume<float_type> bounding_{};
 
     // Body spatial information
     vector3<float_type> position_{};

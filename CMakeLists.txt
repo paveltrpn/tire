@@ -158,8 +158,8 @@ add_library(geometry
     modules/geometry/wavefront.h
     modules/geometry/polytope.cpp
     modules/geometry/polytope.h
-    modules/geometry/collision_shapes.cpp
-    modules/geometry/collision_shapes.h
+    modules/geometry/bounding_volumes.cpp
+    modules/geometry/bounding_volumes.h
 )
 target_link_libraries(geometry algebra)
 
@@ -171,6 +171,8 @@ add_library(scene
     modules/scene/body.h
     modules/scene/camera.h
     modules/scene/camera.cpp
+    modules/scene/player.h
+    modules/scene/player.cpp
 )
 target_link_libraries(scene config io image algebra geometry)
 

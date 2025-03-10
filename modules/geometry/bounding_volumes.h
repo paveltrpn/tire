@@ -9,7 +9,7 @@ namespace tire {
 using namespace algebra;
 
 template <typename T>
-struct CollisionShape {};
+struct BoundingVolume {};
 
 template <typename T>
 struct AABoundingBox;
@@ -18,7 +18,7 @@ template <typename T>
 struct OOBoundingBox;
 
 template <typename T>
-struct BoundingSphere final : CollisionShape<T> {
+struct BoundingSphere final : BoundingVolume<T> {
     using value_type = T;
 
     void setRadius( float value ) { radius_ = value; }
@@ -43,7 +43,7 @@ private:
 };
 
 template <typename T>
-struct AABoundingBox final : CollisionShape<T> {
+struct AABoundingBox final : BoundingVolume<T> {
     using value_type = T;
 
     bool testBoundingSphere( const BoundingSphere<value_type> &other ) {}
@@ -62,7 +62,7 @@ private:
 };
 
 template <typename T>
-struct OOBoundingBox final : CollisionShape<T> {
+struct OOBoundingBox final : BoundingVolume<T> {
     using value_type = T;
 
 private:

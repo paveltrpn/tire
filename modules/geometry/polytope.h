@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "algebra/vector2.h"
-#include "geometry/collision_shapes.h"
+#include "geometry/bounding_volumes.h"
 #include "point.h"
 #include "normal.h"
 
