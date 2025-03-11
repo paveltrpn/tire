@@ -7,6 +7,7 @@
 
 #include "body.h"
 #include "camera.h"
+#include "player.h"
 
 namespace tire {
 
@@ -21,11 +22,18 @@ struct Scene {
     virtual ~Scene() = default;
 
     void setActiveCamera( size_t id ) { activeCamera_ = id; };
-    [[nodiscard]] std::shared_ptr<Perspective> camera() const {
-        return cameras_[activeCamera_];
+    [[nodiscard]] Perspective &camera() const {
+        return *cameras_[activeCamera_].get();
     };
 
+    Player &player() { return player_; };
+
+    virtual void submit() = 0;
+    virtual void draw() = 0;
+
     void traverse( float frameDuration );
+
+    float frameDuration_{};
 
 private:
     void process();
@@ -34,12 +42,14 @@ private:
     nlohmann::json scene_;
 
 protected:
-    float frameDuration_{};
+    // float frameDuration_{};
 
     std::vector<std::shared_ptr<Body>> bodyList_{};
     std::vector<std::shared_ptr<Perspective>> cameras_{};
 
     int activeCamera_{ 0 };
+
+    Player player_{};
 };
 
 }  // namespace tire

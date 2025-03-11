@@ -49,6 +49,18 @@ protected:
                                              const char *extension );
     virtual void setSwapInterval( int interval ) = 0;
 
+    void keyPressEvent( unsigned int key );
+    void keyReleaseEvent( unsigned int key );
+    void mouseButtonPressEvent( unsigned int key );
+    void mouseButtonReleaseEvent( unsigned int key );
+
+    // Call when mouse moves free upon window. "x" and "y"
+    // represent current cursor position in window coordinates
+    void mouseMoveEvent( unsigned int x, unsigned int y );
+    // Call when mouse holds in defined position. "x" and "y"
+    // represent current cursor ofssets.
+    void mouseOffsetEvent( unsigned int x, unsigned int y );
+
 protected:
     bool run_{ true };
     Timer timer_{};
@@ -58,6 +70,10 @@ protected:
     Window window_;
     Colormap colorMap_;
     GLXFBConfig bestFbc_;
+
+    bool holdMouse_{ true };
+    unsigned int holdMouseX_{ 500 };
+    unsigned int holdMouseY_{ 500 };
 
     // window properties
     int posx_{};

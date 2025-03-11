@@ -48,13 +48,13 @@ struct Perspective final : Camera {
         const auto rotation = algebra::rotate<float>( yaw_, pitch_, roll_ );
 
         offset.transposeSelf();
-        // matrix_ = offset * rotation * projection;
+        matrix_ = offset * rotation * projection;
 
-        algebra::matrix4f lookAt{};
-        lookAt.lookAt( algebra::vector3f{ 0.0, 0.0, 10.0 },
-                       algebra::vector3f{ 2.4, -2.2, -3.0 },
-                       algebra::vector3f{ 0.0, 1.0, 0.0 } );
-        matrix_ = lookAt * projection;
+        // algebra::matrix4f lookAt{};
+        // lookAt.lookAt( algebra::vector3f{ 0.0, 0.0, 10.0 },
+        //    algebra::vector3f{ 2.4, -2.2, -3.0 },
+        //    algebra::vector3f{ 0.0, 1.0, 0.0 } );
+        // matrix_ = lookAt * projection;
 
         return matrix_;
     }

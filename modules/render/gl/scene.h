@@ -13,8 +13,8 @@ namespace tire::gl {
 struct Scene final : tire::Scene {
     Scene( const std::filesystem::path &fname );
 
-    void submit();
-    void draw();
+    void submit() override;
+    void draw() override;
 
 private:
     std::vector<BodyBuffer> buffersList_;

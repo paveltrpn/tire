@@ -15,6 +15,7 @@ private:
 
     BoundingSphere<float> bounding_{};
     float mass_{};
+    algebra::vector3f velocity_{};
 };
 
 }  // namespace tire

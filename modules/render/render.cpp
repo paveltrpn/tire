@@ -3,9 +3,12 @@
 #include <GL/glx.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/extensions/Xfixes.h>
 
 #include <array>
+#include <print>
 
+#include "algebra/vector3.h"
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_RENDER_CPP{ true };
 
@@ -139,11 +142,11 @@ void Render::configureX11() {
     swa.event_mask = StructureNotifyMask;
 
     // create window
-    auto cptr = Config::instance();
-    posx_ = cptr->get<int>( "window_pos_x", 100 );
-    posy_ = cptr->get<int>( "window_pos_y", 100 );
-    width_ = cptr->get<int>( "window_width", 320 );
-    height_ = cptr->get<int>( "window_height", 240 );
+    auto configHandle = Config::instance();
+    posx_ = configHandle->get<int>( "window_pos_x", 100 );
+    posy_ = configHandle->get<int>( "window_pos_y", 100 );
+    width_ = configHandle->get<int>( "window_width", 320 );
+    height_ = configHandle->get<int>( "window_height", 240 );
 
     window_ =
         XCreateWindow( display_, RootWindow( display_, vi->screen ), 0, 0,
@@ -166,14 +169,23 @@ void Render::configureX11() {
 
     XFree( vi );
 
-    XStoreName(
-        display_, window_,
-        cptr->get<std::string>( "application_name", "default" ).c_str() );
+    XStoreName( display_, window_,
+                configHandle->get<std::string>( "application_name", "default" )
+                    .c_str() );
     XMapWindow( display_, window_ );
 
-    XSelectInput( display_, window_, KeyPressMask | KeyReleaseMask );
+    // Allow X11 propagate events to a window
+    XSelectInput( display_, window_,
+                  KeyPressMask | KeyReleaseMask | ButtonPressMask |
+                      ButtonReleaseMask | PointerMotionMask );
 
+    // Move newly created window to initial window position
     XMoveResizeWindow( display_, window_, posx_, posy_, width_, height_ );
+
+    // Handle cursor visibility at startup
+    if ( holdMouse_ ) {
+        XFixesHideCursor( display_, window_ );
+    }
 }
 
 void Render::loop( uv_timer_t *handle ) {
@@ -186,15 +198,17 @@ void Render::loop( uv_timer_t *handle ) {
         XNextEvent( self->display_, &event );
         if ( event.type == KeyPress ) {
             auto keyEventCode = event.xkey.keycode;
+
+            // Handle key press
+            self->keyPressEvent( event.xkey.keycode );
+
+            // Handle escape button here for convinient access to uv timer handle
             switch ( keyEventCode ) {
                 case 9: {  // == ESCAPE
                     // stop render loop
                     uv_timer_stop( handle );
                     event::Context::stop();
                     self->run_ = false;
-                    break;
-                }
-                case 38: {  // == 'a'
                     break;
                 }
                 default: {
@@ -204,11 +218,16 @@ void Render::loop( uv_timer_t *handle ) {
             // Force immidiate output to stdout
             std::cout << std::flush;
         } else if ( event.type == KeyRelease ) {
-            auto keyEventCode = event.xkey.keycode;
-            switch ( keyEventCode ) {
-                default: {
-                    break;
-                }
+            self->keyReleaseEvent( event.xkey.keycode );
+        } else if ( event.type == ButtonPress ) {
+            self->mouseButtonPressEvent( event.xbutton.button );
+        } else if ( event.type == ButtonRelease ) {
+            self->mouseButtonReleaseEvent( event.xbutton.button );
+        } else if ( event.type == MotionNotify ) {
+            if ( self->holdMouse_ )
+                self->mouseOffsetEvent( event.xmotion.x, event.xmotion.y );
+            else {
+                self->mouseMoveEvent( event.xmotion.x, event.xmotion.y );
             }
         }
     }
@@ -216,6 +235,12 @@ void Render::loop( uv_timer_t *handle ) {
     self->frame();
     self->postFrame();
     self->swapBuffers();
+
+    // Conditionally force mouse hold position.
+    if ( self->holdMouse_ ) {
+        XWarpPointer( self->display_, None, self->window_, 0, 0, 0, 0,
+                      self->holdMouseX_, self->holdMouseY_ );
+    }
 }
 
 void Render::run() {
@@ -223,6 +248,122 @@ void Render::run() {
     preLoop();
     event::Context::run();
     postLoop();
+}
+
+void Render::keyPressEvent( unsigned int key ) {
+    std::cout << " ===== " << key << "\n";
+    switch ( key ) {
+        case 24: {  // == 'q'
+            break;
+        }
+        case 25: {  // == 'w'
+            //scene_->camera().move( algebra::vector3f{ 0.0, 0.0, 0.1 } );
+            break;
+        }
+        case 26: {  // == 'e'
+            break;
+        }
+        case 27: {  // == 'r'
+            break;
+        }
+        case 28: {  // == 't'
+            break;
+        }
+        case 29: {  // == 'y'
+            break;
+        }
+        case 30: {  // == 'u'
+            break;
+        }
+        case 31: {  // == 'i'
+            break;
+        }
+        case 32: {  // == 'o'
+            break;
+        }
+        case 33: {  // == 'p'
+            break;
+        }
+        case 34: {  // == '['
+            break;
+        }
+        case 35: {  // == ']'
+            break;
+        }
+        case 38: {  // == 'a'
+            break;
+        }
+        case 39: {  // == 's'
+            //scene_->camera().move( algebra::vector3f{ 0.0, 0.0, -0.1 } );
+            break;
+        }
+        case 40: {  // == 'd'
+            break;
+        }
+        case 41: {  // == 'f'
+            break;
+        }
+        case 42: {  // == 'g'
+            // Window grab/release the mouse pointer
+            holdMouse_ = !holdMouse_;
+            if ( holdMouse_ ) {
+                XFixesHideCursor( display_, window_ );
+            } else {
+                XFixesShowCursor( display_, window_ );
+            }
+            break;
+        }
+        case 43: {  // == 'h'
+            break;
+        }
+        case 44: {  // == 'j'
+            break;
+        }
+        case 45: {  // == 'k'
+            break;
+        }
+        case 46: {  // == 'l'
+            break;
+        }
+        case 47: {  // == ';'
+            break;
+        }
+        case 48: {  // == '''
+            break;
+        }
+        case 52: {  // == 'z'
+            break;
+        }
+        default: {
+            break;
+        }
+    }
+}
+
+void Render::keyReleaseEvent( unsigned int key ) {
+    switch ( key ) {
+        case 38: {  // == 'a'
+            break;
+        }
+        default: {
+            break;
+        }
+    }
+}
+
+void Render::mouseButtonPressEvent( unsigned int key ) {
+}
+
+void Render::mouseButtonReleaseEvent( unsigned int key ) {
+}
+
+void Render::mouseMoveEvent( unsigned int x, unsigned int y ) {
+}
+
+void Render::mouseOffsetEvent( unsigned int x, unsigned int y ) {
+    const int xOffset = holdMouseX_ - x;
+    const int yOffset = holdMouseY_ - y;
+    scene_->camera().rotate( yOffset / 200.0f, xOffset / 200.0f, 0.0f );
 }
 
 }  // namespace tire

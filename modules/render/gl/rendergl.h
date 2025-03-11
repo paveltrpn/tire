@@ -93,7 +93,6 @@ private:
     // X11 OpenGL context
     GLXContext glContext_{ nullptr };
 
-    std::shared_ptr<gl::Scene> scene_;
     std::unique_ptr<ScreenString> screenString_;
 };
 

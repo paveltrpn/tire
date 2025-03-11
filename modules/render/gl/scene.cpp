@@ -86,7 +86,7 @@ void Scene::draw() {
     shaderStorage_.use( "flatshadeTexture" );
     shaderStorage_.setMatrixUniform( "flatshadeTexture", "view_matrix",
                                      GL_FALSE,
-                                     camera()->matrix<tire::OpenGLTag>() );
+                                     camera().matrix<tire::OpenGLTag>() );
 
     for ( size_t i = 0; auto &buffer : buffersList_ ) {
         const Colorf bodyColor = bodyList_[i]->albedoColor();

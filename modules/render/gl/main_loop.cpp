@@ -42,6 +42,9 @@ void RenderGL::frame() {
     screenString_->setColor( { "darkred" } );
     screenString_->draw(
         std::format( "fps = {}", 1000000 / timer_.averageFrameDuration() ) );
+    screenString_->set_text_position( -31.5f, 25.5f );
+    screenString_->setColor( { "white" } );
+    screenString_->draw( std::format( "press \"g\" for grub/ungrub cursor" ) );
 
     screenString_->flush();
 }

@@ -51,7 +51,7 @@ void Scene::output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
 
     // Initialize scene command buffer
     cBufs_[imageIndex]->prepare( currentFramebuffer,
-                                 camera()->matrix<tire::VulkanTag>() );
+                                 camera().matrix<tire::VulkanTag>() );
 
     // Record draw commands for all scene objects in command buffer
     for ( size_t object = 0; object < buffersList_.size(); ++object ) {

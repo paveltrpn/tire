@@ -51,7 +51,8 @@ void RenderVK::frame() {
     // NOTE: currentFrame_->imageIndex
     const auto currentFramebuffer = swapchain_->framebuffer( imageIndex );
 
-    scene_->output( currentFramebuffer, imageIndex, iaSem, rfSem, ifFnc );
+    auto handle = static_cast<vk::Scene*>( scene_.get() );
+    handle->output( currentFramebuffer, imageIndex, iaSem, rfSem, ifFnc );
 
     present_->present( rfSem, &imageIndex );
 

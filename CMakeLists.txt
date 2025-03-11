@@ -205,7 +205,8 @@ target_link_libraries(gl_test PUBLIC
     scene 
     config 
     render 
-    X11 
+    X11
+    Xfixes
     GL 
     GLU 
     Vulkan::Vulkan 
@@ -220,7 +221,8 @@ target_link_libraries(vk_test PUBLIC
     scene 
     config 
     render 
-    X11 
+    X11
+    Xfixes
     GL 
     GLU 
     Vulkan::Vulkan 

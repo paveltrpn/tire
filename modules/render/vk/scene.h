@@ -20,7 +20,9 @@ struct Scene final : tire::Scene {
     Scene( const std::filesystem::path &fname, const vk::Device *device,
            const vk::Pipeline *pipeline );
 
-    void submit();
+    void submit() override;
+    void draw() override {};
+
     void output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
                  VkSemaphore waitSemaphore, VkSemaphore signalSemaphore,
                  VkFence fence );

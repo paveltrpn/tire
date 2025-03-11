@@ -83,8 +83,6 @@ private:
     }
 
 private:
-    std::shared_ptr<vk::Scene> scene_;
-
     std::unique_ptr<vk::Instance> instance_{};
     std::unique_ptr<vk::Surface> surface_{};
     std::unique_ptr<vk::Device> device_{};
