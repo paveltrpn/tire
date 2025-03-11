@@ -1,4 +1,5 @@
 
+
 #pragma once
 
 #include "algebra/vector3.h"
@@ -6,7 +7,7 @@
 
 namespace tire {
 
-struct Player final {
+struct Flycam final {
 private:
     algebra::vector3f position_{};
     float yaw_{};

@@ -171,8 +171,8 @@ add_library(scene
     modules/scene/body.h
     modules/scene/camera.h
     modules/scene/camera.cpp
-    modules/scene/player.h
-    modules/scene/player.cpp
+    modules/scene/flycam.h
+    modules/scene/flycam.cpp
 )
 target_link_libraries(scene config io image algebra geometry)
 

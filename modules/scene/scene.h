@@ -7,7 +7,7 @@
 
 #include "body.h"
 #include "camera.h"
-#include "player.h"
+#include "flycam.h"
 
 namespace tire {
 
@@ -26,7 +26,7 @@ struct Scene {
         return *cameras_[activeCamera_].get();
     };
 
-    Player &player() { return player_; };
+    Flycam &flycam() { return player_; };
 
     virtual void submit() = 0;
     virtual void draw() = 0;
@@ -49,7 +49,7 @@ protected:
 
     int activeCamera_{ 0 };
 
-    Player player_{};
+    Flycam player_{};
 };
 
 }  // namespace tire
