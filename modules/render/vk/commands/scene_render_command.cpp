@@ -7,11 +7,11 @@ static constexpr bool DEBUG_OUTPUT_SCENE_RENDER_COMMAND_CPP{ true };
 
 namespace tire::vk {
 
-SceneRenderCommand::SceneRenderCommand( const vk::Device *device,
+SceneRenderCommand::SceneRenderCommand( const vk::Context *context,
                                         const vk::Pipeline *pipeline,
                                         const CommandPool *pool,
                                         uint32_t commandsCount )
-    : device_{ device }
+    : context_{ context }
     , pipeline_{ pipeline }
     , pool_{ pool } {
     const VkCommandBufferAllocateInfo allocInfo{
@@ -21,7 +21,7 @@ SceneRenderCommand::SceneRenderCommand( const vk::Device *device,
         .commandBufferCount = 1 };
     VkCommandBuffer buffer{ VK_NULL_HANDLE };
     const auto err =
-        vkAllocateCommandBuffers( device_->handle(), &allocInfo, &command_ );
+        vkAllocateCommandBuffers( context_->device(), &allocInfo, &command_ );
     if ( err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to allocate command buffers with code {}!",
@@ -38,12 +38,12 @@ SceneRenderCommand::SceneRenderCommand( const vk::Device *device,
                                 backgroundColor.b(), 1.0f } };
     clearValues_[1].depthStencil = { .depth = 0.0f, .stencil = 0 };
 
-    width_ = device_->extent().width;
-    height_ = device_->extent().height;
+    width_ = context_->currentExtent().width;
+    height_ = context_->currentExtent().height;
 }
 
 void SceneRenderCommand::clean() {
-    vkFreeCommandBuffers( device_->handle(), pool_->handle(), 1, &command_ );
+    vkFreeCommandBuffers( context_->device(), pool_->handle(), 1, &command_ );
 }
 
 void SceneRenderCommand::reset() {
@@ -65,7 +65,7 @@ void SceneRenderCommand::prepare( VkFramebuffer framebuffer,
         .renderPass = pipeline_->renderpass(),
         .framebuffer = framebuffer,
         .renderArea = { .offset = { .x = 0, .y = 0 },
-                        .extent = { device_->extent() } },
+                        .extent = { context_->currentExtent() } },
         .clearValueCount = static_cast<uint32_t>( clearValues_.size() ),
         .pClearValues = clearValues_.data() };
 
@@ -135,7 +135,7 @@ void SceneRenderCommand::submit( VkSemaphore waitSemaphores,
         .pSignalSemaphores = sgnlsems.data() };
 
     // NOTE: omit return code check
-    vkQueueSubmit( device_->graphicsQueue(),
+    vkQueueSubmit( context_->graphicsQueue(),
                    static_cast<uint32_t>( commands.size() ), &submitInfo,
                    fence );
 }

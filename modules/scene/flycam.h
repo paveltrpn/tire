@@ -9,11 +9,13 @@ namespace tire {
 
 struct Flycam final {
 private:
-    algebra::vector3f position_{};
-    algebra::vector3f look_{};
-    algebra::vector3f left_{};
-    // Default up vector +Y
-    algebra::vector3f up_{ 0.0f, 1.0f, 0.0f };
+    algebra::vector3f position_{ 0.0f, 0.0f, 0.0f };
+    // Default look vector +Z
+    algebra::vector3f look_{ 0.0f, 0.0f, 1.0f };
+    // Default left vector -X
+    algebra::vector3f left_{ -1.0f, 0.0f, 0.0f };
+    // One and only up vector +Y
+    const algebra::vector3f up_{ 0.0f, 1.0f, 0.0f };
 
     float yaw_{};
     float pitch_{};

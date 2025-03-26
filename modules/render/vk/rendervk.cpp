@@ -19,39 +19,18 @@ namespace tire {
 RenderVK::RenderVK()
     : Render{} {
     try {
-        instance_ = std::make_unique<vk::Instance>();
-
-        surface_ =
-            std::make_unique<vk::Surface>( display_, window_, instance_.get() );
-
-        device_ =
-            std::make_unique<vk::Device>( instance_.get(), surface_.get() );
-        device_->pickAndCreateDevice();
-
         const auto configHandle = Config::instance();
         const auto basePath = configHandle->getBasePath().string();
-
-        commandPool_ = std::make_unique<vk::CommandPool>( device_.get() );
-
-        swapchain_ = std::make_unique<vk::Swapchain>(
-            device_.get(), surface_.get(), commandPool_.get() );
-        swapchain_->createSwapchain();
-        swapchain_->createImageViews();
+        context_ = std::make_unique<vk::Context>( display_, window_ );
+        context_->init();
 
         piplineMatrixReady_ =
-            std::make_unique<vk::PiplineMatrixReady>( device_.get() );
+            std::make_unique<vk::PiplineMatrixReady>( context_.get() );
         piplineMatrixReady_->initPipeline(
             { basePath + "/assets/shaders/vk_simple_box_VERTEX.spv",
               basePath + "/assets/shaders/vk_simple_box_FRAGMENT.spv" } );
 
-        swapchain_->createFramebuffers( piplineMatrixReady_.get() );
-
-        present_ =
-            std::make_unique<vk::Present>( device_.get(), swapchain_.get() );
-
-        presentSync_ = std::make_unique<
-            vk::PresentSynchronization<FRAMES_IN_FLIGHT_COUNT>>(
-            device_.get() );
+        context_->createFramebuffers( piplineMatrixReady_.get() );
 
     } catch ( const std::runtime_error &e ) {
         throw std::runtime_error( e.what() );
@@ -63,12 +42,12 @@ void RenderVK::scene( const std::filesystem::path &path ) {
     const auto basePath = configHandle->getBasePath().string();
 
     piplineVertexBuffer_ =
-        std::make_unique<vk::PiplineVertexBuffer>( device_.get() );
+        std::make_unique<vk::PiplineVertexBuffer>( context_.get() );
     piplineVertexBuffer_->initPipeline(
         { basePath + "/assets/shaders/vk_vertex_buffer_VERTEX.spv",
           basePath + "/assets/shaders/vk_vertex_buffer_FRAGMENT.spv" } );
 
-    scene_ = std::make_shared<vk::Scene>( path, device_.get(),
+    scene_ = std::make_shared<vk::Scene>( path, context_.get(),
                                           piplineVertexBuffer_.get() );
 }
 

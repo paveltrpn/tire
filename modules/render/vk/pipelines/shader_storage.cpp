@@ -5,19 +5,19 @@
 #include <vulkan/vk_enum_string_helper.h>
 
 #include "shader_storage.h"
-#include "../../../log/log.h"
+#include "log/log.h"
 
 static constexpr bool DEBUG_OUTPUT_SHADER_STORAGE_VK_CPP{ true };
 
 namespace tire::vk {
 
-ShaderStorage::ShaderStorage( const vk::Device *device )
-    : device_{ device } {
+ShaderStorage::ShaderStorage( const vk::Context *context )
+    : context_{ context } {
 }
 
 ShaderStorage::~ShaderStorage() {
     for ( const auto &module : modules_ ) {
-        vkDestroyShaderModule( device_->handle(), std::get<1>( module ),
+        vkDestroyShaderModule( context_->device(), std::get<1>( module ),
                                nullptr );
     }
 }
@@ -31,7 +31,7 @@ void ShaderStorage::push( std::span<uint8_t> bytecode,
     createInfo.pCode = reinterpret_cast<const uint32_t *>( bytecode.data() );
 
     VkShaderModule module;
-    if ( const auto err = vkCreateShaderModule( device_->handle(), &createInfo,
+    if ( const auto err = vkCreateShaderModule( context_->device(), &createInfo,
                                                 nullptr, &module );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
@@ -46,7 +46,7 @@ void ShaderStorage::push( std::span<uint8_t> bytecode,
 }
 
 void ShaderStorage::add( const std::filesystem::path &path ) {
-    if ( device_->handle() == VK_NULL_HANDLE ) {
+    if ( context_->device() == VK_NULL_HANDLE ) {
         throw std::runtime_error( std::format(
             "can't use shaders before valid logical device is acquired!" ) );
     }
@@ -174,7 +174,7 @@ void ShaderStorage::destroy( const std::string &name ) {
         log::warning( "module {} not exist!", name );
         return;
     }
-    vkDestroyShaderModule( device_->handle(), module, nullptr );
+    vkDestroyShaderModule( context_->device(), module, nullptr );
     modules_.erase( name );
 }
 

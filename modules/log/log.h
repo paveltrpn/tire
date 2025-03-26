@@ -5,6 +5,7 @@
 #include <string>
 #include <format>
 #include <source_location>
+#include <exception>
 
 namespace tire::log {
 
@@ -87,6 +88,17 @@ void error( std::format_string<Ts...> msg, Ts &&...args ) {
                   << std::vformat( msg.get(), std::make_format_args( args... ) )
                   << "\n";
     }
+}
+
+template <typename... Ts>
+void fatal( std::format_string<Ts...> msg, Ts &&...args ) {
+    constexpr char preamble[] = "\033[3;31m[fatal] \033[0m\t";
+    std::cout << preamble
+              << std::vformat( msg.get(), std::make_format_args( args... ) )
+              << "\n";
+
+    // Terminate
+    std::terminate();
 }
 
 void print_source(

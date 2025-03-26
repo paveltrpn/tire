@@ -6,7 +6,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "device.h"
+#include "context.h"
 #include "render/vk/pipelines/pipeline.h"
 #include "scene/scene.h"
 #include "command_pool.h"
@@ -17,7 +17,7 @@
 namespace tire::vk {
 
 struct Scene final : tire::Scene {
-    Scene( const std::filesystem::path &fname, const vk::Device *device,
+    Scene( const std::filesystem::path &fname, const vk::Context *context,
            const vk::Pipeline *pipeline );
 
     void submit() override;
@@ -28,7 +28,7 @@ struct Scene final : tire::Scene {
                  VkFence fence );
 
 private:
-    const vk::Device *device_;
+    const vk::Context *context_;
     const vk::Pipeline *pipeline_;
 
     std::unique_ptr<vk::CommandPool> commandPool_{};

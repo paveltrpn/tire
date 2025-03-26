@@ -1,15 +1,15 @@
- 
+
 #pragma once
 
 #include <vector>
 #include <vulkan/vulkan.h>
 
-#include "device.h"
+#include "context.h"
 
 namespace tire::vk {
 
 struct CommandPool final {
-    CommandPool( const vk::Device *device );
+    CommandPool( const vk::Context *context );
 
     CommandPool( const CommandPool &other ) = delete;
     CommandPool( CommandPool &&other ) = delete;
@@ -17,13 +17,13 @@ struct CommandPool final {
     CommandPool &operator=( CommandPool &&other ) = delete;
 
     ~CommandPool() {
-        vkDestroyCommandPool( device_->handle(), commandPool_, nullptr );
+        vkDestroyCommandPool( context_->device(), commandPool_, nullptr );
     }
 
     [[nodiscard]] VkCommandPool handle() const { return commandPool_; }
 
 private:
-    const vk::Device *device_{};
+    const vk::Context *context_{};
 
     // Vulkan etity handles
     VkCommandPool commandPool_{ VK_NULL_HANDLE };
@@ -32,4 +32,4 @@ private:
     VkCommandPoolCreateInfo poolInfo_{};
 };
 
-}
+}  // namespace tire::vk

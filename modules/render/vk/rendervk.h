@@ -11,14 +11,10 @@
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 
-#include "instance.h"
-#include "surface.h"
-#include "device.h"
-#include "swapchain.h"
+#include "context.h"
 #include "pipelines/pipeline.h"
 #include "buffers/vertex_buffer.h"
 #include "command_pool.h"
-#include "present.h"
 
 #include "../render.h"
 #include "scene.h"
@@ -83,19 +79,10 @@ private:
     }
 
 private:
-    std::unique_ptr<vk::Instance> instance_{};
-    std::unique_ptr<vk::Surface> surface_{};
-    std::unique_ptr<vk::Device> device_{};
-    std::unique_ptr<vk::Swapchain> swapchain_{};
+    std::unique_ptr<vk::Context> context_{};
 
     std::unique_ptr<vk::Pipeline> piplineMatrixReady_{};
     std::unique_ptr<vk::Pipeline> piplineVertexBuffer_{};
-
-    std::unique_ptr<vk::CommandPool> commandPool_{};
-
-    std::unique_ptr<vk::Present> present_{};
-    std::unique_ptr<vk::PresentSynchronization<FRAMES_IN_FLIGHT_COUNT>>
-        presentSync_{};
 
     uint32_t currentFrame_{ 0 };
 };

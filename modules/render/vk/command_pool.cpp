@@ -8,13 +8,13 @@ static constexpr bool DEBUG_OUTPUT_COMMAND_POOL_CPP{ true };
 
 namespace tire::vk {
 
-CommandPool::CommandPool( const vk::Device *device )
-    : device_{ device } {
+CommandPool::CommandPool( const vk::Context *context )
+    : context_{ context } {
     poolInfo_.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     poolInfo_.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-    poolInfo_.queueFamilyIndex = device->graphicsFamily();
+    poolInfo_.queueFamilyIndex = context_->graphicsFamily();
 
-    if ( const auto err = vkCreateCommandPool( device_->handle(), &poolInfo_,
+    if ( const auto err = vkCreateCommandPool( context_->device(), &poolInfo_,
                                                nullptr, &commandPool_ );
          err != VK_SUCCESS ) {
         throw std::runtime_error(

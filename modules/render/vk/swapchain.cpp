@@ -1,16 +1,16 @@
 
-#include <array>
-
+#define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "rendervk.h"
-#include "swapchain.h"
+#include "context.h"
 #include "log/log.h"
-static constexpr bool DEBUG_OUTPUT_SWAPCHAINVK_CPP{ true };
+static constexpr bool DEBUG_OUTPUT_SWAPCHAIN_CPP{ true };
 
-import config;
+#include "context.h"
+#include "pipelines/pipeline.h"
 
 namespace tire::vk {
+
 namespace {
 
 bool hasStencilComponent( VkFormat format ) {
@@ -18,18 +18,18 @@ bool hasStencilComponent( VkFormat format ) {
            format == VK_FORMAT_D24_UNORM_S8_UINT;
 }
 
-void transitionImageLayout( const vk::Device *device,
-                            const vk::CommandPool *commandPool, VkImage image,
+void transitionImageLayout( VkDevice device, VkCommandPool commandPool,
+                            VkQueue graphicsQueue, VkImage image,
                             VkFormat format, VkImageLayout oldLayout,
                             VkImageLayout newLayout ) {
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocInfo.commandPool = commandPool->handle();
+    allocInfo.commandPool = commandPool;
     allocInfo.commandBufferCount = 1;
 
     VkCommandBuffer commandBuffer;
-    vkAllocateCommandBuffers( device->handle(), &allocInfo, &commandBuffer );
+    vkAllocateCommandBuffers( device, &allocInfo, &commandBuffer );
 
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -92,27 +92,27 @@ void transitionImageLayout( const vk::Device *device,
 
         destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
     } else {
-        throw std::invalid_argument( "unsupported layout transition!" );
+        log::fatal( "unsupported layout transition!" );
     }
     /*
-    if ( oldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
-         newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL ) {
-        barrier.srcAccessMask = 0;
-        barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-
-        sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-        destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-    } else if ( oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL &&
-                newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ) {
-        barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-        barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-
-        sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-        destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-    } else {
-        throw std::invalid_argument( "unsupported layout transition!" );
-    }
-   */
+            if ( oldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
+                 newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL ) {
+                barrier.srcAccessMask = 0;
+                barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        
+                sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+                destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+            } else if ( oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL &&
+                        newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ) {
+                barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+                barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+        
+                sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+            } else {
+                throw std::invalid_argument( "unsupported layout transition!" );
+            }
+           */
     vkCmdPipelineBarrier( commandBuffer, sourceStage, destinationStage, 0, 0,
                           nullptr, 0, nullptr, 1, &barrier );
 
@@ -123,36 +123,15 @@ void transitionImageLayout( const vk::Device *device,
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffer;
 
-    vkQueueSubmit( device->graphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE );
-    vkQueueWaitIdle( device->graphicsQueue() );
+    vkQueueSubmit( graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE );
+    vkQueueWaitIdle( graphicsQueue );
 
-    vkFreeCommandBuffers( device->handle(), commandPool->handle(), 1,
-                          &commandBuffer );
+    vkFreeCommandBuffers( device, commandPool, 1, &commandBuffer );
 }
+
 }  // namespace
 
-Swapchain::Swapchain( const vk::Device *device, const vk::Surface *surface,
-                      const vk::CommandPool *commandPool )
-    : device_{ device }
-    , surface_{ surface }
-    , commandPool_{ commandPool } {
-}
-
-Swapchain::~Swapchain() {
-    for ( auto framebuffer : framebuffers_ ) {
-        vkDestroyFramebuffer( device_->handle(), framebuffer, nullptr );
-    }
-    vkDestroySwapchainKHR( device_->handle(), swapchain_, nullptr );
-}
-
-void Swapchain::createSwapchain() {
-    swapChainExtent_ = device_->extent();
-
-    const auto surfaceFormat = device_->surfaceFormat();
-    const auto presentMode = device_->presentMode();
-
-    const auto surfaceCapabilities = device_->surfaceCapabilities();
-
+void Context::makeSwapchain() {
     // Choose count of images to draw in.
     uint32_t imageCount{};
     {
@@ -160,43 +139,43 @@ void Swapchain::createSwapchain() {
         // to wait on the driver to complete internal operations before we can acquire
         // another image to render to. Therefore it is recommended to request at least one
         // more image than the minimum:
-        imageCount = surfaceCapabilities.minImageCount + 1;
+        imageCount = surfaceCapabilities_.minImageCount + 1;
 
         // We should also make sure to not exceed the maximum number of images while
         // doing this, where 0 is a special value that means that there is no maximum:
-        if ( surfaceCapabilities.maxImageCount > 0 &&
-             imageCount > surfaceCapabilities.maxImageCount ) {
-            imageCount = surfaceCapabilities.maxImageCount;
+        if ( surfaceCapabilities_.maxImageCount > 0 &&
+             imageCount > surfaceCapabilities_.maxImageCount ) {
+            imageCount = surfaceCapabilities_.maxImageCount;
         }
 
         // Skip all logic above, just use to two images
         imageCount = FRAMES_IN_FLIGHT_COUNT;
     }
 
-    log::debug<DEBUG_OUTPUT_SWAPCHAINVK_CPP>(
+    log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>(
         "vk::Swapchain: vulkan swapchain surface capabilities image count: {}, "
         "with max is {}",
-        imageCount, surfaceCapabilities.maxImageCount );
+        imageCount, surfaceCapabilities_.maxImageCount );
 
     VkSwapchainCreateInfoKHR createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    createInfo.surface = surface_->handle();
+    createInfo.surface = surface_;
 
     // The implementation will either create the swapchain with at least
     // that many images, or it will fail to create the swapchain.
     createInfo.minImageCount = imageCount;
 
-    createInfo.imageFormat = surfaceFormat.format;
-    createInfo.imageColorSpace = surfaceFormat.colorSpace;
-    createInfo.imageExtent = swapChainExtent_;
+    createInfo.imageFormat = surfaceFormat_.format;
+    createInfo.imageColorSpace = surfaceFormat_.colorSpace;
+    createInfo.imageExtent = currentExtent_;
     createInfo.imageArrayLayers = 1;
     createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-    const uint32_t graphicsFamily{ device_->graphicsFamily() };
-    const uint32_t presentFamily{ device_->presentFamily() };
-    std::array<uint32_t, 2> queueFamilyIndices = { graphicsFamily,
-                                                   presentFamily };
-    if ( graphicsFamily != presentFamily ) {
+    // const uint32_t graphicsFamily{ device_->graphicsFamily() };
+    // const uint32_t presentFamily{ device_->presentFamily() };
+    std::array<uint32_t, 2> queueFamilyIndices = { graphicsFamilyQueueId_,
+                                                   presentSupportQueueId_ };
+    if ( graphicsFamilyQueueId_ != presentSupportQueueId_ ) {
         createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
         createInfo.queueFamilyIndexCount = 2;
         createInfo.pQueueFamilyIndices = queueFamilyIndices.data();
@@ -206,17 +185,17 @@ void Swapchain::createSwapchain() {
         createInfo.pQueueFamilyIndices = nullptr;  // Optional
     }
 
-    createInfo.preTransform = surfaceCapabilities.currentTransform;
+    createInfo.preTransform = surfaceCapabilities_.currentTransform;
     createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-    createInfo.presentMode = presentMode;
+    createInfo.presentMode = presentMode_;
     createInfo.clipped = VK_TRUE;
     createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-    if ( const auto err = vkCreateSwapchainKHR( device_->handle(), &createInfo,
-                                                nullptr, &swapchain_ );
+    if ( const auto err =
+             vkCreateSwapchainKHR( device_, &createInfo, nullptr, &swapchain_ );
          err != VK_SUCCESS ) {
-        throw std::runtime_error( std::format(
-            "failed to create swapchain code {}\n!", string_VkResult( err ) ) );
+        log::fatal( "failed to create swapchain code {}\n!",
+                    string_VkResult( err ) );
     } else {
         log::info( "vk::Swapchain ===  vulkan swapchain created!" );
     }
@@ -225,35 +204,30 @@ void Swapchain::createSwapchain() {
     // equal to previously defined in VkSwapchainCreateInfoKHR.minImageCount.
     // But we still try to get image count that way.
     if ( const auto err = vkGetSwapchainImagesKHR(
-             device_->handle(), swapchain_, &swapchainImageCount_, nullptr );
+             device_, swapchain_, &swapchainImageCount_, nullptr );
          err != VK_SUCCESS ) {
-        throw std::runtime_error(
-            std::format( "failed to get swapchain images count with code {}\n!",
-                         string_VkResult( err ) ) );
+        log::fatal( "failed to get swapchain images count with code {}\n!",
+                    string_VkResult( err ) );
     } else {
-        log::debug<DEBUG_OUTPUT_SWAPCHAINVK_CPP>(
+        log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>(
             "vk::Swapchain === swapchain images count: {}",
             swapchainImageCount_ );
     }
 
     swapChainImages_.resize( imageCount );
 
-    if ( const auto err =
-             vkGetSwapchainImagesKHR( device_->handle(), swapchain_,
-                                      &imageCount, swapChainImages_.data() );
+    if ( const auto err = vkGetSwapchainImagesKHR(
+             device_, swapchain_, &imageCount, swapChainImages_.data() );
          err != VK_SUCCESS ) {
-        throw std::runtime_error(
-            std::format( "failed to get swapchain images with code {}\n!",
-                         string_VkResult( err ) ) );
+        log::fatal( "failed to get swapchain images with code {}\n!",
+                    string_VkResult( err ) );
     } else {
-        log::debug<DEBUG_OUTPUT_SWAPCHAINVK_CPP>(
+        log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>(
             "vk::Swapchain === images acquired!" );
     }
 
-    swapChainImageFormat_ = surfaceFormat.format;
-
     //
-    // Depth image cration
+    // Depth image creation
     //
     auto createImage = [this]( uint32_t width, uint32_t height, VkFormat format,
                                VkImageTiling tiling, VkImageUsageFlags usage,
@@ -274,33 +248,32 @@ void Swapchain::createSwapchain() {
         imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
         imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-        if ( vkCreateImage( device_->handle(), &imageInfo, nullptr, &image ) !=
+        if ( vkCreateImage( device_, &imageInfo, nullptr, &image ) !=
              VK_SUCCESS ) {
-            throw std::runtime_error( "failed to create image!" );
+            log::fatal( "failed to create image!" );
         }
 
         VkMemoryRequirements memRequirements;
-        vkGetImageMemoryRequirements( device_->handle(), image,
-                                      &memRequirements );
+        vkGetImageMemoryRequirements( device_, image, &memRequirements );
 
         VkMemoryAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         allocInfo.allocationSize = memRequirements.size;
-        allocInfo.memoryTypeIndex = device_->memoryRequirements(
-            memRequirements.memoryTypeBits, properties );
+        allocInfo.memoryTypeIndex =
+            memoryRequirements( memRequirements.memoryTypeBits, properties );
 
-        if ( vkAllocateMemory( device_->handle(), &allocInfo, nullptr,
-                               &imageMemory ) != VK_SUCCESS ) {
-            throw std::runtime_error( "failed to allocate image memory!" );
+        if ( vkAllocateMemory( device_, &allocInfo, nullptr, &imageMemory ) !=
+             VK_SUCCESS ) {
+            log::fatal( "failed to allocate image memory!" );
         }
 
-        if ( vkBindImageMemory( device_->handle(), image, imageMemory, 0 ) !=
+        if ( vkBindImageMemory( device_, image, imageMemory, 0 ) !=
              VK_SUCCESS ) {
-            throw std::runtime_error( "failed to bind image!" );
+            log::fatal( "failed to bind image!" );
         }
     };
 
-    const auto depthFormat = device_->findSupportedFormat(
+    const auto depthFormat = findSupportedFormat(
         { VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT,
           VK_FORMAT_D24_UNORM_S8_UINT },
         VK_IMAGE_TILING_OPTIMAL,
@@ -308,7 +281,7 @@ void Swapchain::createSwapchain() {
     //const auto depthFormat = VK_FORMAT_D32_SFLOAT;
 
     createImage(
-        swapChainExtent_.width, swapChainExtent_.height, depthFormat,
+        currentExtent_.width, currentExtent_.height, depthFormat,
         VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage_, depthImageMemory_ );
 
@@ -327,9 +300,9 @@ void Swapchain::createSwapchain() {
         viewInfo.subresourceRange.layerCount = 1;
 
         VkImageView imageView;
-        if ( vkCreateImageView( device_->handle(), &viewInfo, nullptr,
-                                &imageView ) != VK_SUCCESS ) {
-            throw std::runtime_error( "failed to create image view!" );
+        if ( vkCreateImageView( device_, &viewInfo, nullptr, &imageView ) !=
+             VK_SUCCESS ) {
+            log::fatal( "failed to create image view!" );
         }
 
         return imageView;
@@ -338,19 +311,19 @@ void Swapchain::createSwapchain() {
     depthImageView_ =
         createImageView( depthImage_, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT );
 
-    transitionImageLayout( device_, commandPool_, depthImage_, depthFormat,
-                           VK_IMAGE_LAYOUT_UNDEFINED,
+    transitionImageLayout( device_, commandPool_, graphicsQueue_, depthImage_,
+                           depthFormat, VK_IMAGE_LAYOUT_UNDEFINED,
                            VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL );
 }
 
-void Swapchain::createImageViews() {
+void Context::makeImageViews() {
     swapChainImageViews_.resize( swapChainImages_.size() );
     for ( size_t i = 0; i < swapChainImages_.size(); i++ ) {
         const VkImageViewCreateInfo createInfo{
             .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
             .image = swapChainImages_[i],
             .viewType = VK_IMAGE_VIEW_TYPE_2D,
-            .format = swapChainImageFormat_,
+            .format = surfaceFormat_.format,
             .components = { VK_COMPONENT_SWIZZLE_IDENTITY,
                             VK_COMPONENT_SWIZZLE_IDENTITY,
                             VK_COMPONENT_SWIZZLE_IDENTITY,
@@ -361,21 +334,20 @@ void Swapchain::createImageViews() {
                                   .baseArrayLayer = 0,
                                   .layerCount = 1 } };
 
-        if ( const auto err =
-                 vkCreateImageView( device_->handle(), &createInfo, nullptr,
-                                    &swapChainImageViews_[i] );
+        if ( const auto err = vkCreateImageView( device_, &createInfo, nullptr,
+                                                 &swapChainImageViews_[i] );
              err != VK_SUCCESS ) {
-            throw std::runtime_error( std::format(
+            log::fatal(
                 "failed to create swapchain image views with code {}\n!",
-                string_VkResult( err ) ) );
+                string_VkResult( err ) );
         } else {
-            log::debug<DEBUG_OUTPUT_SWAPCHAINVK_CPP>(
+            log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>(
                 "vk::Swapchain === image view {} created!", i );
         }
     }
 }
 
-void Swapchain::createFramebuffers( const vk::Pipeline *pipeline ) {
+void Context::createFramebuffers( const Pipeline *pipeline ) {
     framebuffers_.resize( swapChainImageViews_.size() );
     for ( size_t i = 0; i < swapChainImageViews_.size(); i++ ) {
         std::array<VkImageView, 2> attachments = { swapChainImageViews_[i],
@@ -385,22 +357,20 @@ void Swapchain::createFramebuffers( const vk::Pipeline *pipeline ) {
             .renderPass = pipeline->renderpass(),
             .attachmentCount = static_cast<uint32_t>( attachments.size() ),
             .pAttachments = attachments.data(),
-            .width = swapChainExtent_.width,
-            .height = swapChainExtent_.height,
+            .width = currentExtent_.width,
+            .height = currentExtent_.height,
             .layers = 1 };
 
-        if ( const auto err =
-                 vkCreateFramebuffer( device_->handle(), &framebufferInfo,
-                                      nullptr, &framebuffers_[i] );
+        if ( const auto err = vkCreateFramebuffer( device_, &framebufferInfo,
+                                                   nullptr, &framebuffers_[i] );
              err != VK_SUCCESS ) {
-            throw std::runtime_error(
-                std::format( "failed to create framebuffer at {} with code {}!",
-                             i, string_VkResult( err ) ) );
+            log::fatal( "failed to create framebuffer at {} with code {}!", i,
+                        string_VkResult( err ) );
         } else {
-            log::debug<DEBUG_OUTPUT_SWAPCHAINVK_CPP>(
+            log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>(
                 "vk::Swapchain === framebuffer {} created!", i );
         }
     }
 }
 
-}  // namespace tire::vk
+}  // namespace atire

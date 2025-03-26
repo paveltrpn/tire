@@ -5,8 +5,8 @@
 #include <span>
 #include <vulkan/vulkan.h>
 
-#include "../device.h"
-#include "../../../log/log.h"
+#include "../context.h"
+#include "log/log.h"
 
 namespace tire::vk {
 
@@ -85,7 +85,7 @@ static const std::map<ShaderStageType, std::string> StagesSuffixMap = {
 };
 
 struct ShaderStorage final {
-    ShaderStorage( const vk::Device *device );
+    ShaderStorage( const vk::Context *context );
 
     ShaderStorage( const ShaderStorage &other ) = delete;
     ShaderStorage( ShaderStorage &&other ) = delete;
@@ -137,7 +137,7 @@ private:
     bool isValidName( const std::string &name );
 
 private:
-    const vk::Device *device_;
+    const vk::Context *context_;
 
     std::map<std::string, VkShaderModule> modules_{};
     std::map<ShaderStageType, bool> check_{};

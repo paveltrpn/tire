@@ -3,14 +3,14 @@
 
 #include <vulkan/vulkan.h>
 
-#include "../device.h"
+#include "../context.h"
 #include "shader_storage.h"
 #include "renderpass.h"
 
 namespace tire::vk {
 
 struct Pipeline {
-    Pipeline( const vk::Device *device );
+    Pipeline( const vk::Context *context );
 
     Pipeline( const Pipeline &other ) = delete;
     Pipeline( Pipeline &&other ) = delete;
@@ -32,7 +32,7 @@ protected:
     [[nodiscard]] virtual VkPipelineLayout initLayout() = 0;
 
 protected:
-    const vk::Device *device_;
+    const vk::Context *context_;
     std::unique_ptr<vk::ShaderStorage> shaderStorage_;
     std::unique_ptr<vk::RenderpassBase> renderpass_;
 
@@ -41,8 +41,8 @@ protected:
 };
 
 struct PiplineMatrixReady final : Pipeline {
-    PiplineMatrixReady( const vk::Device *device )
-        : Pipeline( device ) {}
+    PiplineMatrixReady( const vk::Context *context )
+        : Pipeline( context ) {}
 
 public:
     void initPipeline(
@@ -55,8 +55,8 @@ private:
 // =====================================================================================
 
 struct PiplineVertexBuffer final : Pipeline {
-    PiplineVertexBuffer( const vk::Device *device )
-        : Pipeline( device ) {}
+    PiplineVertexBuffer( const vk::Context *context )
+        : Pipeline( context ) {}
 
 public:
     void initPipeline(

@@ -7,13 +7,13 @@
 
 #include <log/log.h>
 
-#include "../device.h"
+#include "../context.h"
 
 namespace tire::vk {
 
 struct RenderpassBase {
-    RenderpassBase( const vk::Device *device )
-        : device_{ device } {}
+    RenderpassBase( const vk::Context *context )
+        : context_{ context } {}
 
     RenderpassBase( const RenderpassBase &other ) = delete;
     RenderpassBase( RenderpassBase &&other ) = delete;
@@ -22,7 +22,7 @@ struct RenderpassBase {
     RenderpassBase &operator=( RenderpassBase &&other ) = delete;
 
     virtual ~RenderpassBase() {
-        vkDestroyRenderPass( device_->handle(), renderPass_, nullptr );
+        vkDestroyRenderPass( context_->device(), renderPass_, nullptr );
     };
 
     [[nodiscard]] VkRenderPass handle() const { return renderPass_; }
@@ -30,7 +30,7 @@ struct RenderpassBase {
     virtual void init() = 0;
 
 protected:
-    const vk::Device *device_;
+    const vk::Context *context_;
     VkRenderPass renderPass_{ VK_NULL_HANDLE };
 };
 
@@ -39,8 +39,8 @@ protected:
 struct RenderpassSimple final : RenderpassBase {
     using base_class = RenderpassBase;
 
-    RenderpassSimple( const vk::Device *device )
-        : base_class{ device } {
+    RenderpassSimple( const vk::Context *context )
+        : base_class{ context } {
         init();
     }
 

@@ -1,11 +1,14 @@
 
+#define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "instance.h"
+#include "context.h"
 #include "log/log.h"
-static constexpr bool DEBUG_OUTPUT_INSTANCEVK_CPP{ true };
+static constexpr bool DEBUG_OUTPUT_INSTANCE_CPP{ true };
 
 import config;
+
+#include "context.h"
 
 namespace tire::vk {
 
@@ -13,6 +16,8 @@ namespace tire::vk {
 #define STRING_INFO "\033[37m"
 #define STRING_WARNING "\033[33m"
 #define STRING_ERROR "\033[36m"
+
+namespace {
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL
 debugCallback( VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
@@ -49,7 +54,9 @@ static VkResult vkCreateDebugUtilsMessenger(
     }
 }
 
-Instance::Instance() {
+}  // namespace
+
+void Context::makeInstance() {
     const auto configPtr = Config::instance();
     const auto applicationName = configPtr->getString( "application_name" );
     const auto engineName = configPtr->getString( "engine_name" );
@@ -73,11 +80,10 @@ Instance::Instance() {
     if ( const auto err =
              vkEnumerateInstanceLayerProperties( &layersCount, nullptr );
          err != VK_SUCCESS ) {
-        throw std::runtime_error( std::format(
-            "can't enumerate instance layer properties with code: {}\n",
-            string_VkResult( err ) ) );
+        log::fatal( "can't enumerate instance layer properties with code: {}\n",
+                    string_VkResult( err ) );
     } else {
-        log::debug<DEBUG_OUTPUT_INSTANCEVK_CPP>(
+        log::debug<DEBUG_OUTPUT_INSTANCE_CPP>(
             "vk::Instance === layer properties value: {}", layersCount );
     }
 
@@ -86,9 +92,8 @@ Instance::Instance() {
     if ( const auto err = vkEnumerateInstanceLayerProperties(
              &layersCount, layerProperties_.data() );
          err != VK_SUCCESS ) {
-        throw std::runtime_error( std::format(
-            "can't acquire instance layer properties with code: {}\n",
-            string_VkResult( err ) ) );
+        log::fatal( "can't acquire instance layer properties with code: {}\n",
+                    string_VkResult( err ) );
     } else {
         log::info( "vk::Instance === layer properties acquired" );
     }
@@ -98,11 +103,11 @@ Instance::Instance() {
 
     // Show little fancy window with some useful info.
     desiredValidationLayerList_.emplace_back( "VK_LAYER_MESA_overlay" );
-    desiredValidationLayerList_.emplace_back( "VK_LAYER_NV_optimus" );
-    desiredValidationLayerList_.emplace_back(
-        "VK_LAYER_VALVE_steam_fossilize_64" );
-    desiredValidationLayerList_.emplace_back(
-        "VK_LAYER_VALVE_steam_overlay_64" );
+    //desiredValidationLayerList_.emplace_back( "VK_LAYER_NV_optimus" );
+    // desiredValidationLayerList_.emplace_back(
+    // "VK_LAYER_VALVE_steam_fossilize_64" );
+    // desiredValidationLayerList_.emplace_back(
+    // "VK_LAYER_VALVE_steam_overlay_64" );
     // desiredInstanceValidationLayerList.push_back( "VK_LAYER_KHRONOS_validation" ); // not supported
 
     const std::vector<VkValidationFeatureEnableEXT>
@@ -154,12 +159,12 @@ Instance::Instance() {
     if ( const auto err = vkEnumerateInstanceExtensionProperties(
              nullptr, &extCount, nullptr );
          err != VK_SUCCESS ) {
-        throw std::runtime_error(
-            std::format( "can't enumerate instance extension "
-                         "properties with code: {}\n",
-                         string_VkResult( err ) ) );
+        log::fatal(
+            "can't enumerate instance extension "
+            "properties with code: {}\n",
+            string_VkResult( err ) );
     } else {
-        log::debug<DEBUG_OUTPUT_INSTANCEVK_CPP>(
+        log::debug<DEBUG_OUTPUT_INSTANCE_CPP>(
             "vk::Instance === extension properties value: {}", extCount );
     }
 
@@ -168,10 +173,10 @@ Instance::Instance() {
     if ( const auto err = vkEnumerateInstanceExtensionProperties(
              nullptr, &extCount, extensionProperties_.data() );
          err != VK_SUCCESS ) {
-        throw std::runtime_error(
-            std::format( "can't acquire instance extension properties "
-                         "with code: {}\n",
-                         string_VkResult( err ) ) );
+        log::fatal(
+            "can't acquire instance extension properties "
+            "with code: {}\n",
+            string_VkResult( err ) );
     } else {
         log::info( "vk::Instance === extension properties aquired" );
     }
@@ -194,9 +199,8 @@ Instance::Instance() {
     if ( const auto err =
              vkCreateInstance( &instanceCreateInfo, nullptr, &instance_ );
          err != VK_SUCCESS ) {
-        throw std::runtime_error(
-            std::format( "can't create vk instance with code: {}\n",
-                         string_VkResult( err ) ) );
+        log::fatal( "can't create vk instance with code: {}\n",
+                    string_VkResult( err ) );
     } else {
         log::info( "vk::Instance === vulkan instance created!" );
     }
@@ -206,52 +210,12 @@ Instance::Instance() {
                  instance_, &debugUtilsMessengerCreateInfo, nullptr,
                  &debugMessenger_ );
              err != VK_SUCCESS ) {
-            throw std::runtime_error(
-                std::format( "failed to set up debug messenger with code {}!\n",
-                             string_VkResult( err ) ) );
+            log::fatal( "failed to set up debug messenger with code {}!\n",
+                        string_VkResult( err ) );
         } else {
-            log::debug<DEBUG_OUTPUT_INSTANCEVK_CPP>(
+            log::debug<DEBUG_OUTPUT_INSTANCE_CPP>(
                 "vk::Instance === vkCreateDebugUtilsMessenger success!" );
         }
     }
 }
-
-Instance::~Instance() {
-    vkDestroyInstance( instance_, nullptr );
-}
-
-VkInstance Instance::handle() const {
-    return instance_;
-}
-
-std::pair<uint32_t, char const *const *> Instance::validationLayers() const {
-    return std::make_pair( desiredValidationLayerList_.size(),
-                           desiredValidationLayerList_.data() );
-}
-
-void Instance::info() const {
-    std::print(
-        R"(Instance extensions count: {}
-==========================
-)",
-        extensionProperties_.size() );
-    for ( auto &prop : extensionProperties_ ) {
-        std::print( R"(	{} | revision: {}
-)",
-                    prop.extensionName, prop.specVersion );
-    }
-
-    std::print(
-        R"(Layers count: {}
-=============
-)",
-        layerProperties_.size() );
-    for ( auto &layer : layerProperties_ ) {
-        std::print( R"(	{} | specVersion: {}
-    {}
-)",
-                    layer.layerName, layer.specVersion, layer.description );
-    }
-}
-
 }  // namespace tire::vk

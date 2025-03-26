@@ -8,7 +8,7 @@ namespace tire::vk {
 void RenderpassSimple::init() {
     VkAttachmentDescription colorAttachment{};
     // Same as swapchain image format
-    colorAttachment.format = device_->surfaceFormat().format;
+    colorAttachment.format = context_->surfaceFormat().format;
     colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
     colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -18,7 +18,7 @@ void RenderpassSimple::init() {
     colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
     //Similar to swapchain creation depth format acquire!
-    const auto depthFormat = device_->findSupportedFormat(
+    const auto depthFormat = context_->findSupportedFormat(
         { VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT,
           VK_FORMAT_D24_UNORM_S8_UINT },
         VK_IMAGE_TILING_OPTIMAL,
@@ -76,7 +76,7 @@ void RenderpassSimple::init() {
     renderPassInfo.pDependencies = &dependency;
 
     if ( const auto err = vkCreateRenderPass(
-             device_->handle(), &renderPassInfo, nullptr, &renderPass_ );
+             context_->device(), &renderPassInfo, nullptr, &renderPass_ );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create render pass with code {}!",

@@ -31,33 +31,34 @@ void RenderVK::preFrame() {
 void RenderVK::frame() {
     uint32_t imageIndex{};
 
-    const auto [iaSem, rfSem, ifFnc] = presentSync_->get( imageIndex );
+    const auto [iaSem, rfSem, ifFnc] =
+        context_->getPresentSynchronization( imageIndex );
 
 #define ONE_SECOND 1000000000
     // NOTE: omit return code check
-    vkWaitForFences( device_->handle(), 1, &ifFnc, VK_TRUE, 0 );
+    vkWaitForFences( context_->device(), 1, &ifFnc, VK_TRUE, 0 );
 
     // NOTE: omit return code check
-    vkResetFences( device_->handle(), 1, &ifFnc );
+    vkResetFences( context_->device(), 1, &ifFnc );
 
     // NOTE: omit return code check
     // May return VK_SUBOPTIMAL_KHR or even VK_ERROR_OUT_OF_DATE_KHR
     // if current surface properties are no longer matched
     // exactly or swap chain has become incompatible
     // with the surface and can no longer be used for rendering
-    vkAcquireNextImageKHR( device_->handle(), swapchain_->handle(), UINT64_MAX,
-                           iaSem, VK_NULL_HANDLE, &imageIndex );
+    vkAcquireNextImageKHR( context_->device(), context_->swapchain(),
+                           UINT64_MAX, iaSem, VK_NULL_HANDLE, &imageIndex );
 
     // NOTE: currentFrame_->imageIndex
-    const auto currentFramebuffer = swapchain_->framebuffer( imageIndex );
+    const auto currentFramebuffer = context_->framebuffer( imageIndex );
 
     auto handle = static_cast<vk::Scene*>( scene_.get() );
     handle->output( currentFramebuffer, imageIndex, iaSem, rfSem, ifFnc );
 
-    present_->present( rfSem, &imageIndex );
+    context_->present( rfSem, &imageIndex );
 
     // NOTE: omit return code check
-    vkResetFences( device_->handle(), 1, &ifFnc );
+    vkResetFences( context_->device(), 1, &ifFnc );
 
     // TODO: decide is correct to use imageIndex from vkAcquireNextImageKHR()
     // instead if currentFrame? Maybe it works because of number of swapchain
@@ -76,7 +77,7 @@ void RenderVK::swapBuffers() {
 void RenderVK::postLoop() {
     // we should wait for the logical device to finish operations
     // before exiting mainLoop and destroying the window
-    vkDeviceWaitIdle( device_->handle() );
+    vkDeviceWaitIdle( context_->device() );
 };
 
 }  // namespace tire

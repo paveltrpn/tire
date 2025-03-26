@@ -5,6 +5,7 @@
 #include <vulkan/vulkan_core.h>
 #include <type_traits>
 
+#include "../context.h"
 #include "../pipelines/pipeline.h"
 #include "../command_pool.h"
 #include "algebra/matrix4.h"
@@ -12,8 +13,9 @@
 
 namespace tire::vk {
 struct SceneRenderCommand final {
-    SceneRenderCommand( const vk::Device *device, const vk::Pipeline *pipeline,
-                        const CommandPool *pool, uint32_t commandsCount );
+    SceneRenderCommand( const vk::Context *context,
+                        const vk::Pipeline *pipeline, const CommandPool *pool,
+                        uint32_t commandsCount );
 
     SceneRenderCommand( const SceneRenderCommand &other ) = delete;
     SceneRenderCommand( SceneRenderCommand &&other ) = delete;
@@ -31,7 +33,7 @@ struct SceneRenderCommand final {
 
 protected:
     // Propertis set on "command" creation and stay same trough lifetime
-    const vk::Device *device_{};
+    const vk::Context *context_{};
     const vk::Pipeline *pipeline_{};
     const vk::CommandPool *pool_{};
 

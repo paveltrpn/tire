@@ -119,7 +119,7 @@ void PiplineMatrixReady::initPipeline(
         .basePipelineIndex = -1 };
 
     if ( const auto err =
-             vkCreateGraphicsPipelines( device_->handle(), VK_NULL_HANDLE, 1,
+             vkCreateGraphicsPipelines( context_->device(), VK_NULL_HANDLE, 1,
                                         &pipelineInfo, nullptr, &pipeline_ );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
@@ -152,7 +152,7 @@ VkPipelineLayout PiplineMatrixReady::initLayout() {
     VkPipelineLayout layout{ VK_NULL_HANDLE };
 
     if ( const auto err = vkCreatePipelineLayout(
-             device_->handle(), &pipelineLayoutInfo, nullptr, &layout );
+             context_->device(), &pipelineLayoutInfo, nullptr, &layout );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create pipeline layout with code {}!",

@@ -10,18 +10,18 @@
 
 namespace tire::vk {
 
-Scene::Scene( const std::filesystem::path &fname, const vk::Device *device,
+Scene::Scene( const std::filesystem::path &fname, const vk::Context *context,
               const vk::Pipeline *pipeline )
     : tire::Scene{ fname }
-    , device_{ device }
+    , context_{ context }
     , pipeline_{ pipeline } {
-    commandPool_ = std::make_unique<vk::CommandPool>( device_ );
+    commandPool_ = std::make_unique<vk::CommandPool>( context_ );
 
     // Create scene draw command (three times)
     cBufs_.reserve( FRAMES_IN_FLIGHT_COUNT );
     for ( auto i = 0; i < cBufs_.capacity(); ++i ) {
         cBufs_.push_back( std::make_unique<vk::SceneRenderCommand>(
-            device_, pipeline_, commandPool_.get(), bodyList_.size() ) );
+            context_, pipeline_, commandPool_.get(), bodyList_.size() ) );
     }
 
     // Create vulkan "vertex buffers"
@@ -29,7 +29,7 @@ Scene::Scene( const std::filesystem::path &fname, const vk::Device *device,
     buffersList_.reserve( nodeListSize );
     for ( size_t i{}; i < nodeListSize; ++i ) {
         auto buf = std::make_shared<vk::VertexBuffer<float>>(
-            device_, bodyList_[i]->verteciesCount() );
+            context_, bodyList_[i]->verteciesCount() );
         buffersList_.push_back( std::move( buf ) );
     }
 }

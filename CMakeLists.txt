@@ -106,12 +106,11 @@ add_library(render
     modules/render/gl/texture.cpp
     modules/render/vk/rendervk.cpp
     modules/render/vk/rendervk.h
+    modules/render/vk/context.h
+    modules/render/vk/context.cpp
     modules/render/vk/instance.cpp
-    modules/render/vk/instance.h
-    modules/render/vk/surface.cpp
-    modules/render/vk/surface.h
     modules/render/vk/device.cpp
-    modules/render/vk/device.h
+    modules/render/vk/swapchain.cpp
     modules/render/vk/main_loop.cpp
     modules/render/vk/pipelines/shader_storage.h
     modules/render/vk/pipelines/shader_storage.cpp
@@ -127,12 +126,8 @@ add_library(render
     modules/render/vk/buffers/vertex_buffer.cpp
     modules/render/vk/scene.h
     modules/render/vk/scene.cpp
-    modules/render/vk/swapchain.h
-    modules/render/vk/swapchain.cpp
     modules/render/vk/command_pool.h
     modules/render/vk/command_pool.cpp
-    modules/render/vk/present.h
-    modules/render/vk/present.cpp
 )
 target_link_libraries(render scene config geometry algebra event)
 

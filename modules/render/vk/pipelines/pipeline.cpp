@@ -10,14 +10,14 @@ import config;
 
 namespace tire::vk {
 
-Pipeline::Pipeline( const vk::Device *device )
-    : device_{ device } {
-    shaderStorage_ = std::make_unique<vk::ShaderStorage>( device_ );
-    renderpass_ = std::make_unique<vk::RenderpassSimple>( device_ );
+Pipeline::Pipeline( const vk::Context *context )
+    : context_{ context } {
+    shaderStorage_ = std::make_unique<vk::ShaderStorage>( context_ );
+    renderpass_ = std::make_unique<vk::RenderpassSimple>( context_ );
 }
 
 Pipeline::~Pipeline() {
-    vkDestroyPipeline( device_->handle(), pipeline_, nullptr );
+    vkDestroyPipeline( context_->device(), pipeline_, nullptr );
 }
 
 }  // namespace tire::vk
