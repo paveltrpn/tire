@@ -112,8 +112,8 @@ add_library(render
     modules/render/vk/device.cpp
     modules/render/vk/swapchain.cpp
     modules/render/vk/main_loop.cpp
-    modules/render/vk/pipelines/shader_storage.h
-    modules/render/vk/pipelines/shader_storage.cpp
+    modules/render/vk/pipelines/program.h
+    modules/render/vk/pipelines/program.cpp
     modules/render/vk/pipelines/pipeline.h
     modules/render/vk/pipelines/pipeline.cpp
     modules/render/vk/pipelines/pipeline_matrix_ready.cpp

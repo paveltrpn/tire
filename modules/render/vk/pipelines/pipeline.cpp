@@ -12,7 +12,7 @@ namespace tire::vk {
 
 Pipeline::Pipeline( const vk::Context *context )
     : context_{ context } {
-    shaderStorage_ = std::make_unique<vk::ShaderStorage>( context_ );
+    program_ = std::make_unique<vk::Program>( context_ );
     renderpass_ = std::make_unique<vk::RenderpassSimple>( context_ );
 }
 

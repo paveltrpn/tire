@@ -4,7 +4,7 @@
 #include <vulkan/vulkan.h>
 
 #include "../context.h"
-#include "shader_storage.h"
+#include "program.h"
 #include "renderpass.h"
 
 namespace tire::vk {
@@ -33,7 +33,7 @@ protected:
 
 protected:
     const vk::Context *context_;
-    std::unique_ptr<vk::ShaderStorage> shaderStorage_;
+    std::unique_ptr<vk::Program> program_;
     std::unique_ptr<vk::RenderpassBase> renderpass_;
 
     VkPipeline pipeline_{ VK_NULL_HANDLE };

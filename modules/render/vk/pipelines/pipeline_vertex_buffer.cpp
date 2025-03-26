@@ -115,14 +115,14 @@ void PiplineVertexBuffer::initPipeline(
         .pDynamicStates = dynamicStates.data() };
 
     layout_ = initLayout();
-    shaderStorage_->fill( files );
+    program_->fill( files );
 
     const VkPipelineShaderStageCreateInfo vertShaderStage{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
         .pNext = nullptr,
         .flags = 0,
         .stage = VK_SHADER_STAGE_VERTEX_BIT,
-        .module = shaderStorage_->get<ShaderStageType::VERTEX>(),
+        .module = program_->get<ShaderStageType::VERTEX>(),
         .pName = "main" };
 
     const VkPipelineShaderStageCreateInfo fragShaderStage{
@@ -130,7 +130,7 @@ void PiplineVertexBuffer::initPipeline(
         .pNext = nullptr,
         .flags = 0,
         .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
-        .module = shaderStorage_->get<ShaderStageType::FRAGMENT>(),
+        .module = program_->get<ShaderStageType::FRAGMENT>(),
         .pName = "main" };
 
     // ====================================================================

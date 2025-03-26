@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <filesystem>
 #include <span>
 #include <vulkan/vulkan.h>
@@ -64,35 +64,36 @@ concept ShaderStage =
     ( Stage == ShaderStageType::SUBPASSSHADING ) ||
     ( Stage == ShaderStageType::CLUSTERCULLING );
 
-static const std::map<ShaderStageType, std::string> StagesSuffixMap = {
-    { ShaderStageType::VERTEX, vertex_stage_suffix },
-    { ShaderStageType::FRAGMENT, fragment_stage_suffix },
-    { ShaderStageType::TESSELATION_EVAL, tesseval_stage_suffix },
-    { ShaderStageType::TESSELATION_CTRL, tessctrl_stage_suffix },
-    { ShaderStageType::GEOMETRY, geometry_stage_suffix },
-    { ShaderStageType::COMPUTE, compute_stage_suffix },
-    { ShaderStageType::RAYGEN, raygen_stage_suffix },
-    { ShaderStageType::ANYHIT, anyhit_stage_suffix },
-    { ShaderStageType::CLOSESTHIT, closeshit_stage_suffix },
-    { ShaderStageType::MISS, miss_stage_suffix },
-    { ShaderStageType::INTERSECTION, intersection_stage_suffix },
-    { ShaderStageType::CALLABLE, callable_stage_suffix },
-    { ShaderStageType::TASK, task_stage_suffix },
-    { ShaderStageType::MESH, mesh_stage_suffix },
-    { ShaderStageType::SUBPASSSHADING, subpassshading_stage_suffix },
-    { ShaderStageType::CLUSTERCULLING, clusterculling_stage_suffix },
+static const std::unordered_map<ShaderStageType, std::string> StagesSuffixMap =
+    {
+        { ShaderStageType::VERTEX, vertex_stage_suffix },
+        { ShaderStageType::FRAGMENT, fragment_stage_suffix },
+        { ShaderStageType::TESSELATION_EVAL, tesseval_stage_suffix },
+        { ShaderStageType::TESSELATION_CTRL, tessctrl_stage_suffix },
+        { ShaderStageType::GEOMETRY, geometry_stage_suffix },
+        { ShaderStageType::COMPUTE, compute_stage_suffix },
+        { ShaderStageType::RAYGEN, raygen_stage_suffix },
+        { ShaderStageType::ANYHIT, anyhit_stage_suffix },
+        { ShaderStageType::CLOSESTHIT, closeshit_stage_suffix },
+        { ShaderStageType::MISS, miss_stage_suffix },
+        { ShaderStageType::INTERSECTION, intersection_stage_suffix },
+        { ShaderStageType::CALLABLE, callable_stage_suffix },
+        { ShaderStageType::TASK, task_stage_suffix },
+        { ShaderStageType::MESH, mesh_stage_suffix },
+        { ShaderStageType::SUBPASSSHADING, subpassshading_stage_suffix },
+        { ShaderStageType::CLUSTERCULLING, clusterculling_stage_suffix },
 
 };
 
-struct ShaderStorage final {
-    ShaderStorage( const vk::Context *context );
+struct Program final {
+    Program( const vk::Context *context );
 
-    ShaderStorage( const ShaderStorage &other ) = delete;
-    ShaderStorage( ShaderStorage &&other ) = delete;
-    ShaderStorage &operator=( const ShaderStorage &other ) = delete;
-    ShaderStorage &operator=( ShaderStorage &&other ) = delete;
+    Program( const Program &other ) = delete;
+    Program( Program &&other ) = delete;
+    Program &operator=( const Program &other ) = delete;
+    Program &operator=( Program &&other ) = delete;
 
-    ~ShaderStorage();
+    ~Program();
 
     // Preconditions:
     // 1) File must be compiled SPIRV bytecode with ".spv" extension.
@@ -140,8 +141,9 @@ private:
 private:
     const vk::Context *context_;
 
-    std::map<std::string, VkShaderModule> modules_{};
-    std::map<ShaderStageType, bool> check_{};
+    // Contains shader stages vulkan shader mudules. One module per stage.
+    std::unordered_map<std::string, VkShaderModule> modules_{};
+    std::unordered_map<ShaderStageType, bool> check_{};
 };
 
 }  // namespace tire::vk
