@@ -6,37 +6,44 @@ LIBS 	 :=
 RM       := rm -f
 
 SOURCES_DIR := shaders
-SRCS := $(SOURCES_DIR)/vk_simple_tri_VERTEX.glsl \
-	$(SOURCES_DIR)/vk_simple_tri_FRAGMENT.glsl \
-	$(SOURCES_DIR)/vk_simple_box_VERTEX.glsl \
-	$(SOURCES_DIR)/vk_simple_box_FRAGMENT.glsl \
-	$(SOURCES_DIR)/vk_vertex_buffer_VERTEX.glsl \
-	$(SOURCES_DIR)/vk_vertex_buffer_FRAGMENT.glsl
+OUT_DIR := spirv
+SRCS := $(SOURCES_DIR)/vk_simpleTri_VERTEX.glsl \
+	$(SOURCES_DIR)/vk_simpleTri_FRAGMENT.glsl \
+	$(SOURCES_DIR)/vk_simpleBox_VERTEX.glsl \
+	$(SOURCES_DIR)/vk_simpleBox_FRAGMENT.glsl \
+	$(SOURCES_DIR)/vk_vertexBuffer_VERTEX.glsl \
+	$(SOURCES_DIR)/vk_vertexBuffer_FRAGMENT.glsl
 
+OUT :=  $(SOURCES_DIR)/$(OUT_DIR)/vk_simpleTri_VERTEX.spv \
+	$(SOURCES_DIR)/$(OUT_DIR)/vk_simpleTri_FRAGMENT.spv \
+	$(SOURCES_DIR)/$(OUT_DIR)/vk_simpleBox_VERTEX.spv \
+	$(SOURCES_DIR)/$(OUT_DIR)/vk_simpleBox_FRAGMENT.spv \
+	$(SOURCES_DIR)/$(OUT_DIR)/vk_vertexBuffer_VERTEX.spv \
+	$(SOURCES_DIR)/$(OUT_DIR)/vk_vertexBuffer_FRAGMENT.spv
 
 SPVS := $(SRCS:.glsl=.spv)
 
 $(info SHADERS MAKEFILE)
 
-all: $(SPVS)
+all: $(OUT)
 
-$(SOURCES_DIR)/vk_simple_tri_VERTEX.spv: $(SOURCES_DIR)/vk_simple_tri_VERTEX.glsl
+$(SOURCES_DIR)/$(OUT_DIR)/vk_simpleTri_VERTEX.spv: $(SOURCES_DIR)/vk_simpleTri_VERTEX.glsl
 	$(CC) $(FLAGS) -fshader-stage=vertex $< -o $@
 
-$(SOURCES_DIR)/vk_simple_tri_FRAGMENT.spv: $(SOURCES_DIR)/vk_simple_tri_FRAGMENT.glsl
+$(SOURCES_DIR)/$(OUT_DIR)/vk_simpleTri_FRAGMENT.spv: $(SOURCES_DIR)/vk_simpleTri_FRAGMENT.glsl
 	$(CC) $(FLAGS) -fshader-stage=fragment $< -o $@
 
-$(SOURCES_DIR)/vk_simple_box_VERTEX.spv: $(SOURCES_DIR)/vk_simple_box_VERTEX.glsl
+$(SOURCES_DIR)/$(OUT_DIR)/vk_simpleBox_VERTEX.spv: $(SOURCES_DIR)/vk_simpleBox_VERTEX.glsl
 	$(CC) $(FLAGS) -fshader-stage=vertex $< -o $@
 
-$(SOURCES_DIR)/vk_simple_box_FRAGMENT.spv: $(SOURCES_DIR)/vk_simple_box_FRAGMENT.glsl
+$(SOURCES_DIR)/$(OUT_DIR)/vk_simpleBox_FRAGMENT.spv: $(SOURCES_DIR)/vk_simpleBox_FRAGMENT.glsl
 	$(CC) $(FLAGS) -fshader-stage=fragment $< -o $@
 
-$(SOURCES_DIR)/vk_vertex_buffer_VERTEX.spv: $(SOURCES_DIR)/vk_vertex_buffer_VERTEX.glsl
+$(SOURCES_DIR)/$(OUT_DIR)/vk_vertexBuffer_VERTEX.spv: $(SOURCES_DIR)/vk_vertexBuffer_VERTEX.glsl
 	$(CC) $(FLAGS) -fshader-stage=vertex $< -o $@
 
-$(SOURCES_DIR)/vk_vertex_buffer_FRAGMENT.spv: $(SOURCES_DIR)/vk_vertex_buffer_FRAGMENT.glsl
+$(SOURCES_DIR)/$(OUT_DIR)/vk_vertexBuffer_FRAGMENT.spv: $(SOURCES_DIR)/vk_vertexBuffer_FRAGMENT.glsl
 	$(CC) $(FLAGS) -fshader-stage=fragment $< -o $@
 
 clean:
-	$(RM) $(SOURCES_DIR)/*.spv
+	$(RM) $(SOURCES_DIR)/$(OUT_DIR)/*.spv

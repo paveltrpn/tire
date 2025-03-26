@@ -108,6 +108,7 @@ struct ShaderStorage final {
 
     [[nodiscard]] VkShaderModule get( const std::string &name );
 
+    // Return shader vulkan module
     template <ShaderStageType Stage>
     requires ShaderStage<Stage> [[nodiscard]] VkShaderModule get() const {
         // We sure that "std::map<>::at() return proper value because

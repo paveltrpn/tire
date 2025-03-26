@@ -58,7 +58,7 @@ void ShaderStorage::add( const std::filesystem::path &path ) {
     }
 
     // Future shader name, comes from filename. Have format:
-    // "vk_{some_name}_STAGETYPE, where _STAGETYPE suffix is
+    // "vk_{someNname}_STAGETYPE, where _STAGETYPE suffix is
     // something from well defined set.
     const auto name = path.stem().string();
 
