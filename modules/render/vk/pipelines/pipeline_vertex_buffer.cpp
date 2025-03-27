@@ -115,23 +115,7 @@ void PiplineVertexBuffer::initPipeline(
         .pDynamicStates = dynamicStates.data() };
 
     layout_ = initLayout();
-    program_->fill( files );
-
-    const VkPipelineShaderStageCreateInfo vertShaderStage{
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-        .pNext = nullptr,
-        .flags = 0,
-        .stage = VK_SHADER_STAGE_VERTEX_BIT,
-        .module = program_->get<ShaderStageType::VERTEX>(),
-        .pName = "main" };
-
-    const VkPipelineShaderStageCreateInfo fragShaderStage{
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-        .pNext = nullptr,
-        .flags = 0,
-        .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
-        .module = program_->get<ShaderStageType::FRAGMENT>(),
-        .pName = "main" };
+    initShaderStages( files );
 
     // ====================================================================
     // ============= DEPTH BUFER ==========================================
@@ -155,14 +139,10 @@ void PiplineVertexBuffer::initPipeline(
     viewportState.viewportCount = 1;
     viewportState.scissorCount = 1;
 
-    // NOTE: Will vulkan ignore nullptr shader stages?
-    const std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages{
-        vertShaderStage, fragShaderStage };
-
     const VkGraphicsPipelineCreateInfo pipelineInfo{
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-        .stageCount = static_cast<uint32_t>( shaderStages.size() ),
-        .pStages = shaderStages.data(),
+        .stageCount = static_cast<uint32_t>( shaderStages_.size() ),
+        .pStages = shaderStages_.data(),
         .pVertexInputState = &vertexInput,
         .pInputAssemblyState = &inputAssembly,
         .pViewportState = &viewportState,

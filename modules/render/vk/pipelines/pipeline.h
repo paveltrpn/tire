@@ -28,6 +28,8 @@ struct Pipeline {
     virtual void initPipeline(
         const std::vector<std::filesystem::path> &files ) = 0;
 
+    void initShaderStages( const std::vector<std::filesystem::path> &files );
+
 protected:
     [[nodiscard]] virtual VkPipelineLayout initLayout() = 0;
 
@@ -38,6 +40,8 @@ protected:
 
     VkPipeline pipeline_{ VK_NULL_HANDLE };
     VkPipelineLayout layout_{ VK_NULL_HANDLE };
+
+    std::vector<VkPipelineShaderStageCreateInfo> shaderStages_{};
 };
 
 struct PiplineMatrixReady final : Pipeline {
