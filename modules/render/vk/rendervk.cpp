@@ -24,13 +24,14 @@ RenderVK::RenderVK()
         context_ = std::make_unique<vk::Context>( display_, window_ );
         context_->init();
 
-        piplineMatrixReady_ =
-            std::make_unique<vk::PiplineMatrixReady>( context_.get() );
-        piplineMatrixReady_->initPipeline(
-            { basePath + "/assets/shaders/spirv/vk_simpleBox_VERTEX.spv",
-              basePath + "/assets/shaders/spirv/vk_simpleBox_FRAGMENT.spv" } );
+        piplineVertexBuffer_ =
+            std::make_unique<vk::PiplineVertexBuffer>( context_.get() );
+        piplineVertexBuffer_->initPipeline(
+            { basePath + "/assets/shaders/spirv/vk_vertexBuffer_VERTEX.spv",
+              basePath +
+                  "/assets/shaders/spirv/vk_vertexBuffer_FRAGMENT.spv" } );
 
-        context_->createFramebuffers( piplineMatrixReady_.get() );
+        context_->createFramebuffers( piplineVertexBuffer_.get() );
 
     } catch ( const std::runtime_error &e ) {
         throw std::runtime_error( e.what() );
@@ -38,15 +39,6 @@ RenderVK::RenderVK()
 };
 
 void RenderVK::scene( const std::filesystem::path &path ) {
-    const auto configHandle = Config::instance();
-    const auto basePath = configHandle->getBasePath().string();
-
-    piplineVertexBuffer_ =
-        std::make_unique<vk::PiplineVertexBuffer>( context_.get() );
-    piplineVertexBuffer_->initPipeline(
-        { basePath + "/assets/shaders/spirv/vk_vertexBuffer_VERTEX.spv",
-          basePath + "/assets/shaders/spirv/vk_vertexBuffer_FRAGMENT.spv" } );
-
     scene_ = std::make_shared<vk::Scene>( path, context_.get(),
                                           piplineVertexBuffer_.get() );
 }

@@ -81,7 +81,6 @@ private:
 private:
     std::unique_ptr<vk::Context> context_{};
 
-    std::unique_ptr<vk::Pipeline> piplineMatrixReady_{};
     std::unique_ptr<vk::Pipeline> piplineVertexBuffer_{};
 
     uint32_t currentFrame_{ 0 };
