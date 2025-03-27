@@ -116,6 +116,7 @@ void Program::add( const std::filesystem::path &path ) {
     file.read( charBuf.data(), static_cast<int>( fileSize ) );
     file.close();
 
+    // Cast file data readed as char to vulkan acceptable uint8_t
     std::vector<uint8_t> uint8Buf( fileSize );
     std::transform( charBuf.begin(), charBuf.end(), uint8Buf.begin(),
                     []( char v ) { return static_cast<uint8_t>( v ); } );

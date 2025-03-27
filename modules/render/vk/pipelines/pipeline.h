@@ -24,6 +24,7 @@ struct Pipeline {
 
     virtual void buildPipeline() = 0;
 
+    // Call this manually before buildPipeline()
     void initShaderStages( const vk::Program *program );
 
 protected:
