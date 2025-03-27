@@ -23,10 +23,9 @@ struct Pipeline {
     [[nodiscard]] VkPipelineLayout layout() const { return layout_; };
     [[nodiscard]] VkRenderPass renderpass() const { return renderPass_; }
 
-    virtual void initPipeline(
-        const std::vector<std::filesystem::path> &files ) = 0;
+    virtual void initPipeline() = 0;
 
-    void initShaderStages( const std::vector<std::filesystem::path> &files );
+    void initShaderStages( const vk::Program *program );
 
 protected:
     // Each pipeline can have unique layout
@@ -36,7 +35,6 @@ protected:
 
 protected:
     const vk::Context *context_;
-    std::unique_ptr<vk::Program> program_;
 
     VkPipeline pipeline_{ VK_NULL_HANDLE };
     VkPipelineLayout layout_{ VK_NULL_HANDLE };
@@ -50,8 +48,7 @@ struct PiplineMatrixReady final : Pipeline {
         : Pipeline( context ) {}
 
 public:
-    void initPipeline(
-        const std::vector<std::filesystem::path> &files ) override;
+    void initPipeline() override;
 
 private:
     VkPipelineLayout initLayout() override;
@@ -65,8 +62,7 @@ struct PiplineVertexBuffer final : Pipeline {
         : Pipeline( context ) {}
 
 public:
-    void initPipeline(
-        const std::vector<std::filesystem::path> &files ) override;
+    void initPipeline() override;
 
 private:
     VkPipelineLayout initLayout() override;

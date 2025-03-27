@@ -7,8 +7,7 @@
 
 namespace tire::vk {
 
-void PiplineVertexBuffer::initPipeline(
-    const std::vector<std::filesystem::path> &files ) {
+void PiplineVertexBuffer::initPipeline() {
     std::array<VkVertexInputBindingDescription, 2> bindingDescriptions{};
     bindingDescriptions[0].stride = sizeof( algebra::vector3f );
     bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
@@ -116,7 +115,6 @@ void PiplineVertexBuffer::initPipeline(
 
     layout_ = initLayout();
     renderPass_ = initRenderpass();
-    initShaderStages( files );
 
     // ====================================================================
     // ============= DEPTH BUFER ==========================================
@@ -205,7 +203,7 @@ VkPipelineLayout PiplineVertexBuffer::initLayout() {
             std::format( "failed to create pipeline layout with code {}!",
                          string_VkResult( err ) ) );
     } else {
-        log::info( "vk::PipelineMatrixReady === pipeline layout created!" );
+        log::info( "vk::PiplineVertexBuffer === pipeline layout created!" );
     }
 
     return layout;

@@ -3,8 +3,7 @@
 
 namespace tire::vk {
 
-void PiplineMatrixReady::initPipeline(
-    const std::vector<std::filesystem::path> &files ) {
+void PiplineMatrixReady::initPipeline() {
     const VkPipelineVertexInputStateCreateInfo vertexInput{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
         .pNext = nullptr,
@@ -79,7 +78,6 @@ void PiplineMatrixReady::initPipeline(
 
     layout_ = initLayout();
     renderPass_ = initRenderpass();
-    initShaderStages( files );
 
     const VkGraphicsPipelineCreateInfo pipelineInfo{
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,

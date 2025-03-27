@@ -2,6 +2,7 @@
 #include <print>
 #include <format>
 #include <set>
+#include "render/vk/pipelines/program.h"
 
 #define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vulkan.h>
@@ -26,10 +27,14 @@ RenderVK::RenderVK()
 
         piplineVertexBuffer_ =
             std::make_unique<vk::PiplineVertexBuffer>( context_.get() );
-        piplineVertexBuffer_->initPipeline(
+
+        auto vertexBufferProgram = vk::Program{ context_.get() };
+        vertexBufferProgram.fill(
             { basePath + "/assets/shaders/spirv/vk_vertexBuffer_VERTEX.spv",
               basePath +
                   "/assets/shaders/spirv/vk_vertexBuffer_FRAGMENT.spv" } );
+        piplineVertexBuffer_->initShaderStages( &vertexBufferProgram );
+        piplineVertexBuffer_->initPipeline();
 
         context_->createFramebuffers( piplineVertexBuffer_.get() );
 

@@ -12,23 +12,19 @@ namespace tire::vk {
 
 Pipeline::Pipeline( const vk::Context *context )
     : context_{ context } {
-    program_ = std::make_unique<vk::Program>( context_ );
 }
 
 Pipeline::~Pipeline() {
     vkDestroyPipeline( context_->device(), pipeline_, nullptr );
 }
 
-void Pipeline::initShaderStages(
-    const std::vector<std::filesystem::path> &files ) {
-    program_->fill( files );
-
+void Pipeline::initShaderStages( const vk::Program *program ) {
     const VkPipelineShaderStageCreateInfo vertShaderStage{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
         .pNext = nullptr,
         .flags = 0,
         .stage = VK_SHADER_STAGE_VERTEX_BIT,
-        .module = program_->get<ShaderStageType::VERTEX>(),
+        .module = program->get<ShaderStageType::VERTEX>(),
         .pName = "main" };
 
     const VkPipelineShaderStageCreateInfo fragShaderStage{
@@ -36,7 +32,7 @@ void Pipeline::initShaderStages(
         .pNext = nullptr,
         .flags = 0,
         .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
-        .module = program_->get<ShaderStageType::FRAGMENT>(),
+        .module = program->get<ShaderStageType::FRAGMENT>(),
         .pName = "main" };
 
     shaderStages_.push_back( vertShaderStage );
