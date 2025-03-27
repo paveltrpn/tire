@@ -22,7 +22,7 @@ struct Pipeline {
     [[nodiscard]] VkPipelineLayout layout() const { return layout_; };
     [[nodiscard]] VkRenderPass renderpass() const { return renderPass_; }
 
-    virtual void initPipeline() = 0;
+    virtual void buildPipeline() = 0;
 
     void initShaderStages( const vk::Program *program );
 
@@ -47,7 +47,7 @@ struct PiplineMatrixReady final : Pipeline {
         : Pipeline( context ) {}
 
 public:
-    void initPipeline() override;
+    void buildPipeline() override;
 
 private:
     VkPipelineLayout initLayout() override;
@@ -61,7 +61,7 @@ struct PiplineVertexBuffer final : Pipeline {
         : Pipeline( context ) {}
 
 public:
-    void initPipeline() override;
+    void buildPipeline() override;
 
 private:
     VkPipelineLayout initLayout() override;

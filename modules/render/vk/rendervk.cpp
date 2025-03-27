@@ -33,8 +33,9 @@ RenderVK::RenderVK()
             { basePath + "/assets/shaders/spirv/vk_vertexBuffer_VERTEX.spv",
               basePath +
                   "/assets/shaders/spirv/vk_vertexBuffer_FRAGMENT.spv" } );
+
         piplineVertexBuffer_->initShaderStages( &vertexBufferProgram );
-        piplineVertexBuffer_->initPipeline();
+        piplineVertexBuffer_->buildPipeline();
 
         context_->createFramebuffers( piplineVertexBuffer_.get() );
 

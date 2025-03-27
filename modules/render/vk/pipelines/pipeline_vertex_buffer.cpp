@@ -10,7 +10,8 @@
 
 namespace tire::vk {
 
-void PiplineVertexBuffer::initPipeline() {
+void PiplineVertexBuffer::buildPipeline() {
+    // Init fixed stages
     std::array<VkVertexInputBindingDescription, 2> bindingDescriptions{};
     bindingDescriptions[0].stride = sizeof( algebra::vector3f );
     bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
@@ -116,12 +117,11 @@ void PiplineVertexBuffer::initPipeline() {
         .dynamicStateCount = static_cast<uint32_t>( dynamicStates.size() ),
         .pDynamicStates = dynamicStates.data() };
 
-    layout_ = initLayout();
-    renderPass_ = initRenderpass();
+    VkPipelineViewportStateCreateInfo viewportState{};
+    viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+    viewportState.viewportCount = 1;
+    viewportState.scissorCount = 1;
 
-    // ====================================================================
-    // ============= DEPTH BUFER ==========================================
-    // ====================================================================
     VkPipelineDepthStencilStateCreateInfo depthStencil{};
     depthStencil.sType =
         VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
@@ -136,11 +136,14 @@ void PiplineVertexBuffer::initPipeline() {
     depthStencil.front = {};
     depthStencil.back = {};
 
-    VkPipelineViewportStateCreateInfo viewportState{};
-    viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-    viewportState.viewportCount = 1;
-    viewportState.scissorCount = 1;
+    // =============================================================================
 
+    // This pipeline layout initialization
+    layout_ = initLayout();
+    // This pipeline renderpass initialization
+    renderPass_ = initRenderpass();
+
+    // Create pipeline
     const VkGraphicsPipelineCreateInfo pipelineInfo{
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
         .stageCount = static_cast<uint32_t>( shaderStages_.size() ),

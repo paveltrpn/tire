@@ -5,7 +5,8 @@
 
 namespace tire::vk {
 
-void PiplineMatrixReady::initPipeline() {
+void PiplineMatrixReady::buildPipeline() {
+    // Init fixed stages
     const VkPipelineVertexInputStateCreateInfo vertexInput{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
         .pNext = nullptr,
@@ -78,9 +79,12 @@ void PiplineMatrixReady::initPipeline() {
         .dynamicStateCount = static_cast<uint32_t>( dynamicStates.size() ),
         .pDynamicStates = dynamicStates.data() };
 
+    // This pipeline layout initialization
     layout_ = initLayout();
+    // This pipeline renderpass initialization
     renderPass_ = initRenderpass();
 
+    // Create pipeline
     const VkGraphicsPipelineCreateInfo pipelineInfo{
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
         .stageCount = static_cast<uint32_t>( shaderStages_.size() ),
