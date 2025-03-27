@@ -5,7 +5,6 @@
 
 #include "../context.h"
 #include "program.h"
-#include "renderpass.h"
 
 namespace tire::vk {
 

@@ -1,4 +1,6 @@
 
+#include <vulkan/vk_enum_string_helper.h>
+
 #include "scene_render_command.h"
 
 #include "algebra/matrix4.h"
