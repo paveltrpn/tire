@@ -4,6 +4,7 @@
 
 #include "pipeline.h"
 #include "log/log.h"
+#include "vulkan/vulkan_core.h"
 static constexpr bool DEBUG_OUTPUT_PIPELINE_CPP{ true };
 
 import config;
@@ -19,24 +20,31 @@ Pipeline::~Pipeline() {
 }
 
 void Pipeline::initShaderStages( const vk::Program *program ) {
-    const VkPipelineShaderStageCreateInfo vertShaderStage{
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-        .pNext = nullptr,
-        .flags = 0,
-        .stage = VK_SHADER_STAGE_VERTEX_BIT,
-        .module = program->get<ShaderStageType::VERTEX>(),
-        .pName = "main" };
+    // Add vertex stage
+    if ( const auto module = program->get<ShaderStageType::VERTEX>();
+         module != VK_NULL_HANDLE ) {
+        const VkPipelineShaderStageCreateInfo stage{
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0,
+            .stage = VK_SHADER_STAGE_VERTEX_BIT,
+            .module = module,
+            .pName = "main" };
+        shaderStages_.push_back( stage );
+    }
 
-    const VkPipelineShaderStageCreateInfo fragShaderStage{
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-        .pNext = nullptr,
-        .flags = 0,
-        .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
-        .module = program->get<ShaderStageType::FRAGMENT>(),
-        .pName = "main" };
-
-    shaderStages_.push_back( vertShaderStage );
-    shaderStages_.push_back( fragShaderStage );
+    // Add vertex stage
+    if ( const auto module = program->get<ShaderStageType::FRAGMENT>();
+         module != VK_NULL_HANDLE ) {
+        const VkPipelineShaderStageCreateInfo stage{
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0,
+            .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
+            .module = module,
+            .pName = "main" };
+        shaderStages_.push_back( stage );
+    }
 }
 
 }  // namespace tire::vk
