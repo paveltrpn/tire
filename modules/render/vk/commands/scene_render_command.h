@@ -14,8 +14,7 @@
 namespace tire::vk {
 struct SceneRenderCommand final {
     SceneRenderCommand( const vk::Context *context,
-                        const vk::Pipeline *pipeline, const CommandPool *pool,
-                        uint32_t commandsCount );
+                        const vk::Pipeline *pipeline );
 
     SceneRenderCommand( const SceneRenderCommand &other ) = delete;
     SceneRenderCommand( SceneRenderCommand &&other ) = delete;
@@ -35,7 +34,6 @@ protected:
     // Propertis set on "command" creation and stay same trough lifetime
     const vk::Context *context_{};
     const vk::Pipeline *pipeline_{};
-    const vk::CommandPool *pool_{};
 
     // One command draw all objects
     VkCommandBuffer command_{ VK_NULL_HANDLE };

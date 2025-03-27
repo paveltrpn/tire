@@ -20,8 +20,8 @@ Scene::Scene( const std::filesystem::path &fname, const vk::Context *context,
     // Create scene draw command (three times)
     cBufs_.reserve( FRAMES_IN_FLIGHT_COUNT );
     for ( auto i = 0; i < cBufs_.capacity(); ++i ) {
-        cBufs_.push_back( std::make_unique<vk::SceneRenderCommand>(
-            context_, pipeline_, commandPool_.get(), bodyList_.size() ) );
+        cBufs_.push_back(
+            std::make_unique<vk::SceneRenderCommand>( context_, pipeline_ ) );
     }
 
     // Create vulkan "vertex buffers"

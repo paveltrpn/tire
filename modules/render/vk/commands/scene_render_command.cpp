@@ -10,15 +10,12 @@ static constexpr bool DEBUG_OUTPUT_SCENE_RENDER_COMMAND_CPP{ true };
 namespace tire::vk {
 
 SceneRenderCommand::SceneRenderCommand( const vk::Context *context,
-                                        const vk::Pipeline *pipeline,
-                                        const CommandPool *pool,
-                                        uint32_t commandsCount )
+                                        const vk::Pipeline *pipeline )
     : context_{ context }
-    , pipeline_{ pipeline }
-    , pool_{ pool } {
+    , pipeline_{ pipeline } {
     const VkCommandBufferAllocateInfo allocInfo{
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-        .commandPool = pool_->handle(),
+        .commandPool = context_->commandPool(),
         .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
         .commandBufferCount = 1 };
     VkCommandBuffer buffer{ VK_NULL_HANDLE };
@@ -45,7 +42,8 @@ SceneRenderCommand::SceneRenderCommand( const vk::Context *context,
 }
 
 void SceneRenderCommand::clean() {
-    vkFreeCommandBuffers( context_->device(), pool_->handle(), 1, &command_ );
+    vkFreeCommandBuffers( context_->device(), context_->commandPool(), 1,
+                          &command_ );
 }
 
 void SceneRenderCommand::reset() {
