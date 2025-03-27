@@ -118,8 +118,6 @@ add_library(render
     modules/render/vk/pipelines/pipeline.cpp
     modules/render/vk/pipelines/pipeline_matrix_ready.cpp
     modules/render/vk/pipelines/pipeline_vertex_buffer.cpp
-    modules/render/vk/pipelines/renderpass.h
-    modules/render/vk/pipelines/renderpass.cpp
     modules/render/vk/commands/scene_render_command.h
     modules/render/vk/commands/scene_render_command.cpp
     modules/render/vk/buffers/vertex_buffer.h

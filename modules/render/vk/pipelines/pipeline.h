@@ -21,9 +21,7 @@ struct Pipeline {
 
     [[nodiscard]] VkPipeline pipeline() const { return pipeline_; };
     [[nodiscard]] VkPipelineLayout layout() const { return layout_; };
-    [[nodiscard]] VkRenderPass renderpass() const {
-        return renderpass_->handle();
-    }
+    [[nodiscard]] VkRenderPass renderpass() const { return renderPass_; }
 
     virtual void initPipeline(
         const std::vector<std::filesystem::path> &files ) = 0;
@@ -31,15 +29,18 @@ struct Pipeline {
     void initShaderStages( const std::vector<std::filesystem::path> &files );
 
 protected:
+    // Each pipeline can have unique layout
     [[nodiscard]] virtual VkPipelineLayout initLayout() = 0;
+    // Each pipeline can have unique renderpass
+    [[nodiscard]] virtual VkRenderPass initRenderpass() = 0;
 
 protected:
     const vk::Context *context_;
     std::unique_ptr<vk::Program> program_;
-    std::unique_ptr<vk::RenderpassBase> renderpass_;
 
     VkPipeline pipeline_{ VK_NULL_HANDLE };
     VkPipelineLayout layout_{ VK_NULL_HANDLE };
+    VkRenderPass renderPass_{ VK_NULL_HANDLE };
 
     std::vector<VkPipelineShaderStageCreateInfo> shaderStages_{};
 };
@@ -54,6 +55,7 @@ public:
 
 private:
     VkPipelineLayout initLayout() override;
+    VkRenderPass initRenderpass() override;
 };
 
 // =====================================================================================
@@ -68,6 +70,7 @@ public:
 
 private:
     VkPipelineLayout initLayout() override;
+    VkRenderPass initRenderpass() override;
 };
 
 }  // namespace tire::vk
