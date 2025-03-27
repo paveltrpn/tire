@@ -31,7 +31,6 @@ private:
     const vk::Context *context_;
     const vk::Pipeline *pipeline_;
 
-    std::unique_ptr<vk::CommandPool> commandPool_{};
     std::vector<std::unique_ptr<vk::SceneRenderCommand>> cBufs_{};
     std::vector<std::shared_ptr<vk::VertexBuffer<float>>> buffersList_;
 };

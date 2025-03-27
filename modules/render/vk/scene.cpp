@@ -15,8 +15,6 @@ Scene::Scene( const std::filesystem::path &fname, const vk::Context *context,
     : tire::Scene{ fname }
     , context_{ context }
     , pipeline_{ pipeline } {
-    commandPool_ = std::make_unique<vk::CommandPool>( context_ );
-
     // Create scene draw command (three times)
     cBufs_.reserve( FRAMES_IN_FLIGHT_COUNT );
     for ( auto i = 0; i < cBufs_.capacity(); ++i ) {
