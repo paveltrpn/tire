@@ -15,6 +15,7 @@ struct Scene final : tire::Scene {
 
     void submit() override;
     void draw() override;
+    void clean() override {};
 
 private:
     std::vector<BodyBuffer> buffersList_;

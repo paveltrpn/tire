@@ -27,15 +27,15 @@ debugCallback( VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
     const std::string message{ pCallbackData->pMessage };
 
     if ( messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT ) {
-        std::println( "{}", STRING_INFO + message + STRING_RESET );
+        std::println( "{}\n", STRING_INFO + message + STRING_RESET );
     }
 
     if ( messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT ) {
-        std::println( "{}", STRING_WARNING + message + STRING_RESET );
+        std::println( "{}\n", STRING_WARNING + message + STRING_RESET );
     }
 
     if ( messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT ) {
-        std::println( "{}", STRING_ERROR + message + STRING_RESET );
+        std::println( "{}\n", STRING_ERROR + message + STRING_RESET );
     }
 
     return VK_FALSE;
@@ -92,19 +92,21 @@ void Context::makeInstance() {
     }
 
     // Vulkan vlidation layers list to enable
-    // vllist.push_back( "VK_LAYER_INTEL_nullhw" ); // cause crash on device creation
-
     // Show little fancy window with some useful info.
-    desiredValidationLayerList_.emplace_back( "VK_LAYER_MESA_overlay" );
+    // desiredValidationLayerList_.emplace_back( "VK_LAYER_MESA_overlay" );
     //desiredValidationLayerList_.emplace_back( "VK_LAYER_NV_optimus" );
     // desiredValidationLayerList_.emplace_back(
     // "VK_LAYER_VALVE_steam_fossilize_64" );
     // desiredValidationLayerList_.emplace_back(
     // "VK_LAYER_VALVE_steam_overlay_64" );
-    // desiredInstanceValidationLayerList.push_back( "VK_LAYER_KHRONOS_validation" ); // not supported
+    desiredValidationLayerList_.push_back(
+        "VK_LAYER_KHRONOS_validation" );  // not supported
 
+    //  NOTE: Enable all avlilable validation features.
     const std::vector<VkValidationFeatureEnableEXT>
         validationFeatureEnableList = {
+            VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_EXT,
+            VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_RESERVE_BINDING_SLOT_EXT,
             VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT,
             VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT,
             VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT };
@@ -156,7 +158,8 @@ void Context::makeInstance() {
     instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     instanceCreateInfo.pApplicationInfo = &appInfo;
 
-    if ( configPtr->get<bool>( "enable_validation_layers" ) ) {
+    // configPtr->get<bool>( "enable_validation_layers" ) ;
+    if ( ENABLE_VULKAN_VALIDATION_LAYERS ) {
         instanceCreateInfo.enabledLayerCount =
             static_cast<uint32_t>( desiredValidationLayerList_.size() );
         instanceCreateInfo.ppEnabledLayerNames =
@@ -215,7 +218,8 @@ void Context::makeInstance() {
         log::info( "vk::Instance === vulkan instance created!" );
     }
 
-    if ( configPtr->get<bool>( "enable_validation_layers" ) ) {
+    // configPtr->get<bool>( "enable_validation_layers" )
+    if ( ENABLE_VULKAN_VALIDATION_LAYERS ) {
         if ( const auto err = vkCreateDebugUtilsMessenger(
                  instance_, &debugUtilsMessengerCreateInfo, nullptr,
                  &debugMessenger_ );

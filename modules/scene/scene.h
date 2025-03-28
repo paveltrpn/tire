@@ -31,6 +31,7 @@ struct Scene {
     virtual void submit() = 0;
     virtual void draw() = 0;
 
+    virtual void clean() = 0;
     void traverse( float frameDuration );
 
     float frameDuration_{};

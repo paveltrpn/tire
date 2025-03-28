@@ -71,7 +71,7 @@ protected:
     Colormap colorMap_;
     GLXFBConfig bestFbc_;
 
-    bool holdMouse_{ true };
+    bool holdMouse_{ false };
     unsigned int holdMouseX_{ 500 };
     unsigned int holdMouseY_{ 500 };
 

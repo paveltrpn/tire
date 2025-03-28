@@ -29,6 +29,8 @@ void RenderVK::preFrame() {
 };
 
 void RenderVK::frame() {
+    std::println(
+        " =================== FRAME_START =============================" );
     uint32_t imageIndex{};
 
     const auto [iaSem, rfSem, ifFnc] = context_->getFrameSyncSet( imageIndex );
@@ -63,6 +65,9 @@ void RenderVK::frame() {
     // instead if currentFrame? Maybe it works because of number of swapchain
     // images is equal to frames in flight? What will happen if this values be different?
     currentFrame_ = ( currentFrame_ + 1 ) % context_->framesCount();
+
+    std::println(
+        " =================== FRAME_END =============================" );
 };
 
 void RenderVK::postFrame() {
@@ -77,6 +82,8 @@ void RenderVK::postLoop() {
     // we should wait for the logical device to finish operations
     // before exiting mainLoop and destroying the window
     vkDeviceWaitIdle( context_->device() );
+
+    scene_->clean();
 };
 
 }  // namespace tire

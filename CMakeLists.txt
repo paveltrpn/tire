@@ -80,6 +80,8 @@ target_sources(config
     modules/config/config.cpp
 )
 
+add_compile_definitions(ENABLE_VULKAN_VALIDATION_LAYERS=true)
+
 add_library(render
     modules/render/render.cpp
     modules/render/render.h

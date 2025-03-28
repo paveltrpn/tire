@@ -23,6 +23,16 @@ struct Scene final : tire::Scene {
     void submit() override;
     void draw() override {};
 
+    void clean() override {
+        for ( auto &cbuf : cBufs_ ) {
+            cbuf->clean();
+        }
+
+        for ( auto &buf : buffersList_ ) {
+            buf->clean();
+        }
+    };
+
     void output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
                  VkSemaphore waitSemaphore, VkSemaphore signalSemaphore,
                  VkFence fence );

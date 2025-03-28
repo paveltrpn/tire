@@ -1,5 +1,6 @@
 
 #include <stdexcept>
+#include "vulkan/vulkan_core.h"
 #define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vk_enum_string_helper.h>
 
@@ -129,7 +130,20 @@ void Context::present( const VkSemaphore semaphore, uint32_t *imageIndex ) {
     }
 }
 
+static void vkDestroyDebugUtilsMessenger(
+    VkInstance instance, VkDebugUtilsMessengerEXT messanger,
+    const VkAllocationCallbacks *pAllocator ) {
+    auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
+        instance, "vkDestroyDebugUtilsMessengerEXT" );
+    if ( func != nullptr ) {
+        return func( instance, messanger, pAllocator );
+    }
+}
+
 Context::~Context() {
+    vkDestroyImage( device_, depthImage_, nullptr );
+    vkDestroyImageView( device_, depthImageView_, nullptr );
+
     for ( auto i = 0; i < framesCount_; i++ ) {
         vkDestroySemaphore( device_, frames_[i].imageAvailableSemaphore_,
                             nullptr );
@@ -137,12 +151,18 @@ Context::~Context() {
                             nullptr );
         vkDestroyFence( device_, frames_[i].inFlightFence_, nullptr );
         vkDestroyFramebuffer( device_, frames_[i].framebuffer_, nullptr );
+        vkDestroyImageView( device_, frames_[i].view_, nullptr );
     }
+
+    vkDestroyCommandPool( device_, commandPool_, nullptr );
 
     vkDestroySwapchainKHR( device_, swapchain_, nullptr );
 
     vkDestroyDevice( device_, nullptr );
     vkDestroySurfaceKHR( instance_, surface_, nullptr );
+
+    vkDestroyDebugUtilsMessenger( instance_, debugMessenger_, nullptr );
+
     vkDestroyInstance( instance_, nullptr );
 }
 

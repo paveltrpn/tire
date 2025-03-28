@@ -66,7 +66,6 @@ struct VertexBuffer final {
     VkDeviceMemory bufferMemory() { return bufferMemory_; };
     size_t verteciesCount() { return verteciesCount_; }
 
-private:
     void clean() {
         vkDestroyBuffer( context_->device(), buffer_, nullptr );
         vkFreeMemory( context_->device(), bufferMemory_, nullptr );
