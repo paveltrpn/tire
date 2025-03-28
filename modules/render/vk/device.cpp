@@ -7,6 +7,8 @@
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_DEVICE_CPP{ true };
 
+// import config;
+
 #include "context.h"
 
 namespace tire::vk {
@@ -222,15 +224,15 @@ void Context::makeDevice() {
     std::vector<const char *> desiredExtensionsList{};
     desiredExtensionsList.emplace_back( "VK_KHR_swapchain" );
     desiredExtensionsList.emplace_back( "VK_KHR_maintenance1" );
-    // desiredExtensionsList.emplace_back( "VK_KHR_ray_query" );
-    // desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_pipeline" );
-    // desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_maintenance1" );
-    // desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_position_fetch" );
-    // desiredExtensionsList.emplace_back( "VK_KHR_acceleration_structure" );
-    // desiredExtensionsList.emplace_back( "VK_EXT_descriptor_indexing" );
-    // desiredExtensionsList.emplace_back( "VK_KHR_maintenance3" );
-    // desiredExtensionsList.emplace_back( "VK_KHR_buffer_device_address" );
-    // desiredExtensionsList.emplace_back( "VK_KHR_deferred_host_operations" );
+    desiredExtensionsList.emplace_back( "VK_KHR_ray_query" );
+    desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_pipeline" );
+    desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_maintenance1" );
+    desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_position_fetch" );
+    desiredExtensionsList.emplace_back( "VK_KHR_acceleration_structure" );
+    desiredExtensionsList.emplace_back( "VK_EXT_descriptor_indexing" );
+    desiredExtensionsList.emplace_back( "VK_KHR_maintenance3" );
+    desiredExtensionsList.emplace_back( "VK_KHR_buffer_device_address" );
+    desiredExtensionsList.emplace_back( "VK_KHR_deferred_host_operations" );
 
     VkDeviceCreateInfo deviceCreateInfo{};
     deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -243,14 +245,18 @@ void Context::makeDevice() {
         static_cast<uint32_t>( desiredExtensionsList.size() );
     deviceCreateInfo.ppEnabledExtensionNames = desiredExtensionsList.data();
 
+    // NOTE: cannot use "import config" as c++ module bcause of clang 20 bug - "error: 'lifetimebound' attribute
+    // cannot be applied to a parameter of a function that returns void; did you mean 'lifetime_capture_by(X)'"
     // Config::instance()->get<bool>( "enable_validation_layers" )
+    // Force use validation layers
     if ( true ) {
-        const auto size = desiredValidationLayerList_.size();
-        const auto data = desiredValidationLayerList_.data();
-        deviceCreateInfo.enabledLayerCount = static_cast<uint32_t>( size );
-        deviceCreateInfo.ppEnabledLayerNames = data;
+        deviceCreateInfo.enabledLayerCount =
+            static_cast<uint32_t>( desiredValidationLayerList_.size() );
+        deviceCreateInfo.ppEnabledLayerNames =
+            desiredValidationLayerList_.data();
     } else {
         deviceCreateInfo.enabledLayerCount = 0;
+        deviceCreateInfo.ppEnabledLayerNames = nullptr;
     }
 
     // Create a logical device
@@ -264,11 +270,11 @@ void Context::makeDevice() {
         log::info( "vk::Device === logical device create success!" );
     }
 
+    // Graphic and present queue id
     vkGetDeviceQueue( device_, graphicsFamilyQueueId_, 0, &graphicsQueue_ );
     vkGetDeviceQueue( device_, presentSupportQueueId_, 0, &presentQueue_ );
 
-    // physical device surface capabilities
-
+    // Physical device surface capabilities
     if ( const auto err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
              physicalDevices_[pickedPhysicalDeviceId_].device, surface_,
              &surfaceCapabilities_ );
@@ -286,7 +292,7 @@ void Context::makeDevice() {
     // have ben resized??
     currentExtent_ = surfaceCapabilities_.currentExtent;
 
-    // physical device surface formats
+    // Physical device surface formats
     uint32_t formatCount;
     if ( const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR(
              physicalDevices_[pickedPhysicalDeviceId_].device, surface_,
@@ -326,7 +332,7 @@ void Context::makeDevice() {
                      string_VkFormat( item.format ) );
     }
 
-    // physical device present modes
+    // Physical device present modes
     uint32_t presentModeCount;
     if ( const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR(
              physicalDevices_[pickedPhysicalDeviceId_].device, surface_,
@@ -384,4 +390,4 @@ void Context::makeDevice() {
         string_VkPresentModeKHR( presentMode_ ) );
 }
 
-}  // namespace atire
+}  // namespace tire::vk
