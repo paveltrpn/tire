@@ -19,7 +19,7 @@ void PiplineVertexBuffer::buildPipeline() {
 
     bindingDescriptions[1].stride = sizeof( algebra::vector3f );
     bindingDescriptions[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-    bindingDescriptions[1].binding = 0;
+    bindingDescriptions[1].binding = 1;
 
     std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
     attributeDescriptions[0].binding = 0;

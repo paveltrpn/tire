@@ -67,7 +67,7 @@ void Context::makeInstance() {
         .applicationVersion = VK_MAKE_VERSION( 1, 0, 0 ),
         .pEngineName = engineName.data(),
         .engineVersion = VK_MAKE_VERSION( 1, 0, 0 ),
-        .apiVersion = VK_API_VERSION_1_0 };
+        .apiVersion = VK_API_VERSION_1_1 };
 
     uint32_t layersCount;
     if ( const auto err =
@@ -99,8 +99,7 @@ void Context::makeInstance() {
     // "VK_LAYER_VALVE_steam_fossilize_64" );
     // desiredValidationLayerList_.emplace_back(
     // "VK_LAYER_VALVE_steam_overlay_64" );
-    desiredValidationLayerList_.push_back(
-        "VK_LAYER_KHRONOS_validation" );  // not supported
+    desiredValidationLayerList_.push_back( "VK_LAYER_KHRONOS_validation" );
 
     //  NOTE: Enable all avlilable validation features.
     const std::vector<VkValidationFeatureEnableEXT>
@@ -108,7 +107,7 @@ void Context::makeInstance() {
             VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_EXT,
             VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_RESERVE_BINDING_SLOT_EXT,
             VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT,
-            VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT,
+            /* VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT,*/
             VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT };
 
     VkValidationFeaturesEXT validationFeatures = {

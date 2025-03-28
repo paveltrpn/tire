@@ -234,10 +234,7 @@ void Context::makeDevice() {
     desiredExtensionsList.emplace_back( "VK_KHR_buffer_device_address" );
     desiredExtensionsList.emplace_back( "VK_KHR_deferred_host_operations" );
     desiredExtensionsList.emplace_back( "VK_KHR_spirv_1_4" );
-    // desiredExtensionsList.emplace_back(
-    // "VK_KHR_get_physical_device_properties2" );
-    // desiredExtensionsList.emplace_back( "VK_KHR_device_group" );
-    // desiredExtensionsList.emplace_back( "VK_KHR_shader_float_controls" );
+    desiredExtensionsList.emplace_back( "VK_KHR_shader_float_controls" );
 
     VkDeviceCreateInfo deviceCreateInfo{};
     deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
