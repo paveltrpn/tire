@@ -181,17 +181,17 @@ void PiplineVertexBuffer::buildPipeline() {
 
 VkPipelineLayout PiplineVertexBuffer::initLayout() {
     //setup push constants
-    std::array<VkPushConstantRange, 2> constants;
+    std::array<VkPushConstantRange, 1> constants;
 
-    constants[0] =
-        VkPushConstantRange{ .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-                             .offset = 0,
-                             .size = sizeof( algebra::matrix4f ) };
+    constants[0] = VkPushConstantRange{
+        .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+        .offset = 0,
+        .size = sizeof( algebra::matrix4f ) + sizeof( algebra::vector3f ) };
 
-    constants[1] =
-        VkPushConstantRange{ .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-                             .offset = sizeof( algebra::matrix4f ),
-                             .size = sizeof( algebra::vector3f ) };
+    // constants[1] =
+    // VkPushConstantRange{ .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+    //  .offset = sizeof( algebra::matrix4f ),
+    //  .size = sizeof( algebra::vector3f ) };
 
     const VkPipelineLayoutCreateInfo pipelineLayoutInfo{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
