@@ -143,6 +143,7 @@ static void vkDestroyDebugUtilsMessenger(
 Context::~Context() {
     vkDestroyImage( device_, depthImage_, nullptr );
     vkDestroyImageView( device_, depthImageView_, nullptr );
+    vkFreeMemory( device_, depthImageMemory_, nullptr );
 
     for ( auto i = 0; i < framesCount_; i++ ) {
         vkDestroySemaphore( device_, frames_[i].imageAvailableSemaphore_,

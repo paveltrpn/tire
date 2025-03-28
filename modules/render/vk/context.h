@@ -141,9 +141,9 @@ private:
     VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
     uint32_t swapchainImageCount_{};
     uint32_t framesCount_{};
+    std::vector<Frame> frames_{};
     VkImage depthImage_;
     VkDeviceMemory depthImageMemory_;
-    std::vector<Frame> frames_{};
     VkImageView depthImageView_;
 };
 
