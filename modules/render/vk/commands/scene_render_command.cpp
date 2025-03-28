@@ -42,8 +42,10 @@ SceneRenderCommand::SceneRenderCommand( const vk::Context *context,
 }
 
 void SceneRenderCommand::clean() {
-    vkFreeCommandBuffers( context_->device(), context_->commandPool(), 1,
-                          &command_ );
+    // Because command buffers are freed for us when we free the command
+    // pool, there is nothing extra to do for command buffer cleanup.
+    // vkFreeCommandBuffers( context_->device(), context_->commandPool(), 1,
+    //   &command_ );
 }
 
 void SceneRenderCommand::reset() {

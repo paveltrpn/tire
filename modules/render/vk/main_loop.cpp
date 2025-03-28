@@ -29,15 +29,14 @@ void RenderVK::preFrame() {
 };
 
 void RenderVK::frame() {
-    std::println(
-        " =================== FRAME_START =============================" );
     uint32_t imageIndex{};
 
-    const auto [iaSem, rfSem, ifFnc] = context_->getFrameSyncSet( imageIndex );
+    const auto [iaSem, rfSem, ifFnc] =
+        context_->getFrameSyncSet( currentFrame_ );
 
 #define ONE_SECOND 1000000000
     // NOTE: omit return code check
-    vkWaitForFences( context_->device(), 1, &ifFnc, VK_TRUE, 0 );
+    vkWaitForFences( context_->device(), 1, &ifFnc, VK_TRUE, UINT64_MAX );
 
     // NOTE: omit return code check
     vkResetFences( context_->device(), 1, &ifFnc );
@@ -51,23 +50,17 @@ void RenderVK::frame() {
                            UINT64_MAX, iaSem, VK_NULL_HANDLE, &imageIndex );
 
     // NOTE: currentFrame_->imageIndex
-    const auto currentFramebuffer = context_->framebuffer( imageIndex );
+    const auto currentFramebuffer = context_->framebuffer( currentFrame_ );
 
     auto handle = static_cast<vk::Scene*>( scene_.get() );
-    handle->output( currentFramebuffer, imageIndex, iaSem, rfSem, ifFnc );
+    handle->output( currentFramebuffer, currentFrame_, iaSem, rfSem, ifFnc );
 
-    context_->present( rfSem, &imageIndex );
-
-    // NOTE: omit return code check
-    vkResetFences( context_->device(), 1, &ifFnc );
+    context_->present( rfSem, &currentFrame_ );
 
     // TODO: decide is correct to use imageIndex from vkAcquireNextImageKHR()
     // instead if currentFrame? Maybe it works because of number of swapchain
     // images is equal to frames in flight? What will happen if this values be different?
     currentFrame_ = ( currentFrame_ + 1 ) % context_->framesCount();
-
-    std::println(
-        " =================== FRAME_END =============================" );
 };
 
 void RenderVK::postFrame() {

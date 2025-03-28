@@ -12,25 +12,25 @@ namespace tire::vk {
 
 void PiplineVertexBuffer::buildPipeline() {
     // Init fixed stages
-    std::array<VkVertexInputBindingDescription, 2> bindingDescriptions{};
+    std::array<VkVertexInputBindingDescription, 1> bindingDescriptions{};
     bindingDescriptions[0].stride = sizeof( algebra::vector3f );
     bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
     bindingDescriptions[0].binding = 0;
 
-    bindingDescriptions[1].stride = sizeof( algebra::vector3f );
-    bindingDescriptions[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-    bindingDescriptions[1].binding = 1;
+    // bindingDescriptions[1].stride = sizeof( algebra::vector3f );
+    // bindingDescriptions[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+    // bindingDescriptions[1].binding = 1;
 
-    std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+    std::array<VkVertexInputAttributeDescription, 1> attributeDescriptions{};
     attributeDescriptions[0].binding = 0;
     attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
     attributeDescriptions[0].offset = 0;
     attributeDescriptions[0].location = 0;
 
-    attributeDescriptions[1].binding = 0;
-    attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-    attributeDescriptions[1].offset = 0;
-    attributeDescriptions[1].location = 1;
+    // attributeDescriptions[1].binding = 0;
+    // attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+    // attributeDescriptions[1].offset = 0;
+    // attributeDescriptions[1].location = 1;
 
     // attributeDescriptions[1].binding = 0;
     // attributeDescriptions[1].location = 1;
