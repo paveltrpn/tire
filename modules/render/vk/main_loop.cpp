@@ -31,8 +31,7 @@ void RenderVK::preFrame() {
 void RenderVK::frame() {
     uint32_t imageIndex{};
 
-    const auto [iaSem, rfSem, ifFnc] =
-        context_->getPresentSynchronization( imageIndex );
+    const auto [iaSem, rfSem, ifFnc] = context_->getFrameSyncSet( imageIndex );
 
 #define ONE_SECOND 1000000000
     // NOTE: omit return code check
@@ -63,7 +62,7 @@ void RenderVK::frame() {
     // TODO: decide is correct to use imageIndex from vkAcquireNextImageKHR()
     // instead if currentFrame? Maybe it works because of number of swapchain
     // images is equal to frames in flight? What will happen if this values be different?
-    currentFrame_ = ( currentFrame_ + 1 ) % FRAMES_IN_FLIGHT_COUNT;
+    currentFrame_ = ( currentFrame_ + 1 ) % context_->framesCount();
 };
 
 void RenderVK::postFrame() {

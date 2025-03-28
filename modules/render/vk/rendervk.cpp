@@ -34,10 +34,11 @@ RenderVK::RenderVK()
               basePath +
                   "/assets/shaders/spirv/vk_vertexBuffer_FRAGMENT.spv" } );
 
-        piplineVertexBuffer_->initShaderStages( &vertexBufferProgram );
+        piplineVertexBuffer_->initShaderStages( vertexBufferProgram );
         piplineVertexBuffer_->buildPipeline();
 
-        context_->createFramebuffers( piplineVertexBuffer_.get() );
+        context_->makeFrames( piplineVertexBuffer_.get() );
+        // context_->createFramebuffers( piplineVertexBuffer_.get() );
 
     } catch ( const std::runtime_error &e ) {
         throw std::runtime_error( e.what() );

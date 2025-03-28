@@ -85,6 +85,10 @@ static const std::unordered_map<ShaderStageType, std::string> StagesSuffixMap =
 
 };
 
+// Program is a set of vulkan shader modules loaded from spirv bytecode.
+// Each program must contain at least two shader stages - VERTEX and FRAGMENT (despite
+// of the vulkan specification demands at least one shader stage - VERTEX for graphics
+// pipeline or it can be COMPUTE shader for compute pipeline).
 struct Program final {
     Program( const vk::Context *context );
 
@@ -95,6 +99,7 @@ struct Program final {
 
     ~Program();
 
+    // Add single shader stage from precompiled spirv file.
     // Preconditions:
     // 1) File must be compiled SPIRV bytecode with ".spv" extension.
     // 2) Filename must contains "_STAGESUFFIX" suffix ("_VERTEX", "_FRAGMENT" etc.)
@@ -102,7 +107,10 @@ struct Program final {
     // there is only one mudule for each stage and modules count
     // equal to vulkan shader stages types.
     void add( const std::filesystem::path &path );
+
+    // Add shader stage as bytecode array
     void add( std::span<uint8_t> bytecode, const std::string &name );
+
     void fill( const std::vector<std::filesystem::path> &files );
     void fill( const std::vector<std::pair<std::span<uint8_t>, std::string>>
                    &sources );

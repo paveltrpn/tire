@@ -25,7 +25,7 @@ struct Pipeline {
     virtual void buildPipeline() = 0;
 
     // Call this manually before buildPipeline()
-    void initShaderStages( const vk::Program *program );
+    void initShaderStages( const vk::Program &program );
 
 protected:
     // Each pipeline can have unique layout
@@ -51,7 +51,12 @@ public:
     void buildPipeline() override;
 
 private:
+    // Access to descriptor sets from a pipeline is accomplished through a pipeline layout.
+    // Zero or more descriptor set layouts and zero or more push constant ranges are combined
+    // to form a pipeline layout object describing the complete set of resources
+    // that can be accessed by a pipeline.
     VkPipelineLayout initLayout() override;
+
     VkRenderPass initRenderpass() override;
 };
 

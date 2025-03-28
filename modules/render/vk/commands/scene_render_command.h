@@ -21,7 +21,7 @@ struct SceneRenderCommand final {
     SceneRenderCommand &operator=( const SceneRenderCommand &other ) = delete;
     SceneRenderCommand &operator=( SceneRenderCommand &&other ) = delete;
 
-    ~SceneRenderCommand() { clean(); }
+    ~SceneRenderCommand() = default;
 
     void clean();
     void reset();

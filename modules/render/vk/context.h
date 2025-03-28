@@ -12,8 +12,6 @@
 
 namespace tire::vk {
 
-#define FRAMES_IN_FLIGHT_COUNT 2
-
 struct Pipeline;
 
 struct Context final {
@@ -47,18 +45,21 @@ struct Context final {
                                   VkImageTiling tiling,
                                   VkFormatFeatureFlags features ) const;
 
-    void createFramebuffers( const Pipeline* pipeline );
+    void makeFrames( const Pipeline* pipeline );
 
-    [[nodiscard]] std::tuple<VkSemaphore, VkSemaphore, VkFence>
-    getPresentSynchronization( size_t i ) {
-        return { imageAvailableSemaphores_[i], renderFinishedSemaphores_[i],
-                 inFlightFences_[i] };
+    [[nodiscard]] std::tuple<VkSemaphore, VkSemaphore, VkFence> getFrameSyncSet(
+        size_t i ) {
+        return { frames_[i].imageAvailableSemaphore_,
+                 frames_[i].renderFinishedSemaphore_,
+                 frames_[i].inFlightFence_ };
     }
+
+    [[nodiscard]] uint32_t framesCount() const { return framesCount_; };
 
     void present( const VkSemaphore semaphore, uint32_t* imageIndex );
 
     [[nodiscard]] VkFramebuffer framebuffer( size_t id ) const {
-        return framebuffers_[id];
+        return frames_[id].framebuffer_;
     };
 
     [[nodiscard]]
@@ -84,16 +85,23 @@ private:
     void makeDevice();
     void makeCommandPool();
     void makeSwapchain();
-    void makeImageViews();
-    void makePresentSynchronization();
 
 private:
-    struct PhysicalDevice {
+    struct PhysicalDevice final {
         VkPhysicalDevice device{ VK_NULL_HANDLE };
         VkPhysicalDeviceProperties properties{};
         VkPhysicalDeviceFeatures features{};
         std::vector<VkExtensionProperties> extensions{};
         std::vector<VkQueueFamilyProperties> queueFamilyProperties{};
+    };
+
+    struct Frame final {
+        VkImage image_{};
+        VkImageView view_{};
+        VkFramebuffer framebuffer_{};
+        VkSemaphore imageAvailableSemaphore_{};
+        VkSemaphore renderFinishedSemaphore_{};
+        VkFence inFlightFence_{};
     };
 
 private:
@@ -132,17 +140,11 @@ private:
     // Swapchain
     VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
     uint32_t swapchainImageCount_{};
-    std::vector<VkImage> swapChainImages_{};
-    std::vector<VkImageView> swapChainImageViews_{};
-    std::vector<VkFramebuffer> framebuffers_{};
+    uint32_t framesCount_{};
     VkImage depthImage_;
     VkDeviceMemory depthImageMemory_;
+    std::vector<Frame> frames_{};
     VkImageView depthImageView_;
-
-    // Present synchronization
-    std::array<VkSemaphore, FRAMES_IN_FLIGHT_COUNT> imageAvailableSemaphores_{};
-    std::array<VkSemaphore, FRAMES_IN_FLIGHT_COUNT> renderFinishedSemaphores_{};
-    std::array<VkFence, FRAMES_IN_FLIGHT_COUNT> inFlightFences_{};
 };
 
 }  // namespace tire::vk

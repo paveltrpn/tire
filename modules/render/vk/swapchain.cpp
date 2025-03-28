@@ -133,29 +133,32 @@ void transitionImageLayout( VkDevice device, VkCommandPool commandPool,
 
 void Context::makeSwapchain() {
     // Choose count of images to draw in.
-    uint32_t imageCount{};
-    {
-        // However, simply sticking to this minimum means that we may sometimes have
-        // to wait on the driver to complete internal operations before we can acquire
-        // another image to render to. Therefore it is recommended to request at least one
-        // more image than the minimum:
-        imageCount = surfaceCapabilities_.minImageCount + 1;
+    // However, simply sticking to this minimum means that we may sometimes have
+    // to wait on the driver to complete internal operations before we can acquire
+    // another image to render to. Therefore it is recommended to request at least one
+    // more image than the minimum:
+    framesCount_ = surfaceCapabilities_.minImageCount + 1;
 
-        // We should also make sure to not exceed the maximum number of images while
-        // doing this, where 0 is a special value that means that there is no maximum:
-        if ( surfaceCapabilities_.maxImageCount > 0 &&
-             imageCount > surfaceCapabilities_.maxImageCount ) {
-            imageCount = surfaceCapabilities_.maxImageCount;
-        }
-
-        // Skip all logic above, just use to two images
-        imageCount = FRAMES_IN_FLIGHT_COUNT;
+    // We should also make sure to not exceed the maximum number of images while
+    // doing this, where 0 is a special value that means that there is no maximum:
+    if ( surfaceCapabilities_.maxImageCount > 0 &&
+         framesCount_ > surfaceCapabilities_.maxImageCount ) {
+        framesCount_ = surfaceCapabilities_.maxImageCount;
     }
 
+#define FRAMES_IN_FLIGHT_COUNT 2
+    // Skip all logic above, just use two images
+    framesCount_ = FRAMES_IN_FLIGHT_COUNT;
+
+    // Reserve space for frames images render into
+    frames_.reserve( framesCount_ );
+
     log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>(
-        "vk::Swapchain: vulkan swapchain surface capabilities image count: {}, "
+        "vk::Swapchain === vulkan swapchain surface capabilities image count "
+        "set to "
+        "{}, "
         "with max is {}",
-        imageCount, surfaceCapabilities_.maxImageCount );
+        framesCount_, surfaceCapabilities_.maxImageCount );
 
     VkSwapchainCreateInfoKHR createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -163,7 +166,7 @@ void Context::makeSwapchain() {
 
     // The implementation will either create the swapchain with at least
     // that many images, or it will fail to create the swapchain.
-    createInfo.minImageCount = imageCount;
+    createInfo.minImageCount = framesCount_;
 
     createInfo.imageFormat = surfaceFormat_.format;
     createInfo.imageColorSpace = surfaceFormat_.colorSpace;
@@ -201,7 +204,7 @@ void Context::makeSwapchain() {
     }
 
     // Get swapchain images count. Sudden, this number is
-    // equal to previously defined in VkSwapchainCreateInfoKHR.minImageCount.
+    // equal to previously defined in VkSwapchainCreateInfoKHR.minImageCount (== framesCount_).
     // But we still try to get image count that way.
     if ( const auto err = vkGetSwapchainImagesKHR(
              device_, swapchain_, &swapchainImageCount_, nullptr );
@@ -214,21 +217,7 @@ void Context::makeSwapchain() {
             swapchainImageCount_ );
     }
 
-    swapChainImages_.resize( imageCount );
-
-    if ( const auto err = vkGetSwapchainImagesKHR(
-             device_, swapchain_, &imageCount, swapChainImages_.data() );
-         err != VK_SUCCESS ) {
-        log::fatal( "failed to get swapchain images with code {}\n!",
-                    string_VkResult( err ) );
-    } else {
-        log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>(
-            "vk::Swapchain === images acquired!" );
-    }
-
-    //
-    // Depth image creation
-    //
+    // Depth image
     auto createImage = [this]( uint32_t width, uint32_t height, VkFormat format,
                                VkImageTiling tiling, VkImageUsageFlags usage,
                                VkMemoryPropertyFlags properties, VkImage &image,
@@ -316,12 +305,29 @@ void Context::makeSwapchain() {
                            VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL );
 }
 
-void Context::makeImageViews() {
-    swapChainImageViews_.resize( swapChainImages_.size() );
-    for ( size_t i = 0; i < swapChainImages_.size(); i++ ) {
+void Context::makeFrames( const Pipeline *pipeline ) {
+    // Acquire all swapchain images at one call
+    std::vector<VkImage> swapChainImages;
+    swapChainImages.reserve( framesCount_ );
+    if ( const auto err = vkGetSwapchainImagesKHR(
+             device_, swapchain_, &framesCount_, swapChainImages.data() );
+         err != VK_SUCCESS ) {
+        log::fatal( "failed to get swapchain images with code {}\n!",
+                    string_VkResult( err ) );
+    } else {
+        log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>(
+            "vk::Swapchain === images acquired!" );
+    }
+
+    // Create frame related vulkan entities - images, image views, framebuffers and sync primitieves.
+    for ( size_t i{}; i < framesCount_; ++i ) {
+        // Frame image
+        frames_[i].image_ = swapChainImages[i];
+
+        // Frame image view
         const VkImageViewCreateInfo createInfo{
             .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-            .image = swapChainImages_[i],
+            .image = swapChainImages[i],
             .viewType = VK_IMAGE_VIEW_TYPE_2D,
             .format = surfaceFormat_.format,
             .components = { VK_COMPONENT_SWIZZLE_IDENTITY,
@@ -335,7 +341,7 @@ void Context::makeImageViews() {
                                   .layerCount = 1 } };
 
         if ( const auto err = vkCreateImageView( device_, &createInfo, nullptr,
-                                                 &swapChainImageViews_[i] );
+                                                 &frames_[i].view_ );
              err != VK_SUCCESS ) {
             log::fatal(
                 "failed to create swapchain image views with code {}\n!",
@@ -344,13 +350,9 @@ void Context::makeImageViews() {
             log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>(
                 "vk::Swapchain === image view {} created!", i );
         }
-    }
-}
 
-void Context::createFramebuffers( const Pipeline *pipeline ) {
-    framebuffers_.resize( swapChainImageViews_.size() );
-    for ( size_t i = 0; i < swapChainImageViews_.size(); i++ ) {
-        std::array<VkImageView, 2> attachments = { swapChainImageViews_[i],
+        // Frame framebuffer
+        std::array<VkImageView, 2> attachments = { frames_[i].view_,
                                                    depthImageView_ };
         const VkFramebufferCreateInfo framebufferInfo{
             .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
@@ -361,8 +363,8 @@ void Context::createFramebuffers( const Pipeline *pipeline ) {
             .height = currentExtent_.height,
             .layers = 1 };
 
-        if ( const auto err = vkCreateFramebuffer( device_, &framebufferInfo,
-                                                   nullptr, &framebuffers_[i] );
+        if ( const auto err = vkCreateFramebuffer(
+                 device_, &framebufferInfo, nullptr, &frames_[i].framebuffer_ );
              err != VK_SUCCESS ) {
             log::fatal( "failed to create framebuffer at {} with code {}!", i,
                         string_VkResult( err ) );
@@ -370,7 +372,30 @@ void Context::createFramebuffers( const Pipeline *pipeline ) {
             log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>(
                 "vk::Swapchain === framebuffer {} created!", i );
         }
+
+        // Frame synchronization primitieves
+        VkSemaphoreCreateInfo semaphoreInfo{
+            .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0 };
+
+        VkFenceCreateInfo fenceInfo{
+            .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = VK_FENCE_CREATE_SIGNALED_BIT };
+
+        if ( vkCreateSemaphore( device_, &semaphoreInfo, nullptr,
+                                &frames_[i].imageAvailableSemaphore_ ) !=
+                 VK_SUCCESS ||
+             vkCreateSemaphore( device_, &semaphoreInfo, nullptr,
+                                &frames_[i].renderFinishedSemaphore_ ) !=
+                 VK_SUCCESS ||
+             vkCreateFence( device_, &fenceInfo, nullptr,
+                            &frames_[i].inFlightFence_ ) != VK_SUCCESS ) {
+            throw std::runtime_error(
+                std::format( "failed to create semaphores!" ) );
+        }
     }
 }
 
-}  // namespace atire
+}  // namespace tire::vk
