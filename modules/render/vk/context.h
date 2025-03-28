@@ -48,10 +48,10 @@ struct Context final {
     void makeFrames( const Pipeline* pipeline );
 
     [[nodiscard]] std::tuple<VkSemaphore, VkSemaphore, VkFence> getFrameSyncSet(
-        size_t i ) {
-        return { frames_[i].imageAvailableSemaphore_,
-                 frames_[i].renderFinishedSemaphore_,
-                 frames_[i].inFlightFence_ };
+        size_t id ) {
+        return { frames_[id].imageAvailableSemaphore_,
+                 frames_[id].renderFinishedSemaphore_,
+                 frames_[id].inFlightFence_ };
     }
 
     [[nodiscard]] uint32_t framesCount() const { return framesCount_; };
@@ -80,7 +80,7 @@ struct Context final {
 
 private:
     void makeInstance();
-    void makeSurface();
+    void makeXlibSurface();
     void collectPhysicalDevices();
     void makeDevice();
     void makeCommandPool();

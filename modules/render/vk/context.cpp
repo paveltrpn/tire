@@ -18,14 +18,14 @@ Context::Context( Display *display, Window window )
 
 void Context::init() {
     makeInstance();
-    makeSurface();
+    makeXlibSurface();
     collectPhysicalDevices();
     makeDevice();
     makeCommandPool();
     makeSwapchain();
 }
 
-void Context::makeSurface() {
+void Context::makeXlibSurface() {
     VkXlibSurfaceCreateInfoKHR xlibSurfInfo_{};
     xlibSurfInfo_.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
     xlibSurfInfo_.dpy = const_cast<Display *>( display_ );
