@@ -146,7 +146,13 @@ void Context::makeSwapchain() {
         framesCount_ = surfaceCapabilities_.maxImageCount;
     }
 
-#define FRAMES_IN_FLIGHT_COUNT 2
+// NOTE: Warning from validation layers:
+// A Swapchain is being created with minImageCount set to 2, which means double buffering
+// is going to be used. Using double buffering and vsync locks rendering to an integer
+// fraction of the vsync rate. In turn, reducing the performance of the application if
+// rendering is slower than vsync. Consider setting minImageCount to 3 to use
+// triple buffering to maximize performance in such cases.
+#define FRAMES_IN_FLIGHT_COUNT 3
     // Skip all logic above, just use two images
     framesCount_ = FRAMES_IN_FLIGHT_COUNT;
 

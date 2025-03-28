@@ -197,10 +197,10 @@ void Context::makeInstance() {
     std::vector<const char *> desiredInstanceExtensionsList{};
     desiredInstanceExtensionsList.emplace_back( "VK_KHR_surface" );
     desiredInstanceExtensionsList.emplace_back( "VK_KHR_xlib_surface" );
-    desiredInstanceExtensionsList.emplace_back(
-        VK_EXT_DEBUG_REPORT_EXTENSION_NAME );
-    desiredInstanceExtensionsList.emplace_back(
-        VK_EXT_DEBUG_UTILS_EXTENSION_NAME );
+    if ( ENABLE_VULKAN_VALIDATION_LAYERS ) {
+        desiredInstanceExtensionsList.emplace_back(
+            VK_EXT_DEBUG_UTILS_EXTENSION_NAME );
+    }
 
     instanceCreateInfo.enabledExtensionCount =
         static_cast<uint32_t>( desiredInstanceExtensionsList.size() );

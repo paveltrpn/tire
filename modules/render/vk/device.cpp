@@ -223,14 +223,12 @@ void Context::makeDevice() {
 
     std::vector<const char *> desiredExtensionsList{};
     desiredExtensionsList.emplace_back( "VK_KHR_swapchain" );
-    desiredExtensionsList.emplace_back( "VK_KHR_maintenance1" );
     desiredExtensionsList.emplace_back( "VK_KHR_ray_query" );
     desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_pipeline" );
     desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_maintenance1" );
     desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_position_fetch" );
     desiredExtensionsList.emplace_back( "VK_KHR_acceleration_structure" );
     desiredExtensionsList.emplace_back( "VK_EXT_descriptor_indexing" );
-    desiredExtensionsList.emplace_back( "VK_KHR_maintenance3" );
     desiredExtensionsList.emplace_back( "VK_KHR_buffer_device_address" );
     desiredExtensionsList.emplace_back( "VK_KHR_deferred_host_operations" );
     desiredExtensionsList.emplace_back( "VK_KHR_spirv_1_4" );
