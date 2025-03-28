@@ -69,13 +69,6 @@ void Context::makeInstance() {
         .engineVersion = VK_MAKE_VERSION( 1, 0, 0 ),
         .apiVersion = VK_API_VERSION_1_0 };
 
-    const auto debugUtilsMessageSeverityFlagBits =
-        (VkDebugUtilsMessageSeverityFlagBitsEXT)(
-            // VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
-            VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
-            VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-            VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT );
-
     uint32_t layersCount;
     if ( const auto err =
              vkEnumerateInstanceLayerProperties( &layersCount, nullptr );
@@ -112,7 +105,7 @@ void Context::makeInstance() {
 
     const std::vector<VkValidationFeatureEnableEXT>
         validationFeatureEnableList = {
-            // VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT,
+            VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT,
             VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT,
             VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT };
 
@@ -125,11 +118,28 @@ void Context::makeInstance() {
         .disabledValidationFeatureCount = 0,
         .pDisabledValidationFeatures = nullptr };
 
-    const auto debugUtilsMessageTypeFlagBits =
-        (VkDebugUtilsMessageTypeFlagBitsEXT)(
-            // VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-            VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-            VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT );
+    auto debugUtilsMessageTypeFlagBits =
+        (VkDebugUtilsMessageTypeFlagBitsEXT)( VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+                                              VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT );
+
+    auto debugUtilsMessageSeverityFlagBits =
+        (VkDebugUtilsMessageSeverityFlagBitsEXT)( VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
+                                                  VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                                                  VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT );
+
+#define VERBOSE_VULKAN_OUTPUT false
+    if ( VERBOSE_VULKAN_OUTPUT ) {
+        debugUtilsMessageTypeFlagBits =
+            (VkDebugUtilsMessageTypeFlagBitsEXT)( VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+                                                  VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+                                                  VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT );
+
+        debugUtilsMessageSeverityFlagBits =
+            (VkDebugUtilsMessageSeverityFlagBitsEXT)( VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
+                                                      VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
+                                                      VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                                                      VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT );
+    }
 
     VkDebugUtilsMessengerCreateInfoEXT debugUtilsMessengerCreateInfo = {
         .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
