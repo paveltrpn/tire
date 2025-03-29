@@ -324,26 +324,24 @@ requires Algebraic<T> struct matrix4 final {
         value_type nf{ near / ( far - near ) };
 
         ( *this )[0] = focal / aspect;
-        ( *this )[1] = value_type{ 0 };
-        ( *this )[2] = value_type{ 0 };
-        ( *this )[3] = value_type{ 0 };
-
         ( *this )[4] = value_type{ 0 };
-        ( *this )[5] = -focal;
-        ( *this )[6] = value_type{ 0 };
-        ( *this )[7] = value_type{ 0 };
-
         ( *this )[8] = value_type{ 0 };
-        ( *this )[9] = value_type{ 0 };
-        ( *this )[10] = nf;
-        ( *this )[11] = far * nf;
-
         ( *this )[12] = value_type{ 0 };
-        ( *this )[13] = value_type{ 0 };
-        ( *this )[14] = value_type{ -1 };
-        ( *this )[15] = value_type{ 0 };
 
-        this->transposeSelf();
+        ( *this )[1] = value_type{ 0 };
+        ( *this )[5] = -focal;
+        ( *this )[9] = value_type{ 0 };
+        ( *this )[13] = value_type{ 0 };
+
+        ( *this )[2] = value_type{ 0 };
+        ( *this )[6] = value_type{ 0 };
+        ( *this )[10] = nf;
+        ( *this )[14] = far * nf;
+
+        ( *this )[3] = value_type{ 0 };
+        ( *this )[7] = value_type{ 0 };
+        ( *this )[11] = value_type{ -1 };
+        ( *this )[15] = value_type{ 0 };
     }
 
     void vperspective2( value_type fov, value_type aspect, value_type near,
