@@ -265,10 +265,6 @@ requires Algebraic<T> struct matrix4 final {
 
         // NOTE: GNU related function sincos()
         // Choose sincos() function according to value_type.
-        //
-        // Focal distance as inverted tangent (1/tan(fov)) can be obtained
-        // as inverted tangent calculation (ctg(x)) - cos(fov)/sin(fov) instead of normal
-        // tan(x) = sin(x)/cos(x).
         value_type sinFov{}, cosFov{};
         if constexpr ( std::is_same_v<value_type, double> ) {
             sincos( static_cast<value_type>( 0.5 ) * radFov, &sinFov, &cosFov );
@@ -313,10 +309,6 @@ requires Algebraic<T> struct matrix4 final {
 
         // NOTE: GNU related function sincos()
         // Choose sincos() function according to value_type.
-        //
-        // Focal distance as inverted tangent (1/tan(fov)) can be obtained
-        // as inverted tangent calculation (ctg(x)) - cos(fov)/sin(fov) instead of normal
-        // tan(x) = sin(x)/cos(x).
 
         value_type sinFov{}, cosFov{};
         if constexpr ( std::is_same_v<value_type, double> ) {
@@ -360,10 +352,6 @@ requires Algebraic<T> struct matrix4 final {
 
         // NOTE: GNU related function sincos()
         // Choose sincos() function according to value_type.
-        //
-        // Focal distance as inverted tangent (1/tan(fov)) can be obtained
-        // as inverted tangent calculation (ctg(x)) - cos(fov)/sin(fov) instead of normal
-        // tan(x) = sin(x)/cos(x).
 
         value_type sinFov{}, cosFov{};
         if constexpr ( std::is_same_v<value_type, double> ) {
@@ -376,6 +364,7 @@ requires Algebraic<T> struct matrix4 final {
         // value_type tanFov = std::tan( value_type{ 0.5 } * radFov );
         value_type tanFov = sinFov / cosFov;
         value_type focal = static_cast<value_type>( 1.0 ) / tanFov;
+        value_type nf{ far / ( far - near ) };
 
         ( *this )[0] = focal / aspect;
         ( *this )[1] = value_type{ 0 };
@@ -389,12 +378,12 @@ requires Algebraic<T> struct matrix4 final {
 
         ( *this )[8] = value_type{ 0 };
         ( *this )[9] = value_type{ 0 };
-        ( *this )[10] = far / ( far - near );
-        ( *this )[11] = -( near * far ) / ( far - near );
+        ( *this )[10] = nf;
+        ( *this )[11] = -near * nf;
 
         ( *this )[12] = value_type{ 0 };
         ( *this )[13] = value_type{ 0 };
-        ( *this )[14] = value_type{ -1 };
+        ( *this )[14] = value_type{ 1 };
         ( *this )[15] = value_type{ 0 };
     }
 
