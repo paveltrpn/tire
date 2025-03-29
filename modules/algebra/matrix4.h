@@ -16,7 +16,7 @@
 namespace tire::algebra {
 
 template <std::floating_point T>
-constexpr T _half_circle = T( 180.0L );
+constexpr T _half_circle = T{ 180 };
 
 template <std::floating_point T>
 constexpr T degToRad( T deg ) {
@@ -263,34 +263,31 @@ requires Algebraic<T> struct matrix4 final {
                       value_type far ) {
         const auto radFov = degToRad( fov );
 
-        value_type tanFovHalf{};
-
         // NOTE: GNU related function sincos()
         // Choose sincos() function according to value_type.
         //
         // Focal distance as inverted tangent (1/tan(fov)) can be obtained
         // as inverted tangent calculation (ctg(x)) - cos(fov)/sin(fov) instead of normal
         // tan(x) = sin(x)/cos(x).
+        value_type sinFov{}, cosFov{};
         if constexpr ( std::is_same_v<value_type, double> ) {
-            double sinFov{}, cosFov{};
             sincos( static_cast<value_type>( 0.5 ) * radFov, &sinFov, &cosFov );
-            tanFovHalf = cosFov / sinFov;
         } else if constexpr ( std::is_same_v<value_type, float> ) {
-            float sinFov{}, cosFov{};
             sincosf( static_cast<value_type>( 0.5 ) * radFov, &sinFov,
                      &cosFov );
-            tanFovHalf = cosFov / sinFov;
         }
 
-        // value_type tanFovHalf =
+        // value_type tanFov =
         // std::tan( static_cast<value_type>( 0.5 ) * radFov );
+        value_type tanFov = sinFov / cosFov;
+        value_type focal = static_cast<value_type>( 1.0 ) / tanFov;
 
-        ( *this )[0] = tanFovHalf / aspect;
+        ( *this )[0] = focal / aspect;
         ( *this )[1] = value_type{ 0 };
         ( *this )[2] = value_type{ 0 };
         ( *this )[3] = value_type{ 0 };
         ( *this )[4] = value_type{ 0 };
-        ( *this )[5] = tanFovHalf;
+        ( *this )[5] = focal;
         ( *this )[6] = value_type{ 0 };
         ( *this )[7] = value_type{ 0 };
         ( *this )[8] = value_type{ 0 };
@@ -329,12 +326,10 @@ requires Algebraic<T> struct matrix4 final {
                      &cosFov );
         }
 
+        // value_type tanFov = std::tan( value_type{ 0.5 } * radFov );
         value_type tanFov = sinFov / cosFov;
-        value_type focal = static_cast<value_type>( 1.0 ) / tanFov;
-
-        // value_type tanFov =
-        // std::tan( static_cast<value_type>( 0.5 ) * radFov );
-        // value_type focal = static_cast<value_type>( 1.0 ) / tanFov;
+        value_type focal = 1.0 / tanFov;
+        value_type nf{ near / ( far - near ) };
 
         ( *this )[0] = focal / aspect;
         ( *this )[1] = value_type{ 0 };
@@ -348,12 +343,58 @@ requires Algebraic<T> struct matrix4 final {
 
         ( *this )[8] = value_type{ 0 };
         ( *this )[9] = value_type{ 0 };
-        ( *this )[10] = far / ( near - far );
-        ( *this )[11] = value_type{ -1 };
+        ( *this )[10] = nf;
+        ( *this )[11] = far * nf;
 
         ( *this )[12] = value_type{ 0 };
         ( *this )[13] = value_type{ 0 };
-        ( *this )[14] = ( near * far ) / ( near - far );
+        ( *this )[14] = value_type{ -1 };
+        ( *this )[15] = value_type{ 0 };
+
+        this->transposeSelf();
+    }
+
+    void vperspective2( value_type fov, value_type aspect, value_type near,
+                        value_type far ) {
+        const auto radFov = degToRad( fov );
+
+        // NOTE: GNU related function sincos()
+        // Choose sincos() function according to value_type.
+        //
+        // Focal distance as inverted tangent (1/tan(fov)) can be obtained
+        // as inverted tangent calculation (ctg(x)) - cos(fov)/sin(fov) instead of normal
+        // tan(x) = sin(x)/cos(x).
+
+        value_type sinFov{}, cosFov{};
+        if constexpr ( std::is_same_v<value_type, double> ) {
+            sincos( static_cast<value_type>( 0.5 ) * radFov, &sinFov, &cosFov );
+        } else if constexpr ( std::is_same_v<value_type, float> ) {
+            sincosf( static_cast<value_type>( 0.5 ) * radFov, &sinFov,
+                     &cosFov );
+        }
+
+        // value_type tanFov = std::tan( value_type{ 0.5 } * radFov );
+        value_type tanFov = sinFov / cosFov;
+        value_type focal = static_cast<value_type>( 1.0 ) / tanFov;
+
+        ( *this )[0] = focal / aspect;
+        ( *this )[1] = value_type{ 0 };
+        ( *this )[2] = value_type{ 0 };
+        ( *this )[3] = value_type{ 0 };
+
+        ( *this )[4] = value_type{ 0 };
+        ( *this )[5] = focal;
+        ( *this )[6] = value_type{ 0 };
+        ( *this )[7] = value_type{ 0 };
+
+        ( *this )[8] = value_type{ 0 };
+        ( *this )[9] = value_type{ 0 };
+        ( *this )[10] = far / ( far - near );
+        ( *this )[11] = -( near * far ) / ( far - near );
+
+        ( *this )[12] = value_type{ 0 };
+        ( *this )[13] = value_type{ 0 };
+        ( *this )[14] = value_type{ -1 };
         ( *this )[15] = value_type{ 0 };
     }
 
@@ -717,6 +758,13 @@ template <typename T>
 matrix4<T> vperspective( float fov, float aspect, float ncp, float fcp ) {
     matrix4<T> rt;
     rt.vperspective( fov, aspect, ncp, fcp );
+    return rt;
+}
+
+template <typename T>
+matrix4<T> vperspective2( float fov, float aspect, float ncp, float fcp ) {
+    matrix4<T> rt;
+    rt.vperspective2( fov, aspect, ncp, fcp );
     return rt;
 }
 

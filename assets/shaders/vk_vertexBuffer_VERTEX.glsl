@@ -10,7 +10,7 @@ layout( push_constant ) uniform constants_t {
 
 void main() {
     gl_Position = constants.view * vec4( inPositionOne, 1.0 );
-    // WHAT!!!
-    gl_Position.z /= gl_Position.w;
+    // gl_Position.z = (gl_Position.z + gl_Position.w) / 2.0;
+    // gl_Position.z /= gl_Position.w;
     fragColor = constants.color;
 }

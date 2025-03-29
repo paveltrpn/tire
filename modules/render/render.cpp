@@ -257,7 +257,7 @@ void Render::keyPressEvent( unsigned int key ) {
             break;
         }
         case 25: {  // == 'w'
-            //scene_->camera().move( algebra::vector3f{ 0.0, 0.0, 0.1 } );
+            scene_->camera().move( algebra::vector3f{ 0.0, 0.0, 1.5 } );
             break;
         }
         case 26: {  // == 'e'
@@ -294,7 +294,7 @@ void Render::keyPressEvent( unsigned int key ) {
             break;
         }
         case 39: {  // == 's'
-            //scene_->camera().move( algebra::vector3f{ 0.0, 0.0, -0.1 } );
+            scene_->camera().move( algebra::vector3f{ 0.0, 0.0, -1.5 } );
             break;
         }
         case 40: {  // == 'd'
