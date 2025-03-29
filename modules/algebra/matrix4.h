@@ -342,6 +342,30 @@ requires Algebraic<T> struct matrix4 final {
         ( *this )[7] = value_type{ 0 };
         ( *this )[11] = value_type{ -1 };
         ( *this )[15] = value_type{ 0 };
+
+        // TODO: Check and write in transpose version.
+        /*
+        const matrix4<value_type> inverse;
+        inverse[0] = aspect / focal;
+        inverse[1] = value_type{ 0 };
+        inverse[2] = value_type{ 0 };
+        inverse[3] = value_type{ 0 };
+
+        inverse[4] = value_type{ 0 };
+        inverse[5] = 1 / -focal;
+        inverse[6] = value_type{ 0 };
+        inverse[7] = value_type{ 0 };
+
+        inverse[8] = value_type{ 0 };
+        inverse[9] = value_type{ 0 };
+        inverse[10] = value_type{ 0 };
+        inverse[11] = value_type{ -1 };
+
+        inverse[12] = value_type{ 0 };
+        inverse[13] = value_type{ 0 };
+        inverse[14] = 1 / ( far * nf );
+        inverse[15] = nf / ( far * nf );
+        */
     }
 
     void vperspective2( value_type fov, value_type aspect, value_type near,
