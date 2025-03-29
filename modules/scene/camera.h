@@ -43,9 +43,10 @@ struct Perspective final : Camera {
         } else if constexpr ( std::is_same_v<Type, VulkanTag> ) {
             projection =
                 algebra::vperspective<float>( fov_, aspect_, ncp_, fcp_ );
+            // projection.transposeSelf();
         }
         auto offset = algebra::translate<float>( position_ );
-        const auto rotation = algebra::rotate<float>( yaw_, pitch_, roll_ );
+        auto rotation = algebra::rotate<float>( yaw_, pitch_, roll_ );
 
         offset.transposeSelf();
         matrix_ = offset * rotation * projection;

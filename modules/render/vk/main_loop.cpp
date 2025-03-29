@@ -67,6 +67,8 @@ void RenderVK::swapBuffers() {
 };
 
 void RenderVK::postLoop() {
+    log::info( "vk::Render === wait device idle..." );
+
     // we should wait for the logical device to finish operations
     // before exiting mainLoop and destroying the window
     vkDeviceWaitIdle( context_->device() );

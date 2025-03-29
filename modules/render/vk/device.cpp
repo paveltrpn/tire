@@ -223,6 +223,7 @@ void Context::makeDevice() {
 
     std::vector<const char *> desiredExtensionsList{};
     desiredExtensionsList.emplace_back( "VK_KHR_swapchain" );
+    /*
     desiredExtensionsList.emplace_back( "VK_KHR_ray_query" );
     desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_pipeline" );
     desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_maintenance1" );
@@ -233,7 +234,7 @@ void Context::makeDevice() {
     desiredExtensionsList.emplace_back( "VK_KHR_deferred_host_operations" );
     desiredExtensionsList.emplace_back( "VK_KHR_spirv_1_4" );
     desiredExtensionsList.emplace_back( "VK_KHR_shader_float_controls" );
-
+    */
     VkDeviceCreateInfo deviceCreateInfo{};
     deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();

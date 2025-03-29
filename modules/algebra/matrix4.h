@@ -314,28 +314,27 @@ requires Algebraic<T> struct matrix4 final {
                        value_type far ) {
         const auto radFov = degToRad( fov );
 
-        value_type focal{};
-
         // NOTE: GNU related function sincos()
         // Choose sincos() function according to value_type.
         //
         // Focal distance as inverted tangent (1/tan(fov)) can be obtained
         // as inverted tangent calculation (ctg(x)) - cos(fov)/sin(fov) instead of normal
         // tan(x) = sin(x)/cos(x).
+
+        value_type sinFov{}, cosFov{};
         if constexpr ( std::is_same_v<value_type, double> ) {
-            double sinFov{}, cosFov{};
             sincos( static_cast<value_type>( 0.5 ) * radFov, &sinFov, &cosFov );
-            focal = cosFov / sinFov;
         } else if constexpr ( std::is_same_v<value_type, float> ) {
-            float sinFov{}, cosFov{};
             sincosf( static_cast<value_type>( 0.5 ) * radFov, &sinFov,
                      &cosFov );
-            focal = cosFov / sinFov;
         }
 
-        // value_type tanFovHalf =
+        value_type tanFov = sinFov / cosFov;
+        value_type focal = static_cast<value_type>( 1.0 ) / tanFov;
+
+        // value_type tanFov =
         // std::tan( static_cast<value_type>( 0.5 ) * radFov );
-        // value_type focal = static_cast<value_type>( 1.0 ) / tanFovHalf;
+        // value_type focal = static_cast<value_type>( 1.0 ) / tanFov;
 
         ( *this )[0] = focal / aspect;
         ( *this )[1] = value_type{ 0 };

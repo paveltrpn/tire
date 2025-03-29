@@ -67,7 +67,7 @@ void Context::makeInstance() {
         .applicationVersion = VK_MAKE_VERSION( 1, 0, 0 ),
         .pEngineName = engineName.data(),
         .engineVersion = VK_MAKE_VERSION( 1, 0, 0 ),
-        .apiVersion = VK_API_VERSION_1_1 };
+        .apiVersion = VK_API_VERSION_1_3 };
 
     uint32_t layersCount;
     if ( const auto err =
