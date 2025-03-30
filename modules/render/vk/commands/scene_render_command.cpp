@@ -103,14 +103,15 @@ void SceneRenderCommand::prepare( VkFramebuffer framebuffer,
 }
 
 void SceneRenderCommand::bindBuffer( algebra::vector3f color, VkBuffer vbo,
-                                     uint32_t vCount ) {
+                                     VkBuffer nbo, uint32_t vCount ) {
     vkCmdPushConstants( command_, pipeline_->layout(),
                         VK_SHADER_STAGE_VERTEX_BIT, sizeof( float ) * 16,
                         sizeof( color ), &color );
 
-    std::array<VkBuffer, 1> vertexBuffers = { vbo };
-    std::array<VkDeviceSize, 1> offsets = { 0 };
-    vkCmdBindVertexBuffers( command_, 0, 1, vertexBuffers.data(),
+    // NOTE: see https://docs.vulkan.org/guide/latest/vertex_input_data_processing.html
+    std::array<VkBuffer, 2> vertexBuffers = { vbo, nbo };
+    std::array<VkDeviceSize, 2> offsets = { 0, 0 };
+    vkCmdBindVertexBuffers( command_, 0, 2, vertexBuffers.data(),
                             offsets.data() );
     vkCmdDraw( command_, vCount, 3, 0, 0 );
 }

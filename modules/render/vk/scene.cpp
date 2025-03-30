@@ -15,7 +15,7 @@ Scene::Scene( const std::filesystem::path &fname, const vk::Context *context,
     : tire::Scene{ fname }
     , context_{ context }
     , pipeline_{ pipeline } {
-    // Create scene draw command (three times)
+    // Create scene draw command for each frame
     cBufs_.reserve( context_->framesCount() );
     for ( auto i = 0; i < cBufs_.capacity(); ++i ) {
         cBufs_.push_back(
@@ -24,19 +24,34 @@ Scene::Scene( const std::filesystem::path &fname, const vk::Context *context,
 
     // Create vulkan "vertex buffers"
     const auto nodeListSize = bodyList_.size();
-    buffersList_.reserve( nodeListSize );
+    vertBuffersList_.reserve( nodeListSize );
     for ( size_t i{}; i < nodeListSize; ++i ) {
         auto buf = std::make_shared<vk::VertexBuffer<float>>(
             context_, bodyList_[i]->verteciesCount() );
-        buffersList_.push_back( std::move( buf ) );
+        vertBuffersList_.push_back( std::move( buf ) );
+    }
+
+    // Create vulkan "normal buffers"
+    nrmlBuffersList_.reserve( nodeListSize );
+    for ( size_t i{}; i < nodeListSize; ++i ) {
+        auto buf = std::make_shared<vk::VertexBuffer<float>>(
+            context_, bodyList_[i]->verteciesCount() );
+        nrmlBuffersList_.push_back( std::move( buf ) );
     }
 }
 
 void Scene::submit() {
     // Update data in vulkan "vertex" buffers, i.e. copy from CPU memory
-    for ( size_t i = 0; auto &buffer : buffersList_ ) {
+    for ( size_t i = 0; auto &buffer : vertBuffersList_ ) {
         buffer->populate(
             reinterpret_cast<const void *>( bodyList_[i]->verteciesData() ) );
+        ++i;
+    }
+
+    // Update data in vulkan "normal" buffers
+    for ( size_t i = 0; auto &buffer : nrmlBuffersList_ ) {
+        buffer->populate(
+            reinterpret_cast<const void *>( bodyList_[i]->normalsData() ) );
         ++i;
     }
 }
@@ -52,11 +67,12 @@ void Scene::output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
                                  camera().matrix<tire::VulkanTag>() );
 
     // Record draw commands for all scene objects in command buffer
-    for ( size_t object = 0; object < buffersList_.size(); ++object ) {
+    for ( size_t object = 0; object < vertBuffersList_.size(); ++object ) {
         const auto color = bodyList_[object]->albedoColor().asVector3f();
         cBufs_[imageIndex]->bindBuffer(
-            color, buffersList_[object]->buffer(),
-            buffersList_[object]->verteciesCount() );
+            color, vertBuffersList_[object]->buffer(),
+            nrmlBuffersList_[object]->buffer(),
+            vertBuffersList_[object]->verteciesCount() );
     }
 
     // Finalize command recording and submit command

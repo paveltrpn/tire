@@ -12,35 +12,27 @@ namespace tire::vk {
 
 void PiplineVertexBuffer::buildPipeline() {
     // Init fixed stages
-    std::array<VkVertexInputBindingDescription, 1> bindingDescriptions{};
+
+    // NOTE: https://docs.vulkan.org/guide/latest/vertex_input_data_processing.html
+    std::array<VkVertexInputBindingDescription, 2> bindingDescriptions{};
     bindingDescriptions[0].stride = sizeof( algebra::vector3f );
     bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
     bindingDescriptions[0].binding = 0;
 
-    // bindingDescriptions[1].stride = sizeof( algebra::vector3f );
-    // bindingDescriptions[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-    // bindingDescriptions[1].binding = 1;
+    bindingDescriptions[1].stride = sizeof( algebra::vector3f );
+    bindingDescriptions[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+    bindingDescriptions[1].binding = 1;
 
-    std::array<VkVertexInputAttributeDescription, 1> attributeDescriptions{};
+    std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
     attributeDescriptions[0].binding = 0;
     attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
     attributeDescriptions[0].offset = 0;
     attributeDescriptions[0].location = 0;
 
-    // attributeDescriptions[1].binding = 0;
-    // attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-    // attributeDescriptions[1].offset = 0;
-    // attributeDescriptions[1].location = 1;
-
-    // attributeDescriptions[1].binding = 0;
-    // attributeDescriptions[1].location = 1;
-    // attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-    // attributeDescriptions[1].offset = offsetof( Vertex, color );
-
-    // float: VK_FORMAT_R32_SFLOAT
-    // vec2: VK_FORMAT_R32G32_SFLOAT
-    // vec3: VK_FORMAT_R32G32B32_SFLOAT
-    // vec4: VK_FORMAT_R32G32B32A32_SFLOAT
+    attributeDescriptions[1].binding = 1;
+    attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+    attributeDescriptions[1].offset = 0;
+    attributeDescriptions[1].location = 1;
 
     const VkPipelineVertexInputStateCreateInfo vertexInput{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,

@@ -28,7 +28,11 @@ struct Scene final : tire::Scene {
             cbuf->clean();
         }
 
-        for ( auto &buf : buffersList_ ) {
+        for ( auto &buf : vertBuffersList_ ) {
+            buf->clean();
+        }
+
+        for ( auto &buf : nrmlBuffersList_ ) {
             buf->clean();
         }
     };
@@ -42,7 +46,8 @@ private:
     const vk::Pipeline *pipeline_;
 
     std::vector<std::unique_ptr<vk::SceneRenderCommand>> cBufs_{};
-    std::vector<std::shared_ptr<vk::VertexBuffer<float>>> buffersList_;
+    std::vector<std::shared_ptr<vk::VertexBuffer<float>>> vertBuffersList_;
+    std::vector<std::shared_ptr<vk::VertexBuffer<float>>> nrmlBuffersList_;
 };
 
 }  // namespace tire::vk
