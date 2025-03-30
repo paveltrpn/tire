@@ -68,9 +68,9 @@ void Scene::output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
 
     // Record draw commands for all scene objects in command buffer
     for ( size_t object = 0; object < vertBuffersList_.size(); ++object ) {
-        const auto color = bodyList_[object]->albedoColor().asVector3f();
         cBufs_[imageIndex]->bindBuffer(
-            color, vertBuffersList_[object]->buffer(),
+            bodyList_[object]->albedoColor(),
+            vertBuffersList_[object]->buffer(),
             nrmlBuffersList_[object]->buffer(),
             vertBuffersList_[object]->verteciesCount() );
     }

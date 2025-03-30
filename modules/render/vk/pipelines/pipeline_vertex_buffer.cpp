@@ -3,6 +3,7 @@
 
 #include <vulkan/vk_enum_string_helper.h>
 
+#include "image/color.h"
 #include "pipeline.h"
 #include "algebra/vector3.h"
 #include "algebra/matrix4.h"
@@ -14,6 +15,7 @@ void PiplineVertexBuffer::buildPipeline() {
     // Init fixed stages
 
     // NOTE: https://docs.vulkan.org/guide/latest/vertex_input_data_processing.html
+    // Prepare descriptors for VERTEX data
     std::array<VkVertexInputBindingDescription, 2> bindingDescriptions{};
     bindingDescriptions[0].stride = sizeof( algebra::vector3f );
     bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
@@ -23,6 +25,7 @@ void PiplineVertexBuffer::buildPipeline() {
     bindingDescriptions[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
     bindingDescriptions[1].binding = 1;
 
+    // Prepare descriptors for NORMALS data
     std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
     attributeDescriptions[0].binding = 0;
     attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
@@ -177,12 +180,7 @@ VkPipelineLayout PiplineVertexBuffer::initLayout() {
     constants[0] = VkPushConstantRange{
         .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
         .offset = 0,
-        .size = sizeof( algebra::matrix4f ) + sizeof( algebra::vector3f ) };
-
-    // constants[1] =
-    // VkPushConstantRange{ .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-    //  .offset = sizeof( algebra::matrix4f ),
-    //  .size = sizeof( algebra::vector3f ) };
+        .size = sizeof( algebra::matrix4f ) + sizeof( Colorf ) };
 
     const VkPipelineLayoutCreateInfo pipelineLayoutInfo{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
