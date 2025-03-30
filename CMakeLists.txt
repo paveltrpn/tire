@@ -124,6 +124,10 @@ add_library(render
     modules/render/vk/commands/scene_render_command.cpp
     modules/render/vk/buffers/vertex_buffer.h
     modules/render/vk/buffers/vertex_buffer.cpp
+    modules/render/vk/images/plain_image.h
+    modules/render/vk/images/plain_image.cpp
+    modules/render/vk/images/texture_image.h
+    modules/render/vk/images/texture_image.cpp
     modules/render/vk/scene.h
     modules/render/vk/scene.cpp
     modules/render/vk/command_pool.h
