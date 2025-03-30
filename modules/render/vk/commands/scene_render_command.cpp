@@ -99,7 +99,8 @@ void SceneRenderCommand::prepare( VkFramebuffer framebuffer,
     vkCmdBindPipeline( command_, VK_PIPELINE_BIND_POINT_GRAPHICS,
                        pipeline_->pipeline() );
     vkCmdPushConstants( command_, pipeline_->layout(),
-                        VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( view ), &view );
+                        VK_SHADER_STAGE_VERTEX_BIT, 0,
+                        sizeof( algebra::matrix4f ), &view );
 }
 
 void SceneRenderCommand::bindBuffer( Colorf color, VkBuffer vbo, VkBuffer nbo,
@@ -107,7 +108,7 @@ void SceneRenderCommand::bindBuffer( Colorf color, VkBuffer vbo, VkBuffer nbo,
     const auto c = color.asVector4f();
     vkCmdPushConstants( command_, pipeline_->layout(),
                         VK_SHADER_STAGE_VERTEX_BIT, sizeof( algebra::matrix4f ),
-                        sizeof( color ), &c );
+                        sizeof( algebra::vector4f ), &c );
 
     // NOTE: see https://docs.vulkan.org/guide/latest/vertex_input_data_processing.html
     std::array<VkBuffer, 2> vertexBuffers = { vbo, nbo };
