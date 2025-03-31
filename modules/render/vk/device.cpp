@@ -7,15 +7,16 @@
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_DEVICE_CPP{ true };
 
-// import config;
-
 #include "context.h"
+
+import config;
 
 namespace tire::vk {
 
 void Context::collectPhysicalDevices() {
     uint32_t devCount{};
 
+    // Enumerate physical devices
     if ( const auto err =
              vkEnumeratePhysicalDevices( instance_, &devCount, nullptr );
          err != VK_SUCCESS ) {
@@ -31,8 +32,10 @@ void Context::collectPhysicalDevices() {
         log::fatal( "no vulkan physical devices in system\n" );
     }
 
-    std::vector<VkPhysicalDevice> physicalDevices( devCount );
+    std::vector<VkPhysicalDevice> physicalDevices{};
+    physicalDevices.resize( devCount );
 
+    // Get physical devices
     if ( const auto err = vkEnumeratePhysicalDevices( instance_, &devCount,
                                                       physicalDevices.data() );
          err != VK_SUCCESS ) {
@@ -43,6 +46,7 @@ void Context::collectPhysicalDevices() {
             "vk::Device === physical devices acquire success" );
     }
 
+    // Get physical device info for each device
     log::info( "vk::Device === collect physical device info..." );
     for ( const auto device : physicalDevices ) {
         // Collect physical devices and its properties
@@ -58,12 +62,15 @@ void Context::collectPhysicalDevices() {
         uint32_t queueFamilyCount{};
         vkGetPhysicalDeviceQueueFamilyProperties( device, &queueFamilyCount,
                                                   nullptr );
-        std::vector<VkQueueFamilyProperties> qfp( queueFamilyCount );
+
+        std::vector<VkQueueFamilyProperties> qfp{};
+        qfp.resize( queueFamilyCount );
         vkGetPhysicalDeviceQueueFamilyProperties( device, &queueFamilyCount,
                                                   qfp.data() );
         log::debug<DEBUG_OUTPUT_DEVICE_CPP>(
             "vk::Device === device queue family count: {}", queueFamilyCount );
 
+        // Collect physical device extensions info
         uint32_t extensionCount{};
         if ( const auto err = vkEnumerateDeviceExtensionProperties(
                  device, nullptr, &extensionCount, nullptr );
@@ -80,8 +87,8 @@ void Context::collectPhysicalDevices() {
                 devProps.deviceName, extensionCount );
         }
 
-        std::vector<VkExtensionProperties> availableExtensions(
-            extensionCount );
+        std::vector<VkExtensionProperties> availableExtensions;
+        availableExtensions.resize( extensionCount );
 
         if ( const auto err = vkEnumerateDeviceExtensionProperties(
                  device, nullptr, &extensionCount, availableExtensions.data() );
@@ -98,6 +105,7 @@ void Context::collectPhysicalDevices() {
                 devProps.deviceName );
         }
 
+        // Store physical device in list
         physicalDevices_.emplace_back(
             PhysicalDevice{ .device = device,
                             .properties = devProps,
@@ -108,6 +116,8 @@ void Context::collectPhysicalDevices() {
 }
 
 void Context::makeDevice() {
+    const auto congigHandle = Config::instance();
+
     // Check which devices available on machine
     int discreetGpuId{ -1 };
     int integratedGpuId{ -1 };
@@ -152,7 +162,7 @@ void Context::makeDevice() {
     } else if ( cpuGpuId != -1 ) {
         pickedPhysicalDeviceId_ = cpuGpuId;
     } else {
-        log::fatal( "no suitable vulkan devices found! " );
+        log::fatal( "vk::Device === no suitable vulkan devices found! " );
     }
 
     log::info(
@@ -223,18 +233,25 @@ void Context::makeDevice() {
 
     std::vector<const char *> desiredExtensionsList{};
     desiredExtensionsList.emplace_back( "VK_KHR_swapchain" );
-    /*
-    desiredExtensionsList.emplace_back( "VK_KHR_ray_query" );
-    desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_pipeline" );
-    desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_maintenance1" );
-    desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_position_fetch" );
-    desiredExtensionsList.emplace_back( "VK_KHR_acceleration_structure" );
-    desiredExtensionsList.emplace_back( "VK_EXT_descriptor_indexing" );
-    desiredExtensionsList.emplace_back( "VK_KHR_buffer_device_address" );
-    desiredExtensionsList.emplace_back( "VK_KHR_deferred_host_operations" );
-    desiredExtensionsList.emplace_back( "VK_KHR_spirv_1_4" );
-    desiredExtensionsList.emplace_back( "VK_KHR_shader_float_controls" );
-    */
+
+    if ( congigHandle->get<bool>( "enable_raytracing_extensions" ) ) {
+        log::info( "vk::Device === raytracing extansions enabled" );
+
+        desiredExtensionsList.emplace_back( "VK_KHR_ray_query" );
+        desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_pipeline" );
+        desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_maintenance1" );
+        desiredExtensionsList.emplace_back(
+            "VK_KHR_ray_tracing_position_fetch" );
+        desiredExtensionsList.emplace_back( "VK_KHR_acceleration_structure" );
+        desiredExtensionsList.emplace_back( "VK_EXT_descriptor_indexing" );
+        desiredExtensionsList.emplace_back( "VK_KHR_buffer_device_address" );
+        desiredExtensionsList.emplace_back( "VK_KHR_deferred_host_operations" );
+        desiredExtensionsList.emplace_back( "VK_KHR_spirv_1_4" );
+        desiredExtensionsList.emplace_back( "VK_KHR_shader_float_controls" );
+    } else {
+        log::info( "vk::Device === raytracing extansions disabled" );
+    }
+
     VkDeviceCreateInfo deviceCreateInfo{};
     deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
@@ -248,9 +265,10 @@ void Context::makeDevice() {
 
     // NOTE: cannot use "import config" as c++ module bcause of clang 20 bug - "error: 'lifetimebound' attribute
     // cannot be applied to a parameter of a function that returns void; did you mean 'lifetime_capture_by(X)'"
-    // Config::instance()->get<bool>( "enable_validation_layers" )
+    //
     // Force use validation layers
-    if ( ENABLE_VULKAN_VALIDATION_LAYERS ) {
+
+    if ( congigHandle->get<bool>( "enable_validation_layers" ) ) {
         deviceCreateInfo.enabledLayerCount =
             static_cast<uint32_t>( desiredValidationLayerList_.size() );
         deviceCreateInfo.ppEnabledLayerNames =

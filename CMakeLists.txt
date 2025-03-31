@@ -80,8 +80,6 @@ target_sources(config
     modules/config/config.cpp
 )
 
-add_compile_definitions(ENABLE_VULKAN_VALIDATION_LAYERS=true)
-
 add_library(render
     modules/render/render.cpp
     modules/render/render.h
@@ -228,6 +226,11 @@ target_link_libraries(vk_test PUBLIC
     GLU 
     Vulkan::Vulkan 
     uv
+)
+
+set_target_properties( vk_test gl_test
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "../../../bin"
 )
 
 add_subdirectory(test/wavefront)

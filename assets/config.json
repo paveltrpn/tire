@@ -1,0 +1,19 @@
+{
+  "application_name": "tire",
+  "fullscreen": false,
+  "resizeable": false,
+  "window_width": 1920,
+  "window_height": 1080,
+  "window_pos_x": 400,
+  "window_pos_y": 400,
+  "doublebuffer": true,
+  "frame_count": 3,
+  "enable_vsync": true,
+  "enable_debug": true,
+  "engine_name": "tiny_render",
+  "enable_validation_layers": true,
+  "enable_additional_validation_layers": false,
+  "enable_api_dump_validation_layers": false,
+  "enable_raytracing_extensions": false, 
+  "verbose_vulkan_output": false
+}

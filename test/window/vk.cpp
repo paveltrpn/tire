@@ -10,7 +10,7 @@ import config;
 int main( int argc, char **argv ) {
     std::unique_ptr<tire::Render> rndr;
     try {
-        new tire::Config{ "test/window/config.json" };
+        new tire::Config{ std::filesystem::path{} / "assets" / "config.json" };
 
         rndr = std::make_unique<tire::RenderVK>();
         // rndr->displayRenderInfo();

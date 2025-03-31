@@ -1,4 +1,5 @@
 build/
+bin/
 .vscode/
 CMakeLists.txt.user
 assets/shaders/spirv/*.spv

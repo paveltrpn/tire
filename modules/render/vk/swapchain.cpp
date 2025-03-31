@@ -9,6 +9,8 @@ static constexpr bool DEBUG_OUTPUT_SWAPCHAIN_CPP{ true };
 #include "context.h"
 #include "pipelines/pipeline.h"
 
+import config;
+
 namespace tire::vk {
 
 namespace {
@@ -132,29 +134,29 @@ void transitionImageLayout( VkDevice device, VkCommandPool commandPool,
 }  // namespace
 
 void Context::makeSwapchain() {
-    // Choose count of images to draw in.
-    // However, simply sticking to this minimum means that we may sometimes have
-    // to wait on the driver to complete internal operations before we can acquire
-    // another image to render to. Therefore it is recommended to request at least one
-    // more image than the minimum:
-    framesCount_ = surfaceCapabilities_.minImageCount + 1;
+    const auto congigHandle = Config::instance();
 
-    // We should also make sure to not exceed the maximum number of images while
-    // doing this, where 0 is a special value that means that there is no maximum:
-    if ( surfaceCapabilities_.maxImageCount > 0 &&
-         framesCount_ > surfaceCapabilities_.maxImageCount ) {
-        framesCount_ = surfaceCapabilities_.maxImageCount;
+    log::info(
+        "vk::Swapchain === surface capabilities minImageCount: {}, "
+        "maxImageCount: {}",
+        surfaceCapabilities_.minImageCount,
+        surfaceCapabilities_.maxImageCount );
+
+    // NOTE: Warning from validation layers:
+    // A Swapchain is being created with minImageCount set to 2, which means double buffering
+    // is going to be used. Using double buffering and vsync locks rendering to an integer
+    // fraction of the vsync rate. In turn, reducing the performance of the application if
+    // rendering is slower than vsync. Consider setting minImageCount to 3 to use
+    // triple buffering to maximize performance in such cases.
+    // Skip all logic above, just use value from config
+    framesCount_ = congigHandle->get<int>( "frame_count" );
+
+    if ( ( framesCount_ < surfaceCapabilities_.minImageCount ) ||
+         ( framesCount_ > surfaceCapabilities_.maxImageCount ) ) {
+        log::fatal(
+            "vk::Swapchain === desired frame count not fit to available "
+            "surface image count limits" );
     }
-
-// NOTE: Warning from validation layers:
-// A Swapchain is being created with minImageCount set to 2, which means double buffering
-// is going to be used. Using double buffering and vsync locks rendering to an integer
-// fraction of the vsync rate. In turn, reducing the performance of the application if
-// rendering is slower than vsync. Consider setting minImageCount to 3 to use
-// triple buffering to maximize performance in such cases.
-#define FRAMES_IN_FLIGHT_COUNT 3
-    // Skip all logic above, just use two images
-    framesCount_ = FRAMES_IN_FLIGHT_COUNT;
 
     // Reserve space for frames images render into
     frames_.reserve( framesCount_ );
@@ -162,9 +164,8 @@ void Context::makeSwapchain() {
     log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>(
         "vk::Swapchain === vulkan swapchain surface capabilities image count "
         "set to "
-        "{}, "
-        "with max is {}",
-        framesCount_, surfaceCapabilities_.maxImageCount );
+        "{}",
+        framesCount_ );
 
     VkSwapchainCreateInfoKHR createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
