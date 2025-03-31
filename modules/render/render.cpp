@@ -25,7 +25,7 @@ Render::Render() {
         throw std::runtime_error( "instantiate config first!!!" );
     }
 
-    openDisplay();
+    // Crate X11 window
     configureX11();
 
     // Event Context singleton explicit instatiation
@@ -38,7 +38,9 @@ Render::~Render() {
     XCloseDisplay( display_ );
 }
 
-void Render::openDisplay() {
+void Render::configureX11() {
+    log::info( "Render === begin configure X11..." );
+
     display_ = XOpenDisplay( nullptr );
 
     if ( !display_ ) {
@@ -46,38 +48,6 @@ void Render::openDisplay() {
     } else {
         log::info( "Render === open X11 display" );
     }
-}
-
-bool Render::isExtensionSupported( const char *extList,
-                                   const char *extension ) {
-    const char *start;
-    const char *where, *terminator;
-
-    /* Extension names should not have spaces. */
-    where = strchr( extension, ' ' );
-    if ( where || *extension == '\0' ) return false;
-
-    /* It takes a bit of care to be fool-proof about parsing the
-       OpenGL extensions string. Don't be fooled by sub-strings,
-       etc. */
-    for ( start = extList;; ) {
-        where = strstr( start, extension );
-
-        if ( !where ) break;
-
-        terminator = where + strlen( extension );
-
-        if ( where == start || *( where - 1 ) == ' ' )
-            if ( *terminator == ' ' || *terminator == '\0' ) return true;
-
-        start = terminator;
-    }
-
-    return false;
-}
-
-void Render::configureX11() {
-    log::info( "Render === begin configure X11..." );
 
     // Get a matching FB config
     constexpr std::array<int, 23> visual_attribs = {

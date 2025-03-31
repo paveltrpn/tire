@@ -34,9 +34,6 @@ struct Render {
     virtual void scene( const std::filesystem::path &path ) = 0;
     void run();
 
-private:
-    static void loop( uv_timer_t *handle );
-
 protected:
     virtual void preLoop() = 0;
     virtual void preFrame() = 0;
@@ -45,8 +42,6 @@ protected:
     virtual void swapBuffers() = 0;
     virtual void postLoop() = 0;
 
-    [[nodiscard]] bool isExtensionSupported( const char *extList,
-                                             const char *extension );
     virtual void setSwapInterval( int interval ) = 0;
 
     void keyPressEvent( unsigned int key );
@@ -84,8 +79,10 @@ protected:
     std::shared_ptr<Scene> scene_{};
 
 private:
-    void openDisplay();
     void configureX11();
+
+private:
+    static void loop( uv_timer_t *handle );
 };
 
 }  // namespace tire

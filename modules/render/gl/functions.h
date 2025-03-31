@@ -8,6 +8,8 @@
 
 namespace tire::gl {
 
+extern PFNGLDEBUGMESSAGECALLBACKPROC glDebugMessageCallback;
+
 /* Creates a program object.
  * GLuint glCreateProgram(void)
  */

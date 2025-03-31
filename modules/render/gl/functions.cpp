@@ -10,6 +10,8 @@
 
 namespace tire::gl {
 
+PFNGLDEBUGMESSAGECALLBACKPROC glDebugMessageCallback{ nullptr };
+
 // shaders
 PFNGLCREATEPROGRAMPROC glCreateProgram{ nullptr };
 PFNGLLINKPROGRAMPROC glLinkProgram{ nullptr };
@@ -96,6 +98,9 @@ FuncPtr getProcAddress( const char *name ) {
 }  // namespace
 
 void init() {
+    glDebugMessageCallback = getProcAddress<PFNGLDEBUGMESSAGECALLBACKPROC>(
+        "glDebugMessageCallback" );
+
     // Shaders
     glCreateProgram =
         getProcAddress<PFNGLCREATEPROGRAMPROC>( "glCreateProgram" );

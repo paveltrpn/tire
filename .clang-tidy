@@ -32,3 +32,4 @@ Checks: >
   -modernize-use-constraints,
   -modernize-type-traits,
   -modernize-macro-to-enum,
+  -misc-use-anonymous-namespace,
