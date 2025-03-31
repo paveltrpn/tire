@@ -165,7 +165,7 @@ void RenderGL::configureGl() {
 
     // error ocured
     if ( __details::ctxErrorOccurred && glContext_ ) {
-        throw std::runtime_error( "can't create modern OpenGL context!" );
+        throw std::runtime_error( "can't create OpenGL context!" );
     }
 
     // Sync to ensure any errors generated are processed.
