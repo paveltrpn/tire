@@ -104,20 +104,24 @@ void Scene::process() {
         throw std::runtime_error( "there is can't be scene without objects!" );
     }
 
-    if ( scene_.contains( "cameras" ) ) {
-        const auto cameras = scene_["cameras"];
+    if ( scene_.contains( constants::scene::PARAM_CAMERAS ) ) {
+        const auto cameras = scene_[constants::scene::PARAM_CAMERAS];
         for ( const auto &item : cameras ) {
-            const auto &type = item["type"];
-            if ( type == "perspective" ) {
-                const std::array<float, 3> position = item["position"];
-                const std::array<float, 3> lookAt = item["look_at"];
-                const auto &fov = item["fov"];
-                const auto &aspect = 16.0f / 9.0f;  //item["aspect"];
-                const auto &ncp = item["ncp"];
-                const auto &fcp = item["fcp"];
+            const auto &type = item[constants::scene::PARAM_CAMERA_TYPE];
+            if ( type == constants::scene::PARAM_CAMERA_PERSPECTIVE ) {
+                const std::array<float, 3> eye =
+                    item[constants::scene::PARAM_CAMERA_EYE];
+                const std::array<float, 3> target =
+                    item[constants::scene::PARAM_CAMERA_TARGET];
+                const auto &fov = item[constants::scene::PARAM_CAMERA_FOV];
+                const auto &aspect =
+                    16.0f /
+                    9.0f;  //item[constants::scene::PARAM_CAMERA_ASPECT];
+                const auto &ncp = item[constants::scene::PARAM_CAMERA_NCP];
+                const auto &fcp = item[constants::scene::PARAM_CAMERA_FCP];
                 auto camera = std::make_shared<Perspective>(
                     Perspective{ fov, aspect, ncp, fcp } );
-                camera->move( { position[0], position[1], position[2] } );
+                camera->move( { eye[0], eye[1], eye[2] } );
                 cameras_.push_back( std::move( camera ) );
 
                 log::debug<DEBUG_OUTPUT_SCENE_CPP>(

@@ -9,13 +9,13 @@ namespace tire {
 using namespace algebra;
 
 template <typename T>
-struct BoundingVolume {};
-
-template <typename T>
 struct AABoundingBox;
 
 template <typename T>
 struct OOBoundingBox;
+
+template <typename T>
+struct BoundingVolume {};
 
 template <typename T>
 struct BoundingSphere final : BoundingVolume<T> {

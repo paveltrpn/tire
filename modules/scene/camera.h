@@ -23,7 +23,6 @@ struct Camera {
     void setAngles( float yaw, float pitch, float roll );
 
 protected:
-    algebra::matrix4f matrix_{};
     algebra::vector3f position_{};
     float yaw_{};
     float pitch_{};
@@ -48,15 +47,13 @@ struct Perspective final : Camera {
         auto rotation = algebra::rotate<float>( yaw_, pitch_, roll_ );
 
         offset.transposeSelf();
-        matrix_ = offset * rotation * projection;
+        return offset * rotation * projection;
 
         // algebra::matrix4f lookAt{};
         // lookAt.lookAt( algebra::vector3f{ 0.0, 0.0, 0.0 },
         //    algebra::vector3f{ 0.0, 0.0, 1.0 },
         //    algebra::vector3f{ 0.0, 1.0, 0.0 } );
         // matrix_ = lookAt * projection;
-
-        return matrix_;
     }
 
     void setFov( float fov );

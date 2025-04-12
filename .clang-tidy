@@ -33,3 +33,4 @@ Checks: >
   -modernize-type-traits,
   -modernize-macro-to-enum,
   -misc-use-anonymous-namespace,
+  -modernize-avoid-c-arrays,

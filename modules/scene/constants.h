@@ -25,8 +25,8 @@ static constexpr char PARAM_OBJECT_ALBEDO_TEXTURE[] = "albedo_texture";
 
 static constexpr char PARAM_CAMERA_TYPE[] = "type";
 static constexpr char PARAM_CAMERA_PERSPECTIVE[] = "perspective";
-static constexpr char PARAM_CAMERA_SPAWN_POS[] = "position";
-static constexpr char PARAM_CAMERA_LOOK_AT[] = "look_at";
+static constexpr char PARAM_CAMERA_EYE[] = "eye";
+static constexpr char PARAM_CAMERA_TARGET[] = "target";
 static constexpr char PARAM_CAMERA_FOV[] = "fov";
 static constexpr char PARAM_CAMERA_ASPECT[] = "aspect";
 static constexpr char PARAM_CAMERA_NCP[] = "ncp";
