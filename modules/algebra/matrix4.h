@@ -9,19 +9,12 @@
 #include <mdspan>
 #include <type_traits>
 
+#include "common.h"
 #include "algebra/concepts.h"
 #include "vector3.h"
 #include "vector4.h"
 
 namespace tire::algebra {
-
-template <std::floating_point T>
-constexpr T _half_circle = T{ 180 };
-
-template <std::floating_point T>
-constexpr T degToRad( T deg ) {
-    return deg * std::numbers::pi_v<T> / _half_circle<T>;
-}
 
 template <typename T>
 requires Algebraic<T> struct matrix4 final {

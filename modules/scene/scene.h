@@ -22,11 +22,9 @@ struct Scene {
     virtual ~Scene() = default;
 
     void setActiveCamera( size_t id ) { activeCamera_ = id; };
-    [[nodiscard]] Perspective &camera() const {
+    [[nodiscard]] Flycam &camera() const {
         return *cameras_[activeCamera_].get();
     };
-
-    Flycam &flycam() { return player_; };
 
     virtual void submit() = 0;
     virtual void draw() = 0;
@@ -46,11 +44,9 @@ protected:
     // float frameDuration_{};
 
     std::vector<std::shared_ptr<Body>> bodyList_{};
-    std::vector<std::shared_ptr<Perspective>> cameras_{};
+    std::vector<std::shared_ptr<Flycam>> cameras_{};
 
     int activeCamera_{ 0 };
-
-    Flycam player_{};
 };
 
 }  // namespace tire

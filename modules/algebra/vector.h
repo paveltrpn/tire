@@ -56,7 +56,20 @@ requires Algebraic<T> struct vector_base {
 
     value_type sqLenght() const { return dot( *this ); }
 
-    auto lenght() -> value_type const { return std::sqrt( sqLenght() ); }
+    auto lenght() -> value_type const {
+        // TODO: call proper square root function for float and double
+        return std::sqrt( sqLenght() );
+    }
+
+    void normalizeSelf() {
+        value_type len = lenght();
+
+        if ( len > 0.0 ) {
+            for ( size_t i{}; i < size; ++i ) {
+                data_[i] /= len;
+            }
+        }
+    }
 
     friend self operator+( const self &lhs, const self &rhs ) {
         auto rt = lhs;

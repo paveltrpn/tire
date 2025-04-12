@@ -1,18 +1,22 @@
 
 #pragma once
 
+#include <cstddef>
+#include <cmath>
 #include <array>
+
 #include "concepts.h"
-#include "vector.h"
 
 namespace tire::algebra {
 
 template <typename T>
-requires Algebraic<T> struct vector3 : vector_base<T, 3> {
-    using base_type = vector_base<T, 3>;
-    using base_type::data_;
-    using typename base_type::self;
-    using typename base_type::value_type;
+requires Algebraic<T> struct vector3 final {
+    using value_type = T;
+    using self = vector3<value_type>;
+    using reference = self &;
+    using const_reference = const self &;
+    using pointer = value_type *;
+    using const_pointer = const value_type *;
 
     vector3() {
         data_[0] = T{};
@@ -38,9 +42,92 @@ requires Algebraic<T> struct vector3 : vector_base<T, 3> {
         ( *this )[2] = rhs[2];
     }
 
+    [[nodiscard]] value_type &operator[]( size_t index ) {
+        return data_[index];
+    }
+
+    [[nodiscard]] const value_type &operator[]( size_t index ) const {
+        return data_[index];
+    }
+
     value_type x() const { return data_[0]; }
     value_type y() const { return data_[1]; }
     value_type z() const { return data_[2]; }
+
+    void plus( const self &b ) {
+        for ( size_t i = 0; i < 3; ++i ) data_[i] += b.data_[i];
+    };
+
+    void minus( const self &b ) {
+        for ( size_t i = 0; i < 3; ++i ) data_[i] -= b.data_[i];
+    };
+
+    template <typename U>
+    void scale( U factor ) {
+        for ( size_t i = 0; i < 3; ++i ) data_[i] *= factor;
+    }
+
+    value_type dot( const self &b ) const {
+        value_type rt{};
+
+        for ( size_t i = 0; i < 3; ++i ) rt += data_[i] * b.data_[i];
+
+        return rt;
+    }
+
+    value_type sqLength() const { return dot( *this ); }
+
+    auto length() -> value_type const {
+        // TODO: call proper square root function for float and double
+        return std::sqrt( sqLength() );
+    }
+
+    void normalizeSelf() {
+        value_type len = length();
+
+        if ( len > 0.0 ) {
+            for ( size_t i{}; i < 3; ++i ) {
+                data_[i] /= len;
+            }
+        }
+    }
+
+    self cross( const self &other ) const {
+        auto x = data_[1] * other.data_[2] - data_[2] * other.data_[1];
+        auto y = data_[2] * other.data_[0] - data_[0] * other.data_[2];
+        auto z = data_[0] * other.data_[1] - data_[1] * other.data_[0];
+
+        return { x, y, z };
+    }
+
+    friend self operator+( const self &lhs, const self &rhs ) {
+        auto rt = lhs;
+        rt.plus( rhs );
+        return rt;
+    }
+
+    self &operator+=( const self &rhs ) {
+        ( *this ).plus( rhs );
+        return *this;
+    }
+
+    friend self operator-( const self &lhs, const self &rhs ) {
+        auto rt = lhs;
+        rt.minus( rhs );
+        return rt;
+    }
+
+    self &operator-=( const self &rhs ) {
+        ( *this ).minus( rhs );
+        return *this;
+    }
+
+    pointer data() { return data_.data(); }
+
+    const_pointer data() const { return data_.data(); }
+
+private:
+    std::array<value_type, 3> data_{};
 };
 
 using vector3l = vector3<long long>;

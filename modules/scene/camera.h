@@ -5,16 +5,9 @@
 #include "algebra/vector3.h"
 #include "algebra/matrix4.h"
 
+#include "render_tag.h"
+
 namespace tire {
-
-struct OpenGLTag {};
-struct VulkanTag {};
-
-// Concept for compile time branch or overload by
-// render type.
-template <typename T>
-concept RenderType =
-    std::is_same_v<T, OpenGLTag> || std::is_same_v<T, VulkanTag>;
 
 struct Camera {
     void move( const algebra::vector3f &offset );

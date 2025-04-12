@@ -1,6 +1,7 @@
 
 #include <fstream>
 #include <array>
+#include "algebra/vector3.h"
 #include "geometry/polytope.h"
 
 #include "log/log.h"
@@ -111,16 +112,30 @@ void Scene::process() {
             if ( type == constants::scene::PARAM_CAMERA_PERSPECTIVE ) {
                 const std::array<float, 3> eye =
                     item[constants::scene::PARAM_CAMERA_EYE];
+                const auto eyev = algebra::vector3f{ eye };
+
                 const std::array<float, 3> target =
                     item[constants::scene::PARAM_CAMERA_TARGET];
+                const auto targetv = algebra::vector3f{ target };
+
+                const std::array<float, 3> euler =
+                    item[constants::scene::PARAM_CAMERA_EULER];
+
                 const auto &fov = item[constants::scene::PARAM_CAMERA_FOV];
                 const auto &aspect =
                     16.0f /
                     9.0f;  //item[constants::scene::PARAM_CAMERA_ASPECT];
                 const auto &ncp = item[constants::scene::PARAM_CAMERA_NCP];
                 const auto &fcp = item[constants::scene::PARAM_CAMERA_FCP];
-                auto camera = std::make_shared<Perspective>(
-                    Perspective{ fov, aspect, ncp, fcp } );
+
+                auto camera = std::make_shared<Flycam>( eye, euler[0], euler[1],
+                                                        euler[2] );
+
+                camera->setFov( fov );
+                camera->setAspect( aspect );
+                camera->setNcp( ncp );
+                camera->setFcp( fcp );
+
                 camera->move( { eye[0], eye[1], eye[2] } );
                 cameras_.push_back( std::move( camera ) );
 

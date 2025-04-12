@@ -27,6 +27,7 @@ static constexpr char PARAM_CAMERA_TYPE[] = "type";
 static constexpr char PARAM_CAMERA_PERSPECTIVE[] = "perspective";
 static constexpr char PARAM_CAMERA_EYE[] = "eye";
 static constexpr char PARAM_CAMERA_TARGET[] = "target";
+static constexpr char PARAM_CAMERA_EULER[] = "euler";
 static constexpr char PARAM_CAMERA_FOV[] = "fov";
 static constexpr char PARAM_CAMERA_ASPECT[] = "aspect";
 static constexpr char PARAM_CAMERA_NCP[] = "ncp";
