@@ -223,6 +223,7 @@ void Render::run() {
 void Render::keyPressEvent( unsigned int key ) {
     switch ( key ) {
         case 24: {  // == 'q'
+            scene_->nextCamera();
             break;
         }
         case 25: {  // == 'w'

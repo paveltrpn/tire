@@ -2,6 +2,7 @@
 #pragma once
 
 #include <filesystem>
+#include "log/log.h"
 #include "nlohmann/json.hpp"
 #include "uv.h"
 
@@ -21,7 +22,20 @@ struct Scene {
 
     virtual ~Scene() = default;
 
-    void setActiveCamera( size_t id ) { activeCamera_ = id; };
+    // Set active camera, first camera - 0.
+    // One default camera exist anyway.
+    void setActiveCamera( size_t id ) {
+        if ( id < cameras_.size() ) {
+            activeCamera_ = id;
+        } else {
+            activeCamera_ = 0;
+            log::warning( "Scene === try to get not existing camera - {}", id );
+        }
+    };
+
+    // Switch to next camera.
+    void nextCamera() { setActiveCamera( ++activeCamera_ ); }
+
     [[nodiscard]] Flycam &camera() const {
         return *cameras_[activeCamera_].get();
     };
@@ -46,6 +60,7 @@ protected:
     std::vector<std::shared_ptr<Body>> bodyList_{};
     std::vector<std::shared_ptr<Flycam>> cameras_{};
 
+    // One camera exist anyway
     int activeCamera_{ 0 };
 };
 

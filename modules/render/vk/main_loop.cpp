@@ -13,7 +13,7 @@ void RenderVK::preLoop() {
     log::notice( "render loop starts here..." );
 
     auto handle = showMetrics();
-    handle.scheduleDestroy();
+    // handle.scheduleDestroy();
 
     event::testTimerEvent( 1000 );
     executeByTimeOut( 1500 );
