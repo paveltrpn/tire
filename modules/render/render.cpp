@@ -335,7 +335,10 @@ void Render::mouseMoveEvent( unsigned int x, unsigned int y ) {
 void Render::mouseOffsetEvent( unsigned int x, unsigned int y ) {
     const int xOffset = holdMouseX_ - x;
     const int yOffset = holdMouseY_ - y;
-    scene_->camera().rotate( xOffset / 200.0f, yOffset / 200.0f );
+
+#define MOUSE_SENSIVITY 0.002
+    scene_->camera().rotate( xOffset * MOUSE_SENSIVITY,
+                             yOffset * MOUSE_SENSIVITY );
 }
 
 }  // namespace tire
