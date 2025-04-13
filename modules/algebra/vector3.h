@@ -120,9 +120,40 @@ requires Algebraic<T> struct vector3 final {
         return *this;
     }
 
+    // Internal data pointer getter
     value_type *data() { return data_.data(); }
-
     const value_type *data() const { return data_.data(); }
+
+    // std::get overload for structured binding vector3 types
+    template <size_t I>
+    auto &get() & {
+        if constexpr ( I == 0 )
+            return data_[0];
+        else if constexpr ( I == 1 )
+            return data_[1];
+        else if constexpr ( I == 2 )
+            return data_[2];
+    }
+
+    template <size_t I>
+    auto const &get() const & {
+        if constexpr ( I == 0 )
+            return data_[0];
+        else if constexpr ( I == 1 )
+            return data_[1];
+        else if constexpr ( I == 2 )
+            return data_[2];
+    }
+
+    template <size_t I>
+    auto &&get() && {
+        if constexpr ( I == 0 )
+            return std::move( data_[0] );
+        else if constexpr ( I == 1 )
+            return std::move( data_[1] );
+        else if constexpr ( I == 2 )
+            return std::move( data_[2] );
+    }
 
 private:
     std::array<value_type, 3> data_{};
@@ -133,3 +164,48 @@ using vector3f = vector3<float>;
 using vector3d = vector3<double>;
 
 }  // namespace tire::algebra
+
+// NOTE: namespace std!!!
+namespace std {
+
+// Structured binding for vector3f
+template <>
+struct tuple_size<tire::algebra::vector3f>
+    : std::integral_constant<size_t, 3> {};
+
+template <>
+struct std::tuple_element<0, tire::algebra::vector3f> {
+    using type = float;
+};
+
+template <>
+struct std::tuple_element<1, tire::algebra::vector3f> {
+    using type = float;
+};
+
+template <>
+struct std::tuple_element<2, tire::algebra::vector3f> {
+    using type = float;
+};
+
+// Structured binding for vector3d
+template <>
+struct tuple_size<tire::algebra::vector3d>
+    : std::integral_constant<size_t, 3> {};
+
+template <>
+struct std::tuple_element<0, tire::algebra::vector3d> {
+    using type = double;
+};
+
+template <>
+struct std::tuple_element<1, tire::algebra::vector3d> {
+    using type = double;
+};
+
+template <>
+struct std::tuple_element<2, tire::algebra::vector3d> {
+    using type = double;
+};
+
+}  // namespace std

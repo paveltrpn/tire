@@ -39,7 +39,7 @@ void RenderGL::frame() {
     screenString_->draw(
         std::format( "fps = {}", 1000000 / timer_.averageFrameDuration() ) );
 
-    const auto cpos = scene_->camera().position();
+    const auto [xp, yp, zp] = scene_->camera().position();
     const auto cazimuth = scene_->camera().azimuth();
     const auto celevation = scene_->camera().elevation();
 
@@ -48,7 +48,7 @@ void RenderGL::frame() {
     screenString_->draw(
         std::format( "x:{:<7.2f} y:{:<7.2f} z:{:<7.2f} "
                      "azimuth:{:<3.2f} elevation:{:<3.2f}",
-                     cpos.x(), cpos.y(), cpos.z(), cazimuth, celevation ) );
+                     xp, yp, zp, cazimuth, celevation ) );
 
     screenString_->set_text_position( -31.5f, 27.5f );
     screenString_->setColor( { "white" } );
