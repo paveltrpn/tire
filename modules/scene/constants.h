@@ -3,9 +3,12 @@
 
 namespace tire::constants::scene {
 
+static constexpr char PARAM_ENVIRONMENT[] = "environment";
 static constexpr char PARAM_OBJECTS[] = "objects";
 static constexpr char PARAM_CAMERAS[] = "cameras";
 static constexpr char PARAM_LIGHTS[] = "lights";
+
+static constexpr char PARAM_BACKGROUND_COLOR[] = "background_color";
 
 static constexpr char PARAM_OBJECT_TYPE_BOX[] = "box";
 static constexpr char PARAM_OBJECT_TYPE_FRAME[] = "frame";

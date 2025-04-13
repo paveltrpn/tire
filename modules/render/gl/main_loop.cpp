@@ -9,9 +9,8 @@ void RenderGL::preLoop() {
     // Start metrics logging coroutine
     showMetrics();
 
-    const auto backgroundColor = Colorf( "#0f0f0f" );
-    glClearColor( backgroundColor.r(), backgroundColor.g(), backgroundColor.b(),
-                  1.0f );
+    const auto bg = scene_->backgroundColor();
+    glClearColor( bg.r(), bg.g(), bg.b(), 1.0f );
 };
 
 void RenderGL::preFrame() {

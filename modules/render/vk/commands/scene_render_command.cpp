@@ -30,6 +30,7 @@ SceneRenderCommand::SceneRenderCommand( const vk::Context *context,
             "vk::SceneRenderCommand === buffer created!" );
     };
 
+    // TODO: pass background color fdrom scene environment parameters.
     // Note that the order of clearValues should be identical to the order of your
     // attachments
     const auto backgroundColor = Colorf( "#0f0f0f" );

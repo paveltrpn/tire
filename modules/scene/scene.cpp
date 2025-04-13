@@ -42,6 +42,13 @@ Scene::Scene( const std::filesystem::path &fname ) {
 
 void Scene::process() {
     const auto basePath = Config::instance()->getBasePath();
+
+    // Read "environment section"
+    const auto &environment = scene_[constants::scene::PARAM_ENVIRONMENT];
+    const auto &bg = environment[constants::scene::PARAM_BACKGROUND_COLOR];
+    backgrounColor_ = Colorf( bg );
+
+    // Read "objects" section
     if ( scene_.contains( constants::scene::PARAM_OBJECTS ) ) {
         const auto objects = scene_[constants::scene::PARAM_OBJECTS];
         for ( const auto &item : objects ) {
@@ -105,6 +112,7 @@ void Scene::process() {
         throw std::runtime_error( "there is can't be scene without objects!" );
     }
 
+    // Read "cameras" section
     if ( scene_.contains( constants::scene::PARAM_CAMERAS ) ) {
         const auto cameras = scene_[constants::scene::PARAM_CAMERAS];
         for ( const auto &item : cameras ) {
@@ -149,6 +157,7 @@ void Scene::process() {
         throw std::runtime_error( "there is can't be scene without cameras!" );
     }
 
+    // Read "lights" section
     // if ( scene_.contains( "lights" ) ) {
     // } else {
     //     throw std::runtime_error( "there is can't be scene without lights!" );

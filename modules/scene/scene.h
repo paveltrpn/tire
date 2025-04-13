@@ -40,6 +40,10 @@ struct Scene {
         return *cameras_[activeCamera_].get();
     };
 
+    [[nodiscard]] const Colorf &backgroundColor() const {
+        return backgrounColor_;
+    };
+
     virtual void submit() = 0;
     virtual void draw() = 0;
 
@@ -55,7 +59,7 @@ private:
     nlohmann::json scene_;
 
 protected:
-    // float frameDuration_{};
+    Colorf backgrounColor_{ "black" };
 
     std::vector<std::shared_ptr<Body>> bodyList_{};
     std::vector<std::shared_ptr<Flycam>> cameras_{};
