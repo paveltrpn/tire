@@ -13,15 +13,11 @@ template <typename T>
 requires Algebraic<T> struct vector3 final {
     using value_type = T;
     using self = vector3<value_type>;
-    using reference = self &;
-    using const_reference = const self &;
-    using pointer = value_type *;
-    using const_pointer = const value_type *;
 
     vector3() {
-        data_[0] = T{};
-        data_[1] = T{};
-        data_[2] = T{};
+        data_[0] = value_type{};
+        data_[1] = value_type{};
+        data_[2] = value_type{};
     }
 
     vector3( value_type x, value_type y, value_type z ) {
@@ -37,9 +33,9 @@ requires Algebraic<T> struct vector3 final {
     }
 
     vector3( const self &rhs ) {
-        ( *this )[0] = rhs[0];
-        ( *this )[1] = rhs[1];
-        ( *this )[2] = rhs[2];
+        data_[0] = rhs.data_[0];
+        data_[1] = rhs.data_[1];
+        data_[2] = rhs.data_[2];
     }
 
     [[nodiscard]] value_type &operator[]( size_t index ) {
@@ -132,9 +128,9 @@ requires Algebraic<T> struct vector3 final {
         return *this;
     }
 
-    pointer data() { return data_.data(); }
+    value_type *data() { return data_.data(); }
 
-    const_pointer data() const { return data_.data(); }
+    const value_type *data() const { return data_.data(); }
 
 private:
     std::array<value_type, 3> data_{};

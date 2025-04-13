@@ -221,13 +221,12 @@ void Render::run() {
 }
 
 void Render::keyPressEvent( unsigned int key ) {
-    std::cout << " ===== " << key << "\n";
     switch ( key ) {
         case 24: {  // == 'q'
             break;
         }
         case 25: {  // == 'w'
-            scene_->camera().move( algebra::vector3f{ 0.0, 0.0, 1.5 } );
+            scene_->camera().moveForward();
             break;
         }
         case 26: {  // == 'e'
@@ -261,13 +260,15 @@ void Render::keyPressEvent( unsigned int key ) {
             break;
         }
         case 38: {  // == 'a'
+            scene_->camera().strafeLeft();
             break;
         }
         case 39: {  // == 's'
-            scene_->camera().move( algebra::vector3f{ 0.0, 0.0, -1.5 } );
+            scene_->camera().moveBackward();
             break;
         }
         case 40: {  // == 'd'
+            scene_->camera().strafeRight();
             break;
         }
         case 41: {  // == 'f'

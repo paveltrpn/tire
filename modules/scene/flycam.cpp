@@ -15,13 +15,30 @@ Flycam::Flycam( const algebra::vector3f &eye, float azimuth, float elevation ) {
     eye_ = eye;
 }
 
-void Flycam::move( const algebra::vector3f &offset ) {
+void Flycam::moveForward() {
     eye_.plus( look_.scale( 0.2 ) );
+}
+
+void Flycam::moveBackward() {
+    eye_.minus( look_.scale( 0.2 ) );
+}
+
+void Flycam::strafeLeft() {
+    eye_.plus( right_.scale( 0.2 ) );
+}
+
+void Flycam::strafeRight() {
+    eye_.minus( right_.scale( 0.2 ) );
 }
 
 void Flycam::rotate( float azimuthOffset, float elevayionOffset ) {
     azimuth_ += azimuthOffset;
+
     elevation_ += elevayionOffset;
+
+#define ELEVATION_BOUND 80.0
+    if ( elevation_ > ELEVATION_BOUND ) elevation_ = ELEVATION_BOUND;
+    if ( elevation_ < -ELEVATION_BOUND ) elevation_ = -ELEVATION_BOUND;
 }
 
 void Flycam::setPosition( const algebra::vector3f &pos ) {

@@ -27,7 +27,11 @@ struct Flycam final {
     void setNcp( float ncp );
     void setFcp( float fcp );
 
-    void move( const algebra::vector3f &offset );
+    void moveForward();
+    void moveBackward();
+    void strafeLeft();
+    void strafeRight();
+
     void rotate( float azimuthffset, float elevayionOffset );
     void setPosition( const algebra::vector3f &pos );
     void setAngles( float azimuth, float elevation, float roll );
