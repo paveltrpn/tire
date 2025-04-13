@@ -49,14 +49,16 @@ struct Flycam final {
         }
         auto offset = algebra::translate<float>( eye_ );
 
-        // Get azimuth rotation
+        // Get azimuth rotation matrix
         auto ar = algebra::rotate<float>( zenith_, azimuth_ );
 
         // Get actual "right side" direction vector
         right_ = ar.mult_vector3( { 1.0f, 0.0f, 0.0f } );
+
+        // Get elevation rotation matrix
         auto er = algebra::rotate<float>( right_, elevation_ );
 
-        // Get actual look vector
+        // Get actual look direction vector
         look_ = er.mult_vector3( right_.cross( zenith_ ) );
 
         // Add roll rotation
@@ -69,6 +71,11 @@ struct Flycam final {
 
         return offset * rotation * projection;
     }
+
+    algebra::vector3f position() { return eye_; };
+    float azimuth() { return azimuth_; };
+    float elevation() { return elevation_; };
+    float roll() { return roll_; };
 
 private:
     // Perspective parameters

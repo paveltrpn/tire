@@ -114,9 +114,9 @@ void Scene::process() {
                     item[constants::scene::PARAM_CAMERA_EYE];
                 const auto eyev = algebra::vector3f{ eye };
 
+                // Unused
                 const std::array<float, 3> target =
                     item[constants::scene::PARAM_CAMERA_TARGET];
-                const auto targetv = algebra::vector3f{ target };
 
                 const float azimuth =
                     item[constants::scene::PARAM_CAMERA_AZIMUTH];

@@ -34,8 +34,12 @@ void Flycam::strafeRight() {
 void Flycam::rotate( float azimuthOffset, float elevayionOffset ) {
     azimuth_ += azimuthOffset;
 
+    // Clamp azimuth
+    if ( ( azimuth_ > 360.0 ) || ( azimuth_ < -360.0 ) ) azimuth_ = 0.0;
+
     elevation_ += elevayionOffset;
 
+    // Check elevation angles bound
 #define ELEVATION_BOUND 80.0
     if ( elevation_ > ELEVATION_BOUND ) elevation_ = ELEVATION_BOUND;
     if ( elevation_ < -ELEVATION_BOUND ) elevation_ = -ELEVATION_BOUND;

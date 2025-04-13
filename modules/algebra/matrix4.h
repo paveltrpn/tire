@@ -183,27 +183,26 @@ requires Algebraic<T> struct matrix4 final {
     }
 
     vector3<value_type> mult_vector3( const vector3<value_type> &v ) {
-        vector3<value_type> rt;
-        value_type w;
+        value_type w{};
 
-        rt[0] = v[0] * ( *this )[0] + v[1] * ( *this )[1] +
-                v[2] * ( *this )[2] + ( *this )[3];
-        rt[1] = v[0] * ( *this )[4] + v[1] * ( *this )[5] +
-                v[2] * ( *this )[6] + ( *this )[7];
-        rt[2] = v[0] * ( *this )[8] + v[1] * ( *this )[9] +
-                v[2] * ( *this )[10] + ( *this )[11];
-        w = v[0] * ( *this )[12] + v[1] * ( *this )[13] + v[2] * ( *this )[14] +
-            ( *this )[15];
+        auto rx = v.x() * ( *this )[0] + v.y() * ( *this )[1] +
+                  v.z() * ( *this )[2] + ( *this )[3];
+        auto ry = v.x() * ( *this )[4] + v.y() * ( *this )[5] +
+                  v.z() * ( *this )[6] + ( *this )[7];
+        auto rz = v.x() * ( *this )[8] + v.y() * ( *this )[9] +
+                  v.z() * ( *this )[10] + ( *this )[11];
+        w = v.x() * ( *this )[12] + v.y() * ( *this )[13] +
+            v.z() * ( *this )[14] + ( *this )[15];
 
         // normalize if w is different than 1 (convert from homogeneous to Cartesian
         // coordinates)
         if ( w != 1.0f ) {
-            rt[0] /= w;
-            rt[1] /= w;
-            rt[2] /= w;
+            rx /= w;
+            ry /= w;
+            rz /= w;
         }
 
-        return rt;
+        return { value_type( rx ), value_type( ry ), value_type( rz ) };
     }
 
     vector4<value_type> mult_vector4( const vector4<value_type> &v ) {
@@ -499,17 +498,17 @@ requires Algebraic<T> struct matrix4 final {
     void scale( const vector3<value_type> &offset ) {
         idtt();
 
-        ( *this )[0] = offset[0];
-        ( *this )[5] = offset[1];
-        ( *this )[10] = offset[2];
+        ( *this )[0] = offset.x();
+        ( *this )[5] = offset.y();
+        ( *this )[10] = offset.z();
     }
 
     void translate( const vector3<value_type> &offset ) {
         idtt();
 
-        ( *this )[3] = offset[0];
-        ( *this )[7] = offset[1];
-        ( *this )[11] = offset[2];
+        ( *this )[3] = offset.x();
+        ( *this )[7] = offset.y();
+        ( *this )[11] = offset.z();
     }
 
     void translate( value_type dx, value_type dy, value_type dz ) {
@@ -577,12 +576,12 @@ requires Algebraic<T> struct matrix4 final {
 
         cosphi = std::cos( degToRad( phi ) );
         sinphi = std::sin( degToRad( phi ) );
-        vxvy = ax[0] * ax[1];
-        vxvz = ax[0] * ax[2];
-        vyvz = ax[1] * ax[2];
-        vx = ax[0];
-        vy = ax[1];
-        vz = ax[2];
+        vxvy = ax.x() * ax.y();
+        vxvz = ax.x() * ax.z();
+        vyvz = ax.y() * ax.z();
+        vx = ax.x();
+        vy = ax.y();
+        vz = ax.z();
 
         ( *this )[0] = cosphi + ( 1.0 - cosphi ) * vx * vx;
         ( *this )[1] = ( 1.0 - cosphi ) * vxvy - sinphi * vz;

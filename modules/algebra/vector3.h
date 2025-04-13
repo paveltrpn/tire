@@ -38,14 +38,6 @@ requires Algebraic<T> struct vector3 final {
         data_[2] = rhs.data_[2];
     }
 
-    [[nodiscard]] value_type &operator[]( size_t index ) {
-        return data_[index];
-    }
-
-    [[nodiscard]] const value_type &operator[]( size_t index ) const {
-        return data_[index];
-    }
-
     value_type x() const { return data_[0]; }
     value_type y() const { return data_[1]; }
     value_type z() const { return data_[2]; }
