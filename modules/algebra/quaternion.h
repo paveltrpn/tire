@@ -1,7 +1,10 @@
 
 #pragma once
 
+#include <cmath>
 #include <array>
+
+#include "common.h"
 #include "algebra/concepts.h"
 
 namespace tire::algebra {
@@ -100,9 +103,6 @@ requires Algebraic<T> struct quaternion_base {
     void byTwoVectors( const algebra::vector3<value_type> &a,
                        const algebra::vector3<value_type> &b ) {
         algebra::vector3<value_type> cpv = a.cross( b );
-        // q.xyz = a;
-        // q.w = sqrt( ( v1.Length ^ 2 ) * ( v2.Length ^ 2 ) ) +
-        //   dotproduct( v1, v2 );
 
         data_[0] = cpv.x();
         data_[1] = cpv.y();
@@ -125,8 +125,9 @@ requires Algebraic<T> struct quaternion_base {
         // pitch (y-axis rotation)
         double sinp = 2.0 * ( w * y - z * x );
         if ( std::abs( sinp ) >= 1.0 ) {
-            angles[1] = radToDeg( std::copysign(
-                M_PI / 2.0, sinp ) );  // use 90 degrees if out of range
+            angles[1] = radToDeg(
+                std::copysign( std::numbers::pi_v<value_type> / 2.0,
+                               sinp ) );  // use 90 degrees if out of range
         } else {
             angles[1] = radToDeg( std::asin( sinp ) );
         }

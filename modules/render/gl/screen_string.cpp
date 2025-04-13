@@ -1,6 +1,8 @@
 
 #include <iostream>
 #include <string>
+#include <algorithm>
+
 #include "algebra/matrix4.h"
 #include "algebra/vector2.h"
 
@@ -47,17 +49,17 @@ void ScreenString::flush() {
     // After uploading vertex data to GPU
     // set CPU side buffers to default value.
     // May be use memset() instead? Ah, nah...
-    std::fill( std::begin( letterQuadsVertecies_ ),
-               std::end( letterQuadsVertecies_ ),
-               algebra::vector2f{ 0.0f, 0.0f } );
+    std::ranges::fill( std::begin( letterQuadsVertecies_ ),
+                       std::end( letterQuadsVertecies_ ),
+                       algebra::vector2f{ 0.0f, 0.0f } );
 
-    std::fill( std::begin( letterQuadsTexcrds_ ),
-               std::end( letterQuadsTexcrds_ ),
-               algebra::vector2f{ 0.0f, 0.0f } );
+    std::ranges::fill( std::begin( letterQuadsTexcrds_ ),
+                       std::end( letterQuadsTexcrds_ ),
+                       algebra::vector2f{ 0.0f, 0.0f } );
 
     const auto color = Colorf{ "white" }.asVector3f();
-    std::fill( std::begin( letterQuadsColors_ ), std::end( letterQuadsColors_ ),
-               color );
+    std::ranges::fill( std::begin( letterQuadsColors_ ),
+                       std::end( letterQuadsColors_ ), color );
 
     glEnable( GL_TEXTURE_2D );
     glEnable( GL_BLEND );

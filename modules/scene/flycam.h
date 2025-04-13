@@ -47,7 +47,6 @@ struct Flycam final {
             projection =
                 algebra::vperspective<float>( fov_, aspect_, ncp_, fcp_ );
         }
-        auto offset = algebra::translate<float>( eye_ );
 
         // Get azimuth rotation matrix
         auto ar = algebra::rotate<float>( zenith_, azimuth_ );
@@ -67,6 +66,7 @@ struct Flycam final {
         // Combine both rotations
         auto rotation = er * ar;
 
+        auto offset = algebra::translate<float>( eye_ );
         offset.transposeSelf();
 
         return offset * rotation * projection;
