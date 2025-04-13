@@ -15,11 +15,11 @@ ScreenString::ScreenString( const std::string& name )
     // Prepare vertex buffer
     buffer_.generate();
     buffer_.bind();
-    buffer_.bindVertexData( letterQuadsVertecies_.size(),
+    buffer_.bindVertexData( letterQuadsVertecies_.size() * 4,
                             letterQuadsVertecies_.data() );
-    buffer_.bindTexcrdData( letterQuadsTexcrds_.size(),
+    buffer_.bindTexcrdData( letterQuadsTexcrds_.size() * 4,
                             letterQuadsTexcrds_.data() );
-    buffer_.bindColorData( letterQuadsColors_.size(),
+    buffer_.bindColorData( letterQuadsColors_.size() * 4,
                            letterQuadsColors_.data() );
     buffer_.release();
 
@@ -37,11 +37,11 @@ void ScreenString::flush() {
     shaderStorage_.use( "screenString" );
 
     // Upload data
-    buffer_.updateVertexData( letterQuadsVertecies_.size(),
+    buffer_.updateVertexData( letterQuadsVertecies_.size() * 4,
                               letterQuadsVertecies_.data() );
-    buffer_.updateTexcrdData( letterQuadsTexcrds_.size(),
+    buffer_.updateTexcrdData( letterQuadsTexcrds_.size() * 4,
                               letterQuadsTexcrds_.data() );
-    buffer_.updateColorData( letterQuadsColors_.size(),
+    buffer_.updateColorData( letterQuadsColors_.size() * 4,
                              letterQuadsColors_.data() );
 
     // After uploading vertex data to GPU
@@ -67,6 +67,7 @@ void ScreenString::flush() {
     buffer_.release();
     glDisable( GL_BLEND );
 
+    // Reset buffer position to begin write caracters from begining of the buffers
     bufferPos_ = 0;
 }
 

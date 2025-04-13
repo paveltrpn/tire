@@ -37,12 +37,20 @@ void RenderGL::frame() {
     screenString_->setColor( { "white" } );
     screenString_->set_text_position( -31.5f, 31.5f );
     screenString_->draw(
-        std::format( "frame time = {}", timer_.averageFrameDuration() ) );
-    screenString_->set_text_position( -31.5f, 28.5f );
-    screenString_->setColor( { "darkred" } );
-    screenString_->draw(
         std::format( "fps = {}", 1000000 / timer_.averageFrameDuration() ) );
-    screenString_->set_text_position( -31.5f, 25.5f );
+
+    const auto cpos = scene_->camera().position();
+    const auto cazimuth = scene_->camera().azimuth();
+    const auto celevation = scene_->camera().elevation();
+
+    screenString_->set_text_position( -31.5f, 29.5f );
+    screenString_->setColor( { "red" } );
+    screenString_->draw(
+        std::format( "x:{:<7.2f} y:{:<7.2f} z:{:<7.2f} "
+                     "azimuth:{:<3.2f} elevation:{:<3.2f}",
+                     cpos.x(), cpos.y(), cpos.z(), cazimuth, celevation ) );
+
+    screenString_->set_text_position( -31.5f, 27.5f );
     screenString_->setColor( { "white" } );
     screenString_->draw( std::format( "press \"g\" for grub/ungrub cursor" ) );
 

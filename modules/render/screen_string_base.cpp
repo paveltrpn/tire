@@ -66,7 +66,7 @@ void ScreenStringBase::draw( const std::string& string ) {
     // Размер ячейки с символом в долях текстурных координат по вертикали
     float tc_gap_y = 1.0f / static_cast<float>( fontRowCount );
 
-    size_t i{};
+    size_t i{ 0 };
     for ( ; i < string.length(); ++i ) {
         offset = ( glyph_quad_wdt + glyph_quad_gap ) * i;
 
@@ -117,7 +117,7 @@ void ScreenStringBase::draw( const std::string& string ) {
     // Save count of symbols that allready have been ocupied space in buffer,
     // because there can be many of draw() calls before flush() that actualy
     // render text geometry and set all counter and buffers to zero
-    bufferPos_ = i;
+    bufferPos_ += i;
 }
 
 }  // namespace tire

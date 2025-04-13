@@ -46,7 +46,7 @@ protected:
 
     std::unique_ptr<Tga> fontImage_{};
 
-    float glyphScale_{ 2.0f };
+    float glyphScale_{ 1.3f };
 #define GLYPH_WIDTH 0.4f
 #define GLYPH_HEIGHT 1.55f
     float glyph_quad_wdt{ GLYPH_WIDTH * glyphScale_ };
