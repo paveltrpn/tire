@@ -7,51 +7,30 @@
 
 namespace tire {
 
-Flycam::Flycam( const algebra::vector3f &eye,
-                const algebra::vector3f &target ) {
-    // Got look vector
-    auto look = target - eye;
-    look.normalizeSelf();
-
-    // Obtain quaternion that rotates between defalt look vector (+z)
-    // and current look vector
-    const auto quat =
-        algebra::quaternionf{ look, algebra::vector3f{ 0.0, 0.0, 1.0 } };
-
-    const auto [roll, pitch, yaw] = quat.toEuler();
-
-    roll_ = roll;
-    pitch_ = pitch;
-    yaw_ = yaw;
-
-    eye_ = eye;
-}
-Flycam::Flycam( const algebra::vector3f &eye, float yaw, float pitch,
-                float roll ) {
-    roll_ = roll;
-    pitch_ = pitch;
-    yaw_ = yaw;
+Flycam::Flycam( const algebra::vector3f &eye, float azimuth, float elevation ) {
+    azimuth_ = azimuth;
+    elevation_ = elevation;
+    roll_ = 0.0;
 
     eye_ = eye;
 }
 
 void Flycam::move( const algebra::vector3f &offset ) {
-    eye_.plus( offset );
+    eye_.plus( look_.scale( 0.2 ) );
 }
 
-void Flycam::rotate( float yawOffset, float pitchOffset, float rollOffset ) {
-    yaw_ += yawOffset;
-    pitch_ += pitchOffset;
-    roll_ += rollOffset;
+void Flycam::rotate( float azimuthOffset, float elevayionOffset ) {
+    azimuth_ += azimuthOffset;
+    elevation_ += elevayionOffset;
 }
 
 void Flycam::setPosition( const algebra::vector3f &pos ) {
     eye_ = pos;
 }
 
-void Flycam::setAngles( float yaw, float pitch, float roll ) {
-    yaw_ = yaw;
-    pitch_ = pitch;
+void Flycam::setAngles( float azimuth, float elevation, float roll ) {
+    azimuth_ = azimuth;
+    elevation_ = elevation;
     roll_ = roll;
 }
 

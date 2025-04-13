@@ -333,7 +333,7 @@ void Render::mouseMoveEvent( unsigned int x, unsigned int y ) {
 void Render::mouseOffsetEvent( unsigned int x, unsigned int y ) {
     const int xOffset = holdMouseX_ - x;
     const int yOffset = holdMouseY_ - y;
-    scene_->camera().rotate( yOffset / 200.0f, xOffset / 200.0f, 0.0f );
+    scene_->camera().rotate( xOffset / 200.0f, yOffset / 200.0f );
 }
 
 }  // namespace tire

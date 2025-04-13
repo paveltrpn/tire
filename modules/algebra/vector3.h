@@ -63,8 +63,18 @@ requires Algebraic<T> struct vector3 final {
     };
 
     template <typename U>
-    void scale( U factor ) {
-        for ( size_t i = 0; i < 3; ++i ) data_[i] *= factor;
+    void scaleSelf( U factor ) {
+        data_[0] *= factor;
+        data_[1] *= factor;
+        data_[2] *= factor;
+    }
+
+    template <typename U>
+    self scale( U factor ) {
+        const auto x = data_[0] * factor;
+        const auto y = data_[1] * factor;
+        const auto z = data_[2] * factor;
+        return { value_type( x ), value_type( y ), value_type( z ) };
     }
 
     value_type dot( const self &b ) const {

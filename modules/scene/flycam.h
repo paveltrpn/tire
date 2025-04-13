@@ -14,9 +14,7 @@ namespace tire {
 struct Flycam final {
     Flycam() = default;
 
-    Flycam( const algebra::vector3f &eye, const algebra::vector3f &target );
-
-    Flycam( const algebra::vector3f &eye, float yaw, float pitch, float roll );
+    Flycam( const algebra::vector3f &eye, float azimuth, float elevation );
 
     Flycam( const Flycam &other ) = delete;
     Flycam( Flycam &&other ) = delete;
@@ -30,9 +28,9 @@ struct Flycam final {
     void setFcp( float fcp );
 
     void move( const algebra::vector3f &offset );
-    void rotate( float yawOffset, float pitchOffset, float rollOffset );
+    void rotate( float azimuthffset, float elevayionOffset );
     void setPosition( const algebra::vector3f &pos );
-    void setAngles( float yaw, float pitch, float roll );
+    void setAngles( float azimuth, float elevation, float roll );
 
     template <RenderType Type>
     algebra::matrix4f matrix() {
@@ -46,30 +44,49 @@ struct Flycam final {
                 algebra::vperspective<float>( fov_, aspect_, ncp_, fcp_ );
         }
         auto offset = algebra::translate<float>( eye_ );
-        auto rotation = algebra::rotate<float>( yaw_, pitch_, roll_ );
+
+        // Get azimuth rotation
+        auto ar = algebra::rotate<float>( zenith_, azimuth_ );
+
+        // Get actual "right side" direction vector
+        right_ = ar.mult_vector3( { 1.0f, 0.0f, 0.0f } );
+        auto er = algebra::rotate<float>( right_, elevation_ );
+
+        // Get actual look vector
+        look_ = er.mult_vector3( right_.cross( zenith_ ) );
+
+        // Add roll rotation
+        //
+
+        // Combine both rotations
+        auto rotation = er * ar;
 
         offset.transposeSelf();
-        return offset * rotation * projection;
 
-        // algebra::matrix4f lookAt{};
-        // lookAt.lookAt( algebra::vector3f{ 0.0, 0.0, 0.0 },
-        //    algebra::vector3f{ 0.0, 0.0, 1.0 },
-        //    algebra::vector3f{ 0.0, 1.0, 0.0 } );
-        // matrix_ = lookAt * projection;
+        return offset * rotation * projection;
     }
 
 private:
+    // Perspective parameters
     float fov_{};
     float aspect_{};
     float ncp_{};
     float fcp_{};
 
+    // Eye position
     algebra::vector3f eye_{ 0.0f, 0.0f, 0.0f };
 
-    float yaw_{};
-    float pitch_{};
+    //
+    algebra::vector3f zenith_{ 0.0f, 1.0f, 0.0f };
+    algebra::vector3f right_{ 1.0f, 0.0f, 0.0f };
+    algebra::vector3f look_{ 0.0f, 0.0f, 1.0f };
+
+    //
+    float azimuth_{};
+    float elevation_{};
     float roll_{};
 
+    // Bounding and mass
     BoundingSphere<float> bounding_{};
     float mass_{};
     algebra::vector3f velocity_{};

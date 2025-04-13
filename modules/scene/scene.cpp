@@ -118,8 +118,11 @@ void Scene::process() {
                     item[constants::scene::PARAM_CAMERA_TARGET];
                 const auto targetv = algebra::vector3f{ target };
 
-                const std::array<float, 3> euler =
-                    item[constants::scene::PARAM_CAMERA_EULER];
+                const float azimuth =
+                    item[constants::scene::PARAM_CAMERA_AZIMUTH];
+
+                const float elevation =
+                    item[constants::scene::PARAM_CAMERA_ELEVATION];
 
                 const auto &fov = item[constants::scene::PARAM_CAMERA_FOV];
                 const auto &aspect =
@@ -128,15 +131,14 @@ void Scene::process() {
                 const auto &ncp = item[constants::scene::PARAM_CAMERA_NCP];
                 const auto &fcp = item[constants::scene::PARAM_CAMERA_FCP];
 
-                auto camera = std::make_shared<Flycam>( eye, euler[0], euler[1],
-                                                        euler[2] );
+                auto camera =
+                    std::make_shared<Flycam>( eye, azimuth, elevation );
 
                 camera->setFov( fov );
                 camera->setAspect( aspect );
                 camera->setNcp( ncp );
                 camera->setFcp( fcp );
 
-                camera->move( { eye[0], eye[1], eye[2] } );
                 cameras_.push_back( std::move( camera ) );
 
                 log::debug<DEBUG_OUTPUT_SCENE_CPP>(
