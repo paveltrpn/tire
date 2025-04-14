@@ -3,6 +3,8 @@
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_MAIN_LOOP_GL_CPP{ true };
 
+import event;
+
 namespace tire {
 
 void RenderGL::preLoop() {
@@ -16,8 +18,9 @@ void RenderGL::preLoop() {
 void RenderGL::preFrame() {
     // Update global timer
     timer_.update();
+
     // Update scene objects
-    scene_->traverse( timer_.floatFrameDuration() );
+    scene_->traverse( timer_.frameDuration<float>() );
 }
 
 void RenderGL::frame() {

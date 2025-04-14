@@ -23,8 +23,9 @@ void RenderVK::preLoop() {
 void RenderVK::preFrame() {
     // Update global timer
     timer_.update();
+
     // Update scene objects
-    scene_->traverse( timer_.floatFrameDuration() );
+    scene_->traverse( timer_.frameDuration<float>() );
     scene_->submit();
 };
 

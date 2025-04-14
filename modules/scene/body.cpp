@@ -50,23 +50,23 @@ const algebra::vector2f *Body::texcrdsData() {
     return shapeData_->texcrdsData();
 }
 
-void Body::setPosition( vector3<float_type> value ) {
+void Body::setPosition( const vector3<float_type> &value ) {
     position_ = value;
 }
 
-void Body::setOrientation( vector3<float_type> value ) {
+void Body::setOrientation( const vector3<float_type> &value ) {
     orientation_ = value;
 }
 
-void Body::setScale( vector3<float_type> value ) {
+void Body::setScale( const vector3<float_type> &value ) {
     scale_ = value;
 }
 
-void Body::setVelocity( vector3<float_type> value ) {
+void Body::setVelocity( const vector3<float_type> &value ) {
     velocity_ = value;
 }
 
-void Body::setTorque( vector3<float_type> value ) {
+void Body::setTorque( const vector3<float_type> &value ) {
     torque_ = value;
 }
 
@@ -82,18 +82,21 @@ const uint8_t *Body::albedoTextureData() {
     return albedoTextureImage_->data();
 }
 
-void Body::applyTransormations() {
+void Body::applyTransormations( float duration ) {
     // Update body spatial parameters
-    orientation_ += torque_;
-    position_ += velocity_;
+    orientation_ += torque_.scale( duration );
+    position_ += velocity_.scale( duration );
 
     // Make transformation matrix
     const auto scale = algebra::scale( scale_.x(), scale_.y(), scale_.z() );
+
+    //
     const auto rotation =
         algebra::rotate( orientation_.x(), orientation_.y(), orientation_.z() );
     const auto offset =
         algebra::translate( position_.x(), position_.y(), position_.z() );
 
+    // Get combined transformation matrix
     algebra::matrix4f transform{};
     transform.multiply( offset );
     transform.multiply( rotation );
@@ -102,8 +105,11 @@ void Body::applyTransormations() {
     // Apply transformation matrix to default geometry data,
     // and copy this data into local buffers.
     for ( auto i = 0; i < shapeData_->verteciesCount(); ++i ) {
+        // Update vertex positions
         auto vertex = shapeData_->vertecies()[i];
         localVertecies_[i] = vertex.transform( transform );
+
+        // Update normals
         auto normal = shapeData_->normals()[i];
         localNormals_[i] = normal.transform( rotation );
     }

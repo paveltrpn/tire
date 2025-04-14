@@ -7,6 +7,7 @@
 
 #include <array>
 #include <print>
+#include <coroutine>
 
 #include "algebra/vector3.h"
 #include "log/log.h"
@@ -14,7 +15,9 @@ static constexpr bool DEBUG_OUTPUT_RENDER_CPP{ true };
 
 #include "render.h"
 
+import config;
 import event;
+import io;
 
 namespace tire {
 
@@ -339,6 +342,43 @@ void Render::mouseOffsetEvent( unsigned int x, unsigned int y ) {
 #define MOUSE_SENSIVITY 0.002
     scene_->camera().rotate( xOffset * MOUSE_SENSIVITY,
                              yOffset * MOUSE_SENSIVITY );
+}
+
+event::Task<void> Render::executeByTimeOut( long long timeout ) {
+    co_await event::setTimeout( timeout );
+    log::notice( "test coroutine timer trigger" );
+};
+
+event::Task<void> Render::watchFile( std::string path ) {
+    bool isRenamed{ false };
+    while ( !isRenamed ) {
+        const auto res = co_await io::watchForFile( path );
+        // Wait for uv_fs_event_stop() to cancel next callback call
+        co_await event::setTimeout( 100 );
+        log::notice( "file  \"{}\" changed with code {}", path,
+                     static_cast<int>( res ) );
+        if ( isRenamed = ( res == UV_RENAME ); isRenamed ) {
+            log::notice( "file  \"{}\" have been renamed, stop watching",
+                         path );
+        }
+    }
+};
+
+event::Task<void> Render::showMetrics() {
+    while ( true ) {
+        co_await event::setTimeout( 3000 );
+
+        event::Context::metrics();
+
+        const auto afd = timer_.averageFrameDuration();
+        const auto [min, max] = timer_.minMaxFrameDuration();
+        const auto fps = timer_.framesPerSecond();
+
+        log::info( "frame duration = {}, min = {}, max = {}, fps = {:<3.2f}",
+                   afd, min, max, fps );
+
+        timer_.resetAccumulators();
+    }
 }
 
 }  // namespace tire

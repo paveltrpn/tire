@@ -165,11 +165,8 @@ void Scene::process() {
 }
 
 void Scene::traverse( float duration ) {
-    // Update global time flow
-    frameDuration_ = duration;
-
     for ( auto &node : bodyList_ ) {
-        node->applyTransormations();
+        node->applyTransormations( duration );
     }
 }
 

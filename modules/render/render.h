@@ -15,9 +15,14 @@
 #include "timer.h"
 #include "scene/scene.h"
 
-import config;
-
 namespace tire {
+
+namespace event {
+
+template <typename T>
+struct Task;
+
+}
 
 struct Render {
     Render();
@@ -55,6 +60,10 @@ protected:
     // Call when mouse holds in defined position. "x" and "y"
     // represent current cursor ofssets.
     void mouseOffsetEvent( unsigned int x, unsigned int y );
+
+    event::Task<void> executeByTimeOut( long long timeout );
+    event::Task<void> watchFile( std::string path );
+    event::Task<void> showMetrics();
 
 protected:
     bool run_{ true };

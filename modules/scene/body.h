@@ -55,34 +55,34 @@ struct Body final {
         return albedoColor_;
     };
 
-    void setPosition( vector3<float_type> value );
-    void setOrientation( vector3<float_type> value );
-    void setScale( vector3<float_type> value );
-    void setVelocity( vector3<float_type> value );
-    void setTorque( vector3<float_type> value );
+    void setPosition( const vector3<float_type> &value );
+    void setOrientation( const vector3<float_type> &value );
+    void setScale( const vector3<float_type> &value );
+    void setVelocity( const vector3<float_type> &value );
+    void setTorque( const vector3<float_type> &value );
 
     [[nodiscard]]
-    vector3<float_type> position( vector3<float_type> value ) {
+    vector3<float_type> position() const {
         return position_;
     }
 
     [[nodiscard]]
-    vector3<float_type> orientation( vector3<float_type> value ) {
+    vector3<float_type> orientation() const {
         return orientation_;
     }
 
     [[nodiscard]]
-    vector3<float_type> scale( vector3<float_type> value ) {
+    vector3<float_type> scale() const {
         return scale_;
     }
 
     [[nodiscard]]
-    vector3<float_type> velocity( vector3<float_type> value ) {
+    vector3<float_type> velocity() const {
         return velocity_;
     }
 
     [[nodiscard]]
-    vector3<float_type> torque( vector3<float_type> value ) {
+    vector3<float_type> torque() const {
         return torque_;
     }
 
@@ -93,7 +93,7 @@ struct Body final {
     // Calculate transformation matrix, apply this
     // matrix to default geometry data and copy this data
     // into local buffers
-    void applyTransormations();
+    void applyTransormations( float delta );
 
 private:
     // Default body geometry data.

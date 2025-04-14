@@ -21,10 +21,6 @@
 #include "shader_storage.h"
 #include "screen_string.h"
 
-import event;
-import io;
-import config;
-
 namespace tire {
 
 using namespace tire::gl;
@@ -66,16 +62,6 @@ private:
     void postLoop() override;
 
     void setSwapInterval( int interval ) override;
-
-    event::Task<void> showMetrics() {
-        while ( true ) {
-            co_await event::setTimeout( 3000 );
-            event::Context::metrics();
-            log::info( "average frame duration = {}",
-                       timer_.averageFrameDuration() );
-            timer_.resetFrameMetrics();
-        }
-    }
 
 private:
     // glx extensions section

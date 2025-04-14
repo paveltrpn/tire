@@ -1,4 +1,4 @@
-#include "uv/version.h"
+
 module;
 
 #include <string>
@@ -6,9 +6,10 @@ module;
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_EVENT_CONTEXT_H{ true };
 
-#include "../render/render.h"
+#include "render/render.h"
 
 #include <uv.h>
+#include <uv/version.h>
 
 export module event:context;
 
@@ -76,7 +77,7 @@ private:
         uv_timer_init( loop_, &renderTimer_ );
         {
 // Use update interval that gives timer event more frequent then
-// monitor refresh rate with vsync enable
+// monitor refresh rate with vsync enable. In msec.
 #define UPDATE_INTERVAL 10
             const auto res =
                 uv_timer_start( &renderTimer_, cb, 0, UPDATE_INTERVAL );

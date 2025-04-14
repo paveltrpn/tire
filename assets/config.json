@@ -10,7 +10,7 @@
   "background_color": "navy",
   "doublebuffer": true,
   "frame_count": 3,
-  "enable_vsync": false,
+  "enable_vsync": true,
   "enable_debug_output": false,
   "enable_validation_layers": true,
   "enable_additional_validation_layers": false,
