@@ -3,7 +3,7 @@
 
 namespace tire {
 
-const std::vector<point3f> BoxData::vertecies_ = {
+const std::vector<vector3f> BoxData::vertecies_ = {
     { -0.5, 0.5, -0.5 }, { 0.5, 0.5, 0.5 },    { 0.5, 0.5, -0.5 },
     { 0.5, 0.5, 0.5 },   { -0.5, -0.5, 0.5 },  { 0.5, -0.5, 0.5 },
     { -0.5, 0.5, 0.5 },  { -0.5, -0.5, -0.5 }, { -0.5, -0.5, 0.5 },
@@ -17,7 +17,7 @@ const std::vector<point3f> BoxData::vertecies_ = {
     { 0.5, 0.5, -0.5 },  { 0.5, 0.5, 0.5 },    { 0.5, -0.5, 0.5 },
     { -0.5, 0.5, -0.5 }, { 0.5, 0.5, -0.5 },   { 0.5, -0.5, -0.5 } };
 
-const std::vector<normalf> BoxData::normals_ = {
+const std::vector<vector3f> BoxData::normals_ = {
     { -0.0, 1.0, -0.0 },  { -0.0, 1.0, -0.0 },  { -0.0, 1.0, -0.0 },
     { -0.0, -0.0, 1.0 },  { -0.0, -0.0, 1.0 },  { -0.0, -0.0, 1.0 },
     { -1.0, -0.0, -0.0 }, { -1.0, -0.0, -0.0 }, { -1.0, -0.0, -0.0 },
@@ -45,7 +45,7 @@ const std::vector<algebra::vector2f> BoxData::texcrds_ = {
 
 // ==========================================================================
 
-const std::vector<point3f> FrameData::vertecies_ = {
+const std::vector<vector3f> FrameData::vertecies_ = {
     { 0.515568, 0.0, -0.517536 },       { -0.416348, 0.137445, -0.41399 },
     { 0.412022, 0.137445, -0.41399 },   { -0.416348, 0.137445, -0.41399 },
     { 0.308476, 0.0, -0.310444 },       { 0.412022, 0.137445, -0.41399 },
@@ -95,7 +95,7 @@ const std::vector<point3f> FrameData::vertecies_ = {
     { 0.412022, -0.137445, 0.41438 },   { 0.412022, -0.137445, -0.41399 },
     { 0.515568, 0.0, -0.517536 },       { 0.515568, 0.0, 0.517926 } };
 
-const std::vector<normalf> FrameData::normals_ = {
+const std::vector<vector3f> FrameData::normals_ = {
     { -0.0, 0.6017, -0.7987 },  { -0.0, 0.6017, -0.7987 },
     { -0.0, 0.6017, -0.7987 },  { -0.0, 0.6017, 0.7987 },
     { -0.0, 0.6017, 0.7987 },   { -0.0, 0.6017, 0.7987 },
@@ -145,7 +145,7 @@ const std::vector<normalf> FrameData::normals_ = {
     { -0.7987, -0.6017, -0.0 }, { 0.7987, -0.6017, -0.0 },
     { 0.7987, -0.6017, -0.0 },  { 0.7987, -0.6017, -0.0 } };
 
-const std::vector<algebra::vector2f> FrameData::texcrds_ = {
+const std::vector<vector2f> FrameData::texcrds_ = {
     { 0.207215, 0.554325 }, { 0.30344, 0.054325 },  { 0.30344, 0.49877 },
     { 0.88079, 0.443214 },  { 0.784565, 0.054325 }, { 0.88079, -0.00123 },
     { 0.784565, 0.49877 },  { 0.88079, 0.887658 },  { 0.784565, 0.832103 },
@@ -181,7 +181,7 @@ const std::vector<algebra::vector2f> FrameData::texcrds_ = {
 
 // ==========================================================================
 
-const std::vector<point3f> DiamondData::vertecies_ = {
+const std::vector<vector3f> DiamondData::vertecies_ = {
     { 0.0, -0.5, 0.0 },
     { 0.3618, -0.223607, 0.26286 },
     { -0.138193, -0.223607, 0.42532 },
@@ -243,7 +243,7 @@ const std::vector<point3f> DiamondData::vertecies_ = {
     { 0.138193, 0.223607, -0.42532 },
     { 0.0, 0.5, 0.0 } };
 
-const std::vector<normalf> DiamondData::normals_ = {
+const std::vector<vector3f> DiamondData::normals_ = {
     { 0.1876, -0.7947, 0.5774 },   { 0.1876, -0.7947, 0.5774 },
     { 0.1876, -0.7947, 0.5774 },   { 0.6071, -0.7947, -0.0 },
     { 0.6071, -0.7947, -0.0 },     { 0.6071, -0.7947, -0.0 },
@@ -275,7 +275,7 @@ const std::vector<normalf> DiamondData::normals_ = {
     { -0.1876, 0.7947, -0.5774 },  { 0.4911, 0.7947, -0.3568 },
     { 0.4911, 0.7947, -0.3568 },   { 0.4911, 0.7947, -0.3568 } };
 
-const std::vector<algebra::vector2f> DiamondData::texcrds_ = {
+const std::vector<vector2f> DiamondData::texcrds_ = {
     { 0.20412, 0.403881 },  { 0.432335, 0.227106 }, { 0.432335, 0.462805 },
     { 0.432335, 0.227106 }, { 0.20412, 0.403881 },  { 0.16514, 0.117853 },
     { 0.03183, 0.92989 },   { 0.0, 0.69635 },       { 0.25, 0.840685 },
@@ -300,7 +300,7 @@ const std::vector<algebra::vector2f> DiamondData::texcrds_ = {
 
 // ==========================================================================
 
-const std::vector<point3f> Wall01Data::vertecies_ = {
+const std::vector<vector3f> Wall01Data::vertecies_ = {
     { -0.125, 1.0, 0.5 },  { -0.125, -1.0, -0.5 }, { -0.125, -1.0, 0.5 },
     { -0.125, 1.0, -0.5 }, { 0.125, -1.0, -0.5 },  { -0.125, -1.0, -0.5 },
     { 0.125, 1.0, -0.5 },  { 0.125, -1.0, 0.5 },   { 0.125, -1.0, -0.5 },
@@ -314,7 +314,7 @@ const std::vector<point3f> Wall01Data::vertecies_ = {
     { 0.125, -1.0, -0.5 }, { 0.125, -1.0, 0.5 },   { -0.125, -1.0, 0.5 },
     { -0.125, 1.0, -0.5 }, { -0.125, 1.0, 0.5 },   { 0.125, 1.0, 0.5 } };
 
-const std::vector<normalf> Wall01Data::normals_ = {
+const std::vector<vector3f> Wall01Data::normals_ = {
     { -1.0, -0.0, -0.0 }, { -1.0, -0.0, -0.0 }, { -1.0, -0.0, -0.0 },
     { -0.0, -0.0, -1.0 }, { -0.0, -0.0, -1.0 }, { -0.0, -0.0, -1.0 },
     { 1.0, -0.0, -0.0 },  { 1.0, -0.0, -0.0 },  { 1.0, -0.0, -0.0 },
@@ -328,7 +328,7 @@ const std::vector<normalf> Wall01Data::normals_ = {
     { -0.0, -1.0, -0.0 }, { -0.0, -1.0, -0.0 }, { -0.0, -1.0, -0.0 },
     { -0.0, 1.0, -0.0 },  { -0.0, 1.0, -0.0 },  { -0.0, 1.0, -0.0 } };
 
-const std::vector<algebra::vector2f> Wall01Data::texcrds_ = {
+const std::vector<vector2f> Wall01Data::texcrds_ = {
     { 0.0, 0.0 },           { 0.363636, 0.727273 }, { 0.0, 0.727273 },
     { 0.727273, 0.0 },      { 0.818182, 0.727273 }, { 0.727273, 0.727273 },
     { 0.363636, 0.0 },      { 0.727273, 0.727273 }, { 0.363636, 0.727273 },
@@ -344,7 +344,7 @@ const std::vector<algebra::vector2f> Wall01Data::texcrds_ = {
 
 // ==========================================================================
 
-const std::vector<point3f> Arch01Data::vertecies_ = {
+const std::vector<vector3f> Arch01Data::vertecies_ = {
     { -0.125, 0.125, 0.625 },   { -0.125, -0.125, 0.375 },
     { -0.125, -0.125, 0.625 },  { -0.125, 0.125, 0.375 },
     { 0.125, -0.125, 0.375 },   { -0.125, -0.125, 0.375 },
@@ -508,7 +508,7 @@ const std::vector<point3f> Arch01Data::vertecies_ = {
     { 0.125, -0.625, -0.625 },  { 0.125, -0.375, -0.625 },
     { 0.125, -0.625, -0.625 },  { -0.125, -0.625, -0.625 } };
 
-const std::vector<normalf> Arch01Data::normals_ = {
+const std::vector<vector3f> Arch01Data::normals_ = {
     { -1.0, -0.0, -0.0 }, { -1.0, -0.0, -0.0 }, { -1.0, -0.0, -0.0 },
     { -0.0, -0.0, -1.0 }, { -0.0, -0.0, -1.0 }, { -0.0, -0.0, -1.0 },
     { 1.0, -0.0, -0.0 },  { 1.0, -0.0, -0.0 },  { 1.0, -0.0, -0.0 },
@@ -687,7 +687,7 @@ const std::vector<algebra::vector2f> Arch01Data::texcrds_ = {
 
 // ==========================================================================
 
-const std::vector<point3f> PrismhexaData::vertecies_ = {
+const std::vector<vector3f> PrismhexaData::vertecies_ = {
     { 0.0, 0.5, -0.5 },         { 0.433013, -0.5, -0.25 },
     { 0.0, -0.5, -0.5 },        { 0.433013, 0.5, -0.25 },
     { 0.433013, -0.5, 0.25 },   { 0.433013, -0.5, -0.25 },
@@ -719,7 +719,7 @@ const std::vector<point3f> PrismhexaData::vertecies_ = {
     { 0.0, -0.5, 0.5 },         { 0.0, -0.5, 0.5 },
     { -0.433013, -0.5, 0.25 },  { -0.433013, -0.5, -0.25 } };
 
-const std::vector<normalf> PrismhexaData::normals_ = {
+const std::vector<vector3f> PrismhexaData::normals_ = {
     { 0.5, -0.0, -0.866 },  { 0.5, -0.0, -0.866 },  { 0.5, -0.0, -0.866 },
     { 1.0, -0.0, -0.0 },    { 1.0, -0.0, -0.0 },    { 1.0, -0.0, -0.0 },
     { 0.5, -0.0, 0.866 },   { 0.5, -0.0, 0.866 },   { 0.5, -0.0, 0.866 },
@@ -742,7 +742,7 @@ const std::vector<normalf> PrismhexaData::normals_ = {
     { -0.0, -1.0, -0.0 },   { -0.0, -1.0, -0.0 },   { -0.0, -1.0, -0.0 },
 };
 
-const std::vector<algebra::vector2f> PrismhexaData::texcrds_ = {
+const std::vector<vector2f> PrismhexaData::texcrds_ = {
     { 1.0, 1.0 },       { 0.833333, 0.5 },  { 1.0, 0.5 },
     { 0.833333, 1.0 },  { 0.666667, 0.5 },  { 0.833333, 0.5 },
     { 0.666667, 1.0 },  { 0.5, 0.5 },       { 0.666667, 0.5 },
@@ -767,7 +767,7 @@ const std::vector<algebra::vector2f> PrismhexaData::texcrds_ = {
 
 // ==========================================================================
 
-const std::vector<point3f> PrismData::vertecies_ = {
+const std::vector<vector3f> PrismData::vertecies_ = {
     { 0.0, 0.5, -0.5 },        { 0.433013, -0.5, 0.25 },
     { 0.0, -0.5, -0.5 },       { 0.433013, 0.5, 0.25 },
     { -0.433013, -0.5, 0.25 }, { 0.433013, -0.5, 0.25 },
@@ -782,7 +782,7 @@ const std::vector<point3f> PrismData::vertecies_ = {
     { 0.0, 0.5, -0.5 },        { 0.0, -0.5, -0.5 },
 };
 
-const std::vector<normalf> PrismData::normals_ = {
+const std::vector<vector3f> PrismData::normals_ = {
     { 0.866, -0.0, -0.5 },  { 0.866, -0.0, -0.5 },  { 0.866, -0.0, -0.5 },
     { -0.0, -0.0, 1.0 },    { -0.0, -0.0, 1.0 },    { -0.0, -0.0, 1.0 },
     { -0.0, 1.0, -0.0 },    { -0.0, 1.0, -0.0 },    { -0.0, 1.0, -0.0 },
@@ -793,7 +793,7 @@ const std::vector<normalf> PrismData::normals_ = {
     { -0.866, -0.0, -0.5 }, { -0.866, -0.0, -0.5 }, { -0.866, -0.0, -0.5 },
 };
 
-const std::vector<algebra::vector2f> PrismData::texcrds_ = {
+const std::vector<vector2f> PrismData::texcrds_ = {
     { 1.0, 1.0 },       { 0.666667, 0.5 },  { 1.0, 0.5 },
     { 0.666667, 1.0 },  { 0.333333, 0.5 },  { 0.666667, 0.5 },
     { 0.457846, 0.13 }, { 0.25, 0.49 },     { 0.042154, 0.13 },
@@ -806,7 +806,7 @@ const std::vector<algebra::vector2f> PrismData::texcrds_ = {
 
 // ==========================================================================
 
-const std::vector<point3f> PyramidcutData::vertecies_ = {
+const std::vector<vector3f> PyramidcutData::vertecies_ = {
     { -0.15, 0.5, 0.15 },  { -0.5, -0.5, -0.5 },  { -0.5, -0.5, 0.5 },
     { -0.15, 0.5, -0.15 }, { 0.5, -0.5, -0.5 },   { -0.5, -0.5, -0.5 },
     { 0.15, 0.5, -0.15 },  { 0.5, -0.5, 0.5 },    { 0.5, -0.5, -0.5 },
@@ -821,7 +821,7 @@ const std::vector<point3f> PyramidcutData::vertecies_ = {
     { -0.15, 0.5, -0.15 }, { -0.15, 0.5, 0.15 },  { 0.15, 0.5, 0.15 },
 };
 
-const std::vector<normalf> PyramidcutData::normals_ = {
+const std::vector<vector3f> PyramidcutData::normals_ = {
     { -0.9439, 0.3304, -0.0 }, { -0.9439, 0.3304, -0.0 },
     { -0.9439, 0.3304, -0.0 }, { -0.0, 0.3304, -0.9439 },
     { -0.0, 0.3304, -0.9439 }, { -0.0, 0.3304, -0.9439 },
@@ -842,7 +842,7 @@ const std::vector<normalf> PyramidcutData::normals_ = {
     { -0.0, 1.0, -0.0 },       { -0.0, 1.0, -0.0 },
 };
 
-const std::vector<algebra::vector2f> PyramidcutData::texcrds_ = {
+const std::vector<vector2f> PyramidcutData::texcrds_ = {
     { 0.116667, 0.0 },      { 0.333333, 0.35316 },  { 0.0, 0.35316 },
     { 0.45, 0.0 },          { 0.666667, 0.35316 },  { 0.333333, 0.35316 },
     { 0.116667, 0.35316 },  { 0.333333, 0.706321 }, { 0.0, 0.706321 },

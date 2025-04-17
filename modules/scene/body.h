@@ -7,8 +7,6 @@
 #include <memory>
 
 #include "geometry/polytope.h"
-#include "geometry/point.h"
-#include "geometry/normal.h"
 #include "geometry/bounding_volumes.h"
 
 #include "algebra/vector2.h"
@@ -39,8 +37,8 @@ struct Body final {
     size_t texcrdsArraySize() const;
 
     //
-    const point3f *verteciesData();
-    const normalf *normalsData();
+    const vector3f *verteciesData();
+    const vector3f *normalsData();
     const vector2f *texcrdsData();
 
     void setBounding( BoundingVolume<float> value ) { bounding_ = value; }
@@ -103,8 +101,8 @@ private:
     // every frame with geometry data taken from default
     // shape data and transform according to actual spatial
     // information
-    std::vector<point3f> localVertecies_{};
-    std::vector<normalf> localNormals_{};
+    std::vector<vector3f> localVertecies_{};
+    std::vector<vector3f> localNormals_{};
 
     BoundingVolume<float_type> bounding_{};
 

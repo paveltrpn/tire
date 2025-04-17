@@ -147,12 +147,6 @@ add_library(image
 )
 
 add_library(geometry
-    modules/geometry/transformations.cpp
-    modules/geometry/transformations.h
-    modules/geometry/point.cpp
-    modules/geometry/point.h
-    modules/geometry/normal.cpp
-    modules/geometry/normal.h
     modules/geometry/wavefront.cpp
     modules/geometry/wavefront.h
     modules/geometry/polytope.cpp

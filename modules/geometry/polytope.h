@@ -5,18 +5,16 @@
 
 #include "algebra/vector2.h"
 #include "geometry/bounding_volumes.h"
-#include "point.h"
-#include "normal.h"
 
 namespace tire {
 
 struct PolytopeData {
     [[nodiscard]] virtual size_t verteciesCount() const = 0;
-    [[nodiscard]] virtual const point3f* verteciesData() const = 0;
-    [[nodiscard]] virtual const normalf* normalsData() const = 0;
-    [[nodiscard]] virtual const algebra::vector2f* texcrdsData() const = 0;
-    [[nodiscard]] virtual const std::vector<point3f>& vertecies() const = 0;
-    [[nodiscard]] virtual const std::vector<normalf>& normals() const = 0;
+    [[nodiscard]] virtual const vector3f* verteciesData() const = 0;
+    [[nodiscard]] virtual const vector3f* normalsData() const = 0;
+    [[nodiscard]] virtual const vector2f* texcrdsData() const = 0;
+    [[nodiscard]] virtual const std::vector<vector3f>& vertecies() const = 0;
+    [[nodiscard]] virtual const std::vector<vector3f>& normals() const = 0;
 };
 
 // ==========================================================================
@@ -26,29 +24,29 @@ struct BoxData final : PolytopeData {
         return vertecies_.size();
     };
 
-    [[nodiscard]] const point3f* verteciesData() const final {
+    [[nodiscard]] const vector3f* verteciesData() const final {
         return vertecies_.data();
     };
 
-    [[nodiscard]] const normalf* normalsData() const final {
+    [[nodiscard]] const vector3f* normalsData() const final {
         return normals_.data();
     }
 
-    [[nodiscard]] const algebra::vector2f* texcrdsData() const final {
+    [[nodiscard]] const vector2f* texcrdsData() const final {
         return texcrds_.data();
     }
 
-    [[nodiscard]] const std::vector<point3f>& vertecies() const final {
+    [[nodiscard]] const std::vector<vector3f>& vertecies() const final {
         return vertecies_;
     };
 
-    [[nodiscard]] const std::vector<normalf>& normals() const final {
+    [[nodiscard]] const std::vector<vector3f>& normals() const final {
         return normals_;
     }
 
-    static const std::vector<point3f> vertecies_;
-    static const std::vector<normalf> normals_;
-    static const std::vector<algebra::vector2f> texcrds_;
+    static const std::vector<vector3f> vertecies_;
+    static const std::vector<vector3f> normals_;
+    static const std::vector<vector2f> texcrds_;
 };
 
 // ==========================================================================
@@ -58,11 +56,11 @@ struct FrameData final : PolytopeData {
         return vertecies_.size();
     };
 
-    [[nodiscard]] const point3f* verteciesData() const final {
+    [[nodiscard]] const vector3f* verteciesData() const final {
         return vertecies_.data();
     };
 
-    [[nodiscard]] const normalf* normalsData() const final {
+    [[nodiscard]] const vector3f* normalsData() const final {
         return normals_.data();
     }
 
@@ -70,17 +68,17 @@ struct FrameData final : PolytopeData {
         return texcrds_.data();
     }
 
-    [[nodiscard]] const std::vector<point3f>& vertecies() const final {
+    [[nodiscard]] const std::vector<vector3f>& vertecies() const final {
         return vertecies_;
     };
 
-    [[nodiscard]] const std::vector<normalf>& normals() const final {
+    [[nodiscard]] const std::vector<vector3f>& normals() const final {
         return normals_;
     }
 
-    static const std::vector<point3f> vertecies_;
-    static const std::vector<normalf> normals_;
-    static const std::vector<algebra::vector2f> texcrds_;
+    static const std::vector<vector3f> vertecies_;
+    static const std::vector<vector3f> normals_;
+    static const std::vector<vector2f> texcrds_;
 };
 
 struct DiamondData final : PolytopeData {
@@ -88,23 +86,23 @@ struct DiamondData final : PolytopeData {
         return vertecies_.size();
     };
 
-    [[nodiscard]] const point3f* verteciesData() const final {
+    [[nodiscard]] const vector3f* verteciesData() const final {
         return vertecies_.data();
     };
 
-    [[nodiscard]] const normalf* normalsData() const final {
+    [[nodiscard]] const vector3f* normalsData() const final {
         return normals_.data();
     }
 
-    [[nodiscard]] const algebra::vector2f* texcrdsData() const final {
+    [[nodiscard]] const vector2f* texcrdsData() const final {
         return texcrds_.data();
     }
 
-    [[nodiscard]] const std::vector<point3f>& vertecies() const final {
+    [[nodiscard]] const std::vector<vector3f>& vertecies() const final {
         return vertecies_;
     };
 
-    [[nodiscard]] const std::vector<normalf>& normals() const final {
+    [[nodiscard]] const std::vector<vector3f>& normals() const final {
         return normals_;
     }
 
@@ -112,9 +110,9 @@ struct DiamondData final : PolytopeData {
         return BoundingSphere<float>{};
     }
 
-    static const std::vector<point3f> vertecies_;
-    static const std::vector<normalf> normals_;
-    static const std::vector<algebra::vector2f> texcrds_;
+    static const std::vector<vector3f> vertecies_;
+    static const std::vector<vector3f> normals_;
+    static const std::vector<vector2f> texcrds_;
 };
 
 struct Wall01Data final : PolytopeData {
@@ -122,23 +120,23 @@ struct Wall01Data final : PolytopeData {
         return vertecies_.size();
     };
 
-    [[nodiscard]] const point3f* verteciesData() const final {
+    [[nodiscard]] const vector3f* verteciesData() const final {
         return vertecies_.data();
     };
 
-    [[nodiscard]] const normalf* normalsData() const final {
+    [[nodiscard]] const vector3f* normalsData() const final {
         return normals_.data();
     }
 
-    [[nodiscard]] const algebra::vector2f* texcrdsData() const final {
+    [[nodiscard]] const vector2f* texcrdsData() const final {
         return texcrds_.data();
     }
 
-    [[nodiscard]] const std::vector<point3f>& vertecies() const final {
+    [[nodiscard]] const std::vector<vector3f>& vertecies() const final {
         return vertecies_;
     };
 
-    [[nodiscard]] const std::vector<normalf>& normals() const final {
+    [[nodiscard]] const std::vector<vector3f>& normals() const final {
         return normals_;
     }
 
@@ -146,9 +144,9 @@ struct Wall01Data final : PolytopeData {
         return BoundingSphere<float>{};
     }
 
-    static const std::vector<point3f> vertecies_;
-    static const std::vector<normalf> normals_;
-    static const std::vector<algebra::vector2f> texcrds_;
+    static const std::vector<vector3f> vertecies_;
+    static const std::vector<vector3f> normals_;
+    static const std::vector<vector2f> texcrds_;
 };
 
 struct Arch01Data final : PolytopeData {
@@ -156,23 +154,23 @@ struct Arch01Data final : PolytopeData {
         return vertecies_.size();
     };
 
-    [[nodiscard]] const point3f* verteciesData() const final {
+    [[nodiscard]] const vector3f* verteciesData() const final {
         return vertecies_.data();
     };
 
-    [[nodiscard]] const normalf* normalsData() const final {
+    [[nodiscard]] const vector3f* normalsData() const final {
         return normals_.data();
     }
 
-    [[nodiscard]] const algebra::vector2f* texcrdsData() const final {
+    [[nodiscard]] const vector2f* texcrdsData() const final {
         return texcrds_.data();
     }
 
-    [[nodiscard]] const std::vector<point3f>& vertecies() const final {
+    [[nodiscard]] const std::vector<vector3f>& vertecies() const final {
         return vertecies_;
     };
 
-    [[nodiscard]] const std::vector<normalf>& normals() const final {
+    [[nodiscard]] const std::vector<vector3f>& normals() const final {
         return normals_;
     }
 
@@ -180,9 +178,9 @@ struct Arch01Data final : PolytopeData {
         return BoundingSphere<float>{};
     }
 
-    static const std::vector<point3f> vertecies_;
-    static const std::vector<normalf> normals_;
-    static const std::vector<algebra::vector2f> texcrds_;
+    static const std::vector<vector3f> vertecies_;
+    static const std::vector<vector3f> normals_;
+    static const std::vector<vector2f> texcrds_;
 };
 
 struct PrismhexaData final : PolytopeData {
@@ -190,23 +188,23 @@ struct PrismhexaData final : PolytopeData {
         return vertecies_.size();
     };
 
-    [[nodiscard]] const point3f* verteciesData() const final {
+    [[nodiscard]] const vector3f* verteciesData() const final {
         return vertecies_.data();
     };
 
-    [[nodiscard]] const normalf* normalsData() const final {
+    [[nodiscard]] const vector3f* normalsData() const final {
         return normals_.data();
     }
 
-    [[nodiscard]] const algebra::vector2f* texcrdsData() const final {
+    [[nodiscard]] const vector2f* texcrdsData() const final {
         return texcrds_.data();
     }
 
-    [[nodiscard]] const std::vector<point3f>& vertecies() const final {
+    [[nodiscard]] const std::vector<vector3f>& vertecies() const final {
         return vertecies_;
     };
 
-    [[nodiscard]] const std::vector<normalf>& normals() const final {
+    [[nodiscard]] const std::vector<vector3f>& normals() const final {
         return normals_;
     }
 
@@ -214,9 +212,9 @@ struct PrismhexaData final : PolytopeData {
         return BoundingSphere<float>{};
     }
 
-    static const std::vector<point3f> vertecies_;
-    static const std::vector<normalf> normals_;
-    static const std::vector<algebra::vector2f> texcrds_;
+    static const std::vector<vector3f> vertecies_;
+    static const std::vector<vector3f> normals_;
+    static const std::vector<vector2f> texcrds_;
 };
 
 struct PrismData final : PolytopeData {
@@ -224,23 +222,23 @@ struct PrismData final : PolytopeData {
         return vertecies_.size();
     };
 
-    [[nodiscard]] const point3f* verteciesData() const final {
+    [[nodiscard]] const vector3f* verteciesData() const final {
         return vertecies_.data();
     };
 
-    [[nodiscard]] const normalf* normalsData() const final {
+    [[nodiscard]] const vector3f* normalsData() const final {
         return normals_.data();
     }
 
-    [[nodiscard]] const algebra::vector2f* texcrdsData() const final {
+    [[nodiscard]] const vector2f* texcrdsData() const final {
         return texcrds_.data();
     }
 
-    [[nodiscard]] const std::vector<point3f>& vertecies() const final {
+    [[nodiscard]] const std::vector<vector3f>& vertecies() const final {
         return vertecies_;
     };
 
-    [[nodiscard]] const std::vector<normalf>& normals() const final {
+    [[nodiscard]] const std::vector<vector3f>& normals() const final {
         return normals_;
     }
 
@@ -248,9 +246,9 @@ struct PrismData final : PolytopeData {
         return BoundingSphere<float>{};
     }
 
-    static const std::vector<point3f> vertecies_;
-    static const std::vector<normalf> normals_;
-    static const std::vector<algebra::vector2f> texcrds_;
+    static const std::vector<vector3f> vertecies_;
+    static const std::vector<vector3f> normals_;
+    static const std::vector<vector2f> texcrds_;
 };
 
 struct PyramidcutData final : PolytopeData {
@@ -258,23 +256,23 @@ struct PyramidcutData final : PolytopeData {
         return vertecies_.size();
     };
 
-    [[nodiscard]] const point3f* verteciesData() const final {
+    [[nodiscard]] const vector3f* verteciesData() const final {
         return vertecies_.data();
     };
 
-    [[nodiscard]] const normalf* normalsData() const final {
+    [[nodiscard]] const vector3f* normalsData() const final {
         return normals_.data();
     }
 
-    [[nodiscard]] const algebra::vector2f* texcrdsData() const final {
+    [[nodiscard]] const vector2f* texcrdsData() const final {
         return texcrds_.data();
     }
 
-    [[nodiscard]] const std::vector<point3f>& vertecies() const final {
+    [[nodiscard]] const std::vector<vector3f>& vertecies() const final {
         return vertecies_;
     };
 
-    [[nodiscard]] const std::vector<normalf>& normals() const final {
+    [[nodiscard]] const std::vector<vector3f>& normals() const final {
         return normals_;
     }
 
@@ -282,9 +280,9 @@ struct PyramidcutData final : PolytopeData {
         return BoundingSphere<float>{};
     }
 
-    static const std::vector<point3f> vertecies_;
-    static const std::vector<normalf> normals_;
-    static const std::vector<algebra::vector2f> texcrds_;
+    static const std::vector<vector3f> vertecies_;
+    static const std::vector<vector3f> normals_;
+    static const std::vector<vector2f> texcrds_;
 };
 
 }  // namespace tire

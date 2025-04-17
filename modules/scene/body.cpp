@@ -5,8 +5,6 @@
 
 #include "body.h"
 #include "geometry/polytope.h"
-#include "geometry/point.h"
-#include "geometry/normal.h"
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_NODE_CPP{ false };
 
@@ -38,11 +36,11 @@ size_t Body::texcrdsArraySize() const {
     return verteciesCount() * 2 * sizeof( float );
 };
 
-const point3f *Body::verteciesData() {
+const vector3f *Body::verteciesData() {
     return localVertecies_.data();
 }
 
-const normalf *Body::normalsData() {
+const vector3f *Body::normalsData() {
     return localNormals_.data();
 }
 
@@ -110,11 +108,11 @@ void Body::applyTransormations( float duration ) {
     for ( auto i = 0; i < shapeData_->verteciesCount(); ++i ) {
         // Update vertex positions
         auto vertex = shapeData_->vertecies()[i];
-        localVertecies_[i] = vertex.transform( transform );
+        localVertecies_[i] = transform.mult_vector3( vertex );
 
         // Update normals
         auto normal = shapeData_->normals()[i];
-        localNormals_[i] = normal.transform( itRotation );
+        localNormals_[i] = itRotation.mult_vector3( normal );
     }
 }
 
