@@ -46,10 +46,6 @@ struct BoxData final : PolytopeData {
         return normals_;
     }
 
-    [[nodiscard]] OOBoundingBox<float> bounding() {
-        return OOBoundingBox<float>{};
-    }
-
     static const std::vector<point3f> vertecies_;
     static const std::vector<normalf> normals_;
     static const std::vector<algebra::vector2f> texcrds_;
@@ -80,10 +76,6 @@ struct FrameData final : PolytopeData {
 
     [[nodiscard]] const std::vector<normalf>& normals() const final {
         return normals_;
-    }
-
-    [[nodiscard]] OOBoundingBox<float> bounding() {
-        return OOBoundingBox<float>{};
     }
 
     static const std::vector<point3f> vertecies_;

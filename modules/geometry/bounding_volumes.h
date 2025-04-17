@@ -2,6 +2,7 @@
 #pragma once
 
 #include "algebra/vector3.h"
+#include "algebra/matrix4.h"
 
 namespace tire {
 
@@ -31,7 +32,7 @@ struct BoundingSphere final : BoundingVolume<T> {
         vector3<value_type> dif = position_ - other.position_;
         value_type dist = dif * dif;
         // Spheres intersect if squared distance is less than squared sum of radii
-        float radiusSum = radius_ + other.radius_;
+        value_type radiusSum = radius_ + other.radius_;
         return dist <= radiusSum * radiusSum;
     }
 
@@ -45,6 +46,10 @@ private:
 template <typename T>
 struct AABoundingBox final : BoundingVolume<T> {
     using value_type = T;
+
+    // Construct surrounding AABB from given transformed AABB.
+    AABoundingBox( const AABoundingBox &other,
+                   const matrix4<value_type> &transformation ) {}
 
     bool testBoundingSphere( const BoundingSphere<value_type> &other ) {}
     bool testAABoundingBox( const AABoundingBox<value_type> &other ) {
@@ -64,6 +69,11 @@ private:
 template <typename T>
 struct OOBoundingBox final : BoundingVolume<T> {
     using value_type = T;
+
+    // Construct OOBB from transformed AABB. In other
+    // words - initialize OOBB from AABB and transformation matrix.
+    OOBoundingBox( const AABoundingBox<value_type> &other,
+                   const matrix4<value_type> &transformation ) {}
 
 private:
     // OOBB center point
