@@ -44,6 +44,8 @@ struct BoxData final : PolytopeData {
         return normals_;
     }
 
+    static const long long trianglesCount_{};
+    static const AABoundingBox<float> bounding_;
     static const std::vector<vector3f> vertecies_;
     static const std::vector<vector3f> normals_;
     static const std::vector<vector2f> texcrds_;
@@ -76,6 +78,8 @@ struct FrameData final : PolytopeData {
         return normals_;
     }
 
+    static const long long trianglesCount_{};
+    static const AABoundingBox<float> bounding_;
     static const std::vector<vector3f> vertecies_;
     static const std::vector<vector3f> normals_;
     static const std::vector<vector2f> texcrds_;
@@ -110,6 +114,8 @@ struct DiamondData final : PolytopeData {
         return BoundingSphere<float>{};
     }
 
+    static const long long trianglesCount_{};
+    static const AABoundingBox<float> bounding_;
     static const std::vector<vector3f> vertecies_;
     static const std::vector<vector3f> normals_;
     static const std::vector<vector2f> texcrds_;
@@ -144,6 +150,8 @@ struct Wall01Data final : PolytopeData {
         return BoundingSphere<float>{};
     }
 
+    static const long long trianglesCount_{};
+    static const AABoundingBox<float> bounding_;
     static const std::vector<vector3f> vertecies_;
     static const std::vector<vector3f> normals_;
     static const std::vector<vector2f> texcrds_;
@@ -178,6 +186,8 @@ struct Arch01Data final : PolytopeData {
         return BoundingSphere<float>{};
     }
 
+    static const long long trianglesCount_{};
+    static const AABoundingBox<float> bounding_;
     static const std::vector<vector3f> vertecies_;
     static const std::vector<vector3f> normals_;
     static const std::vector<vector2f> texcrds_;
@@ -212,6 +222,8 @@ struct PrismhexaData final : PolytopeData {
         return BoundingSphere<float>{};
     }
 
+    static const long long trianglesCount_{};
+    static const AABoundingBox<float> bounding_;
     static const std::vector<vector3f> vertecies_;
     static const std::vector<vector3f> normals_;
     static const std::vector<vector2f> texcrds_;
@@ -246,6 +258,8 @@ struct PrismData final : PolytopeData {
         return BoundingSphere<float>{};
     }
 
+    static const long long trianglesCount_{};
+    static const AABoundingBox<float> bounding_;
     static const std::vector<vector3f> vertecies_;
     static const std::vector<vector3f> normals_;
     static const std::vector<vector2f> texcrds_;
@@ -280,6 +294,8 @@ struct PyramidcutData final : PolytopeData {
         return BoundingSphere<float>{};
     }
 
+    static const long long trianglesCount_{};
+    static const AABoundingBox<float> bounding_;
     static const std::vector<vector3f> vertecies_;
     static const std::vector<vector3f> normals_;
     static const std::vector<vector2f> texcrds_;

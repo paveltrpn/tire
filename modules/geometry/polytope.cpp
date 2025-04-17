@@ -3,6 +3,8 @@
 
 namespace tire {
 
+const AABoundingBox<float> BoxData::bounding_ = { vector3f{}, vector3f{} };
+
 const std::vector<vector3f> BoxData::vertecies_ = {
     { -0.5, 0.5, -0.5 }, { 0.5, 0.5, 0.5 },    { 0.5, 0.5, -0.5 },
     { 0.5, 0.5, 0.5 },   { -0.5, -0.5, 0.5 },  { 0.5, -0.5, 0.5 },
@@ -44,6 +46,8 @@ const std::vector<algebra::vector2f> BoxData::texcrds_ = {
 };
 
 // ==========================================================================
+
+const AABoundingBox<float> FrameData::bounding_ = { vector3f{}, vector3f{} };
 
 const std::vector<vector3f> FrameData::vertecies_ = {
     { 0.515568, 0.0, -0.517536 },       { -0.416348, 0.137445, -0.41399 },
@@ -181,6 +185,8 @@ const std::vector<vector2f> FrameData::texcrds_ = {
 
 // ==========================================================================
 
+const AABoundingBox<float> DiamondData::bounding_ = { vector3f{}, vector3f{} };
+
 const std::vector<vector3f> DiamondData::vertecies_ = {
     { 0.0, -0.5, 0.0 },
     { 0.3618, -0.223607, 0.26286 },
@@ -300,6 +306,8 @@ const std::vector<vector2f> DiamondData::texcrds_ = {
 
 // ==========================================================================
 
+const AABoundingBox<float> Wall01Data::bounding_ = { vector3f{}, vector3f{} };
+
 const std::vector<vector3f> Wall01Data::vertecies_ = {
     { -0.125, 1.0, 0.5 },  { -0.125, -1.0, -0.5 }, { -0.125, -1.0, 0.5 },
     { -0.125, 1.0, -0.5 }, { 0.125, -1.0, -0.5 },  { -0.125, -1.0, -0.5 },
@@ -343,6 +351,8 @@ const std::vector<vector2f> Wall01Data::texcrds_ = {
     { 0.909091, 0.727273 }, { 0.909091, 0.363636 }, { 1.0, 0.363636 } };
 
 // ==========================================================================
+
+const AABoundingBox<float> Arch01Data::bounding_ = { vector3f{}, vector3f{} };
 
 const std::vector<vector3f> Arch01Data::vertecies_ = {
     { -0.125, 0.125, 0.625 },   { -0.125, -0.125, 0.375 },
@@ -687,6 +697,9 @@ const std::vector<algebra::vector2f> Arch01Data::texcrds_ = {
 
 // ==========================================================================
 
+const AABoundingBox<float> PrismhexaData::bounding_ = { vector3f{},
+                                                        vector3f{} };
+
 const std::vector<vector3f> PrismhexaData::vertecies_ = {
     { 0.0, 0.5, -0.5 },         { 0.433013, -0.5, -0.25 },
     { 0.0, -0.5, -0.5 },        { 0.433013, 0.5, -0.25 },
@@ -767,6 +780,8 @@ const std::vector<vector2f> PrismhexaData::texcrds_ = {
 
 // ==========================================================================
 
+const AABoundingBox<float> PrismData::bounding_ = { vector3f{}, vector3f{} };
+
 const std::vector<vector3f> PrismData::vertecies_ = {
     { 0.0, 0.5, -0.5 },        { 0.433013, -0.5, 0.25 },
     { 0.0, -0.5, -0.5 },       { 0.433013, 0.5, 0.25 },
@@ -805,6 +820,9 @@ const std::vector<vector2f> PrismData::texcrds_ = {
 };
 
 // ==========================================================================
+
+const AABoundingBox<float> PyramidcutData::bounding_ = { vector3f{},
+                                                         vector3f{} };
 
 const std::vector<vector3f> PyramidcutData::vertecies_ = {
     { -0.15, 0.5, 0.15 },  { -0.5, -0.5, -0.5 },  { -0.5, -0.5, 0.5 },

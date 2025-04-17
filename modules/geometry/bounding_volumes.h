@@ -47,6 +47,10 @@ template <typename T>
 struct AABoundingBox final : BoundingVolume<T> {
     using value_type = T;
 
+    AABoundingBox( vector3<value_type> min, vector3<value_type> max )
+        : min_{ min }
+        , max_{ max } {};
+
     // Construct surrounding AABB from given transformed AABB.
     AABoundingBox( const AABoundingBox &other,
                    const matrix4<value_type> &transformation ) {}
