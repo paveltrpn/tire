@@ -50,7 +50,7 @@ Scene::Scene( const std::filesystem::path &fname )
                            lightColorFlatshade.b() } );
 
     shaderStorage_.setVectorUniform( "flatshade", "lightpos",
-                                     algebra::vector3f{ 10.0f, 0.0f, 5.0f } );
+                                     algebra::vector3f{ 0.0f, 10.0f, 0.0f } );
 
     // ========================================================================
 
@@ -67,7 +67,7 @@ Scene::Scene( const std::filesystem::path &fname )
                            lightColorShadedTex.b() } );
 
     shaderStorage_.setVectorUniform( "flatshadeTexture", "lightpos",
-                                     algebra::vector3f{ 10.0f, 0.0f, 5.0f } );
+                                     algebra::vector3f{ 0.0f, 10.0f, 0.0f } );
 }
 
 void Scene::submit() {

@@ -117,4 +117,174 @@ struct DiamondData final : PolytopeData {
     static const std::vector<algebra::vector2f> texcrds_;
 };
 
+struct Wall01Data final : PolytopeData {
+    [[nodiscard]] size_t verteciesCount() const final {
+        return vertecies_.size();
+    };
+
+    [[nodiscard]] const point3f* verteciesData() const final {
+        return vertecies_.data();
+    };
+
+    [[nodiscard]] const normalf* normalsData() const final {
+        return normals_.data();
+    }
+
+    [[nodiscard]] const algebra::vector2f* texcrdsData() const final {
+        return texcrds_.data();
+    }
+
+    [[nodiscard]] const std::vector<point3f>& vertecies() const final {
+        return vertecies_;
+    };
+
+    [[nodiscard]] const std::vector<normalf>& normals() const final {
+        return normals_;
+    }
+
+    [[nodiscard]] BoundingSphere<float> bounding() {
+        return BoundingSphere<float>{};
+    }
+
+    static const std::vector<point3f> vertecies_;
+    static const std::vector<normalf> normals_;
+    static const std::vector<algebra::vector2f> texcrds_;
+};
+
+struct Arch01Data final : PolytopeData {
+    [[nodiscard]] size_t verteciesCount() const final {
+        return vertecies_.size();
+    };
+
+    [[nodiscard]] const point3f* verteciesData() const final {
+        return vertecies_.data();
+    };
+
+    [[nodiscard]] const normalf* normalsData() const final {
+        return normals_.data();
+    }
+
+    [[nodiscard]] const algebra::vector2f* texcrdsData() const final {
+        return texcrds_.data();
+    }
+
+    [[nodiscard]] const std::vector<point3f>& vertecies() const final {
+        return vertecies_;
+    };
+
+    [[nodiscard]] const std::vector<normalf>& normals() const final {
+        return normals_;
+    }
+
+    [[nodiscard]] BoundingSphere<float> bounding() {
+        return BoundingSphere<float>{};
+    }
+
+    static const std::vector<point3f> vertecies_;
+    static const std::vector<normalf> normals_;
+    static const std::vector<algebra::vector2f> texcrds_;
+};
+
+struct PrismhexaData final : PolytopeData {
+    [[nodiscard]] size_t verteciesCount() const final {
+        return vertecies_.size();
+    };
+
+    [[nodiscard]] const point3f* verteciesData() const final {
+        return vertecies_.data();
+    };
+
+    [[nodiscard]] const normalf* normalsData() const final {
+        return normals_.data();
+    }
+
+    [[nodiscard]] const algebra::vector2f* texcrdsData() const final {
+        return texcrds_.data();
+    }
+
+    [[nodiscard]] const std::vector<point3f>& vertecies() const final {
+        return vertecies_;
+    };
+
+    [[nodiscard]] const std::vector<normalf>& normals() const final {
+        return normals_;
+    }
+
+    [[nodiscard]] BoundingSphere<float> bounding() {
+        return BoundingSphere<float>{};
+    }
+
+    static const std::vector<point3f> vertecies_;
+    static const std::vector<normalf> normals_;
+    static const std::vector<algebra::vector2f> texcrds_;
+};
+
+struct PrismData final : PolytopeData {
+    [[nodiscard]] size_t verteciesCount() const final {
+        return vertecies_.size();
+    };
+
+    [[nodiscard]] const point3f* verteciesData() const final {
+        return vertecies_.data();
+    };
+
+    [[nodiscard]] const normalf* normalsData() const final {
+        return normals_.data();
+    }
+
+    [[nodiscard]] const algebra::vector2f* texcrdsData() const final {
+        return texcrds_.data();
+    }
+
+    [[nodiscard]] const std::vector<point3f>& vertecies() const final {
+        return vertecies_;
+    };
+
+    [[nodiscard]] const std::vector<normalf>& normals() const final {
+        return normals_;
+    }
+
+    [[nodiscard]] BoundingSphere<float> bounding() {
+        return BoundingSphere<float>{};
+    }
+
+    static const std::vector<point3f> vertecies_;
+    static const std::vector<normalf> normals_;
+    static const std::vector<algebra::vector2f> texcrds_;
+};
+
+struct PyramidcutData final : PolytopeData {
+    [[nodiscard]] size_t verteciesCount() const final {
+        return vertecies_.size();
+    };
+
+    [[nodiscard]] const point3f* verteciesData() const final {
+        return vertecies_.data();
+    };
+
+    [[nodiscard]] const normalf* normalsData() const final {
+        return normals_.data();
+    }
+
+    [[nodiscard]] const algebra::vector2f* texcrdsData() const final {
+        return texcrds_.data();
+    }
+
+    [[nodiscard]] const std::vector<point3f>& vertecies() const final {
+        return vertecies_;
+    };
+
+    [[nodiscard]] const std::vector<normalf>& normals() const final {
+        return normals_;
+    }
+
+    [[nodiscard]] BoundingSphere<float> bounding() {
+        return BoundingSphere<float>{};
+    }
+
+    static const std::vector<point3f> vertecies_;
+    static const std::vector<normalf> normals_;
+    static const std::vector<algebra::vector2f> texcrds_;
+};
+
 }  // namespace tire

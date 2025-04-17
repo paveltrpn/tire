@@ -92,6 +92,38 @@ void Scene::process() {
                 log::debug<DEBUG_OUTPUT_SCENE_CPP>(
                     "Scene ===  \"{}\" added to scene",
                     constants::scene::PARAM_OBJECT_TYPE_DIAMOND );
+            } else if ( type == constants::scene::PARAM_OBJECT_TYPE_WALL01 ) {
+                auto shapePtr = std::make_shared<Wall01Data>();
+                node->setShapeData( std::move( shapePtr ) );
+                log::debug<DEBUG_OUTPUT_SCENE_CPP>(
+                    "Scene ===  \"{}\" added to scene",
+                    constants::scene::PARAM_OBJECT_TYPE_DIAMOND );
+            } else if ( type == constants::scene::PARAM_OBJECT_TYPE_ARCH01 ) {
+                auto shapePtr = std::make_shared<Arch01Data>();
+                node->setShapeData( std::move( shapePtr ) );
+                log::debug<DEBUG_OUTPUT_SCENE_CPP>(
+                    "Scene ===  \"{}\" added to scene",
+                    constants::scene::PARAM_OBJECT_TYPE_DIAMOND );
+            } else if ( type ==
+                        constants::scene::PARAM_OBJECT_TYPE_PRISMHEXA ) {
+                auto shapePtr = std::make_shared<PrismhexaData>();
+                node->setShapeData( std::move( shapePtr ) );
+                log::debug<DEBUG_OUTPUT_SCENE_CPP>(
+                    "Scene ===  \"{}\" added to scene",
+                    constants::scene::PARAM_OBJECT_TYPE_DIAMOND );
+            } else if ( type == constants::scene::PARAM_OBJECT_TYPE_PRISM ) {
+                auto shapePtr = std::make_shared<PrismData>();
+                node->setShapeData( std::move( shapePtr ) );
+                log::debug<DEBUG_OUTPUT_SCENE_CPP>(
+                    "Scene ===  \"{}\" added to scene",
+                    constants::scene::PARAM_OBJECT_TYPE_DIAMOND );
+            } else if ( type ==
+                        constants::scene::PARAM_OBJECT_TYPE_PYRAMIDCUT ) {
+                auto shapePtr = std::make_shared<PyramidcutData>();
+                node->setShapeData( std::move( shapePtr ) );
+                log::debug<DEBUG_OUTPUT_SCENE_CPP>(
+                    "Scene ===  \"{}\" added to scene",
+                    constants::scene::PARAM_OBJECT_TYPE_DIAMOND );
             }
 
             // Set body properties
@@ -134,8 +166,7 @@ void Scene::process() {
 
                 const auto &fov = item[constants::scene::PARAM_CAMERA_FOV];
                 const auto &aspect =
-                    16.0f /
-                    9.0f;  //item[constants::scene::PARAM_CAMERA_ASPECT];
+                    item[constants::scene::PARAM_CAMERA_ASPECT];
                 const auto &ncp = item[constants::scene::PARAM_CAMERA_NCP];
                 const auto &fcp = item[constants::scene::PARAM_CAMERA_FCP];
 

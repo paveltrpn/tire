@@ -13,6 +13,11 @@ static constexpr char PARAM_BACKGROUND_COLOR[] = "background_color";
 static constexpr char PARAM_OBJECT_TYPE_BOX[] = "box";
 static constexpr char PARAM_OBJECT_TYPE_FRAME[] = "frame";
 static constexpr char PARAM_OBJECT_TYPE_DIAMOND[] = "diamond";
+static constexpr char PARAM_OBJECT_TYPE_WALL01[] = "wall01";
+static constexpr char PARAM_OBJECT_TYPE_ARCH01[] = "arch01";
+static constexpr char PARAM_OBJECT_TYPE_PRISM[] = "prism";
+static constexpr char PARAM_OBJECT_TYPE_PRISMHEXA[] = "prismhexa";
+static constexpr char PARAM_OBJECT_TYPE_PYRAMIDCUT[] = "pyramidcut";
 
 static constexpr char PARAM_OBJECT_TYPE[] = "type";
 
