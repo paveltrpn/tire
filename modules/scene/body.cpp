@@ -93,6 +93,9 @@ void Body::applyTransormations( float duration ) {
     //
     const auto rotation =
         algebra::rotate( orientation_.x(), orientation_.y(), orientation_.z() );
+    auto itRotation = rotation.inverse();
+    itRotation.transposeSelf();
+
     const auto offset =
         algebra::translate( position_.x(), position_.y(), position_.z() );
 
@@ -111,7 +114,7 @@ void Body::applyTransormations( float duration ) {
 
         // Update normals
         auto normal = shapeData_->normals()[i];
-        localNormals_[i] = normal.transform( rotation );
+        localNormals_[i] = normal.transform( itRotation );
     }
 }
 

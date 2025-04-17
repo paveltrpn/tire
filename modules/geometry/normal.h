@@ -58,16 +58,11 @@ struct normal {
     }
 
     [[nodiscard]] self transform( mat4_type mtrx ) const {
-        // Transorm normal by inversed and transposed transformation matrix.
-        auto i = mtrx.inverse();
-        i.transposeSelf();
         return mtrx.mult_vector3( normal_ );
     }
 
     void transformThis( mat4_type mtrx ) {
-        auto i = mtrx.inverse();
-        i.transposeSelf();
-        normal_ = i.mult_vector3( normal_ );
+        normal_ = mtrx.mult_vector3( normal_ );
     }
 
 private:

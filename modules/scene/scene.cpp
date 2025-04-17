@@ -196,9 +196,13 @@ void Scene::process() {
 }
 
 void Scene::traverse( float duration ) {
-    for ( auto &node : bodyList_ ) {
-        node->applyTransormations( duration );
+    for ( size_t i{ 0 }; i < bodyList_.size(); ++i ) {
+        bodyList_[i]->applyTransormations( duration );
     }
+
+    // for ( auto &node : bodyList_ ) {
+    // node->applyTransormations( duration );
+    // }
 }
 
 }  // namespace tire
