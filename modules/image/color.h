@@ -73,6 +73,23 @@ static const std::map<std::string, std::string> htmlColors{
     { "slategray", "#708090" },
     { "darkslategray", "#2F4F4F" },
     { "black", "#000000" },
+    { "Gainsboro", "#DCDCDC" },
+    { "LightGrey", "#D3D3D3" },
+    { "LightGray", "#D3D3D3" },
+    { "Silver", "#C0C0C0" },
+    { "DarkGray", "#A9A9A9" },
+    { "DarkGrey", "#A9A9A9" },
+    { "Gray", "#808080" },
+    { "Grey", "#808080" },
+    { "DimGray", "#696969" },
+    { "DimGrey", "#696969" },
+    { "LightSlateGray", "#778899" },
+    { "LightSlateGrey", "#778899" },
+    { "SlateGray", "#708090" },
+    { "SlateGrey", "#708090" },
+    { "DarkSlateGray", "#2F4F4F" },
+    { "DarkSlateGrey", "#2F4F4F" },
+    { "Black", "#00000" },
 };
 
 }

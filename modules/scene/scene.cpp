@@ -77,53 +77,36 @@ void Scene::process() {
             if ( type == constants::scene::PARAM_OBJECT_TYPE_BOX ) {
                 auto shapePtr = std::make_shared<BoxData>();
                 node->setShapeData( std::move( shapePtr ) );
-                log::debug<DEBUG_OUTPUT_SCENE_CPP>(
-                    "Scene === \"{}\" added to scene",
-                    constants::scene::PARAM_OBJECT_TYPE_BOX );
+
             } else if ( type == constants::scene::PARAM_OBJECT_TYPE_FRAME ) {
                 auto shapePtr = std::make_shared<FrameData>();
                 node->setShapeData( std::move( shapePtr ) );
-                log::debug<DEBUG_OUTPUT_SCENE_CPP>(
-                    "Scene ===  \"{}\" added to scene",
-                    constants::scene::PARAM_OBJECT_TYPE_FRAME );
+
             } else if ( type == constants::scene::PARAM_OBJECT_TYPE_DIAMOND ) {
                 auto shapePtr = std::make_shared<DiamondData>();
                 node->setShapeData( std::move( shapePtr ) );
-                log::debug<DEBUG_OUTPUT_SCENE_CPP>(
-                    "Scene ===  \"{}\" added to scene",
-                    constants::scene::PARAM_OBJECT_TYPE_DIAMOND );
+
             } else if ( type == constants::scene::PARAM_OBJECT_TYPE_WALL01 ) {
                 auto shapePtr = std::make_shared<Wall01Data>();
                 node->setShapeData( std::move( shapePtr ) );
-                log::debug<DEBUG_OUTPUT_SCENE_CPP>(
-                    "Scene ===  \"{}\" added to scene",
-                    constants::scene::PARAM_OBJECT_TYPE_DIAMOND );
+
             } else if ( type == constants::scene::PARAM_OBJECT_TYPE_ARCH01 ) {
                 auto shapePtr = std::make_shared<Arch01Data>();
                 node->setShapeData( std::move( shapePtr ) );
-                log::debug<DEBUG_OUTPUT_SCENE_CPP>(
-                    "Scene ===  \"{}\" added to scene",
-                    constants::scene::PARAM_OBJECT_TYPE_DIAMOND );
+
             } else if ( type ==
                         constants::scene::PARAM_OBJECT_TYPE_PRISMHEXA ) {
                 auto shapePtr = std::make_shared<PrismhexaData>();
                 node->setShapeData( std::move( shapePtr ) );
-                log::debug<DEBUG_OUTPUT_SCENE_CPP>(
-                    "Scene ===  \"{}\" added to scene",
-                    constants::scene::PARAM_OBJECT_TYPE_DIAMOND );
+
             } else if ( type == constants::scene::PARAM_OBJECT_TYPE_PRISM ) {
                 auto shapePtr = std::make_shared<PrismData>();
                 node->setShapeData( std::move( shapePtr ) );
-                log::debug<DEBUG_OUTPUT_SCENE_CPP>(
-                    "Scene ===  \"{}\" added to scene",
-                    constants::scene::PARAM_OBJECT_TYPE_DIAMOND );
+
             } else if ( type ==
                         constants::scene::PARAM_OBJECT_TYPE_PYRAMIDCUT ) {
                 auto shapePtr = std::make_shared<PyramidcutData>();
                 node->setShapeData( std::move( shapePtr ) );
-                log::debug<DEBUG_OUTPUT_SCENE_CPP>(
-                    "Scene ===  \"{}\" added to scene",
-                    constants::scene::PARAM_OBJECT_TYPE_DIAMOND );
             }
 
             // Set body properties
@@ -179,9 +162,6 @@ void Scene::process() {
                 camera->setFcp( fcp );
 
                 cameras_.push_back( std::move( camera ) );
-
-                log::debug<DEBUG_OUTPUT_SCENE_CPP>(
-                    "Scene === perspective camera added to scene" );
             }
         }
     } else {
@@ -189,10 +169,48 @@ void Scene::process() {
     }
 
     // Read "lights" section
-    // if ( scene_.contains( "lights" ) ) {
-    // } else {
-    //     throw std::runtime_error( "there is can't be scene without lights!" );
-    // }
+    if ( scene_.contains( constants::scene::PARAM_LIGHTS ) ) {
+        const auto lights = scene_[constants::scene::PARAM_LIGHTS];
+        for ( const auto &item : lights ) {
+            const auto &type = item[constants::scene::PARAM_LIGHT_TYPE];
+            if ( type == constants::scene::PARAM_LIGHT_OMNI ) {
+                const std::array<float, 3> position =
+                    item[constants::scene::PARAM_OMNILIGHT_POSITION];
+
+                const float constant =
+                    item[constants::scene::PARAM_OMNILIGHT_CONSTANT];
+
+                const float linear =
+                    item[constants::scene::PARAM_OMNILIGHT_LINEAR];
+
+                const float quadratic =
+                    item[constants::scene::PARAM_OMNILIGHT_QUADRATIC];
+
+                const std::array<float, 3> ambient =
+                    item[constants::scene::PARAM_OMNILIGHT_AMBIENT];
+
+                const std::array<float, 3> diffuse =
+                    item[constants::scene::PARAM_OMNILIGHT_DIFFUSE];
+
+                const std::array<float, 3> specular =
+                    item[constants::scene::PARAM_OMNILIGHT_SPECULAR];
+
+                auto light = std::make_shared<OmniLight<float>>();
+
+                light->setPosition( { position } );
+                light->setConstant( constant );
+                light->setLinear( linear );
+                light->setQuadratic( quadratic );
+                light->setAmbient( { ambient } );
+                light->setDiffuse( { diffuse } );
+                light->setSpecular( { specular } );
+
+                lightList_.push_back( light );
+            }
+        }
+    } else {
+        throw std::runtime_error( "there is can't be scene without lights!" );
+    }
 }
 
 void Scene::traverse( float duration ) {

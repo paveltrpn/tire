@@ -4,7 +4,6 @@
 #include "algebra/vector4.h"
 #include "render/vk/commands/scene_render_command.h"
 #include "rendervk.h"
-#include "scene/camera.h"
 #include "vulkan/vulkan_core.h"
 #include "scene.h"
 

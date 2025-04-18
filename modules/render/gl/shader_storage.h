@@ -75,6 +75,23 @@ struct ShaderStorage final {
 
     void destroy( const std::string &name );
 
+    template <typename T>
+        requires std::is_same_v<T, float> || std::is_same_v<T, double> ||
+        std::is_same_v<T, unsigned int> ||
+        std::is_same_v<T, int> void setScalarUniform( const std::string &name,
+                                                      const char *id,
+                                                      T value ) {
+        const auto location = getUniformLocation( name, id );
+
+        if constexpr ( std::is_same_v<T, float> ) {
+            glUniform1f( location, value );
+        } else if constexpr ( std::is_same_v<T, double> ) {
+            glUniform1f( location, value );
+        } else {
+            glUniform1i( location, value );
+        }
+    }
+
     template <algebra::VectorFloat T>
     void setVectorUniform( const std::string &name, const char *id, T value ) {
         const auto location = getUniformLocation( name, id );

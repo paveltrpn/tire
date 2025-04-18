@@ -42,6 +42,16 @@ static constexpr char PARAM_CAMERA_ASPECT[] = "aspect";
 static constexpr char PARAM_CAMERA_NCP[] = "ncp";
 static constexpr char PARAM_CAMERA_FCP[] = "fcp";
 
+static constexpr char PARAM_LIGHT_TYPE[] = "type";
+static constexpr char PARAM_LIGHT_OMNI[] = "omni";
+static constexpr char PARAM_OMNILIGHT_POSITION[] = "position";
+static constexpr char PARAM_OMNILIGHT_CONSTANT[] = "constant";
+static constexpr char PARAM_OMNILIGHT_LINEAR[] = "linear";
+static constexpr char PARAM_OMNILIGHT_QUADRATIC[] = "quadratic";
+static constexpr char PARAM_OMNILIGHT_AMBIENT[] = "ambient";
+static constexpr char PARAM_OMNILIGHT_DIFFUSE[] = "diffuse";
+static constexpr char PARAM_OMNILIGHT_SPECULAR[] = "specular";
+
 static constexpr char PARAM_NAME_GRAVITY_VEC[] = "gravity_vec";
 
 }  // namespace tire::constants::scene

@@ -162,8 +162,8 @@ add_library(scene
     modules/scene/scene.cpp
     modules/scene/body.cpp
     modules/scene/body.h
-    modules/scene/camera.h
-    modules/scene/camera.cpp
+    modules/scene/light.h
+    modules/scene/light.cpp
     modules/scene/flycam.h
     modules/scene/flycam.cpp
 )

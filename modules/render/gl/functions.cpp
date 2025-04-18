@@ -31,6 +31,8 @@ PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation{ nullptr };
 PFNGLGETACTIVEATTRIBPROC glGetActiveAttrib{ nullptr };
 PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv{ nullptr };
 PFNGLUNIFORM3FVPROC glUniform3fv{ nullptr };
+PFNGLUNIFORM1FPROC glUniform1f{ nullptr };
+PFNGLUNIFORM1IPROC glUniform1i{ nullptr };
 
 // Vertex buffers
 PFNGLGENBUFFERSPROC glGenBuffers{ nullptr };
@@ -146,6 +148,10 @@ void init() {
         getProcAddress<PFNGLUNIFORMMATRIX4FVPROC>( "glUniformMatrix4fv" );
 
     glUniform3fv = getProcAddress<PFNGLUNIFORM3FVPROC>( "glUniform3fv" );
+
+    glUniform1f = getProcAddress<PFNGLUNIFORM1FPROC>( "glUniform1f" );
+
+    glUniform1i = getProcAddress<PFNGLUNIFORM1IPROC>( "glUniform1i" );
 
     // Vertex buffers
     glGenBuffers = getProcAddress<PFNGLGENBUFFERSPROC>( "glGenBuffers" );

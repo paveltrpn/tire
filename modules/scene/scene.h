@@ -7,7 +7,7 @@
 #include "uv.h"
 
 #include "body.h"
-#include "camera.h"
+#include "light.h"
 #include "flycam.h"
 
 namespace tire {
@@ -60,6 +60,7 @@ protected:
     Colorf backgrounColor_{ "black" };
 
     std::vector<std::shared_ptr<Body>> bodyList_{};
+    std::vector<std::shared_ptr<OmniLight<float>>> lightList_{};
     std::vector<std::shared_ptr<Flycam>> cameras_{};
 
     // One camera exist anyway

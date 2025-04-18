@@ -4,7 +4,6 @@
 #include <GL/glcorearb.h>
 #include "functions.h"
 #include "render/gl/texture.h"
-#include "scene/camera.h"
 
 import config;
 
@@ -41,21 +40,41 @@ Scene::Scene( const std::filesystem::path &fname )
     }
 
     // Load shaders
-    shaderStorage_.add( "flatshade" );
-    shaderStorage_.use( "flatshade" );
-    const Colorf lightColorFlatshade = { 1.0f, 1.0f, 1.0f };
-    shaderStorage_.setVectorUniform(
-        "flatshade", "lightcolor",
-        algebra::vector3f{ lightColorFlatshade.r(), lightColorFlatshade.g(),
-                           lightColorFlatshade.b() } );
+    shaderStorage_.add( "pplTexture" );
+    shaderStorage_.use( "pplTexture" );
 
-    shaderStorage_.setVectorUniform( "flatshade", "lightpos",
-                                     algebra::vector3f{ 0.0f, 10.0f, 0.0f } );
+    shaderStorage_.setScalarUniform( "pplTexture", "lightsCount",
+                                     int( lightList_.size() ) );
 
-    // ========================================================================
+    for ( size_t i{ 0 }; i < lightList_.size(); ++i ) {
+        const auto position = std::format( "omniLights[{}].position", i );
+        shaderStorage_.setVectorUniform( "pplTexture", position.c_str(),
+                                         lightList_[i]->position() );
 
-    shaderStorage_.add( "diffuseTexture" );
+        const auto constant = std::format( "omniLights[{}].constant", i );
+        shaderStorage_.setScalarUniform( "pplTexture", constant.c_str(),
+                                         lightList_[i]->constant() );
 
+        const auto linear = std::format( "omniLights[{}].linear", i );
+        shaderStorage_.setScalarUniform( "pplTexture", linear.c_str(),
+                                         lightList_[i]->linear() );
+
+        const auto quadratic = std::format( "omniLights[{}].quadratic", i );
+        shaderStorage_.setScalarUniform( "pplTexture", quadratic.c_str(),
+                                         lightList_[i]->quadratic() );
+
+        const auto ambient = std::format( "omniLights[{}].ambient", i );
+        shaderStorage_.setVectorUniform( "pplTexture", ambient.c_str(),
+                                         lightList_[i]->ambient() );
+
+        const auto diffuse = std::format( "omniLights[{}].diffuse", i );
+        shaderStorage_.setVectorUniform( "pplTexture", diffuse.c_str(),
+                                         lightList_[i]->diffuse() );
+
+        const auto specular = std::format( "omniLights[{}].specular", i );
+        shaderStorage_.setVectorUniform( "pplTexture", specular.c_str(),
+                                         lightList_[i]->specular() );
+    }
     // ========================================================================
 
     shaderStorage_.add( "flatshadeTexture" );
@@ -83,15 +102,17 @@ void Scene::submit() {
 }
 
 void Scene::draw() {
-    shaderStorage_.use( "flatshadeTexture" );
-    shaderStorage_.setMatrixUniform( "flatshadeTexture", "view_matrix",
-                                     GL_FALSE,
+    shaderStorage_.use( "pplTexture" );
+    shaderStorage_.setMatrixUniform( "pplTexture", "viewMatrix", GL_FALSE,
                                      camera().matrix<tire::OpenGLTag>() );
+
+    shaderStorage_.setVectorUniform( "pplTexture", "eyePosition",
+                                     camera().position() );
 
     for ( size_t i = 0; auto &buffer : buffersList_ ) {
         const Colorf bodyColor = bodyList_[i]->albedoColor();
         shaderStorage_.setVectorUniform(
-            "flatshadeTexture", "color",
+            "pplTexture", "diffuseColor",
             algebra::vector3f{ bodyColor.r(), bodyColor.g(), bodyColor.b() } );
 
         texturesList_[i].bind();
