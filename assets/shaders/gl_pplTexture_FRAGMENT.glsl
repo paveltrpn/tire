@@ -22,7 +22,7 @@ struct OmniLight {
     vec3 diffuse;
     vec3 specular;
 };  
-#define MAX_LIGHTS 5  
+#define MAX_LIGHTS 15  
 uniform OmniLight omniLights[MAX_LIGHTS];
 
 vec3 CalcPointLight(OmniLight light, vec3 normal, vec3 fragPos, vec3 viewDir)

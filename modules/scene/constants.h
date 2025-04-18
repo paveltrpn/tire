@@ -41,6 +41,7 @@ static constexpr char PARAM_CAMERA_FOV[] = "fov";
 static constexpr char PARAM_CAMERA_ASPECT[] = "aspect";
 static constexpr char PARAM_CAMERA_NCP[] = "ncp";
 static constexpr char PARAM_CAMERA_FCP[] = "fcp";
+static constexpr char PARAM_CAMERA_NAME[] = "name";
 
 static constexpr char PARAM_LIGHT_TYPE[] = "type";
 static constexpr char PARAM_LIGHT_OMNI[] = "omni";

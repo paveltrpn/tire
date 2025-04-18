@@ -57,6 +57,11 @@ void RenderGL::frame() {
     screenString_->draw(
         std::format( "\"g\" - grub/ungrub cursor, \"q\" - next camera" ) );
 
+    screenString_->set_text_position( -31.5f, 25.5f );
+    screenString_->setColor( { "white" } );
+    screenString_->draw(
+        std::format( "active camera - {}", scene_->camera().name() ) );
+
     screenString_->flush();
 }
 

@@ -153,6 +153,9 @@ void Scene::process() {
                 const auto &ncp = item[constants::scene::PARAM_CAMERA_NCP];
                 const auto &fcp = item[constants::scene::PARAM_CAMERA_FCP];
 
+                const std::string &name =
+                    item[constants::scene::PARAM_CAMERA_NAME];
+
                 auto camera =
                     std::make_shared<Flycam>( eye, azimuth, elevation );
 
@@ -160,6 +163,7 @@ void Scene::process() {
                 camera->setAspect( aspect );
                 camera->setNcp( ncp );
                 camera->setFcp( fcp );
+                camera->setName( name );
 
                 cameras_.push_back( std::move( camera ) );
             }

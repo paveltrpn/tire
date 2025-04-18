@@ -57,7 +57,7 @@
             ],
             "scale": [
                 3.1,
-                4,
+                4.7,
                 6
             ],
             "velocity": [
@@ -88,7 +88,7 @@
             ],
             "scale": [
                 3.1,
-                3,
+                4.5,
                 6
             ],
             "velocity": [
@@ -119,7 +119,7 @@
             ],
             "scale": [
                 3.1,
-                4,
+                5.5,
                 6
             ],
             "velocity": [
@@ -149,9 +149,9 @@
                 96
             ],
             "scale": [
-                3.1,
-                4,
-                6
+                2.6,
+                8.4,
+                6.0
             ],
             "velocity": [
                 0,
@@ -172,16 +172,16 @@
             "position": [
                 0,
                 1.5,
-                23
+                24.0
             ],
             "orientation": [
                 -4.5,
                 7,
-                82
+                92
             ],
             "scale": [
                 3.1,
-                4,
+                6.2,
                 6
             ],
             "velocity": [
@@ -491,7 +491,7 @@
             ],
             "scale": [
                 4.1,
-                4,
+                4.6,
                 6.3
             ],
             "velocity": [
@@ -583,8 +583,8 @@
                 94.5
             ],
             "scale": [
-                4.5,
-                4.8,
+                3.1,
+                5.8,
                 5
             ],
             "velocity": [
@@ -604,7 +604,7 @@
             "albedo_color": "LightGrey",
             "albedo_texture": "PavingStones136Color.tga",
             "position": [
-                2.2,
+                0.5,
                 0,
                 -24.3
             ],
@@ -614,8 +614,8 @@
                 90.5
             ],
             "scale": [
-                4.5,
-                5,
+                2.9,
+                8.7,
                 7
             ],
             "velocity": [
@@ -739,8 +739,132 @@
             ],
             "scale": [
                 2.2,
-                5.6,
-                6.8
+                6.6,
+                7.8
+            ],
+            "velocity": [
+                0,
+                0,
+                0
+            ],
+            "torque": [
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "name": "pyramid_east_01",
+            "type": "pyramidcut",
+            "albedo_color": "LightGrey",
+            "albedo_texture": "wall_stone.tga",
+            "position": [
+                21.1,
+                2.5,
+                -5.0
+            ],
+            "orientation": [
+                0,
+                5,
+                0
+            ],
+            "scale": [
+                3.0,
+                6.0,
+                3.0
+            ],
+            "velocity": [
+                0,
+                0,
+                0
+            ],
+            "torque": [
+                0,
+                0,
+                0
+            ]
+        },
+         {
+            "name": "pyramid_east_02",
+            "type": "pyramidcut",
+            "albedo_color": "LightGrey",
+            "albedo_texture": "wall_stone.tga",
+            "position": [
+                22.9,
+                1.5,
+                4.0
+            ],
+            "orientation": [
+                0,
+                6,
+                0
+            ],
+            "scale": [
+                3.0,
+                6.0,
+                3.0
+            ],
+            "velocity": [
+                0,
+                0,
+                0
+            ],
+            "torque": [
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "name": "pyramid_west_01",
+            "type": "pyramidcut",
+            "albedo_color": "LightGrey",
+            "albedo_texture": "wall_stone.tga",
+            "position": [
+                -22.1,
+                1.1,
+                -4.5
+            ],
+            "orientation": [
+                0,
+                7,
+                0
+            ],
+            "scale": [
+                3.0,
+                6.0,
+                3.0
+            ],
+            "velocity": [
+                0,
+                0,
+                0
+            ],
+            "torque": [
+                0,
+                0,
+                0
+            ]
+        },
+         {
+            "name": "pyramid_west_02",
+            "type": "pyramidcut",
+            "albedo_color": "LightGrey",
+            "albedo_texture": "wall_stone.tga",
+            "position": [
+                -21.9,
+                1.5,
+                4.0
+            ],
+            "orientation": [
+                0,
+                6,
+                0
+            ],
+            "scale": [
+                3.0,
+                6.0,
+                3.0
             ],
             "velocity": [
                 0,
@@ -863,8 +987,8 @@
             ],
             "scale": [
                 2.7,
-                5.4,
-                5.8
+                6.4,
+                6.8
             ],
             "velocity": [
                 0,
@@ -916,7 +1040,7 @@
             "position": [
                 -11.3,
                 2,
-                -3.3
+                -4.3
             ],
             "orientation": [
                 0,
@@ -940,13 +1064,13 @@
             ]
         },
         {
-            "name": "west_pillar_01",
+            "name": "east_pillar_01",
             "type": "prism",
             "albedo_color": "LightGrey",
             "albedo_texture": "wall_stone.tga",
             "position": [
                 12.8,
-                1.3,
+                2.1,
                 2.5
             ],
             "orientation": [
@@ -971,14 +1095,14 @@
             ]
         },
         {
-            "name": "west_pillar_02",
+            "name": "east_pillar_02",
             "type": "prism",
             "albedo_color": "darkgrey",
             "albedo_texture": "wall_stone.tga",
             "position": [
-                13.5,
-                1.3,
-                -2.5
+                14.4,
+                1.6,
+                -3.5
             ],
             "orientation": [
                 0,
@@ -1159,27 +1283,27 @@
     ],
     "cameras": [
         {
-            "name": "",
+            "name": "north",
             "type": "perspective",
             "eye": [
-                -27.5,
-                -24,
-                -21
+                -32.0,
+                -27.0,
+                -31.0
             ],
             "target": [
                 0,
                 0,
                 1
             ],
-            "azimuth": 37,
-            "elevation": -30,
+            "azimuth": 45,
+            "elevation": -32,
             "fov": 50,
             "aspect": 1.7777777,
             "ncp": 0.1,
             "fcp": 150
         },
         {
-            "name": "",
+            "name": "south",
             "type": "perspective",
             "eye": [
                 -18,
@@ -1199,7 +1323,7 @@
             "fcp": 150
         },
         {
-            "name": "",
+            "name": "west",
             "type": "perspective",
             "eye": [
                 -24,
@@ -1219,7 +1343,7 @@
             "fcp": 150
         },
         {
-            "name": "",
+            "name": "east",
             "type": "perspective",
             "eye": [
                 27,

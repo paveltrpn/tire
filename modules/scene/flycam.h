@@ -1,6 +1,8 @@
 #pragma once
 
+#include <string>
 #include <type_traits>
+
 #include "algebra/vector3.h"
 #include "algebra/matrix4.h"
 
@@ -26,6 +28,7 @@ struct Flycam final {
     void setAspect( float aspect );
     void setNcp( float ncp );
     void setFcp( float fcp );
+    void setName( const std::string &value ) { name_ = value; };
 
     void moveForward();
     void moveBackward();
@@ -76,6 +79,7 @@ struct Flycam final {
     float azimuth() { return azimuth_; };
     float elevation() { return elevation_; };
     float roll() { return roll_; };
+    std::string name() { return name_; };
 
 private:
     // Perspective parameters
@@ -101,6 +105,8 @@ private:
     BoundingSphere<float> bounding_{};
     float mass_{};
     algebra::vector3f velocity_{};
+
+    std::string name_{};
 };
 
 }  // namespace tire

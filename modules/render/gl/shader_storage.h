@@ -86,7 +86,8 @@ struct ShaderStorage final {
         if constexpr ( std::is_same_v<T, float> ) {
             glUniform1f( location, value );
         } else if constexpr ( std::is_same_v<T, double> ) {
-            glUniform1f( location, value );
+            // TODO: a way to pass double???
+            glUniform1f( location, static_cast<float>( value ) );
         } else {
             glUniform1i( location, value );
         }
