@@ -25,7 +25,7 @@ struct SceneRenderCommand final {
 
     void clean();
     void reset();
-    void prepare( VkFramebuffer framebuffer, algebra::matrix4f view );
+    void prepare( VkFramebuffer framebuffer, algebra::matrix4d view );
     void bindBuffer( Colorf color, VkBuffer vbo, VkBuffer nbo,
                      uint32_t vCount );
     void submit( VkSemaphore waitSemaphores, VkSemaphore signalSemaphores,

@@ -16,7 +16,7 @@ namespace tire {
 struct Flycam final {
     Flycam() = default;
 
-    Flycam( const algebra::vector3f &eye, float azimuth, float elevation );
+    Flycam( const algebra::vector3d &eye, float azimuth, float elevation );
 
     Flycam( const Flycam &other ) = delete;
     Flycam( Flycam &&other ) = delete;
@@ -36,29 +36,29 @@ struct Flycam final {
     void strafeRight();
 
     void rotate( float azimuthffset, float elevayionOffset );
-    void setPosition( const algebra::vector3f &pos );
+    void setPosition( const algebra::vector3d &pos );
     void setAngles( float azimuth, float elevation, float roll );
 
     template <RenderType Type>
-    algebra::matrix4f matrix() {
-        algebra::matrix4f projection;
+    algebra::matrix4d matrix() {
+        algebra::matrix4d projection;
         // Choose projection matrix according to render type
         if constexpr ( std::is_same_v<Type, OpenGLTag> ) {
             projection =
-                algebra::perspective<float>( fov_, aspect_, ncp_, fcp_ );
+                algebra::perspective<double>( fov_, aspect_, ncp_, fcp_ );
         } else if constexpr ( std::is_same_v<Type, VulkanTag> ) {
             projection =
-                algebra::vperspective<float>( fov_, aspect_, ncp_, fcp_ );
+                algebra::vperspective<double>( fov_, aspect_, ncp_, fcp_ );
         }
 
         // Get azimuth rotation matrix
-        auto ar = algebra::rotate<float>( zenith_, azimuth_ );
+        auto ar = algebra::rotate<double>( zenith_, azimuth_ );
 
         // Get actual "right side" direction vector
         right_ = ar.mult_vector3( { 1.0f, 0.0f, 0.0f } );
 
         // Get elevation rotation matrix
-        auto er = algebra::rotate<float>( right_, elevation_ );
+        auto er = algebra::rotate<double>( right_, elevation_ );
 
         // Get actual look direction vector
         look_ = er.mult_vector3( right_.cross( zenith_ ) );
@@ -69,13 +69,13 @@ struct Flycam final {
         // Combine both rotations
         auto rotation = er * ar;
 
-        auto offset = algebra::translate<float>( eye_ );
+        auto offset = algebra::translate<double>( eye_ );
         offset.transposeSelf();
 
         return offset * rotation * projection;
     }
 
-    algebra::vector3f position() { return eye_; };
+    algebra::vector3d position() { return eye_; };
     float azimuth() { return azimuth_; };
     float elevation() { return elevation_; };
     float roll() { return roll_; };
@@ -89,12 +89,12 @@ private:
     float fcp_{};
 
     // Eye position
-    algebra::vector3f eye_{ 0.0f, 0.0f, 0.0f };
+    algebra::vector3d eye_{ 0.0f, 0.0f, 0.0f };
 
     //
-    algebra::vector3f zenith_{ 0.0f, 1.0f, 0.0f };
-    algebra::vector3f right_{ 1.0f, 0.0f, 0.0f };
-    algebra::vector3f look_{ 0.0f, 0.0f, 1.0f };
+    algebra::vector3d zenith_{ 0.0f, 1.0f, 0.0f };
+    algebra::vector3d right_{ 1.0f, 0.0f, 0.0f };
+    algebra::vector3d look_{ 0.0f, 0.0f, 1.0f };
 
     //
     float azimuth_{};
@@ -104,7 +104,7 @@ private:
     // Bounding and mass
     BoundingSphere<float> bounding_{};
     float mass_{};
-    algebra::vector3f velocity_{};
+    algebra::vector3d velocity_{};
 
     std::string name_{};
 };

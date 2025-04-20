@@ -54,7 +54,7 @@ void SceneRenderCommand::reset() {
 }
 
 void SceneRenderCommand::prepare( VkFramebuffer framebuffer,
-                                  algebra::matrix4f view ) {
+                                  algebra::matrix4d view ) {
     const VkCommandBufferBeginInfo beginInfo{
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
         .flags = 0,
@@ -101,14 +101,14 @@ void SceneRenderCommand::prepare( VkFramebuffer framebuffer,
                        pipeline_->pipeline() );
     vkCmdPushConstants( command_, pipeline_->layout(),
                         VK_SHADER_STAGE_VERTEX_BIT, 0,
-                        sizeof( algebra::matrix4f ), &view );
+                        sizeof( algebra::matrix4d ), &view );
 }
 
 void SceneRenderCommand::bindBuffer( Colorf color, VkBuffer vbo, VkBuffer nbo,
                                      uint32_t vCount ) {
     const auto c = color.asVector4f();
     vkCmdPushConstants( command_, pipeline_->layout(),
-                        VK_SHADER_STAGE_VERTEX_BIT, sizeof( algebra::matrix4f ),
+                        VK_SHADER_STAGE_VERTEX_BIT, sizeof( algebra::matrix4d ),
                         sizeof( algebra::vector4f ), &c );
 
     // NOTE: see https://docs.vulkan.org/guide/latest/vertex_input_data_processing.html

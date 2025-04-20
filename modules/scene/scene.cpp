@@ -133,12 +133,12 @@ void Scene::process() {
         for ( const auto &item : cameras ) {
             const auto &type = item[constants::scene::PARAM_CAMERA_TYPE];
             if ( type == constants::scene::PARAM_CAMERA_PERSPECTIVE ) {
-                const std::array<float, 3> eye =
+                const std::array<double, 3> eye =
                     item[constants::scene::PARAM_CAMERA_EYE];
-                const auto eyev = algebra::vector3f{ eye };
+                const auto eyev = algebra::vector3d{ eye };
 
                 // Unused
-                const std::array<float, 3> target =
+                const std::array<double, 3> target =
                     item[constants::scene::PARAM_CAMERA_TARGET];
 
                 const float azimuth =

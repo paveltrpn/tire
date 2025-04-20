@@ -7,7 +7,7 @@
 
 namespace tire {
 
-Flycam::Flycam( const algebra::vector3f &eye, float azimuth, float elevation ) {
+Flycam::Flycam( const algebra::vector3d &eye, float azimuth, float elevation ) {
     azimuth_ = azimuth;
     elevation_ = elevation;
     roll_ = 0.0;
@@ -45,7 +45,7 @@ void Flycam::rotate( float azimuthOffset, float elevayionOffset ) {
     if ( elevation_ < -ELEVATION_BOUND ) elevation_ = -ELEVATION_BOUND;
 }
 
-void Flycam::setPosition( const algebra::vector3f &pos ) {
+void Flycam::setPosition( const algebra::vector3d &pos ) {
     eye_ = pos;
 }
 

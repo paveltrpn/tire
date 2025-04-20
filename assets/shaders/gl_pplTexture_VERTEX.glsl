@@ -4,8 +4,10 @@ layout (location = 0) in vec3 vertexPos;
 layout (location = 1) in vec3 vertexNrm;
 layout (location = 2) in vec2 vertexTxc;
 
-uniform mat4 viewMatrix;
-uniform vec3 eyePosition;
+// GL_ARB_gpu_shader_fp64 double precision values
+uniform dmat4 viewMatrix;
+uniform dvec3 eyePosition;
+
 uniform vec3 diffuseColor;
 uniform int lightsCount;
 
@@ -18,8 +20,10 @@ out flat uint LightsCount;
 
 void main()
 {
-    gl_Position = viewMatrix * vec4(vertexPos, 1.0);
-    EyePosition = eyePosition;
+    // Explicitly converts to 32 bit precision, by now...
+    gl_Position = mat4(viewMatrix) * vec4(vertexPos, 1.0);
+    EyePosition = vec3(eyePosition.xyz);
+
     FragmentPosition = vertexPos;
     DiffuseColor = diffuseColor;
     TexCoord = vertexTxc;

@@ -7,7 +7,7 @@ layout( location = 0 ) out vec4 fragColor;
 layout( location = 1 ) out vec3 vLighting;
 
 layout( push_constant ) uniform constants_t {
-    mat4 view;
+    dmat4 view;
     vec4 color;
 } constants;
 
@@ -22,6 +22,6 @@ void main() {
     float directional = max(dot(normal.xyz, directionalVector), 0.0);
     vLighting = ambientLight + (lightcolor * directional);
 
-    gl_Position = constants.view * vec4( vertex, 1.0 );
+    gl_Position = mat4(constants.view) * vec4( vertex, 1.0 );
     fragColor = constants.color;
 }
