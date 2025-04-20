@@ -11,6 +11,7 @@
 
 #include "algebra/vector3.h"
 #include "log/log.h"
+#include "scene/flycam.h"
 static constexpr bool DEBUG_OUTPUT_RENDER_CPP{ true };
 
 #include "render.h"
@@ -230,7 +231,7 @@ void Render::keyPressEvent( unsigned int key ) {
             break;
         }
         case 25: {  // == 'w'
-            scene_->camera().moveForward();
+            scene_->camera().setMoveBit( FlycamMoveBits::FORWARD );
             break;
         }
         case 26: {  // == 'e'
@@ -264,15 +265,15 @@ void Render::keyPressEvent( unsigned int key ) {
             break;
         }
         case 38: {  // == 'a'
-            scene_->camera().strafeLeft();
+            scene_->camera().setMoveBit( FlycamMoveBits::LEFT );
             break;
         }
         case 39: {  // == 's'
-            scene_->camera().moveBackward();
+            scene_->camera().setMoveBit( FlycamMoveBits::BACKWARD );
             break;
         }
         case 40: {  // == 'd'
-            scene_->camera().strafeRight();
+            scene_->camera().setMoveBit( FlycamMoveBits::RIGHT );
             break;
         }
         case 41: {  // == 'f'
@@ -317,7 +318,20 @@ void Render::keyPressEvent( unsigned int key ) {
 
 void Render::keyReleaseEvent( unsigned int key ) {
     switch ( key ) {
+        case 25: {  // == 'w'
+            scene_->camera().unsetMoveBit( FlycamMoveBits::FORWARD );
+            break;
+        }
         case 38: {  // == 'a'
+            scene_->camera().unsetMoveBit( FlycamMoveBits::LEFT );
+            break;
+        }
+        case 39: {  // == 's'
+            scene_->camera().unsetMoveBit( FlycamMoveBits::BACKWARD );
+            break;
+        }
+        case 40: {  // == 'd'
+            scene_->camera().unsetMoveBit( FlycamMoveBits::RIGHT );
             break;
         }
         default: {

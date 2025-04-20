@@ -16,22 +16,6 @@ Flycam::Flycam( const algebra::vector3<value_type> &eye, value_type azimuth,
     eye_ = eye;
 }
 
-void Flycam::moveForward() {
-    eye_.plus( look_.scale( 0.2 ) );
-}
-
-void Flycam::moveBackward() {
-    eye_.minus( look_.scale( 0.2 ) );
-}
-
-void Flycam::strafeLeft() {
-    eye_.plus( right_.scale( 0.2 ) );
-}
-
-void Flycam::strafeRight() {
-    eye_.minus( right_.scale( 0.2 ) );
-}
-
 void Flycam::rotate( value_type azimuthOffset, value_type elevayionOffset ) {
     azimuth_ += azimuthOffset;
 
@@ -71,6 +55,36 @@ void Flycam::setNcp( value_type ncp ) {
 
 void Flycam::setFcp( value_type fcp ) {
     fcp_ = fcp;
+}
+
+void Flycam::setMoveBit( FlycamMoveBits bit ) {
+    moveMask_ |= ( (uint32_t)1 << bit );
+}
+
+void Flycam::unsetMoveBit( FlycamMoveBits bit ) {
+    moveMask_ &= ~( (uint32_t)1 << bit );
+}
+
+void Flycam::unsetMoveAll() {
+    moveMask_ = 0;
+}
+
+void Flycam::traverse() {
+    if ( ( moveMask_ >> FlycamMoveBits::FORWARD ) & (uint32_t)1 ) {
+        velocity_ += look_;
+    } else if ( ( moveMask_ >> FlycamMoveBits::BACKWARD ) & (uint32_t)1 ) {
+        velocity_ += look_.inverse();
+    } else if ( ( moveMask_ >> FlycamMoveBits::RIGHT ) & (uint32_t)1 ) {
+        velocity_ += right_.inverse();
+    } else if ( ( moveMask_ >> FlycamMoveBits::LEFT ) & (uint32_t)1 ) {
+        velocity_ += right_;
+    } else if ( moveMask_ == 0 ) {
+        velocity_ = vector3<value_type>( 0.0, 0.0, 0.0 );
+    }
+
+    eye_.plus( velocity_.scale( 0.5 ) );
+
+    velocity_ = vector3<value_type>( 0.0, 0.0, 0.0 );
 }
 
 }  // namespace tire

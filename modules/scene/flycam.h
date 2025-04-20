@@ -13,6 +13,16 @@
 
 namespace tire {
 
+enum FlycamMoveBits {
+    NONE = 1 << 0,
+    FORWARD = 1 << 1,
+    BACKWARD = 1 << 2,
+    LEFT = 1 << 3,
+    RIGHT = 1 << 4,
+    UP = 1 << 5,
+    DOWN = 1 << 6,
+};
+
 struct Flycam final {
     using value_type = double;
 
@@ -33,10 +43,9 @@ struct Flycam final {
     void setFcp( value_type fcp );
     void setName( const std::string &value ) { name_ = value; };
 
-    void moveForward();
-    void moveBackward();
-    void strafeLeft();
-    void strafeRight();
+    void setMoveBit( FlycamMoveBits bit );
+    void unsetMoveBit( FlycamMoveBits bit );
+    void unsetMoveAll();
 
     void rotate( value_type azimuthffset, value_type elevayionOffset );
     void setPosition( const algebra::vector3d &pos );
@@ -84,6 +93,8 @@ struct Flycam final {
     value_type roll() { return roll_; };
     std::string name() { return name_; };
 
+    void traverse();
+
 private:
     // Perspective parameters
     value_type fov_{};
@@ -103,6 +114,8 @@ private:
     value_type azimuth_{};
     value_type elevation_{};
     value_type roll_{};
+
+    uint32_t moveMask_{};
 
     // Bounding and mass
     BoundingSphere<value_type> bounding_{};

@@ -50,6 +50,8 @@ requires Algebraic<T> struct vector3 final {
         for ( size_t i = 0; i < 3; ++i ) data_[i] -= b.data_[i];
     };
 
+    self inverse() { return { -data_[0], -data_[1], -data_[2] }; }
+
     template <typename U>
     void scaleSelf( U factor ) {
         data_[0] *= factor;

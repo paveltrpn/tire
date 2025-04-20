@@ -1,6 +1,7 @@
 
 #include "rendergl.h"
 #include "log/log.h"
+#include "scene/scene.h"
 static constexpr bool DEBUG_OUTPUT_MAIN_LOOP_GL_CPP{ true };
 
 import event;
@@ -21,6 +22,8 @@ void RenderGL::preFrame() {
 
     // Update scene objects
     scene_->traverse( timer_.frameDuration<float>() );
+
+    scene_->camera().traverse();
 }
 
 void RenderGL::frame() {
