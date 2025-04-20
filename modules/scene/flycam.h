@@ -13,14 +13,24 @@
 
 namespace tire {
 
+// enum FlycamMoveBits {
+// NONE = 1 << 0,
+// FORWARD = 1 << 1,
+// BACKWARD = 1 << 2,
+// LEFT = 1 << 3,
+// RIGHT = 1 << 4,
+// UP = 1 << 5,
+// DOWN = 1 << 6,
+// };
+
 enum FlycamMoveBits {
-    NONE = 1 << 0,
-    FORWARD = 1 << 1,
-    BACKWARD = 1 << 2,
-    LEFT = 1 << 3,
-    RIGHT = 1 << 4,
-    UP = 1 << 5,
-    DOWN = 1 << 6,
+    NONE = 1,
+    FORWARD = 2,
+    BACKWARD = 3,
+    LEFT = 4,
+    RIGHT = 5,
+    UP = 6,
+    DOWN = 7,
 };
 
 struct Flycam final {

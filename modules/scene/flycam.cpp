@@ -1,4 +1,5 @@
 
+#include <iostream>
 
 #include "flycam.h"
 #include <print>
@@ -70,17 +71,17 @@ void Flycam::unsetMoveAll() {
 }
 
 void Flycam::traverse() {
-    if ( ( moveMask_ >> FlycamMoveBits::FORWARD ) & (uint32_t)1 ) {
+    if ( ( moveMask_ >> FlycamMoveBits::FORWARD ) & (uint32_t)1 )
         velocity_ += look_;
-    } else if ( ( moveMask_ >> FlycamMoveBits::BACKWARD ) & (uint32_t)1 ) {
+
+    if ( ( moveMask_ >> FlycamMoveBits::BACKWARD ) & (uint32_t)1 )
         velocity_ += look_.inverse();
-    } else if ( ( moveMask_ >> FlycamMoveBits::RIGHT ) & (uint32_t)1 ) {
+
+    if ( ( moveMask_ >> FlycamMoveBits::RIGHT ) & (uint32_t)1 )
         velocity_ += right_.inverse();
-    } else if ( ( moveMask_ >> FlycamMoveBits::LEFT ) & (uint32_t)1 ) {
+
+    if ( ( moveMask_ >> FlycamMoveBits::LEFT ) & (uint32_t)1 )
         velocity_ += right_;
-    } else if ( moveMask_ == 0 ) {
-        velocity_ = vector3<value_type>( 0.0, 0.0, 0.0 );
-    }
 
     eye_.plus( velocity_.scale( 0.5 ) );
 
