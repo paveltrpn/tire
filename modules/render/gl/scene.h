@@ -5,7 +5,7 @@
 
 #include "scene/scene.h"
 #include "buffers/body_buffer.h"
-#include "shader_storage.h"
+#include "program.h"
 #include "texture.h"
 
 namespace tire::gl {
@@ -21,7 +21,7 @@ private:
     std::vector<BodyBuffer> buffersList_;
     std::vector<gl::Texture> texturesList_{};
 
-    gl::ShaderStorage shaderStorage_{};
+    gl::Program pplTexture{};
 };
 
 }  // namespace tire::gl

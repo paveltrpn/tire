@@ -1,21 +1,24 @@
 
+#include <format>
 #include <fstream>
 #include <stdexcept>
 #include <utility>
 #include <vector>
 
-#include "shader_storage.h"
-#include <GL/gl.h>
-#include <GL/glcorearb.h>
-#include "functions.h"
+#include "program.h"
 #include "log/log.h"
-static constexpr bool DEBUG_OUTPUT_SHADER_STORAGE_GL_CPP{ true };
+static constexpr bool DEBUG_OUTPUT_PROGRAM_CPP{ true };
 
 import config;
 
 namespace tire::gl {
 
-void ShaderStorage::add( const std::string &name ) {
+void Program::init( const std::string &name ) {
+    if ( program_ != 0 ) {
+        log::warning( "reinitialize already linked program!" );
+        clean();
+    }
+
     std::vector<GLuint> stageUnits{};
 
     // Try to find all files in assets directory, that satisfies
@@ -33,32 +36,38 @@ void ShaderStorage::add( const std::string &name ) {
     }
 
     // Link
-    auto program = glCreateProgram();
+    program_ = glCreateProgram();
 
     for ( const auto handle : stageUnits ) {
-        glAttachShader( program, handle );
+        glAttachShader( program_, handle );
     }
 
-    glLinkProgram( program );
+    glLinkProgram( program_ );
 
     GLint success;
-    glGetProgramiv( program, GL_LINK_STATUS, &success );
+    glGetProgramiv( program_, GL_LINK_STATUS, &success );
 
     if ( success == GL_FALSE ) {
         int32_t logLength;
-        glGetProgramiv( program, GL_INFO_LOG_LENGTH, &logLength );
+        glGetProgramiv( program_, GL_INFO_LOG_LENGTH, &logLength );
         std::vector<GLchar> log;
         log.reserve( logLength );
-        glGetProgramInfoLog( program, logLength, nullptr, log.data() );
-        throw std::runtime_error( std::format(
-            "gl::ShaderStorage === can't link program with trace:\n{}",
-            log.data() ) );
+        glGetProgramInfoLog( program_, logLength, nullptr, log.data() );
+        throw std::runtime_error(
+            std::format( "gl::Program === can't link program with trace:\n{}",
+                         log.data() ) );
     }
-
-    programs_[name] = program;
 }
 
-std::vector<std::pair<std::string, GLenum>> ShaderStorage::scanForShaderFiles(
+void Program::use() {
+    glUseProgram( program_ );
+}
+
+void Program::clean() {
+    glDeleteProgram( program_ );
+}
+
+std::vector<std::pair<std::string, GLenum>> Program::scanForShaderFiles(
     const std::string &name ) {
     /* 
      * @brief - Split given string by seperator
@@ -129,13 +138,13 @@ std::vector<std::pair<std::string, GLenum>> ShaderStorage::scanForShaderFiles(
     return retItem;
 }
 
-std::string ShaderStorage::readSource( const std::string &name ) {
+std::string Program::readSource( const std::string &name ) {
     const auto configHandle = Config::instance();
     const auto basePath = configHandle->getBasePath().string();
     const std::filesystem::path path =
         std::format( "{}/assets/shaders/{}", basePath, name );
 
-    log::debug<DEBUG_OUTPUT_SHADER_STORAGE_GL_CPP>(
+    log::debug<DEBUG_OUTPUT_PROGRAM_CPP>(
         "gl::ShaderStorage === loading shader file {}",
         path.filename().string() );
 
@@ -159,7 +168,7 @@ std::string ShaderStorage::readSource( const std::string &name ) {
     return str;
 }
 
-GLuint ShaderStorage::compile( GLenum stage, std::string_view source ) {
+GLuint Program::compile( GLenum stage, std::string_view source ) {
     const GLuint shHandle = glCreateShader( stage );
     const char *c_str = source.data();
 
@@ -183,28 +192,8 @@ GLuint ShaderStorage::compile( GLenum stage, std::string_view source ) {
     }
 }
 
-void ShaderStorage::use( const std::string &name ) {
-    // GLuint module;
-    // try {
-    // module = programs_.at( name );
-    // } catch ( std::out_of_range &e ) {
-    // throw std::runtime_error( std::format(
-    // "gl::ShaderStorage === shader program {} not exist!", name ) );
-    // }
-
-    // Just belive in
-    glUseProgram( programs_[name] );
-}
-
-void ShaderStorage::destroy( const std::string &name ) {
-    // for ( const auto handle : stages_ ) {
-    // glDeleteProgram( handle );
-    // }
-}
-
-GLuint ShaderStorage::getUniformLocation( const std::string &name,
-                                          const char *id ) {
-    const auto location = glGetUniformLocation( programs_[name], id );
+GLuint Program::getUniformLocation( const std::string &id ) {
+    const auto location = glGetUniformLocation( program_, id.c_str() );
 
     if ( location == GL_INVALID_VALUE ) {
         log::warning(
@@ -219,4 +208,10 @@ GLuint ShaderStorage::getUniformLocation( const std::string &name,
 
     return location;
 }
+
+void Program::addUniform( const std::string &id ) {
+    const auto location = glGetUniformLocation( program_, id.c_str() );
+    uniforms_[id] = location;
+}
+
 }  // namespace tire::gl

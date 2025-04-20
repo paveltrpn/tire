@@ -32,11 +32,11 @@ ScreenString::ScreenString( const std::string& name )
                    fontImage_->data() );
 
     // Prepare shader storage
-    shaderStorage_.add( "screenString" );
+    program_.init( "screenString" );
 };
 
 void ScreenString::flush() {
-    shaderStorage_.use( "screenString" );
+    program_.use();
 
     // Upload data
     buffer_.updateVertexData( letterQuadsVertecies_.size() * 4,

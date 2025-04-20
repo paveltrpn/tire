@@ -3,7 +3,10 @@
 
 #include <map>
 #include <filesystem>
+#include <unordered_map>
 #include <variant>
+#include <vector>
+
 #include <GL/gl.h>
 
 #include <type_traits>
@@ -17,8 +20,6 @@
 #include "algebra/matrix2.h"
 #include "algebra/matrix3.h"
 #include "algebra/matrix4.h"
-
-#include "image/color.h"
 
 namespace tire::gl {
 
@@ -59,29 +60,21 @@ static const std::map<std::string, GLenum> StagesSuffixMap = {
     // { mesh_stage_suffix, GL_MESH_SHADER },
 };
 
-struct ShaderStorage final {
-    ShaderStorage() = default;
+struct Program final {
+    Program() = default;
+    ~Program() { clean(); };
 
-    ShaderStorage( const ShaderStorage &other ) = delete;
-    ShaderStorage( ShaderStorage &&other ) = delete;
-    ShaderStorage &operator=( const ShaderStorage &other ) = delete;
-    ShaderStorage &operator=( ShaderStorage &&other ) = delete;
-
-    ~ShaderStorage() = default;
-
-    void add( const std::string &name );
-
-    void use( const std::string &name );
-
-    void destroy( const std::string &name );
+    void init( const std::string &name );
+    void addUniform( const std::string &id );
+    void use();
+    void clean();
 
     template <typename T>
         requires std::is_same_v<T, float> || std::is_same_v<T, double> ||
         std::is_same_v<T, unsigned int> ||
-        std::is_same_v<T, int> void setScalarUniform( const std::string &name,
-                                                      const char *id,
+        std::is_same_v<T, int> void setScalarUniform( const std::string &id,
                                                       T value ) {
-        const auto location = getUniformLocation( name, id );
+        const auto location = uniforms_[id];
 
         if constexpr ( std::is_same_v<T, float> ) {
             glUniform1f( location, value );
@@ -96,8 +89,8 @@ struct ShaderStorage final {
     }
 
     template <algebra::VectorFloat T>
-    void setVectorUniform( const std::string &name, const char *id, T value ) {
-        const auto location = getUniformLocation( name, id );
+    void setVectorUniform( const std::string &id, T value ) {
+        const auto location = uniforms_[id];
 
         if constexpr ( std::is_same_v<T, algebra::vector2f> ) {
             glUniform2fv( location, 1, value.data() );
@@ -135,9 +128,9 @@ struct ShaderStorage final {
     void setMatrixUniform( GLuint location, GLboolean transpose, T value );
 
     template <algebra::MatrixFloat T>
-    void setMatrixUniform( const std::string &name, const char *id,
-                           GLboolean transpose, T value ) {
-        const auto location = getUniformLocation( name, id );
+    void setMatrixUniform( const std::string &id, GLboolean transpose,
+                           T value ) {
+        const auto location = uniforms_[id];
 
         if constexpr ( std::is_same_v<T, algebra::matrix2f> ) {
             glUniformMatrix2fv( location, 1, transpose, value.data() );
@@ -154,11 +147,11 @@ private:
     std::string readSource( const std::string &name );
     GLuint compile( GLenum stage, std::string_view source );
 
-    GLuint getUniformLocation( const std::string &name, const char *id );
+    GLuint getUniformLocation( const std::string &id );
 
 private:
-    // "program name (string id)" - "shader program"
-    std::map<std::string, GLuint> programs_;
+    GLuint program_{};
+    std::unordered_map<std::string, GLint> uniforms_{};
 };
 
 }  // namespace tire::gl

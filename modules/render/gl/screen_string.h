@@ -8,7 +8,7 @@
 #include <GL/gl.h>
 
 #include "render/screen_string_base.h"
-#include "shader_storage.h"
+#include "program.h"
 #include "buffers/screen_string_buffer.h"
 #include "texture.h"
 
@@ -25,7 +25,7 @@ struct ScreenString final : ScreenStringBase {
     void flush() override;
 
 private:
-    ShaderStorage shaderStorage_;
+    Program program_;
     ScreenStringBuffer buffer_;
     Texture texture_;
 };

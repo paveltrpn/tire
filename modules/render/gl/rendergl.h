@@ -18,7 +18,6 @@
 
 #include "../render.h"
 #include "scene.h"
-#include "shader_storage.h"
 #include "screen_string.h"
 
 namespace tire {
