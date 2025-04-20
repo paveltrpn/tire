@@ -31,7 +31,7 @@ struct Texture final {
     void generate();
     void clean();
 
-    void bind();
+    void bind( GLuint bpoint );
     void load( GLuint width, GLuint height, const void *data );
 
 private:

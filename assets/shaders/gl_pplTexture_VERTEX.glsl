@@ -15,7 +15,12 @@ out vec3 EyePosition;
 out vec3 DiffuseColor;
 out vec2 TexCoord;
 out vec3 Normal;
-out vec3 FragmentPosition;  
+out vec3 FragmentPosition;
+
+// For normal mapping
+out vec2 FragmentTexcrd;  
+
+// Current scene lights count
 out flat uint LightsCount;
 
 void main()
@@ -25,6 +30,7 @@ void main()
     EyePosition = vec3(eyePosition.xyz);
 
     FragmentPosition = vertexPos;
+    FragmentTexcrd = vertexTxc;
     DiffuseColor = diffuseColor;
     TexCoord = vertexTxc;
     Normal = vertexNrm;

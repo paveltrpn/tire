@@ -19,7 +19,9 @@ struct Scene final : tire::Scene {
 
 private:
     std::vector<BodyBuffer> buffersList_;
-    std::vector<gl::Texture> texturesList_{};
+
+    std::vector<gl::Texture> albedoTexturesList_{};
+    std::vector<gl::Texture> normalmapTexturesList_{};
 
     gl::Program pplTexture{};
 };

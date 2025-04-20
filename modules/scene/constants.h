@@ -30,6 +30,7 @@ static constexpr char PARAM_OBJECT_TORQUE[] = "torque";
 static constexpr char PARAM_OBJECT_ALBEDO_COLOR[] = "albedo_color";
 static constexpr char PARAM_OBJECT_SPECULAR_COLOR[] = "specular_color";
 static constexpr char PARAM_OBJECT_ALBEDO_TEXTURE[] = "albedo_texture";
+static constexpr char PARAM_OBJECT_MATERIAL_NAME[] = "material_name";
 
 static constexpr char PARAM_CAMERA_TYPE[] = "type";
 static constexpr char PARAM_CAMERA_PERSPECTIVE[] = "perspective";

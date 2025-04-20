@@ -27,7 +27,7 @@ ScreenString::ScreenString( const std::string& name )
 
     // Prepare texture
     texture_.generate();
-    texture_.bind();
+    texture_.bind( 0 );
     texture_.load( fontImage_->widht(), fontImage_->height(),
                    fontImage_->data() );
 
@@ -64,7 +64,7 @@ void ScreenString::flush() {
     glEnable( GL_TEXTURE_2D );
     glEnable( GL_BLEND );
     glBlendFunc( GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR );
-    texture_.bind();
+    texture_.bind( 0 );
     buffer_.draw();
     buffer_.release();
     glDisable( GL_BLEND );

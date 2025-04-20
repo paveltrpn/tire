@@ -29,14 +29,19 @@ Scene::Scene( const std::filesystem::path &fname )
         // Store object buffers id's
         buffersList_.push_back( std::move( buffer ) );
 
-        gl::Texture texture{};
+        gl::Texture albedoTexture{};
+        albedoTexture.generate();
+        albedoTexture.bind( 0 );
+        const auto &[atw, ath] = bodyList_[i]->albedoTextureSize();
+        albedoTexture.load( atw, ath, bodyList_[i]->albedoTextureData() );
+        albedoTexturesList_.push_back( std::move( albedoTexture ) );
 
-        texture.generate();
-        texture.bind();
-        const auto &[tw, th] = bodyList_[i]->albedoTextureSize();
-        texture.load( tw, th, bodyList_[i]->albedoTextureData() );
-
-        texturesList_.push_back( std::move( texture ) );
+        gl::Texture normalTexture{};
+        normalTexture.generate();
+        normalTexture.bind( 1 );
+        const auto &[ntw, nth] = bodyList_[i]->normalmapTextureSize();
+        normalTexture.load( ntw, nth, bodyList_[i]->normalmapTextureData() );
+        normalmapTexturesList_.push_back( std::move( normalTexture ) );
     }
 
     // Load shaders
@@ -112,7 +117,9 @@ void Scene::draw() {
             "diffuseColor",
             algebra::vector3f{ bodyColor.r(), bodyColor.g(), bodyColor.b() } );
 
-        texturesList_[i].bind();
+        albedoTexturesList_[i].bind( 0 );
+        normalmapTexturesList_[i].bind( 1 );
+
         buffer.draw();
         buffer.release();
         ++i;

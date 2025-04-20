@@ -69,8 +69,9 @@ void Scene::process() {
             // Body material information
             const auto &albedoColor =
                 item[constants::scene::PARAM_OBJECT_ALBEDO_COLOR];
-            const auto &albedoTextureFile =
-                item[constants::scene::PARAM_OBJECT_ALBEDO_TEXTURE];
+
+            const std::string &materialName =
+                item[constants::scene::PARAM_OBJECT_MATERIAL_NAME];
 
             // Body vertecies data
             auto node = std::make_shared<Body>();
@@ -117,8 +118,14 @@ void Scene::process() {
             node->setTorque( torque );
 
             node->setAlbedoColor( albedoColor );
+
             node->setAlbedoTextureImage(
-                { basePath / "assets" / "textures" / albedoTextureFile } );
+                { basePath / "assets" / "textures" /
+                  std::format( "{}_color.tga", materialName ) } );
+
+            node->setNormalmapTextureImage(
+                { basePath / "assets" / "textures" /
+                  std::format( "{}_normalgl.tga", materialName ) } );
 
             // Append body to list
             bodyList_.push_back( std::move( node ) );

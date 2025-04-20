@@ -14,7 +14,8 @@ void Texture::clean() {
     glDeleteTextures( 1, &texture_ );
 }
 
-void Texture::bind() {
+void Texture::bind( GLuint bpoint ) {
+    glActiveTexture( GL_TEXTURE0 + bpoint );
     glBindTexture( GL_TEXTURE_2D, texture_ );
 }
 
