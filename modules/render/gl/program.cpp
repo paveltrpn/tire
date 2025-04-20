@@ -19,6 +19,8 @@ void Program::init( const std::string &name ) {
         clean();
     }
 
+    name_ = name;
+
     std::vector<GLuint> stageUnits{};
 
     // Try to find all files in assets directory, that satisfies
@@ -117,7 +119,7 @@ std::vector<std::pair<std::string, GLenum>> Program::scanForShaderFiles(
                 type = StagesSuffixMap.at( suffix );
             } catch ( std::out_of_range &e ) {
                 throw std::runtime_error( std::format(
-                    "gl::ShaderStorage === shader stage type {} not exist!",
+                    "gl::Program === shader stage type {} not exist!",
                     suffix ) );
             }
 
@@ -130,7 +132,7 @@ std::vector<std::pair<std::string, GLenum>> Program::scanForShaderFiles(
     // If directory not contains shader source files then throw
     if ( retItem.empty() ) {
         throw std::runtime_error(
-            std::format( "gl::ShaderStorage === shaders directory not contain "
+            std::format( "gl::Program === shaders directory not contain "
                          "files for shader {}",
                          name ) );
     }
@@ -145,13 +147,12 @@ std::string Program::readSource( const std::string &name ) {
         std::format( "{}/assets/shaders/{}", basePath, name );
 
     log::debug<DEBUG_OUTPUT_PROGRAM_CPP>(
-        "gl::ShaderStorage === loading shader file {}",
-        path.filename().string() );
+        "gl::Program === loading shader file {}", path.filename().string() );
 
     std::ifstream file{ path };
     if ( !file ) {
         throw std::runtime_error(
-            std::format( "gl::ShaderStorage === file not found: {}\n",
+            std::format( "gl::Program === file not found: {}\n",
                          path.filename().string() ) );
     }
 
@@ -185,7 +186,7 @@ GLuint Program::compile( GLenum stage, std::string_view source ) {
         log.reserve( logLength );
         glGetShaderInfoLog( shHandle, logLength, nullptr, log.data() );
         throw std::runtime_error( std::format(
-            "gl::ShaderStorage === can't compile program with trace:\n{}",
+            "gl::Program === can't compile program with trace:\n{}",
             log.data() ) );
     } else {
         return shHandle;
@@ -197,12 +198,12 @@ GLuint Program::getUniformLocation( const std::string &id ) {
 
     if ( location == GL_INVALID_VALUE ) {
         log::warning(
-            "gl::ShaderStorage ===  uniform location error - invalid value" );
+            "gl::Program ===  uniform location error - invalid value" );
     }
 
     if ( location == GL_INVALID_OPERATION ) {
         log::warning(
-            "gl::ShaderStorage ===  uniform location error - invalid "
+            "gl::Program ===  uniform location error - invalid "
             "operation" );
     }
 
@@ -210,7 +211,14 @@ GLuint Program::getUniformLocation( const std::string &id ) {
 }
 
 void Program::addUniform( const std::string &id ) {
+    if ( uniforms_.contains( id ) ) {
+        log::warning( "gl::Program === program {} already contains uniform {}",
+                      name_, id );
+        return;
+    }
+
     const auto location = glGetUniformLocation( program_, id.c_str() );
+
     uniforms_[id] = location;
 }
 

@@ -52,15 +52,23 @@ extern PFNGLATTACHSHADERPROC glAttachShader;
 extern PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
 extern PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
 extern PFNGLGETACTIVEATTRIBPROC glGetActiveAttrib;
+extern PFNGLUNIFORMMATRIX2FVPROC glUniformMatrix2fv;
+extern PFNGLUNIFORMMATRIX3FVPROC glUniformMatrix3fv;
 extern PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
+extern PFNGLUNIFORM2FVPROC glUniform2fv;
 extern PFNGLUNIFORM3FVPROC glUniform3fv;
+extern PFNGLUNIFORM4FVPROC glUniform4fv;
 extern PFNGLUNIFORM1FPROC glUniform1f;
 extern PFNGLUNIFORM1IPROC glUniform1i;
 extern PFNGLUNIFORM1UIPROC glUniform1ui;
 
 // GL_ARB_gpu_shader_fp64
+extern PFNGLUNIFORMMATRIX2DVPROC glUniformMatrix2dv;
+extern PFNGLUNIFORMMATRIX3DVPROC glUniformMatrix3dv;
 extern PFNGLUNIFORMMATRIX4DVPROC glUniformMatrix4dv;
+extern PFNGLUNIFORM2DVPROC glUniform2dv;
 extern PFNGLUNIFORM3DVPROC glUniform3dv;
+extern PFNGLUNIFORM4DVPROC glUniform4dv;
 extern PFNGLUNIFORM1DPROC glUniform1d;
 
 // Vertex buffers

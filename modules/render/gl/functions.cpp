@@ -29,15 +29,24 @@ PFNGLATTACHSHADERPROC glAttachShader{ nullptr };
 PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog{ nullptr };
 PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation{ nullptr };
 PFNGLGETACTIVEATTRIBPROC glGetActiveAttrib{ nullptr };
+
+PFNGLUNIFORMMATRIX2FVPROC glUniformMatrix2fv{ nullptr };
+PFNGLUNIFORMMATRIX3FVPROC glUniformMatrix3fv{ nullptr };
 PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv{ nullptr };
+PFNGLUNIFORM2FVPROC glUniform2fv{ nullptr };
 PFNGLUNIFORM3FVPROC glUniform3fv{ nullptr };
+PFNGLUNIFORM4FVPROC glUniform4fv{ nullptr };
 PFNGLUNIFORM1FPROC glUniform1f{ nullptr };
 PFNGLUNIFORM1IPROC glUniform1i{ nullptr };
 PFNGLUNIFORM1UIPROC glUniform1ui{ nullptr };
 
 // GL_ARB_gpu_shader_fp64
+PFNGLUNIFORMMATRIX2DVPROC glUniformMatrix2dv{ nullptr };
+PFNGLUNIFORMMATRIX3DVPROC glUniformMatrix3dv{ nullptr };
 PFNGLUNIFORMMATRIX4DVPROC glUniformMatrix4dv{ nullptr };
+PFNGLUNIFORM2DVPROC glUniform2dv{ nullptr };
 PFNGLUNIFORM3DVPROC glUniform3dv{ nullptr };
+PFNGLUNIFORM4DVPROC glUniform4dv{ nullptr };
 PFNGLUNIFORM1DPROC glUniform1d{ nullptr };
 
 // Vertex buffers
@@ -150,10 +159,20 @@ void init() {
     glGetActiveAttrib =
         getProcAddress<PFNGLGETACTIVEATTRIBPROC>( "glGetActiveAttrib" );
 
+    glUniformMatrix2fv =
+        getProcAddress<PFNGLUNIFORMMATRIX2FVPROC>( "glUniformMatrix2fv" );
+
+    glUniformMatrix3fv =
+        getProcAddress<PFNGLUNIFORMMATRIX3FVPROC>( "glUniformMatrix3fv" );
+
     glUniformMatrix4fv =
         getProcAddress<PFNGLUNIFORMMATRIX4FVPROC>( "glUniformMatrix4fv" );
 
+    glUniform2fv = getProcAddress<PFNGLUNIFORM2FVPROC>( "glUnifor23fv" );
+
     glUniform3fv = getProcAddress<PFNGLUNIFORM3FVPROC>( "glUniform3fv" );
+
+    glUniform4fv = getProcAddress<PFNGLUNIFORM4FVPROC>( "glUniform4fv" );
 
     glUniform1f = getProcAddress<PFNGLUNIFORM1FPROC>( "glUniform1f" );
 
@@ -162,10 +181,21 @@ void init() {
     glUniform1ui = getProcAddress<PFNGLUNIFORM1UIPROC>( "glUniform1ui" );
 
     // GL_ARB_gpu_shader_fp64
+
+    glUniformMatrix2dv =
+        getProcAddress<PFNGLUNIFORMMATRIX2DVPROC>( "glUniformMatrix2dv" );
+
+    glUniformMatrix3dv =
+        getProcAddress<PFNGLUNIFORMMATRIX3DVPROC>( "glUniformMatrix3dv" );
+
     glUniformMatrix4dv =
         getProcAddress<PFNGLUNIFORMMATRIX4DVPROC>( "glUniformMatrix4dv" );
 
+    glUniform2dv = getProcAddress<PFNGLUNIFORM2DVPROC>( "glUniform2dv" );
+
     glUniform3dv = getProcAddress<PFNGLUNIFORM3DVPROC>( "glUniform3dv" );
+
+    glUniform4dv = getProcAddress<PFNGLUNIFORM4DVPROC>( "glUniform4dv" );
 
     glUniform1d = getProcAddress<PFNGLUNIFORM1DPROC>( "glUniform1d" );
 

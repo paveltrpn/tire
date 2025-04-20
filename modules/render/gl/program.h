@@ -21,7 +21,11 @@
 #include "algebra/matrix3.h"
 #include "algebra/matrix4.h"
 
+#include "log/log.h"
+
 namespace tire::gl {
+
+using namespace algebra;
 
 enum class ShaderStageType {
     VERTEX,
@@ -74,6 +78,12 @@ struct Program final {
         std::is_same_v<T, unsigned int> ||
         std::is_same_v<T, int> void setScalarUniform( const std::string &id,
                                                       T value ) {
+        if ( !uniforms_.contains( id ) ) {
+            log::warning( "gl::Program === program {} not contains uniform {}",
+                          name_, id );
+            return;
+        }
+
         const auto location = uniforms_[id];
 
         if constexpr ( std::is_same_v<T, float> ) {
@@ -88,48 +98,111 @@ struct Program final {
         }
     }
 
+    template <algebra::VectorDouble T>
+    void setVectorUniform( const std::string &id, T value ) {
+        if ( !uniforms_.contains( id ) ) {
+            log::warning( "gl::Program === program {} not contains uniform {}",
+                          name_, id );
+            return;
+        }
+
+        const auto location = uniforms_[id];
+
+        if constexpr ( std::is_same_v<T, vector2d> ) {
+            glUniform2dv( location, 1, value.data() );
+        } else if constexpr ( std::is_same_v<T, vector3d> ) {
+            glUniform3dv( location, 1, value.data() );
+        } else if constexpr ( std::is_same_v<T, vector4d> ) {
+            glUniform4dv( location, 1, value.data() );
+        }
+    }
+
     template <algebra::VectorFloat T>
     void setVectorUniform( const std::string &id, T value ) {
+        if ( !uniforms_.contains( id ) ) {
+            log::warning( "gl::Program === program {} not contains uniform {}",
+                          name_, id );
+            return;
+        }
+
         const auto location = uniforms_[id];
 
         if constexpr ( std::is_same_v<T, algebra::vector2f> ) {
             glUniform2fv( location, 1, value.data() );
         } else if constexpr ( std::is_same_v<T, algebra::vector3f> ) {
             glUniform3fv( location, 1, value.data() );
-        } else if constexpr ( std::is_same_v<typename T::value_type, float> &&
-                              T::size == 4 ) {
+        } else if constexpr ( std::is_same_v<T, vector4f> ) {
             glUniform4fv( location, 1, value.data() );
-        } else if constexpr ( std::is_same_v<typename T::value_type, int> &&
-                              T::size == 2 ) {
+        }
+    }
+
+    template <algebra::VectorInt T>
+    void setVectorUniform( const std::string &id, T value ) {
+        if ( !uniforms_.contains( id ) ) {
+            log::warning( "gl::Program === program {} not contains uniform {}",
+                          name_, id );
+            return;
+        }
+
+        const auto location = uniforms_[id];
+
+        if constexpr ( std::is_same_v<T, algebra::vector2f> ) {
             glUniform2iv( location, 1, value.data() );
-        } else if constexpr ( std::is_same_v<typename T::value_type, int> &&
-                              T::size == 3 ) {
+        } else if constexpr ( std::is_same_v<T, algebra::vector3f> ) {
             glUniform3iv( location, 1, value.data() );
-        } else if constexpr ( std::is_same_v<typename T::value_type, int> &&
-                              T::size == 4 ) {
+        } else if constexpr ( std::is_same_v<T, vector4f> ) {
             glUniform4iv( location, 1, value.data() );
-        } else if constexpr ( std::is_same_v<typename T::value_type,
-                                             unsigned int> &&
-                              T::size == 2 ) {
+        }
+    }
+
+    template <algebra::VectorUInt T>
+    void setVectorUniform( const std::string &id, T value ) {
+        if ( !uniforms_.contains( id ) ) {
+            log::warning( "gl::Program === program {} not contains uniform {}",
+                          name_, id );
+            return;
+        }
+
+        const auto location = uniforms_[id];
+
+        if constexpr ( std::is_same_v<T, algebra::vector2f> ) {
             glUniform2uiv( location, 1, value.data() );
-        } else if constexpr ( std::is_same_v<typename T::value_type,
-                                             unsigned int> &&
-                              T::size == 3 ) {
+        } else if constexpr ( std::is_same_v<T, algebra::vector3f> ) {
             glUniform3uiv( location, 1, value.data() );
-        } else if constexpr ( std::is_same_v<typename T::value_type,
-                                             unsigned int> &&
-                              T::size == 4 ) {
+        } else if constexpr ( std::is_same_v<T, vector4f> ) {
             glUniform4uiv( location, 1, value.data() );
         }
     }
 
-    // only declaration now
     template <algebra::MatrixDouble T>
-    void setMatrixUniform( GLuint location, GLboolean transpose, T value );
+    void setMatrixUniform( const std::string &id, GLboolean transpose,
+                           T value ) {
+        if ( !uniforms_.contains( id ) ) {
+            log::warning( "gl::Program === program {} not contains uniform {}",
+                          name_, id );
+            return;
+        }
+
+        const auto location = uniforms_[id];
+
+        if constexpr ( std::is_same_v<T, algebra::matrix2d> ) {
+            glUniformMatrix2dv( location, 1, transpose, value.data() );
+        } else if constexpr ( std::is_same_v<T, algebra::matrix3d> ) {
+            glUniformMatrix3dv( location, 1, transpose, value.data() );
+        } else if constexpr ( std::is_same_v<T, algebra::matrix4d> ) {
+            glUniformMatrix4dv( location, 1, transpose, value.data() );
+        }
+    }
 
     template <algebra::MatrixFloat T>
     void setMatrixUniform( const std::string &id, GLboolean transpose,
                            T value ) {
+        if ( !uniforms_.contains( id ) ) {
+            log::warning( "gl::Program === program {} not contains uniform {}",
+                          name_, id );
+            return;
+        }
+
         const auto location = uniforms_[id];
 
         if constexpr ( std::is_same_v<T, algebra::matrix2f> ) {
@@ -151,6 +224,7 @@ private:
 
 private:
     GLuint program_{};
+    std::string name_{};
     std::unordered_map<std::string, GLint> uniforms_{};
 };
 
