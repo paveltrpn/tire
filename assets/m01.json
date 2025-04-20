@@ -1002,68 +1002,6 @@
             ]
         },
         {
-            "name": "west_pillar_01",
-            "type": "prism",
-            "albedo_color": "LightGrey",
-            "albedo_texture": "wall_stone.tga",
-            "position": [
-                -10.3,
-                2,
-                3.6
-            ],
-            "orientation": [
-                0,
-                0,
-                0
-            ],
-            "scale": [
-                2,
-                6,
-                2
-            ],
-            "velocity": [
-                0,
-                0,
-                0
-            ],
-            "torque": [
-                0,
-                0,
-                0
-            ]
-        },
-        {
-            "name": "west_pillar_02",
-            "type": "prism",
-            "albedo_color": "LightGrey",
-            "albedo_texture": "wall_stone.tga",
-            "position": [
-                -11.3,
-                2,
-                -4.3
-            ],
-            "orientation": [
-                0,
-                60,
-                0
-            ],
-            "scale": [
-                2,
-                5.5,
-                2
-            ],
-            "velocity": [
-                0,
-                0,
-                0
-            ],
-            "torque": [
-                0,
-                0,
-                0
-            ]
-        },
-        {
             "name": "east_pillar_01",
             "type": "prism",
             "albedo_color": "LightGrey",
@@ -1268,6 +1206,37 @@
                 10.4,
                 5.5,
                 10.4
+            ],
+            "velocity": [
+                0,
+                0,
+                0
+            ],
+            "torque": [
+                0,
+                0,
+                0
+            ]
+        },
+        {
+            "name": "west_upper_arch_01",
+            "type": "arch01",
+            "albedo_color": "white",
+            "albedo_texture": "wall_stone.tga",
+            "position": [
+                -11,
+                5.0,
+                0.0
+            ],
+            "orientation": [
+                0.0,
+                11,
+                0.0
+            ],
+            "scale": [
+                5.0,
+                9.0,
+                6.5
             ],
             "velocity": [
                 0,

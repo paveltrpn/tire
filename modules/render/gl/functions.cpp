@@ -33,6 +33,12 @@ PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv{ nullptr };
 PFNGLUNIFORM3FVPROC glUniform3fv{ nullptr };
 PFNGLUNIFORM1FPROC glUniform1f{ nullptr };
 PFNGLUNIFORM1IPROC glUniform1i{ nullptr };
+PFNGLUNIFORM1UIPROC glUniform1ui{ nullptr };
+
+// GL_ARB_gpu_shader_fp64
+PFNGLUNIFORMMATRIX4DVPROC glUniformMatrix4dv{ nullptr };
+PFNGLUNIFORM3DVPROC glUniform3dv{ nullptr };
+PFNGLUNIFORM1DPROC glUniform1d{ nullptr };
 
 // Vertex buffers
 PFNGLGENBUFFERSPROC glGenBuffers{ nullptr };
@@ -152,6 +158,16 @@ void init() {
     glUniform1f = getProcAddress<PFNGLUNIFORM1FPROC>( "glUniform1f" );
 
     glUniform1i = getProcAddress<PFNGLUNIFORM1IPROC>( "glUniform1i" );
+
+    glUniform1ui = getProcAddress<PFNGLUNIFORM1UIPROC>( "glUniform1ui" );
+
+    // GL_ARB_gpu_shader_fp64
+    glUniformMatrix4dv =
+        getProcAddress<PFNGLUNIFORMMATRIX4DVPROC>( "glUniformMatrix4dv" );
+
+    glUniform3dv = getProcAddress<PFNGLUNIFORM3DVPROC>( "glUniform3dv" );
+
+    glUniform1d = getProcAddress<PFNGLUNIFORM1DPROC>( "glUniform1d" );
 
     // Vertex buffers
     glGenBuffers = getProcAddress<PFNGLGENBUFFERSPROC>( "glGenBuffers" );

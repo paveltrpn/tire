@@ -85,6 +85,7 @@ protected:
     int width_{};
     int height_{};
 
+    // The Scene
     std::shared_ptr<Scene> scene_{};
 
 private:

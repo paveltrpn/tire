@@ -56,6 +56,12 @@ extern PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
 extern PFNGLUNIFORM3FVPROC glUniform3fv;
 extern PFNGLUNIFORM1FPROC glUniform1f;
 extern PFNGLUNIFORM1IPROC glUniform1i;
+extern PFNGLUNIFORM1UIPROC glUniform1ui;
+
+// GL_ARB_gpu_shader_fp64
+extern PFNGLUNIFORMMATRIX4DVPROC glUniformMatrix4dv;
+extern PFNGLUNIFORM3DVPROC glUniform3dv;
+extern PFNGLUNIFORM1DPROC glUniform1d;
 
 // Vertex buffers
 extern PFNGLGENBUFFERSPROC glGenBuffers;

@@ -17,6 +17,8 @@ struct Timer final {
 
     ~Timer() = default;
 
+#define TO_SECOND 0.000001
+
     /*
      * @return - frame time in microseconds
     **/
@@ -27,19 +29,19 @@ struct Timer final {
 
     [[nodiscard]]
     float floatFrameDuration() const {
-        return static_cast<float>( frameDuration_ ) * 0.000001f;
+        return static_cast<float>( frameDuration_ ) * TO_SECOND;
     };
 
     [[nodiscard]]
     double doubleFrameDuration() const {
-        return static_cast<double>( frameDuration_ ) * 0.000001;
+        return static_cast<double>( frameDuration_ ) * TO_SECOND;
     };
 
     template <typename T>
         requires std::is_same_v<float, T> ||
         std::is_same_v<double, T> [[nodiscard]]
         T frameDuration() {
-        return static_cast<T>( frameDuration_ ) * static_cast<T>( 0.000001 );
+        return static_cast<T>( frameDuration_ ) * static_cast<T>( TO_SECOND );
     }
 
     [[nodiscard]]
@@ -50,7 +52,7 @@ struct Timer final {
     [[nodiscard]]
     float framesPerSecond() const {
         return static_cast<float>( frameCountAccumulator_ ) /
-               ( static_cast<float>( frameDurationAccumulator_ ) * 0.000001f );
+               ( static_cast<float>( frameDurationAccumulator_ ) * TO_SECOND );
     }
 
     [[nodiscard]]
