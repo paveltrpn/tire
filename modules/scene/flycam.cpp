@@ -7,7 +7,8 @@
 
 namespace tire {
 
-Flycam::Flycam( const algebra::vector3d &eye, float azimuth, float elevation ) {
+Flycam::Flycam( const algebra::vector3<value_type> &eye, value_type azimuth,
+                value_type elevation ) {
     azimuth_ = azimuth;
     elevation_ = elevation;
     roll_ = 0.0;
@@ -31,7 +32,7 @@ void Flycam::strafeRight() {
     eye_.minus( right_.scale( 0.2 ) );
 }
 
-void Flycam::rotate( float azimuthOffset, float elevayionOffset ) {
+void Flycam::rotate( value_type azimuthOffset, value_type elevayionOffset ) {
     azimuth_ += azimuthOffset;
 
     // Clamp azimuth
@@ -45,29 +46,30 @@ void Flycam::rotate( float azimuthOffset, float elevayionOffset ) {
     if ( elevation_ < -ELEVATION_BOUND ) elevation_ = -ELEVATION_BOUND;
 }
 
-void Flycam::setPosition( const algebra::vector3d &pos ) {
+void Flycam::setPosition( const algebra::vector3<value_type> &pos ) {
     eye_ = pos;
 }
 
-void Flycam::setAngles( float azimuth, float elevation, float roll ) {
+void Flycam::setAngles( value_type azimuth, value_type elevation,
+                        value_type roll ) {
     azimuth_ = azimuth;
     elevation_ = elevation;
     roll_ = roll;
 }
 
-void Flycam::setFov( float fov ) {
+void Flycam::setFov( value_type fov ) {
     fov_ = fov;
 }
 
-void Flycam::setAspect( float aspect ) {
+void Flycam::setAspect( value_type aspect ) {
     aspect_ = aspect;
 }
 
-void Flycam::setNcp( float ncp ) {
+void Flycam::setNcp( value_type ncp ) {
     ncp_ = ncp;
 }
 
-void Flycam::setFcp( float fcp ) {
+void Flycam::setFcp( value_type fcp ) {
     fcp_ = fcp;
 }
 
