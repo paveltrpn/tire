@@ -26,6 +26,9 @@ void RenderVK::preFrame() {
 
     // Update scene objects
     scene_->traverse( timer_.frameDuration<float>() );
+
+    scene_->camera().traverse();
+
     scene_->submit();
 };
 
