@@ -1,12 +1,15 @@
 
 #pragma once
 
+#include <unordered_map>
+
 #include <GL/gl.h>
 
 #include "scene/scene.h"
 #include "buffers/body_buffer.h"
 #include "program.h"
 #include "texture.h"
+#include "material.h"
 
 namespace tire::gl {
 
@@ -24,6 +27,8 @@ private:
     std::vector<gl::Texture> normalmapTexturesList_{};
 
     gl::Program pplTexture{};
+
+    std::unordered_map<std::string, TextureSet> materialSet_{};
 };
 
 }  // namespace tire::gl

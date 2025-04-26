@@ -3,6 +3,7 @@
 #include <GL/gl.h>
 #include <GL/glcorearb.h>
 #include "functions.h"
+#include "render/gl/material.h"
 #include "render/gl/texture.h"
 
 import config;
@@ -15,8 +16,8 @@ Scene::Scene( const std::filesystem::path &fname )
     buffersList_.reserve( nodeListSize );
 
     for ( size_t i{}; i < nodeListSize; ++i ) {
+        // Generate OpneGl vertex buffers.
         BodyBuffer buffer{};
-
         buffer.generate();
         buffer.bind();
         buffer.bindVertexData( bodyList_[i]->verteciesCount(),
@@ -29,6 +30,7 @@ Scene::Scene( const std::filesystem::path &fname )
         // Store object buffers id's
         buffersList_.push_back( std::move( buffer ) );
 
+        // Load diffuse textures.
         gl::Texture albedoTexture{};
         albedoTexture.generate();
         albedoTexture.bind( 0 );
@@ -42,6 +44,12 @@ Scene::Scene( const std::filesystem::path &fname )
         const auto &[ntw, nth] = bodyList_[i]->normalmapTextureSize();
         normalTexture.load( ntw, nth, bodyList_[i]->normalmapTextureData() );
         normalmapTexturesList_.push_back( std::move( normalTexture ) );
+
+        // Load textures that requres by body from bodys list.
+        const auto &materialName = bodyList_[i]->materialName();
+        if ( !materialSet_.contains( materialName ) ) {
+            materialSet_[materialName] = TextureSet{ materialName };
+        }
     }
 
     // Load shaders

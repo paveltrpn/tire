@@ -58,6 +58,7 @@ struct Body final {
     void setScale( const vector3<float_type> &value );
     void setVelocity( const vector3<float_type> &value );
     void setTorque( const vector3<float_type> &value );
+    void setMaterialName( const std::string &value );
 
     [[nodiscard]]
     vector3<float_type> position() const {
@@ -83,6 +84,11 @@ struct Body final {
     vector3<float_type> torque() const {
         return torque_;
     }
+
+    [[nodiscard]]
+    std::string materialName() const {
+        return materialName_;
+    };
 
     void setAlbedoTextureImage( const std::string &file );
     std::pair<int, int> albedoTextureSize();
@@ -121,6 +127,8 @@ private:
     Colorf albedoColor_{};
     std::unique_ptr<Tga> albedoTextureImage_;
     std::unique_ptr<Tga> normalmapTextureImage_;
+
+    std::string materialName_{};
 };
 
 }  // namespace tire

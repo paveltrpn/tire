@@ -101,7 +101,7 @@ std::vector<std::pair<std::string, GLenum>> Program::scanForShaderFiles(
 
     // Iterate over directory
     std::vector<std::pair<std::string, GLenum>> retItem;
-    for ( auto const &entry :
+    for ( auto &&entry :
           std::filesystem::directory_iterator{ shaderFilesPath } ) {
         // Take only "name" part of filename, i.e. except
         // extension and path.
@@ -124,8 +124,8 @@ std::vector<std::pair<std::string, GLenum>> Program::scanForShaderFiles(
             }
 
             // Store available shader file name and it's shader stage type
-            retItem.push_back(
-                std::make_pair( std::format( "{}.glsl", fileName ), type ) );
+            retItem.emplace_back(
+                std::pair{ std::format( "{}.glsl", fileName ), type } );
         }
     }
 

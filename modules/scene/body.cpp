@@ -68,6 +68,10 @@ void Body::setTorque( const vector3<float_type> &value ) {
     torque_ = value;
 }
 
+void Body::setMaterialName( const std::string &value ) {
+    materialName_ = value;
+}
+
 void Body::setAlbedoTextureImage( const std::string &file ) {
     albedoTextureImage_ = std::make_unique<Tga>( file );
 }

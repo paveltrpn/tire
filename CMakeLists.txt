@@ -104,6 +104,8 @@ add_library(render
     modules/render/gl/program.cpp
     modules/render/gl/texture.h
     modules/render/gl/texture.cpp
+    modules/render/gl/material.h
+    modules/render/gl/material.cpp
     modules/render/vk/rendervk.cpp
     modules/render/vk/rendervk.h
     modules/render/vk/context.h

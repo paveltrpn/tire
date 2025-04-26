@@ -116,7 +116,7 @@ void Scene::process() {
             node->setScale( scale );
             node->setVelocity( velosity );
             node->setTorque( torque );
-
+            node->setMaterialName( materialName );
             node->setAlbedoColor( albedoColor );
 
             node->setAlbedoTextureImage(
