@@ -160,17 +160,17 @@ requires Algebraic<T> struct matrix3 final {
         auto sinr = std::sin( roll );
         auto cosr = std::cos( roll );
 
-        ( *this )[0] = cosy * cosr - siny * cosp * sinr;
-        ( *this )[1] = -cosy * sinr - siny * cosp * cosr;
-        ( *this )[2] = siny * sinp;
+        data_[0] = cosy * cosr - siny * cosp * sinr;
+        data_[1] = -cosy * sinr - siny * cosp * cosr;
+        data_[2] = siny * sinp;
 
-        ( *this )[3] = siny * cosr + cosy * cosp * sinr;
-        ( *this )[4] = -siny * sinr + cosy * cosp * cosr;
-        ( *this )[5] = -cosy * sinp;
+        data_[3] = siny * cosr + cosy * cosp * sinr;
+        data_[4] = -siny * sinr + cosy * cosp * cosr;
+        data_[5] = -cosy * sinp;
 
-        ( *this )[6] = sinp * sinr;
-        ( *this )[7] = sinp * cosr;
-        ( *this )[8] = cosp;
+        data_[6] = sinp * sinr;
+        data_[7] = sinp * cosr;
+        data_[8] = cosp;
     }
 
 private:

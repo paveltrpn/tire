@@ -42,22 +42,6 @@ void Flycam::setAngles( value_type azimuth, value_type elevation,
     roll_ = roll;
 }
 
-void Flycam::setFov( value_type fov ) {
-    fov_ = fov;
-}
-
-void Flycam::setAspect( value_type aspect ) {
-    aspect_ = aspect;
-}
-
-void Flycam::setNcp( value_type ncp ) {
-    ncp_ = ncp;
-}
-
-void Flycam::setFcp( value_type fcp ) {
-    fcp_ = fcp;
-}
-
 void Flycam::setMoveBit( FlycamMoveBits bit ) {
     moveMask_ |= ( (uint32_t)1 << bit );
 }

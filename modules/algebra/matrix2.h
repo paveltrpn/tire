@@ -79,12 +79,12 @@ requires Algebraic<T> struct matrix2 final {
     }
 
     void multiply( const self &rhs ) {
-        auto data0 = ( *this )[0];
-        auto data1 = ( *this )[1];
-        ( *this )[0] = rhs[0] * ( *this )[0] + rhs[1] * ( *this )[2];
-        ( *this )[1] = rhs[0] * ( *this )[1] + rhs[1] * ( *this )[3];
-        ( *this )[2] = rhs[2] * data0 + rhs[3] * ( *this )[2];
-        ( *this )[3] = rhs[2] * data1 + rhs[3] * ( *this )[3];
+        auto data0 = data_[0];
+        auto data1 = data_[1];
+        data_[0] = rhs[0] * data_[0] + rhs[1] * data_[2];
+        data_[1] = rhs[0] * data_[1] + rhs[1] * data_[3];
+        data_[2] = rhs[2] * data0 + rhs[3] * data_[2];
+        data_[3] = rhs[2] * data1 + rhs[3] * data_[3];
     }
 
     [[nodiscard]] self operator*( const self &rhs ) {

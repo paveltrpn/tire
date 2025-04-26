@@ -16,8 +16,8 @@
 
 namespace tire::algebra {
 
-template <typename T>
-requires Algebraic<T> struct matrix4 final {
+template <Algebraic T>
+struct matrix4 final {
     using value_type = T;
     using self = matrix4<value_type>;
     using reference = value_type &;
@@ -97,7 +97,7 @@ requires Algebraic<T> struct matrix4 final {
         data_[15] = T{ 1 };
     }
 
-    [[nodiscard]] self transpose() {
+    [[nodiscard]] self transpose() const {
         value_type tmp;
         auto rt = *this;
 
@@ -177,12 +177,12 @@ requires Algebraic<T> struct matrix4 final {
                           this32 * rhs[2, 3] + ( *this )[3, 3] * rhs[3, 3];
     }
 
-    self operator*( const self &rhs ) {
-        ( *this ).multiply( rhs );
+    self &operator*( const self &rhs ) {
+        this->multiply( rhs );
         return *this;
     }
 
-    vector3<value_type> mult_vector3( const vector3<value_type> &v ) {
+    vector3<value_type> mult_vector3( const vector3<value_type> &v ) const {
         value_type w{};
 
         auto rx = v.x() * ( *this )[0] + v.y() * ( *this )[1] +
@@ -205,7 +205,7 @@ requires Algebraic<T> struct matrix4 final {
         return { value_type( rx ), value_type( ry ), value_type( rz ) };
     }
 
-    vector4<value_type> mult_vector4( const vector4<value_type> &v ) {
+    vector4<value_type> mult_vector4( const vector4<value_type> &v ) const {
         vector4<value_type> rt;
 
         rt[0] = v[0] * ( *this )[0] + v[1] * ( *this )[1] +
@@ -230,25 +230,25 @@ requires Algebraic<T> struct matrix4 final {
         auto sinr = std::sin( roll );
         auto cosr = std::cos( roll );
 
-        ( *this )[0] = cosy * cosr - siny * cosp * sinr;
-        ( *this )[1] = -cosy * sinr - siny * cosp * cosr;
-        ( *this )[2] = siny * sinp;
-        ( *this )[3] = 0.0;
+        data_[0] = cosy * cosr - siny * cosp * sinr;
+        data_[1] = -cosy * sinr - siny * cosp * cosr;
+        data_[2] = siny * sinp;
+        data_[3] = 0.0;
 
-        ( *this )[4] = siny * cosr + cosy * cosp * sinr;
-        ( *this )[5] = -siny * sinr + cosy * cosp * cosr;
-        ( *this )[6] = -cosy * sinp;
-        ( *this )[7] = 0.0;
+        data_[4] = siny * cosr + cosy * cosp * sinr;
+        data_[5] = -siny * sinr + cosy * cosp * cosr;
+        data_[6] = -cosy * sinp;
+        data_[7] = 0.0;
 
-        ( *this )[8] = sinp * sinr;
-        ( *this )[9] = sinp * cosr;
-        ( *this )[10] = cosp;
-        ( *this )[11] = 0.0;
+        data_[8] = sinp * sinr;
+        data_[9] = sinp * cosr;
+        data_[10] = cosp;
+        data_[11] = 0.0;
 
-        ( *this )[12] = 0.0;
-        ( *this )[13] = 0.0;
-        ( *this )[14] = 0.0;
-        ( *this )[15] = 1.0;
+        data_[12] = 0.0;
+        data_[13] = 0.0;
+        data_[14] = 0.0;
+        data_[15] = 1.0;
     }
 
     void perspective( value_type fov, value_type aspect, value_type near,
@@ -270,28 +270,28 @@ requires Algebraic<T> struct matrix4 final {
         value_type tanFov = sinFov / cosFov;
         value_type focal = static_cast<value_type>( 1.0 ) / tanFov;
 
-        ( *this )[0] = focal / aspect;
-        ( *this )[1] = value_type{ 0 };
-        ( *this )[2] = value_type{ 0 };
-        ( *this )[3] = value_type{ 0 };
-        ( *this )[4] = value_type{ 0 };
-        ( *this )[5] = focal;
-        ( *this )[6] = value_type{ 0 };
-        ( *this )[7] = value_type{ 0 };
-        ( *this )[8] = value_type{ 0 };
-        ( *this )[9] = value_type{ 0 };
-        ( *this )[11] = value_type{ -1 };
-        ( *this )[12] = value_type{ 0 };
-        ( *this )[13] = value_type{ 0 };
-        ( *this )[15] = value_type{ 0 };
+        data_[0] = focal / aspect;
+        data_[1] = value_type{ 0 };
+        data_[2] = value_type{ 0 };
+        data_[3] = value_type{ 0 };
+        data_[4] = value_type{ 0 };
+        data_[5] = focal;
+        data_[6] = value_type{ 0 };
+        data_[7] = value_type{ 0 };
+        data_[8] = value_type{ 0 };
+        data_[9] = value_type{ 0 };
+        data_[11] = value_type{ -1 };
+        data_[12] = value_type{ 0 };
+        data_[13] = value_type{ 0 };
+        data_[15] = value_type{ 0 };
 
         if ( far >= std::numeric_limits<value_type>::epsilon() ) {
             value_type nf{ static_cast<value_type>( 1.0 ) / ( far - near ) };
-            ( *this )[10] = -( far + near ) * nf;
-            ( *this )[14] = -( 2.0 * far * near ) * nf;
+            data_[10] = -( far + near ) * nf;
+            data_[14] = -( 2.0 * far * near ) * nf;
         } else {
-            ( *this )[10] = value_type{ -1 };
-            ( *this )[14] = -2.0 * near;
+            data_[10] = value_type{ -1 };
+            data_[14] = -2.0 * near;
         }
     }
 
@@ -315,25 +315,25 @@ requires Algebraic<T> struct matrix4 final {
         value_type focal = 1.0 / tanFov;
         value_type nf{ near / ( far - near ) };
 
-        ( *this )[0] = focal / aspect;
-        ( *this )[4] = value_type{ 0 };
-        ( *this )[8] = value_type{ 0 };
-        ( *this )[12] = value_type{ 0 };
+        data_[0] = focal / aspect;
+        data_[4] = value_type{ 0 };
+        data_[8] = value_type{ 0 };
+        data_[12] = value_type{ 0 };
 
-        ( *this )[1] = value_type{ 0 };
-        ( *this )[5] = -focal;
-        ( *this )[9] = value_type{ 0 };
-        ( *this )[13] = value_type{ 0 };
+        data_[1] = value_type{ 0 };
+        data_[5] = -focal;
+        data_[9] = value_type{ 0 };
+        data_[13] = value_type{ 0 };
 
-        ( *this )[2] = value_type{ 0 };
-        ( *this )[6] = value_type{ 0 };
-        ( *this )[10] = nf;
-        ( *this )[14] = far * nf;
+        data_[2] = value_type{ 0 };
+        data_[6] = value_type{ 0 };
+        data_[10] = nf;
+        data_[14] = far * nf;
 
-        ( *this )[3] = value_type{ 0 };
-        ( *this )[7] = value_type{ 0 };
-        ( *this )[11] = value_type{ -1 };
-        ( *this )[15] = value_type{ 0 };
+        data_[3] = value_type{ 0 };
+        data_[7] = value_type{ 0 };
+        data_[11] = value_type{ -1 };
+        data_[15] = value_type{ 0 };
 
         // TODO: Check and write in transpose version.
         /*
@@ -380,25 +380,25 @@ requires Algebraic<T> struct matrix4 final {
         value_type focal = static_cast<value_type>( 1.0 ) / tanFov;
         value_type nf{ far / ( far - near ) };
 
-        ( *this )[0] = focal / aspect;
-        ( *this )[1] = value_type{ 0 };
-        ( *this )[2] = value_type{ 0 };
-        ( *this )[3] = value_type{ 0 };
+        data_[0] = focal / aspect;
+        data_[1] = value_type{ 0 };
+        data_[2] = value_type{ 0 };
+        data_[3] = value_type{ 0 };
 
-        ( *this )[4] = value_type{ 0 };
-        ( *this )[5] = focal;
-        ( *this )[6] = value_type{ 0 };
-        ( *this )[7] = value_type{ 0 };
+        data_[4] = value_type{ 0 };
+        data_[5] = focal;
+        data_[6] = value_type{ 0 };
+        data_[7] = value_type{ 0 };
 
-        ( *this )[8] = value_type{ 0 };
-        ( *this )[9] = value_type{ 0 };
-        ( *this )[10] = nf;
-        ( *this )[11] = -near * nf;
+        data_[8] = value_type{ 0 };
+        data_[9] = value_type{ 0 };
+        data_[10] = nf;
+        data_[11] = -near * nf;
 
-        ( *this )[12] = value_type{ 0 };
-        ( *this )[13] = value_type{ 0 };
-        ( *this )[14] = value_type{ 1 };
-        ( *this )[15] = value_type{ 0 };
+        data_[12] = value_type{ 0 };
+        data_[13] = value_type{ 0 };
+        data_[14] = value_type{ 1 };
+        data_[15] = value_type{ 0 };
     }
 
     void lookAt( const vector3<value_type> &eye,
@@ -454,111 +454,126 @@ requires Algebraic<T> struct matrix4 final {
             y2 *= len;
         }
 
-        ( *this )[0] = x0;
-        ( *this )[1] = y0;
-        ( *this )[2] = z0;
-        ( *this )[3] = 0.0;
-        ( *this )[4] = x1;
-        ( *this )[5] = y1;
-        ( *this )[6] = z1;
-        ( *this )[7] = 0.0;
-        ( *this )[8] = x2;
-        ( *this )[9] = y2;
-        ( *this )[10] = z2;
-        ( *this )[11] = 0.0;
-        ( *this )[12] = -( x0 * eye[0] + x1 * eye[1] + x2 * eye[2] );
-        ( *this )[13] = -( y0 * eye[0] + y1 * eye[1] + y2 * eye[2] );
-        ( *this )[14] = -( z0 * eye[0] + z1 * eye[1] + z2 * eye[2] );
-        ( *this )[15] = 1.0;
+        data_[0] = x0;
+        data_[1] = y0;
+        data_[2] = z0;
+        data_[3] = 0.0;
+        data_[4] = x1;
+        data_[5] = y1;
+        data_[6] = z1;
+        data_[7] = 0.0;
+        data_[8] = x2;
+        data_[9] = y2;
+        data_[10] = z2;
+        data_[11] = 0.0;
+        data_[12] = -( x0 * eye[0] + x1 * eye[1] + x2 * eye[2] );
+        data_[13] = -( y0 * eye[0] + y1 * eye[1] + y2 * eye[2] );
+        data_[14] = -( z0 * eye[0] + z1 * eye[1] + z2 * eye[2] );
+        data_[15] = 1.0;
     }
 
     void orthographic( value_type left, value_type right, value_type bottom,
                        value_type top, value_type near, value_type far ) {
-        ( *this )[0] = 2.0 / ( right - left );
-        ( *this )[1] = 0.0;
-        ( *this )[2] = 0.0;
-        ( *this )[3] = 0.0;
+        data_[0] = 2.0 / ( right - left );
+        data_[1] = 0.0;
+        data_[2] = 0.0;
+        data_[3] = 0.0;
 
-        ( *this )[4] = 0.0;
-        ( *this )[5] = 2.0 / ( top - bottom );
-        ( *this )[6] = 0.0;
-        ( *this )[7] = 0.0;
+        data_[4] = 0.0;
+        data_[5] = 2.0 / ( top - bottom );
+        data_[6] = 0.0;
+        data_[7] = 0.0;
 
-        ( *this )[8] = 0.0;
-        ( *this )[9] = 0.0;
-        ( *this )[10] = -2.0 / ( far - near );
-        ( *this )[11] = 0.0;
+        data_[8] = 0.0;
+        data_[9] = 0.0;
+        data_[10] = -2.0 / ( far - near );
+        data_[11] = 0.0;
 
-        ( *this )[12] = -( right + left ) / ( right - left );
-        ( *this )[13] = -( top + bottom ) / ( top - bottom );
-        ( *this )[14] = -( far + near ) / ( far - near );
-        ( *this )[15] = 1.0;
+        data_[12] = -( right + left ) / ( right - left );
+        data_[13] = -( top + bottom ) / ( top - bottom );
+        data_[14] = -( far + near ) / ( far - near );
+        data_[15] = 1.0;
     }
 
     void scale( const vector3<value_type> &offset ) {
         idtt();
 
-        ( *this )[0] = offset.x();
-        ( *this )[5] = offset.y();
-        ( *this )[10] = offset.z();
+        data_[0] = offset.x();
+        data_[5] = offset.y();
+        data_[10] = offset.z();
     }
 
     void translate( const vector3<value_type> &offset ) {
         idtt();
 
-        ( *this )[3] = offset.x();
-        ( *this )[7] = offset.y();
-        ( *this )[11] = offset.z();
+        data_[3] = offset.x();
+        data_[7] = offset.y();
+        data_[11] = offset.z();
     }
 
     void translate( value_type dx, value_type dy, value_type dz ) {
         idtt();
 
-        ( *this )[3] = dx;
-        ( *this )[7] = dy;
-        ( *this )[11] = dz;
+        data_[3] = dx;
+        data_[7] = dy;
+        data_[11] = dz;
     }
 
     void rotation_yaw( value_type angl ) {
         idtt();
+
         value_type sa{}, ca{};
 
         auto a = degToRad( angl );
-        sa = std::sin( a );
-        ca = std::cos( a );
 
-        ( *this )[5] = ca;
-        ( *this )[6] = -sa;
-        ( *this )[9] = sa;
-        ( *this )[10] = ca;
+        if constexpr ( std::is_same_v<value_type, double> ) {
+            sincos( a, &sa, &ca );
+        } else if constexpr ( std::is_same_v<value_type, float> ) {
+            sincosf( a, &sa, &ca );
+        }
+
+        data_[5] = ca;
+        data_[6] = -sa;
+        data_[9] = sa;
+        data_[10] = ca;
     }
 
     void rotation_pitch( value_type angl ) {
         idtt();
+
         value_type sa{}, ca{};
 
         auto a = degToRad( angl );
-        sa = std::sin( a );
-        ca = std::cos( a );
 
-        ( *this )[0] = ca;
-        ( *this )[2] = sa;
-        ( *this )[8] = -sa;
-        ( *this )[10] = ca;
+        if constexpr ( std::is_same_v<value_type, double> ) {
+            sincos( a, &sa, &ca );
+        } else if constexpr ( std::is_same_v<value_type, float> ) {
+            sincosf( a, &sa, &ca );
+        }
+
+        data_[0] = ca;
+        data_[2] = sa;
+        data_[8] = -sa;
+        data_[10] = ca;
     }
 
     void rotation_roll( value_type angl ) {
         idtt();
+
         value_type sa{}, ca{};
 
         auto a = degToRad( angl );
-        sa = std::sin( a );
-        ca = std::cos( a );
 
-        ( *this )[0] = ca;
-        ( *this )[1] = -sa;
-        ( *this )[4] = sa;
-        ( *this )[5] = ca;
+        if constexpr ( std::is_same_v<value_type, double> ) {
+            sincos( a, &sa, &ca );
+        } else if constexpr ( std::is_same_v<value_type, float> ) {
+            sincosf( a, &sa, &ca );
+        }
+
+        data_[0] = ca;
+        data_[1] = -sa;
+        data_[4] = sa;
+        data_[5] = ca;
     }
 
     void euler( value_type yaw, value_type pitch, value_type roll ) {
@@ -583,25 +598,25 @@ requires Algebraic<T> struct matrix4 final {
         vy = ax.y();
         vz = ax.z();
 
-        ( *this )[0] = cosphi + ( 1.0 - cosphi ) * vx * vx;
-        ( *this )[1] = ( 1.0 - cosphi ) * vxvy - sinphi * vz;
-        ( *this )[2] = ( 1.0 - cosphi ) * vxvz + sinphi * vy;
-        ( *this )[3] = 0.0f;
+        data_[0] = cosphi + ( 1.0 - cosphi ) * vx * vx;
+        data_[1] = ( 1.0 - cosphi ) * vxvy - sinphi * vz;
+        data_[2] = ( 1.0 - cosphi ) * vxvz + sinphi * vy;
+        data_[3] = 0.0f;
 
-        ( *this )[4] = ( 1.0 - cosphi ) * vxvy + sinphi * vz;
-        ( *this )[5] = cosphi + ( 1.0 - cosphi ) * vy * vy;
-        ( *this )[6] = ( 1.0 - cosphi ) * vyvz - sinphi * vx;
-        ( *this )[7] = 0.0f;
+        data_[4] = ( 1.0 - cosphi ) * vxvy + sinphi * vz;
+        data_[5] = cosphi + ( 1.0 - cosphi ) * vy * vy;
+        data_[6] = ( 1.0 - cosphi ) * vyvz - sinphi * vx;
+        data_[7] = 0.0f;
 
-        ( *this )[8] = ( 1.0 - cosphi ) * vxvz - sinphi * vy;
-        ( *this )[9] = ( 1.0 - cosphi ) * vyvz + sinphi * vx;
-        ( *this )[10] = cosphi + ( 1.0 - cosphi ) * vz * vz;
-        ( *this )[11] = 0.0f;
+        data_[8] = ( 1.0 - cosphi ) * vxvz - sinphi * vy;
+        data_[9] = ( 1.0 - cosphi ) * vyvz + sinphi * vx;
+        data_[10] = cosphi + ( 1.0 - cosphi ) * vz * vz;
+        data_[11] = 0.0f;
 
-        ( *this )[12] = 0.0f;
-        ( *this )[13] = 0.0f;
-        ( *this )[14] = 0.0f;
-        ( *this )[15] = 1.0f;
+        data_[12] = 0.0f;
+        data_[13] = 0.0f;
+        data_[14] = 0.0f;
+        data_[15] = 1.0f;
     }
 
     self inverse() const {

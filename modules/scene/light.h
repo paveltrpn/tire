@@ -57,15 +57,47 @@ template <typename T>
         return specular_;
     };
 
-    void setPosition( const vector3<value_type>& value ) { position_ = value; };
+    [[maybe_unused]]
+    OmniLight& setPosition( const vector3<value_type>& value ) {
+        position_ = value;
+        return *this;
+    };
 
-    void setConstant( value_type value ) { constant_ = value; };
-    void setLinear( value_type value ) { linear_ = value; };
-    void setQuadratic( value_type value ) { quadratic_ = value; };
+    [[maybe_unused]]
+    OmniLight& setConstant( value_type value ) {
+        constant_ = value;
+        return *this;
+    };
 
-    void setAmbient( const vector3<value_type>& value ) { ambient_ = value; };
-    void setDiffuse( const vector3<value_type>& value ) { diffuse_ = value; };
-    void setSpecular( const vector3<value_type>& value ) { specular_ = value; };
+    [[maybe_unused]]
+    OmniLight& setLinear( value_type value ) {
+        linear_ = value;
+        return *this;
+    };
+
+    [[maybe_unused]]
+    OmniLight& setQuadratic( value_type value ) {
+        quadratic_ = value;
+        return *this;
+    };
+
+    [[maybe_unused]]
+    OmniLight& setAmbient( const vector3<value_type>& value ) {
+        ambient_ = value;
+        return *this;
+    };
+
+    [[maybe_unused]]
+    OmniLight& setDiffuse( const vector3<value_type>& value ) {
+        diffuse_ = value;
+        return *this;
+    };
+
+    [[maybe_unused]]
+    OmniLight& setSpecular( const vector3<value_type>& value ) {
+        specular_ = value;
+        return *this;
+    };
 
 private:
     vector3<value_type> position_{ 0.0, 0.0, 0.0 };

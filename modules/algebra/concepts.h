@@ -16,8 +16,8 @@ requires Algebraic<T> struct matrix2;
 template <typename T>
 requires Algebraic<T> struct matrix3;
 
-template <typename T>
-requires Algebraic<T> struct matrix4;
+template <Algebraic T>
+struct matrix4;
 
 template <typename T>
 requires Algebraic<T> struct vector2;

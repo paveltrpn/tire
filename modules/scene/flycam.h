@@ -34,6 +34,7 @@ enum FlycamMoveBits {
 };
 
 struct Flycam final {
+    // NOTE: 64-bit prescision float!
     using value_type = double;
 
     Flycam() = default;
@@ -47,11 +48,35 @@ struct Flycam final {
     Flycam &operator=( const Flycam &other ) = delete;
     Flycam &operator=( Flycam &&other ) = delete;
 
-    void setFov( value_type fov );
-    void setAspect( value_type aspect );
-    void setNcp( value_type ncp );
-    void setFcp( value_type fcp );
-    void setName( const std::string &value ) { name_ = value; };
+    [[maybe_unused]]
+    Flycam &setFov( value_type fov ) {
+        fov_ = fov;
+        return *this;
+    }
+
+    [[maybe_unused]]
+    Flycam &setAspect( value_type aspect ) {
+        aspect_ = aspect;
+        return *this;
+    }
+
+    [[maybe_unused]]
+    Flycam &setNcp( value_type ncp ) {
+        ncp_ = ncp;
+        return *this;
+    }
+
+    [[maybe_unused]]
+    Flycam &setFcp( value_type fcp ) {
+        fcp_ = fcp;
+        return *this;
+    }
+
+    [[maybe_unused]]
+    Flycam &setName( const std::string &value ) {
+        name_ = value;
+        return *this;
+    };
 
     void setMoveBit( FlycamMoveBits bit );
     void unsetMoveBit( FlycamMoveBits bit );
@@ -74,13 +99,13 @@ struct Flycam final {
         }
 
         // Get azimuth rotation matrix
-        auto ar = algebra::rotate<value_type>( zenith_, azimuth_ );
+        const auto &ar = algebra::rotate<value_type>( zenith_, azimuth_ );
 
         // Get actual "right side" direction vector
         right_ = ar.mult_vector3( { 1.0f, 0.0f, 0.0f } );
 
         // Get elevation rotation matrix
-        auto er = algebra::rotate<value_type>( right_, elevation_ );
+        const auto &er = algebra::rotate<value_type>( right_, elevation_ );
 
         // Get actual look direction vector
         look_ = er.mult_vector3( right_.cross( zenith_ ) );
@@ -88,20 +113,37 @@ struct Flycam final {
         // Add roll rotation
         //
 
-        // Combine both rotations
-        auto rotation = er * ar;
-
-        auto offset = algebra::translate<value_type>( eye_ );
+        // Get offset matrix
+        auto &&offset = algebra::translate<value_type>( eye_ );
         offset.transposeSelf();
 
-        return offset * rotation * projection;
+        return offset * er * ar * projection;
     }
 
-    algebra::vector3<value_type> position() { return eye_; };
-    value_type azimuth() { return azimuth_; };
-    value_type elevation() { return elevation_; };
-    value_type roll() { return roll_; };
-    std::string name() { return name_; };
+    [[nodiscard]]
+    algebra::vector3<value_type> position() const {
+        return eye_;
+    };
+
+    [[nodiscard]]
+    value_type azimuth() const {
+        return azimuth_;
+    };
+
+    [[nodiscard]]
+    value_type elevation() const {
+        return elevation_;
+    };
+
+    [[nodiscard]]
+    value_type roll() const {
+        return roll_;
+    };
+
+    [[nodiscard]]
+    std::string name() const {
+        return name_;
+    };
 
     void traverse();
 

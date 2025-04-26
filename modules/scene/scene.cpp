@@ -166,11 +166,11 @@ void Scene::process() {
                 auto camera =
                     std::make_shared<Flycam>( eye, azimuth, elevation );
 
-                camera->setFov( fov );
-                camera->setAspect( aspect );
-                camera->setNcp( ncp );
-                camera->setFcp( fcp );
-                camera->setName( name );
+                camera->setFov( fov )
+                    .setAspect( aspect )
+                    .setNcp( ncp )
+                    .setFcp( fcp )
+                    .setName( name );
 
                 cameras_.push_back( std::move( camera ) );
             }
@@ -208,13 +208,13 @@ void Scene::process() {
 
                 auto light = std::make_shared<OmniLight<float>>();
 
-                light->setPosition( { position } );
-                light->setConstant( constant );
-                light->setLinear( linear );
-                light->setQuadratic( quadratic );
-                light->setAmbient( { ambient } );
-                light->setDiffuse( { diffuse } );
-                light->setSpecular( { specular } );
+                light->setPosition( { position } )
+                    .setConstant( constant )
+                    .setLinear( linear )
+                    .setQuadratic( quadratic )
+                    .setAmbient( { ambient } )
+                    .setDiffuse( { diffuse } )
+                    .setSpecular( { specular } );
 
                 lightList_.push_back( light );
             }
