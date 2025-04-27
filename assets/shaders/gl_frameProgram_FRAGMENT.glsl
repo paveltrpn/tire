@@ -27,8 +27,28 @@ vec4 chromaticAbberations() {
     return ret;
 }
 
+vec4 pixelization() {
+    int pixelSize = 5;
+
+    float x = int(gl_FragCoord.x) % pixelSize;
+    float y = int(gl_FragCoord.y) % pixelSize;
+
+    x = floor(pixelSize / 2.0) - x;
+    y = floor(pixelSize / 2.0) - y;
+
+    x = gl_FragCoord.x + x;
+    y = gl_FragCoord.y + y;
+
+    vec2 texSize  = textureSize(frameTexture, 0).xy;
+
+    vec4 ret;
+    ret = texture(frameTexture, vec2(x, y) / texSize);
+    return ret;
+}
+
 void main()
 { 
+    // FragColor = pixelization();
     FragColor = chromaticAbberations();
     // FragColor = texture(frameTexture, TexCoords);
 }
