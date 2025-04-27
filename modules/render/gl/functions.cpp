@@ -82,6 +82,19 @@ PFNGLSAMPLERPARAMETERFPROC glSamplerParameterf{ nullptr };
 PFNGLBINDSAMPLERPROC glBindSampler{ nullptr };
 PFNGLTEXTUREPARAMETERIPROC glTextureParameteri{ nullptr };
 
+// Framebuffer / Renderbuffer
+PFNGLGENFRAMEBUFFERSPROC glGenFramebuffers{ nullptr };
+PFNGLBINDFRAMEBUFFERPROC glBindFramebuffer{ nullptr };
+PFNGLCHECKFRAMEBUFFERSTATUSPROC glCheckFramebufferStatus{ nullptr };
+PFNGLDELETEFRAMEBUFFERSPROC glDeleteFramebuffers{ nullptr };
+PFNGLFRAMEBUFFERTEXTURE2DPROC glFramebufferTexture2D{ nullptr };
+
+PFNGLGENRENDERBUFFERSPROC glGenRenderbuffers{ nullptr };
+PFNGLBINDRENDERBUFFERPROC glBindRenderbuffer{ nullptr };
+PFNGLRENDERBUFFERSTORAGEPROC glRenderbufferStorage{ nullptr };
+PFNGLFRAMEBUFFERRENDERBUFFERPROC glFramebufferRenderbuffer{ nullptr };
+PFNGLDELETERENDERBUFFERSPROC glDeleteRenderbuffers{ nullptr };
+
 namespace {
 
 bool queryExtension( const char *extName ) {
@@ -280,6 +293,38 @@ void init() {
 
     glTextureParameteri =
         getProcAddress<PFNGLTEXTUREPARAMETERIPROC>( "glTextureParameteri" );
+
+    // Framebuffer / Renderbuffer
+    glGenFramebuffers =
+        getProcAddress<PFNGLGENFRAMEBUFFERSPROC>( "glGenFramebuffers" );
+
+    glBindFramebuffer =
+        getProcAddress<PFNGLBINDFRAMEBUFFERPROC>( "glBindFramebuffer" );
+
+    glCheckFramebufferStatus = getProcAddress<PFNGLCHECKFRAMEBUFFERSTATUSPROC>(
+        "glCheckFramebufferStatus" );
+
+    glDeleteFramebuffers =
+        getProcAddress<PFNGLDELETEFRAMEBUFFERSPROC>( "glDeleteFramebuffers" );
+
+    glFramebufferTexture2D = getProcAddress<PFNGLFRAMEBUFFERTEXTURE2DPROC>(
+        "glFramebufferTexture2D" );
+
+    glGenRenderbuffers =
+        getProcAddress<PFNGLGENRENDERBUFFERSPROC>( "glGenRenderbuffers" );
+
+    glBindRenderbuffer =
+        getProcAddress<PFNGLBINDRENDERBUFFERPROC>( "glBindRenderbuffer" );
+
+    glRenderbufferStorage =
+        getProcAddress<PFNGLRENDERBUFFERSTORAGEPROC>( "glRenderbufferStorage" );
+
+    glFramebufferRenderbuffer =
+        getProcAddress<PFNGLFRAMEBUFFERRENDERBUFFERPROC>(
+            "glFramebufferRenderbuffer" );
+
+    glDeleteRenderbuffers =
+        getProcAddress<PFNGLDELETERENDERBUFFERSPROC>( "glDeleteRenderbuffers" );
 }
 
 }  // namespace tire::gl

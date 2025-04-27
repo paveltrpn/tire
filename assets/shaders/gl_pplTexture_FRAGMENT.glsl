@@ -32,15 +32,6 @@ uniform OmniLight omniLights[MAX_LIGHTS];
 vec3 CalcPointLight(OmniLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
     vec3 lightDir = normalize(light.position - fragPos);
-    
-    // diffuse shading
-    float diff = max(dot(normal, lightDir), 0.0);
-
-    // specular shading
-    vec3 reflectDir = reflect(-lightDir, normal);
-
-    float materialShininess = 128;
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), materialShininess);
 
     // attenuation
     float distance    = length(light.position - fragPos);
@@ -49,8 +40,18 @@ vec3 CalcPointLight(OmniLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
     // combine results
     vec3 ambient  = light.ambient * vec3(texture(albedoTexture, TexCoord));
+
+     // diffuse shading
+    float diff = max(dot(normal, lightDir), 0.0);
     vec3 diffuse  = light.diffuse  * diff * vec3(texture(albedoTexture, TexCoord));
+
+     // specular shading
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float materialShininess = 128;
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), materialShininess);
     vec3 specular = light.specular * spec * vec3(texture(roughnessTexture, TexCoord));
+
+
     ambient  *= attenuation;
     diffuse  *= attenuation;
     specular *= attenuation;

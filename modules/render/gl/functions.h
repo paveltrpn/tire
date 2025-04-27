@@ -108,6 +108,19 @@ extern PFNGLSAMPLERPARAMETERFPROC glSamplerParameterf;
 extern PFNGLBINDSAMPLERPROC glBindSampler;
 extern PFNGLTEXTUREPARAMETERIPROC glTextureParameteri;
 
+// Framebuffer / Renderbuffer
+extern PFNGLGENFRAMEBUFFERSPROC glGenFramebuffers;
+extern PFNGLBINDFRAMEBUFFERPROC glBindFramebuffer;
+extern PFNGLCHECKFRAMEBUFFERSTATUSPROC glCheckFramebufferStatus;
+extern PFNGLDELETEFRAMEBUFFERSPROC glDeleteFramebuffers;
+extern PFNGLFRAMEBUFFERTEXTURE2DPROC glFramebufferTexture2D;
+
+extern PFNGLGENRENDERBUFFERSPROC glGenRenderbuffers;
+extern PFNGLBINDRENDERBUFFERPROC glBindRenderbuffer;
+extern PFNGLRENDERBUFFERSTORAGEPROC glRenderbufferStorage;
+extern PFNGLFRAMEBUFFERRENDERBUFFERPROC glFramebufferRenderbuffer;
+extern PFNGLDELETERENDERBUFFERSPROC glDeleteRenderbuffers;
+
 void init();
 
 }  // namespace tire::gl

@@ -80,8 +80,9 @@ struct Program final {
         std::is_same_v<T, int> void setScalarUniform( const std::string &id,
                                                       T value ) {
         if ( !uniforms_.contains( id ) ) {
-            log::warning( "gl::Program === program {} not contains uniform {}",
-                          name_, id );
+            log::warning(
+                "gl::Program === program \"{}\" not contains uniform {}", name_,
+                id );
             return;
         }
 
@@ -102,8 +103,9 @@ struct Program final {
     template <algebra::VectorDouble T>
     void setVectorUniform( const std::string &id, T value ) {
         if ( !uniforms_.contains( id ) ) {
-            log::warning( "gl::Program === program {} not contains uniform {}",
-                          name_, id );
+            log::warning(
+                "gl::Program === program \"{}\" not contains uniform {}", name_,
+                id );
             return;
         }
 
@@ -121,8 +123,9 @@ struct Program final {
     template <algebra::VectorFloat T>
     void setVectorUniform( const std::string &id, T value ) {
         if ( !uniforms_.contains( id ) ) {
-            log::warning( "gl::Program === program {} not contains uniform {}",
-                          name_, id );
+            log::warning(
+                "gl::Program === program \"{}\" not contains uniform {}", name_,
+                id );
             return;
         }
 
@@ -140,8 +143,9 @@ struct Program final {
     template <algebra::VectorInt T>
     void setVectorUniform( const std::string &id, T value ) {
         if ( !uniforms_.contains( id ) ) {
-            log::warning( "gl::Program === program {} not contains uniform {}",
-                          name_, id );
+            log::warning(
+                "gl::Program === program \"{}\" not contains uniform {}", name_,
+                id );
             return;
         }
 
@@ -159,8 +163,9 @@ struct Program final {
     template <algebra::VectorUInt T>
     void setVectorUniform( const std::string &id, T value ) {
         if ( !uniforms_.contains( id ) ) {
-            log::warning( "gl::Program === program {} not contains uniform {}",
-                          name_, id );
+            log::warning(
+                "gl::Program === program \"{}\" not contains uniform {}", name_,
+                id );
             return;
         }
 
@@ -179,8 +184,9 @@ struct Program final {
     void setMatrixUniform( const std::string &id, GLboolean transpose,
                            T value ) {
         if ( !uniforms_.contains( id ) ) {
-            log::warning( "gl::Program === program {} not contains uniform {}",
-                          name_, id );
+            log::warning(
+                "gl::Program === program \"{}\" not contains uniform {}", name_,
+                id );
             return;
         }
 
@@ -199,8 +205,9 @@ struct Program final {
     void setMatrixUniform( const std::string &id, GLboolean transpose,
                            T value ) {
         if ( !uniforms_.contains( id ) ) {
-            log::warning( "gl::Program === program {} not contains uniform {}",
-                          name_, id );
+            log::warning(
+                "gl::Program === program \"{}\" not contains uniform {}", name_,
+                id );
             return;
         }
 
