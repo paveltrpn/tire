@@ -168,6 +168,8 @@ add_library(scene
     modules/scene/light.cpp
     modules/scene/flycam.h
     modules/scene/flycam.cpp
+    modules/scene/mesh.h
+    modules/scene/mesh.cpp
 )
 target_link_libraries(scene config io image algebra geometry)
 

@@ -22,6 +22,8 @@ template <typename T>
 struct BoundingSphere final : BoundingVolume<T> {
     using value_type = T;
 
+    BoundingSphere() = default;
+
     void setRadius( float value ) { radius_ = value; }
     void setPosition( vector3<value_type> value ) { position_ = value; }
 
@@ -46,6 +48,8 @@ private:
 template <typename T>
 struct AABoundingBox final : BoundingVolume<T> {
     using value_type = T;
+
+    AABoundingBox() = default;
 
     AABoundingBox( vector3<value_type> min, vector3<value_type> max )
         : min_{ min }
@@ -73,6 +77,8 @@ private:
 template <typename T>
 struct OOBoundingBox final : BoundingVolume<T> {
     using value_type = T;
+
+    OOBoundingBox() = default;
 
     // Construct OOBB from transformed AABB. In other
     // words - initialize OOBB from AABB and transformation matrix.

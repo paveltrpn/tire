@@ -29,6 +29,17 @@ struct OmniLight {
 #define MAX_LIGHTS 15  
 uniform OmniLight omniLights[MAX_LIGHTS];
 
+// PBR-maps for roughness (and metallic) are usually stored in non-linear
+// color space (sRGB), so we use these functions to convert into linear RGB.
+vec3 PowVec3(vec3 v, float p)
+{
+    return vec3(pow(v.x, p), pow(v.y, p), pow(v.z, p));
+}
+
+const float gamma = 0.81;
+vec3 ToLinear(vec3 v) { return PowVec3(v, gamma); }
+vec3 ToSRGB(vec3 v)   { return PowVec3(v, 1.0/gamma); }
+
 vec3 CalcPointLight(OmniLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
     vec3 lightDir = normalize(light.position - fragPos);
@@ -77,7 +88,5 @@ void main()
     // outColor = vec4(DiffuseColor.rgb*result, 1.0);
     vec3 color  = vec3(DiffuseColor.rgb*result);
 
-    // Gamma corection?
-    float gamma = 1.0 / 0.75;
-    outColor = vec4( pow( color, vec3(gamma, gamma, gamma) ), 1.0 );
+    outColor = vec4( ToSRGB(color), 1.0 );
 }
