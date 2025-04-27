@@ -45,7 +45,6 @@ Scene::Scene( const std::filesystem::path &fname )
     for ( size_t i{ 0 }; i < lightList_.size(); ++i ) {
         pplTexture.addUniform( std::vector<std::string>{
             std::format( "omniLights[{}].position", i ),
-            std::format( "omniLights[{}].position", i ),
             std::format( "omniLights[{}].constant", i ),
             std::format( "omniLights[{}].linear", i ),
             std::format( "omniLights[{}].quadratic", i ),

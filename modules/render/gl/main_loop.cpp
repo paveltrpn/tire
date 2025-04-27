@@ -1,4 +1,5 @@
 
+#include <GL/glcorearb.h>
 #include "rendergl.h"
 #include "log/log.h"
 #include "scene/scene.h"
@@ -9,36 +10,49 @@ import event;
 namespace tire {
 
 void RenderGL::preLoop() {
-    // Start metrics logging coroutine
+    // Start metrics logging coroutine.
     showMetrics();
-
-    const auto bg = scene_->backgroundColor();
-    glClearColor( bg.r(), bg.g(), bg.b(), 1.0f );
 };
 
 void RenderGL::preFrame() {
-    // Update global timer
+    // Update global timer.
     timer_.update();
 
-    // Update scene objects
+    // Update scene objects.
     scene_->traverse( timer_.frameDuration<float>() );
 
     scene_->camera().traverse();
 }
 
 void RenderGL::frame() {
+    // Begin render frame.
     glViewport( 0, 0, width_, height_ );
+
+    // Render to framebuffer.
+    glBindFramebuffer( GL_FRAMEBUFFER, framebuffer_.frambufferObject_ );
+    const auto bg = scene_->backgroundColor();
+    glClearColor( bg.r(), bg.g(), bg.b(), 1.0f );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
+    // Render scene.
     glEnable( GL_DEPTH_TEST );
     glDepthFunc( GL_LESS );
 
-    glDisable( GL_TEXTURE_2D );
     scene_->submit();
     scene_->draw();
 
-    glDisable( GL_DEPTH_TEST );
+    glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+    glClearColor( bg.r(), bg.g(), bg.b(), 1.0f );
+    glClear( GL_COLOR_BUFFER_BIT );
 
+    // Show framebuffer quad with frame texture.
+    frameProgram_.use();
+    glBindVertexArray( framebuffer_.array_ );
+    glDisable( GL_DEPTH_TEST );
+    glBindTexture( GL_TEXTURE_2D, framebuffer_.frameTexture_ );
+    glDrawArrays( GL_QUADS, 0, 4 );
+
+    // Render screen text upon the framebuffer quad.
     screenString_->setColor( { "white" } );
     screenString_->set_text_position( -31.5f, 31.5f );
     screenString_->draw(
@@ -66,6 +80,7 @@ void RenderGL::frame() {
         std::format( "active camera - {}", scene_->camera().name() ) );
 
     screenString_->flush();
+    // End render frame.
 }
 
 void RenderGL::postFrame() {

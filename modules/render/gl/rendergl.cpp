@@ -1,5 +1,6 @@
 
 
+#include <GL/gl.h>
 #include <GL/glx.h>
 #include <memory>
 #include <stdexcept>
@@ -10,6 +11,7 @@
 #include <map>
 
 #include "log/log.h"
+#include "render/gl/functions.h"
 static constexpr bool DEBUG_OUTPUT_RENDERGL_CPP{ true };
 
 #include "render/gl/screen_string.h"
@@ -91,9 +93,70 @@ RenderGL::RenderGL()
 
     screenString_ =
         std::make_unique<ScreenString>( "RobotoMono-1024-512-32-64.tga" );
+
+    // Framebuffer / Renderbuffer initialization
+
+    glGenFramebuffers( 1, &framebuffer_.frambufferObject_ );
+    glBindFramebuffer( GL_FRAMEBUFFER, framebuffer_.frambufferObject_ );
+
+    glGenTextures( 1, &framebuffer_.frameTexture_ );
+    glBindTexture( GL_TEXTURE_2D, framebuffer_.frameTexture_ );
+
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, width_, height_, 0, GL_RGB,
+                  GL_UNSIGNED_BYTE, nullptr );
+
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+    glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                            framebuffer_.frameTexture_, 0 );
+    glBindTexture( GL_TEXTURE_2D, 0 );
+
+    glGenRenderbuffers( 1, &framebuffer_.renderbufferObject_ );
+    glBindRenderbuffer( GL_RENDERBUFFER, framebuffer_.renderbufferObject_ );
+    glRenderbufferStorage( GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width_,
+                           height_ );
+
+    glFramebufferRenderbuffer( GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                               GL_RENDERBUFFER,
+                               framebuffer_.renderbufferObject_ );
+
+    if ( glCheckFramebufferStatus( GL_FRAMEBUFFER ) !=
+         GL_FRAMEBUFFER_COMPLETE ) {
+        log::error( " RenderGL === Ffamebuffer is not complete!" );
+    }
+
+    glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+
+    glGenVertexArrays( 1, &framebuffer_.array_ );
+    glGenBuffers( 2, framebuffer_.buffers_.data() );
+
+    // Make framebuffer quad
+    glBindVertexArray( framebuffer_.array_ );
+
+    glEnableVertexAttribArray( 0 );
+    glBindBuffer( GL_ARRAY_BUFFER, framebuffer_.buffers_[0] );
+    glBufferData( GL_ARRAY_BUFFER,
+                  framebuffer_.frameQuadCrds.size() * 3 * sizeof( float ),
+                  framebuffer_.frameQuadCrds.data(), GL_DYNAMIC_DRAW );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
+
+    glEnableVertexAttribArray( 1 );
+    glBindBuffer( GL_ARRAY_BUFFER, framebuffer_.buffers_[1] );
+    glBufferData( GL_ARRAY_BUFFER,
+                  framebuffer_.frameQuadTexc.size() * 2 * sizeof( float ),
+                  framebuffer_.frameQuadTexc.data(), GL_DYNAMIC_DRAW );
+    glVertexAttribPointer( 1, 2, GL_FLOAT, GL_FALSE, 0, nullptr );
+
+    // Make frameboffer shader program
+    frameProgram_.init( "frameProgram" );
 }
 
 RenderGL::~RenderGL() {
+    glDeleteFramebuffers( 1, &framebuffer_.frambufferObject_ );
+    glDeleteRenderbuffers( 1, &framebuffer_.renderbufferObject_ );
+    glDeleteTextures( 1, &framebuffer_.frameTexture_ );
+
     glXDestroyContext( display_, glContext_ );
 }
 

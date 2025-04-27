@@ -17,12 +17,34 @@
 #include <X11/Xutil.h>
 
 #include "../render.h"
+#include "render/gl/program.h"
 #include "scene.h"
 #include "screen_string.h"
+#include "algebra/vector2.h"
+#include "algebra/vector3.h"
 
 namespace tire {
 
 using namespace tire::gl;
+
+struct Framebuffer final {
+    GLuint frameTexture_{};
+    GLuint frambufferObject_{};
+    GLuint renderbufferObject_{};
+
+    std::array<algebra::vector3f, 4> frameQuadCrds{
+        algebra::vector3f{ -1.0f, 1.0f, 0.0f },
+        algebra::vector3f{ 1.0f, 1.0f, 0.0f },
+        algebra::vector3f{ 1.0f, -1.0f, 0.0f },
+        algebra::vector3f{ -1.0f, -1.0f, 0.0f } };
+
+    std::array<algebra::vector2f, 4> frameQuadTexc{
+        algebra::vector2f{ 0.0f, 1.0f }, algebra::vector2f{ 1.0f, 1.0f },
+        algebra::vector2f{ 1.0f, 0.0f }, algebra::vector2f{ 0.0f, 0.0f } };
+
+    GLuint array_{};
+    std::array<GLuint, 2> buffers_{};
+};
 
 struct RenderGL final : Render {
     RenderGL();
@@ -79,6 +101,9 @@ private:
     GLXContext glContext_{ nullptr };
 
     std::unique_ptr<ScreenString> screenString_;
+
+    Framebuffer framebuffer_{};
+    Program frameProgram_{};
 };
 
 }  // namespace tire
