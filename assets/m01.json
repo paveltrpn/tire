@@ -106,7 +106,7 @@
             "name": "south_03",
             "type": "wall01",
             "albedo_color": "LightGrey",
-            "material_name": "PavingStones136",
+            "material_name": "PavingStones111",
             "position": [
                 0,
                 1.5,
@@ -137,7 +137,7 @@
             "name": "south_04",
             "type": "wall01",
             "albedo_color": "LightGrey",
-            "material_name": "PavingStones136",
+            "material_name": "PavingStones111",
             "position": [
                 0,
                 1.5,
@@ -168,7 +168,7 @@
             "name": "south_05",
             "type": "wall01",
             "albedo_color": "LightGrey",
-            "material_name": "PavingStones136",
+            "material_name": "PavingStones111",
             "position": [
                 0,
                 1.5,
@@ -416,7 +416,7 @@
             "name": "pillar",
             "type": "prismhexa",
             "albedo_color": "darkgray",
-            "material_name": "PavingStones021",
+            "material_name": "PavingStones111",
             "position": [
                 4,
                 6.6,
@@ -447,7 +447,7 @@
             "name": "east_01",
             "type": "wall01",
             "albedo_color": "LightGrey",
-            "material_name": "PavingStones136",
+            "material_name": "PavingStones111",
             "position": [
                 6,
                 -0.5,
@@ -478,7 +478,7 @@
             "name": "north_01",
             "type": "wall01",
             "albedo_color": "LightGrey",
-            "material_name": "PavingStones136",
+            "material_name": "PavingStones111",
             "position": [
                 0,
                 0,
@@ -509,7 +509,7 @@
             "name": "north_02",
             "type": "wall01",
             "albedo_color": "LightGrey",
-            "material_name": "PavingStones136",
+            "material_name": "PavingStones111",
             "position": [
                 0,
                 0,
@@ -540,7 +540,7 @@
             "name": "north_03",
             "type": "wall01",
             "albedo_color": "LightGrey",
-            "material_name": "PavingStones136",
+            "material_name": "PavingStones111",
             "position": [
                 1.3,
                 0,
@@ -571,7 +571,7 @@
             "name": "north_04",
             "type": "wall01",
             "albedo_color": "LightGrey",
-            "material_name": "PavingStones136",
+            "material_name": "PavingStones111",
             "position": [
                 1.8,
                 0,
@@ -602,7 +602,7 @@
             "name": "north_05",
             "type": "wall01",
             "albedo_color": "LightGrey",
-            "material_name": "PavingStones136",
+            "material_name": "PavingStones111",
             "position": [
                 0.5,
                 0,
@@ -633,7 +633,7 @@
             "name": "north_06",
             "type": "wall01",
             "albedo_color": "LightGrey",
-            "material_name": "PavingStones136",
+            "material_name": "PavingStones111",
             "position": [
                 0.2,
                 0,
@@ -664,7 +664,7 @@
             "name": "east_02",
             "type": "wall01",
             "albedo_color": "LightGrey",
-            "material_name": "PavingStones136",
+            "material_name": "PavingStones111",
             "position": [
                 11,
                 -0.8,

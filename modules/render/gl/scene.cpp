@@ -30,21 +30,6 @@ Scene::Scene( const std::filesystem::path &fname )
         // Store object buffers id's
         buffersList_.push_back( std::move( buffer ) );
 
-        // Load diffuse textures.
-        gl::Texture albedoTexture{};
-        albedoTexture.generate();
-        albedoTexture.bind( 0 );
-        const auto &[atw, ath] = bodyList_[i]->albedoTextureSize();
-        albedoTexture.load( atw, ath, bodyList_[i]->albedoTextureData() );
-        albedoTexturesList_.push_back( std::move( albedoTexture ) );
-
-        gl::Texture normalTexture{};
-        normalTexture.generate();
-        normalTexture.bind( 1 );
-        const auto &[ntw, nth] = bodyList_[i]->normalmapTextureSize();
-        normalTexture.load( ntw, nth, bodyList_[i]->normalmapTextureData() );
-        normalmapTexturesList_.push_back( std::move( normalTexture ) );
-
         // Load textures that requres by body from bodys list.
         const auto &materialName = bodyList_[i]->materialName();
         if ( !materialSet_.contains( materialName ) ) {
@@ -125,11 +110,11 @@ void Scene::draw() {
             "diffuseColor",
             algebra::vector3f{ bodyColor.r(), bodyColor.g(), bodyColor.b() } );
 
-        albedoTexturesList_[i].bind( 0 );
-        normalmapTexturesList_[i].bind( 1 );
+        materialSet_[bodyList_[i]->materialName()].bind();
 
         buffer.draw();
         buffer.release();
+
         ++i;
     }
 }

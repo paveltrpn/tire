@@ -119,14 +119,6 @@ void Scene::process() {
             node->setMaterialName( materialName );
             node->setAlbedoColor( albedoColor );
 
-            node->setAlbedoTextureImage(
-                { basePath / "assets" / "textures" /
-                  std::format( "{}_color.tga", materialName ) } );
-
-            node->setNormalmapTextureImage(
-                { basePath / "assets" / "textures" /
-                  std::format( "{}_normalgl.tga", materialName ) } );
-
             // Append body to list
             bodyList_.push_back( std::move( node ) );
         }

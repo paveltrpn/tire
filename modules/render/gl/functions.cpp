@@ -80,6 +80,7 @@ PFNGLCREATESAMPLERSPROC glCreateSamplers{ nullptr };
 PFNGLSAMPLERPARAMETERIPROC glSamplerParameteri{ nullptr };
 PFNGLSAMPLERPARAMETERFPROC glSamplerParameterf{ nullptr };
 PFNGLBINDSAMPLERPROC glBindSampler{ nullptr };
+PFNGLTEXTUREPARAMETERIPROC glTextureParameteri{ nullptr };
 
 namespace {
 
@@ -276,6 +277,9 @@ void init() {
 
     glSamplerParameterf =
         getProcAddress<PFNGLSAMPLERPARAMETERFPROC>( "glSamplerParameterf" );
+
+    glTextureParameteri =
+        getProcAddress<PFNGLTEXTUREPARAMETERIPROC>( "glTextureParameteri" );
 }
 
 }  // namespace tire::gl

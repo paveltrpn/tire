@@ -106,6 +106,7 @@ extern PFNGLCREATESAMPLERSPROC glCreateSamplers;
 extern PFNGLSAMPLERPARAMETERIPROC glSamplerParameteri;
 extern PFNGLSAMPLERPARAMETERFPROC glSamplerParameterf;
 extern PFNGLBINDSAMPLERPROC glBindSampler;
+extern PFNGLTEXTUREPARAMETERIPROC glTextureParameteri;
 
 void init();
 

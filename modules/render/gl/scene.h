@@ -22,12 +22,7 @@ struct Scene final : tire::Scene {
 
 private:
     std::vector<BodyBuffer> buffersList_;
-
-    std::vector<gl::Texture> albedoTexturesList_{};
-    std::vector<gl::Texture> normalmapTexturesList_{};
-
     gl::Program pplTexture{};
-
     std::unordered_map<std::string, TextureSet> materialSet_{};
 };
 

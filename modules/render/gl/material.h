@@ -65,7 +65,7 @@ struct TextureSet final {
 private:
     void init();
     void clean();
-    void bindTextureSlot( TextureType slot, const Tga &image );
+    void bindTextureSlot( GLuint slot, const Tga &image );
 
     // Return list of paths to texture files, that corresponds
     // given material name.

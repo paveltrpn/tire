@@ -11,7 +11,9 @@ in flat uint LightsCount;
 out vec4 outColor;
 
 layout(binding=0) uniform sampler2D albedoTexture;  
-layout(binding=1) uniform sampler2D normalmapTexture;
+layout(binding=1) uniform sampler2D normalTexture;
+layout(binding=2) uniform sampler2D roughnessTexture;
+layout(binding=3) uniform sampler2D displacementTexture;
 
 struct OmniLight {    
     vec3 position;
@@ -48,7 +50,7 @@ vec3 CalcPointLight(OmniLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     // combine results
     vec3 ambient  = light.ambient * vec3(texture(albedoTexture, TexCoord));
     vec3 diffuse  = light.diffuse  * diff * vec3(texture(albedoTexture, TexCoord));
-    vec3 specular = light.specular * spec * vec3(texture(normalmapTexture, TexCoord));
+    vec3 specular = light.specular * spec * vec3(texture(roughnessTexture, TexCoord));
     ambient  *= attenuation;
     diffuse  *= attenuation;
     specular *= attenuation;
@@ -71,5 +73,10 @@ void main()
     for(int i = 0; i < LightsCount; i++)
         result += CalcPointLight(omniLights[i], norm, FragmentPosition, viewDir);    
     
-    outColor = vec4(DiffuseColor.rgb*result, 1.0);
+    // outColor = vec4(DiffuseColor.rgb*result, 1.0);
+    vec3 color  = vec3(DiffuseColor.rgb*result);
+
+    // Gamma corection?
+    float gamma = 1.0 / 0.75;
+    outColor = vec4( pow( color, vec3(gamma, gamma, gamma) ), 1.0 );
 }

@@ -31,38 +31,42 @@ void TextureSet::init() {
 
     if ( texturesList.empty() ) {
         throw std::runtime_error( std::format(
-            "no texture files corresponts \"{}\" material", setName_ ) );
+            "no texture files corresponds \"{}\" material", setName_ ) );
     }
 
     for ( auto &&item : texturesList ) {
-        // Load color map texture file.
         if ( item.contains( colorMapSuffix ) ) {
             Tga image{ item };
-            bindTextureSlot( TextureType::COLOR, image );
-            break;
+            const auto color = static_cast<GLuint>( TextureType::COLOR );
+            bindTextureSlot( set_[color], image );
+            continue;
         }
 
         // Load normal map texture file.
         if ( item.contains( normalMapSuffix ) ) {
             Tga image{ item };
-            bindTextureSlot( TextureType::NORMAL, image );
-            break;
+            const auto normal = static_cast<GLuint>( TextureType::NORMAL );
+            bindTextureSlot( set_[normal], image );
+            continue;
         }
 
         // Load roughness map texture file.
         if ( item.contains( roughnessMapSuffix ) ) {
             Tga image{ item };
-            bindTextureSlot( TextureType::ROUGHNESS, image );
-            break;
+            const auto roughness =
+                static_cast<GLuint>( TextureType::ROUGHNESS );
+            bindTextureSlot( set_[roughness], image );
+            continue;
         }
 
         // Load displacement map texture file.
         if ( item.contains( displacementMapSuffix ) ) {
             Tga image{ item };
-            bindTextureSlot( TextureType::DISPLACEMENT, image );
-            break;
+            const auto displacement =
+                static_cast<GLuint>( TextureType::DISPLACEMENT );
+            bindTextureSlot( set_[displacement], image );
+            continue;
         }
-        log::info( "{}", item );
     }
 }
 
@@ -70,7 +74,19 @@ void TextureSet::clean() {
     glDeleteTextures( set_.size(), set_.data() );
 }
 
-void TextureSet::bindTextureSlot( TextureType slot, const Tga &image ) {
+void TextureSet::bindTextureSlot( GLuint slot, const Tga &image ) {
+    glBindTexture( GL_TEXTURE_2D, slot );
+    const auto width = image.widht();
+    const auto height = image.height();
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                     GL_LINEAR_MIPMAP_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+                  GL_UNSIGNED_BYTE, image.data() );
+    glGenerateMipmap( GL_TEXTURE_2D );
+
+    // Maybe unbind?
+    glBindTexture( GL_TEXTURE_2D, 0 );
 }
 
 std::vector<std::string> TextureSet::scanForTextureFiles() {
@@ -98,6 +114,17 @@ std::vector<std::string> TextureSet::scanForTextureFiles() {
 }
 
 void TextureSet::bind() {
+    const auto color = static_cast<GLuint>( TextureType::COLOR );
+    glBindTextureUnit( color, set_[color] );
+
+    const auto normal = static_cast<GLuint>( TextureType::NORMAL );
+    glBindTextureUnit( normal, set_[normal] );
+
+    const auto roughness = static_cast<GLuint>( TextureType::ROUGHNESS );
+    glBindTextureUnit( roughness, set_[roughness] );
+
+    const auto displacement = static_cast<GLuint>( TextureType::DISPLACEMENT );
+    glBindTextureUnit( displacement, set_[displacement] );
 }
 
 }  // namespace tire::gl

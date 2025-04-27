@@ -72,31 +72,6 @@ void Body::setMaterialName( const std::string &value ) {
     materialName_ = value;
 }
 
-void Body::setAlbedoTextureImage( const std::string &file ) {
-    albedoTextureImage_ = std::make_unique<Tga>( file );
-}
-
-std::pair<int, int> Body::albedoTextureSize() {
-    return { albedoTextureImage_->widht(), albedoTextureImage_->height() };
-}
-
-const uint8_t *Body::albedoTextureData() {
-    return albedoTextureImage_->data();
-}
-
-void Body::setNormalmapTextureImage( const std::string &file ) {
-    normalmapTextureImage_ = std::make_unique<Tga>( file );
-}
-
-std::pair<int, int> Body::normalmapTextureSize() {
-    return { normalmapTextureImage_->widht(),
-             normalmapTextureImage_->height() };
-}
-
-const uint8_t *Body::normalmapTextureData() {
-    return normalmapTextureImage_->data();
-}
-
 void Body::applyTransormations( float duration ) {
     // Update body spatial parameters
     orientation_ += torque_.scale( duration );

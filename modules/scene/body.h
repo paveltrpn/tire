@@ -90,14 +90,6 @@ struct Body final {
         return materialName_;
     };
 
-    void setAlbedoTextureImage( const std::string &file );
-    std::pair<int, int> albedoTextureSize();
-    const uint8_t *albedoTextureData();
-
-    void setNormalmapTextureImage( const std::string &file );
-    std::pair<int, int> normalmapTextureSize();
-    const uint8_t *normalmapTextureData();
-
     // Calculate transformation matrix, apply this
     // matrix to default geometry data and copy this data
     // into local buffers
@@ -125,9 +117,6 @@ private:
 
     // Body material information
     Colorf albedoColor_{};
-    std::unique_ptr<Tga> albedoTextureImage_;
-    std::unique_ptr<Tga> normalmapTextureImage_;
-
     std::string materialName_{};
 };
 
