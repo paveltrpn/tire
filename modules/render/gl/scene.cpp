@@ -40,18 +40,18 @@ Scene::Scene( const std::filesystem::path &fname )
     // Load shaders
     pplTexture.init( "pplTexture" );
     pplTexture.use();
-    pplTexture.addUniform( "viewMatrix" );
-    pplTexture.addUniform( "eyePosition" );
-    pplTexture.addUniform( "diffuseColor" );
-    pplTexture.addUniform( "lightsCount" );
+    pplTexture.addUniform( std::vector<std::string>{
+        "viewMatrix", "eyePosition", "diffuseColor", "lightsCount" } );
     for ( size_t i{ 0 }; i < lightList_.size(); ++i ) {
-        pplTexture.addUniform( std::format( "omniLights[{}].position", i ) );
-        pplTexture.addUniform( std::format( "omniLights[{}].constant", i ) );
-        pplTexture.addUniform( std::format( "omniLights[{}].linear", i ) );
-        pplTexture.addUniform( std::format( "omniLights[{}].quadratic", i ) );
-        pplTexture.addUniform( std::format( "omniLights[{}].ambient", i ) );
-        pplTexture.addUniform( std::format( "omniLights[{}].diffuse", i ) );
-        pplTexture.addUniform( std::format( "omniLights[{}].specular", i ) );
+        pplTexture.addUniform( std::vector<std::string>{
+            std::format( "omniLights[{}].position", i ),
+            std::format( "omniLights[{}].position", i ),
+            std::format( "omniLights[{}].constant", i ),
+            std::format( "omniLights[{}].linear", i ),
+            std::format( "omniLights[{}].quadratic", i ),
+            std::format( "omniLights[{}].ambient", i ),
+            std::format( "omniLights[{}].diffuse", i ),
+            std::format( "omniLights[{}].specular", i ) } );
     }
 
     pplTexture.setScalarUniform( "lightsCount", int( lightList_.size() ) );

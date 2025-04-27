@@ -70,6 +70,7 @@ struct Program final {
 
     void init( const std::string &name );
     void addUniform( const std::string &id );
+    void addUniform( std::vector<std::string> &&ids );
     void use();
     void clean();
 

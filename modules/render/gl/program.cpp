@@ -212,14 +212,21 @@ GLuint Program::getUniformLocation( const std::string &id ) {
 
 void Program::addUniform( const std::string &id ) {
     if ( uniforms_.contains( id ) ) {
-        log::warning( "gl::Program === program {} already contains uniform {}",
-                      name_, id );
+        log::warning(
+            "gl::Program === program \"{}\" already contains uniform {}", name_,
+            id );
         return;
     }
 
     const auto location = glGetUniformLocation( program_, id.c_str() );
 
     uniforms_[id] = location;
+}
+
+void Program::addUniform( std::vector<std::string> &&ids ) {
+    for ( auto &&item : ids ) {
+        addUniform( item );
+    }
 }
 
 }  // namespace tire::gl
