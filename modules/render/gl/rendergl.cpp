@@ -95,7 +95,6 @@ RenderGL::RenderGL()
         std::make_unique<ScreenString>( "RobotoMono-1024-512-32-64.tga" );
 
     // Framebuffer / Renderbuffer initialization
-
     glGenFramebuffers( 1, &framebuffer_.frambufferObject_ );
     glBindFramebuffer( GL_FRAMEBUFFER, framebuffer_.frambufferObject_ );
 
@@ -128,10 +127,10 @@ RenderGL::RenderGL()
 
     glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 
+    // Make framebuffer quad.
     glGenVertexArrays( 1, &framebuffer_.array_ );
     glGenBuffers( 2, framebuffer_.buffers_.data() );
 
-    // Make framebuffer quad
     glBindVertexArray( framebuffer_.array_ );
 
     glEnableVertexAttribArray( 0 );
