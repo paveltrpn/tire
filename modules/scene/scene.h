@@ -2,10 +2,13 @@
 #pragma once
 
 #include <filesystem>
+#include <unordered_map>
+
 #include "log/log.h"
 #include "nlohmann/json.hpp"
 #include "uv.h"
 
+#include "mesh.h"
 #include "body.h"
 #include "light.h"
 #include "flycam.h"
@@ -51,6 +54,7 @@ struct Scene {
     void traverse( float frameDuration );
 
 private:
+    void fillMeshBank();
     void process();
 
 private:
@@ -65,6 +69,8 @@ protected:
 
     // One camera exist anyway
     int activeCamera_{ 0 };
+
+    std::unordered_map<std::string, std::shared_ptr<Mesh>> meshBank_{};
 };
 
 }  // namespace tire

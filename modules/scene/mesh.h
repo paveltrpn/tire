@@ -14,10 +14,16 @@ struct Mesh final {
 
     Mesh( const std::string& path );
 
-    [[nodiscard]] size_t verteciesCount() const { return vertecies_.size(); };
+    Mesh( const Mesh& other ) = delete;
+    Mesh( Mesh&& other ) = delete;
 
-    [[nodiscard]] const vector3<value_type>* verteciesData() const {
-        return vertecies_.data();
+    Mesh& operator=( const Mesh& other ) = delete;
+    Mesh& operator=( Mesh&& other ) = delete;
+
+    ~Mesh() = default;
+
+    [[nodiscard]] const vector3<value_type>* verticesData() const {
+        return vertices_.data();
     };
 
     [[nodiscard]] const vector3<value_type>* normalsData() const {
@@ -29,7 +35,7 @@ struct Mesh final {
     }
 
     [[nodiscard]] const std::vector<vector3<value_type>>& vertecies() const {
-        return vertecies_;
+        return vertices_;
     };
 
     [[nodiscard]] const std::vector<vector3<value_type>>& normals() const {
@@ -43,7 +49,7 @@ struct Mesh final {
 private:
     long long trianglesCount_{};
     AABoundingBox<value_type> bounding_;
-    std::vector<vector3<value_type>> vertecies_;
+    std::vector<vector3<value_type>> vertices_;
     std::vector<vector3<value_type>> normals_;
     std::vector<vector2<value_type>> texcrds_;
 };

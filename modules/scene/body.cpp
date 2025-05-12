@@ -48,23 +48,23 @@ const algebra::vector2f *Body::texcrdsData() {
     return shapeData_->texcrdsData();
 }
 
-void Body::setPosition( const vector3<float_type> &value ) {
+void Body::setPosition( const vector3<value_type> &value ) {
     position_ = value;
 }
 
-void Body::setOrientation( const vector3<float_type> &value ) {
+void Body::setOrientation( const vector3<value_type> &value ) {
     orientation_ = value;
 }
 
-void Body::setScale( const vector3<float_type> &value ) {
+void Body::setScale( const vector3<value_type> &value ) {
     scale_ = value;
 }
 
-void Body::setVelocity( const vector3<float_type> &value ) {
+void Body::setVelocity( const vector3<value_type> &value ) {
     velocity_ = value;
 }
 
-void Body::setTorque( const vector3<float_type> &value ) {
+void Body::setTorque( const vector3<value_type> &value ) {
     torque_ = value;
 }
 

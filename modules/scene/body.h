@@ -21,7 +21,7 @@ namespace tire {
 using namespace algebra;
 
 struct Body final {
-    using float_type = float;
+    using value_type = float;
 
     Body() = default;
 
@@ -37,9 +37,9 @@ struct Body final {
     size_t texcrdsArraySize() const;
 
     //
-    const vector3f *verteciesData();
-    const vector3f *normalsData();
-    const vector2f *texcrdsData();
+    const vector3<value_type> *verteciesData();
+    const vector3<value_type> *normalsData();
+    const vector2<value_type> *texcrdsData();
 
     void setBounding( BoundingVolume<float> value ) { bounding_ = value; }
     const BoundingVolume<float> bounding() { return bounding_; };
@@ -53,35 +53,35 @@ struct Body final {
         return albedoColor_;
     };
 
-    void setPosition( const vector3<float_type> &value );
-    void setOrientation( const vector3<float_type> &value );
-    void setScale( const vector3<float_type> &value );
-    void setVelocity( const vector3<float_type> &value );
-    void setTorque( const vector3<float_type> &value );
+    void setPosition( const vector3<value_type> &value );
+    void setOrientation( const vector3<value_type> &value );
+    void setScale( const vector3<value_type> &value );
+    void setVelocity( const vector3<value_type> &value );
+    void setTorque( const vector3<value_type> &value );
     void setMaterialName( const std::string &value );
 
     [[nodiscard]]
-    vector3<float_type> position() const {
+    vector3<value_type> position() const {
         return position_;
     }
 
     [[nodiscard]]
-    vector3<float_type> orientation() const {
+    vector3<value_type> orientation() const {
         return orientation_;
     }
 
     [[nodiscard]]
-    vector3<float_type> scale() const {
+    vector3<value_type> scale() const {
         return scale_;
     }
 
     [[nodiscard]]
-    vector3<float_type> velocity() const {
+    vector3<value_type> velocity() const {
         return velocity_;
     }
 
     [[nodiscard]]
-    vector3<float_type> torque() const {
+    vector3<value_type> torque() const {
         return torque_;
     }
 
@@ -106,14 +106,14 @@ private:
     std::vector<vector3f> localVertecies_{};
     std::vector<vector3f> localNormals_{};
 
-    BoundingVolume<float_type> bounding_{};
+    BoundingVolume<value_type> bounding_{};
 
     // Body spatial information
-    vector3<float_type> position_{};
-    vector3<float_type> orientation_{};
-    vector3<float_type> scale_{};
-    vector3<float_type> velocity_{};
-    vector3<float_type> torque_{};
+    vector3<value_type> position_{};
+    vector3<value_type> orientation_{};
+    vector3<value_type> scale_{};
+    vector3<value_type> velocity_{};
+    vector3<value_type> torque_{};
 
     // Body material information
     Colorf albedoColor_{};

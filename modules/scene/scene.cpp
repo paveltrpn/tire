@@ -1,6 +1,8 @@
 
 #include <fstream>
 #include <array>
+#include <format>
+
 #include "algebra/vector3.h"
 #include "geometry/polytope.h"
 
@@ -36,13 +38,31 @@ Scene::Scene( const std::filesystem::path &fname ) {
             "Scene ===  file not found: {}\n", path.filename().string() ) );
     }
 
+    // Load meshes data.
+    fillMeshBank();
+
     // Parse json. Collect objects, cameras, lights and other scene entities
     process();
 }
 
-void Scene::process() {
-    const auto basePath = Config::instance()->getBasePath();
+void Scene::fillMeshBank() {
+    const auto basePath = Config::instance()->getBasePath().string();
+    const std::filesystem::path meshFlesPath =
+        std::format( "{}/assets/mesh/", basePath );
 
+    // Iterate over directory
+    for ( auto &&entry : std::filesystem::directory_iterator{ meshFlesPath } ) {
+        std::vector<std::string> retItem;
+        // Take only "name" part of filename, i.e. except
+        // extension and path.
+        const auto &fileName = entry.path().stem().string();
+
+        auto mesh = std::make_shared<Mesh>( entry.path().string() );
+        meshBank_.insert( { fileName, std::move( mesh ) } );
+    }
+}
+
+void Scene::process() {
     // Read "environment section"
     const auto &environment = scene_[constants::scene::PARAM_ENVIRONMENT];
     const auto &bg = environment[constants::scene::PARAM_BACKGROUND_COLOR];
@@ -57,12 +77,16 @@ void Scene::process() {
             // Body spatial information
             const std::array<float, 3> position =
                 item[constants::scene::PARAM_OBJECT_POSITION];
+
             const std::array<float, 3> orientaion =
                 item[constants::scene::PARAM_OBJECT_ORIENTATION];
+
             const std::array<float, 3> scale =
                 item[constants::scene::PARAM_OBJECT_SCALE];
+
             const std::array<float, 3> velosity =
                 item[constants::scene::PARAM_OBJECT_VELOCITY];
+
             const std::array<float, 3> torque =
                 item[constants::scene::PARAM_OBJECT_TORQUE];
 
@@ -73,7 +97,7 @@ void Scene::process() {
             const std::string &materialName =
                 item[constants::scene::PARAM_OBJECT_MATERIAL_NAME];
 
-            // Body vertecies data
+            // Body vertices data
             auto node = std::make_shared<Body>();
             if ( type == constants::scene::PARAM_OBJECT_TYPE_BOX ) {
                 auto shapePtr = std::make_shared<BoxData>();
