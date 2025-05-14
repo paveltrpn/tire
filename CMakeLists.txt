@@ -67,6 +67,13 @@ add_library(algebra)
 target_sources(algebra PRIVATE ${MOD_ALGEBRA_SRC})
 set_target_properties(algebra PROPERTIES LINKER_LANGUAGE CXX)
 
+# Module ui
+# ================================
+file(GLOB MOD_UI_SRC "modules/ui/*.cpp" "modules/ui/*.h")
+add_library(ui)
+target_sources(ui PRIVATE ${MOD_UI_SRC})
+set_target_properties(ui PROPERTIES LINKER_LANGUAGE CXX)
+
 # Module config
 # ================================
 add_library(config)
@@ -82,7 +89,7 @@ target_sources(config
 file(GLOB_RECURSE MOD_RENDER_SRC "modules/render/*.cpp" "modules/render/*.h")
 add_library(render)
 target_sources(render PRIVATE ${MOD_RENDER_SRC})
-target_link_libraries(render scene config geometry algebra event)
+target_link_libraries(render ui scene config geometry algebra event)
 
 # Module image
 # ================================
