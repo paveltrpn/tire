@@ -1,4 +1,5 @@
 
+#include <memory>
 #include <print>
 #include <format>
 #include <set>
@@ -39,7 +40,6 @@ RenderVK::RenderVK()
 
         context_->makeFrames( piplineVertexBuffer_.get() );
         // context_->createFramebuffers( piplineVertexBuffer_.get() );
-
     } catch ( const std::runtime_error &e ) {
         throw std::runtime_error( e.what() );
     }

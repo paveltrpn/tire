@@ -46,6 +46,8 @@ endif()
 
 find_package(Vulkan REQUIRED)
 
+# Module log
+# ================================
 add_library(log
     modules/log/log.h
     modules/log/log.cpp
@@ -58,20 +60,15 @@ add_compile_definitions(ENABLE_NOTICE_OUTPUT=true)
 add_compile_definitions(ENABLE_ERROR_OUTPUT=true)
 set_target_properties(log PROPERTIES LINKER_LANGUAGE CXX)
 
-add_library(algebra
-    modules/algebra/concepts.h
-    modules/algebra/matrix.h
-    modules/algebra/matrix2.h
-    modules/algebra/matrix3.h
-    modules/algebra/matrix4.h
-    modules/algebra/vector.h
-    modules/algebra/vector2.h
-    modules/algebra/vector3.h
-    modules/algebra/vector4.h
-    modules/algebra/quaternion.h
-)
+# Module algebra
+# ================================
+file(GLOB MOD_ALGEBRA_SRC "modules/algebra/*.cpp" "modules/algebra/*.h")
+add_library(algebra)
+target_sources(algebra PRIVATE ${MOD_ALGEBRA_SRC})
 set_target_properties(algebra PROPERTIES LINKER_LANGUAGE CXX)
 
+# Module config
+# ================================
 add_library(config)
 target_sources(config
   PUBLIC
@@ -80,99 +77,35 @@ target_sources(config
     modules/config/config.cpp
 )
 
-add_library(render
-    modules/render/render.cpp
-    modules/render/render.h
-    modules/render/timer.cpp
-    modules/render/timer.h
-    modules/render/screen_string_base.cpp
-    modules/render/screen_string_base.h
-    modules/render/gl/rendergl.cpp
-    modules/render/gl/rendergl.h
-    modules/render/gl/screen_string.cpp
-    modules/render/gl/screen_string.h
-    modules/render/gl/main_loop.cpp
-    modules/render/gl/functions.cpp
-    modules/render/gl/functions.h
-    modules/render/gl/buffers/body_buffer.cpp
-    modules/render/gl/buffers/body_buffer.h
-    modules/render/gl/buffers/screen_string_buffer.cpp
-    modules/render/gl/buffers/screen_string_buffer.h
-    modules/render/gl/scene.h
-    modules/render/gl/scene.cpp
-    modules/render/gl/program.h
-    modules/render/gl/program.cpp
-    modules/render/gl/texture.h
-    modules/render/gl/texture.cpp
-    modules/render/gl/material.h
-    modules/render/gl/material.cpp
-    modules/render/vk/rendervk.cpp
-    modules/render/vk/rendervk.h
-    modules/render/vk/context.h
-    modules/render/vk/context.cpp
-    modules/render/vk/instance.cpp
-    modules/render/vk/device.cpp
-    modules/render/vk/swapchain.cpp
-    modules/render/vk/main_loop.cpp
-    modules/render/vk/pipelines/program.h
-    modules/render/vk/pipelines/program.cpp
-    modules/render/vk/pipelines/pipeline.h
-    modules/render/vk/pipelines/pipeline.cpp
-    modules/render/vk/pipelines/pipeline_matrix_ready.cpp
-    modules/render/vk/pipelines/pipeline_vertex_buffer.cpp
-    modules/render/vk/commands/scene_render_command.h
-    modules/render/vk/commands/scene_render_command.cpp
-    modules/render/vk/buffers/plain_buffer.h
-    modules/render/vk/buffers/plain_buffer.cpp
-    modules/render/vk/buffers/vertex_buffer.h
-    modules/render/vk/buffers/vertex_buffer.cpp
-    modules/render/vk/images/plain_image.h
-    modules/render/vk/images/plain_image.cpp
-    modules/render/vk/images/texture_image.h
-    modules/render/vk/images/texture_image.cpp
-    modules/render/vk/scene.h
-    modules/render/vk/scene.cpp
-    modules/render/vk/command_pool.h
-    modules/render/vk/command_pool.cpp
-)
+# Module render
+# ================================
+file(GLOB_RECURSE MOD_RENDER_SRC "modules/render/*.cpp" "modules/render/*.h")
+add_library(render)
+target_sources(render PRIVATE ${MOD_RENDER_SRC})
 target_link_libraries(render scene config geometry algebra event)
 
-add_library(image
-    modules/image/bmp.cpp
-    modules/image/bmp.h
-    modules/image/tga.cpp
-    modules/image/tga.h
-    modules/image/canvas.cpp
-    modules/image/canvas.h
-    modules/image/color.cpp
-    modules/image/color.h
-)
+# Module image
+# ================================
+file(GLOB MOD_IMAGE_SRC "modules/image/*.cpp" "modules/image/*.h")
+add_library(image)
+target_sources(image PRIVATE ${MOD_IMAGE_SRC})
 
-add_library(geometry
-    modules/geometry/wavefront.cpp
-    modules/geometry/wavefront.h
-    modules/geometry/polytope.cpp
-    modules/geometry/polytope.h
-    modules/geometry/bounding_volumes.cpp
-    modules/geometry/bounding_volumes.h
-)
+# Module geometry
+# ================================
+file(GLOB MOD_GEOMETRY_SRC "modules/geometry/*.cpp" "modules/geometry/*.h")
+add_library(geometry)
+target_sources(geometry PRIVATE ${MOD_GEOMETRY_SRC})
 target_link_libraries(geometry algebra)
 
-add_library(scene
-    modules/scene/constants.h
-    modules/scene/scene.h
-    modules/scene/scene.cpp
-    modules/scene/body.cpp
-    modules/scene/body.h
-    modules/scene/light.h
-    modules/scene/light.cpp
-    modules/scene/flycam.h
-    modules/scene/flycam.cpp
-    modules/scene/mesh.h
-    modules/scene/mesh.cpp
-)
+# Module scene
+# ================================
+file(GLOB MOD_SCENE_SRC "modules/scene/*.cpp" "modules/scene/*.h")
+add_library(scene)
+target_sources(scene PRIVATE ${MOD_SCENE_SRC})
 target_link_libraries(scene config io image algebra geometry)
 
+# Module event
+# ================================
 add_library(event)
 target_sources(event
   PUBLIC
@@ -184,6 +117,8 @@ target_sources(event
 )
 target_link_libraries(event config)
 
+# Module io
+# ================================
 add_library(io)
 target_sources(io
   PUBLIC
@@ -193,6 +128,8 @@ target_sources(io
 )
 target_link_libraries(io event)
 
+# Add subdirectories
+# ================================
 add_subdirectory(test/window)
 target_link_libraries(gl_test PUBLIC 
     log 

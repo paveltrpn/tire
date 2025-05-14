@@ -28,7 +28,7 @@ Render::Render() {
     if ( !tire::Config::instance() ) {
         throw std::runtime_error( "instantiate config first!!!" );
     }
-
+    
     // Crate X11 window
     configureX11();
 

@@ -84,7 +84,7 @@ protected:
     int posy_{};
     int width_{};
     int height_{};
-
+    
     // The Scene
     std::shared_ptr<Scene> scene_{};
 
