@@ -104,6 +104,16 @@ add_library(geometry)
 target_sources(geometry PRIVATE ${MOD_GEOMETRY_SRC})
 target_link_libraries(geometry algebra)
 
+# Module wavefront
+# ================================
+file(GLOB MOD_WAVEFRONT_SRC "modules/wavefront/*.cpp")
+add_library(wavefront)
+target_sources(wavefront
+  PUBLIC
+    FILE_SET CXX_MODULES FILES
+    ${MOD_WAVEFRONT_SRC}
+)
+
 # Module scene
 # ================================
 file(GLOB MOD_SCENE_SRC "modules/scene/*.cpp" "modules/scene/*.h")
@@ -176,7 +186,7 @@ set_target_properties( vk_test gl_test
 )
 
 add_subdirectory(test/wavefront)
-target_link_libraries(wavefront geometry)
+target_link_libraries(obj_test wavefront)
 
 add_subdirectory(test/color)
 target_link_libraries(color image)

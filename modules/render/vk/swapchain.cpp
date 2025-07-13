@@ -151,12 +151,12 @@ void Context::makeSwapchain() {
     // Skip all logic above, just use value from config
     framesCount_ = congigHandle->get<int>( "frame_count" );
 
-    if ( ( framesCount_ < surfaceCapabilities_.minImageCount ) ||
-         ( framesCount_ > surfaceCapabilities_.maxImageCount ) ) {
-        log::fatal(
-            "vk::Swapchain === desired frame count not fit to available "
-            "surface image count limits" );
-    }
+    //if ( ( framesCount_ < surfaceCapabilities_.minImageCount ) ||
+     //    ( framesCount_ > surfaceCapabilities_.maxImageCount ) ) {
+      //  log::fatal(
+      //      "vk::Swapchain === desired frame count not fit to available "
+      //      "surface image count limits" );
+    //}
 
     // Reserve space for frames images render into
     frames_.reserve( framesCount_ );
