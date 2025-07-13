@@ -69,10 +69,13 @@ set_target_properties(algebra PROPERTIES LINKER_LANGUAGE CXX)
 
 # Module ui
 # ================================
-file(GLOB MOD_UI_SRC "modules/ui/*.cpp" "modules/ui/*.h")
+file(GLOB MOD_UI_SRC "modules/ui/*.cpp")
 add_library(ui)
-target_sources(ui PRIVATE ${MOD_UI_SRC})
-set_target_properties(ui PROPERTIES LINKER_LANGUAGE CXX)
+target_sources(ui 
+  PUBLIC
+    FILE_SET CXX_MODULES FILES
+    ${MOD_UI_SRC}
+)
 
 # Module config
 # ================================
