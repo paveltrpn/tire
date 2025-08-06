@@ -5,6 +5,7 @@ module;
 #include <map>
 #include <vector>
 #include <format>
+#include <filesystem>
 
 #include "geometry/polytope.h"
 
