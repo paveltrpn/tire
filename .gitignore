@@ -1,7 +1,8 @@
 build/
 bin/
 CMakeLists.txt.user
-assets/shaders/spirv/*.spv
+assets/*
+!assets/.gitkeep
 *.cap
 *.foz
 tmp/*
