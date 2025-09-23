@@ -1,8 +1,9 @@
 build/
 bin/
 CMakeLists.txt.user
-assets/*
+assets/
 !assets/.gitkeep
 *.cap
 *.foz
 tmp/*
+Session.vim
