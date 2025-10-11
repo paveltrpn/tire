@@ -35,15 +35,6 @@ else()
     message(SEND_ERROR "LIBUV_DIR is not set")
 endif()
 
-# Today is no physics
-# if (DEFINED ENV{JOLT_PHYSICS_DIR} AND NOT "$ENV{JOLT_PHYSICS_DIR}" STREQUAL "")
-#     message("JOLT_PHYSICS_DIR is set to $ENV{JOLT_PHYSICS_DIR}")
-#     include_directories($ENV{JOLT_PHYSICS_DIR})
-#     link_directories($ENV{JOLT_PHYSICS_DIR}/Build/Linux_Release)
-# else()
-#     message(SEND_ERROR "JOLT_PHYSICS_DIR is not set")
-# endif()
-
 find_package(Vulkan REQUIRED)
 
 # Module log
@@ -151,22 +142,6 @@ target_link_libraries(io event)
 # Add subdirectories
 # ================================
 add_subdirectory(test/window)
-target_link_libraries(gl_test PUBLIC 
-    log 
-    event 
-    io 
-    algebra 
-    scene 
-    config 
-    render 
-    X11
-    Xfixes
-    GL 
-    GLU 
-    Vulkan::Vulkan 
-    uv
-)
-
 target_link_libraries(vk_test PUBLIC 
     log 
     event 
@@ -181,11 +156,6 @@ target_link_libraries(vk_test PUBLIC
     GLU 
     Vulkan::Vulkan 
     uv
-)
-
-set_target_properties( vk_test gl_test
-    PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "../../../bin"
 )
 
 add_subdirectory(test/wavefront)

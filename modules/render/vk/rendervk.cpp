@@ -40,12 +40,12 @@ RenderVK::RenderVK()
 
         context_->makeFrames( piplineVertexBuffer_.get() );
         // context_->createFramebuffers( piplineVertexBuffer_.get() );
-    } catch ( const std::runtime_error &e ) {
+    } catch ( const std::runtime_error& e ) {
         throw std::runtime_error( e.what() );
     }
 };
 
-void RenderVK::scene( const std::filesystem::path &path ) {
+void RenderVK::scene( const std::filesystem::path& path ) {
     scene_ = std::make_shared<vk::Scene>( path, context_.get(),
                                           piplineVertexBuffer_.get() );
 }

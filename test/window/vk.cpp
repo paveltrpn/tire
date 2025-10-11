@@ -7,10 +7,10 @@
 
 import config;
 
-int main( int argc, char **argv ) {
+int main( int argc, char** argv ) {
     std::unique_ptr<tire::Render> rndr;
     try {
-        new tire::Config{ std::filesystem::path{} / "assets" / "config.json" };
+        new tire::Config{ "../assets/config.json" };
 
         rndr = std::make_unique<tire::RenderVK>();
         // rndr->displayRenderInfo();
@@ -19,7 +19,7 @@ int main( int argc, char **argv ) {
 
         rndr->scene( configPtr->getBasePath() / "assets" / "m01.json" );
         rndr->run();
-    } catch ( const std::exception &e ) {
+    } catch ( const std::exception& e ) {
         tire::log::error( "caught exception: {}", e.what() );
         return 1;
     }

@@ -33,11 +33,13 @@ private:
         // folder up, then base path is "../app"
         basePath_ = std::filesystem::canonical( "/proc/self/exe" )
                         .parent_path()
+                        .parent_path()
+                        .parent_path()
                         .parent_path();
     };
 
 public:
-    explicit Config( const std::filesystem::path &fname )
+    explicit Config( const std::filesystem::path& fname )
         : Config() {
         if ( !instance_ ) {
             const auto path = std::filesystem::path{ basePath_ / fname };
@@ -45,7 +47,7 @@ public:
             if ( file ) {
                 try {
                     config_ = nlohmann::json::parse( file );
-                } catch ( const nlohmann::json::parse_error &e ) {
+                } catch ( const nlohmann::json::parse_error& e ) {
                     log::error(
                         "config json parse error\n"
                         "message:\t{}\n"
@@ -64,14 +66,14 @@ public:
         }
     }
 
-    Config( const Config &rhs ) = delete;
-    Config( Config &&rhs ) = delete;
-    Config &operator=( const Config &rhs ) = delete;
-    Config &operator=( Config &&rhs ) = delete;
+    Config( const Config& rhs ) = delete;
+    Config( Config&& rhs ) = delete;
+    Config& operator=( const Config& rhs ) = delete;
+    Config& operator=( Config&& rhs ) = delete;
 
     ~Config() = default;
 
-    [[nodiscard]] const std::filesystem::path &getBasePath() const {
+    [[nodiscard]] const std::filesystem::path& getBasePath() const {
         return basePath_;
     };
 
@@ -106,7 +108,7 @@ public:
                     param );
                 return dflt;
             }
-        } catch ( nlohmann::json::exception &e ) {
+        } catch ( nlohmann::json::exception& e ) {
             log::warning(
                 "json exception handled... config param error \"{}\", what: "
                 "{}, default value used",
@@ -115,7 +117,7 @@ public:
         }
     }
 
-    static Config *instance() {
+    static Config* instance() {
         if ( !instance_ ) {
             log::error(
                 "Config === global instance must be initialized explicitly!" );
