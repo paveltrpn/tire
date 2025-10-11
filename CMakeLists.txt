@@ -35,6 +35,14 @@ else()
     message(SEND_ERROR "LIBUV_DIR is not set")
 endif()
 
+if (DEFINED ENV{LOCAL_GLFW} AND NOT "$ENV{LOCAL_GLFW}" STREQUAL "")
+    message( "LOCAL_GLFW is set to $ENV{LOCAL_GLFW}")
+    include_directories($ENV{LOCAL_GLFW}/include)
+    link_directories($ENV{LOCAL_GLFW}/lib)
+else()
+    message(SEND_ERROR "LOCAL_GLFW is not set")
+endif()
+
 find_package(Vulkan REQUIRED)
 
 # Module log
@@ -142,7 +150,7 @@ target_link_libraries(io event)
 # Main apps subdirectories
 # ================================
 add_subdirectory(apps)
-target_link_libraries(vk_test PUBLIC 
+target_link_libraries(barevk PUBLIC 
     log 
     event 
     io 
@@ -152,8 +160,24 @@ target_link_libraries(vk_test PUBLIC
     render 
     X11
     Xfixes
-    GL 
-    GLU 
+    GL
+    glfw3
+    Vulkan::Vulkan 
+    uv
+)
+
+target_link_libraries(qtvk PUBLIC 
+    log 
+    event 
+    io 
+    algebra 
+    scene 
+    config 
+    render 
+    X11
+    Xfixes
+    GL
+    glfw3
     Vulkan::Vulkan 
     uv
 )
