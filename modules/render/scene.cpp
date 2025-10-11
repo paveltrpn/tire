@@ -2,15 +2,15 @@
 #include <vector>
 
 #include "algebra/vector4.h"
-#include "render/vk/commands/scene_render_command.h"
+#include "commands/scene_render_command.h"
 #include "rendervk.h"
 #include "vulkan/vulkan_core.h"
 #include "scene.h"
 
 namespace tire::vk {
 
-Scene::Scene( const std::filesystem::path &fname, const vk::Context *context,
-              const vk::Pipeline *pipeline )
+Scene::Scene( const std::filesystem::path& fname, const vk::Context* context,
+              const vk::Pipeline* pipeline )
     : tire::Scene{ fname }
     , context_{ context }
     , pipeline_{ pipeline } {
@@ -41,16 +41,16 @@ Scene::Scene( const std::filesystem::path &fname, const vk::Context *context,
 
 void Scene::submit() {
     // Update data in vulkan "vertex" buffers, i.e. copy from CPU memory
-    for ( size_t i = 0; auto &buffer : vertBuffersList_ ) {
+    for ( size_t i = 0; auto& buffer : vertBuffersList_ ) {
         buffer->populate(
-            reinterpret_cast<const void *>( bodyList_[i]->verteciesData() ) );
+            reinterpret_cast<const void*>( bodyList_[i]->verteciesData() ) );
         ++i;
     }
 
     // Update data in vulkan "normal" buffers
-    for ( size_t i = 0; auto &buffer : nrmlBuffersList_ ) {
+    for ( size_t i = 0; auto& buffer : nrmlBuffersList_ ) {
         buffer->populate(
-            reinterpret_cast<const void *>( bodyList_[i]->normalsData() ) );
+            reinterpret_cast<const void*>( bodyList_[i]->normalsData() ) );
         ++i;
     }
 }

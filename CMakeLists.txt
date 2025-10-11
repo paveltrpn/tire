@@ -139,9 +139,9 @@ target_sources(io
 )
 target_link_libraries(io event)
 
-# Add subdirectories
+# Main apps subdirectories
 # ================================
-add_subdirectory(test/window)
+add_subdirectory(apps)
 target_link_libraries(vk_test PUBLIC 
     log 
     event 
@@ -158,6 +158,8 @@ target_link_libraries(vk_test PUBLIC
     uv
 )
 
+# Test subdirectories
+# ================================
 add_subdirectory(test/wavefront)
 target_link_libraries(obj_test wavefront)
 

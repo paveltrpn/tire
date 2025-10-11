@@ -7,7 +7,7 @@
 #include <vulkan/vulkan.h>
 
 #include "context.h"
-#include "render/vk/pipelines/pipeline.h"
+#include "pipelines/pipeline.h"
 #include "scene/scene.h"
 #include "command_pool.h"
 #include "commands/scene_render_command.h"
@@ -17,22 +17,22 @@
 namespace tire::vk {
 
 struct Scene final : tire::Scene {
-    Scene( const std::filesystem::path &fname, const vk::Context *context,
-           const vk::Pipeline *pipeline );
+    Scene( const std::filesystem::path& fname, const vk::Context* context,
+           const vk::Pipeline* pipeline );
 
     void submit() override;
     void draw() override {};
 
     void clean() override {
-        for ( auto &cbuf : cBufs_ ) {
+        for ( auto& cbuf : cBufs_ ) {
             cbuf->clean();
         }
 
-        for ( auto &buf : vertBuffersList_ ) {
+        for ( auto& buf : vertBuffersList_ ) {
             buf->clean();
         }
 
-        for ( auto &buf : nrmlBuffersList_ ) {
+        for ( auto& buf : nrmlBuffersList_ ) {
             buf->clean();
         }
     };
@@ -42,8 +42,8 @@ struct Scene final : tire::Scene {
                  VkFence fence );
 
 private:
-    const vk::Context *context_;
-    const vk::Pipeline *pipeline_;
+    const vk::Context* context_;
+    const vk::Pipeline* pipeline_;
 
     std::vector<std::unique_ptr<vk::SceneRenderCommand>> cBufs_{};
     std::vector<std::shared_ptr<vk::VertexBuffer<float>>> vertBuffersList_;

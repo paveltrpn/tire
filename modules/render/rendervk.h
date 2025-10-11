@@ -9,7 +9,7 @@
 #include "buffers/vertex_buffer.h"
 #include "command_pool.h"
 
-#include "../render.h"
+#include "render.h"
 #include "scene.h"
 
 #define FRAMES_IN_FLIGHT_COUNT 2
@@ -24,7 +24,7 @@ struct RenderVK final : Render {
     void setSwapInterval( int interval ) override;
 
 private:
-    void scene( const std::filesystem::path &path ) override;
+    void scene( const std::filesystem::path& path ) override;
     void preLoop() override;
     void preFrame() override;
     void frame() override;
