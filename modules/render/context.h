@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <print>
 #include <vector>
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
@@ -41,7 +42,7 @@ struct Context {
     };
 
     [[nodiscard]]
-    const VkExtent2D& currentExtent() const {
+    virtual const VkExtent2D& currentExtent() const {
         return currentExtent_;
     };
 

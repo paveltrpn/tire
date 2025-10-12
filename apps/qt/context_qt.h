@@ -14,7 +14,6 @@
 #define CONFIG_ENABLE_ADDITIONAL_VALIDATION_LAYERS false
 #define CONFIG_ENABLE_API_DUMP_VALIDATION_LAYRES false
 #define CONFIG_VERBOSE_VULKAN_OUTPUT false
-#define CONFIG_FRAMES_COUNT 3
 #define CONFIG_ENABLE_RAYTRACING_APPLICATIONS false
 
 namespace tire::vk {
@@ -47,19 +46,9 @@ struct ContextQt final : Context {
         const std::vector<VkFormat>& candidates, VkImageTiling tiling,
         VkFormatFeatureFlags features ) const -> VkFormat override;
 
-    [[nodiscard]] auto framesCount() const -> uint32_t { return framesCount_; };
-
-    // [[nodiscard]] const VkQueue& graphicsQueue() const {
-    // return graphicsQueue_;
-    // }
-
     //[[nodiscard]] VkQueue presentQueue() const { return presentQueue_; };
 
-    [[nodiscard]] auto graphicsFamily() const -> uint32_t {
-        return graphicsFamilyQueueId_;
-    };
-
-    [[nodiscard]] auto currentExtent() const -> const VkExtent2D& {
+    [[nodiscard]] auto currentExtent() const -> const VkExtent2D& override {
         return surfaceCapabilities_.currentExtent;
     };
 
@@ -92,11 +81,7 @@ private:
     VkSurfaceCapabilitiesKHR surfaceCapabilities_{};
 
     // Graphics queue resources.
-    uint32_t graphicsFamilyQueueId_{};
     uint32_t graphicsQueueId_{};
-    VkQueue graphicsQueue_{};
-
-    uint32_t framesCount_{ CONFIG_FRAMES_COUNT };
 };
 
 }  // namespace tire::vk

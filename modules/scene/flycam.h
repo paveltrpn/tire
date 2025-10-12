@@ -39,41 +39,41 @@ struct Flycam final {
 
     Flycam() = default;
 
-    Flycam( const algebra::vector3d &eye, value_type azimuth,
+    Flycam( const algebra::vector3d& eye, value_type azimuth,
             value_type elevation );
 
-    Flycam( const Flycam &other ) = delete;
-    Flycam( Flycam &&other ) = delete;
+    Flycam( const Flycam& other ) = delete;
+    Flycam( Flycam&& other ) = delete;
 
-    Flycam &operator=( const Flycam &other ) = delete;
-    Flycam &operator=( Flycam &&other ) = delete;
+    Flycam& operator=( const Flycam& other ) = delete;
+    Flycam& operator=( Flycam&& other ) = delete;
 
     [[maybe_unused]]
-    Flycam &setFov( value_type fov ) {
+    Flycam& setFov( value_type fov ) {
         fov_ = fov;
         return *this;
     }
 
     [[maybe_unused]]
-    Flycam &setAspect( value_type aspect ) {
+    Flycam& setAspect( value_type aspect ) {
         aspect_ = aspect;
         return *this;
     }
 
     [[maybe_unused]]
-    Flycam &setNcp( value_type ncp ) {
+    Flycam& setNcp( value_type ncp ) {
         ncp_ = ncp;
         return *this;
     }
 
     [[maybe_unused]]
-    Flycam &setFcp( value_type fcp ) {
+    Flycam& setFcp( value_type fcp ) {
         fcp_ = fcp;
         return *this;
     }
 
     [[maybe_unused]]
-    Flycam &setName( const std::string &value ) {
+    Flycam& setName( const std::string& value ) {
         name_ = value;
         return *this;
     };
@@ -83,7 +83,7 @@ struct Flycam final {
     void unsetMoveAll();
 
     void rotate( value_type azimuthffset, value_type elevayionOffset );
-    void setPosition( const algebra::vector3d &pos );
+    void setPosition( const algebra::vector3d& pos );
     void setAngles( value_type azimuth, value_type elevation, value_type roll );
 
     template <RenderType Type>
@@ -99,13 +99,13 @@ struct Flycam final {
         }
 
         // Get azimuth rotation matrix
-        const auto &ar = algebra::rotate<value_type>( zenith_, azimuth_ );
+        const auto& ar = algebra::rotate<value_type>( zenith_, azimuth_ );
 
         // Get actual "right side" direction vector
         right_ = ar.mult_vector3( { 1.0f, 0.0f, 0.0f } );
 
         // Get elevation rotation matrix
-        const auto &er = algebra::rotate<value_type>( right_, elevation_ );
+        const auto& er = algebra::rotate<value_type>( right_, elevation_ );
 
         // Get actual look direction vector
         look_ = er.mult_vector3( right_.cross( zenith_ ) );
@@ -114,7 +114,7 @@ struct Flycam final {
         //
 
         // Get offset matrix
-        auto &&offset = algebra::translate<value_type>( eye_ );
+        auto&& offset = algebra::translate<value_type>( eye_ );
         offset.transposeSelf();
 
         return offset * er * ar * projection;
