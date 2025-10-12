@@ -1,4 +1,5 @@
 
+#include <memory>
 #include <GLFW/glfw3.h>
 
 #include "bare.h"
@@ -20,9 +21,12 @@ BareWindow::BareWindow() {
 
     window_ = glfwCreateWindow( width_, height_, "glfw", nullptr, nullptr );
 
-    uint32_t extensionCount;
-    const char** glfwExtensions =
-        glfwGetRequiredInstanceExtensions( &extensionCount );
+    nWindow_ = glfwGetX11Window( window_ );
+    display_ = glfwGetX11Display();
+
+    context_ = std::make_unique<tire::vk::Context>( display_, nWindow_ );
+
+    context_->init();
 
     // VkSurfaceKHR surface;
     // if ( glfwCreateWindowSurface( instance, window, nullptr, &surface ) !=

@@ -30,6 +30,8 @@ int main( int argc, char** argv ) {
 */
 
 auto main( int argc, char** argv ) -> int {
+    new tire::Config{ "assets/config.json" };
+
     auto foo = BareWindow{};
     foo.loop();
 }

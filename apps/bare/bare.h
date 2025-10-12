@@ -3,8 +3,15 @@
 #define __bare_window_h__
 
 #include <iostream>
+
 #include <GLFW/glfw3.h>
+#define GLFW_EXPOSE_NATIVE_X11
+#include <GLFW/glfw3native.h>
+
 #include <vulkan/vulkan.h>
+
+#include "render/context.h"
+#include "render/rendervk.h"
 
 struct BareWindow final {
     BareWindow();
@@ -17,11 +24,18 @@ private:
     GLFWwindow* window_{};
     GLFWmonitor* monitor_{};
 
+    Display* display_;
+    Window nWindow_;
+
     // window properties
     int posx_{};
     int posy_{};
     int width_{ 640 };
     int height_{ 480 };
+
+    // Render related
+    std::unique_ptr<tire::vk::Context> context_;
+    std::unique_ptr<tire::Render> render_;
 };
 
 #endif
