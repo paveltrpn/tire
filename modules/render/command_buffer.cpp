@@ -41,7 +41,8 @@ auto Context::initPrimaryCommandBuffer() -> void {
 auto Context::initSecondaryCommandBuffer() -> void {
 }
 
-auto Context::renderCommandBegin( uint32_t frameId ) -> void {
+auto Context::renderCommandBegin( uint32_t frameId, VkRenderPass renderPass )
+    -> void {
     const auto [iaSem, rfSem, ifFnc] = getFrameSyncSet( frameId );
 
     vkResetCommandBuffer( cbPrimary_, 0 );
@@ -91,6 +92,21 @@ auto Context::renderCommandBegin( uint32_t frameId ) -> void {
         { .x = 0, .y = 0 },
         { .width = currentExtent().width, .height = currentExtent().height } };
     vkCmdSetScissor( cbPrimary_, 0, 1, &scissor );
+
+    const auto currentFramebuffer = framebuffer( frameId );
+
+    const VkRenderPassBeginInfo renderPassInfo{
+        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+        .pNext = nullptr,
+        .renderPass = renderPass,
+        .framebuffer = currentFramebuffer,
+        .renderArea = { .offset = { .x = 0, .y = 0 },
+                        .extent = { currentExtent() } },
+        .clearValueCount = static_cast<uint32_t>( clearValues_.size() ),
+        .pClearValues = clearValues_.data() };
+
+    vkCmdBeginRenderPass( cbPrimary_, &renderPassInfo,
+                          VK_SUBPASS_CONTENTS_INLINE );
 }
 
 auto Context::renderCommandEnd( uint32_t frameId ) -> void {

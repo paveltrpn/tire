@@ -9,12 +9,12 @@
 namespace tire::vk {
 
 struct Pipeline {
-    Pipeline( const vk::Context *context );
+    Pipeline( const vk::Context* context );
 
-    Pipeline( const Pipeline &other ) = delete;
-    Pipeline( Pipeline &&other ) = delete;
-    Pipeline &operator=( const Pipeline &other ) = delete;
-    Pipeline &operator=( Pipeline &&other ) = delete;
+    Pipeline( const Pipeline& other ) = delete;
+    Pipeline( Pipeline&& other ) = delete;
+    Pipeline& operator=( const Pipeline& other ) = delete;
+    Pipeline& operator=( Pipeline&& other ) = delete;
 
     virtual ~Pipeline();
 
@@ -25,7 +25,7 @@ struct Pipeline {
     virtual void buildPipeline() = 0;
 
     // Call this manually before buildPipeline()
-    void initShaderStages( const vk::Program &program );
+    void initShaderStages( const vk::Program& program );
 
 protected:
     // Each pipeline can have unique layout
@@ -34,7 +34,7 @@ protected:
     [[nodiscard]] virtual VkRenderPass initRenderpass() = 0;
 
 protected:
-    const vk::Context *context_;
+    const vk::Context* context_;
 
     VkPipeline pipeline_{ VK_NULL_HANDLE };
     VkPipelineLayout layout_{ VK_NULL_HANDLE };
@@ -44,7 +44,7 @@ protected:
 };
 
 struct PiplineMatrixReady final : Pipeline {
-    PiplineMatrixReady( const vk::Context *context )
+    PiplineMatrixReady( const vk::Context* context )
         : Pipeline( context ) {}
 
 public:
@@ -63,7 +63,7 @@ private:
 // =====================================================================================
 
 struct PiplineVertexBuffer final : Pipeline {
-    PiplineVertexBuffer( const vk::Context *context )
+    PiplineVertexBuffer( const vk::Context* context )
         : Pipeline( context ) {}
 
 public:

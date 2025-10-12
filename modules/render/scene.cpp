@@ -47,27 +47,8 @@ void Scene::submit() {
     }
 }
 
-void Scene::output( const VkCommandBuffer cb,
-                    const VkFramebuffer currentFramebuffer ) {
+void Scene::output( const VkCommandBuffer cb ) {
     const auto view = camera().matrix<tire::VulkanTag>();
-
-    std::array<VkClearValue, 2> clearValues_{};
-    const auto backgroundColor = Colorf( "#0f0f0f" );
-    clearValues_[0].color = { { backgroundColor.r(), backgroundColor.g(),
-                                backgroundColor.b(), 1.0f } };
-    clearValues_[1].depthStencil = { .depth = 0.0f, .stencil = 0 };
-
-    const VkRenderPassBeginInfo renderPassInfo{
-        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-        .pNext = nullptr,
-        .renderPass = pipeline_->renderpass(),
-        .framebuffer = currentFramebuffer,
-        .renderArea = { .offset = { .x = 0, .y = 0 },
-                        .extent = { context_->currentExtent() } },
-        .clearValueCount = static_cast<uint32_t>( clearValues_.size() ),
-        .pClearValues = clearValues_.data() };
-
-    vkCmdBeginRenderPass( cb, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE );
 
     vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS,
                        pipeline_->pipeline() );

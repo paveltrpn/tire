@@ -33,12 +33,11 @@ void RenderVK::preFrame() {
 };
 
 void RenderVK::frame() {
-    context_->renderCommandBegin( currentFrame_ );
-
-    const auto currentFramebuffer = context_->framebuffer( currentFrame_ );
+    context_->renderCommandBegin( currentFrame_,
+                                  piplineVertexBuffer_->renderpass() );
 
     auto handle = static_cast<vk::Scene*>( scene_.get() );
-    handle->output( context_->getDrawCommandBuffer(), currentFramebuffer );
+    handle->output( context_->getDrawCommandBuffer() );
 
     context_->renderCommandEnd( currentFrame_ );
 

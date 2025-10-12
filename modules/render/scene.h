@@ -32,8 +32,7 @@ struct Scene final : tire::Scene {
         }
     };
 
-    void output( const VkCommandBuffer cb,
-                 const VkFramebuffer currentFramebuffer );
+    void output( const VkCommandBuffer cb );
 
 private:
     const vk::Context* context_;

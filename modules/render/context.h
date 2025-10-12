@@ -76,7 +76,8 @@ struct Context final {
         return currentExtent_;
     };
 
-    auto renderCommandBegin( uint32_t frameId ) -> void;
+    auto renderCommandBegin( uint32_t frameId, VkRenderPass renderPass )
+        -> void;
     auto renderCommandEnd( uint32_t frameId ) -> void;
 
     auto getDrawCommandBuffer() const -> VkCommandBuffer { return cbPrimary_; }
