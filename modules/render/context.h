@@ -2,9 +2,6 @@
 #pragma once
 
 #include <vector>
-#include <expected>
-#include <array>
-
 #include <vulkan/vulkan.h>
 
 #include <X11/Xlib.h>
@@ -15,23 +12,24 @@ namespace tire::vk {
 
 struct Pipeline;
 
-struct Context final {
-    Context( Display* display, Window window );
-    ~Context();
+struct Context {
+    Context() = default;
+    virtual ~Context() = default;
 
     Context( const Context& other ) = delete;
     Context( Context&& other ) = delete;
-    Context& operator=( const Context& other ) = delete;
-    Context& operator=( Context&& other ) = delete;
+    auto operator=( const Context& other ) -> Context& = delete;
+    auto operator=( Context&& other ) -> Context& = delete;
 
-    // Init all context
-    void init();
-
-    [[nodiscard]] VkInstance instance() const { return instance_; };
-    [[nodiscard]] VkSurfaceKHR surface() const { return surface_; };
-    [[nodiscard]] VkDevice device() const { return device_; };
-    [[nodiscard]] VkCommandPool commandPool() const { return commandPool_; };
-    [[nodiscard]] VkSwapchainKHR swapchain() const { return swapchain_; };
+    [[nodiscard]] auto instance() const -> VkInstance { return instance_; };
+    [[nodiscard]] auto surface() const -> VkSurfaceKHR { return surface_; };
+    [[nodiscard]] auto device() const -> VkDevice { return device_; };
+    [[nodiscard]] auto commandPool() const -> VkCommandPool {
+        return commandPool_;
+    };
+    [[nodiscard]] auto swapchain() const -> VkSwapchainKHR {
+        return swapchain_;
+    };
 
     [[nodiscard]]
     const VkSurfaceFormatKHR& surfaceFormat() const {
@@ -39,36 +37,11 @@ struct Context final {
     };
 
     [[nodiscard]]
-    uint32_t memoryRequirements( uint32_t typeFilter,
-                                 VkMemoryPropertyFlags properties ) const;
-    [[nodiscard]]
-    VkFormat findSupportedFormat( const std::vector<VkFormat>& candidates,
-                                  VkImageTiling tiling,
-                                  VkFormatFeatureFlags features ) const;
-
-    void makeFrames( const Pipeline* pipeline );
-
-    [[nodiscard]] std::tuple<VkSemaphore, VkSemaphore, VkFence> getFrameSyncSet(
-        size_t id ) {
-        return { frames_[id].imageAvailableSemaphore_,
-                 frames_[id].renderFinishedSemaphore_,
-                 frames_[id].inFlightFence_ };
-    }
-
-    [[nodiscard]] uint32_t framesCount() const { return framesCount_; };
-
-    [[nodiscard]] VkFramebuffer framebuffer( size_t id ) const {
-        return frames_[id].framebuffer_;
-    };
-
-    [[nodiscard]]
     const VkQueue& graphicsQueue() const {
         return graphicsQueue_;
     }
 
-    [[nodiscard]] VkQueue presentQueue() const { return presentQueue_; };
-
-    [[nodiscard]] uint32_t graphicsFamily() const {
+    [[nodiscard]] auto graphicsFamily() const -> uint32_t {
         return graphicsFamilyQueueId_;
     };
 
@@ -77,85 +50,33 @@ struct Context final {
         return currentExtent_;
     };
 
-    auto renderCommandBegin( uint32_t frameId, VkRenderPass renderPass )
-        -> void;
-    auto renderCommandEnd( uint32_t frameId ) -> void;
+    [[nodiscard]]
+    virtual uint32_t memoryRequirements(
+        uint32_t typeFilter, VkMemoryPropertyFlags properties ) const = 0;
 
-    auto getDrawCommandBuffer() const -> VkCommandBuffer { return cbPrimary_; }
+    [[nodiscard]]
+    virtual VkFormat findSupportedFormat(
+        const std::vector<VkFormat>& candidates, VkImageTiling tiling,
+        VkFormatFeatureFlags features ) const = 0;
 
-private:
-    void makeInstance();
-    void makeXlibSurface();
-    void collectPhysicalDevices();
-    void makeDevice();
-    void makeCommandPool();
-    void makeSwapchain();
-    auto initPrimaryCommandBuffer() -> void;
-    auto initSecondaryCommandBuffer() -> void;
+    [[nodiscard]]
+    virtual auto getDrawCommandBuffer() const -> VkCommandBuffer = 0;
 
-private:
-    struct PhysicalDevice final {
-        VkPhysicalDevice device{ VK_NULL_HANDLE };
-        VkPhysicalDeviceProperties properties{};
-        VkPhysicalDeviceFeatures features{};
-        std::vector<VkExtensionProperties> extensions{};
-        std::vector<VkQueueFamilyProperties> queueFamilyProperties{};
-    };
-
-    struct Frame final {
-        VkImage image_{};
-        VkImageView view_{};
-        VkFramebuffer framebuffer_{};
-        VkSemaphore imageAvailableSemaphore_{};
-        VkSemaphore renderFinishedSemaphore_{};
-        VkFence inFlightFence_{};
-    };
-
-private:
-    // Outer world connection
-    const Display* display_;
-    const Window window_;
-
+protected:
     // Instance
     VkInstance instance_{ VK_NULL_HANDLE };
-    VkDebugUtilsMessengerEXT debugMessenger_{ VK_NULL_HANDLE };
-    std::vector<const char*> desiredValidationLayerList_{};
-    std::vector<VkExtensionProperties> extensionProperties_{};
-    std::vector<VkLayerProperties> layerProperties_{};
-
-    // Surface
     VkSurfaceKHR surface_{ VK_NULL_HANDLE };
-
-    // Physical and logical devices
     VkDevice device_{ VK_NULL_HANDLE };
-    std::vector<PhysicalDevice> physicalDevices_{};
-    int pickedPhysicalDeviceId_{ -1 };
+    VkCommandPool commandPool_{ VK_NULL_HANDLE };
+    VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
+
     uint32_t graphicsFamilyQueueId_{ UINT32_MAX };
-    uint32_t presentSupportQueueId_{ UINT32_MAX };
-    VkQueue graphicsQueue_{ VK_NULL_HANDLE };
-    VkQueue presentQueue_{ VK_NULL_HANDLE };
-    VkSurfaceCapabilitiesKHR surfaceCapabilities_{};
-    std::vector<VkSurfaceFormatKHR> surfaceFormats_{};
-    std::vector<VkPresentModeKHR> presentModes_{};
-    VkSurfaceFormatKHR surfaceFormat_{};
-    VkPresentModeKHR presentMode_{};
+
     VkExtent2D currentExtent_{};
 
-    // Command pool
-    VkCommandPool commandPool_{ VK_NULL_HANDLE };
-    VkCommandBuffer cbPrimary_{ VK_NULL_HANDLE };
-    VkCommandBuffer cbSecondary_{ VK_NULL_HANDLE };
-    // Background color value
-    std::array<VkClearValue, 2> clearValues_{};
+    VkQueue graphicsQueue_{ VK_NULL_HANDLE };
 
-    // Swapchain
-    VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
-    uint32_t swapchainImageCount_{};
-    uint32_t framesCount_{};
-    std::vector<Frame> frames_{};
-    VkImage depthImage_;
-    VkDeviceMemory depthImageMemory_;
-    VkImageView depthImageView_;
+    VkSurfaceFormatKHR surfaceFormat_{};
 };
 
 }  // namespace tire::vk

@@ -15,7 +15,7 @@
 
 namespace tire {
 
-MainWindow::MainWindow( QQuickView *parent )
+MainWindow::MainWindow( QQuickView* parent )
     : QQuickView{ parent }
     , engine_{ engine() }
     , context_{ rootContext() }
@@ -25,7 +25,7 @@ MainWindow::MainWindow( QQuickView *parent )
     , theme_{ new Appearance{ workPath(), this } }
 
 {
-    QSGRendererInterface *rif = this->rendererInterface();
+    QSGRendererInterface* rif = this->rendererInterface();
 
     // We are not prepared for anything other than running with the RHI and its Vulkan backend.
     if ( rif->graphicsApi() != QSGRendererInterface::Vulkan ) {
@@ -64,7 +64,7 @@ MainWindow::MainWindow( QQuickView *parent )
     // Schedule actions on main component loading.
     connect(
         this, &QQuickView::statusChanged, this,
-        [this]( QQuickView::Status status ) {
+        [this]( QQuickView::Status status ) -> void {
             switch ( status ) {
                 case QQuickView::Error: {
                     log::fatal(
@@ -87,7 +87,7 @@ MainWindow::MainWindow( QQuickView *parent )
                     // TODO: Spawn this in c++ code and attach to
                     // qml scene graph somehow to avoid explicit definition
                     // of this object in main.qml
-                    renderItemHandle_ = rootObject()->findChild<RenderItem *>();
+                    renderItemHandle_ = rootObject()->findChild<RenderItem*>();
                     if ( !renderItemHandle_ ) {
                         log::fatal(
                             "MainWindow === can't acquire renderer "
@@ -135,17 +135,17 @@ MainWindow::MainWindow( QQuickView *parent )
 
     // Process quit actions.
     connect( engine_, &QQmlEngine::quit, this,
-             [this]() { QApplication::quit(); } );
+             [this]() -> void { QApplication::quit(); } );
 }
 
-void MainWindow::closeEvent( QCloseEvent *ev ) {
+void MainWindow::closeEvent( QCloseEvent* ev ) {
     log::info( "quit" );
 
     // Save window geometry at close.
     settings_->setValue( "main_window_geometry", geometry() );
 }
 
-void MainWindow::keyPressEvent( QKeyEvent *ev ) {
+void MainWindow::keyPressEvent( QKeyEvent* ev ) {
     switch ( ev->key() ) {
         case Qt::Key_Escape: {
             QApplication::quit();
@@ -157,19 +157,19 @@ void MainWindow::keyPressEvent( QKeyEvent *ev ) {
     }
 }
 
-void MainWindow::keyReleaseEvent( QKeyEvent *ev ) {
+void MainWindow::keyReleaseEvent( QKeyEvent* ev ) {
 }
 
-void MainWindow::mouseMoveEvent( QMouseEvent *ev ) {
+void MainWindow::mouseMoveEvent( QMouseEvent* ev ) {
 }
 
-void MainWindow::mousePressEvent( QMouseEvent *ev ) {
+void MainWindow::mousePressEvent( QMouseEvent* ev ) {
 }
 
-void MainWindow::mouseReleaseEvent( QMouseEvent *ev ) {
+void MainWindow::mouseReleaseEvent( QMouseEvent* ev ) {
 }
 
-void MainWindow::resizeEvent( QResizeEvent *ev ) {
+void MainWindow::resizeEvent( QResizeEvent* ev ) {
     // qDebug() << ev->size();
 
     if ( renderItemHandle_ ) renderItemHandle_->updateSurface();

@@ -11,23 +11,23 @@ static constexpr bool DEBUG_OUTPUT_SHADER_STORAGE_VK_CPP{ true };
 
 namespace tire::vk {
 
-Program::Program( const vk::Context *context )
+Program::Program( const vk::Context* context )
     : context_{ context } {
 }
 
 Program::~Program() {
-    for ( const auto &module : modules_ ) {
+    for ( const auto& module : modules_ ) {
         vkDestroyShaderModule( context_->device(), std::get<1>( module ),
                                nullptr );
     }
 }
 
-void Program::push( std::span<uint8_t> bytecode, const std::string &name ) {
+void Program::push( std::span<uint8_t> bytecode, const std::string& name ) {
     // Create vulkan shader module
     VkShaderModuleCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     createInfo.codeSize = bytecode.size();
-    createInfo.pCode = reinterpret_cast<const uint32_t *>( bytecode.data() );
+    createInfo.pCode = reinterpret_cast<const uint32_t*>( bytecode.data() );
 
     VkShaderModule module;
     if ( const auto err = vkCreateShaderModule( context_->device(), &createInfo,
@@ -44,8 +44,9 @@ void Program::push( std::span<uint8_t> bytecode, const std::string &name ) {
     modules_[name] = module;
 }
 
-void Program::add( const std::filesystem::path &path ) {
-    if ( context_->device() == VK_NULL_HANDLE ) {
+void Program::add( const std::filesystem::path& path ) {
+    const auto device = context_->device();
+    if ( device == VK_NULL_HANDLE ) {
         throw std::runtime_error( std::format(
             "can't use shaders before valid logical device is acquired!" ) );
     }
@@ -82,7 +83,7 @@ void Program::add( const std::filesystem::path &path ) {
     }
 
     // Split given string by seperator
-    auto split = []( const std::string &string, const char *sep ) {
+    auto split = []( const std::string& string, const char* sep ) {
         std::vector<std::string> list;
         std::string::size_type start{ 0 };
         std::string::size_type end;
@@ -125,52 +126,52 @@ void Program::add( const std::filesystem::path &path ) {
     push( uint8Buf, name );
 }
 
-void Program::add( std::span<uint8_t> bytecode, const std::string &name ) {
+void Program::add( std::span<uint8_t> bytecode, const std::string& name ) {
     push( bytecode, name );
 }
 
-void Program::fill( const std::vector<std::filesystem::path> &files ) {
+void Program::fill( const std::vector<std::filesystem::path>& files ) {
     if ( files.size() < 2 ) {
         throw std::runtime_error( std::format(
             "vk::ShaderStorage == pipeline shader storage must "
             "contains at least vertex and fragment shader stages!" ) );
     }
 
-    for ( const auto &item : files ) {
+    for ( const auto& item : files ) {
         add( item );
     }
 }
 
 void Program::fill(
-    const std::vector<std::pair<std::span<uint8_t>, std::string>> &sources ) {
+    const std::vector<std::pair<std::span<uint8_t>, std::string>>& sources ) {
     if ( sources.size() < 2 ) {
         throw std::runtime_error( std::format(
             "vk::ShaderStorage == pipeline shader storage must "
             "contains at least vertex and fragment shader stages!" ) );
     }
 
-    for ( const auto &item : sources ) {
+    for ( const auto& item : sources ) {
         auto [bytecode, name] = item;
         add( bytecode, name );
     }
 }
 
-VkShaderModule Program::get( const std::string &name ) {
+VkShaderModule Program::get( const std::string& name ) {
     VkShaderModule module;
     try {
         module = modules_.at( name );
-    } catch ( std::out_of_range &e ) {
+    } catch ( std::out_of_range& e ) {
         log::warning( "module {} not exist!", name );
         return VK_NULL_HANDLE;
     }
     return module;
 }
 
-void Program::destroy( const std::string &name ) {
+void Program::destroy( const std::string& name ) {
     VkShaderModule module;
     try {
         module = modules_.at( name );
-    } catch ( std::out_of_range &e ) {
+    } catch ( std::out_of_range& e ) {
         log::warning( "module {} not exist!", name );
         return;
     }
@@ -179,13 +180,13 @@ void Program::destroy( const std::string &name ) {
 }
 
 void Program::list() {
-    for ( const auto &key : modules_ ) {
+    for ( const auto& key : modules_ ) {
         log::debug<DEBUG_OUTPUT_SHADER_STORAGE_VK_CPP>(
             "available shader module: \"{}\"", std::get<0>( key ) );
     }
 }
 
-bool Program::checkStageExist( const std::string &stageSuffix ) {
+bool Program::checkStageExist( const std::string& stageSuffix ) {
     // Find shader stage module name in modules_ which have certain suffix
     const auto end = modules_.cend();
     const auto it = std::find_if(
@@ -197,7 +198,7 @@ bool Program::checkStageExist( const std::string &stageSuffix ) {
     return it != end;
 }
 
-bool Program::isValidName( const std::string &name ) {
+bool Program::isValidName( const std::string& name ) {
     // Finds out that given shader file name contains somthing from
     // shader stage suffix set ("VERTEX", "FRAGMENT" etc.)
     const auto end = StagesSuffixMap.cend();

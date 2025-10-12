@@ -171,24 +171,25 @@ target_link_libraries(barevk PUBLIC
     uv
 )
 
-set_target_properties(qtvk PROPERTIES AUTOMOC TRUE)
-target_link_libraries(qtvk PUBLIC
-    log 
-    algebra 
-    scene 
-    config 
-    render 
-    glfw3
-    Vulkan::Vulkan 
-    uv
-    Qt::Core
-    Qt::Gui
-    Qt6::GuiPrivate
-    Qt::Quick
-    Qt::QuickWidgets
-    Qt::QuickControls2
-    Qt::Qml
-)
+
+#set_target_properties(qtvk PROPERTIES AUTOMOC TRUE)
+#target_link_libraries(qtvk PUBLIC
+#    log 
+#    algebra 
+#    scene 
+#    config 
+#    render 
+#    glfw3
+#    Vulkan::Vulkan 
+#   uv
+#    Qt::Core
+#    Qt::Gui
+#    Qt6::GuiPrivate
+#    Qt::Quick
+#    Qt::QuickWidgets
+#    Qt::QuickControls2
+#    Qt::Qml
+#)
 
 # Test subdirectories
 # ================================

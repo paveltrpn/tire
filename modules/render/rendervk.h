@@ -35,6 +35,10 @@ struct RenderVK final {
     void createGraphicsPipeline();
     void createSyncObjects();
 
+    auto renderPass() const -> VkRenderPass {
+        return piplineVertexBuffer_->renderpass();
+    }
+
 public:
     void keyPressEvent( unsigned int key );
     void keyReleaseEvent( unsigned int key );
@@ -53,8 +57,6 @@ private:
     vk::Context* context_{};
 
     std::unique_ptr<vk::Pipeline> piplineVertexBuffer_{};
-
-    uint32_t currentFrame_{ 0 };
 
     // The Scene
     std::shared_ptr<Scene> scene_{};

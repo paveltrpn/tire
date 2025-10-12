@@ -7,12 +7,12 @@
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_DEVICE_CPP{ true };
 
-#include "context.h"
+#include "context_bare.h"
 #include "config/config.h"
 
 namespace tire::vk {
 
-void Context::collectPhysicalDevices() {
+void ContextBare::collectPhysicalDevices() {
     uint32_t devCount{};
 
     // Enumerate physical devices
@@ -114,7 +114,7 @@ void Context::collectPhysicalDevices() {
     }
 }
 
-void Context::makeDevice() {
+void ContextBare::makeDevice() {
     const auto congigHandle = Config::instance();
 
     // Check which devices available on machine

@@ -3,11 +3,9 @@
 #define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "context.h"
+#include "context_bare.h"
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_INSTANCE_CPP{ true };
-
-#include "context.h"
 
 #include "config/config.h"
 
@@ -60,7 +58,7 @@ static VkResult vkCreateDebugUtilsMessenger(
 
 }  // namespace
 
-void Context::makeInstance() {
+void ContextBare::makeInstance() {
     const auto configPtr = Config::instance();
 
     const auto applicationName = configPtr->getString( "application_name" );

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <unordered_map>
 #include <filesystem>
 #include <span>
@@ -90,12 +91,12 @@ static const std::unordered_map<ShaderStageType, std::string> StagesSuffixMap =
 // of the vulkan specification demands at least one shader stage - VERTEX for graphics
 // pipeline or it can be COMPUTE shader for compute pipeline).
 struct Program final {
-    Program( const vk::Context *context );
+    Program( const vk::Context* context );
 
-    Program( const Program &other ) = delete;
-    Program( Program &&other ) = delete;
-    Program &operator=( const Program &other ) = delete;
-    Program &operator=( Program &&other ) = delete;
+    Program( const Program& other ) = delete;
+    Program( Program&& other ) = delete;
+    Program& operator=( const Program& other ) = delete;
+    Program& operator=( Program&& other ) = delete;
 
     ~Program();
 
@@ -106,16 +107,16 @@ struct Program final {
     // 3) Shader mudules map contains one shader module per stage, i.e.
     // there is only one mudule for each stage and modules count
     // equal to vulkan shader stages types.
-    void add( const std::filesystem::path &path );
+    void add( const std::filesystem::path& path );
 
     // Add shader stage as bytecode array
-    void add( std::span<uint8_t> bytecode, const std::string &name );
+    void add( std::span<uint8_t> bytecode, const std::string& name );
 
-    void fill( const std::vector<std::filesystem::path> &files );
-    void fill( const std::vector<std::pair<std::span<uint8_t>, std::string>>
-                   &sources );
+    void fill( const std::vector<std::filesystem::path>& files );
+    void fill( const std::vector<std::pair<std::span<uint8_t>, std::string>>&
+                   sources );
 
-    [[nodiscard]] VkShaderModule get( const std::string &name );
+    [[nodiscard]] VkShaderModule get( const std::string& name );
 
     // Return shader vulkan module
     template <ShaderStageType Stage>
@@ -124,7 +125,7 @@ struct Program final {
         // of concept keep invariant
         const std::string suffix = StagesSuffixMap.at( Stage );
 
-        for ( const auto &item : modules_ ) {
+        for ( const auto& item : modules_ ) {
             const auto [name, module] = item;
             if ( name.ends_with( suffix ) ) {
                 return module;
@@ -138,16 +139,16 @@ struct Program final {
         return VK_NULL_HANDLE;
     }
 
-    void destroy( const std::string &name );
+    void destroy( const std::string& name );
     void list();
 
 private:
-    void push( std::span<uint8_t> bytecode, const std::string &name );
-    bool checkStageExist( const std::string &stageSuffix );
-    bool isValidName( const std::string &name );
+    void push( std::span<uint8_t> bytecode, const std::string& name );
+    bool checkStageExist( const std::string& stageSuffix );
+    bool isValidName( const std::string& name );
 
 private:
-    const vk::Context *context_;
+    const vk::Context* context_;
 
     // Contains shader stages vulkan shader mudules. One module per stage.
     std::unordered_map<std::string, VkShaderModule> modules_{};

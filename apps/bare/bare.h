@@ -10,7 +10,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "render/context.h"
+#include "context_bare.h"
 #include "render/rendervk.h"
 #include "scene/scene.h"
 
@@ -32,8 +32,10 @@ private:
     int height_{ 1024 };
 
     // Render related
-    std::unique_ptr<tire::vk::Context> context_;
+    std::unique_ptr<tire::vk::ContextBare> context_;
     std::unique_ptr<tire::RenderVK> render_;
+
+    uint32_t currentFrame_{ 0 };
 };
 
 #endif

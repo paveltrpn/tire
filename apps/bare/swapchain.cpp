@@ -2,13 +2,12 @@
 #define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "context.h"
+#include "context_bare.h"
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_SWAPCHAIN_CPP{ true };
 
 #include "config/config.h"
-#include "context.h"
-#include "pipelines/pipeline.h"
+#include "context_bare.h"
 
 namespace tire::vk {
 
@@ -132,7 +131,7 @@ void transitionImageLayout( VkDevice device, VkCommandPool commandPool,
 
 }  // namespace
 
-void Context::makeSwapchain() {
+void ContextBare::makeSwapchain() {
     const auto congigHandle = Config::instance();
 
     log::info(
@@ -311,7 +310,7 @@ void Context::makeSwapchain() {
                            VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL );
 }
 
-void Context::makeFrames( const Pipeline* pipeline ) {
+void ContextBare::makeFrames( VkRenderPass renderPass ) {
     // Acquire all swapchain images at one call
     std::vector<VkImage> swapChainImages;
     swapChainImages.resize( framesCount_ );
@@ -362,7 +361,7 @@ void Context::makeFrames( const Pipeline* pipeline ) {
                                                    depthImageView_ };
         const VkFramebufferCreateInfo framebufferInfo{
             .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-            .renderPass = pipeline->renderpass(),
+            .renderPass = renderPass,
             .attachmentCount = static_cast<uint32_t>( attachments.size() ),
             .pAttachments = attachments.data(),
             .width = currentExtent_.width,

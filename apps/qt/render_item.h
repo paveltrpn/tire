@@ -22,7 +22,7 @@ public:
     Q_INVOKABLE void noop() { log::info( "noop from render item" ); }
 
     auto updateSurface() -> void {
-        if ( context_ ) context_->querySurface();
+        // if ( context_ ) context_->querySurface();
     }
 
     // Context proxy functions
