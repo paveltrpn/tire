@@ -8,7 +8,11 @@
 #include "window.h"
 #include "log/log.h"
 
-int main( int argc, char *argv[] ) {
+#include "config/config.h"
+
+int main( int argc, char* argv[] ) {
+    new tire::Config{ "assets/config.json" };
+
     const QGuiApplication app( argc, argv );
 
     tire::log::info( "Qt version: {}", qVersion() );

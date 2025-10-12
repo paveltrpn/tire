@@ -7,10 +7,11 @@
 
 namespace tire {
 
-Appearance::Appearance( const QDir &path, QObject *parent )
+Appearance::Appearance( const QDir& path, QObject* parent )
     : QObject{ parent } {
     // Load color scheme.
-    QFile file( path.path() + QDir::separator() + "assets/colors/colors.json" );
+    QFile file( path.path() + QDir::separator() +
+                "apps/qt/qml/assets/colors.json" );
     file.open( QIODevice::ReadOnly | QIODevice::Text );
     const QByteArray data = file.readAll();
 

@@ -15,9 +15,7 @@ struct CommandPool final {
     CommandPool& operator=( const CommandPool& other ) = delete;
     CommandPool& operator=( CommandPool&& other ) = delete;
 
-    ~CommandPool() {
-        vkDestroyCommandPool( context_->device(), commandPool_, nullptr );
-    }
+    ~CommandPool();
 
     [[nodiscard]] VkCommandPool handle() const { return commandPool_; }
 

@@ -8,7 +8,7 @@ static constexpr bool DEBUG_OUTPUT_COMMAND_POOL_CPP{ true };
 
 namespace tire::vk {
 
-CommandPool::CommandPool( const vk::Context *context )
+CommandPool::CommandPool( const vk::Context* context )
     : context_{ context } {
     poolInfo_.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     poolInfo_.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
@@ -24,6 +24,10 @@ CommandPool::CommandPool( const vk::Context *context )
         log::debug<DEBUG_OUTPUT_COMMAND_POOL_CPP>(
             "vk::CommandPool === command pool created!" );
     }
+}
+
+CommandPool::~CommandPool() {
+    vkDestroyCommandPool( context_->device(), commandPool_, nullptr );
 }
 
 }  // namespace tire::vk

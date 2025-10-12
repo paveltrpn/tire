@@ -6,10 +6,6 @@ set(CMAKE_CXX_COMPILER $ENV{GCC_LATEST}/bin/g++-15.1)
 # set(CMAKE_CXX_COMPILER clang++)
 # add_link_options(-stdlib=libc++)
 add_compile_options(-std=c++26)
-
-# NOTE: 
-add_compile_options(-fpermissive)
-
 set(CMAKE_BUILD_TYPE Debug)
 
 project (tiny_render)
@@ -105,7 +101,7 @@ target_sources(config PRIVATE ${MOD_CONFIG_SRC})
 file(GLOB_RECURSE MOD_RENDER_SRC "modules/render/*.cpp" "modules/render/*.h")
 add_library(render)
 target_sources(render PRIVATE ${MOD_RENDER_SRC})
-target_link_libraries(render Vulkan::Vulkan ui scene config geometry algebra event)
+target_link_libraries(render vulkan ui scene config geometry algebra event)
 
 # Module image
 # ================================

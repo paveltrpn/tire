@@ -126,7 +126,8 @@ MainWindow::MainWindow( QQuickView* parent )
         } );
 
     // Load main QML component.
-    setSource( QUrl( workPath().path() + QDir::separator() + "qml/main.qml" ) );
+    setSource( QUrl( workPath().path() + QDir::separator() +
+                     "apps/qt/qml/main.qml" ) );
 
     // Set deefault or restore main window geometry.
     const auto restoredGeometry =

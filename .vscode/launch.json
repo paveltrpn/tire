@@ -4,8 +4,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "cryptest",
-            "program": "${workspaceFolder}/build/apps/barevk",
+            "name": "barevk",
+            "program": "${workspaceFolder}/build/barevk",
+            "args": [],
+            "cwd": "${workspaceFolder}/build"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "qtvk",
+            "program": "${workspaceFolder}/build/qtvk",
             "args": [],
             "cwd": "${workspaceFolder}/build"
         }
