@@ -10,7 +10,6 @@
 #include "pipelines/pipeline.h"
 #include "scene/scene.h"
 #include "command_pool.h"
-#include "commands/scene_render_command.h"
 #include "buffers/vertex_buffer.h"
 #include "vulkan/vulkan_core.h"
 
@@ -24,10 +23,6 @@ struct Scene final : tire::Scene {
     void draw() override {};
 
     void clean() override {
-        for ( auto& cbuf : cBufs_ ) {
-            cbuf->clean();
-        }
-
         for ( auto& buf : vertBuffersList_ ) {
             buf->clean();
         }
@@ -37,15 +32,13 @@ struct Scene final : tire::Scene {
         }
     };
 
-    void output( const VkFramebuffer currentFramebuffer, uint32_t imageIndex,
-                 VkSemaphore waitSemaphore, VkSemaphore signalSemaphore,
-                 VkFence fence );
+    void output( const VkCommandBuffer cb,
+                 const VkFramebuffer currentFramebuffer );
 
 private:
     const vk::Context* context_;
     const vk::Pipeline* pipeline_;
 
-    std::vector<std::unique_ptr<vk::SceneRenderCommand>> cBufs_{};
     std::vector<std::shared_ptr<vk::VertexBuffer<float>>> vertBuffersList_;
     std::vector<std::shared_ptr<vk::VertexBuffer<float>>> nrmlBuffersList_;
 };

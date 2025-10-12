@@ -78,6 +78,13 @@ struct Context final {
         return currentExtent_;
     };
 
+    auto renderCommandBegin( uint32_t frameId ) -> void;
+    auto renderCommandEnd( uint32_t frameId ) -> void;
+
+    auto getPrimaryCommandBuffer() const -> VkCommandBuffer {
+        return cbPrimary_;
+    }
+
 private:
     void makeInstance();
     void makeXlibSurface();
