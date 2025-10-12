@@ -18,8 +18,10 @@
 namespace tire {
 
 struct RenderVK final {
-    RenderVK( vk::Context* context );
+    RenderVK() = default;
     ~RenderVK() = default;
+
+    auto init( vk::Context* context ) -> void;
 
     void displayRenderInfo() {};
     void setSwapInterval( int interval );

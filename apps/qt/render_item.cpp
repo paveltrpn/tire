@@ -106,7 +106,7 @@ auto RenderItem::beforeRendering() -> void {
 
         emit contextinitialized();
 
-        render_ = std::make_unique<tire::RenderVK>( context_.get() );
+        render_->init( context_.get() );
 
         render_->scene( "/mnt/main/code/tire/assets/m01.json" );
 
@@ -129,7 +129,9 @@ auto RenderItem::beforeRenderPassRecording() -> void {
 
     // Render frame with custom scene.
     // render_->frame( cb, g.width(), g.height() );
+    render_->preFrame();
     render_->frame( cb );
+    render_->postFrame();
 
     window_->endExternalCommands();
 }
@@ -146,7 +148,7 @@ auto RenderItem::sync() -> void {
             qDebug() << "RenderItem === bad qquickitem render interface...";
         }
 
-        render_ = std::make_unique<tire::RenderVK>( context_.get() );
+        render_ = std::make_unique<tire::RenderVK>();
 
         // Initializing resources is done before starting to record the
         // renderpass, regardless of wanting an underlay or overlay.

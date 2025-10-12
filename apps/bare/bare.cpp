@@ -66,7 +66,8 @@ BareWindow::BareWindow() {
 
     context_->init();
 
-    render_ = std::make_unique<tire::RenderVK>( context_.get() );
+    render_ = std::make_unique<tire::RenderVK>();
+    render_->init( context_.get() );
 
     context_->makeFrames( render_->renderPass() );
 

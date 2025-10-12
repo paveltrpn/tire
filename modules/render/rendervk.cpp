@@ -18,8 +18,8 @@ static constexpr bool DEBUG_OUTPUT_RENDERVK_CPP{ true };
 
 namespace tire {
 
-RenderVK::RenderVK( vk::Context* context )
-    : context_{ context } {
+auto RenderVK::init( vk::Context* context ) -> void {
+    context_ = context;
     try {
         const auto configHandle = Config::instance();
         const auto basePath = configHandle->getBasePath().string();
@@ -40,7 +40,7 @@ RenderVK::RenderVK( vk::Context* context )
     } catch ( const std::runtime_error& e ) {
         throw std::runtime_error( e.what() );
     }
-};
+}
 
 void RenderVK::scene( const std::filesystem::path& path ) {
     scene_ = std::make_shared<vk::Scene>( path, context_,

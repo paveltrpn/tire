@@ -130,8 +130,8 @@ MainWindow::MainWindow( QQuickView* parent )
                      "apps/qt/qml/main.qml" ) );
 
     // Set deefault or restore main window geometry.
-    const auto restoredGeometry =
-        settings_->value( "main_window_geometry", QRect( 300, 300, 640, 480 ) );
+    const auto restoredGeometry = settings_->value(
+        "main_window_geometry", QRect( 300, 300, 1024, 1024 ) );
     setGeometry( restoredGeometry.toRect() );
 
     // Process quit actions.

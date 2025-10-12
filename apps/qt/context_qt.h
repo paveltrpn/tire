@@ -35,8 +35,6 @@ struct ContextQt final : Context {
     auto queryDeviceInfo() -> void;
     auto querySurface() -> void;
 
-    [[nodiscard]] auto instance() const -> VkInstance { return instance_; };
-    [[nodiscard]] auto device() const -> VkDevice { return device_; };
     [[nodiscard]] auto renderPass() const -> VkRenderPass {
         return renderPass_;
     };
