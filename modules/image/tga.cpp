@@ -25,10 +25,10 @@ Tga::Tga( std::string_view fname ) {
 
     _decompressed = new uint8_t[_header.width * _header.height * channels];
 
-    auto getByte = [this, channels]( uint8_t *c ) {
+    auto getByte = [this, channels]( uint8_t* c ) {
         // channels can be == 3 or 4. Hence we read 4 bytes in 4-bytes array
         // or read 3 bytes and leave 4-th byte unused.
-        _fileStream.read( reinterpret_cast<char *>( c ), channels );
+        _fileStream.read( reinterpret_cast<char*>( c ), channels );
     };
 
     auto setByte = [this, channels]( size_t i, uint8_t c[4] ) {
@@ -56,7 +56,7 @@ Tga::Tga( std::string_view fname ) {
     if ( _header.imageType ==
          static_cast<decltype( _header.imageType )>( TgaCompress::RLE ) ) {
         for ( i = 0; i < _header.width * _header.height; ) {
-            _fileStream.read( reinterpret_cast<char *>( &blockInfo ), 1 );
+            _fileStream.read( reinterpret_cast<char*>( &blockInfo ), 1 );
 
             isPacked = blockInfo & 128;
             numPixels = blockInfo & 127;
@@ -82,7 +82,7 @@ Tga::Tga( std::string_view fname ) {
 }
 
 void Tga::openFile( std::string_view fname ) {
-    _fileStream.open( fname, std::ifstream::binary );
+    _fileStream.open( std::string{ fname }, std::ifstream::binary );
     if ( !_fileStream ) {
         throw std::runtime_error(
             std::format( "tga file \"{}\" not found", std::string{ fname } ) );
@@ -93,7 +93,7 @@ void Tga::readHeader() {
     // Zeroed
     std::array<std::byte, TGA_HEADER_SIZE> header{};
 
-    _fileStream.read( reinterpret_cast<char *>( &header ), TGA_HEADER_SIZE );
+    _fileStream.read( reinterpret_cast<char*>( &header ), TGA_HEADER_SIZE );
 
     _header.identsize = static_cast<uint8_t>( header[0] );
     _header.colorMapType = static_cast<uint8_t>( header[1] );
@@ -141,7 +141,7 @@ size_t Tga::channels() const {
     return _header.bits / 8;
 }
 
-uint8_t *Tga::data() const {
+uint8_t* Tga::data() const {
     return _decompressed;
 }
 

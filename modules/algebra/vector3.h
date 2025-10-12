@@ -176,17 +176,17 @@ struct tuple_size<tire::algebra::vector3f>
     : std::integral_constant<size_t, 3> {};
 
 template <>
-struct std::tuple_element<0, tire::algebra::vector3f> {
+struct tuple_element<0, tire::algebra::vector3f> {
     using type = float;
 };
 
 template <>
-struct std::tuple_element<1, tire::algebra::vector3f> {
+struct tuple_element<1, tire::algebra::vector3f> {
     using type = float;
 };
 
 template <>
-struct std::tuple_element<2, tire::algebra::vector3f> {
+struct tuple_element<2, tire::algebra::vector3f> {
     using type = float;
 };
 
@@ -196,17 +196,17 @@ struct tuple_size<tire::algebra::vector3d>
     : std::integral_constant<size_t, 3> {};
 
 template <>
-struct std::tuple_element<0, tire::algebra::vector3d> {
+struct tuple_element<0, tire::algebra::vector3d> {
     using type = double;
 };
 
 template <>
-struct std::tuple_element<1, tire::algebra::vector3d> {
+struct tuple_element<1, tire::algebra::vector3d> {
     using type = double;
 };
 
 template <>
-struct std::tuple_element<2, tire::algebra::vector3d> {
+struct tuple_element<2, tire::algebra::vector3d> {
     using type = double;
 };
 

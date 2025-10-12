@@ -11,7 +11,7 @@ static constexpr bool DEBUG_OUTPUT_SCENE_CPP{ true };
 #include "scene.h"
 #include "constants.h"
 
-import config;
+#include "config/config.h"
 
 namespace tire {
 

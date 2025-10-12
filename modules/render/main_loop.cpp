@@ -5,8 +5,6 @@
 
 #include "rendervk.h"
 
-import event;
-
 namespace tire {
 
 void RenderVK::preLoop() {
@@ -15,7 +13,7 @@ void RenderVK::preLoop() {
     // auto handle = showMetrics();
     // handle.scheduleDestroy();
 
-    event::testTimerEvent( 1000 );
+    // event::testTimerEvent( 1000 );
     //executeByTimeOut( 1500 );
     //watchFile( "/mnt/main_disk/code/tiny_render/assets/figures.json" );
 };

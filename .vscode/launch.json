@@ -5,7 +5,7 @@
             "type": "lldb",
             "request": "launch",
             "name": "cryptest",
-            "program": "${workspaceFolder}/bin/vk_test",
+            "program": "${workspaceFolder}/build/apps/barevk",
             "args": [],
             "cwd": "${workspaceFolder}/build"
         }

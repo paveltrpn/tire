@@ -108,15 +108,15 @@ export struct Obj final {
 public:
     Obj() = delete;
 
-    Obj( const Obj &rhs ) = delete;
-    Obj( Obj &&rhs ) = delete;
-    Obj &operator=( const Obj &rhs ) = delete;
-    Obj &operator=( const Obj &&rhs ) = delete;
+    Obj( const Obj& rhs ) = delete;
+    Obj( Obj&& rhs ) = delete;
+    Obj& operator=( const Obj& rhs ) = delete;
+    Obj& operator=( const Obj&& rhs ) = delete;
 
     Obj( std::string_view path ) {
         assertFilePath( path );
 
-        file_.open( path );
+        file_.open( std::string{ path } );
 
         if ( file_ ) {
             collectObjectInfo();
@@ -170,8 +170,7 @@ public:
         file_.seekg( 0, std::ios_base::beg );  // rewind
     }
 
-    friend auto operator<<( std::ostream &os, const Obj &rhs )
-        -> std::ostream &;
+    friend auto operator<<( std::ostream& os, const Obj& rhs ) -> std::ostream&;
 
 private:
     std::ifstream file_;
@@ -184,7 +183,7 @@ private:
     size_t facesCount_{ 0 };
 };
 
-export auto operator<<( std::ostream &os, const Obj &rhs ) -> std::ostream & {
+export auto operator<<( std::ostream& os, const Obj& rhs ) -> std::ostream& {
     os << std::format(
         R"foo(object name: {}
 material file: {}

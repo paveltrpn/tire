@@ -6,10 +6,9 @@
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_SWAPCHAIN_CPP{ true };
 
+#include "config/config.h"
 #include "context.h"
 #include "pipelines/pipeline.h"
-
-import config;
 
 namespace tire::vk {
 
@@ -152,14 +151,14 @@ void Context::makeSwapchain() {
     framesCount_ = congigHandle->get<int>( "frame_count" );
 
     //if ( ( framesCount_ < surfaceCapabilities_.minImageCount ) ||
-     //    ( framesCount_ > surfaceCapabilities_.maxImageCount ) ) {
-      //  log::fatal(
-      //      "vk::Swapchain === desired frame count not fit to available "
-      //      "surface image count limits" );
+    //    ( framesCount_ > surfaceCapabilities_.maxImageCount ) ) {
+    //  log::fatal(
+    //      "vk::Swapchain === desired frame count not fit to available "
+    //      "surface image count limits" );
     //}
 
     // Reserve space for frames images render into
-    frames_.reserve( framesCount_ );
+    frames_.resize( framesCount_ );
 
     log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>(
         "vk::Swapchain === vulkan swapchain surface capabilities image count "
@@ -227,8 +226,8 @@ void Context::makeSwapchain() {
     // Depth image
     auto createImage = [this]( uint32_t width, uint32_t height, VkFormat format,
                                VkImageTiling tiling, VkImageUsageFlags usage,
-                               VkMemoryPropertyFlags properties, VkImage &image,
-                               VkDeviceMemory &imageMemory ) {
+                               VkMemoryPropertyFlags properties, VkImage& image,
+                               VkDeviceMemory& imageMemory ) {
         VkImageCreateInfo imageInfo{};
         imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
         imageInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -312,10 +311,10 @@ void Context::makeSwapchain() {
                            VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL );
 }
 
-void Context::makeFrames( const Pipeline *pipeline ) {
+void Context::makeFrames( const Pipeline* pipeline ) {
     // Acquire all swapchain images at one call
     std::vector<VkImage> swapChainImages;
-    swapChainImages.reserve( framesCount_ );
+    swapChainImages.resize( framesCount_ );
     if ( const auto err = vkGetSwapchainImagesKHR(
              device_, swapchain_, &framesCount_, swapChainImages.data() );
          err != VK_SUCCESS ) {

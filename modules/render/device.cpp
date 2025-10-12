@@ -8,8 +8,7 @@
 static constexpr bool DEBUG_OUTPUT_DEVICE_CPP{ true };
 
 #include "context.h"
-
-import config;
+#include "config/config.h"
 
 namespace tire::vk {
 
@@ -124,8 +123,8 @@ void Context::makeDevice() {
     int otherGpuId{ -1 };
     int virtualGpuId{ -1 };
     int cpuGpuId{ -1 };
-    for ( auto i{ 0 }; const auto &physicalDevice : physicalDevices_ ) {
-        const auto &deviceProps = physicalDevice.properties;
+    for ( auto i{ 0 }; const auto& physicalDevice : physicalDevices_ ) {
+        const auto& deviceProps = physicalDevice.properties;
         switch ( physicalDevice.properties.deviceType ) {
             case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU: {
                 discreetGpuId = i;
@@ -174,7 +173,7 @@ void Context::makeDevice() {
     // any queue family with VK_QUEUE_GRAPHICS_BIT or VK_QUEUE_COMPUTE_BIT ca-
     // pabilities already implicitly support VK_QUEUE_TRANSFER_BIT operations.
     for ( auto i{ 0 };
-          const auto &queueFamily :
+          const auto& queueFamily :
           physicalDevices_[pickedPhysicalDeviceId_].queueFamilyProperties ) {
         if ( queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT ) {
             graphicsFamilyQueueId_ = i;
@@ -231,7 +230,7 @@ void Context::makeDevice() {
         queueCreateInfos.push_back( queueCreateInfo );
     }
 
-    std::vector<const char *> desiredExtensionsList{};
+    std::vector<const char*> desiredExtensionsList{};
     desiredExtensionsList.emplace_back( "VK_KHR_swapchain" );
 
     if ( congigHandle->get<bool>( "enable_raytracing_extensions" ) ) {
@@ -346,7 +345,7 @@ void Context::makeDevice() {
             "success!" );
     }
 
-    for ( const auto &item : surfaceFormats_ ) {
+    for ( const auto& item : surfaceFormats_ ) {
         log::notice( "vk::Device === format: {}",
                      string_VkFormat( item.format ) );
     }
@@ -385,7 +384,7 @@ void Context::makeDevice() {
             "vk::Device === physical device present modes acquire success!" );
     }
 
-    for ( const auto &item : presentModes_ ) {
+    for ( const auto& item : presentModes_ ) {
         log::notice( "vk::Device === mode: {}",
                      string_VkPresentModeKHR( item ) );
     }

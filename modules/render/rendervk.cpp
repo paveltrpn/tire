@@ -14,7 +14,7 @@
 static constexpr bool DEBUG_OUTPUT_RENDERVK_CPP{ true };
 #include "algebra/matrix4.h"
 
-import config;
+#include "config/config.h"
 
 namespace tire {
 

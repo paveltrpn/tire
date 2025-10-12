@@ -9,7 +9,7 @@ static constexpr bool DEBUG_OUTPUT_INSTANCE_CPP{ true };
 
 #include "context.h"
 
-import config;
+#include "config/config.h"
 
 namespace tire::vk {
 
@@ -23,8 +23,8 @@ namespace {
 static VKAPI_ATTR VkBool32 VKAPI_CALL
 debugCallback( VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
                VkDebugUtilsMessageTypeFlagsEXT messageTypes,
-               const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
-               void *pUserData ) {
+               const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+               void* pUserData ) {
     const std::string message{ pCallbackData->pMessage };
 
     if ( messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT ) {
@@ -46,9 +46,9 @@ debugCallback( VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
 }
 
 static VkResult vkCreateDebugUtilsMessenger(
-    VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo,
-    const VkAllocationCallbacks *pAllocator,
-    VkDebugUtilsMessengerEXT *pDebugMessenger ) {
+    VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+    const VkAllocationCallbacks* pAllocator,
+    VkDebugUtilsMessengerEXT* pDebugMessenger ) {
     auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
         instance, "vkCreateDebugUtilsMessengerEXT" );
     if ( func != nullptr ) {
@@ -184,7 +184,7 @@ void Context::makeInstance() {
         .pUserData = nullptr };
 
     // Vulkan instance extensions list
-    std::vector<const char *> desiredInstanceExtensionsList{};
+    std::vector<const char*> desiredInstanceExtensionsList{};
     desiredInstanceExtensionsList.emplace_back( "VK_KHR_surface" );
     desiredInstanceExtensionsList.emplace_back( "VK_KHR_xlib_surface" );
     if ( configPtr->get<bool>( "enable_validation_layers" ) ) {
@@ -202,8 +202,8 @@ void Context::makeInstance() {
             static_cast<uint32_t>( desiredValidationLayerList_.size() );
         instanceCreateInfo.ppEnabledLayerNames =
             desiredValidationLayerList_.data();
-        instanceCreateInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT
-                                        *)&debugUtilsMessengerCreateInfo;
+        instanceCreateInfo.pNext =
+            (VkDebugUtilsMessengerCreateInfoEXT*)&debugUtilsMessengerCreateInfo;
     }
 
     instanceCreateInfo.enabledExtensionCount =

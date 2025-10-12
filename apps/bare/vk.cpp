@@ -6,7 +6,7 @@
 #include "render/rendervk.h"
 #include "bare.h"
 
-import config;
+#include "config/config.h"
 
 auto main( int argc, char** argv ) -> int {
     try {

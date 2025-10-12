@@ -3,7 +3,7 @@
 
 #include "mesh.h"
 
-import config;
+#include "config/config.h"
 
 namespace tire {
 

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <expected>
+#include <array>
 
 #include <vulkan/vulkan.h>
 

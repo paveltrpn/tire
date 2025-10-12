@@ -6,11 +6,10 @@
 #include <cmath>
 #include <concepts>
 #include <numbers>
-#include <mdspan>
 #include <type_traits>
 
 #include "common.h"
-#include "algebra/concepts.h"
+#include "concepts.h"
 #include "vector3.h"
 #include "vector4.h"
 
@@ -32,19 +31,6 @@ struct matrix4 final {
             data_[i] = e;
             ++i;
         }
-    }
-
-    // row-wise indexing operator
-    [[nodiscard]] reference operator[]( size_t i, size_t j ) {
-        // NOTE: explicit std::mdspan template arguments!!!
-        return std::mdspan<value_type, std::extents<size_t, 4, 4>>(
-            data_.data(), 4, 4 )[i, j];
-    }
-
-    [[nodiscard]] const_reference operator[]( size_t i, size_t j ) const {
-        // NOTE: explicit std::mdspan template arguments!!!
-        return std::mdspan<const value_type, std::extents<size_t, 4, 4>>(
-            data_.data(), 4, 4 )[i, j];
     }
 
     [[nodiscard]] reference operator[]( size_t index ) { return data_[index]; }
@@ -98,7 +84,7 @@ struct matrix4 final {
     }
 
     [[nodiscard]] self transpose() const {
-        value_type tmp;
+        /* value_type tmp;
         auto rt = *this;
 
         for ( size_t i = 0; i < 4; ++i ) {
@@ -109,21 +95,30 @@ struct matrix4 final {
             }
         }
 
-        return rt;
+        return rt;*/
     }
 
     void transposeSelf() {
-        value_type tmp;
+        /* value_type tmp;
         for ( size_t i = 0; i < 4; ++i ) {
             for ( size_t j = 0; j < i; ++j ) {
                 tmp = ( *this )[j, i];
                 ( *this )[j, i] = ( *this )[i, j];
                 ( *this )[i, j] = tmp;
             }
+        }*/
+
+        for ( int i = 0; i < 4; ++i ) {
+            for ( int j = i + 1; j < 4; ++j ) {
+                int ij = i * 4 + j;
+                int ji = j * 4 + i;
+                std::swap( data_[ij], data_[ji] );
+            }
         }
     }
 
     void multiply( const self &rhs ) {
+        /*
         auto this00 = ( *this )[0, 0];
         auto this01 = ( *this )[0, 1];
         auto this02 = ( *this )[0, 2];
@@ -174,7 +169,21 @@ struct matrix4 final {
         ( *this )[3, 2] = this30 * rhs[0, 2] + this31 * rhs[1, 2] +
                           this32 * rhs[2, 2] + ( *this )[3, 3] * rhs[3, 2];
         ( *this )[3, 3] = this30 * rhs[0, 3] + this31 * rhs[1, 3] +
-                          this32 * rhs[2, 3] + ( *this )[3, 3] * rhs[3, 3];
+                          this32 * rhs[2, 3] + ( *this )[3, 3] * rhs[3, 3];*/
+        std::array<T, 16> temp;
+
+        for ( int i = 0; i < 4; ++i ) {
+            for ( int j = 0; j < 4; ++j ) {
+                temp[i * 4 + j] = 0;
+                for ( int k = 0; k < 4; ++k ) {
+                    temp[i * 4 + j] += data_[i * 4 + k] * rhs[k * 4 + j];
+                }
+            }
+        }
+
+        for ( int i = 0; i < 16; ++i ) {
+            data_[i] = temp[i];
+        }
     }
 
     self &operator*( const self &rhs ) {
@@ -337,27 +346,27 @@ struct matrix4 final {
 
         // TODO: Check and write in transpose version.
         /*
-        const matrix4<value_type> inverse;
-        inverse[0] = aspect / focal;
-        inverse[1] = value_type{ 0 };
-        inverse[2] = value_type{ 0 };
-        inverse[3] = value_type{ 0 };
+            const matrix4<value_type> inverse;
+            inverse[0] = aspect / focal;
+            inverse[1] = value_type{ 0 };
+            inverse[2] = value_type{ 0 };
+            inverse[3] = value_type{ 0 };
 
-        inverse[4] = value_type{ 0 };
-        inverse[5] = 1 / -focal;
-        inverse[6] = value_type{ 0 };
-        inverse[7] = value_type{ 0 };
+            inverse[4] = value_type{ 0 };
+            inverse[5] = 1 / -focal;
+            inverse[6] = value_type{ 0 };
+            inverse[7] = value_type{ 0 };
 
-        inverse[8] = value_type{ 0 };
-        inverse[9] = value_type{ 0 };
-        inverse[10] = value_type{ 0 };
-        inverse[11] = value_type{ -1 };
+            inverse[8] = value_type{ 0 };
+            inverse[9] = value_type{ 0 };
+            inverse[10] = value_type{ 0 };
+            inverse[11] = value_type{ -1 };
 
-        inverse[12] = value_type{ 0 };
-        inverse[13] = value_type{ 0 };
-        inverse[14] = 1 / ( far * nf );
-        inverse[15] = nf / ( far * nf );
-        */
+            inverse[12] = value_type{ 0 };
+            inverse[13] = value_type{ 0 };
+            inverse[14] = 1 / ( far * nf );
+            inverse[15] = nf / ( far * nf );
+            */
     }
 
     void vperspective2( value_type fov, value_type aspect, value_type near,

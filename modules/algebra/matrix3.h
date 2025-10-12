@@ -4,9 +4,8 @@
 #include <cstddef>
 #include <initializer_list>
 #include <cmath>
-#include <mdspan>
 
-#include "algebra/concepts.h"
+#include "concepts.h"
 #include "vector3.h"
 
 namespace tire::algebra {
@@ -21,15 +20,6 @@ requires Algebraic<T> struct matrix3 final {
     using const_pointer = const value_type *;
 
     matrix3() { idtt(); }
-
-    // row-wise indexing operator
-    [[nodiscard]] reference operator[]( size_t i, size_t j ) {
-        return std::mdspan( data_.data(), 3, 3 )[i, j];
-    }
-
-    [[nodiscard]] const_reference operator[]( size_t i, size_t j ) const {
-        return std::mdspan( data_.data(), 3, 3 )[i, j];
-    }
 
     [[nodiscard]] reference operator[]( size_t index ) { return data_[index]; }
 
@@ -101,7 +91,7 @@ requires Algebraic<T> struct matrix3 final {
     }
 
     void multiply( const self &rhs ) {
-        auto this00 = ( *this )[0, 0];
+        /*auto this00 = ( *this )[0, 0];
         auto this01 = ( *this )[0, 1];
 
         ( *this )[0, 0] = this00 * rhs[0, 0] + this01 * rhs[1, 0] +
@@ -129,7 +119,7 @@ requires Algebraic<T> struct matrix3 final {
         ( *this )[2, 1] = this20 * rhs[0, 1] + this21 * rhs[1, 1] +
                           ( *this )[2, 2] * rhs[2, 1];
         ( *this )[2, 2] = this20 * rhs[0, 2] + this21 * rhs[1, 2] +
-                          ( *this )[2, 2] * rhs[2, 2];
+                          ( *this )[2, 2] * rhs[2, 2];*/
     }
 
     self operator*( const self &rhs ) {

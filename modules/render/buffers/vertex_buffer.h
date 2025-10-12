@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <cstring>
 #include <concepts>
 #include <vulkan/vulkan.h>
 #include <vulkan/vk_enum_string_helper.h>
@@ -17,7 +18,7 @@ template <std::floating_point T>
 struct VertexBuffer final {
     using value_type = T;
 
-    VertexBuffer( const vk::Context *context, size_t verteciesCount )
+    VertexBuffer( const vk::Context* context, size_t verteciesCount )
         : context_{ context }
         , verteciesCount_{ verteciesCount } {
         VkBufferCreateInfo bufferInfo{};
@@ -53,12 +54,13 @@ struct VertexBuffer final {
         vkBindBufferMemory( context_->device(), buffer_, bufferMemory_, 0 );
     }
 
-    void populate( const void *data ) {
-        void *mapAddress;
+    void populate( const void* data ) {
+        void* mapAddress;
         vkMapMemory( context_->device(), bufferMemory_, 0,
                      sizeof( value_type ) * verteciesCount_ * 3, 0,
                      &mapAddress );
-        memcpy( mapAddress, data, sizeof( value_type ) * verteciesCount_ * 3 );
+        std::memcpy( mapAddress, data,
+                     sizeof( value_type ) * verteciesCount_ * 3 );
         vkUnmapMemory( context_->device(), bufferMemory_ );
     }
 
@@ -72,7 +74,7 @@ struct VertexBuffer final {
     }
 
 private:
-    const vk::Context *context_{};
+    const vk::Context* context_{};
     VkBuffer buffer_{ VK_NULL_HANDLE };
     VkDeviceMemory bufferMemory_{ VK_NULL_HANDLE };
 

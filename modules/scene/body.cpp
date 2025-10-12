@@ -16,8 +16,8 @@ namespace tire {
 
 void Body::setShapeData( std::shared_ptr<PolytopeData> data ) {
     shapeData_ = std::move( data );
-    localVertecies_.reserve( shapeData_->verteciesCount() );
-    localNormals_.reserve( shapeData_->verteciesCount() );
+    localVertecies_.resize( shapeData_->verteciesCount() );
+    localNormals_.resize( shapeData_->verteciesCount() );
 }
 
 size_t Body::verteciesCount() const {
@@ -36,39 +36,39 @@ size_t Body::texcrdsArraySize() const {
     return verteciesCount() * 2 * sizeof( float );
 };
 
-const vector3f *Body::verteciesData() {
+const vector3f* Body::verteciesData() {
     return localVertecies_.data();
 }
 
-const vector3f *Body::normalsData() {
+const vector3f* Body::normalsData() {
     return localNormals_.data();
 }
 
-const algebra::vector2f *Body::texcrdsData() {
+const algebra::vector2f* Body::texcrdsData() {
     return shapeData_->texcrdsData();
 }
 
-void Body::setPosition( const vector3<value_type> &value ) {
+void Body::setPosition( const vector3<value_type>& value ) {
     position_ = value;
 }
 
-void Body::setOrientation( const vector3<value_type> &value ) {
+void Body::setOrientation( const vector3<value_type>& value ) {
     orientation_ = value;
 }
 
-void Body::setScale( const vector3<value_type> &value ) {
+void Body::setScale( const vector3<value_type>& value ) {
     scale_ = value;
 }
 
-void Body::setVelocity( const vector3<value_type> &value ) {
+void Body::setVelocity( const vector3<value_type>& value ) {
     velocity_ = value;
 }
 
-void Body::setTorque( const vector3<value_type> &value ) {
+void Body::setTorque( const vector3<value_type>& value ) {
     torque_ = value;
 }
 
-void Body::setMaterialName( const std::string &value ) {
+void Body::setMaterialName( const std::string& value ) {
     materialName_ = value;
 }
 

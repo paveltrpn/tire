@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "algebra/vector3.h"
@@ -30,7 +29,7 @@ struct BoundingSphere final : BoundingVolume<T> {
     float radius() { return radius_; }
     vector3<value_type> position() { return position_; }
 
-    bool testBoundingSphere( const BoundingSphere<value_type> &other ) {
+    bool testBoundingSphere( const BoundingSphere<value_type>& other ) {
         vector3<value_type> dif = position_ - other.position_;
         value_type dist = dif * dif;
         // Spheres intersect if squared distance is less than squared sum of radii
@@ -38,7 +37,9 @@ struct BoundingSphere final : BoundingVolume<T> {
         return dist <= radiusSum * radiusSum;
     }
 
-    bool testAABoundingBox( const AABoundingBox<value_type> &other ) {}
+    bool testAABoundingBox( const AABoundingBox<value_type>& other ) {
+        return false;
+    }
 
 private:
     value_type radius_{};
@@ -56,11 +57,14 @@ struct AABoundingBox final : BoundingVolume<T> {
         , max_{ max } {};
 
     // Construct surrounding AABB from given transformed AABB.
-    AABoundingBox( const AABoundingBox &other,
-                   const matrix4<value_type> &transformation ) {}
+    AABoundingBox( const AABoundingBox& other,
+                   const matrix4<value_type>& transformation ) {}
 
-    bool testBoundingSphere( const BoundingSphere<value_type> &other ) {}
-    bool testAABoundingBox( const AABoundingBox<value_type> &other ) {
+    bool testBoundingSphere( const BoundingSphere<value_type>& other ) {
+        return false;
+    }
+
+    bool testAABoundingBox( const AABoundingBox<value_type>& other ) {
         // Exit with no intersection if separated along an axis
         if ( max_[0] < other.min_[0] || min_[0] > other.max_[0] ) return false;
         if ( max_[1] < other.min_[1] || min_[1] > other.max_[1] ) return false;
@@ -82,8 +86,8 @@ struct OOBoundingBox final : BoundingVolume<T> {
 
     // Construct OOBB from transformed AABB. In other
     // words - initialize OOBB from AABB and transformation matrix.
-    OOBoundingBox( const AABoundingBox<value_type> &other,
-                   const matrix4<value_type> &transformation ) {}
+    OOBoundingBox( const AABoundingBox<value_type>& other,
+                   const matrix4<value_type>& transformation ) {}
 
 private:
     // OOBB center point

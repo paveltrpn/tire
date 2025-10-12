@@ -4,7 +4,6 @@ module;
 #include <string>
 #include <memory>
 #include "log/log.h"
-static constexpr bool DEBUG_OUTPUT_EVENT_CONTEXT_H{ true };
 
 #include "render/rendervk.h"
 
@@ -12,6 +11,8 @@ static constexpr bool DEBUG_OUTPUT_EVENT_CONTEXT_H{ true };
 #include <uv/version.h>
 
 export module event:context;
+
+static constexpr bool DEBUG_OUTPUT_EVENT_CONTEXT_H{ true };
 
 namespace tire::event {
 

@@ -7,11 +7,11 @@
 #include "vulkan/vulkan_core.h"
 static constexpr bool DEBUG_OUTPUT_PIPELINE_CPP{ true };
 
-import config;
+#include "config/config.h"
 
 namespace tire::vk {
 
-Pipeline::Pipeline( const vk::Context *context )
+Pipeline::Pipeline( const vk::Context* context )
     : context_{ context } {
 }
 
@@ -21,7 +21,7 @@ Pipeline::~Pipeline() {
     vkDestroyPipeline( context_->device(), pipeline_, nullptr );
 }
 
-void Pipeline::initShaderStages( const vk::Program &program ) {
+void Pipeline::initShaderStages( const vk::Program& program ) {
     // Reserve space for all possible shader stages structs
     shaderStages_.reserve( 16 );
 

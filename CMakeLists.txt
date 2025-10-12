@@ -1,14 +1,16 @@
 cmake_minimum_required(VERSION 3.28)
 
-set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_COMPILER clang++)
-add_compile_options(-stdlib=libc++ -std=c++26)
-add_link_options(-stdlib=libc++)
+set(CMAKE_C_COMPILER $ENV{GCC_LATEST}/bin/gcc-15.1)
+set(CMAKE_CXX_COMPILER $ENV{GCC_LATEST}/bin/g++-15.1)
+# set(CMAKE_C_COMPILER clang)
+# set(CMAKE_CXX_COMPILER clang++)
+# add_link_options(-stdlib=libc++)
+add_compile_options(-std=c++23)
 set(CMAKE_BUILD_TYPE Debug)
 
 project (tiny_render)
 
-set(CMAKE_CXX_STANDARD 26)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON )
 
 include_directories("modules")
@@ -45,6 +47,17 @@ endif()
 
 find_package(Vulkan REQUIRED)
 
+set(QT_VERSION 6.10)
+list(APPEND CMAKE_PREFIX_PATH $ENV{LOCAL_LATEST_QT})
+find_package(Qt6 ${QT_VERSION} COMPONENTS
+    Core
+    Gui
+    Quick
+    QuickWidgets
+    QuickControls2
+    Qml
+)
+
 # Module log
 # ================================
 add_library(log
@@ -78,13 +91,9 @@ target_sources(ui
 
 # Module config
 # ================================
+file(GLOB MOD_CONFIG_SRC "modules/config/*.cpp" "modules/config/*.h")
 add_library(config)
-target_sources(config
-  PUBLIC
-    FILE_SET CXX_MODULES FILES
-    modules/config/interface.cpp
-    modules/config/config.cpp
-)
+target_sources(config PRIVATE ${MOD_CONFIG_SRC})
 
 # Module render
 # ================================
@@ -121,39 +130,37 @@ target_sources(wavefront
 file(GLOB MOD_SCENE_SRC "modules/scene/*.cpp" "modules/scene/*.h")
 add_library(scene)
 target_sources(scene PRIVATE ${MOD_SCENE_SRC})
-target_link_libraries(scene config io image algebra geometry)
+target_link_libraries(scene config image algebra geometry)
 
 # Module event
 # ================================
-add_library(event)
-target_sources(event
-  PUBLIC
-    FILE_SET CXX_MODULES FILES
-    modules/event/interface.cpp
-    modules/event/async.cpp
-    modules/event/context.cpp
-    modules/event/timer.cpp
-)
-target_link_libraries(event config)
+#add_library(event)
+#target_sources(event
+#  PUBLIC
+#    FILE_SET CXX_MODULES FILES
+#    modules/event/interface.cpp
+#    modules/event/async.cpp
+#    modules/event/context.cpp
+#    modules/event/timer.cpp
+#)
+#target_link_libraries(event config)
 
 # Module io
 # ================================
-add_library(io)
-target_sources(io
-  PUBLIC
-    FILE_SET CXX_MODULES FILES
-    modules/io/interface.cpp
-    modules/io/file.cpp
-)
-target_link_libraries(io event)
+#add_library(io)
+#target_sources(io
+#  PUBLIC
+#    FILE_SET CXX_MODULES FILES
+#    modules/io/interface.cpp
+#    modules/io/file.cpp
+#)
+#target_link_libraries(io )
 
 # Main apps subdirectories
 # ================================
 add_subdirectory(apps)
 target_link_libraries(barevk PUBLIC 
     log 
-    event 
-    io 
     algebra 
     scene 
     config 
@@ -165,8 +172,6 @@ target_link_libraries(barevk PUBLIC
 
 target_link_libraries(qtvk PUBLIC 
     log 
-    event 
-    io 
     algebra 
     scene 
     config 
