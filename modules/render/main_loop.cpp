@@ -22,9 +22,9 @@ void RenderVK::preFrame() {
     scene_->submit();
 };
 
-void RenderVK::frame() {
+void RenderVK::frame( VkCommandBuffer cb ) {
     auto handle = static_cast<vk::Scene*>( scene_.get() );
-    handle->output( context_->getDrawCommandBuffer() );
+    handle->output( cb );
 };
 
 void RenderVK::postFrame() {

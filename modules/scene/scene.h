@@ -4,9 +4,10 @@
 #include <filesystem>
 #include <unordered_map>
 
+#include <vulkan/vulkan.h>
+
 #include "log/log.h"
 #include "nlohmann/json.hpp"
-#include "uv.h"
 
 #include "mesh.h"
 #include "body.h"
@@ -16,12 +17,12 @@
 namespace tire {
 
 struct Scene {
-    Scene( const std::filesystem::path &fname );
+    Scene( const std::filesystem::path& fname );
 
-    Scene( const Scene &other ) = delete;
-    Scene( Scene &&other ) = delete;
-    Scene &operator=( const Scene &other ) = delete;
-    Scene &operator=( Scene &&other ) = delete;
+    Scene( const Scene& other ) = delete;
+    Scene( Scene&& other ) = delete;
+    Scene& operator=( const Scene& other ) = delete;
+    Scene& operator=( Scene&& other ) = delete;
 
     virtual ~Scene() = default;
 
@@ -39,11 +40,11 @@ struct Scene {
     // Switch to next camera.
     void nextCamera() { setActiveCamera( ++activeCamera_ ); }
 
-    [[nodiscard]] Flycam &camera() const {
+    [[nodiscard]] Flycam& camera() const {
         return *cameras_[activeCamera_].get();
     };
 
-    [[nodiscard]] const Colorf &backgroundColor() const {
+    [[nodiscard]] const Colorf& backgroundColor() const {
         return backgrounColor_;
     };
 

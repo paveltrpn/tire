@@ -31,8 +31,6 @@ private:
         // folder up, then base path is "../app"
         basePath_ = std::filesystem::canonical( "/proc/self/exe" )
                         .parent_path()
-                        .parent_path()
-                        .parent_path()
                         .parent_path();
     };
 

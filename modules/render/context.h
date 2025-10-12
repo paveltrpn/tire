@@ -3,14 +3,9 @@
 
 #include <vector>
 #include <vulkan/vulkan.h>
-
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
 #include <vulkan/vulkan_core.h>
 
 namespace tire::vk {
-
-struct Pipeline;
 
 struct Context {
     Context() = default;
@@ -58,9 +53,6 @@ struct Context {
     virtual VkFormat findSupportedFormat(
         const std::vector<VkFormat>& candidates, VkImageTiling tiling,
         VkFormatFeatureFlags features ) const = 0;
-
-    [[nodiscard]]
-    virtual auto getDrawCommandBuffer() const -> VkCommandBuffer = 0;
 
 protected:
     // Instance

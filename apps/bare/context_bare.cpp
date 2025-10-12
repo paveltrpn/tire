@@ -44,8 +44,9 @@ void ContextBare::makeXlibSurface() {
     }
 }
 
-uint32_t ContextBare::memoryRequirements(
-    uint32_t typeFilter, VkMemoryPropertyFlags properties ) const {
+auto ContextBare::memoryRequirements( uint32_t typeFilter,
+                                      VkMemoryPropertyFlags properties ) const
+    -> uint32_t {
     VkPhysicalDeviceMemoryProperties memProperties{};
     vkGetPhysicalDeviceMemoryProperties(
         physicalDevices_[pickedPhysicalDeviceId_].device, &memProperties );
@@ -64,9 +65,10 @@ uint32_t ContextBare::memoryRequirements(
     return {};
 }
 
-VkFormat ContextBare::findSupportedFormat(
-    const std::vector<VkFormat>& candidates, VkImageTiling tiling,
-    VkFormatFeatureFlags features ) const {
+auto ContextBare::findSupportedFormat( const std::vector<VkFormat>& candidates,
+                                       VkImageTiling tiling,
+                                       VkFormatFeatureFlags features ) const
+    -> VkFormat {
     for ( VkFormat format : candidates ) {
         VkFormatProperties props;
         vkGetPhysicalDeviceFormatProperties(

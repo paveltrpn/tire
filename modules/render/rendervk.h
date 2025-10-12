@@ -27,7 +27,7 @@ struct RenderVK final {
     void scene( const std::filesystem::path& path );
     void preLoop();
     void preFrame();
-    void frame();
+    void frame( VkCommandBuffer cb );
     void postFrame();
     void swapBuffers();
     void postLoop();

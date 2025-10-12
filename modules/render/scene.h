@@ -9,7 +9,6 @@
 #include "context.h"
 #include "pipelines/pipeline.h"
 #include "scene/scene.h"
-#include "command_pool.h"
 #include "buffers/vertex_buffer.h"
 #include "vulkan/vulkan_core.h"
 
@@ -38,8 +37,8 @@ private:
     const vk::Context* context_;
     const vk::Pipeline* pipeline_;
 
-    std::vector<std::shared_ptr<vk::VertexBuffer<float>>> vertBuffersList_;
-    std::vector<std::shared_ptr<vk::VertexBuffer<float>>> nrmlBuffersList_;
+    std::vector<std::shared_ptr<vk::VertexBuffer>> vertBuffersList_;
+    std::vector<std::shared_ptr<vk::VertexBuffer>> nrmlBuffersList_;
 };
 
 }  // namespace tire::vk

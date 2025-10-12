@@ -7,20 +7,20 @@
 
 namespace tire {
 
-RenderItem::RenderItem( QQuickItem *parent )
+RenderItem::RenderItem( QQuickItem* parent )
     : QQuickItem{ parent } {
     setFlag( QQuickItem::ItemHasContents );
     connect( this, &QQuickItem::windowChanged, this,
              &RenderItem::handleWindowChanged );
 }
 
-auto RenderItem::updatePaintNode( QSGNode *node, UpdatePaintNodeData * )
-    -> QSGNode * {
+auto RenderItem::updatePaintNode( QSGNode* node, UpdatePaintNodeData* )
+    -> QSGNode* {
     window()->update();  // ensure getting to beforeRendering() at some point
     return node;
 };
 
-auto RenderItem::handleWindowChanged( QQuickWindow *win ) -> void {
+auto RenderItem::handleWindowChanged( QQuickWindow* win ) -> void {
     if ( win ) {
         connect( win, &QQuickWindow::beforeSynchronizing, this,
                  &RenderItem::sync, Qt::DirectConnection );
@@ -52,12 +52,12 @@ auto RenderItem::beforeRendering() -> void {
         // and used by vk::Render.
 
         const auto rhiHandle =
-            reinterpret_cast<QRhi *>( renderInterface_->getResource(
+            reinterpret_cast<QRhi*>( renderInterface_->getResource(
                 window_, QSGRendererInterface::RhiResource ) );
 
         qDebug() << rhiHandle->driverInfo();
 
-        const auto nh = static_cast<const QRhiVulkanNativeHandles *>(
+        const auto nh = static_cast<const QRhiVulkanNativeHandles*>(
             rhiHandle->nativeHandles() );
 
         // Vulkan instance from QRhi.
@@ -76,37 +76,39 @@ auto RenderItem::beforeRendering() -> void {
         }
 
         // Chosen physical device.
-        const auto physDev = *reinterpret_cast<VkPhysicalDevice *>(
-            renderInterface_->getResource(
+        const auto physDev =
+            *reinterpret_cast<VkPhysicalDevice*>( renderInterface_->getResource(
                 window_, QSGRendererInterface::PhysicalDeviceResource ) );
 
         // Acquired logical device.
         const auto dev =
-            *reinterpret_cast<VkDevice *>( renderInterface_->getResource(
+            *reinterpret_cast<VkDevice*>( renderInterface_->getResource(
                 window_, QSGRendererInterface::DeviceResource ) );
 
         // Render pass.
         const auto rp =
-            *reinterpret_cast<VkRenderPass *>( renderInterface_->getResource(
+            *reinterpret_cast<VkRenderPass*>( renderInterface_->getResource(
                 window_, QSGRendererInterface::RenderPassResource ) );
 
         // Graphics queue family index used by the scenegraph.
         const auto gqfi =
-            *reinterpret_cast<uint32_t *>( renderInterface_->getResource(
+            *reinterpret_cast<uint32_t*>( renderInterface_->getResource(
                 window_,
                 QSGRendererInterface::GraphicsQueueFamilyIndexResource ) );
 
         // Graphics queue index.
         const auto gqi =
-            *reinterpret_cast<uint32_t *>( renderInterface_->getResource(
+            *reinterpret_cast<uint32_t*>( renderInterface_->getResource(
                 window_, QSGRendererInterface::GraphicsQueueIndexResource ) );
 
-        context_ = std::make_unique<vk::Context>( inst->vkInstance(), physDev,
-                                                  dev, sface, rp, gqfi, gqi );
+        context_ = std::make_unique<vk::ContextQt>( inst->vkInstance(), physDev,
+                                                    dev, sface, rp, gqfi, gqi );
 
         emit contextinitialized();
 
-        render_->init( context_.get() );
+        render_ = std::make_unique<tire::RenderVK>( context_.get() );
+
+        render_->scene( "/mnt/main/code/tire/assets/m01.json" );
 
         emit renderInitialized();
     }
@@ -119,14 +121,15 @@ auto RenderItem::beforeRenderPassRecording() -> void {
     // This object has limited validity, and is only valid while the scene
     // graph is preparing the next frame.
     const auto cb =
-        *reinterpret_cast<VkCommandBuffer *>( renderInterface_->getResource(
+        *reinterpret_cast<VkCommandBuffer*>( renderInterface_->getResource(
             window_, QSGRendererInterface::CommandListResource ) );
 
     //
     const auto g = window_->geometry();
 
     // Render frame with custom scene.
-    render_->frame( cb, g.width(), g.height() );
+    // render_->frame( cb, g.width(), g.height() );
+    render_->frame( cb );
 
     window_->endExternalCommands();
 }
@@ -143,7 +146,7 @@ auto RenderItem::sync() -> void {
             qDebug() << "RenderItem === bad qquickitem render interface...";
         }
 
-        render_ = std::make_unique<vk::Render>();
+        render_ = std::make_unique<tire::RenderVK>( context_.get() );
 
         // Initializing resources is done before starting to record the
         // renderpass, regardless of wanting an underlay or overlay.

@@ -17,7 +17,7 @@ Scene::Scene( const std::filesystem::path& fname, const vk::Context* context,
     const auto nodeListSize = bodyList_.size();
     vertBuffersList_.reserve( nodeListSize );
     for ( size_t i{}; i < nodeListSize; ++i ) {
-        auto buf = std::make_shared<vk::VertexBuffer<float>>(
+        auto buf = std::make_shared<vk::VertexBuffer>(
             context_, bodyList_[i]->verteciesCount() );
         vertBuffersList_.push_back( std::move( buf ) );
     }
@@ -25,7 +25,7 @@ Scene::Scene( const std::filesystem::path& fname, const vk::Context* context,
     // Create vulkan "normal buffers"
     nrmlBuffersList_.reserve( nodeListSize );
     for ( size_t i{}; i < nodeListSize; ++i ) {
-        auto buf = std::make_shared<vk::VertexBuffer<float>>(
+        auto buf = std::make_shared<vk::VertexBuffer>(
             context_, bodyList_[i]->verteciesCount() );
         nrmlBuffersList_.push_back( std::move( buf ) );
     }

@@ -2,7 +2,6 @@
 #pragma once
 
 #include <cstring>
-#include <concepts>
 #include <vulkan/vulkan.h>
 #include <vulkan/vk_enum_string_helper.h>
 #include <vulkan/vulkan_core.h>
@@ -14,9 +13,8 @@ static constexpr bool DEBUG_OUTPUT_VERTEX_BUFFER_H{ true };
 
 namespace tire::vk {
 
-template <std::floating_point T>
 struct VertexBuffer final {
-    using value_type = T;
+    using value_type = float;
 
     VertexBuffer( const vk::Context* context, size_t verteciesCount )
         : context_{ context }

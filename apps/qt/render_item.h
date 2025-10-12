@@ -7,6 +7,7 @@
 #include <vulkan/vulkan.h>
 
 #include "render/rendervk.h"
+#include "context_qt.h"
 
 namespace tire {
 
@@ -76,7 +77,7 @@ private:
     QRhi* rhiHandle{};
 
     // Custom render.
-    std::unique_ptr<vk::Context> context_{ nullptr };
+    std::unique_ptr<vk::ContextQt> context_{ nullptr };
     std::unique_ptr<RenderVK> render_{ nullptr };
 };
 

@@ -29,12 +29,14 @@ struct ContextBare final : Context {
     void init();
 
     [[nodiscard]]
-    uint32_t memoryRequirements(
-        uint32_t typeFilter, VkMemoryPropertyFlags properties ) const override;
+    auto memoryRequirements( uint32_t typeFilter,
+                             VkMemoryPropertyFlags properties ) const
+        -> uint32_t override;
     [[nodiscard]]
-    VkFormat findSupportedFormat(
-        const std::vector<VkFormat>& candidates, VkImageTiling tiling,
-        VkFormatFeatureFlags features ) const override;
+    auto findSupportedFormat( const std::vector<VkFormat>& candidates,
+                              VkImageTiling tiling,
+                              VkFormatFeatureFlags features ) const
+        -> VkFormat override;
 
     void makeFrames( VkRenderPass renderPass );
 
@@ -56,7 +58,7 @@ struct ContextBare final : Context {
     auto renderCommandEnd( uint32_t frameId ) -> void;
 
     [[nodiscard]]
-    auto getDrawCommandBuffer() const -> VkCommandBuffer override {
+    auto getDrawCommandBuffer() const -> VkCommandBuffer {
         return cbPrimary_;
     }
 

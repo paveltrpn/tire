@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.20)
 
 set(CMAKE_C_COMPILER $ENV{GCC_LATEST}/bin/gcc-15.1)
 set(CMAKE_CXX_COMPILER $ENV{GCC_LATEST}/bin/g++-15.1)
@@ -6,6 +6,10 @@ set(CMAKE_CXX_COMPILER $ENV{GCC_LATEST}/bin/g++-15.1)
 # set(CMAKE_CXX_COMPILER clang++)
 # add_link_options(-stdlib=libc++)
 add_compile_options(-std=c++26)
+
+# NOTE: 
+add_compile_options(-fpermissive)
+
 set(CMAKE_BUILD_TYPE Debug)
 
 project (tiny_render)
@@ -101,7 +105,7 @@ target_sources(config PRIVATE ${MOD_CONFIG_SRC})
 file(GLOB_RECURSE MOD_RENDER_SRC "modules/render/*.cpp" "modules/render/*.h")
 add_library(render)
 target_sources(render PRIVATE ${MOD_RENDER_SRC})
-target_link_libraries(render ui scene config geometry algebra event)
+target_link_libraries(render Vulkan::Vulkan ui scene config geometry algebra event)
 
 # Module image
 # ================================
@@ -159,7 +163,9 @@ target_link_libraries(scene config image algebra geometry)
 
 # Main apps subdirectories
 # ================================
-add_subdirectory(apps)
+add_executable(barevk)
+file(GLOB_RECURSE EXE_BAREVK_SRC "apps/bare/*.cpp" "apps/bare/*.h")
+target_sources(barevk PRIVATE ${EXE_BAREVK_SRC})
 target_link_libraries(barevk PUBLIC 
     log 
     algebra 
@@ -171,25 +177,27 @@ target_link_libraries(barevk PUBLIC
     uv
 )
 
-
-#set_target_properties(qtvk PROPERTIES AUTOMOC TRUE)
-#target_link_libraries(qtvk PUBLIC
-#    log 
-#    algebra 
-#    scene 
-#    config 
-#    render 
-#    glfw3
-#    Vulkan::Vulkan 
-#   uv
-#    Qt::Core
-#    Qt::Gui
-#    Qt6::GuiPrivate
-#    Qt::Quick
-#    Qt::QuickWidgets
-#    Qt::QuickControls2
-#    Qt::Qml
-#)
+add_executable(qtvk)
+set_target_properties(qtvk PROPERTIES AUTOMOC TRUE)
+file(GLOB_RECURSE EXE_QTVK_SRC "apps/qt/*.cpp" "apps/qt/*.h")
+target_sources(qtvk PRIVATE ${EXE_QTVK_SRC})
+target_link_libraries(qtvk PUBLIC
+ Vulkan::Vulkan 
+ render 
+    Qt::Core
+    Qt::Gui
+    Qt6::GuiPrivate
+    Qt::Quick
+    Qt::QuickWidgets
+    Qt::QuickControls2
+    Qt::Qml
+    log 
+    algebra 
+    scene 
+    config 
+    glfw3
+    uv
+)
 
 # Test subdirectories
 # ================================
