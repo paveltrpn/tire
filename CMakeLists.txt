@@ -158,8 +158,6 @@ target_link_libraries(barevk PUBLIC
     scene 
     config 
     render 
-    X11
-    Xfixes
     glfw3
     Vulkan::Vulkan 
     uv
@@ -173,8 +171,6 @@ target_link_libraries(qtvk PUBLIC
     scene 
     config 
     render 
-    X11
-    Xfixes
     glfw3
     Vulkan::Vulkan 
     uv

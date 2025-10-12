@@ -57,6 +57,8 @@ BareWindow::BareWindow() {
 
     } );
 
+    // NOTE: use native X11 window handles but there is no
+    // X11 related definitions in code and no X11 headers indluded.
     const auto nWindow_ = glfwGetX11Window( window_ );
     const auto display_ = glfwGetX11Display();
 
