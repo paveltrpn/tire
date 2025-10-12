@@ -9,8 +9,8 @@
 #include "buffers/vertex_buffer.h"
 #include "command_pool.h"
 
-#include "render.h"
-#include "render/context.h"
+#include "timer.h"
+#include "context.h"
 #include "scene.h"
 
 #define FRAMES_IN_FLIGHT_COUNT 2
@@ -35,6 +35,19 @@ struct RenderVK final {
     void createGraphicsPipeline();
     void createSyncObjects();
 
+public:
+    void keyPressEvent( unsigned int key );
+    void keyReleaseEvent( unsigned int key );
+    void mouseButtonPressEvent( unsigned int key );
+    void mouseButtonReleaseEvent( unsigned int key );
+
+    // Call when mouse moves free upon window. "x" and "y"
+    // represent current cursor position in window coordinates
+    void mouseMoveEvent( unsigned int x, unsigned int y );
+    // Call when mouse holds in defined position. "x" and "y"
+    // represent current cursor ofssets.
+    void mouseOffsetEvent( unsigned int x, unsigned int y );
+
 private:
     vk::Context* context_{};
 
@@ -46,6 +59,10 @@ private:
     std::shared_ptr<Scene> scene_{};
 
     Timer timer_{};
+
+    bool holdMouse_{ false };
+    unsigned int holdMouseX_{ 500 };
+    unsigned int holdMouseY_{ 500 };
 };
 
 }  // namespace tire

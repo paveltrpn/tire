@@ -25,9 +25,6 @@ private:
     GLFWwindow* window_{};
     GLFWmonitor* monitor_{};
 
-    Display* display_;
-    Window nWindow_;
-
     // window properties
     int posx_{};
     int posy_{};

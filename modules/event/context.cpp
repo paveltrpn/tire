@@ -6,7 +6,7 @@ module;
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_EVENT_CONTEXT_H{ true };
 
-#include "render/render.h"
+#include "render/rendervk.h"
 
 #include <uv.h>
 #include <uv/version.h>
@@ -18,7 +18,7 @@ namespace tire::event {
 export struct Context final {
     Context() {
         if ( !instance_ ) {
-            loop_ = static_cast<uv_loop_t *>( malloc( sizeof( uv_loop_t ) ) );
+            loop_ = static_cast<uv_loop_t*>( malloc( sizeof( uv_loop_t ) ) );
 
             const auto res = uv_loop_init( loop_ );
             if ( res != 0 ) {
@@ -39,17 +39,17 @@ export struct Context final {
         }
     }
 
-    Context( const Context &rhs ) = delete;
-    Context( Context &&rhs ) = delete;
-    Context &operator=( const Context &rhs ) = delete;
-    Context &operator=( Context &&rhs ) = delete;
+    Context( const Context& rhs ) = delete;
+    Context( Context&& rhs ) = delete;
+    Context& operator=( const Context& rhs ) = delete;
+    Context& operator=( Context&& rhs ) = delete;
 
     ~Context() {
         uv_loop_close( loop_ );
         free( loop_ );
     };
 
-    static Context *instance() {
+    static Context* instance() {
         if ( !instance_ ) {
             log::error(
                 "event::Context == global instance must be initialized "
@@ -58,9 +58,9 @@ export struct Context final {
         return instance_.get();
     }
 
-    static uv_loop_t *loop() { return instance()->getLoop(); }
+    static uv_loop_t* loop() { return instance()->getLoop(); }
 
-    static void render( tire::Render *renderContext, uv_timer_cb cb ) {
+    static void render( tire::RenderVK* renderContext, uv_timer_cb cb ) {
         instance()->render_impl( renderContext, cb );
     }
     static void run() { instance()->run_impl(); }
@@ -69,9 +69,9 @@ export struct Context final {
     static void metrics() { instance()->metrics_impl(); }
 
 private:
-    [[nodiscard]] uv_loop_t *getLoop() const { return loop_; };
+    [[nodiscard]] uv_loop_t* getLoop() const { return loop_; };
 
-    void render_impl( tire::Render *renderContext, uv_timer_cb cb ) {
+    void render_impl( tire::RenderVK* renderContext, uv_timer_cb cb ) {
         // Every libuv handle has a void* data field. Here’s how you use it:
         renderTimer_.data = renderContext;
         uv_timer_init( loop_, &renderTimer_ );
@@ -117,7 +117,7 @@ private:
 
 private:
     static std::unique_ptr<Context> instance_;
-    uv_loop_t *loop_{ nullptr };
+    uv_loop_t* loop_{ nullptr };
     uv_timer_t renderTimer_;
 };
 

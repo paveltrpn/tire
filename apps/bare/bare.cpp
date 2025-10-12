@@ -21,8 +21,44 @@ BareWindow::BareWindow() {
 
     window_ = glfwCreateWindow( width_, height_, "glfw", nullptr, nullptr );
 
-    nWindow_ = glfwGetX11Window( window_ );
-    display_ = glfwGetX11Display();
+    glfwSetWindowUserPointer( window_, this );
+
+    glfwSetKeyCallback( window_, []( GLFWwindow* window, int key, int scancode,
+                                     int action, int mods ) {
+        const auto rndrHandle =
+            static_cast<tire::RenderVK*>( glfwGetWindowUserPointer( window ) );
+
+        rndrHandle->keyPressEvent( key );
+        rndrHandle->keyReleaseEvent( key );
+
+        if ( key == GLFW_KEY_ESCAPE ) {
+            glfwSetWindowShouldClose( window, GLFW_TRUE );
+        }
+    } );
+
+    glfwSetMouseButtonCallback( window_, []( GLFWwindow* window, int button,
+                                             int action, int mods ) {
+        const auto rndrHandle =
+            static_cast<tire::RenderVK*>( glfwGetWindowUserPointer( window ) );
+
+        rndrHandle->mouseButtonPressEvent( button );
+        rndrHandle->mouseButtonReleaseEvent( button );
+    } );
+
+    glfwSetCursorPosCallback( window_, []( GLFWwindow* window, double posX,
+                                           double posY ) {
+        const auto rndrHandle =
+            static_cast<tire::RenderVK*>( glfwGetWindowUserPointer( window ) );
+
+        // rndrHandle->mouseOffsetEvent( posX, posY );
+    } );
+
+    glfwSetCursorEnterCallback( window_, []( GLFWwindow* window, int entered ) {
+
+    } );
+
+    const auto nWindow_ = glfwGetX11Window( window_ );
+    const auto display_ = glfwGetX11Display();
 
     context_ = std::make_unique<tire::vk::Context>( display_, nWindow_ );
 
@@ -31,11 +67,6 @@ BareWindow::BareWindow() {
     render_ = std::make_unique<tire::RenderVK>( context_.get() );
 
     render_->scene( "/mnt/main/code/tire/assets/m01.json" );
-
-    // VkSurfaceKHR surface;
-    // if ( glfwCreateWindowSurface( instance, window, nullptr, &surface ) !=
-    //  VK_SUCCESS ) {
-    // }
 }
 
 BareWindow::~BareWindow() {
