@@ -1,6 +1,6 @@
 CompileFlags:
-  CompilationDatabase: ./build/
-  Add: [-std=c++23]
+  CompilationDatabase: build/
+  Add: [-std=c++26]
  
 Hover:
   ShowAKA: Yes
@@ -12,6 +12,43 @@ InlayHints:
   DeducedTypes: Yes
 
 Diagnostics:
+  ClangTidy:
+    Add: 
+    - "modernize*"
+    - "bugprone*"
+    - "misc*"
+    - "performance*"
+    - "portability*"
+    - "unused*"
+    - "cppcoreguidelines*"
+    Remove: 
+    - "bugprone-assignment-in-if-condition"
+    - "bugprone-branch-clone"
+    - "bugprone-easily-swappable-parameters"
+    - "bugprone-implicit-widening-of-multiplication-result"
+    - "bugprone-macro-parentheses"
+    - "bugprone-narrowing-conversions"
+    - "bugprone-not-null-terminated-result"
+    - "bugprone-reserved-identifier"
+    - "bugprone-sizeof-expression"
+    - "bugprone-suspicious-include"
+    - "bugprone-suspicious-memory-comparison"
+    - "bugprone-unused-return-value"
+    - "bugprone-crtp-constructor-accessibility"
+    - "misc-misplaced-const"
+    - "misc-no-recursion"
+    - "misc-unused-parameters"
+    - "misc-non-private-member-variables-in-classes"
+    - "misc-include-cleaner"
+#   - "modernize-use-trailing-return-type"
+    - "modernize-use-constraints"
+    - "modernize-type-traits"
+#   - "modernize-macro-to-enum"
+    - "modernize-use-designated-initializers"
+#   - "misc-use-anonymous-namespace"
+    - "modernize-avoid-c-arrays"
+    CheckOptions:
+      readability-identifier-naming.VariableCase: CamelCase
+
   Suppress: 
-    - unused-includes
     - -Wparentheses

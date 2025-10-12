@@ -5,12 +5,12 @@ set(CMAKE_CXX_COMPILER $ENV{GCC_LATEST}/bin/g++-15.1)
 # set(CMAKE_C_COMPILER clang)
 # set(CMAKE_CXX_COMPILER clang++)
 # add_link_options(-stdlib=libc++)
-add_compile_options(-std=c++23)
+add_compile_options(-std=c++26)
 set(CMAKE_BUILD_TYPE Debug)
 
 project (tiny_render)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON )
 
 include_directories("modules")
