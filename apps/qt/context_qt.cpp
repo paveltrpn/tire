@@ -13,12 +13,12 @@ ContextQt::ContextQt( VkInstance instance, VkPhysicalDevice pDevice,
                       VkDevice device, VkSurfaceKHR surface, VkRenderPass rp,
                       uint32_t gqfi, uint32_t gqi )
     : pDevice_{ pDevice }
-    , renderPass_{ rp }
     , graphicsFamilyQueueId_{ gqfi }
     , graphicsQueueId_{ gqi } {
     instance_ = instance;
     device_ = device;
     surface_ = surface;
+    renderPass_ = rp;
     uint32_t version{};
     vkEnumerateInstanceVersion( &version );
     log::info( "vk::Context === acquired api instance version is {}.{}",

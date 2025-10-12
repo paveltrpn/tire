@@ -35,10 +35,6 @@ struct ContextQt final : Context {
     auto queryDeviceInfo() -> void;
     auto querySurface() -> void;
 
-    [[nodiscard]] auto renderPass() const -> VkRenderPass {
-        return renderPass_;
-    };
-
     // [[nodiscard]] const VkSurfaceFormatKHR& surfaceFormat() const {
     // return surfaceFormat_;
     // };
@@ -94,9 +90,6 @@ private:
     std::vector<VkQueueFamilyProperties> queueFamilyProperties_{};
 
     VkSurfaceCapabilitiesKHR surfaceCapabilities_{};
-
-    // Render pass
-    VkRenderPass renderPass_{ VK_NULL_HANDLE };
 
     // Graphics queue resources.
     uint32_t graphicsFamilyQueueId_{};

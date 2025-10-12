@@ -71,6 +71,7 @@ private:
     void makeDevice();
     void makeCommandPool();
     void makeSwapchain();
+    auto initRenderPass() -> void;
     auto initPrimaryCommandBuffer() -> void;
     auto initSecondaryCommandBuffer() -> void;
 

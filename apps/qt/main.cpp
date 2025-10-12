@@ -26,7 +26,7 @@ int main( int argc, char* argv[] ) {
     // NOTE: have no effect.
     inst.setApiVersion( { 1, 2, 0 } );
 
-    // inst.setLayers( { "VK_LAYER_KHRONOS_validation" } );
+    inst.setLayers( { "VK_LAYER_KHRONOS_validation" } );
 
     // inst.setExtensions({"VK_KHR_surface"});
 

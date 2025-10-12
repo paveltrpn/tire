@@ -54,6 +54,10 @@ struct Context {
         const std::vector<VkFormat>& candidates, VkImageTiling tiling,
         VkFormatFeatureFlags features ) const = 0;
 
+    [[nodiscard]] auto renderPass() const -> VkRenderPass {
+        return renderPass_;
+    };
+
 protected:
     // Instance
     VkInstance instance_{ VK_NULL_HANDLE };
@@ -69,6 +73,8 @@ protected:
     VkQueue graphicsQueue_{ VK_NULL_HANDLE };
 
     VkSurfaceFormatKHR surfaceFormat_{};
+
+    VkRenderPass renderPass_{};
 };
 
 }  // namespace tire::vk

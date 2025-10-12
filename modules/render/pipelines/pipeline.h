@@ -30,8 +30,6 @@ struct Pipeline {
 protected:
     // Each pipeline can have unique layout
     [[nodiscard]] virtual VkPipelineLayout initLayout() = 0;
-    // Each pipeline can have unique renderpass
-    [[nodiscard]] virtual VkRenderPass initRenderpass() = 0;
 
 protected:
     const vk::Context* context_;
@@ -56,8 +54,6 @@ private:
     // to form a pipeline layout object describing the complete set of resources
     // that can be accessed by a pipeline.
     VkPipelineLayout initLayout() override;
-
-    VkRenderPass initRenderpass() override;
 };
 
 // =====================================================================================
@@ -71,7 +67,6 @@ public:
 
 private:
     VkPipelineLayout initLayout() override;
-    VkRenderPass initRenderpass() override;
 };
 
 }  // namespace tire::vk

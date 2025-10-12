@@ -50,15 +50,25 @@ void Scene::submit() {
 void Scene::output( const VkCommandBuffer cb ) {
     const auto view = camera().matrix<tire::VulkanTag>();
 
+    // ====
+    const VkViewport viewport{ .x = 0.0f,
+                               .y = 0.0f,
+                               .width = static_cast<float>( 640 ),
+                               .height = static_cast<float>( 480 ),
+                               .minDepth = 0.0f,
+                               .maxDepth = 1.0f };
+    vkCmdSetViewport( cb, 0, 1, &viewport );
+
+    const VkRect2D scissor{ { .x = 0, .y = 0 },
+                            { .width = 640, .height = 480 } };
+    vkCmdSetScissor( cb, 0, 1, &scissor );
+    // ====
+
     vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS,
                        pipeline_->pipeline() );
+
     vkCmdPushConstants( cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0,
                         sizeof( algebra::matrix4d ), &view );
-
-    const auto bind = []( Colorf color, VkBuffer vbo, VkBuffer nbo,
-                          uint32_t vCount ) {
-
-    };
 
     // Record draw commands for all scene objects in command buffer
     for ( size_t object = 0; object < vertBuffersList_.size(); ++object ) {
