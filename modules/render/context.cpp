@@ -12,7 +12,7 @@ static constexpr bool DEBUG_OUTPUT_CONTEXT_CPP{ true };
 
 namespace tire::vk {
 
-Context::Context( Display *display, Window window )
+Context::Context( Display* display, Window window )
     : display_{ display }
     , window_{ window } {
 }
@@ -24,12 +24,15 @@ void Context::init() {
     makeDevice();
     makeCommandPool();
     makeSwapchain();
+
+    initPrimaryCommandBuffer();
+    initSecondaryCommandBuffer();
 }
 
 void Context::makeXlibSurface() {
     VkXlibSurfaceCreateInfoKHR xlibSurfInfo_{};
     xlibSurfInfo_.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    xlibSurfInfo_.dpy = const_cast<Display *>( display_ );
+    xlibSurfInfo_.dpy = const_cast<Display*>( display_ );
     xlibSurfInfo_.window = window_;
 
     if ( const auto err = vkCreateXlibSurfaceKHR( instance_, &xlibSurfInfo_,
@@ -63,7 +66,7 @@ uint32_t Context::memoryRequirements( uint32_t typeFilter,
     return {};
 }
 
-VkFormat Context::findSupportedFormat( const std::vector<VkFormat> &candidates,
+VkFormat Context::findSupportedFormat( const std::vector<VkFormat>& candidates,
                                        VkImageTiling tiling,
                                        VkFormatFeatureFlags features ) const {
     for ( VkFormat format : candidates ) {
@@ -105,7 +108,7 @@ void Context::makeCommandPool() {
     }
 }
 
-void Context::present( const VkSemaphore semaphore, uint32_t *imageIndex ) {
+void Context::present( const VkSemaphore semaphore, uint32_t* imageIndex ) {
     std::array<VkSwapchainKHR, 1> swapChains = { swapchain_ };
     std::array<VkSemaphore, 1> signalSemaphores = { semaphore };
 
@@ -132,7 +135,7 @@ void Context::present( const VkSemaphore semaphore, uint32_t *imageIndex ) {
 
 static void vkDestroyDebugUtilsMessenger(
     VkInstance instance, VkDebugUtilsMessengerEXT messanger,
-    const VkAllocationCallbacks *pAllocator ) {
+    const VkAllocationCallbacks* pAllocator ) {
     auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
         instance, "vkDestroyDebugUtilsMessengerEXT" );
     if ( func != nullptr ) {

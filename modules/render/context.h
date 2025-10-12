@@ -85,6 +85,8 @@ private:
     void makeDevice();
     void makeCommandPool();
     void makeSwapchain();
+    auto initPrimaryCommandBuffer() -> void;
+    auto initSecondaryCommandBuffer() -> void;
 
 private:
     struct PhysicalDevice final {
@@ -136,6 +138,10 @@ private:
 
     // Command pool
     VkCommandPool commandPool_{ VK_NULL_HANDLE };
+    VkCommandBuffer cbPrimary_{ VK_NULL_HANDLE };
+    VkCommandBuffer cbSecondary_{ VK_NULL_HANDLE };
+    // Background color value
+    std::array<VkClearValue, 2> clearValues_{};
 
     // Swapchain
     VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };

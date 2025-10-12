@@ -44,6 +44,7 @@ public:
     // Call when mouse moves free upon window. "x" and "y"
     // represent current cursor position in window coordinates
     void mouseMoveEvent( unsigned int x, unsigned int y );
+
     // Call when mouse holds in defined position. "x" and "y"
     // represent current cursor ofssets.
     void mouseOffsetEvent( unsigned int x, unsigned int y );
