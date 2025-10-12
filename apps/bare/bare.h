@@ -4,30 +4,14 @@
 
 #include <iostream>
 #include <GLFW/glfw3.h>
+#include <vulkan/vulkan.h>
 
 struct BareWindow final {
-    BareWindow() {
-        if ( glfwInit() != GLFW_TRUE ) {
-            std::cout << "glfwInit() return - GLFW_FALSE!"
-                      << "\n";
-            std::exit( 1 );
-        }
+    BareWindow();
 
-        auto errorCallback = []( int, const char* err_str ) {
-            std::cout << "GLFW Error: " << err_str << std::endl;
-        };
-        glfwSetErrorCallback( errorCallback );
-        glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 2 );
-        glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
-        glfwWindowHint( GLFW_DOUBLEBUFFER, GL_TRUE );
-        glfwWindowHint( GLFW_RESIZABLE, GL_FALSE );
+    ~BareWindow();
 
-        window_ = glfwCreateWindow( width_, height_, "glfw", nullptr, nullptr );
-    }
-    ~BareWindow() {
-        glfwDestroyWindow( window_ );
-        glfwTerminate();
-    }
+    auto loop() -> void;
 
 private:
     GLFWwindow* window_{};
@@ -36,8 +20,8 @@ private:
     // window properties
     int posx_{};
     int posy_{};
-    int width_{};
-    int height_{};
+    int width_{ 640 };
+    int height_{ 480 };
 };
 
 #endif

@@ -4,9 +4,10 @@
 
 #include "log/log.h"
 #include "render/rendervk.h"
+#include "bare.h"
 
 import config;
-
+/*
 int main( int argc, char** argv ) {
     std::unique_ptr<tire::Render> rndr;
     try {
@@ -25,4 +26,10 @@ int main( int argc, char** argv ) {
     }
 
     return 0;
+}
+*/
+
+auto main( int argc, char** argv ) -> int {
+    auto foo = BareWindow{};
+    foo.loop();
 }
