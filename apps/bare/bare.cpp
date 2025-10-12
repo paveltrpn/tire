@@ -28,6 +28,10 @@ BareWindow::BareWindow() {
 
     context_->init();
 
+    render_ = std::make_unique<tire::RenderVK>( context_.get() );
+
+    render_->scene( "/mnt/main/code/tire/assets/m01.json" );
+
     // VkSurfaceKHR surface;
     // if ( glfwCreateWindowSurface( instance, window, nullptr, &surface ) !=
     //  VK_SUCCESS ) {
@@ -42,5 +46,10 @@ BareWindow::~BareWindow() {
 auto BareWindow::loop() -> void {
     while ( true ) {
         glfwPollEvents();
+
+        render_->preFrame();
+        render_->frame();
+        render_->postFrame();
+        render_->swapBuffers();
     }
 }

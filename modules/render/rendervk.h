@@ -10,37 +10,42 @@
 #include "command_pool.h"
 
 #include "render.h"
+#include "render/context.h"
 #include "scene.h"
 
 #define FRAMES_IN_FLIGHT_COUNT 2
 
 namespace tire {
 
-struct RenderVK final : Render {
-    RenderVK();
-    ~RenderVK() override = default;
+struct RenderVK final {
+    RenderVK( vk::Context* context );
+    ~RenderVK() = default;
 
-    void displayRenderInfo() override {};
-    void setSwapInterval( int interval ) override;
+    void displayRenderInfo() {};
+    void setSwapInterval( int interval );
 
-private:
-    void scene( const std::filesystem::path& path ) override;
-    void preLoop() override;
-    void preFrame() override;
-    void frame() override;
-    void postFrame() override;
-    void swapBuffers() override;
-    void postLoop() override;
+    void scene( const std::filesystem::path& path );
+    void preLoop();
+    void preFrame();
+    void frame();
+    void postFrame();
+    void swapBuffers();
+    void postLoop();
 
     void createGraphicsPipeline();
     void createSyncObjects();
 
 private:
-    std::unique_ptr<vk::Context> context_{};
+    vk::Context* context_{};
 
     std::unique_ptr<vk::Pipeline> piplineVertexBuffer_{};
 
     uint32_t currentFrame_{ 0 };
+
+    // The Scene
+    std::shared_ptr<Scene> scene_{};
+
+    Timer timer_{};
 };
 
 }  // namespace tire

@@ -18,18 +18,16 @@ import config;
 
 namespace tire {
 
-RenderVK::RenderVK()
-    : Render{} {
+RenderVK::RenderVK( vk::Context* context )
+    : context_{ context } {
     try {
         const auto configHandle = Config::instance();
         const auto basePath = configHandle->getBasePath().string();
-        context_ = std::make_unique<vk::Context>( display_, window_ );
-        context_->init();
 
         piplineVertexBuffer_ =
-            std::make_unique<vk::PiplineVertexBuffer>( context_.get() );
+            std::make_unique<vk::PiplineVertexBuffer>( context_ );
 
-        auto vertexBufferProgram = vk::Program{ context_.get() };
+        auto vertexBufferProgram = vk::Program{ context_ };
         vertexBufferProgram.fill(
             { basePath + "/assets/shaders/spirv/vk_vertexBuffer_VERTEX.spv",
               basePath +
@@ -46,7 +44,7 @@ RenderVK::RenderVK()
 };
 
 void RenderVK::scene( const std::filesystem::path& path ) {
-    scene_ = std::make_shared<vk::Scene>( path, context_.get(),
+    scene_ = std::make_shared<vk::Scene>( path, context_,
                                           piplineVertexBuffer_.get() );
 }
 

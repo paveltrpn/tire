@@ -15,17 +15,16 @@ import config;
 
 namespace tire {
 
-Scene::Scene( const std::filesystem::path &fname ) {
+Scene::Scene( const std::filesystem::path& fname ) {
     const auto path = std::filesystem::path{ fname };
 
-    log::info( "Scene === loading scene from file {}",
-               fname.filename().string() );
+    log::info( "Scene === loading scene from file {}", fname.string() );
 
     std::ifstream file{ path };
     if ( file ) {
         try {
             scene_ = nlohmann::json::parse( file );
-        } catch ( const nlohmann::json::parse_error &e ) {
+        } catch ( const nlohmann::json::parse_error& e ) {
             log::error(
                 "config json parse error\n"
                 "message:\t{}\n"
@@ -34,8 +33,8 @@ Scene::Scene( const std::filesystem::path &fname ) {
                 e.what(), e.id, e.byte );
         }
     } else {
-        throw std::runtime_error( std::format(
-            "Scene ===  file not found: {}\n", path.filename().string() ) );
+        throw std::runtime_error(
+            std::format( "Scene ===  file not found: {}\n", path.string() ) );
     }
 
     // Load meshes data.
@@ -51,11 +50,11 @@ void Scene::fillMeshBank() {
         std::format( "{}/assets/mesh/", basePath );
 
     // Iterate over directory
-    for ( auto &&entry : std::filesystem::directory_iterator{ meshFlesPath } ) {
+    for ( auto&& entry : std::filesystem::directory_iterator{ meshFlesPath } ) {
         std::vector<std::string> retItem;
         // Take only "name" part of filename, i.e. except
         // extension and path.
-        const auto &fileName = entry.path().stem().string();
+        const auto& fileName = entry.path().stem().string();
 
         auto mesh = std::make_shared<Mesh>( entry.path().string() );
         meshBank_.insert( { fileName, std::move( mesh ) } );
@@ -64,15 +63,15 @@ void Scene::fillMeshBank() {
 
 void Scene::process() {
     // Read "environment section"
-    const auto &environment = scene_[constants::scene::PARAM_ENVIRONMENT];
-    const auto &bg = environment[constants::scene::PARAM_BACKGROUND_COLOR];
+    const auto& environment = scene_[constants::scene::PARAM_ENVIRONMENT];
+    const auto& bg = environment[constants::scene::PARAM_BACKGROUND_COLOR];
     backgrounColor_ = Colorf( bg );
 
     // Read "objects" section
     if ( scene_.contains( constants::scene::PARAM_OBJECTS ) ) {
         const auto objects = scene_[constants::scene::PARAM_OBJECTS];
-        for ( const auto &item : objects ) {
-            const auto &type = item[constants::scene::PARAM_OBJECT_TYPE];
+        for ( const auto& item : objects ) {
+            const auto& type = item[constants::scene::PARAM_OBJECT_TYPE];
 
             // Body spatial information
             const std::array<float, 3> position =
@@ -91,10 +90,10 @@ void Scene::process() {
                 item[constants::scene::PARAM_OBJECT_TORQUE];
 
             // Body material information
-            const auto &albedoColor =
+            const auto& albedoColor =
                 item[constants::scene::PARAM_OBJECT_ALBEDO_COLOR];
 
-            const std::string &materialName =
+            const std::string& materialName =
                 item[constants::scene::PARAM_OBJECT_MATERIAL_NAME];
 
             // Body vertices data
@@ -153,8 +152,8 @@ void Scene::process() {
     // Read "cameras" section
     if ( scene_.contains( constants::scene::PARAM_CAMERAS ) ) {
         const auto cameras = scene_[constants::scene::PARAM_CAMERAS];
-        for ( const auto &item : cameras ) {
-            const auto &type = item[constants::scene::PARAM_CAMERA_TYPE];
+        for ( const auto& item : cameras ) {
+            const auto& type = item[constants::scene::PARAM_CAMERA_TYPE];
             if ( type == constants::scene::PARAM_CAMERA_PERSPECTIVE ) {
                 const std::array<double, 3> eye =
                     item[constants::scene::PARAM_CAMERA_EYE];
@@ -170,13 +169,13 @@ void Scene::process() {
                 const float elevation =
                     item[constants::scene::PARAM_CAMERA_ELEVATION];
 
-                const auto &fov = item[constants::scene::PARAM_CAMERA_FOV];
-                const auto &aspect =
+                const auto& fov = item[constants::scene::PARAM_CAMERA_FOV];
+                const auto& aspect =
                     item[constants::scene::PARAM_CAMERA_ASPECT];
-                const auto &ncp = item[constants::scene::PARAM_CAMERA_NCP];
-                const auto &fcp = item[constants::scene::PARAM_CAMERA_FCP];
+                const auto& ncp = item[constants::scene::PARAM_CAMERA_NCP];
+                const auto& fcp = item[constants::scene::PARAM_CAMERA_FCP];
 
-                const std::string &name =
+                const std::string& name =
                     item[constants::scene::PARAM_CAMERA_NAME];
 
                 auto camera =
@@ -198,8 +197,8 @@ void Scene::process() {
     // Read "lights" section
     if ( scene_.contains( constants::scene::PARAM_LIGHTS ) ) {
         const auto lights = scene_[constants::scene::PARAM_LIGHTS];
-        for ( const auto &item : lights ) {
-            const auto &type = item[constants::scene::PARAM_LIGHT_TYPE];
+        for ( const auto& item : lights ) {
+            const auto& type = item[constants::scene::PARAM_LIGHT_TYPE];
             if ( type == constants::scene::PARAM_LIGHT_OMNI ) {
                 const std::array<float, 3> position =
                     item[constants::scene::PARAM_OMNILIGHT_POSITION];

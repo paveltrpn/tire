@@ -12,6 +12,7 @@
 
 #include "render/context.h"
 #include "render/rendervk.h"
+#include "scene/scene.h"
 
 struct BareWindow final {
     BareWindow();
@@ -35,7 +36,7 @@ private:
 
     // Render related
     std::unique_ptr<tire::vk::Context> context_;
-    std::unique_ptr<tire::Render> render_;
+    std::unique_ptr<tire::RenderVK> render_;
 };
 
 #endif

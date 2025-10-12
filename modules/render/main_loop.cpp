@@ -12,12 +12,12 @@ namespace tire {
 void RenderVK::preLoop() {
     log::notice( "render loop starts here..." );
 
-    auto handle = showMetrics();
+    // auto handle = showMetrics();
     // handle.scheduleDestroy();
 
     event::testTimerEvent( 1000 );
-    executeByTimeOut( 1500 );
-    watchFile( "/mnt/main_disk/code/tiny_render/assets/figures.json" );
+    //executeByTimeOut( 1500 );
+    //watchFile( "/mnt/main_disk/code/tiny_render/assets/figures.json" );
 };
 
 void RenderVK::preFrame() {
