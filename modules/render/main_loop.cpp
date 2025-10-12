@@ -38,7 +38,7 @@ void RenderVK::frame() {
     const auto currentFramebuffer = context_->framebuffer( currentFrame_ );
 
     auto handle = static_cast<vk::Scene*>( scene_.get() );
-    handle->output( context_->getPrimaryCommandBuffer(), currentFramebuffer );
+    handle->output( context_->getDrawCommandBuffer(), currentFramebuffer );
 
     context_->renderCommandEnd( currentFrame_ );
 

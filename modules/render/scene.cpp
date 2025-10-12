@@ -96,9 +96,5 @@ void Scene::output( const VkCommandBuffer cb,
                                 offsets.data() );
         vkCmdDraw( cb, vCount, 3, 0, 0 );
     }
-
-    // Finalize command recording and submit command
-    //cBufs_[imageIndex]->submit( waitSemaphore, signalSemaphore, fence );
 }
-
 }  // namespace tire::vk

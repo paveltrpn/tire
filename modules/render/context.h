@@ -56,8 +56,6 @@ struct Context final {
 
     [[nodiscard]] uint32_t framesCount() const { return framesCount_; };
 
-    void present( const VkSemaphore semaphore, uint32_t* imageIndex );
-
     [[nodiscard]] VkFramebuffer framebuffer( size_t id ) const {
         return frames_[id].framebuffer_;
     };
@@ -81,9 +79,7 @@ struct Context final {
     auto renderCommandBegin( uint32_t frameId ) -> void;
     auto renderCommandEnd( uint32_t frameId ) -> void;
 
-    auto getPrimaryCommandBuffer() const -> VkCommandBuffer {
-        return cbPrimary_;
-    }
+    auto getDrawCommandBuffer() const -> VkCommandBuffer { return cbPrimary_; }
 
 private:
     void makeInstance();

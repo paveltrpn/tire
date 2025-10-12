@@ -115,7 +115,7 @@ auto Context::renderCommandEnd( uint32_t frameId ) -> void {
         .signalSemaphoreCount = 1,
         .pSignalSemaphores = sgnlsems.data() };
 
-    //NOTE: PRESET!
+    // NOTE: PRESET!
     // NOTE: omit return code check
     vkQueueSubmit( graphicsQueue(), static_cast<uint32_t>( commands.size() ),
                    &submitInfo, ifFnc );
