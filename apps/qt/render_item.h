@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <QSGRendererInterface>
@@ -7,7 +6,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "render/render.h"
+#include "render/rendervk.h"
 
 namespace tire {
 
@@ -18,7 +17,7 @@ struct RenderItem : QQuickItem {
     QML_ELEMENT
 
 public:
-    RenderItem( QQuickItem *parent = nullptr );
+    RenderItem( QQuickItem* parent = nullptr );
 
     Q_INVOKABLE void noop() { log::info( "noop from render item" ); }
 
@@ -32,7 +31,7 @@ public:
 
     // Render proxy functions
 public:
-    Q_INVOKABLE void renderNoop(){};
+    Q_INVOKABLE void renderNoop() {};
 
 public slots:
     // Call update to undelying window. Redraw item.
@@ -43,11 +42,11 @@ public slots:
     auto cleanup() -> void;
 
 protected:
-    auto updatePaintNode( QSGNode *node, UpdatePaintNodeData * )
-        -> QSGNode * override;
+    auto updatePaintNode( QSGNode* node, UpdatePaintNodeData* )
+        -> QSGNode* override;
 
 private:
-    auto handleWindowChanged( QQuickWindow *win ) -> void;
+    auto handleWindowChanged( QQuickWindow* win ) -> void;
 
 public slots:
     // Context will be created and Render will be initialezed at first call
@@ -66,19 +65,19 @@ private:
     // Cached window and render interface that this item
     // assined to. Is this pointers valid through all
     // window lifetime?
-    QQuickWindow *window_{};
+    QQuickWindow* window_{};
 
     // The ownership of the  pointer returned from render interface
     // is never transferred to the caller.
-    QSGRendererInterface *renderInterface_{};
+    QSGRendererInterface* renderInterface_{};
 
     // Native QRhi render hardware interface handle.
     // Used to acquire qt initialize vulkan resources.
-    QRhi *rhiHandle{};
+    QRhi* rhiHandle{};
 
     // Custom render.
     std::unique_ptr<vk::Context> context_{ nullptr };
-    std::unique_ptr<vk::Render> render_{ nullptr };
+    std::unique_ptr<RenderVK> render_{ nullptr };
 };
 
 }  // namespace tire

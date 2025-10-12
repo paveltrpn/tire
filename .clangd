@@ -12,6 +12,8 @@ InlayHints:
   DeducedTypes: Yes
 
 Diagnostics:
+  Suppress: 
+    - "drv_unknown_argument"
   ClangTidy:
     Add: 
     - "modernize*"
@@ -21,7 +23,8 @@ Diagnostics:
     - "portability*"
     - "unused*"
     - "cppcoreguidelines*"
-    Remove: 
+    Remove:
+    - "drv_unknown_argument"
     - "bugprone-assignment-in-if-condition"
     - "bugprone-branch-clone"
     - "bugprone-easily-swappable-parameters"
@@ -49,6 +52,3 @@ Diagnostics:
     - "modernize-avoid-c-arrays"
     CheckOptions:
       readability-identifier-naming.VariableCase: CamelCase
-
-  Suppress: 
-    - -Wparentheses

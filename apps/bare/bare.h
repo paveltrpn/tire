@@ -28,8 +28,8 @@ private:
     // window properties
     int posx_{};
     int posy_{};
-    int width_{ 640 };
-    int height_{ 480 };
+    int width_{ 1024 };
+    int height_{ 1024 };
 
     // Render related
     std::unique_ptr<tire::vk::Context> context_;

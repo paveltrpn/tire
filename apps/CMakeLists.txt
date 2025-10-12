@@ -9,8 +9,12 @@ add_executable(barevk
 )
 
 add_executable(qtvk
-    qt/vk.cpp
-    qt/qt.cpp
-    qt/qt.h
+    qt/main.cpp
+    qt/appearance.cpp
+    qt/appearance.h
+    qt/render_item.cpp
+    qt/render_item.h
+    qt/window.cpp
+    qt/window.h
 )
 

@@ -52,6 +52,7 @@ list(APPEND CMAKE_PREFIX_PATH $ENV{LOCAL_LATEST_QT})
 find_package(Qt6 ${QT_VERSION} COMPONENTS
     Core
     Gui
+    GuiPrivate
     Quick
     QuickWidgets
     QuickControls2
@@ -170,7 +171,8 @@ target_link_libraries(barevk PUBLIC
     uv
 )
 
-target_link_libraries(qtvk PUBLIC 
+set_target_properties(qtvk PROPERTIES AUTOMOC TRUE)
+target_link_libraries(qtvk PUBLIC
     log 
     algebra 
     scene 
@@ -179,6 +181,13 @@ target_link_libraries(qtvk PUBLIC
     glfw3
     Vulkan::Vulkan 
     uv
+    Qt::Core
+    Qt::Gui
+    Qt6::GuiPrivate
+    Qt::Quick
+    Qt::QuickWidgets
+    Qt::QuickControls2
+    Qt::Qml
 )
 
 # Test subdirectories
