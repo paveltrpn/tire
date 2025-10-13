@@ -2,19 +2,13 @@
 #pragma once
 
 #include <vector>
-#include <initializer_list>
-#include <iterator>
 #include <memory>
 
 #include "geometry/polytope.h"
 #include "geometry/bounding_volumes.h"
-
 #include "algebra/vector2.h"
 #include "algebra/vector3.h"
-#include "algebra/matrix3.h"
-
 #include "image/color.h"
-#include "image/tga.h"
 
 namespace tire {
 
@@ -37,14 +31,14 @@ struct Body final {
     size_t texcrdsArraySize() const;
 
     //
-    const vector3<value_type> *verteciesData();
-    const vector3<value_type> *normalsData();
-    const vector2<value_type> *texcrdsData();
+    const vector3<value_type>* verteciesData();
+    const vector3<value_type>* normalsData();
+    const vector2<value_type>* texcrdsData();
 
     void setBounding( BoundingVolume<float> value ) { bounding_ = value; }
     const BoundingVolume<float> bounding() { return bounding_; };
 
-    void setAlbedoColor( const std::string &name ) {
+    void setAlbedoColor( const std::string& name ) {
         albedoColor_ = Colorf{ name };
     }
 
@@ -53,12 +47,12 @@ struct Body final {
         return albedoColor_;
     };
 
-    void setPosition( const vector3<value_type> &value );
-    void setOrientation( const vector3<value_type> &value );
-    void setScale( const vector3<value_type> &value );
-    void setVelocity( const vector3<value_type> &value );
-    void setTorque( const vector3<value_type> &value );
-    void setMaterialName( const std::string &value );
+    void setPosition( const vector3<value_type>& value );
+    void setOrientation( const vector3<value_type>& value );
+    void setScale( const vector3<value_type>& value );
+    void setVelocity( const vector3<value_type>& value );
+    void setTorque( const vector3<value_type>& value );
+    void setMaterialName( const std::string& value );
 
     [[nodiscard]]
     vector3<value_type> position() const {
