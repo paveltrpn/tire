@@ -1,11 +1,19 @@
 cmake_minimum_required(VERSION 3.20)
 
+# Use GCC latest
 set(CMAKE_C_COMPILER $ENV{GCC_LATEST}/bin/gcc-15.1)
 set(CMAKE_CXX_COMPILER $ENV{GCC_LATEST}/bin/g++-15.1)
+
+# Use clang latest with clang std lib - libc++
 # set(CMAKE_C_COMPILER clang)
 # set(CMAKE_CXX_COMPILER clang++)
 # add_link_options(-stdlib=libc++)
+
 add_compile_options(-std=c++26)
+
+# Silence some deprecated declaration warnings from nlohmann hson and Qt
+add_compile_options(-Wno-deprecated-declarations)
+
 set(CMAKE_BUILD_TYPE Debug)
 
 project (tiny_render)
