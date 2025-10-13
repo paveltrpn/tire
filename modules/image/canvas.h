@@ -1,5 +1,5 @@
 
-#include <algorithm>
+#include <cstdint>
 #include <cmath>
 #include <cstring>
 #include <iostream>
@@ -27,10 +27,10 @@ public:
     int32_t get_width();
     int32_t get_height();
     int32_t get_bpp();
-    uint8_t *get_data();
+    uint8_t* get_data();
 
 private:
-    uint8_t *data;
+    uint8_t* data;
 
     int32_t cnvs_width;
     int32_t cnvs_height;
@@ -67,7 +67,7 @@ private:
                  */
         struct jpeg_error_mgr jerr;
         /* More stuff */
-        FILE *outfile;           /* target file */
+        FILE* outfile;           /* target file */
         JSAMPROW row_pointer[1]; /* pointer to JSAMPLE row[s] */
         int row_stride;          /* physical row width in image buffer */
 
@@ -162,7 +162,7 @@ private:
     }
 
     int write_tga( std::string fname ) {
-        TGA *tga_out;
+        TGA* tga_out;
         TGAData tga_data;
 
         std::memset( &tga_data, 0, sizeof( TGAData ) );

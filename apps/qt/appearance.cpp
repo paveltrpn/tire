@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include <QFont>
+#include <QString>
 
 #include "appearance.h"
 

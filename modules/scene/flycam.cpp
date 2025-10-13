@@ -1,14 +1,11 @@
 
-#include <iostream>
-
+#include <cstdint>
 #include "flycam.h"
-#include <print>
-#include "algebra/quaternion.h"
 #include "algebra/vector3.h"
 
 namespace tire {
 
-Flycam::Flycam( const algebra::vector3<value_type> &eye, value_type azimuth,
+Flycam::Flycam( const algebra::vector3<value_type>& eye, value_type azimuth,
                 value_type elevation ) {
     azimuth_ = azimuth;
     elevation_ = elevation;
@@ -31,7 +28,7 @@ void Flycam::rotate( value_type azimuthOffset, value_type elevayionOffset ) {
     if ( elevation_ < -ELEVATION_BOUND ) elevation_ = -ELEVATION_BOUND;
 }
 
-void Flycam::setPosition( const algebra::vector3<value_type> &pos ) {
+void Flycam::setPosition( const algebra::vector3<value_type>& pos ) {
     eye_ = pos;
 }
 

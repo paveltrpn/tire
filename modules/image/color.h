@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <array>
+#include <cstdint>
 #include <map>
 #include <concepts>
 #include <type_traits>

@@ -1,8 +1,7 @@
 
-#include <string>
 #include <cstdio>
 #include <fstream>
-#include <iostream>
+#include <cstdint>
 
 #include "log/log.h"
 
@@ -62,8 +61,8 @@ struct BITMAPINFOHEADER {
 };
 
 template <typename Type>
-void read( std::ifstream &fp, Type &result, std::size_t size ) {
-    fp.read( reinterpret_cast<char *>( &result ), size );
+void read( std::ifstream& fp, Type& result, std::size_t size ) {
+    fp.read( reinterpret_cast<char*>( &result ), size );
 }
 
 static unsigned char bitextract( const unsigned int byte,
@@ -92,13 +91,13 @@ struct Bmp {
     size_t width();
     size_t height();
     size_t chanels();
-    uint8_t *data();
+    uint8_t* data();
 
 private:
     BITMAPFILEHEADER fileHeader_{};
     BITMAPINFOHEADER infoHeader_{};
 
-    uint8_t *decompressed_{ nullptr };
+    uint8_t* decompressed_{ nullptr };
 };
 
 }  // namespace tire

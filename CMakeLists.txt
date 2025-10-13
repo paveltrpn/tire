@@ -1,24 +1,29 @@
 cmake_minimum_required(VERSION 3.20)
 
 # Use GCC latest
-set(CMAKE_C_COMPILER $ENV{GCC_LATEST}/bin/gcc-15.1)
-set(CMAKE_CXX_COMPILER $ENV{GCC_LATEST}/bin/g++-15.1)
+# set(CMAKE_C_COMPILER $ENV{GCC_LATEST}/bin/gcc-15.1)
+# set(CMAKE_CXX_COMPILER $ENV{GCC_LATEST}/bin/g++-15.1)
 
-# Use clang latest with clang std lib - libc++
-# set(CMAKE_C_COMPILER clang)
-# set(CMAKE_CXX_COMPILER clang++)
-# add_link_options(-stdlib=libc++)
+# Use clang latest 
+set(CMAKE_C_COMPILER clang)
+set(CMAKE_CXX_COMPILER clang++)
 
-add_compile_options(-std=c++26)
+# Use clang std lib - libc++
+#add_compile_options(-stdlib=libc++)
+#add_link_options(-stdlib=libc++)
 
 # Silence some deprecated declaration warnings from nlohmann hson and Qt
 add_compile_options(-Wno-deprecated-declarations)
 
+# Set latest c++ standart.
+add_compile_options(-std=c++26)
+set(CMAKE_CXX_STANDARD 26)
+
+# Build type.
 set(CMAKE_BUILD_TYPE Debug)
 
 project (tiny_render)
 
-set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON )
 
 include_directories("modules")
@@ -184,13 +189,15 @@ target_link_libraries(barevk PUBLIC
 add_executable(qtvk)
 set_target_properties(qtvk PROPERTIES AUTOMOC TRUE)
 file(GLOB_RECURSE EXE_QTVK_SRC "apps/qt/*.cpp" "apps/qt/*.h")
+target_compile_options(qtvk PRIVATE -stdlib=libstdc++)
+target_link_options(qtvk PRIVATE -stdlib=libstdc++)
 target_sources(qtvk PRIVATE ${EXE_QTVK_SRC})
 target_link_libraries(qtvk PUBLIC
- Vulkan::Vulkan 
- render 
+    Vulkan::Vulkan 
+    render 
     Qt::Core
     Qt::Gui
-    Qt6::GuiPrivate
+    Qt::GuiPrivate
     Qt::Quick
     Qt::QuickWidgets
     Qt::QuickControls2

@@ -1,8 +1,4 @@
 
-#include <memory>
-#include <print>
-#include <format>
-#include <set>
 #include "pipelines/program.h"
 
 #define VK_USE_PLATFORM_XLIB_KHR
@@ -52,7 +48,7 @@ void RenderVK::setSwapInterval( int interval ) {
 };
 
 void RenderVK::keyPressEvent( unsigned int key ) {
-    std::println( "{}", key );
+    log::info( "{}", key );
     switch ( key ) {
         case 24: {  // == 'q'
             scene_->nextCamera();
