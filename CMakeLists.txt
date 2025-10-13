@@ -12,6 +12,7 @@ set(CMAKE_CXX_COMPILER clang++)
 #add_compile_options(-stdlib=libc++)
 #add_link_options(-stdlib=libc++)
 
+
 # Silence some deprecated declaration warnings from nlohmann hson and Qt
 add_compile_options(-Wno-deprecated-declarations)
 
@@ -193,6 +194,7 @@ target_compile_options(qtvk PRIVATE -stdlib=libstdc++)
 target_link_options(qtvk PRIVATE -stdlib=libstdc++)
 target_sources(qtvk PRIVATE ${EXE_QTVK_SRC})
 target_link_libraries(qtvk PUBLIC
+    stdc++
     Vulkan::Vulkan 
     render 
     Qt::Core

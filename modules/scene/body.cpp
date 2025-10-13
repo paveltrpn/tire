@@ -9,7 +9,6 @@
 static constexpr bool DEBUG_OUTPUT_NODE_CPP{ false };
 
 #include "algebra/vector3.h"
-#include "algebra/matrix3.h"
 #include "algebra/matrix4.h"
 
 namespace tire {
