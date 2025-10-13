@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.20)
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_COMPILER clang++)
 
-# Use clang std lib - libc++
+# Use clang stdlib - libc++
 #add_compile_options(-stdlib=libc++)
 #add_link_options(-stdlib=libc++)
 

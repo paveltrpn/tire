@@ -12,9 +12,10 @@ SortIncludes: 'false'
 ReflowComments: 'false'
 AllowShortFunctionsOnASingleLine: InlineOnly
 StatementMacros: [Q_OBJECT, Q_UNUSED, QT_REQUIRE_VERSION]
-Standard: c++11
+Standard: c++20
 AlignOperands: 'true'
 AccessModifierOffset: -4
+PackConstructorInitializers: Never
 BraceWrapping:
   AfterClass:      false
   AfterControlStatement: false

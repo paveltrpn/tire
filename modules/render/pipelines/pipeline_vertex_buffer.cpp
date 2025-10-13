@@ -1,9 +1,6 @@
 
-#include <cstddef>
-
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "image/color.h"
 #include "pipeline.h"
 #include "algebra/vector3.h"
 #include "algebra/matrix4.h"

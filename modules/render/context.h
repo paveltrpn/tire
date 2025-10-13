@@ -27,12 +27,12 @@ struct Context {
     };
 
     [[nodiscard]]
-    const VkSurfaceFormatKHR& surfaceFormat() const {
+    auto surfaceFormat() const -> const VkSurfaceFormatKHR& {
         return surfaceFormat_;
     };
 
     [[nodiscard]]
-    const VkQueue& graphicsQueue() const {
+    auto graphicsQueue() const -> const VkQueue& {
         return graphicsQueue_;
     }
 
@@ -41,40 +41,36 @@ struct Context {
     };
 
     [[nodiscard]]
-    virtual const VkExtent2D& currentExtent() const {
+    virtual auto currentExtent() const -> const VkExtent2D& {
         return currentExtent_;
     };
 
     [[nodiscard]]
-    virtual uint32_t memoryRequirements(
-        uint32_t typeFilter, VkMemoryPropertyFlags properties ) const = 0;
+    virtual auto memoryRequirements( uint32_t typeFilter,
+                                     VkMemoryPropertyFlags properties ) const
+        -> uint32_t = 0;
 
     [[nodiscard]]
-    virtual VkFormat findSupportedFormat(
-        const std::vector<VkFormat>& candidates, VkImageTiling tiling,
-        VkFormatFeatureFlags features ) const = 0;
+    virtual auto findSupportedFormat( const std::vector<VkFormat>& candidates,
+                                      VkImageTiling tiling,
+                                      VkFormatFeatureFlags features ) const
+        -> VkFormat = 0;
 
     [[nodiscard]] auto renderPass() const -> VkRenderPass {
         return renderPass_;
     };
 
 protected:
-    // Instance
     VkInstance instance_{ VK_NULL_HANDLE };
     VkSurfaceKHR surface_{ VK_NULL_HANDLE };
     VkDevice device_{ VK_NULL_HANDLE };
     VkCommandPool commandPool_{ VK_NULL_HANDLE };
     VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
-
     uint32_t graphicsFamilyQueueId_{ UINT32_MAX };
-
     VkExtent2D currentExtent_{};
-
     VkQueue graphicsQueue_{ VK_NULL_HANDLE };
-
     VkSurfaceFormatKHR surfaceFormat_{};
-
-    VkRenderPass renderPass_{};
+    VkRenderPass renderPass_{ VK_NULL_HANDLE };
 };
 
 }  // namespace tire::vk

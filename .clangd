@@ -50,5 +50,6 @@ Diagnostics:
     - "modernize-use-designated-initializers"
 #   - "misc-use-anonymous-namespace"
     - "modernize-avoid-c-arrays"
+    - "cppcoreguidelines-non-private-member-variables-in-classes"
     CheckOptions:
       readability-identifier-naming.VariableCase: CamelCase
