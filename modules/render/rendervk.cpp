@@ -196,10 +196,10 @@ auto RenderVK::drawTestCube( VkCommandBuffer cb ) -> void {
     auto offset = algebra::translate( 0.0f, 0.0f, -2.0f );
     offset.transposeSelf();
 
-    // const auto [width, height] = context_->currentExtent();
+    const auto [width, height] = context_->currentExtent();
     // NOTE: Choose right projection matrix!!!
     const auto proj = algebra::perspective<float>(
-        50.0f, static_cast<float>( 1024 ) / static_cast<float>( 1024 ), 0.1f,
+        50.0f, static_cast<float>( width ) / static_cast<float>( height ), 0.1f,
         100.0f );
     const auto viewMatrix = offset * proj;
     angle_ += timer_.floatFrameDuration() * 25.0f;
@@ -210,14 +210,14 @@ auto RenderVK::drawTestCube( VkCommandBuffer cb ) -> void {
 
     const VkViewport viewport{ .x = 0.0f,
                                .y = 0.0f,
-                               .width = static_cast<float>( 1024 ),
-                               .height = static_cast<float>( 1024 ),
+                               .width = static_cast<float>( width ),
+                               .height = static_cast<float>( height ),
                                .minDepth = 0.0f,
                                .maxDepth = 1.0f };
     vkCmdSetViewport( cb, 0, 1, &viewport );
 
     const VkRect2D scissor{ { .x = 0, .y = 0 },
-                            { .width = 1024, .height = 1024 } };
+                            { .width = width, .height = height } };
     vkCmdSetScissor( cb, 0, 1, &scissor );
 
     vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS,
