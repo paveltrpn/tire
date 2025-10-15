@@ -19,7 +19,7 @@ auto ContextBare::initPrimaryCommandBuffer() -> void {
     const auto backgroundColor = Colorf( "#0f0f0f" );
     clearValues_[0].color = { { backgroundColor.r(), backgroundColor.g(),
                                 backgroundColor.b(), 1.0f } };
-    clearValues_[1].depthStencil = { .depth = 0.0f, .stencil = 0 };
+    clearValues_[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
 }
 
 auto ContextBare::initSecondaryCommandBuffer() -> void {

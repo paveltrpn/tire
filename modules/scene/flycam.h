@@ -95,7 +95,7 @@ struct Flycam final {
                 algebra::perspective<value_type>( fov_, aspect_, ncp_, fcp_ );
         } else if constexpr ( std::is_same_v<Type, VulkanTag> ) {
             projection =
-                algebra::vperspective<value_type>( fov_, aspect_, ncp_, fcp_ );
+                algebra::perspective<value_type>( fov_, aspect_, ncp_, fcp_ );
         }
 
         // Get azimuth rotation matrix

@@ -128,7 +128,6 @@ auto RenderItem::beforeRenderPassRecording() -> void {
     const auto g = window_->geometry();
 
     // Render frame with custom scene.
-    // render_->frame( cb, g.width(), g.height() );
     render_->preFrame();
     render_->frame( cb );
     render_->postFrame();
