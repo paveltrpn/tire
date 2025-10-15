@@ -33,8 +33,7 @@ struct Pipeline {
         return renderPass_;
     }
 
-    virtual auto initShaderStages( const vk::Program& program ) -> void = 0;
-    virtual auto buildPipeline() -> void = 0;
+    virtual auto buildPipeline( const vk::Program& program ) -> void = 0;
 
 protected:
     const vk::Context* context_;

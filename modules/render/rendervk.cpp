@@ -29,8 +29,7 @@ auto RenderVK::init( vk::Context* context ) -> void {
               basePath +
                   "/assets/shaders/spirv/vk_vertexBuffer_FRAGMENT.spv" } );
 
-        piplineVertexBuffer_->initShaderStages( vertexBufferProgram );
-        piplineVertexBuffer_->buildPipeline();
+        piplineVertexBuffer_->buildPipeline( vertexBufferProgram );
 
         // context_->createFramebuffers( piplineVertexBuffer_.get() );
     } catch ( const std::runtime_error& e ) {

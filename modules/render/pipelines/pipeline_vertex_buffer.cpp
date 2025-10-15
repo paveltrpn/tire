@@ -9,7 +9,7 @@
 
 namespace tire::vk {
 
-void PiplineVertexBuffer::initShaderStages( const vk::Program& program ) {
+void PiplineVertexBuffer::buildPipeline( const vk::Program& program ) {
     // Reserve space for all possible shader stages structs
     shaderStages_.reserve( 16 );
 
@@ -90,9 +90,7 @@ void PiplineVertexBuffer::initShaderStages( const vk::Program& program ) {
             .pName = "main" };
         shaderStages_.push_back( stage );
     }
-}
 
-void PiplineVertexBuffer::buildPipeline() {
     // Init fixed stages
 
     // NOTE: https://docs.vulkan.org/guide/latest/vertex_input_data_processing.html
@@ -213,8 +211,8 @@ void PiplineVertexBuffer::buildPipeline() {
 
     // =============================================================================
 
-    // This pipeline layout initialization
-    //setup push constants
+    // This pipeline layout initialization.
+    // Setup push constants.
     std::array<VkPushConstantRange, 1> constants;
 
     constants[0] = VkPushConstantRange{
@@ -239,6 +237,7 @@ void PiplineVertexBuffer::buildPipeline() {
         log::info( "vk::PiplineVertexBuffer === pipeline layout created!" );
     }
 
+    // Init render pass.
     renderPass_ = context_->renderPass();
 
     // Create pipeline
