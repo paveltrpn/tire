@@ -5,6 +5,7 @@
 #include <vulkan/vk_enum_string_helper.h>
 
 #include "context_bare.h"
+#include "image/color.h"
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_CONTEXT_CPP{ true };
 
@@ -24,8 +25,14 @@ void ContextBare::init() {
     makeSwapchain();
     initRenderPass();
     makeFrames();
-    initPrimaryCommandBuffer();
-    initSecondaryCommandBuffer();
+
+    // TODO: pass background color fdrom scene environment parameters.
+    // Note that the order of clearValues should be identical to the order of your
+    // attachments
+    const auto backgroundColor = Colorf( "#0f0f0f" );
+    clearValues_[0].color = { { backgroundColor.r(), backgroundColor.g(),
+                                backgroundColor.b(), 1.0f } };
+    clearValues_[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
 }
 
 void ContextBare::makeXlibSurface() {

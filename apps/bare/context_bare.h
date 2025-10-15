@@ -38,8 +38,8 @@ struct ContextBare final : Context {
                               VkFormatFeatureFlags features ) const
         -> VkFormat override;
 
-    [[nodiscard]] std::tuple<VkSemaphore, VkSemaphore, VkFence, VkCommandBuffer>
-    getFrameSyncSet( size_t id ) {
+    [[nodiscard]] auto getFrameSyncSet( size_t id )
+        -> std::tuple<VkSemaphore, VkSemaphore, VkFence, VkCommandBuffer> {
         return { frames_[id].imageAvailableSemaphore_,
                  frames_[id].renderFinishedSemaphore_,
                  frames_[id].inFlightFence_, frames_[id].cbPrimary_ };
@@ -72,18 +72,15 @@ struct ContextBare final : Context {
         return commandPool_;
     };
 
-    void makeFrames();
-
 private:
-    void makeInstance();
-    void makeXlibSurface();
-    void collectPhysicalDevices();
-    void makeDevice();
-    void makeCommandPool();
-    void makeSwapchain();
+    auto makeInstance() -> void;
+    auto makeXlibSurface() -> void;
+    auto collectPhysicalDevices() -> void;
+    auto makeDevice() -> void;
+    auto makeCommandPool() -> void;
+    auto makeSwapchain() -> void;
     auto initRenderPass() -> void;
-    auto initPrimaryCommandBuffer() -> void;
-    auto initSecondaryCommandBuffer() -> void;
+    auto makeFrames() -> void;
 
 private:
     struct PhysicalDevice final {

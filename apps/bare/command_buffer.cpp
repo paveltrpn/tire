@@ -6,24 +6,10 @@
 
 #include "context_bare.h"
 
-#include "image/color.h"
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_COMMAND_BUFFER_CPP{ true };
 
 namespace tire::vk {
-
-auto ContextBare::initPrimaryCommandBuffer() -> void {
-    // TODO: pass background color fdrom scene environment parameters.
-    // Note that the order of clearValues should be identical to the order of your
-    // attachments
-    const auto backgroundColor = Colorf( "#0f0f0f" );
-    clearValues_[0].color = { { backgroundColor.r(), backgroundColor.g(),
-                                backgroundColor.b(), 1.0f } };
-    clearValues_[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
-}
-
-auto ContextBare::initSecondaryCommandBuffer() -> void {
-}
 
 auto ContextBare::renderCommandBegin( uint32_t frameId ) -> void {
     const auto [iaSem, rfSem, ifFnc, cb] = getFrameSyncSet( frameId );
