@@ -8,6 +8,8 @@
 #include "config/config.h"
 #include "pipelines/pipeline.h"
 #include "pipelines/pipeline_vertex_buffer.h"
+#include "pipelines/pipeline_test_box.h"
+#include "pipelines/test_box_shader.h"
 #include "rendervk.h"
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_RENDERVK_CPP{ true };
@@ -20,16 +22,23 @@ auto RenderVK::init( vk::Context* context ) -> void {
         const auto configHandle = Config::instance();
         const auto basePath = configHandle->getBasePath().string();
 
+        // =============================================================
         piplineVertexBuffer_ =
             std::make_unique<vk::PiplineVertexBuffer>( context_ );
-
         auto vertexBufferProgram = vk::Program{ context_ };
         vertexBufferProgram.fill(
             { basePath + "/assets/shaders/spirv/vk_vertexBuffer_VERTEX.spv",
               basePath +
                   "/assets/shaders/spirv/vk_vertexBuffer_FRAGMENT.spv" } );
-
         piplineVertexBuffer_->buildPipeline( vertexBufferProgram );
+
+        // =============================================================
+        piplineTestBox_ = std::make_unique<vk::PiplineTestBox>( context_ );
+        auto testBoxProgram = vk::Program{ context_ };
+        testBoxProgram.fill(
+            { { vk::vk_simple_box_VERTEX, vk::vertex_stage_suffix },
+              { vk::vk_simple_box_FRAGMENT, vk::fragment_stage_suffix } } );
+        piplineTestBox_->buildPipeline( testBoxProgram );
 
         // context_->createFramebuffers( piplineVertexBuffer_.get() );
     } catch ( const std::runtime_error& e ) {
@@ -179,6 +188,50 @@ void RenderVK::mouseOffsetEvent( unsigned int x, unsigned int y ) {
 #define MOUSE_SENSIVITY 0.002
     scene_->camera().rotate( xOffset * MOUSE_SENSIVITY,
                              yOffset * MOUSE_SENSIVITY );
+}
+
+auto RenderVK::drawTestCube( VkCommandBuffer cb ) -> void {
+    // =================================
+    // Get transformation matricies
+    auto offset = algebra::translate( 0.0f, 0.0f, -2.0f );
+    offset.transposeSelf();
+
+    // const auto [width, height] = context_->currentExtent();
+    // NOTE: Choose right projection matrix!!!
+    const auto proj = algebra::perspective<float>(
+        50.0f, static_cast<float>( 1024 ) / static_cast<float>( 1024 ), 0.1f,
+        100.0f );
+    const auto viewMatrix = offset * proj;
+    angle_ += timer_.floatFrameDuration() * 25.0f;
+    algebra::vector3f ax{ 0.0f, 1.0f, 1.0f };
+    ax.normalizeSelf();
+    const auto modelMatrix = algebra::rotate( ax, angle_ );
+    // =================================
+
+    const VkViewport viewport{ .x = 0.0f,
+                               .y = 0.0f,
+                               .width = static_cast<float>( 1024 ),
+                               .height = static_cast<float>( 1024 ),
+                               .minDepth = 0.0f,
+                               .maxDepth = 1.0f };
+    vkCmdSetViewport( cb, 0, 1, &viewport );
+
+    const VkRect2D scissor{ { .x = 0, .y = 0 },
+                            { .width = 1024, .height = 1024 } };
+    vkCmdSetScissor( cb, 0, 1, &scissor );
+
+    vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS,
+                       piplineTestBox_->pipeline() );
+
+    vkCmdPushConstants( cb, piplineTestBox_->layout(),
+                        VK_SHADER_STAGE_VERTEX_BIT, 0,
+                        sizeof( algebra::matrix4f ), &viewMatrix );
+
+    vkCmdPushConstants( cb, piplineTestBox_->layout(),
+                        VK_SHADER_STAGE_VERTEX_BIT, sizeof( algebra::matrix4f ),
+                        sizeof( algebra::matrix4f ), &modelMatrix );
+
+    vkCmdDraw( cb, 36, 3, 0, 0 );
 }
 
 }  // namespace tire

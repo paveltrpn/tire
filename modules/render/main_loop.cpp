@@ -23,8 +23,9 @@ void RenderVK::preFrame() {
 };
 
 void RenderVK::frame( VkCommandBuffer cb ) {
-    auto handle = static_cast<vk::Scene*>( scene_.get() );
-    handle->output( cb );
+    // auto handle = static_cast<vk::Scene*>( scene_.get() );
+    // handle->output( cb );
+    drawTestCube( cb );
 };
 
 void RenderVK::postFrame() {

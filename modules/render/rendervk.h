@@ -61,6 +61,9 @@ public:
     void mouseOffsetEvent( unsigned int x, unsigned int y );
 
 private:
+    auto drawTestCube( VkCommandBuffer cb ) -> void;
+
+private:
     vk::Context* context_{};
 
     std::unique_ptr<vk::Pipeline> piplineVertexBuffer_{};
@@ -74,6 +77,8 @@ private:
     bool holdMouse_{ false };
     unsigned int holdMouseX_{ 500 };
     unsigned int holdMouseY_{ 500 };
+
+    float angle_;
 };
 
 }  // namespace tire
