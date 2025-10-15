@@ -62,11 +62,14 @@ protected:
     VkSurfaceKHR surface_{ VK_NULL_HANDLE };
     VkDevice device_{ VK_NULL_HANDLE };
     VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
-    uint32_t graphicsFamilyQueueId_{ UINT32_MAX };
-    VkExtent2D currentExtent_{};
+
     VkQueue graphicsQueue_{ VK_NULL_HANDLE };
     VkSurfaceFormatKHR surfaceFormat_{};
     VkRenderPass renderPass_{ VK_NULL_HANDLE };
+
+    uint32_t graphicsFamilyQueueId_{ UINT32_MAX };
+
+    VkExtent2D currentExtent_{};
 };
 
 }  // namespace tire::vk

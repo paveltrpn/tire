@@ -168,7 +168,7 @@ void PiplineTestBox::buildPipeline( const vk::Program& program ) {
     constants[0] =
         VkPushConstantRange{ .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
                              .offset = 0,
-                             .size = ( sizeof( float ) * 16 * 2 ) + 4 };
+                             .size = ( sizeof( float ) * 16 * 2 ) };
 
     const VkPipelineLayoutCreateInfo pipelineLayoutInfo{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,

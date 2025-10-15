@@ -46,13 +46,16 @@ auto ContextBare::renderCommandBegin( uint32_t frameId,
                                       VkRenderPass renderPass ) -> void {
     const auto [iaSem, rfSem, ifFnc] = getFrameSyncSet( frameId );
 
+    std::array<VkFence, 1> fences = { ifFnc };
+
     // NOTE: omit return code check
-    vkWaitForFences( device(), 1, &ifFnc, VK_TRUE, UINT64_MAX );
+    vkWaitForFences( device(), fences.size(), fences.data(), VK_TRUE,
+                     UINT64_MAX );
 
     vkResetCommandBuffer( cbPrimary_, 0 );
 
     // NOTE: omit return code check
-    vkResetFences( device(), 1, &ifFnc );
+    vkResetFences( device(), fences.size(), fences.data() );
 
     // NOTE: omit return code check
     // May return VK_SUBOPTIMAL_KHR or even VK_ERROR_OUT_OF_DATE_KHR
