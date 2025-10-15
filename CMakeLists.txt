@@ -132,13 +132,9 @@ target_link_libraries(geometry algebra)
 
 # Module wavefront
 # ================================
-file(GLOB MOD_WAVEFRONT_SRC "modules/wavefront/*.cpp")
+file(GLOB MOD_WAVEFRONT_SRC "modules/wavefront/*.cpp" "modules/wavefront/*.h")
 add_library(wavefront)
-target_sources(wavefront
-  PUBLIC
-    FILE_SET CXX_MODULES FILES
-    ${MOD_WAVEFRONT_SRC}
-)
+target_sources(wavefront PRIVATE ${MOD_WAVEFRONT_SRC})
 
 # Module scene
 # ================================
