@@ -17,6 +17,11 @@
 struct BareWindow final {
     BareWindow();
 
+    BareWindow( const BareWindow& other ) = delete;
+    BareWindow( BareWindow&& other ) = delete;
+    auto operator=( const BareWindow& other ) -> BareWindow& = delete;
+    auto operator=( BareWindow&& other ) -> BareWindow& = delete;
+
     ~BareWindow();
 
     auto loop() -> void;

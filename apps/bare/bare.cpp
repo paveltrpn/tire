@@ -1,26 +1,32 @@
 
 #include <memory>
+#include <format>
+
 #include <GLFW/glfw3.h>
 
 #include "config/config.h"
 #include "bare.h"
+#include "log/log.h"
 
 BareWindow::BareWindow() {
     if ( glfwInit() != GLFW_TRUE ) {
-        std::cout << "glfwInit() return - GLFW_FALSE!"
-                  << "\n";
-        std::exit( 1 );
+        tire::log::fatal( "glfw init faild!" );
     }
 
-    auto errorCallback = []( int, const char* err_str ) {
-        std::cout << "GLFW Error: " << err_str << std::endl;
+    auto errorCallback = []( int, const char* err_str ) -> void {
+        std::cout << std::format( "GLFW Error: {}\n", err_str );
     };
+
     glfwSetErrorCallback( errorCallback );
 
     glfwWindowHint( GLFW_CLIENT_API, GLFW_NO_API );
     glfwWindowHint( GLFW_RESIZABLE, GLFW_FALSE );
 
     window_ = glfwCreateWindow( width_, height_, "glfw", nullptr, nullptr );
+
+    if ( !window_ ) {
+        tire::log::fatal( "glfw window create faild!" );
+    }
 
     glfwSetWindowUserPointer( window_, this );
 
