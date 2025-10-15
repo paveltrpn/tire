@@ -63,13 +63,10 @@ BareWindow::BareWindow() {
     const auto display_ = glfwGetX11Display();
 
     context_ = std::make_unique<tire::vk::ContextBare>( display_, nWindow_ );
-
     context_->init();
 
     render_ = std::make_unique<tire::RenderVK>();
     render_->init( context_.get() );
-
-    context_->makeFrames( render_->renderPass() );
 
     render_->scene( "/mnt/main/code/tire/assets/m01.json" );
 }
@@ -85,7 +82,7 @@ auto BareWindow::loop() -> void {
 
         render_->preFrame();
 
-        context_->renderCommandBegin( currentFrame_, render_->renderPass() );
+        context_->renderCommandBegin( currentFrame_ );
 
         render_->frame( context_->getDrawCommandBuffer( currentFrame_ ) );
 

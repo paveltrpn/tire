@@ -22,9 +22,8 @@ void ContextBare::init() {
     makeDevice();
     makeCommandPool();
     makeSwapchain();
-
     initRenderPass();
-
+    makeFrames();
     initPrimaryCommandBuffer();
     initSecondaryCommandBuffer();
 }

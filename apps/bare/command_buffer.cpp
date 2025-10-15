@@ -25,8 +25,7 @@ auto ContextBare::initPrimaryCommandBuffer() -> void {
 auto ContextBare::initSecondaryCommandBuffer() -> void {
 }
 
-auto ContextBare::renderCommandBegin( uint32_t frameId,
-                                      VkRenderPass renderPass ) -> void {
+auto ContextBare::renderCommandBegin( uint32_t frameId ) -> void {
     const auto [iaSem, rfSem, ifFnc, cb] = getFrameSyncSet( frameId );
 
     std::array<VkFence, 1> fences = { ifFnc };
@@ -61,7 +60,7 @@ auto ContextBare::renderCommandBegin( uint32_t frameId,
     const VkRenderPassBeginInfo renderPassInfo{
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
         .pNext = nullptr,
-        .renderPass = renderPass,
+        .renderPass = renderPass(),
         .framebuffer = currentFramebuffer,
         .renderArea = { .offset = { .x = 0, .y = 0 },
                         .extent = { currentExtent() } },

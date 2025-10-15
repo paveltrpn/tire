@@ -41,11 +41,6 @@ struct RenderVK final {
     void createGraphicsPipeline();
     void createSyncObjects();
 
-    [[nodiscard]]
-    auto renderPass() const -> VkRenderPass {
-        return piplineVertexBuffer_->renderpass();
-    }
-
 public:
     void keyPressEvent( unsigned int key );
     void keyReleaseEvent( unsigned int key );

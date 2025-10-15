@@ -38,8 +38,6 @@ struct ContextBare final : Context {
                               VkFormatFeatureFlags features ) const
         -> VkFormat override;
 
-    void makeFrames( VkRenderPass renderPass );
-
     [[nodiscard]] std::tuple<VkSemaphore, VkSemaphore, VkFence, VkCommandBuffer>
     getFrameSyncSet( size_t id ) {
         return { frames_[id].imageAvailableSemaphore_,
@@ -56,10 +54,10 @@ struct ContextBare final : Context {
         return presentQueue_;
     };
 
-    auto renderCommandBegin( uint32_t frameId, VkRenderPass renderPass )
-        -> void;
+    auto renderCommandBegin( uint32_t frameId ) -> void;
     auto renderCommandEnd( uint32_t frameId ) -> void;
 
+    [[nodiscard]]
     auto getDrawCommandBuffer( size_t id ) const -> VkCommandBuffer {
         //
         return frames_[id].cbPrimary_;
@@ -73,6 +71,8 @@ struct ContextBare final : Context {
     [[nodiscard]] auto commandPool() const -> VkCommandPool {
         return commandPool_;
     };
+
+    void makeFrames();
 
 private:
     void makeInstance();

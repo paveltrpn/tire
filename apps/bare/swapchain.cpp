@@ -310,7 +310,7 @@ void ContextBare::makeSwapchain() {
                            VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL );
 }
 
-void ContextBare::makeFrames( VkRenderPass renderPass ) {
+void ContextBare::makeFrames() {
     // Acquire all swapchain images at one call
     std::vector<VkImage> swapChainImages;
     swapChainImages.resize( framesCount_ );
@@ -361,7 +361,7 @@ void ContextBare::makeFrames( VkRenderPass renderPass ) {
                                                    depthImageView_ };
         const VkFramebufferCreateInfo framebufferInfo{
             .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-            .renderPass = renderPass,
+            .renderPass = renderPass(),
             .attachmentCount = static_cast<uint32_t>( attachments.size() ),
             .pAttachments = attachments.data(),
             .width = currentExtent_.width,
