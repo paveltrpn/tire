@@ -50,21 +50,6 @@ void Scene::submit() {
 void Scene::output( const VkCommandBuffer cb ) {
     const auto view = camera().matrix<tire::VulkanTag>();
 
-    // ====
-    const auto [width, height] = context_->currentExtent();
-    const VkViewport viewport{ .x = 0.0f,
-                               .y = 0.0f,
-                               .width = static_cast<float>( width ),
-                               .height = static_cast<float>( height ),
-                               .minDepth = 0.0f,
-                               .maxDepth = 1.0f };
-    vkCmdSetViewport( cb, 0, 1, &viewport );
-
-    const VkRect2D scissor{ { .x = 0, .y = 0 },
-                            { .width = width, .height = height } };
-    vkCmdSetScissor( cb, 0, 1, &scissor );
-    // ====
-
     vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS,
                        pipeline_->pipeline() );
 

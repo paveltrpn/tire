@@ -69,30 +69,6 @@ auto ContextBare::renderCommandBegin( uint32_t frameId,
     // NOTE: omit return code check
     vkBeginCommandBuffer( cbPrimary_, &beginInfo );
 
-    // Dynamic viewport. No performance penalty.
-    // Take out work from pipeline creation.
-    // NOTE: Define negative viewport size to use same projection matrix as
-    // for OpenGL pipeline.
-    // const VkViewport viewport{ .x = 0.0f,
-    //    .y = static_cast<float>( height_ ),
-    //    .width = static_cast<float>( width_ ),
-    //    .height = -static_cast<float>( height_ ),
-    //    .minDepth = 0.0f,
-    //    .maxDepth = 1.0f };
-    const VkViewport viewport{
-        .x = 0.0f,
-        .y = 0.0f,
-        .width = static_cast<float>( currentExtent().width ),
-        .height = static_cast<float>( currentExtent().height ),
-        .minDepth = 0.0f,
-        .maxDepth = 1.0f };
-    vkCmdSetViewport( cbPrimary_, 0, 1, &viewport );
-
-    const VkRect2D scissor{
-        { .x = 0, .y = 0 },
-        { .width = currentExtent().width, .height = currentExtent().height } };
-    vkCmdSetScissor( cbPrimary_, 0, 1, &scissor );
-
     const auto currentFramebuffer = framebuffer( frameId );
 
     const VkRenderPassBeginInfo renderPassInfo{
