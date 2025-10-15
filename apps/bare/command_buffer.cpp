@@ -52,10 +52,10 @@ auto ContextBare::renderCommandBegin( uint32_t frameId,
     vkWaitForFences( device(), fences.size(), fences.data(), VK_TRUE,
                      UINT64_MAX );
 
-    vkResetCommandBuffer( cbPrimary_, 0 );
-
     // NOTE: omit return code check
     vkResetFences( device(), fences.size(), fences.data() );
+
+    vkResetCommandBuffer( cbPrimary_, 0 );
 
     // NOTE: omit return code check
     // May return VK_SUBOPTIMAL_KHR or even VK_ERROR_OUT_OF_DATE_KHR
@@ -65,8 +65,6 @@ auto ContextBare::renderCommandBegin( uint32_t frameId,
     uint32_t imageIndex{};
     vkAcquireNextImageKHR( device(), swapchain(), UINT64_MAX, iaSem,
                            VK_NULL_HANDLE, &imageIndex );
-
-    std::cout << imageIndex << " " << frameId << "\n";
 
     const VkCommandBufferBeginInfo beginInfo{
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
