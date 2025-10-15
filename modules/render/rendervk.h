@@ -41,6 +41,7 @@ struct RenderVK final {
     void createGraphicsPipeline();
     void createSyncObjects();
 
+    [[nodiscard]]
     auto renderPass() const -> VkRenderPass {
         return piplineVertexBuffer_->renderpass();
     }
