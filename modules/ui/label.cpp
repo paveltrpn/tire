@@ -1,11 +1,4 @@
-module;
 
-export module ui:label;
+#include "label.h"
 
-namespace tire::ui {
-
-struct Label final {
-private:
-};
-
-}  // namespace tire::ui
+namespace tire {}

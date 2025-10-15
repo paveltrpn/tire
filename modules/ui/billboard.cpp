@@ -1,11 +1,4 @@
-module;
 
-export module ui:billboard;
+#include "billboard.h"
 
-namespace tire::ui {
-
-struct Billboard final {
-private:
-};
-
-}  // namespace tire::ui
+namespace tire::ui {}  // namespace tire::ui
