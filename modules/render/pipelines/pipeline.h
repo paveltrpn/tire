@@ -18,9 +18,20 @@ struct Pipeline {
 
     virtual ~Pipeline();
 
-    [[nodiscard]] VkPipeline pipeline() const { return pipeline_; };
-    [[nodiscard]] VkPipelineLayout layout() const { return layout_; };
-    [[nodiscard]] VkRenderPass renderpass() const { return renderPass_; }
+    [[nodiscard]] auto pipeline() const -> VkPipeline {
+        //
+        return pipeline_;
+    };
+
+    [[nodiscard]] auto layout() const -> VkPipelineLayout {
+        //
+        return layout_;
+    };
+
+    [[nodiscard]] auto renderpass() const -> VkRenderPass {
+        //
+        return renderPass_;
+    }
 
     virtual auto initShaderStages( const vk::Program& program ) -> void = 0;
     virtual auto buildPipeline() -> void = 0;
