@@ -36,8 +36,7 @@ struct ContextQt final : Context {
     auto querySurface() -> void;
 
     [[nodiscard]] auto currentExtent() const -> const VkExtent2D& override {
-        return de_;
-        //return surfaceCapabilities_.currentExtent;
+        return surfaceCapabilities_.currentExtent;
     };
 
     [[nodiscard]] auto getDeviceNameString() -> std::string {
@@ -68,8 +67,6 @@ private:
 
     // Graphics queue resources.
     uint32_t graphicsQueueId_{};
-
-    VkExtent2D de_{ 600, 600 };
 };
 
 }  // namespace tire::vk

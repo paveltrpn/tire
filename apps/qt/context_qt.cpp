@@ -19,20 +19,6 @@ ContextQt::ContextQt( VkInstance instance, VkPhysicalDevice pDevice,
     surface_ = surface;
     renderPass_ = rp;
     graphicsFamilyQueueId_ = gqfi;
-    uint32_t version{};
-    vkEnumerateInstanceVersion( &version );
-    log::info( "vk::Context === acquired api instance version is {}.{}",
-               VK_API_VERSION_MAJOR( version ),
-               VK_API_VERSION_MINOR( version ) );
-
-    queryDeviceInfo();
-    querySurface();
-
-    std::cout << surfaceCapabilities_.currentExtent.height
-              << " ================\n";
-    // Graphic queue.
-    vkGetDeviceQueue( device_, graphicsFamilyQueueId_, graphicsQueueId_,
-                      &graphicsQueue_ );
 }
 
 auto ContextQt::init() -> void {

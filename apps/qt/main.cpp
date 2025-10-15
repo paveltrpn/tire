@@ -10,7 +10,7 @@
 
 #include "config/config.h"
 
-int main( int argc, char* argv[] ) {
+auto main( int argc, char* argv[] ) -> int {
     new tire::Config{ "assets/config.json" };
 
     const QGuiApplication app( argc, argv );

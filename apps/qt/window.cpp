@@ -10,6 +10,7 @@
 #include <QStringLiteral>
 #include <QtQml>
 
+#include "config/config.h"
 #include "log/log.h"
 #include "window.h"
 
@@ -129,10 +130,18 @@ MainWindow::MainWindow( QQuickView* parent )
     setSource( QUrl( workPath().path() + QDir::separator() +
                      "apps/qt/qml/main.qml" ) );
 
+    const auto configHandle = tire::Config::instance();
+    const auto width = configHandle->get<int>( "window_width" );
+    const auto height = configHandle->get<int>( "window_height" );
+    const auto posx = configHandle->get<int>( "window_pos_x" );
+    const auto posy = configHandle->get<int>( "window_pos_y" );
+
+    setGeometry( { posx, posy, width, height } );
+
     // Set deefault or restore main window geometry.
-    const auto restoredGeometry = settings_->value(
-        "main_window_geometry", QRect( 300, 300, 1024, 1024 ) );
-    setGeometry( restoredGeometry.toRect() );
+    // const auto restoredGeometry = settings_->value(
+    // "main_window_geometry", QRect( 300, 300, 1024, 1024 ) );
+    // setGeometry( restoredGeometry.toRect() );
 
     // Process quit actions.
     connect( engine_, &QQmlEngine::quit, this,
