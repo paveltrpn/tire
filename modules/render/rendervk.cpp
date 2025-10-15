@@ -5,12 +5,12 @@
 #include <vulkan/vulkan.h>
 #include <vulkan/vk_enum_string_helper.h>
 
+#include "config/config.h"
+#include "pipelines/pipeline.h"
+#include "pipelines/pipeline_vertex_buffer.h"
 #include "rendervk.h"
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_RENDERVK_CPP{ true };
-#include "algebra/matrix4.h"
-
-#include "config/config.h"
 
 namespace tire {
 

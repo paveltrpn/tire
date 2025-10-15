@@ -13,8 +13,8 @@ struct Pipeline {
 
     Pipeline( const Pipeline& other ) = delete;
     Pipeline( Pipeline&& other ) = delete;
-    Pipeline& operator=( const Pipeline& other ) = delete;
-    Pipeline& operator=( Pipeline&& other ) = delete;
+    auto operator=( const Pipeline& other ) -> Pipeline& = delete;
+    auto operator=( Pipeline&& other ) -> Pipeline& = delete;
 
     virtual ~Pipeline();
 
@@ -22,14 +22,8 @@ struct Pipeline {
     [[nodiscard]] VkPipelineLayout layout() const { return layout_; };
     [[nodiscard]] VkRenderPass renderpass() const { return renderPass_; }
 
-    virtual void buildPipeline() = 0;
-
-    // Call this manually before buildPipeline()
-    void initShaderStages( const vk::Program& program );
-
-protected:
-    // Each pipeline can have unique layout
-    [[nodiscard]] virtual VkPipelineLayout initLayout() = 0;
+    virtual auto initShaderStages( const vk::Program& program ) -> void = 0;
+    virtual auto buildPipeline() -> void = 0;
 
 protected:
     const vk::Context* context_;
@@ -39,34 +33,6 @@ protected:
     VkRenderPass renderPass_{ VK_NULL_HANDLE };
 
     std::vector<VkPipelineShaderStageCreateInfo> shaderStages_{};
-};
-
-struct PiplineMatrixReady final : Pipeline {
-    PiplineMatrixReady( const vk::Context* context )
-        : Pipeline( context ) {}
-
-public:
-    void buildPipeline() override;
-
-private:
-    // Access to descriptor sets from a pipeline is accomplished through a pipeline layout.
-    // Zero or more descriptor set layouts and zero or more push constant ranges are combined
-    // to form a pipeline layout object describing the complete set of resources
-    // that can be accessed by a pipeline.
-    VkPipelineLayout initLayout() override;
-};
-
-// =====================================================================================
-
-struct PiplineVertexBuffer final : Pipeline {
-    PiplineVertexBuffer( const vk::Context* context )
-        : Pipeline( context ) {}
-
-public:
-    void buildPipeline() override;
-
-private:
-    VkPipelineLayout initLayout() override;
 };
 
 }  // namespace tire::vk

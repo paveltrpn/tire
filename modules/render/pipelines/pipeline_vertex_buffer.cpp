@@ -1,12 +1,96 @@
 
 #include <vulkan/vk_enum_string_helper.h>
-
-#include "pipeline.h"
-#include "algebra/vector3.h"
-#include "algebra/matrix4.h"
 #include "vulkan/vulkan_core.h"
 
+#include "algebra/vector3.h"
+#include "algebra/vector4.h"
+#include "algebra/matrix4.h"
+#include "pipeline_vertex_buffer.h"
+
 namespace tire::vk {
+
+void PiplineVertexBuffer::initShaderStages( const vk::Program& program ) {
+    // Reserve space for all possible shader stages structs
+    shaderStages_.reserve( 16 );
+
+    // Add VERTEX stage
+    if ( const auto module = program.get<ShaderStageType::VERTEX>();
+         module != VK_NULL_HANDLE ) {
+        const VkPipelineShaderStageCreateInfo stage{
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0,
+            .stage = VK_SHADER_STAGE_VERTEX_BIT,
+            .module = module,
+            .pName = "main" };
+        shaderStages_.push_back( stage );
+    }
+
+    // Add FRAGMENT stage
+    if ( const auto module = program.get<ShaderStageType::FRAGMENT>();
+         module != VK_NULL_HANDLE ) {
+        const VkPipelineShaderStageCreateInfo stage{
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0,
+            .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
+            .module = module,
+            .pName = "main" };
+        shaderStages_.push_back( stage );
+    }
+
+    // Add TESSEALTION_EVALUATION stage
+    if ( const auto module = program.get<ShaderStageType::TESSELATION_EVAL>();
+         module != VK_NULL_HANDLE ) {
+        const VkPipelineShaderStageCreateInfo stage{
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0,
+            .stage = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT,
+            .module = module,
+            .pName = "main" };
+        shaderStages_.push_back( stage );
+    }
+
+    // Add TESSELATION CONTROL stage
+    if ( const auto module = program.get<ShaderStageType::TESSELATION_CTRL>();
+         module != VK_NULL_HANDLE ) {
+        const VkPipelineShaderStageCreateInfo stage{
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0,
+            .stage = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT,
+            .module = module,
+            .pName = "main" };
+        shaderStages_.push_back( stage );
+    }
+
+    // Add GEOMETRY stage
+    if ( const auto module = program.get<ShaderStageType::GEOMETRY>();
+         module != VK_NULL_HANDLE ) {
+        const VkPipelineShaderStageCreateInfo stage{
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0,
+            .stage = VK_SHADER_STAGE_GEOMETRY_BIT,
+            .module = module,
+            .pName = "main" };
+        shaderStages_.push_back( stage );
+    }
+
+    // Add MESH stage
+    if ( const auto module = program.get<ShaderStageType::MESH>();
+         module != VK_NULL_HANDLE ) {
+        const VkPipelineShaderStageCreateInfo stage{
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0,
+            .stage = VK_SHADER_STAGE_MESH_BIT_EXT,
+            .module = module,
+            .pName = "main" };
+        shaderStages_.push_back( stage );
+    }
+}
 
 void PiplineVertexBuffer::buildPipeline() {
     // Init fixed stages
@@ -130,7 +214,31 @@ void PiplineVertexBuffer::buildPipeline() {
     // =============================================================================
 
     // This pipeline layout initialization
-    layout_ = initLayout();
+    //setup push constants
+    std::array<VkPushConstantRange, 1> constants;
+
+    constants[0] = VkPushConstantRange{
+        .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+        .offset = 0,
+        .size = sizeof( algebra::matrix4d ) + sizeof( algebra::vector4f ) };
+
+    const VkPipelineLayoutCreateInfo pipelineLayoutInfo{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+        .setLayoutCount = 0,
+        .pSetLayouts = nullptr,
+        .pushConstantRangeCount = constants.size(),
+        .pPushConstantRanges = constants.data() };
+
+    if ( const auto err = vkCreatePipelineLayout(
+             context_->device(), &pipelineLayoutInfo, nullptr, &layout_ );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error(
+            std::format( "failed to create pipeline layout with code {}!",
+                         string_VkResult( err ) ) );
+    } else {
+        log::info( "vk::PiplineVertexBuffer === pipeline layout created!" );
+    }
+
     renderPass_ = context_->renderPass();
 
     // Create pipeline
@@ -167,37 +275,6 @@ void PiplineVertexBuffer::buildPipeline() {
     // it to pipeline itself. It can be safeley removed after pipeline creation
     // and pipelines thoose uses this pipeline layout stay valid.
     // vkDestroyPipelineLayout( device_->handle(), layout, nullptr );
-}
-
-VkPipelineLayout PiplineVertexBuffer::initLayout() {
-    //setup push constants
-    std::array<VkPushConstantRange, 1> constants;
-
-    constants[0] = VkPushConstantRange{
-        .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-        .offset = 0,
-        .size = sizeof( algebra::matrix4d ) + sizeof( algebra::vector4f ) };
-
-    const VkPipelineLayoutCreateInfo pipelineLayoutInfo{
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-        .setLayoutCount = 0,
-        .pSetLayouts = nullptr,
-        .pushConstantRangeCount = constants.size(),
-        .pPushConstantRanges = constants.data() };
-
-    VkPipelineLayout layout{ VK_NULL_HANDLE };
-
-    if ( const auto err = vkCreatePipelineLayout(
-             context_->device(), &pipelineLayoutInfo, nullptr, &layout );
-         err != VK_SUCCESS ) {
-        throw std::runtime_error(
-            std::format( "failed to create pipeline layout with code {}!",
-                         string_VkResult( err ) ) );
-    } else {
-        log::info( "vk::PiplineVertexBuffer === pipeline layout created!" );
-    }
-
-    return layout;
 }
 
 }  // namespace tire::vk
