@@ -27,17 +27,11 @@ struct ContextQt final : Context {
 
     ContextQt( const ContextQt& other ) = delete;
     ContextQt( Context&& other ) = delete;
-    ContextQt& operator=( const ContextQt& other ) = delete;
-    ContextQt& operator=( ContextQt&& other ) = delete;
+    auto operator=( const ContextQt& other ) -> ContextQt& = delete;
+    auto operator=( ContextQt&& other ) -> ContextQt& = delete;
 
     auto queryDeviceInfo() -> void;
     auto querySurface() -> void;
-
-    // [[nodiscard]] const VkSurfaceFormatKHR& surfaceFormat() const {
-    // return surfaceFormat_;
-    // };
-
-    //[[nodiscard]] VkQueue presentQueue() const { return presentQueue_; };
 
     [[nodiscard]] auto currentExtent() const -> const VkExtent2D& override {
         return surfaceCapabilities_.currentExtent;

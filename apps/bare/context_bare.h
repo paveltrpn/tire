@@ -35,7 +35,7 @@ struct ContextBare final : Context {
                  frames_[id].inFlightFence_, frames_[id].cbPrimary_ };
     }
 
-    [[nodiscard]] VkFramebuffer framebuffer( size_t id ) const {
+    [[nodiscard]] auto framebuffer( size_t id ) const -> VkFramebuffer {
         return frames_[id].framebuffer_;
     };
 
@@ -120,8 +120,8 @@ private:
     std::array<VkClearValue, 2> clearValues_{};
 
     // Swapchain
-    uint32_t swapchainImageCount_{};
     uint32_t framesCount_{};
+    uint32_t swapchainImageCount_{};
     std::vector<Frame> frames_{};
     VkImage depthImage_;
     VkDeviceMemory depthImageMemory_;
