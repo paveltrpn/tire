@@ -114,7 +114,7 @@ private:
     std::vector<VkPresentModeKHR> presentModes_{};
     VkPresentModeKHR presentMode_{};
 
-    // Command pool
+    // Command buffers
     VkCommandBuffer cbPrimary_{ VK_NULL_HANDLE };
     VkCommandBuffer cbSecondary_{ VK_NULL_HANDLE };
     // Background color value
