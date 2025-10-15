@@ -115,7 +115,7 @@ void ContextBare::collectPhysicalDevices() {
 }
 
 void ContextBare::makeDevice() {
-    const auto congigHandle = Config::instance();
+    const auto configHandle = Config::instance();
 
     // Check which devices available on machine
     int discreetGpuId{ -1 };
@@ -236,7 +236,7 @@ void ContextBare::makeDevice() {
     std::vector<const char*> desiredExtensionsList{};
     desiredExtensionsList.emplace_back( "VK_KHR_swapchain" );
 
-    if ( congigHandle->get<bool>( "enable_raytracing_extensions" ) ) {
+    if ( configHandle->get<bool>( "enable_raytracing_extensions" ) ) {
         log::info( "vk::Device === raytracing extansions enabled" );
 
         desiredExtensionsList.emplace_back( "VK_KHR_ray_query" );
@@ -270,7 +270,7 @@ void ContextBare::makeDevice() {
     //
     // Force use validation layers
 
-    if ( congigHandle->get<bool>( "enable_validation_layers" ) ) {
+    if ( configHandle->get<bool>( "enable_validation_layers" ) ) {
         deviceCreateInfo.enabledLayerCount =
             static_cast<uint32_t>( desiredValidationLayerList_.size() );
         deviceCreateInfo.ppEnabledLayerNames =
