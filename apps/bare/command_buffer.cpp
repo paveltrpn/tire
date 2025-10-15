@@ -17,7 +17,7 @@ auto ContextBare::initPrimaryCommandBuffer() -> void {
         .commandPool = commandPool(),
         .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
         .commandBufferCount = 1 };
-    VkCommandBuffer buffer{ VK_NULL_HANDLE };
+
     const auto err =
         vkAllocateCommandBuffers( device(), &allocInfo, &cbPrimary_ );
     if ( err != VK_SUCCESS ) {
@@ -45,8 +45,6 @@ auto ContextBare::renderCommandBegin( uint32_t frameId,
                                       VkRenderPass renderPass ) -> void {
     const auto [iaSem, rfSem, ifFnc] = getFrameSyncSet( frameId );
 
-    vkResetCommandBuffer( cbPrimary_, 0 );
-
     // NOTE: omit return code check
     vkWaitForFences( device(), 1, &ifFnc, VK_TRUE, UINT64_MAX );
 
@@ -66,9 +64,10 @@ auto ContextBare::renderCommandBegin( uint32_t frameId,
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
         .flags = 0,
         .pInheritanceInfo = nullptr };
-    // NOTE: omit return code check
-    vkBeginCommandBuffer( cbPrimary_, &beginInfo );
 
+    vkResetCommandBuffer( cbPrimary_, 0 );
+
+    vkBeginCommandBuffer( cbPrimary_, &beginInfo );
     const auto currentFramebuffer = framebuffer( frameId );
 
     const VkRenderPassBeginInfo renderPassInfo{
