@@ -281,9 +281,8 @@ void ContextBare::makeDevice() {
     }
 
     // Create a logical device
-    if ( const auto err =
-             vkCreateDevice( physicalDevices_[pickedPhysicalDeviceId_].device,
-                             &deviceCreateInfo, nullptr, &device_ );
+    if ( const auto err = vkCreateDevice( physDevice_, &deviceCreateInfo,
+                                          nullptr, &device_ );
          err != VK_SUCCESS ) {
         log::fatal( "failed to create logical device with code {}!\n",
                     string_VkResult( err ) );
@@ -297,8 +296,7 @@ void ContextBare::makeDevice() {
 
     // Physical device surface capabilities
     if ( const auto err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-             physicalDevices_[pickedPhysicalDeviceId_].device, surface_,
-             &surfaceCapabilities_ );
+             physDevice_, surface_, &surfaceCapabilities_ );
          err != VK_SUCCESS ) {
         log::fatal( "failed to obtain surface capabilities with code {}!\n",
                     string_VkResult( err ) );
@@ -314,10 +312,9 @@ void ContextBare::makeDevice() {
     currentExtent_ = surfaceCapabilities_.currentExtent;
 
     // Physical device surface formats
-    uint32_t formatCount;
+    uint32_t formatCount{};
     if ( const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR(
-             physicalDevices_[pickedPhysicalDeviceId_].device, surface_,
-             &formatCount, nullptr );
+             physDevice_, surface_, &formatCount, nullptr );
          err != VK_SUCCESS ) {
         log::fatal(
             "failed to obtain physical device surface formats "
@@ -335,8 +332,7 @@ void ContextBare::makeDevice() {
     surfaceFormats_.resize( formatCount );
 
     if ( const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR(
-             physicalDevices_[pickedPhysicalDeviceId_].device, surface_,
-             &formatCount, surfaceFormats_.data() );
+             physDevice_, surface_, &formatCount, surfaceFormats_.data() );
          err != VK_SUCCESS ) {
         log::fatal(
             "failed to acquire physical device surface formats "
@@ -354,10 +350,9 @@ void ContextBare::makeDevice() {
     }
 
     // Physical device present modes
-    uint32_t presentModeCount;
+    uint32_t presentModeCount{};
     if ( const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR(
-             physicalDevices_[pickedPhysicalDeviceId_].device, surface_,
-             &presentModeCount, nullptr );
+             physDevice_, surface_, &presentModeCount, nullptr );
          err != VK_SUCCESS ) {
         log::fatal(
             "failed to obtain physical device present modes "
@@ -375,8 +370,7 @@ void ContextBare::makeDevice() {
     presentModes_.resize( presentModeCount );
 
     if ( const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR(
-             physicalDevices_[pickedPhysicalDeviceId_].device, surface_,
-             &presentModeCount, presentModes_.data() );
+             physDevice_, surface_, &presentModeCount, presentModes_.data() );
          err != VK_SUCCESS ) {
         log::fatal(
             "failed to acquire physical device present modes "
