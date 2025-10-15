@@ -1,8 +1,8 @@
 build/
 bin/
 CMakeLists.txt.user
-assets/
-!assets/.gitkeep
+/assets/
+!/assets/.gitkeep
 *.cap
 *.foz
 tmp/*
