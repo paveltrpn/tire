@@ -3,6 +3,7 @@
 #include "vulkan/vulkan.h"
 #include <vulkan/vk_enum_string_helper.h>
 
+#include "config/config.h"
 #include "context_qt.h"
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_CONTEXT_CPP{ true };
@@ -30,6 +31,12 @@ auto ContextQt::init() -> void {
 
     queryDeviceInfo();
     querySurface();
+
+    // NOTE: ackquire viewport size from surface!!!
+    const auto configHandle = tire::Config::instance();
+    const auto width = configHandle->get<int>( "window_width" );
+    const auto height = configHandle->get<int>( "window_height" );
+    setViewportSize( width, height );
 
     std::cout << surfaceCapabilities_.currentExtent.height
               << " ================\n";

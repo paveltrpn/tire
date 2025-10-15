@@ -112,7 +112,7 @@ MainWindow::MainWindow( QQuickView* parent )
                     // Do some actions when render object completed.
                     connect(
                         renderItemHandle_, &RenderItem::renderInitialized, this,
-                        []() {
+                        []() -> void {
                             //
                             log::info( "MainWindow === render initialized!" );
                         } );

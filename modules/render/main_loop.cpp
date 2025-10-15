@@ -23,7 +23,7 @@ void RenderVK::preFrame() {
 };
 
 void RenderVK::frame( VkCommandBuffer cb ) {
-    const auto [width, height] = context_->currentExtent();
+    const auto [width, height] = context_->viewportSize();
 
     // Dynamic viewport. No performance penalty.
     // Take out work from pipeline creation.

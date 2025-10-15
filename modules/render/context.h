@@ -45,6 +45,16 @@ struct Context {
         return currentExtent_;
     };
 
+    auto setViewportSize( uint32_t width, uint32_t height ) -> void {
+        width_ = width;
+        height_ = height;
+    }
+
+    [[nodiscard]]
+    auto viewportSize() -> std::tuple<uint32_t, uint32_t> const {
+        return { width_, height_ };
+    }
+
     [[nodiscard]]
     auto memoryRequirements( uint32_t typeFilter,
                              VkMemoryPropertyFlags properties ) const
@@ -73,6 +83,9 @@ protected:
     uint32_t graphicsFamilyQueueId_{ UINT32_MAX };
 
     VkExtent2D currentExtent_{};
+
+    uint32_t width_{};
+    uint32_t height_{};
 };
 
 }  // namespace tire::vk

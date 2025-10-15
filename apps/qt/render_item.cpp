@@ -62,12 +62,12 @@ auto RenderItem::beforeRendering() -> void {
             rhiHandle->nativeHandles() );
 
         // Vulkan instance from QRhi.
-        const auto inst = nh->inst;
+        //const auto inst = nh->inst;
 
         // Vulkan instance from window.
-        // const auto inst =
-        // reinterpret_cast<QVulkanInstance *>( renderInterface_->getResource(
-        // window_, QSGRendererInterface::VulkanInstanceResource ) );
+        const auto inst =
+            reinterpret_cast<QVulkanInstance*>( renderInterface_->getResource(
+                window_, QSGRendererInterface::VulkanInstanceResource ) );
 
         // VkSurfaceKHR assiciated with Qt window.
         const auto sface = inst->surfaceForWindow( window_ );
