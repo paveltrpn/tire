@@ -51,7 +51,10 @@ struct ContextBare final : Context {
         return frames_[id].framebuffer_;
     };
 
-    [[nodiscard]] VkQueue presentQueue() const { return presentQueue_; };
+    [[nodiscard]] auto presentQueue() const -> VkQueue {
+        //
+        return presentQueue_;
+    };
 
     auto renderCommandBegin( uint32_t frameId, VkRenderPass renderPass )
         -> void;
@@ -59,10 +62,18 @@ struct ContextBare final : Context {
 
     [[nodiscard]]
     auto getDrawCommandBuffer() const -> VkCommandBuffer {
+        //
         return cbPrimary_;
     }
 
-    [[nodiscard]] uint32_t framesCount() const { return framesCount_; };
+    [[nodiscard]] auto framesCount() const -> uint32_t {
+        //
+        return framesCount_;
+    };
+
+    [[nodiscard]] auto commandPool() const -> VkCommandPool {
+        return commandPool_;
+    };
 
 private:
     void makeInstance();
@@ -115,6 +126,7 @@ private:
     VkPresentModeKHR presentMode_{};
 
     // Command buffers
+    VkCommandPool commandPool_{ VK_NULL_HANDLE };
     VkCommandBuffer cbPrimary_{ VK_NULL_HANDLE };
     VkCommandBuffer cbSecondary_{ VK_NULL_HANDLE };
     // Background color value

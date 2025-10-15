@@ -1,4 +1,5 @@
 
+#include <cstdint>
 #include <format>
 
 #include <vulkan/vk_enum_string_helper.h>
@@ -48,6 +49,8 @@ auto ContextBare::renderCommandBegin( uint32_t frameId,
     // NOTE: omit return code check
     vkWaitForFences( device(), 1, &ifFnc, VK_TRUE, UINT64_MAX );
 
+    vkResetCommandBuffer( cbPrimary_, 0 );
+
     // NOTE: omit return code check
     vkResetFences( device(), 1, &ifFnc );
 
@@ -60,14 +63,15 @@ auto ContextBare::renderCommandBegin( uint32_t frameId,
     vkAcquireNextImageKHR( device(), swapchain(), UINT64_MAX, iaSem,
                            VK_NULL_HANDLE, &imageIndex );
 
+    std::cout << imageIndex << " " << frameId << "\n";
+
     const VkCommandBufferBeginInfo beginInfo{
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-        .flags = 0,
+        .flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
         .pInheritanceInfo = nullptr };
 
-    vkResetCommandBuffer( cbPrimary_, 0 );
-
     vkBeginCommandBuffer( cbPrimary_, &beginInfo );
+
     const auto currentFramebuffer = framebuffer( frameId );
 
     const VkRenderPassBeginInfo renderPassInfo{
@@ -87,15 +91,18 @@ auto ContextBare::renderCommandBegin( uint32_t frameId,
 auto ContextBare::renderCommandEnd( uint32_t frameId ) -> void {
     const auto [iaSem, rfSem, ifFnc] = getFrameSyncSet( frameId );
 
+    std::cout << frameId << "\n";
+
     vkCmdEndRenderPass( cbPrimary_ );
     // NOTE: omit return code check
     vkEndCommandBuffer( cbPrimary_ );
+
     std::array<VkPipelineStageFlags, 1> waitStages = {
         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
     std::array<VkSemaphore, 1> waitsems{ iaSem };
     std::array<VkSemaphore, 1> sgnlsems{ rfSem };
-
     std::array<VkCommandBuffer, 1> commands{ cbPrimary_ };
+
     const VkSubmitInfo submitInfo{
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .waitSemaphoreCount = 1,
@@ -113,6 +120,7 @@ auto ContextBare::renderCommandEnd( uint32_t frameId ) -> void {
 
     std::array<VkSwapchainKHR, 1> swapChains = { swapchain_ };
     std::array<VkSemaphore, 1> signalSemaphores = { rfSem };
+    std::array<uint32_t, 1> imageIds = { frameId };
 
     const VkPresentInfoKHR presentInfo{
         .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
@@ -121,7 +129,7 @@ auto ContextBare::renderCommandEnd( uint32_t frameId ) -> void {
         .pWaitSemaphores = signalSemaphores.data(),
         .swapchainCount = 1,
         .pSwapchains = swapChains.data(),
-        .pImageIndices = &frameId,
+        .pImageIndices = imageIds.data(),
         .pResults = nullptr };
 
     // May return VK_SUBOPTIMAL_KHR or even VK_ERROR_OUT_OF_DATE_KHR

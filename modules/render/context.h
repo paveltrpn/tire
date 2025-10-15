@@ -19,9 +19,6 @@ struct Context {
     [[nodiscard]] auto instance() const -> VkInstance { return instance_; };
     [[nodiscard]] auto surface() const -> VkSurfaceKHR { return surface_; };
     [[nodiscard]] auto device() const -> VkDevice { return device_; };
-    [[nodiscard]] auto commandPool() const -> VkCommandPool {
-        return commandPool_;
-    };
     [[nodiscard]] auto swapchain() const -> VkSwapchainKHR {
         return swapchain_;
     };
@@ -64,7 +61,6 @@ protected:
     VkInstance instance_{ VK_NULL_HANDLE };
     VkSurfaceKHR surface_{ VK_NULL_HANDLE };
     VkDevice device_{ VK_NULL_HANDLE };
-    VkCommandPool commandPool_{ VK_NULL_HANDLE };
     VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
     uint32_t graphicsFamilyQueueId_{ UINT32_MAX };
     VkExtent2D currentExtent_{};
