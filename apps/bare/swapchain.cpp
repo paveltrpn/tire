@@ -400,6 +400,23 @@ void ContextBare::makeFrames( VkRenderPass renderPass ) {
             throw std::runtime_error(
                 std::format( "failed to create semaphores!" ) );
         }
+
+        const VkCommandBufferAllocateInfo allocInfo{
+            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+            .commandPool = commandPool(),
+            .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+            .commandBufferCount = 1 };
+
+        const auto err = vkAllocateCommandBuffers( device(), &allocInfo,
+                                                   &frames_[i].cbPrimary_ );
+        if ( err != VK_SUCCESS ) {
+            throw std::runtime_error(
+                std::format( "failed to allocate command buffers with code {}!",
+                             string_VkResult( err ) ) );
+        } else {
+            log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>(
+                "vk::Context === primary command buffer created!" );
+        };
     }
 }
 

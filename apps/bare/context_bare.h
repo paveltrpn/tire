@@ -40,11 +40,11 @@ struct ContextBare final : Context {
 
     void makeFrames( VkRenderPass renderPass );
 
-    [[nodiscard]] std::tuple<VkSemaphore, VkSemaphore, VkFence> getFrameSyncSet(
-        size_t id ) {
+    [[nodiscard]] std::tuple<VkSemaphore, VkSemaphore, VkFence, VkCommandBuffer>
+    getFrameSyncSet( size_t id ) {
         return { frames_[id].imageAvailableSemaphore_,
                  frames_[id].renderFinishedSemaphore_,
-                 frames_[id].inFlightFence_ };
+                 frames_[id].inFlightFence_, frames_[id].cbPrimary_ };
     }
 
     [[nodiscard]] VkFramebuffer framebuffer( size_t id ) const {
@@ -60,10 +60,9 @@ struct ContextBare final : Context {
         -> void;
     auto renderCommandEnd( uint32_t frameId ) -> void;
 
-    [[nodiscard]]
-    auto getDrawCommandBuffer() const -> VkCommandBuffer {
+    auto getDrawCommandBuffer( size_t id ) const -> VkCommandBuffer {
         //
-        return cbPrimary_;
+        return frames_[id].cbPrimary_;
     }
 
     [[nodiscard]] auto framesCount() const -> uint32_t {
@@ -102,6 +101,8 @@ private:
         VkSemaphore imageAvailableSemaphore_{};
         VkSemaphore renderFinishedSemaphore_{};
         VkFence inFlightFence_{};
+        VkCommandBuffer cbPrimary_{ VK_NULL_HANDLE };
+        VkCommandBuffer cbSecondary_{ VK_NULL_HANDLE };
     };
 
 private:
@@ -125,10 +126,9 @@ private:
     std::vector<VkPresentModeKHR> presentModes_{};
     VkPresentModeKHR presentMode_{};
 
-    // Command buffers
+    // Command pool
     VkCommandPool commandPool_{ VK_NULL_HANDLE };
-    VkCommandBuffer cbPrimary_{ VK_NULL_HANDLE };
-    VkCommandBuffer cbSecondary_{ VK_NULL_HANDLE };
+
     // Background color value
     std::array<VkClearValue, 2> clearValues_{};
 

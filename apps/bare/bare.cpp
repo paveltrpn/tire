@@ -87,7 +87,7 @@ auto BareWindow::loop() -> void {
 
         context_->renderCommandBegin( currentFrame_, render_->renderPass() );
 
-        render_->frame( context_->getDrawCommandBuffer() );
+        render_->frame( context_->getDrawCommandBuffer( currentFrame_ ) );
 
         context_->renderCommandEnd( currentFrame_ );
 

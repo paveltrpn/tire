@@ -13,23 +13,6 @@ static constexpr bool DEBUG_OUTPUT_COMMAND_BUFFER_CPP{ true };
 namespace tire::vk {
 
 auto ContextBare::initPrimaryCommandBuffer() -> void {
-    const VkCommandBufferAllocateInfo allocInfo{
-        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-        .commandPool = commandPool(),
-        .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-        .commandBufferCount = 1 };
-
-    const auto err =
-        vkAllocateCommandBuffers( device(), &allocInfo, &cbPrimary_ );
-    if ( err != VK_SUCCESS ) {
-        throw std::runtime_error(
-            std::format( "failed to allocate command buffers with code {}!",
-                         string_VkResult( err ) ) );
-    } else {
-        log::debug<DEBUG_OUTPUT_COMMAND_BUFFER_CPP>(
-            "vk::Context === primary command buffer created!" );
-    };
-
     // TODO: pass background color fdrom scene environment parameters.
     // Note that the order of clearValues should be identical to the order of your
     // attachments
@@ -44,7 +27,7 @@ auto ContextBare::initSecondaryCommandBuffer() -> void {
 
 auto ContextBare::renderCommandBegin( uint32_t frameId,
                                       VkRenderPass renderPass ) -> void {
-    const auto [iaSem, rfSem, ifFnc] = getFrameSyncSet( frameId );
+    const auto [iaSem, rfSem, ifFnc, cb] = getFrameSyncSet( frameId );
 
     std::array<VkFence, 1> fences = { ifFnc };
 
@@ -55,7 +38,7 @@ auto ContextBare::renderCommandBegin( uint32_t frameId,
     // NOTE: omit return code check
     vkResetFences( device(), fences.size(), fences.data() );
 
-    vkResetCommandBuffer( cbPrimary_, 0 );
+    vkResetCommandBuffer( cb, 0 );
 
     // NOTE: omit return code check
     // May return VK_SUBOPTIMAL_KHR or even VK_ERROR_OUT_OF_DATE_KHR
@@ -68,10 +51,10 @@ auto ContextBare::renderCommandBegin( uint32_t frameId,
 
     const VkCommandBufferBeginInfo beginInfo{
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-        .flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
+        .flags = 0,
         .pInheritanceInfo = nullptr };
 
-    vkBeginCommandBuffer( cbPrimary_, &beginInfo );
+    vkBeginCommandBuffer( cb, &beginInfo );
 
     const auto currentFramebuffer = framebuffer( frameId );
 
@@ -85,24 +68,21 @@ auto ContextBare::renderCommandBegin( uint32_t frameId,
         .clearValueCount = static_cast<uint32_t>( clearValues_.size() ),
         .pClearValues = clearValues_.data() };
 
-    vkCmdBeginRenderPass( cbPrimary_, &renderPassInfo,
-                          VK_SUBPASS_CONTENTS_INLINE );
+    vkCmdBeginRenderPass( cb, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE );
 }
 
 auto ContextBare::renderCommandEnd( uint32_t frameId ) -> void {
-    const auto [iaSem, rfSem, ifFnc] = getFrameSyncSet( frameId );
+    const auto [iaSem, rfSem, ifFnc, cb] = getFrameSyncSet( frameId );
 
-    std::cout << frameId << "\n";
-
-    vkCmdEndRenderPass( cbPrimary_ );
+    vkCmdEndRenderPass( cb );
     // NOTE: omit return code check
-    vkEndCommandBuffer( cbPrimary_ );
+    vkEndCommandBuffer( cb );
 
     std::array<VkPipelineStageFlags, 1> waitStages = {
         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
     std::array<VkSemaphore, 1> waitsems{ iaSem };
     std::array<VkSemaphore, 1> sgnlsems{ rfSem };
-    std::array<VkCommandBuffer, 1> commands{ cbPrimary_ };
+    std::array<VkCommandBuffer, 1> commands{ cb };
 
     const VkSubmitInfo submitInfo{
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
