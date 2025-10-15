@@ -16,6 +16,8 @@ struct Context {
     auto operator=( const Context& other ) -> Context& = delete;
     auto operator=( Context&& other ) -> Context& = delete;
 
+    virtual auto init() -> void = 0;
+
     [[nodiscard]] auto instance() const -> VkInstance { return instance_; };
     [[nodiscard]] auto surface() const -> VkSurfaceKHR { return surface_; };
     [[nodiscard]] auto device() const -> VkDevice { return device_; };

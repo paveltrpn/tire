@@ -104,6 +104,7 @@ auto RenderItem::beforeRendering() -> void {
 
         context_ = std::make_unique<vk::ContextQt>( inst->vkInstance(), physDev,
                                                     dev, sface, rp, gqfi, gqi );
+        context_->init();
 
         emit contextinitialized();
 

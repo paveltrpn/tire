@@ -26,7 +26,7 @@ struct ContextBare final : Context {
     auto operator=( ContextBare&& other ) -> ContextBare& = delete;
 
     // Init all context
-    void init();
+    auto init() -> void override;
 
     [[nodiscard]] auto getFrameSyncSet( size_t id )
         -> std::tuple<VkSemaphore, VkSemaphore, VkFence, VkCommandBuffer> {
