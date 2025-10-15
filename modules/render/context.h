@@ -43,15 +43,14 @@ struct Context {
     };
 
     [[nodiscard]]
-    virtual auto memoryRequirements( uint32_t typeFilter,
-                                     VkMemoryPropertyFlags properties ) const
-        -> uint32_t = 0;
+    auto memoryRequirements( uint32_t typeFilter,
+                             VkMemoryPropertyFlags properties ) const
+        -> uint32_t;
 
     [[nodiscard]]
-    virtual auto findSupportedFormat( const std::vector<VkFormat>& candidates,
-                                      VkImageTiling tiling,
-                                      VkFormatFeatureFlags features ) const
-        -> VkFormat = 0;
+    auto findSupportedFormat( const std::vector<VkFormat>& candidates,
+                              VkImageTiling tiling,
+                              VkFormatFeatureFlags features ) const -> VkFormat;
 
     [[nodiscard]] auto renderPass() const -> VkRenderPass {
         return renderPass_;
@@ -60,6 +59,7 @@ struct Context {
 protected:
     VkInstance instance_{ VK_NULL_HANDLE };
     VkSurfaceKHR surface_{ VK_NULL_HANDLE };
+    VkPhysicalDevice physDevice_{};
     VkDevice device_{ VK_NULL_HANDLE };
     VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
 

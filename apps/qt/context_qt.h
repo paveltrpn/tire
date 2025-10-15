@@ -37,14 +37,6 @@ struct ContextQt final : Context {
     // return surfaceFormat_;
     // };
 
-    [[nodiscard]] auto memoryRequirements(
-        uint32_t typeFilter, VkMemoryPropertyFlags properties ) const
-        -> uint32_t override;
-
-    [[nodiscard]] auto findSupportedFormat(
-        const std::vector<VkFormat>& candidates, VkImageTiling tiling,
-        VkFormatFeatureFlags features ) const -> VkFormat override;
-
     //[[nodiscard]] VkQueue presentQueue() const { return presentQueue_; };
 
     [[nodiscard]] auto currentExtent() const -> const VkExtent2D& override {
@@ -70,8 +62,6 @@ struct ContextQt final : Context {
     }
 
 private:
-    // Physical device
-    VkPhysicalDevice pDevice_{ VK_NULL_HANDLE };
     VkPhysicalDeviceProperties pDeviceProperties_{};
     VkPhysicalDeviceFeatures pDeviceFeatures_{};
     std::vector<VkExtensionProperties> pDeviceExtensions_{};

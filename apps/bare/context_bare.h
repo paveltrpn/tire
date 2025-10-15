@@ -28,16 +28,6 @@ struct ContextBare final : Context {
     // Init all context
     void init();
 
-    [[nodiscard]]
-    auto memoryRequirements( uint32_t typeFilter,
-                             VkMemoryPropertyFlags properties ) const
-        -> uint32_t override;
-    [[nodiscard]]
-    auto findSupportedFormat( const std::vector<VkFormat>& candidates,
-                              VkImageTiling tiling,
-                              VkFormatFeatureFlags features ) const
-        -> VkFormat override;
-
     [[nodiscard]] auto getFrameSyncSet( size_t id )
         -> std::tuple<VkSemaphore, VkSemaphore, VkFence, VkCommandBuffer> {
         return { frames_[id].imageAvailableSemaphore_,

@@ -164,6 +164,9 @@ void ContextBare::makeDevice() {
         log::fatal( "vk::Device === no suitable vulkan devices found! " );
     }
 
+    // Base class member.
+    physDevice_ = physicalDevices_[pickedPhysicalDeviceId_].device;
+
     log::info(
         "vk::Device === pick {}",
         physicalDevices_[pickedPhysicalDeviceId_].properties.deviceName );
