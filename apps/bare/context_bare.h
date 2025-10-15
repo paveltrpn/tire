@@ -22,8 +22,8 @@ struct ContextBare final : Context {
 
     ContextBare( const ContextBare& other ) = delete;
     ContextBare( Context&& other ) = delete;
-    ContextBare& operator=( const ContextBare& other ) = delete;
-    ContextBare& operator=( ContextBare&& other ) = delete;
+    auto operator=( const ContextBare& other ) -> ContextBare& = delete;
+    auto operator=( ContextBare&& other ) -> ContextBare& = delete;
 
     // Init all context
     void init();
