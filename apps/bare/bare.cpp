@@ -2,6 +2,7 @@
 #include <memory>
 #include <GLFW/glfw3.h>
 
+#include "config/config.h"
 #include "bare.h"
 
 BareWindow::BareWindow() {
@@ -68,7 +69,8 @@ BareWindow::BareWindow() {
     render_ = std::make_unique<tire::RenderVK>();
     render_->init( context_.get() );
 
-    render_->scene( "/mnt/main/code/tire/assets/m01.json" );
+    const auto basePath = tire::Config::instance()->getBasePath();
+    render_->scene( basePath.string() + "/assets/m01.json" );
 }
 
 BareWindow::~BareWindow() {

@@ -3,6 +3,7 @@
 #include <QVulkanInstance>
 #include <rhi/qrhi.h>
 
+#include "config/config.h"
 #include "render_item.h"
 
 namespace tire {
@@ -108,7 +109,8 @@ auto RenderItem::beforeRendering() -> void {
 
         render_->init( context_.get() );
 
-        render_->scene( "/mnt/main/code/tire/assets/m01.json" );
+        const auto basePath = tire::Config::instance()->getBasePath();
+        render_->scene( basePath.string() + "/assets/m01.json" );
 
         emit renderInitialized();
     }
