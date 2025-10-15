@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.31)
 
 # Use GCC latest
 # set(CMAKE_C_COMPILER $ENV{GCC_LATEST}/bin/gcc-15.1)
@@ -145,7 +145,7 @@ target_sources(wavefront
 file(GLOB MOD_SCENE_SRC "modules/scene/*.cpp" "modules/scene/*.h")
 add_library(scene)
 target_sources(scene PRIVATE ${MOD_SCENE_SRC})
-target_link_libraries(scene config image algebra geometry)
+target_link_libraries(scene config image algebra geometry wavefront)
 
 # Module event
 # ================================
