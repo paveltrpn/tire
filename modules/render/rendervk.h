@@ -1,13 +1,11 @@
 
 #pragma once
 
-#include <vector>
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 
 #include "pipelines/pipeline.h"
 #include "buffers/vertex_buffer.h"
-#include "command_pool.h"
 
 #include "timer.h"
 #include "context.h"
@@ -19,6 +17,12 @@ namespace tire {
 
 struct RenderVK final {
     RenderVK() = default;
+
+    RenderVK( const RenderVK& other ) = delete;
+    RenderVK( RenderVK&& other ) = delete;
+    auto operator=( const RenderVK& other ) -> RenderVK& = delete;
+    auto operator=( RenderVK&& other ) -> RenderVK& = delete;
+
     ~RenderVK() = default;
 
     auto init( vk::Context* context ) -> void;
@@ -59,6 +63,7 @@ private:
     vk::Context* context_{};
 
     std::unique_ptr<vk::Pipeline> piplineVertexBuffer_{};
+    std::unique_ptr<vk::Pipeline> piplineTestBox_{};
 
     // The Scene
     std::shared_ptr<Scene> scene_{};
