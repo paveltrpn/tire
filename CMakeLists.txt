@@ -206,8 +206,6 @@ target_link_libraries(qtvk PUBLIC
 
 # Test subdirectories
 # ================================
-add_subdirectory(test/wavefront)
-target_link_libraries(obj_test wavefront)
+add_subdirectory(test)
 
-add_subdirectory(test/color)
-target_link_libraries(color image)
+
