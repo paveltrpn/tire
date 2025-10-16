@@ -11,7 +11,7 @@
 #include "config/config.h"
 
 auto main( int argc, char* argv[] ) -> int {
-    new tire::Config{ "assets/config.json" };
+    new tire::Config{ "apps/config.json" };
 
     const QGuiApplication app( argc, argv );
 

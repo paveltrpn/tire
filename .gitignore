@@ -3,6 +3,8 @@ bin/
 CMakeLists.txt.user
 /assets/
 !/assets/.gitkeep
+/shaders/spirv
+!/shaders/.gitkeep
 *.cap
 *.foz
 tmp/*

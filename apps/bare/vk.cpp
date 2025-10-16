@@ -10,7 +10,7 @@
 
 auto main( int argc, char** argv ) -> int {
     try {
-        new tire::Config{ "assets/config.json" };
+        new tire::Config{ "apps/config.json" };
         auto foo = BareWindow{};
         foo.loop();
     } catch ( const std::exception& e ) {

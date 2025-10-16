@@ -27,9 +27,8 @@ auto RenderVK::init( vk::Context* context ) -> void {
             std::make_unique<vk::PiplineVertexBuffer>( context_ );
         auto vertexBufferProgram = vk::Program{ context_ };
         vertexBufferProgram.fill(
-            { basePath + "/assets/shaders/spirv/vk_vertexBuffer_VERTEX.spv",
-              basePath +
-                  "/assets/shaders/spirv/vk_vertexBuffer_FRAGMENT.spv" } );
+            { basePath + "/shaders/spirv/vk_vertexBuffer_VERTEX.spv",
+              basePath + "/shaders/spirv/vk_vertexBuffer_FRAGMENT.spv" } );
         piplineVertexBuffer_->buildPipeline( vertexBufferProgram );
 
         // =============================================================
