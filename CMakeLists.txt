@@ -75,10 +75,9 @@ find_package(Qt6 ${QT_VERSION} COMPONENTS
 
 # Module log
 # ================================
-add_library(log
-    modules/log/log.h
-    modules/log/log.cpp
-)
+file(GLOB MOD_LOG_SRC "modules/log/*.cpp" "modules/log/*.h")
+add_library(log)
+target_sources(log PRIVATE ${MOD_LOG_SRC})
 #global user defined output messages macro definition
 add_compile_definitions(ENABLE_DEBUG_OUTPUT=false)
 add_compile_definitions(ENABLE_WARNING_OUTPUT=true)
@@ -139,29 +138,12 @@ add_library(scene)
 target_sources(scene PRIVATE ${MOD_SCENE_SRC})
 target_link_libraries(scene config image algebra geometry wavefront)
 
-# Module event
-# ================================
-#add_library(event)
-#target_sources(event
-#  PUBLIC
-#    FILE_SET CXX_MODULES FILES
-#    modules/event/interface.cpp
-#    modules/event/async.cpp
-#    modules/event/context.cpp
-#    modules/event/timer.cpp
-#)
-#target_link_libraries(event config)
-
 # Module io
 # ================================
-#add_library(io)
-#target_sources(io
-#  PUBLIC
-#    FILE_SET CXX_MODULES FILES
-#    modules/io/interface.cpp
-#    modules/io/file.cpp
-#)
-#target_link_libraries(io )
+add_library(io)
+file(GLOB MOD_IO_SRC "modules/io/*.cpp" "modules/io/*.h")
+target_sources(io PRIVATE ${MOD_IO_SRC})
+target_link_libraries(io uv)
 
 # Main apps subdirectories
 # ================================
