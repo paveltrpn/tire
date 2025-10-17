@@ -23,12 +23,6 @@ concept ConfigParamType = std::is_same_v<bool, std::remove_cv_t<T>> ||
 struct Config final {
 private:
     Config() {
-        // Assumes that file hierarchy is
-        // "../app/bin"
-        // "../app/assets"
-        // "../app/{other}"
-        // Below code trunc application filename and go one
-        // folder up, then base path is "../app"
         basePath_ = std::filesystem::canonical( "/proc/self/exe" )
                         .parent_path()
                         .parent_path();

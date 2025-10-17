@@ -1,5 +1,4 @@
 
-
 #include <stdexcept>
 
 #define SURFACE_WAYLAND
@@ -12,6 +11,7 @@
 #include "vulkan/vulkan_core.h"
 #include <vulkan/vk_enum_string_helper.h>
 
+#include "config/config.h"
 #include "context_bare.h"
 #include "image/color.h"
 #include "log/log.h"
@@ -27,10 +27,12 @@ void ContextBare::init() {
     initRenderPass();
     makeFrames();
 
-    // TODO: pass background color fdrom scene environment parameters.
     // Note that the order of clearValues should be identical to the order of your
     // attachments
-    const auto backgroundColor = Colorf( "#0f0f0f" );
+    const auto configHandle = tire::Config::instance();
+    const auto colorString =
+        configHandle->get<std::string>( "background_color" );
+    const auto backgroundColor = Colorf( colorString );
     clearValues_[0].color = { { backgroundColor.r(), backgroundColor.g(),
                                 backgroundColor.b(), 1.0f } };
     clearValues_[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
