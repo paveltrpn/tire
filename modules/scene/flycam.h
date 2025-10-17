@@ -47,27 +47,35 @@ struct Flycam final {
 
     ~Flycam() = default;
 
-    auto setFov( value_type fov ) -> void {
+    auto setFov( value_type fov ) -> Flycam& {
         //
         fov_ = fov;
+        return *this;
     }
 
-    auto setAspect( value_type aspect ) -> void {
+    auto setAspect( value_type aspect ) -> Flycam& {
         //
         aspect_ = aspect;
+        return *this;
     }
 
-    auto setNcp( value_type ncp ) -> void {
+    auto setNcp( value_type ncp ) -> Flycam& {
         //
         ncp_ = ncp;
+        return *this;
     }
 
-    auto setFcp( value_type fcp ) -> void {
+    auto setFcp( value_type fcp ) -> Flycam& {
         //
         fcp_ = fcp;
+        return *this;
     }
 
-    auto setName( const std::string& value ) -> void { name_ = value; };
+    auto setName( const std::string& value ) -> Flycam& {
+        //
+        name_ = value;
+        return *this;
+    };
 
     void setMoveBit( FlycamMoveBits bit );
     void unsetMoveBit( FlycamMoveBits bit );
