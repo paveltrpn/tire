@@ -2,8 +2,6 @@
 
 #include <stdexcept>
 
-#include "vulkan/vulkan_core.h"
-
 #define SURFACE_WAYLAND
 
 #ifdef SURFACE_X11
@@ -11,6 +9,7 @@
 #elifdef SURFACE_WAYLAND
 #define VK_USE_PLATFORM_WAYLAND_KHR
 #endif
+#include "vulkan/vulkan_core.h"
 #include <vulkan/vk_enum_string_helper.h>
 
 #include "context_bare.h"
