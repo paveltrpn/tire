@@ -47,35 +47,27 @@ struct Flycam final {
 
     ~Flycam() = default;
 
-    [[maybe_unused]]
-    Flycam& setFov( value_type fov ) {
+    auto setFov( value_type fov ) -> void {
+        //
         fov_ = fov;
-        return *this;
     }
 
-    [[maybe_unused]]
-    Flycam& setAspect( value_type aspect ) {
+    auto setAspect( value_type aspect ) -> void {
+        //
         aspect_ = aspect;
-        return *this;
     }
 
-    [[maybe_unused]]
-    Flycam& setNcp( value_type ncp ) {
+    auto setNcp( value_type ncp ) -> void {
+        //
         ncp_ = ncp;
-        return *this;
     }
 
-    [[maybe_unused]]
-    Flycam& setFcp( value_type fcp ) {
+    auto setFcp( value_type fcp ) -> void {
+        //
         fcp_ = fcp;
-        return *this;
     }
 
-    [[maybe_unused]]
-    Flycam& setName( const std::string& value ) {
-        name_ = value;
-        return *this;
-    };
+    auto setName( const std::string& value ) -> void { name_ = value; };
 
     void setMoveBit( FlycamMoveBits bit );
     void unsetMoveBit( FlycamMoveBits bit );
@@ -115,27 +107,27 @@ struct Flycam final {
     }
 
     [[nodiscard]]
-    algebra::vector3<value_type> position() const {
+    auto position() const -> algebra::vector3<value_type> {
         return eye_;
     };
 
     [[nodiscard]]
-    value_type azimuth() const {
+    auto azimuth() const -> value_type {
         return azimuth_;
     };
 
     [[nodiscard]]
-    value_type elevation() const {
+    auto elevation() const -> value_type {
         return elevation_;
     };
 
     [[nodiscard]]
-    value_type roll() const {
+    auto roll() const -> value_type {
         return roll_;
     };
 
     [[nodiscard]]
-    std::string name() const {
+    auto name() const -> std::string {
         return name_;
     };
 

@@ -26,7 +26,7 @@ struct ContextQt final : Context {
     ~ContextQt() override;
 
     ContextQt( const ContextQt& other ) = delete;
-    ContextQt( Context&& other ) = delete;
+    ContextQt( ContextQt&& other ) = delete;
     auto operator=( const ContextQt& other ) -> ContextQt& = delete;
     auto operator=( ContextQt&& other ) -> ContextQt& = delete;
 
@@ -40,7 +40,8 @@ struct ContextQt final : Context {
     };
 
     [[nodiscard]] auto getDeviceNameString() -> std::string {
-        return pDeviceProperties_.deviceName;
+        return std::string{
+            static_cast<const char*>( pDeviceProperties_.deviceName ) };
     }
 
     [[nodiscard]] auto getDeviceDriverVersionString() -> std::string {
