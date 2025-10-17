@@ -1,8 +1,5 @@
 
-#ifndef __bare_window_h__
-#define __bare_window_h__
-
-#include <iostream>
+#pragma once
 
 #include <GLFW/glfw3.h>
 
@@ -10,7 +7,6 @@
 
 #include "context_bare.h"
 #include "render/rendervk.h"
-#include "scene/scene.h"
 
 struct BareWindow final {
     BareWindow();
@@ -40,5 +36,3 @@ private:
 
     uint32_t currentFrame_{ 0 };
 };
-
-#endif

@@ -4,7 +4,7 @@
 
 #include <GLFW/glfw3.h>
 
-#define SURFACE_WAYLAND
+#include "bare.h"
 
 #ifdef SURFACE_X11
 #define GLFW_EXPOSE_NATIVE_X11
@@ -16,7 +16,6 @@
 #endif
 
 #include "config/config.h"
-#include "bare.h"
 #include "log/log.h"
 
 BareWindow::BareWindow() {

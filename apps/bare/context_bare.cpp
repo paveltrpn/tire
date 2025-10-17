@@ -1,6 +1,7 @@
 
 
 #include <stdexcept>
+
 #include "vulkan/vulkan_core.h"
 
 #define SURFACE_WAYLAND
