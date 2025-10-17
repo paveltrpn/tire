@@ -2,7 +2,6 @@
 #include <vector>
 
 #include "algebra/vector4.h"
-#include "rendervk.h"
 #include "vulkan/vulkan_core.h"
 #include "scene.h"
 
@@ -48,7 +47,7 @@ void Scene::submit() {
 }
 
 void Scene::output( const VkCommandBuffer cb ) {
-    const auto view = camera().matrix<tire::VulkanTag>();
+    const auto view = camera().matrix();
 
     vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS,
                        pipeline_->pipeline() );

@@ -1,15 +1,13 @@
 #pragma once
 
 #include <string>
-#include <type_traits>
+#include <cstdint>
 
 #include "algebra/vector3.h"
 #include "algebra/matrix4.h"
 
 #include "algebra/vector3.h"
 #include "geometry/bounding_volumes.h"
-
-#include "render_tag.h"
 
 namespace tire {
 
@@ -45,8 +43,8 @@ struct Flycam final {
     Flycam( const Flycam& other ) = delete;
     Flycam( Flycam&& other ) = delete;
 
-    Flycam& operator=( const Flycam& other ) = delete;
-    Flycam& operator=( Flycam&& other ) = delete;
+    auto operator=( const Flycam& other ) -> Flycam& = delete;
+    auto operator=( Flycam&& other ) -> Flycam& = delete;
 
     [[maybe_unused]]
     Flycam& setFov( value_type fov ) {
@@ -86,17 +84,12 @@ struct Flycam final {
     void setPosition( const algebra::vector3d& pos );
     void setAngles( value_type azimuth, value_type elevation, value_type roll );
 
-    template <RenderType Type>
-    algebra::matrix4<value_type> matrix() {
+    auto matrix() -> algebra::matrix4<value_type> {
         algebra::matrix4<value_type> projection;
-        // Choose projection matrix according to render type
-        if constexpr ( std::is_same_v<Type, OpenGLTag> ) {
-            projection =
-                algebra::perspective<value_type>( fov_, aspect_, ncp_, fcp_ );
-        } else if constexpr ( std::is_same_v<Type, VulkanTag> ) {
-            projection =
-                algebra::perspective<value_type>( fov_, aspect_, ncp_, fcp_ );
-        }
+        projection =
+            algebra::perspective<value_type>( fov_, aspect_, ncp_, fcp_ );
+        // projection =
+        // algebra::vperspective<value_type>( fov_, aspect_, ncp_, fcp_ );
 
         // Get azimuth rotation matrix
         const auto& ar = algebra::rotate<value_type>( zenith_, azimuth_ );
