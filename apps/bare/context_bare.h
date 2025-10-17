@@ -4,8 +4,6 @@
 #include <vector>
 #include <array>
 
-#include <vulkan/vulkan.h>
-
 #define SURFACE_WAYLAND
 
 #ifdef SURFACE_X11
@@ -14,8 +12,6 @@
 #elifdef SURFACE_WAYLAND
 #include <wayland-client.h>
 #endif
-
-#include <vulkan/vulkan_core.h>
 
 #include "render/context.h"
 
