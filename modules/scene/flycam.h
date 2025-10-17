@@ -42,9 +42,10 @@ struct Flycam final {
 
     Flycam( const Flycam& other ) = delete;
     Flycam( Flycam&& other ) = delete;
-
     auto operator=( const Flycam& other ) -> Flycam& = delete;
     auto operator=( Flycam&& other ) -> Flycam& = delete;
+
+    ~Flycam() = default;
 
     [[maybe_unused]]
     Flycam& setFov( value_type fov ) {
