@@ -35,7 +35,6 @@ BareWindow::BareWindow() {
     }
 
     glfwSetWindowPos( window_, posx, posy );
-
     glfwSetWindowUserPointer( window_, this );
 
     glfwSetKeyCallback( window_,
@@ -75,6 +74,34 @@ BareWindow::BareWindow() {
                                 []( GLFWwindow* window, int entered ) -> void {
 
                                 } );
+
+    const auto platform = glfwGetPlatform();
+
+    switch ( platform ) {
+        case GLFW_PLATFORM_NULL: {
+            tire::log::fatal( "glfw platform undefined!" );
+            break;
+        }
+        case GLFW_PLATFORM_WIN32: {
+            tire::log::fatal( "glfw platform win32 not supported!" );
+            break;
+        }
+        case GLFW_PLATFORM_COCOA: {
+            tire::log::fatal( "glfw platform cocoa not supported!" );
+            break;
+        }
+        case GLFW_PLATFORM_X11: {
+            tire::log::info( "glfw platform X11 is used!" );
+            break;
+        }
+        case GLFW_PLATFORM_WAYLAND: {
+            tire::log::info( "glfw platform WAYLAND is used!" );
+            break;
+        }
+        default: {
+            break;
+        }
+    }
 
     // NOTE: use native X11 window handles but there is no
     // X11 related definitions in code and no X11 headers indluded.
