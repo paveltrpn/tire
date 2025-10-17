@@ -50,8 +50,8 @@ void transitionImageLayout( VkDevice device, VkCommandPool commandPool,
     barrier.subresourceRange.baseArrayLayer = 0;
     barrier.subresourceRange.layerCount = 1;
 
-    VkPipelineStageFlags sourceStage;
-    VkPipelineStageFlags destinationStage;
+    VkPipelineStageFlags sourceStage{};
+    VkPipelineStageFlags destinationStage{};
 
     if ( newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL ) {
         barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
@@ -173,9 +173,13 @@ void ContextBare::makeSwapchain() {
     // that many images, or it will fail to create the swapchain.
     createInfo.minImageCount = framesCount_;
 
+    // Use instead of extent ackuired from surface data.
+    const auto [viewportWidth, viewportHeight] = viewportSize();
+
     createInfo.imageFormat = surfaceFormat_.format;
     createInfo.imageColorSpace = surfaceFormat_.colorSpace;
-    createInfo.imageExtent = currentExtent_;
+    createInfo.imageExtent = { viewportWidth,
+                               viewportHeight };  //currentExtent_;
     createInfo.imageArrayLayers = 1;
     createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
@@ -226,7 +230,7 @@ void ContextBare::makeSwapchain() {
     auto createImage = [this]( uint32_t width, uint32_t height, VkFormat format,
                                VkImageTiling tiling, VkImageUsageFlags usage,
                                VkMemoryPropertyFlags properties, VkImage& image,
-                               VkDeviceMemory& imageMemory ) {
+                               VkDeviceMemory& imageMemory ) -> void {
         VkImageCreateInfo imageInfo{};
         imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
         imageInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -275,8 +279,8 @@ void ContextBare::makeSwapchain() {
     //const auto depthFormat = VK_FORMAT_D32_SFLOAT;
 
     createImage(
-        currentExtent_.width, currentExtent_.height, depthFormat,
-        VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+        viewportWidth, viewportHeight, depthFormat, VK_IMAGE_TILING_OPTIMAL,
+        VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage_, depthImageMemory_ );
 
     auto createImageView = [this](
@@ -293,7 +297,7 @@ void ContextBare::makeSwapchain() {
         viewInfo.subresourceRange.baseArrayLayer = 0;
         viewInfo.subresourceRange.layerCount = 1;
 
-        VkImageView imageView;
+        VkImageView imageView{};
         if ( vkCreateImageView( device_, &viewInfo, nullptr, &imageView ) !=
              VK_SUCCESS ) {
             log::fatal( "failed to create image view!" );
@@ -359,13 +363,14 @@ void ContextBare::makeFrames() {
         // Frame framebuffer
         std::array<VkImageView, 2> attachments = { frames_[i].view_,
                                                    depthImageView_ };
+        const auto [viewportWidth, viewportHeight] = viewportSize();
         const VkFramebufferCreateInfo framebufferInfo{
             .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
             .renderPass = renderPass(),
             .attachmentCount = static_cast<uint32_t>( attachments.size() ),
             .pAttachments = attachments.data(),
-            .width = currentExtent_.width,
-            .height = currentExtent_.height,
+            .width = viewportWidth,
+            .height = viewportHeight,
             .layers = 1 };
 
         if ( const auto err = vkCreateFramebuffer(

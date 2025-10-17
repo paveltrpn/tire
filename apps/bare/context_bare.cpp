@@ -1,8 +1,15 @@
 
+
 #include <stdexcept>
 #include "vulkan/vulkan_core.h"
 
+#define SURFACE_WAYLAND
+
+#ifdef SURFACE_X11
 #define VK_USE_PLATFORM_XLIB_KHR
+#elifdef SURFACE_WAYLAND
+#define VK_USE_PLATFORM_WAYLAND_KHR
+#endif
 #include <vulkan/vk_enum_string_helper.h>
 
 #include "context_bare.h"
@@ -29,16 +36,14 @@ void ContextBare::init() {
     clearValues_[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
 }
 
-auto ContextBare::makeWaylandSurface() -> void {
-}
-
+#ifdef SURFACE_X11
 void ContextBare::makeXlibSurface( Display* display, Window window ) {
-    VkXlibSurfaceCreateInfoKHR xlibSurfInfo_{};
-    xlibSurfInfo_.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    xlibSurfInfo_.dpy = display;
-    xlibSurfInfo_.window = window;
+    VkXlibSurfaceCreateInfoKHR xlibSurfInfo{};
+    xlibSurfInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+    xlibSurfInfo.dpy = display;
+    xlibSurfInfo.window = window;
 
-    if ( const auto err = vkCreateXlibSurfaceKHR( instance_, &xlibSurfInfo_,
+    if ( const auto err = vkCreateXlibSurfaceKHR( instance_, &xlibSurfInfo,
                                                   nullptr, &surface_ );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
@@ -48,6 +53,25 @@ void ContextBare::makeXlibSurface( Display* display, Window window ) {
         log::info( "vk::Surface === xlib surface created!" );
     }
 }
+#elifdef SURFACE_WAYLAND
+auto ContextBare::makeWaylandSurface( wl_display* display, wl_surface* surface )
+    -> void {
+    VkWaylandSurfaceCreateInfoKHR wlSurfInfo{};
+    wlSurfInfo.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
+    wlSurfInfo.display = display;
+    wlSurfInfo.surface = surface;
+
+    if ( const auto err = vkCreateWaylandSurfaceKHR( instance_, &wlSurfInfo,
+                                                     nullptr, &surface_ );
+         err != VK_SUCCESS ) {
+        throw std::runtime_error(
+            std::format( "failed to create wayland surface with code {}\n!",
+                         string_VkResult( err ) ) );
+    } else {
+        log::info( "vk::Surface === xlib surface created!" );
+    }
+}
+#endif
 
 void ContextBare::makeCommandPool() {
     VkCommandPoolCreateInfo poolInfo{};

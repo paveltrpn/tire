@@ -6,8 +6,15 @@
 
 #include <vulkan/vulkan.h>
 
+#define SURFACE_WAYLAND
+
+#ifdef SURFACE_X11
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#elifdef SURFACE_WAYLAND
+#include <wayland-client.h>
+#endif
+
 #include <vulkan/vulkan_core.h>
 
 #include "render/context.h"
@@ -29,8 +36,12 @@ struct ContextBare final : Context {
     auto init() -> void override;
 
     auto makeInstance( const std::string surfaceExtension ) -> void;
+
+#ifdef SURFACE_X11
     auto makeXlibSurface( Display* display, Window window ) -> void;
-    auto makeWaylandSurface() -> void;
+#elifdef SURFACE_WAYLAND
+    auto makeWaylandSurface( wl_display* display, wl_surface* surface ) -> void;
+#endif
 
     [[nodiscard]] auto getFrameSyncSet( size_t id )
         -> std::tuple<VkSemaphore, VkSemaphore, VkFence, VkCommandBuffer> {

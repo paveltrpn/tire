@@ -43,13 +43,15 @@ auto ContextBare::renderCommandBegin( uint32_t frameId ) -> void {
 
     const auto currentFramebuffer = framebuffer( frameId );
 
+    const auto [viewportWidth, viewportHeight] = viewportSize();
+
     const VkRenderPassBeginInfo renderPassInfo{
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
         .pNext = nullptr,
         .renderPass = renderPass(),
         .framebuffer = currentFramebuffer,
         .renderArea = { .offset = { .x = 0, .y = 0 },
-                        .extent = { currentExtent() } },
+                        .extent = { viewportWidth, viewportHeight } },
         .clearValueCount = static_cast<uint32_t>( clearValues_.size() ),
         .pClearValues = clearValues_.data() };
 

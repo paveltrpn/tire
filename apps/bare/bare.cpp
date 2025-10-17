@@ -4,8 +4,16 @@
 
 #include <GLFW/glfw3.h>
 
+#define SURFACE_WAYLAND
+
+#ifdef SURFACE_X11
 #define GLFW_EXPOSE_NATIVE_X11
 #include <GLFW/glfw3native.h>
+#elifdef SURFACE_WAYLAND
+#define GLFW_EXPOSE_NATIVE_WAYLAND
+#include <GLFW/glfw3native.h>
+#include <wayland-client.h>
+#endif
 
 #include "config/config.h"
 #include "bare.h"
@@ -37,7 +45,6 @@ BareWindow::BareWindow() {
         tire::log::fatal( "glfw window create faild!" );
     }
 
-    glfwSetWindowPos( window_, posx, posy );
     glfwSetWindowUserPointer( window_, this );
 
     glfwSetKeyCallback( window_,
@@ -95,6 +102,8 @@ BareWindow::BareWindow() {
         }
         case GLFW_PLATFORM_X11: {
             tire::log::info( "glfw platform X11 is used!" );
+
+#ifdef SURFACE_X11
             context_ = std::make_unique<tire::vk::ContextBare>(
                 /*"VK_KHR_xlib_surface"*/ );
 
@@ -103,18 +112,22 @@ BareWindow::BareWindow() {
             const auto window = glfwGetX11Window( window_ );
             const auto display = glfwGetX11Display();
             context_->makeXlibSurface( display, window );
-
+#endif
+            glfwSetWindowPos( window_, posx, posy );
             break;
         }
         case GLFW_PLATFORM_WAYLAND: {
             tire::log::info( "glfw platform WAYLAND is used!" );
+
+#ifdef SURFACE_WAYLAND
             context_ = std::make_unique<tire::vk::ContextBare>(
                 /*"VK_KHR_wayland_surface"*/ );
 
             context_->makeInstance( "VK_KHR_wayland_surface" );
-            // const auto window = glfwGetWaylandDisplay();
-            // const auto display = glfwGetWaylandWindow( window );
-            context_->makeWaylandSurface( /*wlDisplay, wlSurface*/ );
+            const auto surface = glfwGetWaylandWindow( window_ );
+            const auto display = glfwGetWaylandDisplay();
+            context_->makeWaylandSurface( display, surface );
+#endif
 
             break;
         }
