@@ -17,7 +17,7 @@ namespace tire::vk {
 struct Pipeline;
 
 struct ContextBare final : Context {
-    ContextBare( Display* display, Window window );
+    ContextBare() = default;
     ~ContextBare();
 
     ContextBare( const ContextBare& other ) = delete;
@@ -27,6 +27,10 @@ struct ContextBare final : Context {
 
     // Init all context
     auto init() -> void override;
+
+    auto makeInstance( const std::string surfaceExtension ) -> void;
+    auto makeXlibSurface( Display* display, Window window ) -> void;
+    auto makeWaylandSurface() -> void;
 
     [[nodiscard]] auto getFrameSyncSet( size_t id )
         -> std::tuple<VkSemaphore, VkSemaphore, VkFence, VkCommandBuffer> {
@@ -63,8 +67,6 @@ struct ContextBare final : Context {
     };
 
 private:
-    auto makeInstance() -> void;
-    auto makeXlibSurface() -> void;
     auto collectPhysicalDevices() -> void;
     auto makeDevice() -> void;
     auto makeCommandPool() -> void;
@@ -93,10 +95,6 @@ private:
     };
 
 private:
-    // Outer world connection
-    const Display* display_;
-    const Window window_;
-
     // Instance
     VkDebugUtilsMessengerEXT debugMessenger_{ VK_NULL_HANDLE };
     std::vector<const char*> desiredValidationLayerList_{};

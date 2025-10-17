@@ -92,25 +92,35 @@ BareWindow::BareWindow() {
         }
         case GLFW_PLATFORM_X11: {
             tire::log::info( "glfw platform X11 is used!" );
+            context_ = std::make_unique<tire::vk::ContextBare>(
+                /*"VK_KHR_xlib_surface"*/ );
+
+            context_->makeInstance( "VK_KHR_xlib_surface" );
+
+            const auto window = glfwGetX11Window( window_ );
+            const auto display = glfwGetX11Display();
+            context_->makeXlibSurface( display, window );
+
             break;
         }
         case GLFW_PLATFORM_WAYLAND: {
             tire::log::info( "glfw platform WAYLAND is used!" );
+            context_ = std::make_unique<tire::vk::ContextBare>(
+                /*"VK_KHR_wayland_surface"*/ );
+
+            context_->makeInstance( "VK_KHR_wayland_surface" );
+            // wlDisplay* display = glfwGetWaylandDisplay();
+            // wlSurface* surface = glfwGetWaylandWindow(window);
+            context_->makeWaylandSurface( /*wlDisplay, wlSurface*/ );
+
             break;
         }
         default: {
             break;
         }
     }
-
-    // NOTE: use native X11 window handles but there is no
-    // X11 related definitions in code and no X11 headers indluded.
-    const auto nWindow_ = glfwGetX11Window( window_ );
-    const auto display_ = glfwGetX11Display();
-
-    context_ = std::make_unique<tire::vk::ContextBare>( display_, nWindow_ );
-    context_->init();
     context_->setViewportSize( width, height );
+    context_->init();
 
     render_ = std::make_unique<tire::RenderVK>();
     render_->init( context_.get() );

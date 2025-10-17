@@ -11,14 +11,7 @@ static constexpr bool DEBUG_OUTPUT_CONTEXT_CPP{ true };
 
 namespace tire::vk {
 
-ContextBare::ContextBare( Display* display, Window window )
-    : display_{ display }
-    , window_{ window } {
-}
-
 void ContextBare::init() {
-    makeInstance();
-    makeXlibSurface();
     collectPhysicalDevices();
     makeDevice();
     makeCommandPool();
@@ -35,11 +28,14 @@ void ContextBare::init() {
     clearValues_[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
 }
 
-void ContextBare::makeXlibSurface() {
+auto ContextBare::makeWaylandSurface() -> void {
+}
+
+void ContextBare::makeXlibSurface( Display* display, Window window ) {
     VkXlibSurfaceCreateInfoKHR xlibSurfInfo_{};
     xlibSurfInfo_.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    xlibSurfInfo_.dpy = const_cast<Display*>( display_ );
-    xlibSurfInfo_.window = window_;
+    xlibSurfInfo_.dpy = display;
+    xlibSurfInfo_.window = window;
 
     if ( const auto err = vkCreateXlibSurfaceKHR( instance_, &xlibSurfInfo_,
                                                   nullptr, &surface_ );

@@ -58,7 +58,7 @@ static VkResult vkCreateDebugUtilsMessenger(
 
 }  // namespace
 
-void ContextBare::makeInstance() {
+void ContextBare::makeInstance( const std::string surfaceExtension ) {
     const auto configPtr = Config::instance();
 
     const auto applicationName = configPtr->getString( "application_name" );
@@ -184,7 +184,9 @@ void ContextBare::makeInstance() {
     // Vulkan instance extensions list
     std::vector<const char*> desiredInstanceExtensionsList{};
     desiredInstanceExtensionsList.emplace_back( "VK_KHR_surface" );
-    desiredInstanceExtensionsList.emplace_back( "VK_KHR_xlib_surface" );
+    desiredInstanceExtensionsList.emplace_back( surfaceExtension.c_str() );
+    // desiredInstanceExtensionsList.emplace_back( "VK_KHR_xlib_surface" );
+    // desiredInstanceExtensionsList.emplace_back( "VK_KHR_wayland_surface" );
     if ( configPtr->get<bool>( "enable_validation_layers" ) ) {
         desiredInstanceExtensionsList.emplace_back(
             VK_EXT_DEBUG_UTILS_EXTENSION_NAME );
