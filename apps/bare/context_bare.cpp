@@ -1,6 +1,7 @@
 
 #include <stdexcept>
 #include "vulkan/vulkan_core.h"
+
 #define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vk_enum_string_helper.h>
 

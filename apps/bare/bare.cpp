@@ -4,6 +4,9 @@
 
 #include <GLFW/glfw3.h>
 
+#define GLFW_EXPOSE_NATIVE_X11
+#include <GLFW/glfw3native.h>
+
 #include "config/config.h"
 #include "bare.h"
 #include "log/log.h"
@@ -109,8 +112,8 @@ BareWindow::BareWindow() {
                 /*"VK_KHR_wayland_surface"*/ );
 
             context_->makeInstance( "VK_KHR_wayland_surface" );
-            // wlDisplay* display = glfwGetWaylandDisplay();
-            // wlSurface* surface = glfwGetWaylandWindow(window);
+            // const auto window = glfwGetWaylandDisplay();
+            // const auto display = glfwGetWaylandWindow( window );
             context_->makeWaylandSurface( /*wlDisplay, wlSurface*/ );
 
             break;
