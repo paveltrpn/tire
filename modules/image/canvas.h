@@ -67,11 +67,10 @@ struct Canvas final : Image {
 
 private:
     auto swap( Canvas& other ) noexcept -> void {
-        using std::swap;
-        swap( bpp_, other.bpp_ );
-        swap( width_, other.width_ );
-        swap( height_, other.height_ );
-        swap( data_, other.data_ );
+        std::swap( bpp_, other.bpp_ );
+        std::swap( width_, other.width_ );
+        std::swap( height_, other.height_ );
+        std::swap( data_, other.data_ );
     }
 
 private:
