@@ -4,7 +4,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "bare.h"
+#include "window.h"
 
 #ifdef SURFACE_X11
 #define GLFW_EXPOSE_NATIVE_X11
@@ -23,11 +23,9 @@ BareWindow::BareWindow() {
         tire::log::fatal( "glfw init faild!" );
     }
 
-    auto errorCallback = []( int, const char* err_str ) -> void {
+    glfwSetErrorCallback( []( int, const char* err_str ) -> void {
         std::cout << std::format( "GLFW Error: {}\n", err_str );
-    };
-
-    glfwSetErrorCallback( errorCallback );
+    } );
 
     glfwWindowHint( GLFW_CLIENT_API, GLFW_NO_API );
     glfwWindowHint( GLFW_RESIZABLE, GLFW_FALSE );
@@ -140,7 +138,7 @@ BareWindow::BareWindow() {
     render_ = std::make_unique<tire::RenderVK>();
     render_->init( context_.get() );
 
-    const auto basePath = tire::Config::instance()->getBasePath();
+    const auto basePath = configHandle->getBasePath();
     render_->scene( basePath.string() + "/assets/m01.json" );
 }
 

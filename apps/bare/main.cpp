@@ -1,11 +1,6 @@
 
-#include <memory>
-#include <filesystem>
-
 #include "log/log.h"
-#include "render/rendervk.h"
-#include "bare.h"
-
+#include "window.h"
 #include "config/config.h"
 
 auto main( int argc, char** argv ) -> int {

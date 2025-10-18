@@ -4,7 +4,7 @@
 #include <vector>
 #include <array>
 
-#define SURFACE_WAYLAND
+#define SURFACE_X11
 
 #ifdef SURFACE_X11
 #include <X11/Xlib.h>
@@ -31,7 +31,7 @@ struct ContextBare final : Context {
     // Init all context
     auto init() -> void override;
 
-    auto makeInstance( const std::string surfaceExtension ) -> void;
+    auto makeInstance( const std::string& surfaceExtension ) -> void;
 
 #ifdef SURFACE_X11
     auto makeXlibSurface( Display* display, Window window ) -> void;

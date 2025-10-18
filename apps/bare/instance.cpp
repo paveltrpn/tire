@@ -58,7 +58,7 @@ static VkResult vkCreateDebugUtilsMessenger(
 
 }  // namespace
 
-void ContextBare::makeInstance( const std::string surfaceExtension ) {
+void ContextBare::makeInstance( const std::string& surfaceExtension ) {
     const auto configPtr = Config::instance();
 
     const auto applicationName = configPtr->getString( "application_name" );
