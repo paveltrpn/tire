@@ -30,7 +30,9 @@ auto RenderItem::handleWindowChanged( QQuickWindow* win ) -> void {
         connect( win, &QQuickWindow::sceneGraphInvalidated, this,
                  &RenderItem::cleanup, Qt::DirectConnection );
 
-        win->setColor( "#0c0c1c" );
+        const auto configHandle = tire::Config::instance();
+        const auto bg = configHandle->get<std::string>( "background_color" );
+        win->setColor( QColor::fromString( bg ) );
     }
 }
 

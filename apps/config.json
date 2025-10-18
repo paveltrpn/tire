@@ -7,7 +7,7 @@
   "window_height": 900,
   "window_pos_x": 100,
   "window_pos_y": 100,
-  "background_color": "navy",
+  "background_color": "#0c0c1c",
   "doublebuffer": true,
   "frame_count": 3,
   "enable_vsync": true,
