@@ -12,6 +12,7 @@
 
 auto main( int argc, char* argv[] ) -> int {
     new tire::Config{ "apps/config.json" };
+    const auto configHandle = tire::Config::instance();
 
     const QGuiApplication app( argc, argv );
 
@@ -26,13 +27,12 @@ auto main( int argc, char* argv[] ) -> int {
     // NOTE: have no effect.
     inst.setApiVersion( { 1, 2, 0 } );
 
-    inst.setLayers( { "VK_LAYER_KHRONOS_validation" } );
-
-    // inst.setExtensions({"VK_KHR_surface"});
+    if ( configHandle->get<bool>( "enable_validation_layers" ) ) {
+        inst.setLayers( { "VK_LAYER_KHRONOS_validation" } );
+    }
 
     if ( !inst.create() ) {
-        qDebug() << "bad vk instance";
-        return 1;
+        tire::log::fatal( "bad vk instance" );
     }
 
     tire::MainWindow w{};

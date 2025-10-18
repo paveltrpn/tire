@@ -7,14 +7,6 @@
 #include <vulkan/vulkan_core.h>
 #include "render/context.h"
 
-#define CONFIG_APPLAICATION_NAME "application_name"
-#define CONFIG_ENGINE_NAME "engine_name"
-#define CONFIG_ENABLE_VALIDATION_LAYERS false
-#define CONFIG_ENABLE_ADDITIONAL_VALIDATION_LAYERS false
-#define CONFIG_ENABLE_API_DUMP_VALIDATION_LAYRES false
-#define CONFIG_VERBOSE_VULKAN_OUTPUT false
-#define CONFIG_ENABLE_RAYTRACING_APPLICATIONS false
-
 namespace tire::vk {
 
 struct Pipeline;

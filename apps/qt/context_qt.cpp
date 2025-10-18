@@ -14,7 +14,7 @@ ContextQt::ContextQt( VkInstance instance, VkPhysicalDevice pDevice,
                       VkDevice device, VkSurfaceKHR surface, VkRenderPass rp,
                       uint32_t gqfi, uint32_t gqi )
     : graphicsQueueId_{ gqi } {
-    // Vulkan resources ackquired from Qt.
+    // Vulkan resources acquired from Qt.
     instance_ = instance;
     physDevice_ = pDevice;
     device_ = device;
