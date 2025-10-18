@@ -17,7 +17,9 @@ RenderItem::RenderItem( QQuickItem* parent )
 
 auto RenderItem::updatePaintNode( QSGNode* node, UpdatePaintNodeData* )
     -> QSGNode* {
-    window()->update();  // ensure getting to beforeRendering() at some point
+    // ensure getting to beforeRendering() at some point
+    window()->update();
+
     return node;
 };
 

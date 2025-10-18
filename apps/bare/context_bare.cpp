@@ -19,7 +19,17 @@ static constexpr bool DEBUG_OUTPUT_CONTEXT_CPP{ true };
 
 namespace tire::vk {
 
-void ContextBare::init() {
+static void vkDestroyDebugUtilsMessenger(
+    VkInstance instance, VkDebugUtilsMessengerEXT messanger,
+    const VkAllocationCallbacks* pAllocator ) {
+    auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
+        instance, "vkDestroyDebugUtilsMessengerEXT" );
+    if ( func != nullptr ) {
+        return func( instance, messanger, pAllocator );
+    }
+}
+
+auto ContextBare::init() -> void {
     collectPhysicalDevices();
     makeDevice();
     makeCommandPool();
@@ -39,7 +49,7 @@ void ContextBare::init() {
 }
 
 #ifdef SURFACE_X11
-void ContextBare::makeXlibSurface( Display* display, Window window ) {
+auto ContextBare::makeXlibSurface( Display* display, Window window ) -> void {
     VkXlibSurfaceCreateInfoKHR xlibSurfInfo{};
     xlibSurfInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
     xlibSurfInfo.dpy = display;
@@ -90,16 +100,6 @@ void ContextBare::makeCommandPool() {
     } else {
         log::debug<DEBUG_OUTPUT_CONTEXT_CPP>(
             "vk::CommandPool === command pool created!" );
-    }
-}
-
-static void vkDestroyDebugUtilsMessenger(
-    VkInstance instance, VkDebugUtilsMessengerEXT messanger,
-    const VkAllocationCallbacks* pAllocator ) {
-    auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
-        instance, "vkDestroyDebugUtilsMessengerEXT" );
-    if ( func != nullptr ) {
-        return func( instance, messanger, pAllocator );
     }
 }
 
