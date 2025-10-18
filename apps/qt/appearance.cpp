@@ -5,6 +5,7 @@
 #include <QString>
 
 #include "appearance.h"
+#include "log/log.h"
 
 namespace tire {
 
@@ -13,7 +14,11 @@ Appearance::Appearance( const QDir& path, QObject* parent )
     // Load color scheme.
     QFile file( path.path() + QDir::separator() +
                 "apps/qt/qml/assets/colors.json" );
-    file.open( QIODevice::ReadOnly | QIODevice::Text );
+
+    if ( !file.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
+        log::fatal( "Appearence === faild to open colors file!" );
+    }
+
     const QByteArray data = file.readAll();
 
     QJsonParseError parseError;
