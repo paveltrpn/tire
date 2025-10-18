@@ -77,7 +77,7 @@ const std::map<std::string, std::string> htmlColors{
     { "LightGray", "#D3D3D3" },
     { "Silver", "#C0C0C0" },
     { "DarkGray", "#A9A9A9" },
-    { "darkgrey", "#A9A9A9" },
+    { "DarkGrey", "#A9A9A9" },
     { "Gray", "#808080" },
     { "Grey", "#808080" },
     { "DimGray", "#696969" },
@@ -120,10 +120,25 @@ struct Color {
 
     virtual ~Color() = default;
 
-    [[nodiscard]] value_type r() const { return r_; };
-    [[nodiscard]] value_type g() const { return g_; };
-    [[nodiscard]] value_type b() const { return b_; };
-    [[nodiscard]] value_type a() const { return a_; };
+    [[nodiscard]] auto r() const -> value_type {
+        //
+        return r_;
+    };
+
+    [[nodiscard]] auto g() const -> value_type {
+        //
+        return g_;
+    };
+
+    [[nodiscard]] auto b() const -> value_type {
+        //
+        return b_;
+    };
+
+    [[nodiscard]] auto a() const -> value_type {
+        //
+        return a_;
+    };
 
 protected:
     std::array<char_type, 4> charFromHex( std::string_view letters ) {
@@ -190,8 +205,15 @@ struct Colorf final : Color<float> {
         }
     };
 
-    algebra::vector3f asVector3f() { return { r(), g(), b() }; };
-    algebra::vector4f asVector4f() { return { r(), g(), b(), a() }; }
+    [[nodiscard]]
+    auto asVector3f() const -> algebra::vector3f {
+        return { r(), g(), b() };
+    };
+
+    [[nodiscard]]
+    auto asVector4f() const -> algebra::vector4f {
+        return { r(), g(), b(), a() };
+    }
 };
 
 struct Colori final : Color<uint8_t> {

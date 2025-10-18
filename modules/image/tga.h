@@ -1,13 +1,7 @@
 
 #pragma once
 
-#include <fstream>
-#include <iostream>
-#include <cstdint>
-#include <cstdio>
-#include <string>
-
-#include "log/log.h"
+#include "image.h"
 
 namespace tire {
 
@@ -55,30 +49,16 @@ struct STGAHeader {
     uint16_t ystart;
     uint16_t width;
     uint16_t height;
-    // NITE: bit per pixel, not channels count.
+    // NOTE: bit per pixel, not channels count.
     uint8_t bits;
     uint8_t descriptor;
 };
 
-struct Tga {
+struct Tga final : Image {
     Tga( std::string_view fname );
-
-    ~Tga();
-
-    size_t widht() const;
-    size_t height() const;
-    size_t channels() const;
-    uint8_t *data() const;
-
-private:
-    void openFile( std::string_view fname );
-    void readHeader();
 
 private:
     STGAHeader _header{};
-    uint8_t *_decompressed{ nullptr };
-
-    std::ifstream _fileStream;
 };
 
 }  // namespace tire
