@@ -12,7 +12,6 @@
 #include "pipelines/test_box_shader.h"
 #include "rendervk.h"
 #include "log/log.h"
-static constexpr bool DEBUG_OUTPUT_RENDERVK_CPP{ true };
 
 namespace tire {
 

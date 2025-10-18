@@ -1,10 +1,7 @@
 
 #include <cstring>
 #include "vulkan/vk_enum_string_helper.h"
-#include "pipeline.h"
 #include "pipeline_test_box.h"
-
-#include "algebra/matrix4.h"
 
 namespace tire::vk {
 

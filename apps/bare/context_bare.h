@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <array>
+#include <string>
 
 #define SURFACE_X11
 
