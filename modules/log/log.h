@@ -2,7 +2,6 @@
 #pragma once
 
 #include <iostream>
-#include <string>
 #include <format>
 #include <source_location>
 #include <exception>
@@ -40,9 +39,10 @@ namespace tire::log {
  * inverse off      27
  **/
 
-template <bool enable = false, typename... Ts>
-void info( std::format_string<Ts...> msg, Ts &&...args ) {
-    if constexpr ( enable || ENABLE_INFO_OUTPUT ) {
+#define ENABLE_INFO_OUTPUT true
+template <bool enable = ENABLE_INFO_OUTPUT, typename... Ts>
+void info( std::format_string<Ts...> msg, Ts&&... args ) {
+    if constexpr ( enable ) {
         constexpr char preamble[] = "\033[3;32m[info] \033[0m\t\t";
         std::cout << preamble
                   << std::vformat( msg.get(), std::make_format_args( args... ) )
@@ -50,8 +50,9 @@ void info( std::format_string<Ts...> msg, Ts &&...args ) {
     }
 }
 
-template <bool enable = false, typename... Ts>
-void notice( std::format_string<Ts...> msg, Ts &&...args ) {
+#define ENABLE_NOTICE_OUTPUT true
+template <bool enable = ENABLE_NOTICE_OUTPUT, typename... Ts>
+void notice( std::format_string<Ts...> msg, Ts&&... args ) {
     if constexpr ( enable || ENABLE_NOTICE_OUTPUT ) {
         constexpr char preamble[] = "\033[3;36m[notice] \033[0m\t";
         std::cout << preamble
@@ -60,9 +61,10 @@ void notice( std::format_string<Ts...> msg, Ts &&...args ) {
     }
 }
 
-template <bool enable, typename... Ts>
-void debug( std::format_string<Ts...> msg, Ts &&...args ) {
-    if constexpr ( enable || ENABLE_DEBUG_OUTPUT ) {
+#define ENABLE_DEBUG_OUTPUT true
+template <bool enable = ENABLE_DEBUG_OUTPUT, typename... Ts>
+void debug( std::format_string<Ts...> msg, Ts&&... args ) {
+    if constexpr ( enable ) {
         constexpr char preamble[] = "\033[3;35m[debug] \033[0m\t";
         std::cout << preamble
                   << std::vformat( msg.get(), std::make_format_args( args... ) )
@@ -70,9 +72,10 @@ void debug( std::format_string<Ts...> msg, Ts &&...args ) {
     }
 }
 
-template <bool enable = false, typename... Ts>
-void warning( std::format_string<Ts...> msg, Ts &&...args ) {
-    if constexpr ( enable || ENABLE_WARNING_OUTPUT ) {
+#define ENABLE_WARNING_OUTPUT true
+template <bool enable = ENABLE_WARNING_OUTPUT, typename... Ts>
+void warning( std::format_string<Ts...> msg, Ts&&... args ) {
+    if constexpr ( enable ) {
         constexpr char preamble[] = "\033[3;33m[warning] \033[0m\t";
         std::cout << preamble
                   << std::vformat( msg.get(), std::make_format_args( args... ) )
@@ -80,9 +83,10 @@ void warning( std::format_string<Ts...> msg, Ts &&...args ) {
     }
 }
 
-template <bool enable = false, typename... Ts>
-void error( std::format_string<Ts...> msg, Ts &&...args ) {
-    if constexpr ( enable || ENABLE_ERROR_OUTPUT ) {
+#define ENABLE_ERROR_OUTPUT true
+template <bool enable = ENABLE_ERROR_OUTPUT, typename... Ts>
+void error( std::format_string<Ts...> msg, Ts&&... args ) {
+    if constexpr ( enable ) {
         constexpr char preamble[] = "\033[3;31m[error] \033[0m\t";
         std::cout << preamble
                   << std::vformat( msg.get(), std::make_format_args( args... ) )
@@ -91,7 +95,7 @@ void error( std::format_string<Ts...> msg, Ts &&...args ) {
 }
 
 template <typename... Ts>
-void fatal( std::format_string<Ts...> msg, Ts &&...args ) {
+void fatal( std::format_string<Ts...> msg, Ts&&... args ) {
     constexpr char preamble[] = "\033[3;31m[fatal] \033[0m\t";
     std::cout << preamble
               << std::vformat( msg.get(), std::make_format_args( args... ) )
