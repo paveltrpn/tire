@@ -58,37 +58,38 @@ public:
 
     Config( const Config& rhs ) = delete;
     Config( Config&& rhs ) = delete;
-    Config& operator=( const Config& rhs ) = delete;
-    Config& operator=( Config&& rhs ) = delete;
+    auto operator=( const Config& rhs ) -> Config& = delete;
+    auto operator=( Config&& rhs ) -> Config& = delete;
 
-    ~Config() = default;
+    ~Config() {
+        //
+        log::info( "Config === deleted..." );
+    }
 
-    [[nodiscard]] const std::filesystem::path& getBasePath() const {
+    [[nodiscard]] auto getBasePath() const -> const std::filesystem::path& {
         return basePath_;
     };
 
-    [[nodiscard]] std::string getString( std::string_view param ) const {
+    [[nodiscard]] auto getString( std::string_view param ) const
+        -> std::string {
         return config_[param];
     }
 
-    [[nodiscard]] int getInt( std::string_view param ) const {
+    [[nodiscard]] auto getBool( std::string_view param ) const -> bool {
         return config_[param];
     }
 
-    [[nodiscard]] bool getBool( std::string_view param ) const {
+    [[nodiscard]] auto getNumber( std::string_view param ) const -> double {
         return config_[param];
     }
 
-    [[nodiscard]] float getFloat( std::string_view param ) const {
-        return config_[param];
-    }
-
-    [[nodiscard]] nlohmann::json getJson( std::string_view param ) const {
+    [[nodiscard]] auto getJson( std::string_view param ) const
+        -> nlohmann::json {
         return config_[param];
     }
 
     template <ConfigParamType T>
-    [[nodiscard]] T get( std::string_view param, T dflt = {} ) const {
+    [[nodiscard]] auto get( std::string_view param, T dflt = {} ) const -> T {
         try {
             if ( config_.contains( param ) ) {
                 return config_[param];
@@ -107,7 +108,7 @@ public:
         }
     }
 
-    static Config* instance() {
+    static auto instance() -> Config* {
         if ( !instance_ ) {
             log::error(
                 "Config === global instance must be initialized explicitly!" );
