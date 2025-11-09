@@ -106,7 +106,7 @@ target_sources(config PRIVATE ${MOD_CONFIG_SRC})
 file(GLOB_RECURSE MOD_RENDER_SRC "modules/render/*.cpp" "modules/render/*.h")
 add_library(render)
 target_sources(render PRIVATE ${MOD_RENDER_SRC})
-target_link_libraries(render vulkan ui scene config geometry algebra event)
+target_link_libraries(render vulkan ui scene config geometry algebra event test_module)
 
 # Module image
 # ================================
@@ -140,6 +140,18 @@ add_library(io)
 file(GLOB MOD_IO_SRC "modules/io/*.cpp" "modules/io/*.h")
 target_sources(io PRIVATE ${MOD_IO_SRC})
 target_link_libraries(io uv)
+
+# ================================
+# Module test_module
+# ================================
+add_library(test_module)
+target_sources(test_module
+  PUBLIC
+    FILE_SET CXX_MODULES FILES
+    modules/test_module/test_module.cpp
+    modules/test_module/partition1.cpp
+)
+target_link_libraries(test_module)
 
 # Main apps subdirectories
 # ================================
@@ -180,6 +192,7 @@ target_link_libraries(qtvk PUBLIC
     config 
     glfw3
     uv
+    test_module
 )
 
 # Test subdirectories

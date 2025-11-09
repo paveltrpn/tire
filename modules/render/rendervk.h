@@ -13,6 +13,10 @@
 
 #define FRAMES_IN_FLIGHT_COUNT 2
 
+#ifndef Q_MOC_RUN
+import test_module;
+#endif
+
 namespace tire {
 
 struct RenderVK final {
@@ -74,6 +78,8 @@ private:
     unsigned int holdMouseY_{ 500 };
 
     float angle_;
+
+    PartitionOneObject* bar;
 };
 
 }  // namespace tire

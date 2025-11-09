@@ -16,6 +16,10 @@
 namespace tire {
 
 auto RenderVK::init( vk::Context* context ) -> void {
+    PartitionOneObject foo{};
+
+    bar = new PartitionOneObject{};
+
     context_ = context;
     try {
         const auto configHandle = Config::instance();
