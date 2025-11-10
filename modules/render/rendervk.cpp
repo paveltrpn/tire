@@ -12,14 +12,13 @@
 #include "pipelines/test_box_shader.h"
 #include "rendervk.h"
 #include "log/log.h"
+#include "algebra/matrix4.h"
+
+import scene;
 
 namespace tire {
 
 auto RenderVK::init( vk::Context* context ) -> void {
-    PartitionOneObject foo{};
-
-    bar = new PartitionOneObject{};
-
     context_ = context;
     try {
         const auto configHandle = Config::instance();
@@ -49,8 +48,8 @@ auto RenderVK::init( vk::Context* context ) -> void {
 }
 
 void RenderVK::scene( const std::filesystem::path& path ) {
-    scene_ = std::make_shared<vk::Scene>( path, context_,
-                                          piplineVertexBuffer_.get() );
+    scene_ =
+        std::make_shared<SceneVK>( path, context_, piplineVertexBuffer_.get() );
 }
 
 void RenderVK::setSwapInterval( int interval ) {

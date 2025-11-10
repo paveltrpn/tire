@@ -4,6 +4,8 @@
 
 #include "rendervk.h"
 
+import scene;
+
 namespace tire {
 
 void RenderVK::preLoop() {
@@ -47,7 +49,7 @@ void RenderVK::frame( VkCommandBuffer cb ) {
                             { .width = width, .height = height } };
     vkCmdSetScissor( cb, 0, 1, &scissor );
 
-    auto handle = static_cast<vk::Scene*>( scene_.get() );
+    auto handle = static_cast<SceneVK*>( scene_.get() );
     handle->output( cb );
     // drawTestCube( cb );
 };

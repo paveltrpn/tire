@@ -95,6 +95,15 @@ void ContextBare::makeInstance( const std::string& surfaceExtension ) {
     } else {
         log::info( "vk::Instance === layer properties acquired" );
     }
+    /*
+    // Layers optimal order:
+    // <a href='https://vulkan.lunarg.com/doc/view/1.0.13.0/windows/layers.html'/>
+    val layers = arrayOf(
+        "VK_LAYER_GOOGLE_threading", "VK_LAYER_LUNARG_parameter_validation",
+        "VK_LAYER_LUNARG_object_tracker", "VK_LAYER_LUNARG_core_validation",
+        "VK_LAYER_GOOGLE_unique_objects",
+        "VK_LAYER_LUNARG_standard_validation" )
+        */
 
     // Vulkan vlidation layers list to enable
     if ( configPtr->get<bool>( "enable_validation_layers" ) ) {

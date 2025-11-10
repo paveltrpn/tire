@@ -5,19 +5,15 @@
 #include <vulkan/vulkan_core.h>
 
 #include "pipelines/pipeline.h"
-#include "buffers/vertex_buffer.h"
 
 #include "timer.h"
 #include "context.h"
-#include "scene.h"
 
 #define FRAMES_IN_FLIGHT_COUNT 2
 
-#ifndef Q_MOC_RUN
-import test_module;
-#endif
-
 namespace tire {
+
+struct SceneVK;
 
 struct RenderVK final {
     RenderVK() = default;
@@ -69,7 +65,7 @@ private:
     std::unique_ptr<vk::Pipeline> piplineTestBox_{};
 
     // The Scene
-    std::shared_ptr<Scene> scene_{};
+    std::shared_ptr<SceneVK> scene_{};
 
     Timer timer_{};
 
@@ -78,8 +74,6 @@ private:
     unsigned int holdMouseY_{ 500 };
 
     float angle_;
-
-    PartitionOneObject* bar;
 };
 
 }  // namespace tire

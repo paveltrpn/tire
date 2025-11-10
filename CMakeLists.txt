@@ -75,6 +75,7 @@ find_package(Qt6 ${QT_VERSION} COMPONENTS
     Qml
 )
 
+# ================================
 # Module log
 # ================================
 file(GLOB MOD_LOG_SRC "modules/log/*.cpp" "modules/log/*.h")
@@ -82,6 +83,7 @@ add_library(log)
 target_sources(log PRIVATE ${MOD_LOG_SRC})
 set_target_properties(log PROPERTIES LINKER_LANGUAGE CXX)
 
+# ================================
 # Module algebra
 # ================================
 file(GLOB MOD_ALGEBRA_SRC "modules/algebra/*.cpp" "modules/algebra/*.h")
@@ -89,31 +91,36 @@ add_library(algebra)
 target_sources(algebra PRIVATE ${MOD_ALGEBRA_SRC})
 set_target_properties(algebra PROPERTIES LINKER_LANGUAGE CXX)
 
+# ================================
 # Module ui
 # ================================
 file(GLOB MOD_UI_SRC "modules/ui/*.cpp" "modules/ui/*.h")
 add_library(ui)
 target_sources(ui PRIVATE ${MOD_UI_SRC})
 
+# ================================
 # Module config
 # ================================
 file(GLOB MOD_CONFIG_SRC "modules/config/*.cpp" "modules/config/*.h")
 add_library(config)
 target_sources(config PRIVATE ${MOD_CONFIG_SRC})
 
+# ================================
 # Module render
 # ================================
 file(GLOB_RECURSE MOD_RENDER_SRC "modules/render/*.cpp" "modules/render/*.h")
 add_library(render)
 target_sources(render PRIVATE ${MOD_RENDER_SRC})
-target_link_libraries(render vulkan ui scene config geometry algebra event test_module)
+target_link_libraries(render vulkan ui scene config geometry algebra event)
 
+# ================================
 # Module image
 # ================================
 file(GLOB MOD_IMAGE_SRC "modules/image/*.cpp" "modules/image/*.h")
 add_library(image)
 target_sources(image PRIVATE ${MOD_IMAGE_SRC})
 
+# ================================
 # Module geometry
 # ================================
 file(GLOB MOD_GEOMETRY_SRC "modules/geometry/*.cpp" "modules/geometry/*.h")
@@ -121,19 +128,26 @@ add_library(geometry)
 target_sources(geometry PRIVATE ${MOD_GEOMETRY_SRC})
 target_link_libraries(geometry algebra)
 
+# ================================
 # Module wavefront
 # ================================
 file(GLOB MOD_WAVEFRONT_SRC "modules/wavefront/*.cpp" "modules/wavefront/*.h")
 add_library(wavefront)
 target_sources(wavefront PRIVATE ${MOD_WAVEFRONT_SRC})
 
+# ================================
 # Module scene
 # ================================
-file(GLOB MOD_SCENE_SRC "modules/scene/*.cpp" "modules/scene/*.h")
+file(GLOB MOD_SCENE_SRC "modules/scene/*.cpp")
 add_library(scene)
-target_sources(scene PRIVATE ${MOD_SCENE_SRC})
-target_link_libraries(scene config image algebra geometry wavefront)
+target_sources(scene
+  PUBLIC
+    FILE_SET CXX_MODULES FILES
+    ${MOD_SCENE_SRC}
+)
+target_link_libraries(scene config image algebra geometry wavefront render)
 
+# ================================
 # Module io
 # ================================
 add_library(io)
@@ -142,17 +156,6 @@ target_sources(io PRIVATE ${MOD_IO_SRC})
 target_link_libraries(io uv)
 
 # ================================
-# Module test_module
-# ================================
-add_library(test_module)
-target_sources(test_module
-  PUBLIC
-    FILE_SET CXX_MODULES FILES
-    modules/test_module/test_module.cpp
-    modules/test_module/partition1.cpp
-)
-target_link_libraries(test_module)
-
 # Main apps subdirectories
 # ================================
 add_executable(barevk)
@@ -192,7 +195,6 @@ target_link_libraries(qtvk PUBLIC
     config 
     glfw3
     uv
-    test_module
 )
 
 # Test subdirectories
