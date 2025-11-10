@@ -5,7 +5,7 @@
 #include "context.h"
 #include "log/log.h"
 
-namespace tire::vk {
+namespace tire {
 
 auto Context::memoryRequirements( uint32_t typeFilter,
                                   VkMemoryPropertyFlags properties ) const
@@ -51,4 +51,4 @@ auto Context::findSupportedFormat( const std::vector<VkFormat>& candidates,
     return {};
 }
 
-}  // namespace tire::vk
+}  // namespace tire

@@ -10,7 +10,7 @@ static constexpr bool DEBUG_OUTPUT_DEVICE_CPP{ true };
 #include "context_bare.h"
 #include "config/config.h"
 
-namespace tire::vk {
+namespace tire {
 
 void ContextBare::collectPhysicalDevices() {
     uint32_t devCount{};
@@ -405,4 +405,4 @@ void ContextBare::makeDevice() {
         string_VkPresentModeKHR( presentMode_ ) );
 }
 
-}  // namespace tire::vk
+}  // namespace tire

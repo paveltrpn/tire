@@ -17,7 +17,7 @@
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_CONTEXT_CPP{ true };
 
-namespace tire::vk {
+namespace tire {
 
 static void vkDestroyDebugUtilsMessenger(
     VkInstance instance, VkDebugUtilsMessengerEXT messanger,
@@ -211,4 +211,4 @@ auto ContextBare::initRenderPass() -> void {
     }
 }
 
-}  // namespace tire::vk
+}  // namespace tire

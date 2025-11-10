@@ -6,10 +6,12 @@
 
 #include <vulkan/vulkan.h>
 
-#include "render/rendervk.h"
 #include "context_qt.h"
+#include "log/log.h"
 
 namespace tire {
+
+struct RenderVK;
 
 // QQuickItem component, responsible for render scene.
 // Drawed at forground of main window. Spawn in main.qml
@@ -77,8 +79,8 @@ private:
     QRhi* rhiHandle{};
 
     // Custom render.
-    std::unique_ptr<vk::ContextQt> context_{ nullptr };
-    std::unique_ptr<RenderVK> render_{ nullptr };
+    std::unique_ptr<ContextQt> context_{ nullptr };
+    RenderVK* render_{ nullptr };
 };
 
 }  // namespace tire

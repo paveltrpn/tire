@@ -5,7 +5,7 @@
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 
-namespace tire::vk {
+namespace tire {
 
 struct Context {
     Context() = default;
@@ -87,4 +87,4 @@ protected:
     uint32_t height_{};
 };
 
-}  // namespace tire::vk
+}  // namespace tire

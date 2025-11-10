@@ -116,9 +116,12 @@ target_link_libraries(context vulkan config)
 # ================================
 # Module render
 # ================================
-file(GLOB_RECURSE MOD_RENDER_SRC "modules/render/*.cpp" "modules/render/*.h")
+file(GLOB_RECURSE MOD_RENDER_SRC "modules/render/*.cpp")
 add_library(render)
-target_sources(render PRIVATE ${MOD_RENDER_SRC})
+target_sources(render PUBLIC
+    FILE_SET
+      CXX_MODULES FILES
+      ${MOD_RENDER_SRC})
 target_link_libraries(render vulkan context ui scene config geometry algebra event)
 
 # ================================
@@ -144,7 +147,7 @@ add_library(wavefront)
 target_sources(wavefront PRIVATE ${MOD_WAVEFRONT_SRC})
 
 # ================================
-# Module scene (c++20 module)
+# Module scene
 # ================================
 file(GLOB MOD_SCENE_SRC "modules/scene/*.cpp")
 add_library(scene)
@@ -153,7 +156,7 @@ target_sources(scene
     FILE_SET CXX_MODULES FILES
     ${MOD_SCENE_SRC}
 )
-target_link_libraries(scene config image algebra geometry wavefront render)
+target_link_libraries(scene config image algebra geometry wavefront)
 
 # ================================
 # Module io

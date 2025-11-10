@@ -1,6 +1,5 @@
 
 #include <format>
-#include <iostream>
 
 #include <QApplication>
 #include <QObject>
@@ -13,6 +12,8 @@
 #include "config/config.h"
 #include "log/log.h"
 #include "window.h"
+
+import render;
 
 namespace tire {
 

@@ -9,7 +9,7 @@ static constexpr bool DEBUG_OUTPUT_INSTANCE_CPP{ true };
 
 #include "config/config.h"
 
-namespace tire::vk {
+namespace tire {
 
 #define STRING_RESET "\033[0m"
 #define STRING_INFO "\033[37m"
@@ -272,4 +272,4 @@ void ContextBare::makeInstance( const std::string& surfaceExtension ) {
         }
     }
 }
-}  // namespace tire::vk
+}  // namespace tire

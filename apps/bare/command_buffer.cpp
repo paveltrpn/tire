@@ -9,7 +9,7 @@
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_COMMAND_BUFFER_CPP{ true };
 
-namespace tire::vk {
+namespace tire {
 
 auto ContextBare::renderCommandBegin( uint32_t frameId ) -> void {
     const auto [iaSem, rfSem, ifFnc, cb] = getFrameSyncSet( frameId );
@@ -111,4 +111,4 @@ auto ContextBare::renderCommandEnd( uint32_t frameId ) -> void {
     }
 }
 
-}  // namespace tire::vk
+}  // namespace tire

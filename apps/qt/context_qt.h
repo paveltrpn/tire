@@ -7,7 +7,7 @@
 #include <vulkan/vulkan_core.h>
 #include "context/context.h"
 
-namespace tire::vk {
+namespace tire {
 
 struct Pipeline;
 
@@ -62,4 +62,4 @@ private:
     uint32_t graphicsQueueId_{};
 };
 
-}  // namespace tire::vk
+}  // namespace tire

@@ -1,9 +1,16 @@
 
+module;
+
+#include <vulkan/vulkan.h>
+#include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "texture_image.h"
+export module render:texture_image;
 
-#include "log/log.h"
-static constexpr bool DEBUG_OUTPUT_TEXTURE_IMAGE_CPP{ true };
+namespace tire::vk {
 
-namespace tire::vk {}
+struct TextureImage final {
+private:
+};
+
+}  // namespace tire::vk

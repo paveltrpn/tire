@@ -6,4 +6,3 @@ export import :flycam;
 export import :mesh;
 export import :light;
 export import :scene;
-export import :scenevk;

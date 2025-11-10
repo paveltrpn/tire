@@ -6,6 +6,8 @@
 #include "config/config.h"
 #include "render_item.h"
 
+import render;
+
 namespace tire {
 
 RenderItem::RenderItem( QQuickItem* parent )
@@ -106,8 +108,8 @@ auto RenderItem::beforeRendering() -> void {
             *reinterpret_cast<uint32_t*>( renderInterface_->getResource(
                 window_, QSGRendererInterface::GraphicsQueueIndexResource ) );
 
-        context_ = std::make_unique<vk::ContextQt>( inst->vkInstance(), physDev,
-                                                    dev, sface, rp, gqfi, gqi );
+        context_ = std::make_unique<ContextQt>( inst->vkInstance(), physDev,
+                                                dev, sface, rp, gqfi, gqi );
         context_->init();
 
         emit contextinitialized();
@@ -154,7 +156,8 @@ auto RenderItem::sync() -> void {
             qDebug() << "RenderItem === bad qquickitem render interface...";
         }
 
-        render_ = std::make_unique<tire::RenderVK>();
+        // NOTE: DO PROPER DELETE!!!
+        render_ = new tire::RenderVK{};
 
         // Initializing resources is done before starting to record the
         // renderpass, regardless of wanting an underlay or overlay.

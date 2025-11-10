@@ -8,7 +8,7 @@
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_CONTEXT_CPP{ true };
 
-namespace tire::vk {
+namespace tire {
 
 ContextQt::ContextQt( VkInstance instance, VkPhysicalDevice pDevice,
                       VkDevice device, VkSurfaceKHR surface, VkRenderPass rp,
@@ -125,4 +125,4 @@ auto ContextQt::querySurface() -> void {
 ContextQt::~ContextQt() {
 }
 
-}  // namespace tire::vk
+}  // namespace tire

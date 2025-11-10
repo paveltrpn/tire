@@ -4,6 +4,10 @@
 
 #include <GLFW/glfw3.h>
 
+#include <vulkan/vulkan.h>
+#include <vulkan/vulkan_core.h>
+#include <vulkan/vk_enum_string_helper.h>
+
 #include "window.h"
 
 #ifdef SURFACE_X11
@@ -17,6 +21,8 @@
 
 #include "config/config.h"
 #include "log/log.h"
+
+import render;
 
 BareWindow::BareWindow() {
     if ( glfwInit() != GLFW_TRUE ) {
@@ -101,7 +107,7 @@ BareWindow::BareWindow() {
             tire::log::info( "glfw platform X11 is used!" );
 
 #ifdef SURFACE_X11
-            context_ = std::make_unique<tire::vk::ContextBare>(
+            context_ = std::make_unique<tire::ContextBare>(
                 /*"VK_KHR_xlib_surface"*/ );
 
             context_->makeInstance( "VK_KHR_xlib_surface" );

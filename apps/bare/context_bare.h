@@ -16,7 +16,7 @@
 
 #include "context/context.h"
 
-namespace tire::vk {
+namespace tire {
 
 struct ContextBare final : Context {
     ContextBare() = default;
@@ -132,4 +132,4 @@ private:
     VkImageView depthImageView_;
 };
 
-}  // namespace tire::vk
+}  // namespace tire

@@ -1,6 +1,12 @@
 
-#include <vulkan/vk_enum_string_helper.h>
+module;
 
-#include "plain_buffer.h"
+export module render:plain_buffer;
 
-namespace tire::vk {}
+namespace tire::vk {
+
+struct PlainBuffer final {
+private:
+};
+
+}  // namespace tire::vk

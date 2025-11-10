@@ -1,9 +1,16 @@
 
+module;
+
+#include <vulkan/vulkan.h>
+#include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "plain_image.h"
+export module render:plain_image;
 
-#include "log/log.h"
-static constexpr bool DEBUG_OUTPUT_PLAIN_IMAGE_CPP{ true };
+namespace tire {
 
-namespace tire::vk {}
+struct PlainImage final {
+private:
+};
+
+}  // namespace tire

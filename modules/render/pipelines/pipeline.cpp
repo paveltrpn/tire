@@ -1,19 +1,58 @@
 
+module;
+
+#include <vulkan/vulkan.h>
+#include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
-#include "vulkan/vulkan_core.h"
 
-#include "pipeline.h"
+#include "context/context.h"
 
-namespace tire::vk {
+export module render:pipeline;
 
-Pipeline::Pipeline( const vk::Context* context )
-    : context_{ context } {
-}
+import :program;
 
-Pipeline::~Pipeline() {
-    vkDestroyPipelineLayout( context_->device(), layout_, nullptr );
-    vkDestroyRenderPass( context_->device(), renderPass_, nullptr );
-    vkDestroyPipeline( context_->device(), pipeline_, nullptr );
-}
+namespace tire {
 
-}  // namespace tire::vk
+struct Pipeline {
+    Pipeline( const Context* context )
+        : context_{ context } {}
+
+    Pipeline( const Pipeline& other ) = delete;
+    Pipeline( Pipeline&& other ) = delete;
+    auto operator=( const Pipeline& other ) -> Pipeline& = delete;
+    auto operator=( Pipeline&& other ) -> Pipeline& = delete;
+
+    virtual ~Pipeline() {
+        vkDestroyPipelineLayout( context_->device(), layout_, nullptr );
+        vkDestroyRenderPass( context_->device(), renderPass_, nullptr );
+        vkDestroyPipeline( context_->device(), pipeline_, nullptr );
+    }
+
+    [[nodiscard]] auto pipeline() const -> VkPipeline {
+        //
+        return pipeline_;
+    };
+
+    [[nodiscard]] auto layout() const -> VkPipelineLayout {
+        //
+        return layout_;
+    };
+
+    [[nodiscard]] auto renderpass() const -> VkRenderPass {
+        //
+        return renderPass_;
+    }
+
+    virtual auto buildPipeline( const Program& program ) -> void = 0;
+
+protected:
+    const Context* context_;
+
+    VkPipeline pipeline_{ VK_NULL_HANDLE };
+    VkPipelineLayout layout_{ VK_NULL_HANDLE };
+    VkRenderPass renderPass_{ VK_NULL_HANDLE };
+
+    std::vector<VkPipelineShaderStageCreateInfo> shaderStages_{};
+};
+
+}  // namespace tire

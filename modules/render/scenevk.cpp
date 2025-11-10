@@ -7,19 +7,20 @@ module;
 #include "vulkan/vulkan_core.h"
 
 #include "context/context.h"
-#include "render/pipelines/pipeline.h"
-#include "render/buffers/vertex_buffer.h"
 #include "algebra/matrix4.h"
 
-export module scene:scenevk;
+export module render:scenevk;
 
-import :scene;
+import scene;
+
+import :pipeline;
+import :vertex_buffer;
 
 namespace tire {
 
 export struct SceneVK final : tire::Scene {
-    SceneVK( const std::filesystem::path& fname, const vk::Context* context,
-             const vk::Pipeline* pipeline )
+    SceneVK( const std::filesystem::path& fname, const Context* context,
+             const Pipeline* pipeline )
         : tire::Scene{ fname }
         , context_{ context }
         , pipeline_{ pipeline } {
@@ -27,7 +28,7 @@ export struct SceneVK final : tire::Scene {
         const auto nodeListSize = bodyList_.size();
         vertBuffersList_.reserve( nodeListSize );
         for ( size_t i{}; i < nodeListSize; ++i ) {
-            auto buf = std::make_shared<vk::VertexBuffer>(
+            auto buf = std::make_shared<VertexBuffer>(
                 context_, bodyList_[i]->verteciesCount() );
             vertBuffersList_.push_back( std::move( buf ) );
         }
@@ -35,7 +36,7 @@ export struct SceneVK final : tire::Scene {
         // Create vulkan "normal buffers"
         nrmlBuffersList_.reserve( nodeListSize );
         for ( size_t i{}; i < nodeListSize; ++i ) {
-            auto buf = std::make_shared<vk::VertexBuffer>(
+            auto buf = std::make_shared<VertexBuffer>(
                 context_, bodyList_[i]->verteciesCount() );
             nrmlBuffersList_.push_back( std::move( buf ) );
         }
@@ -98,11 +99,11 @@ export struct SceneVK final : tire::Scene {
     }
 
 private:
-    const vk::Context* context_;
-    const vk::Pipeline* pipeline_;
+    const Context* context_;
+    const Pipeline* pipeline_;
 
-    std::vector<std::shared_ptr<vk::VertexBuffer>> vertBuffersList_;
-    std::vector<std::shared_ptr<vk::VertexBuffer>> nrmlBuffersList_;
+    std::vector<std::shared_ptr<VertexBuffer>> vertBuffersList_;
+    std::vector<std::shared_ptr<VertexBuffer>> nrmlBuffersList_;
 };
 
 }  // namespace tire

@@ -1,12 +1,15 @@
 
 #pragma once
 
+#include <memory>
+
 #include <GLFW/glfw3.h>
 
-#include <vulkan/vulkan.h>
-
 #include "context_bare.h"
-#include "render/rendervk.h"
+
+namespace tire {
+struct RenderVK;
+}
 
 struct BareWindow final {
     BareWindow();
@@ -33,7 +36,7 @@ private:
     int height_{ 1024 };
 
     // Render related
-    std::unique_ptr<tire::vk::ContextBare> context_;
+    std::unique_ptr<tire::ContextBare> context_;
     std::unique_ptr<tire::RenderVK> render_;
 
     uint32_t currentFrame_{ 0 };

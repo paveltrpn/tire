@@ -9,7 +9,7 @@ static constexpr bool DEBUG_OUTPUT_SWAPCHAIN_CPP{ true };
 #include "config/config.h"
 #include "context_bare.h"
 
-namespace tire::vk {
+namespace tire {
 
 namespace {
 
@@ -425,4 +425,4 @@ void ContextBare::makeFrames() {
     }
 }
 
-}  // namespace tire::vk
+}  // namespace tire
