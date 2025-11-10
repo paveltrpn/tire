@@ -2,12 +2,11 @@
 module;
 
 #include <cstring>
+#include <format>
+
 #include <vulkan/vulkan.h>
 #include <vulkan/vk_enum_string_helper.h>
 #include <vulkan/vulkan_core.h>
-
-#include "log/log.h"
-static constexpr bool DEBUG_OUTPUT_VERTEX_BUFFER_H{ true };
 
 #include "context/context.h"
 
@@ -54,7 +53,7 @@ struct VertexBuffer final {
         vkBindBufferMemory( context_->device(), buffer_, bufferMemory_, 0 );
     }
 
-    void populate( const void* data ) {
+    auto populate( const void* data ) -> void {
         void* mapAddress;
         vkMapMemory( context_->device(), bufferMemory_, 0,
                      sizeof( value_type ) * verteciesCount_ * 3, 0,
@@ -64,22 +63,25 @@ struct VertexBuffer final {
         vkUnmapMemory( context_->device(), bufferMemory_ );
     }
 
-    VkBuffer buffer() {
-        // /
+    [[nodiscard]]
+    auto buffer() const -> VkBuffer {
+        //
         return buffer_;
     };
 
-    VkDeviceMemory bufferMemory() {
+    [[nodiscard]]
+    auto bufferMemory() const -> VkDeviceMemory {
         //
         return bufferMemory_;
     };
 
-    size_t verteciesCount() {
+    [[nodiscard]]
+    auto verteciesCount() -> size_t {
         //
         return verteciesCount_;
     }
 
-    void clean() {
+    auto clean() -> void {
         vkDestroyBuffer( context_->device(), buffer_, nullptr );
         vkFreeMemory( context_->device(), bufferMemory_, nullptr );
     }
