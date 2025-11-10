@@ -3,7 +3,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "../context.h"
+#include "context/context.h"
 #include "program.h"
 
 namespace tire::vk {

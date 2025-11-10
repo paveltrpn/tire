@@ -6,7 +6,7 @@
 #include <span>
 #include <vulkan/vulkan.h>
 
-#include "../context.h"
+#include "context/context.h"
 #include "log/log.h"
 
 namespace tire::vk {
@@ -120,7 +120,8 @@ struct Program final {
 
     // Return shader vulkan module
     template <ShaderStageType Stage>
-    requires ShaderStage<Stage> [[nodiscard]] VkShaderModule get() const {
+        requires ShaderStage<Stage>
+    [[nodiscard]] VkShaderModule get() const {
         // We sure that "std::map<>::at() return proper value because
         // of concept keep invariant
         const std::string suffix = StagesSuffixMap.at( Stage );

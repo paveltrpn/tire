@@ -4,10 +4,11 @@
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 
+#include "context/context.h"
 #include "pipelines/pipeline.h"
 
 #include "timer.h"
-#include "context.h"
+#include "context/context.h"
 
 #define FRAMES_IN_FLIGHT_COUNT 2
 

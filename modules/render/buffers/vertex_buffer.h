@@ -9,7 +9,7 @@
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_VERTEX_BUFFER_H{ true };
 
-#include "../context.h"
+#include "context/context.h"
 
 namespace tire::vk {
 

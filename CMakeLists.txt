@@ -106,12 +106,20 @@ add_library(config)
 target_sources(config PRIVATE ${MOD_CONFIG_SRC})
 
 # ================================
+# Module context
+# ================================
+file(GLOB_RECURSE MOD_CONTEXT_SRC "modules/context/*.cpp" "modules/context/*.h")
+add_library(context)
+target_sources(context PRIVATE ${MOD_CONTEXT_SRC})
+target_link_libraries(context vulkan config)
+
+# ================================
 # Module render
 # ================================
 file(GLOB_RECURSE MOD_RENDER_SRC "modules/render/*.cpp" "modules/render/*.h")
 add_library(render)
 target_sources(render PRIVATE ${MOD_RENDER_SRC})
-target_link_libraries(render vulkan ui scene config geometry algebra event)
+target_link_libraries(render vulkan context ui scene config geometry algebra event)
 
 # ================================
 # Module image
@@ -161,7 +169,8 @@ target_link_libraries(io uv)
 add_executable(barevk)
 file(GLOB_RECURSE EXE_BAREVK_SRC "apps/bare/*.cpp" "apps/bare/*.h")
 target_sources(barevk PRIVATE ${EXE_BAREVK_SRC})
-target_link_libraries(barevk PUBLIC 
+target_link_libraries(barevk PUBLIC
+    context 
     log 
     algebra 
     scene 
@@ -189,6 +198,7 @@ target_link_libraries(qtvk PUBLIC
     Qt::QuickWidgets
     Qt::QuickControls2
     Qt::Qml
+    context
     log 
     algebra 
     scene 
