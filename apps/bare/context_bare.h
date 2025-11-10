@@ -18,8 +18,6 @@
 
 namespace tire::vk {
 
-struct Pipeline;
-
 struct ContextBare final : Context {
     ContextBare() = default;
     ~ContextBare();
