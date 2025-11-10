@@ -54,7 +54,7 @@ struct VertexBuffer final {
     }
 
     auto populate( const void* data ) -> void {
-        void* mapAddress;
+        void* mapAddress{};
         vkMapMemory( context_->device(), bufferMemory_, 0,
                      sizeof( value_type ) * verteciesCount_ * 3, 0,
                      &mapAddress );

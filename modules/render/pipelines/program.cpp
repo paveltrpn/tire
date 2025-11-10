@@ -238,7 +238,7 @@ struct Program final {
     }
 
     [[nodiscard]] VkShaderModule get( const std::string& name ) {
-        VkShaderModule module;
+        VkShaderModule module{};
         try {
             module = modules_.at( name );
         } catch ( std::out_of_range& e ) {
@@ -251,7 +251,7 @@ struct Program final {
     // Return shader vulkan module
     template <ShaderStageType Stage>
         requires ShaderStage<Stage>
-    [[nodiscard]] VkShaderModule get() const {
+    [[nodiscard]] auto get() const -> VkShaderModule {
         // We sure that "std::map<>::at() return proper value because
         // of concept keep invariant
         const std::string suffix = StagesSuffixMap.at( Stage );
