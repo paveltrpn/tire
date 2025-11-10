@@ -136,7 +136,7 @@ add_library(wavefront)
 target_sources(wavefront PRIVATE ${MOD_WAVEFRONT_SRC})
 
 # ================================
-# Module scene
+# Module scene (c++20 module)
 # ================================
 file(GLOB MOD_SCENE_SRC "modules/scene/*.cpp")
 add_library(scene)

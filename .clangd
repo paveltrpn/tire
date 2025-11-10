@@ -51,5 +51,7 @@ Diagnostics:
 #   - "misc-use-anonymous-namespace"
     - "modernize-avoid-c-arrays"
     - "cppcoreguidelines-non-private-member-variables-in-classes"
+    - "cppcoreguidelines-pro-bounds-array-to-pointer-decay"
+    - "cppcoreguidelines-avoid-c-arrays"
     CheckOptions:
       readability-identifier-naming.VariableCase: CamelCase
