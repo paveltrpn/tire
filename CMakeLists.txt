@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.31)
 
-#set(USE_CLANG ON)
+set(USE_CLANG ON)
 #set(USE_SYSTEM_GCC ON)
-set(USE_LATEST_GCC ON)
+#set(USE_LATEST_GCC ON)
 
 # Choose compiler toolchain.
 if (USE_CLANG)
@@ -119,15 +119,20 @@ add_library(render)
 target_sources(render PUBLIC
     FILE_SET
       CXX_MODULES FILES
-      ${MOD_RENDER_SRC})
+      ${MOD_RENDER_SRC}
+)
 target_link_libraries(render vulkan context ui scene config geometry algebra event)
 
 # ================================
 # Module image
 # ================================
-file(GLOB MOD_IMAGE_SRC "modules/image/*.cpp" "modules/image/*.h")
+file(GLOB MOD_IMAGE_SRC "modules/image/*.cpp")
 add_library(image)
-target_sources(image PRIVATE ${MOD_IMAGE_SRC})
+target_sources(image PUBLIC
+    FILE_SET
+      CXX_MODULES FILES
+      ${MOD_IMAGE_SRC}
+)
 
 # ================================
 # Module geometry

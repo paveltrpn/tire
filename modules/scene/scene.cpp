@@ -8,11 +8,12 @@ module;
 
 #include "log/log.h"
 #include "nlohmann/json.hpp"
-#include "image/color.h"
 #include "config/config.h"
 #include "geometry/polytope.h"
 
 export module scene:scene;
+
+import image;
 
 import :mesh;
 import :body;

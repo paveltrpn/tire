@@ -13,9 +13,10 @@
 
 #include "config/config.h"
 #include "context_bare.h"
-#include "image/color.h"
 #include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_CONTEXT_CPP{ true };
+
+import image;
 
 namespace tire {
 

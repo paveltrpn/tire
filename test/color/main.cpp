@@ -3,9 +3,9 @@
 
 #include "log/log.h"
 
-#include "image/color.h"
+import image;
 
-int main( int argc, char **argv ) {
+int main( int argc, char** argv ) {
     try {
         tire::Colori silver{ "silver" };
         tire::log::debug<true>( "silver r = {}; g = {}; b = {}; a = {}",
@@ -31,7 +31,7 @@ int main( int argc, char **argv ) {
         tire::log::debug<true>( "deepskybluei r = {}; g = {}; b = {}; a = {}",
                                 deepskyblue.r(), deepskyblue.g(),
                                 deepskyblue.b(), deepskyblue.a() );
-    } catch ( const std::runtime_error &e ) {
+    } catch ( const std::runtime_error& e ) {
         tire::log::error( "catch exception: {}", e.what() );
         return 0;
     }

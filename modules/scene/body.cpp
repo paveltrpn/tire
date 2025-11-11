@@ -8,9 +8,10 @@ module;
 #include "geometry/bounding_volumes.h"
 #include "algebra/vector2.h"
 #include "algebra/vector3.h"
-#include "image/color.h"
 
 export module scene:body;
+
+import image;
 
 namespace tire {
 
