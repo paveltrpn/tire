@@ -14,7 +14,6 @@ module;
 
 #include "context/context.h"
 #include "log/log.h"
-static constexpr bool DEBUG_OUTPUT_SHADER_STORAGE_VK_CPP{ true };
 
 export module render:program;
 
@@ -284,8 +283,7 @@ struct Program final {
 
     void list() {
         for ( const auto& key : modules_ ) {
-            log::debug<DEBUG_OUTPUT_SHADER_STORAGE_VK_CPP>(
-                "available shader module: \"{}\"", std::get<0>( key ) );
+            log::debug( "available shader module: \"{}\"", std::get<0>( key ) );
         }
     }
 
@@ -297,7 +295,7 @@ private:
         createInfo.codeSize = bytecode.size();
         createInfo.pCode = reinterpret_cast<const uint32_t*>( bytecode.data() );
 
-        VkShaderModule module;
+        VkShaderModule module{};
         if ( const auto err = vkCreateShaderModule(
                  context_->device(), &createInfo, nullptr, &module );
              err != VK_SUCCESS ) {
@@ -305,8 +303,8 @@ private:
                 std::format( "failed to create shader module {} with code {}!",
                              name, string_VkResult( err ) ) );
         } else {
-            log::debug<DEBUG_OUTPUT_SHADER_STORAGE_VK_CPP>(
-                "vk::ShaderStorage == shader module {} created!", name );
+            log::debug( "vk::ShaderStorage == shader module {} created!",
+                        name );
         }
 
         modules_[name] = module;
