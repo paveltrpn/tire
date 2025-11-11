@@ -18,26 +18,31 @@ namespace tire {
 export enum class IMAGE_DEPTH { RGB = 24, RGBA = 32 };
 
 export struct Image {
+    [[nodiscard]]
     auto bpp() const -> int {
         //
         return bpp_;
     };
 
+    [[nodiscard]]
     auto width() const -> int {
         //
         return width_;
     };
 
+    [[nodiscard]]
     auto height() const -> int {
         //
         return height_;
     };
 
+    [[nodiscard]]
     auto data() const -> uint8_t* {
         //
         return data_;
     };
 
+    [[nodiscard]]
     auto asPPM() const -> std::string {
         auto stream = std::stringstream{};
         const auto components = bpp_ / 8;
@@ -64,6 +69,7 @@ export struct Image {
      * @brief Base class exports as simple PPM format encoded
      * as base64 string.
      */
+    [[nodiscard]]
     virtual auto asBase64() const -> std::string {
         //
         return {};
@@ -131,19 +137,19 @@ protected:
                    data_ );
     }
 
-    explicit Image( Image&& other ) {
+    explicit Image( Image&& other ) noexcept {
         bpp_ = std::exchange( other.bpp_, 0 );
         width_ = std::exchange( other.width_, 0 );
         height_ = std::exchange( other.height_, 0 );
         data_ = std::exchange( other.data_, nullptr );
     }
 
-    Image& operator=( const Image& other ) noexcept {
+    auto operator=( const Image& other ) noexcept -> Image& {
         Image{ other }.swap( *this );
         return *this;
     }
 
-    Image& operator=( Image&& other ) noexcept {
+    auto operator=( Image&& other ) noexcept -> Image& {
         Image{ std::move( other ) }.swap( *this );
         return *this;
     }
