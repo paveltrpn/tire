@@ -1,19 +1,29 @@
 cmake_minimum_required(VERSION 3.31)
 
-# Use GCC latest
-# set(CMAKE_C_COMPILER $ENV{GCC_LATEST}/bin/gcc-15.1)
-# set(CMAKE_CXX_COMPILER $ENV{GCC_LATEST}/bin/g++-15.1)
+#set(USE_CLANG ON)
+#set(USE_SYSTEM_GCC ON)
+set(USE_LATEST_GCC ON)
 
-# Use clang latest 
-set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_COMPILER clang++)
+# Choose compiler toolchain.
+if (USE_CLANG)
+    message( "USE CLANG TOOLCHAIN")
+    set(CMAKE_C_COMPILER clang)
+    set(CMAKE_CXX_COMPILER clang++)
+    
+    # Use clang stdlib - libc++
+    #add_compile_options(-stdlib=libc++)
+    #add_link_options(-stdlib=libc++)
+elseif(USE_SYSTEM_GCC)
+    message( "USE SYSTEM GCC")
+    set(CMAKE_C_COMPILER gcc)
+    set(CMAKE_CXX_COMPILER g++)
+elseif(USE_LATEST_GCC)
+    message( "USE LATEST GCC")
+    set(CMAKE_C_COMPILER $ENV{GCC_LATEST}/bin/gcc-15.1)
+    set(CMAKE_CXX_COMPILER $ENV{GCC_LATEST}/bin/g++-15.1)
+endif()
 
-# Use clang stdlib - libc++
-#add_compile_options(-stdlib=libc++)
-#add_link_options(-stdlib=libc++)
-
-
-# Silence some deprecated declaration warnings from nlohmann hson and Qt
+# Silence some deprecated declaration warnings from nlohmann json and Qt
 add_compile_options(-Wno-deprecated-declarations)
 
 # Set latest c++ standart.
@@ -62,18 +72,6 @@ else()
 endif()
 
 find_package(Vulkan REQUIRED)
-
-set(QT_VERSION 6.10)
-list(APPEND CMAKE_PREFIX_PATH $ENV{LOCAL_LATEST_QT})
-find_package(Qt6 ${QT_VERSION} COMPONENTS
-    Core
-    Gui
-    GuiPrivate
-    Quick
-    QuickWidgets
-    QuickControls2
-    Qml
-)
 
 # ================================
 # Module log
@@ -184,31 +182,44 @@ target_link_libraries(barevk PUBLIC
     uv
 )
 
-add_executable(qtvk)
-set_target_properties(qtvk PROPERTIES AUTOMOC TRUE)
-file(GLOB_RECURSE EXE_QTVK_SRC "apps/qt/*.cpp" "apps/qt/*.h")
-target_compile_options(qtvk PRIVATE -stdlib=libstdc++)
-target_link_options(qtvk PRIVATE -stdlib=libstdc++)
-target_sources(qtvk PRIVATE ${EXE_QTVK_SRC})
-target_link_libraries(qtvk PUBLIC
-    stdc++
-    Vulkan::Vulkan 
-    render 
-    Qt::Core
-    Qt::Gui
-    Qt::GuiPrivate
-    Qt::Quick
-    Qt::QuickWidgets
-    Qt::QuickControls2
-    Qt::Qml
-    context
-    log 
-    algebra 
-    scene 
-    config 
-    glfw3
-    uv
-)
+set(BUILD_QT ON)
+if (BUILD_QT)
+    set(QT_VERSION 6.10)
+    list(APPEND CMAKE_PREFIX_PATH $ENV{LOCAL_LATEST_QT})
+    find_package(Qt6 ${QT_VERSION} COMPONENTS
+        Core
+        Gui
+        GuiPrivate
+        Quick
+        QuickWidgets
+        QuickControls2
+        Qml
+    )
+
+    add_executable(qtvk)
+    set_target_properties(qtvk PROPERTIES AUTOMOC TRUE)
+    file(GLOB_RECURSE EXE_QTVK_SRC "apps/qt/*.cpp" "apps/qt/*.h")
+    target_sources(qtvk PRIVATE ${EXE_QTVK_SRC})
+    target_link_libraries(qtvk PUBLIC
+        stdc++
+        Vulkan::Vulkan 
+        render 
+        Qt::Core
+        Qt::Gui
+        Qt::GuiPrivate
+        Qt::Quick
+        Qt::QuickWidgets
+        Qt::QuickControls2
+        Qt::Qml
+        context
+        log 
+        algebra 
+        scene 
+        config 
+        glfw3
+        uv
+    )
+endif()
 
 # Test subdirectories
 # ================================
