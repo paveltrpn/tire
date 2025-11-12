@@ -40,10 +40,6 @@ private:
     std::condition_variable cv_;
     std::mutex m_;
     bool run_{ false };
-
-    // Async handles that used for calling callbacks
-    // on loop thread.
-    list<uv_async_t> pendingQueue_{};
 };
 
 }  // namespace tire::io

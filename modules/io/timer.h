@@ -73,7 +73,11 @@ struct Timer final : EventScheduler {
             uv_timer_start( &timer->handle_, timer->cb_, timer->timeout_,
                             timer->repeat_ );
 
-            uv_close( reinterpret_cast<uv_handle_t*>( handle ), nullptr );
+            uv_close( reinterpret_cast<uv_handle_t*>( handle ),
+                      []( uv_handle_t* handle ) -> void {
+                          //
+                          delete handle;
+                      } );
         };
 
         schedule( t.get(), timerCb );

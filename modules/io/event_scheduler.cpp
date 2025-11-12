@@ -55,23 +55,20 @@ auto EventScheduler::syncWait() -> void {
 
 auto EventScheduler::schedule( void* payload,
                                std::invocable<uv_async_t*> auto cb ) -> void {
-    // Allocate uv_async_t handle
-    auto j = std::make_shared<uv_async_t>();
+    // Allocate uv_async_t handle. Will be deleted in close callback.
+    const auto j = new uv_async_t;
 
     // Store payload pointer in async handle
     j->data = payload;
 
     // Initilaize async handle with specific payload and callback.
     // NOTE: this is (probably) not thread safe!
-    uv_async_init( loop_, j.get(), cb );
+    uv_async_init( loop_, j, cb );
 
     // Submit job to event loop.
     // This thread safe (one and only thread safe call across
     // all lobuv API)
-    uv_async_send( j.get() );
-
-    // Store handle.
-    pendingQueue_.append( std::move( j ) );
+    uv_async_send( j );
 }
 
 }  // namespace tire::io
