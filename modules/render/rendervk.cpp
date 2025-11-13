@@ -96,7 +96,9 @@ export struct RenderVK final {
     void preLoop() {
         log::notice( "vk::Render === render loop starts here..." );
 
+        timeoutTestCoro( 1000 );
         timeoutTestCoro( 2000 );
+        timeoutTestCoro( 3000 );
 
         ioContext_.run();
     };
