@@ -114,8 +114,8 @@ private:
 
 template <typename T>
 struct TimeoutAwaitable final {
-    TimeoutAwaitable( IoContext& timer, uint64_t timeout )
-        : timer_( timer )
+    TimeoutAwaitable( IoContext& context, uint64_t timeout )
+        : context_( context )
         , timeout_{ timeout } {};
 
     [[nodiscard]]
@@ -142,7 +142,7 @@ struct TimeoutAwaitable final {
 
         coroHandle_ = handle;
 
-        timer_.timeout( timeout_, cb, &coroHandle_ );
+        context_.timeout( timeout_, cb, &coroHandle_ );
     }
 
     auto await_resume() const noexcept -> void {
@@ -150,7 +150,7 @@ struct TimeoutAwaitable final {
     }
 
     std::coroutine_handle<typename T::promise_type> coroHandle_;
-    IoContext& timer_;
+    IoContext& context_;
     uint64_t timeout_;
 };
 
