@@ -1,6 +1,8 @@
 
 module;
 
+// #include <thread>
+// #include <chrono>
 #include <coroutine>
 #include <filesystem>
 
@@ -25,6 +27,8 @@ import :test_box_shader;
 import :pipeline_vertex_buffer;
 
 import io;
+
+// using namespace std::chrono_literals;
 
 namespace tire {
 
@@ -84,11 +88,14 @@ export struct RenderVK final {
 
     auto timeoutTestCoro( uint64_t t ) -> io::Task<void> {
         co_await ioContext_.timeout( t );
-        log::info( "timeout {} exceeded, coroutine done.", t );
+        log::info( "timeout {} exceeded once...", t );
+        co_await ioContext_.timeout( t );
+        log::info( "timeout {} exceeded again, coroutine done.", t );
     }
 
     void preLoop() {
         log::notice( "vk::Render === render loop starts here..." );
+
         timeoutTestCoro( 2000 );
 
         ioContext_.run();
