@@ -24,8 +24,8 @@ struct EventScheduler {
         const auto ret = uv_loop_init( loop_ );
 
         // Loop thread initialization.
-        thread_ = std::make_unique<std::thread>( [this]() {
-            // Main thread must explicitly call notify this
+        thread_ = std::make_unique<std::thread>( [this]() -> void {
+            // Main thread must explicitly notify this
             // thread to start event loop.
             std::unique_lock<std::mutex> lk{ m_ };
             cv_.wait( lk, [this]() -> bool {
