@@ -24,7 +24,6 @@ Diagnostics:
     - "unused*"
     - "cppcoreguidelines*"
     Remove:
-    - "drv_unknown_argument"
     - "bugprone-assignment-in-if-condition"
     - "bugprone-branch-clone"
     - "bugprone-easily-swappable-parameters"
@@ -53,5 +52,8 @@ Diagnostics:
     - "cppcoreguidelines-non-private-member-variables-in-classes"
     - "cppcoreguidelines-pro-bounds-array-to-pointer-decay"
     - "cppcoreguidelines-avoid-c-arrays"
+    - "cppcoreguidelines-no-malloc"
+    - "cppcoreguidelines-owning-memory"
+    - "cppcoreguidelines-pro-type-reinterpret-cast"
     CheckOptions:
       readability-identifier-naming.VariableCase: CamelCase

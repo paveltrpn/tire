@@ -15,14 +15,10 @@ import :list;
 namespace tire::io {
 
 struct EventScheduler {
-    EventScheduler() {
+    EventScheduler()
+        : loop_{
+              static_cast<uv_loop_t*>( std::malloc( sizeof( uv_loop_t ) ) ) } {
         // Try to allocate main loop handle.
-        const auto tmp = std::malloc( sizeof( uv_loop_t ) );
-        if ( !tmp ) {
-            throw std::bad_alloc{};
-        }
-
-        loop_ = static_cast<uv_loop_t*>( tmp );
 
         // We not yet in loop thread. Calling this is safe.
         const auto ret = uv_loop_init( loop_ );
@@ -56,7 +52,7 @@ struct EventScheduler {
         uv_loop_close( loop_ );
 
         // Release loop pointer.
-        free( loop_ );
+        std::free( loop_ );
     }
 
     auto run() -> void {
@@ -100,7 +96,8 @@ protected:
     auto schedule( void* payload, std::invocable<uv_async_t*> auto cb )
         -> void {
         // Allocate uv_async_t handle. Will be deleted in close callback.
-        const auto j = new uv_async_t;
+        const auto j =
+            static_cast<uv_async_t*>( std::malloc( sizeof( uv_async_t ) ) );
 
         // Store payload pointer in async handle
         j->data = payload;

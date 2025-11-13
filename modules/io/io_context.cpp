@@ -1,8 +1,7 @@
 
 module;
 
-#include <vector>
-#include <memory>
+#include <cstdlib>
 #include <coroutine>
 
 #include <uv.h>
@@ -40,18 +39,19 @@ struct WriteHandle {
 export template <typename T>
 struct TimeoutAwaitable;
 
-struct File final : EventScheduler {
-private:
-    std::vector<std::unique_ptr<ReadHandle>> readPool_{};
-    std::vector<std::unique_ptr<WriteHandle>> writPool_{};
-};
-
 export struct IoContext final : EventScheduler {
+    template <typename T>
+    friend struct TimeoutAwaitable;
+
+public:
+    auto timeout( uint64_t timeout ) -> TimeoutAwaitable<Task<void>>;
+
+private:
     // Start timer repeating with interval.
     auto repeat( uint64_t repeat, void ( *cb )( uv_timer_t* ), void* payload )
         -> void {
         //
-        auto t = std::make_shared<TimerHandle>();
+        auto t = new TimerHandle{};
 
         //
         t->timeout_ = 0;
@@ -61,19 +61,23 @@ export struct IoContext final : EventScheduler {
         uv_handle_set_data( reinterpret_cast<uv_handle_t*>( &t->handle_ ),
                             payload );
 
-        auto timerCb = []( uv_async_t* handle ) -> void {
-            auto timer = static_cast<TimerHandle*>( handle->data );
+        auto timerCb = []( uv_async_t* asyncHandle ) -> void {
+            auto timer = static_cast<TimerHandle*>( asyncHandle->data );
 
-            uv_timer_init( handle->loop, &timer->handle_ );
+            uv_timer_init( asyncHandle->loop, &timer->handle_ );
             uv_timer_start( &timer->handle_, timer->cb_, timer->timeout_,
                             timer->repeat_ );
 
             // Manually close active uv_async_t handle.
             // It exclude this handle from event loop queue.
-            uv_close( reinterpret_cast<uv_handle_t*>( handle ), nullptr );
+            uv_close( reinterpret_cast<uv_handle_t*>( asyncHandle ),
+                      []( uv_handle_t* asyncHandle ) -> void {
+                          //
+                          std::free( asyncHandle );
+                      } );
         };
 
-        schedule( t.get(), timerCb );
+        schedule( t, timerCb );
     };
 
     // Fire once by timeout.
@@ -90,24 +94,22 @@ export struct IoContext final : EventScheduler {
         uv_handle_set_data( reinterpret_cast<uv_handle_t*>( &t->handle_ ),
                             payload );
 
-        auto timerCb = []( uv_async_t* handle ) -> void {
-            auto timer = static_cast<TimerHandle*>( handle->data );
+        auto timerCb = []( uv_async_t* asyncHandle ) -> void {
+            auto timer = static_cast<TimerHandle*>( asyncHandle->data );
 
-            uv_timer_init( handle->loop, &timer->handle_ );
+            uv_timer_init( asyncHandle->loop, &timer->handle_ );
             uv_timer_start( &timer->handle_, timer->cb_, timer->timeout_,
                             timer->repeat_ );
 
-            uv_close( reinterpret_cast<uv_handle_t*>( handle ),
-                      []( uv_handle_t* handle ) -> void {
+            uv_close( reinterpret_cast<uv_handle_t*>( asyncHandle ),
+                      []( uv_handle_t* asyncHandle ) -> void {
                           //
-                          delete handle;
+                          std::free( asyncHandle );
                       } );
         };
 
         schedule( t, timerCb );
     };
-
-    auto timeout( uint64_t timeout ) -> TimeoutAwaitable<Task<void>>;
 };
 
 template <typename T>
