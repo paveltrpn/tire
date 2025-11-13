@@ -172,4 +172,6 @@ auto BareWindow::loop() -> void {
 
         currentFrame_ = ( currentFrame_ + 1 ) % context_->framesCount();
     }
+
+    render_->postLoop();
 }
