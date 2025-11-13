@@ -1,11 +1,19 @@
 
-#pragma once
+module;
+
+#include <iostream>
+#include <format>
+#include <vector>
+#include <memory>
+#include <coroutine>
 
 #include <uv.h>
 
-#include "event_scheduler.h"
-#include "list.h"
-#include "async.h"
+export module io:context;
+
+import :event_scheduler;
+import :async;
+import :list;
 
 namespace tire::io {
 
@@ -20,7 +28,27 @@ struct TimerHandle final {
 template <typename T>
 struct TimeoutAwaitable;
 
-struct Timer final : EventScheduler {
+struct ReadHandle {
+    uv_fs_t open_;
+    uv_fs_t read_;
+    uv_fs_t close_;
+    uv_buf_t buf_;
+};
+
+struct WriteHandle {
+    uv_fs_t open_;
+    uv_fs_t write_;
+    uv_fs_t close_;
+    uv_buf_t buf_;
+};
+
+struct File final : EventScheduler {
+private:
+    std::vector<std::unique_ptr<ReadHandle>> readPool_{};
+    std::vector<std::unique_ptr<WriteHandle>> writPool_{};
+};
+
+struct IoContext final : EventScheduler {
     // Start timer repeating with interval.
     auto repeat( uint64_t repeat, void ( *cb )( uv_timer_t* ), void* payload )
         -> void {
@@ -87,10 +115,26 @@ struct Timer final : EventScheduler {
 
     auto timeout( uint64_t timeout ) -> TimeoutAwaitable<Task<void>>;
 
-    auto handlesInfo() const -> void;
+    auto handlesInfo() const -> void {
+        const auto total = handlesCount();
+        int active{ 0 };
+
+        pool_.for_each( [&active]( std::shared_ptr<TimerHandle> item ) -> void {
+            if ( uv_is_active(
+                     reinterpret_cast<const uv_handle_t*>( item.get() ) ) ) {
+                ++active;
+            }
+        } );
+
+        std::cout << std::format( "timers info: {}/{} (total/active)", total,
+                                  active );
+    }
 
     [[nodiscard]]
-    auto handlesCount() const -> size_t;
+    auto handlesCount() const -> size_t {
+        //
+        return pool_.size();
+    }
 
 private:
     // Timer handles.
@@ -99,7 +143,7 @@ private:
 
 template <typename T>
 struct TimeoutAwaitable final {
-    TimeoutAwaitable( Timer& timer, uint64_t timeout )
+    TimeoutAwaitable( IoContext& timer, uint64_t timeout )
         : timer_( timer )
         , timeout_{ timeout } {};
 
@@ -112,7 +156,7 @@ struct TimeoutAwaitable final {
     auto await_suspend(
         std::coroutine_handle<typename T::promise_type> handle ) noexcept {
         // Coroutine resume callback.
-        auto cb = []( uv_timer_t* timer ) {
+        auto cb = []( uv_timer_t* timer ) -> void {
             auto handle =
                 static_cast<std::coroutine_handle<typename T::promise_type>*>(
                     timer->data );
@@ -129,8 +173,13 @@ struct TimeoutAwaitable final {
     }
 
     std::coroutine_handle<typename T::promise_type> handle_;
-    Timer& timer_;
+    IoContext& timer_;
     uint64_t timeout_;
+};
+
+auto IoContext::timeout( uint64_t timeout ) -> TimeoutAwaitable<Task<void>> {
+    //
+    return { *this, timeout };
 };
 
 }  // namespace tire::io

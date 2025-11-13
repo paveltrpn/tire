@@ -1,10 +1,12 @@
 
-#pragma once
+module;
 
 #include <atomic>
 #include <cassert>
 #include <vector>
 #include <condition_variable>
+
+export module io:queue;
 
 namespace tire::io {
 

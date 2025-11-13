@@ -1,11 +1,13 @@
 
-#pragma once
+module;
 
 #include <concepts>
 #include <algorithm>
 #include <list>
 #include <mutex>
 #include <memory>
+
+export module io:list;
 
 namespace tire::io {
 

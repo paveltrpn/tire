@@ -165,8 +165,12 @@ target_link_libraries(scene config image algebra geometry wavefront)
 # Module io
 # ================================
 add_library(io)
-file(GLOB MOD_IO_SRC "modules/io/*.cpp" "modules/io/*.h")
-target_sources(io PRIVATE ${MOD_IO_SRC})
+file(GLOB MOD_IO_SRC "modules/io/*.cpp")
+target_sources(io 
+  PUBLIC
+    FILE_SET CXX_MODULES FILES 
+    ${MOD_IO_SRC}
+)
 target_link_libraries(io uv)
 
 # ================================

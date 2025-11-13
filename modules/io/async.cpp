@@ -1,10 +1,14 @@
 
+module;
+
 #include <string>
 #include <coroutine>
 #include <exception>
 #include <uv.h>
 
 #include "log/log.h"
+
+export module io:async;
 
 namespace tire::io {
 
