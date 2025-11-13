@@ -1,8 +1,6 @@
 
 module;
 
-#include <iostream>
-#include <format>
 #include <thread>
 #include <mutex>
 #include "uv.h"

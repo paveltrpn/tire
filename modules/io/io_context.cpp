@@ -1,8 +1,6 @@
 
 module;
 
-#include <iostream>
-#include <format>
 #include <vector>
 #include <memory>
 #include <coroutine>
@@ -25,9 +23,6 @@ struct TimerHandle final {
     void ( *cb_ )( uv_timer_t* handle ){};
 };
 
-export template <typename T>
-struct TimeoutAwaitable;
-
 struct ReadHandle {
     uv_fs_t open_;
     uv_fs_t read_;
@@ -41,6 +36,9 @@ struct WriteHandle {
     uv_fs_t close_;
     uv_buf_t buf_;
 };
+
+export template <typename T>
+struct TimeoutAwaitable;
 
 struct File final : EventScheduler {
 private:
@@ -128,10 +126,10 @@ struct TimeoutAwaitable final {
         std::coroutine_handle<typename T::promise_type> handle ) noexcept {
         // Coroutine resume callback.
         auto cb = []( uv_timer_t* timer ) -> void {
-            auto handle =
+            auto coroHandle =
                 static_cast<std::coroutine_handle<typename T::promise_type>*>(
                     timer->data );
-            handle->resume();
+            coroHandle->resume();
 
             uv_close( reinterpret_cast<uv_handle_t*>( timer ),
                       []( uv_handle_t* handle ) -> void {
@@ -140,16 +138,16 @@ struct TimeoutAwaitable final {
                       } );
         };
 
-        handle_ = handle;
+        coroHandle_ = handle;
 
-        timer_.timeout( timeout_, cb, &handle_ );
+        timer_.timeout( timeout_, cb, &coroHandle_ );
     }
 
     auto await_resume() const noexcept -> void {
         //
     }
 
-    std::coroutine_handle<typename T::promise_type> handle_;
+    std::coroutine_handle<typename T::promise_type> coroHandle_;
     IoContext& timer_;
     uint64_t timeout_;
 };
