@@ -25,7 +25,7 @@ struct TimerHandle final {
     void ( *cb_ )( uv_timer_t* handle ){};
 };
 
-template <typename T>
+export template <typename T>
 struct TimeoutAwaitable;
 
 struct ReadHandle {
@@ -48,7 +48,7 @@ private:
     std::vector<std::unique_ptr<WriteHandle>> writPool_{};
 };
 
-struct IoContext final : EventScheduler {
+export struct IoContext final : EventScheduler {
     // Start timer repeating with interval.
     auto repeat( uint64_t repeat, void ( *cb )( uv_timer_t* ), void* payload )
         -> void {
@@ -76,15 +76,13 @@ struct IoContext final : EventScheduler {
         };
 
         schedule( t.get(), timerCb );
-
-        pool_.append( std::move( t ) );
     };
 
     // Fire once by timeout.
     auto timeout( uint64_t timeout, void ( *cb )( uv_timer_t* ), void* payload )
         -> void {
         //
-        auto t = std::make_shared<TimerHandle>();
+        auto t = new TimerHandle{};
 
         //
         t->timeout_ = timeout;
@@ -108,37 +106,10 @@ struct IoContext final : EventScheduler {
                       } );
         };
 
-        schedule( t.get(), timerCb );
-
-        pool_.append( std::move( t ) );
+        schedule( t, timerCb );
     };
 
     auto timeout( uint64_t timeout ) -> TimeoutAwaitable<Task<void>>;
-
-    auto handlesInfo() const -> void {
-        const auto total = handlesCount();
-        int active{ 0 };
-
-        pool_.for_each( [&active]( std::shared_ptr<TimerHandle> item ) -> void {
-            if ( uv_is_active(
-                     reinterpret_cast<const uv_handle_t*>( item.get() ) ) ) {
-                ++active;
-            }
-        } );
-
-        std::cout << std::format( "timers info: {}/{} (total/active)", total,
-                                  active );
-    }
-
-    [[nodiscard]]
-    auto handlesCount() const -> size_t {
-        //
-        return pool_.size();
-    }
-
-private:
-    // Timer handles.
-    list<TimerHandle> pool_;
 };
 
 template <typename T>
@@ -161,6 +132,12 @@ struct TimeoutAwaitable final {
                 static_cast<std::coroutine_handle<typename T::promise_type>*>(
                     timer->data );
             handle->resume();
+
+            uv_close( reinterpret_cast<uv_handle_t*>( timer ),
+                      []( uv_handle_t* handle ) -> void {
+                          //
+                          delete handle;
+                      } );
         };
 
         handle_ = handle;

@@ -1,15 +1,16 @@
 
 module;
 
+#include <coroutine>
 #include <filesystem>
 
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
+#include "log/log.h"
 #include "config/config.h"
 #include "context/context.h"
-
 #include "algebra/matrix4.h"
 
 #define FRAMES_IN_FLIGHT_COUNT 2
@@ -22,6 +23,8 @@ import :pipeline;
 import :pipeline_test_box;
 import :test_box_shader;
 import :pipeline_vertex_buffer;
+
+import io;
 
 namespace tire {
 
@@ -79,8 +82,16 @@ export struct RenderVK final {
                                             piplineVertexBuffer_.get() );
     }
 
+    auto timeoutTestCoro( uint64_t t ) -> io::Task<void> {
+        co_await ioContext_.timeout( t );
+        log::info( "timeout {} exceeded, coroutine done.", t );
+    }
+
     void preLoop() {
         log::notice( "vk::Render === render loop starts here..." );
+        timeoutTestCoro( 2000 );
+
+        ioContext_.run();
     };
 
     void preFrame() {
@@ -337,6 +348,8 @@ private:
     unsigned int holdMouseY_{ 500 };
 
     float angle_;
+
+    io::IoContext ioContext_;
 };
 
 }  // namespace tire

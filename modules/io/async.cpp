@@ -12,10 +12,10 @@ export module io:async;
 
 namespace tire::io {
 
-template <typename T>
+export template <typename T>
 struct Task;
 
-template <>
+export template <>
 struct Task<void> {
     struct promise_type;
     using handle_type = std::coroutine_handle<promise_type>;

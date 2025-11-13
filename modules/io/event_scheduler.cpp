@@ -1,10 +1,14 @@
 
 module;
 
+#include <iostream>
+#include <format>
 #include <thread>
 #include <mutex>
 #include "uv.h"
 #include <condition_variable>
+
+#include "log/log.h"
 
 export module io:event_scheduler;
 
@@ -37,14 +41,16 @@ struct EventScheduler {
 
             // Start event loop.
             uv_run( loop_, UV_RUN_DEFAULT );
+
+            log::info( "EventScheduler === uv loop closed!" );
         } );
     }
 
     // Not copyable not moveable "service-like" object.
     EventScheduler( const EventScheduler& other ) = delete;
     EventScheduler( EventScheduler&& other ) = delete;
-    EventScheduler& operator=( const EventScheduler& other ) = delete;
-    EventScheduler& operator=( EventScheduler&& other ) = delete;
+    auto operator=( const EventScheduler& other ) -> EventScheduler& = delete;
+    auto operator=( EventScheduler&& other ) -> EventScheduler& = delete;
 
     virtual ~EventScheduler() {
         // We already left loop thread.
@@ -55,7 +61,30 @@ struct EventScheduler {
         free( loop_ );
     }
 
+    auto run() -> void {
+        if ( run_ ) {
+            log::info(
+                "EventScheduler === can't do run(), context already active!" );
+            return;
+        }
+
+        {
+            std::lock_guard<std::mutex> _{ m_ };
+            run_ = true;
+        }
+        cv_.notify_one();
+
+        thread_->detach();
+    }
+
     auto syncWait() -> void {
+        if ( run_ ) {
+            log::info(
+                "EventScheduler === can't do syncWait(), context already "
+                "active!" );
+            return;
+        }
+
         {
             std::lock_guard<std::mutex> _{ m_ };
             run_ = true;

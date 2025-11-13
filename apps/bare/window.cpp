@@ -154,6 +154,8 @@ BareWindow::~BareWindow() {
 }
 
 auto BareWindow::loop() -> void {
+    render_->preLoop();
+
     while ( run_ ) {
         glfwPollEvents();
 
