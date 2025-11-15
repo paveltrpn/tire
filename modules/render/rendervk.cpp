@@ -140,8 +140,16 @@ export struct RenderVK final {
                                 { .width = width, .height = height } };
         vkCmdSetScissor( cb, 0, 1, &scissor );
 
-        auto handle = static_cast<SceneVK*>( scene_.get() );
-        handle->output( cb );
+        auto scene = static_cast<SceneVK*>( scene_.get() );
+        scene->output( cb );
+
+        // NOTE: About draw few geometry sets within same command buffer AI dummy said:
+        // "Synchronization: If the rendering of the two geometry sets has dependencies
+        // (e.g., one writes to a resource that the other reads), appropriate pipeline
+        // barriers or synchronization primitives might be required. However,
+        // for independent rendering to the same attachments within a single
+        // render pass, Vulkan handles some synchronization implicitly.""
+
         // drawTestCube( cb );
     };
 
@@ -299,8 +307,8 @@ public:
     // Call when mouse holds in defined position. "x" and "y"
     // represent current cursor ofssets.
     void mouseOffsetEvent( unsigned int x, unsigned int y ) {
-        const int xOffset = holdMouseX_ - x;
-        const int yOffset = holdMouseY_ - y;
+        const auto xOffset = holdMouseX_ - x;
+        const auto yOffset = holdMouseY_ - y;
 
 #define MOUSE_SENSIVITY 0.002
         scene_->camera().rotate( xOffset * MOUSE_SENSIVITY,

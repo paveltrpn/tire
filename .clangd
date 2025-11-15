@@ -55,5 +55,7 @@ Diagnostics:
     - "cppcoreguidelines-no-malloc"
     - "cppcoreguidelines-owning-memory"
     - "cppcoreguidelines-pro-type-reinterpret-cast"
+    - "cppcoreguidelines-avoid-magic-numbers"
+    - "cppcoreguidelines-macro-usage"
     CheckOptions:
       readability-identifier-naming.VariableCase: CamelCase
