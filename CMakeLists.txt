@@ -90,13 +90,6 @@ target_sources(algebra PRIVATE ${MOD_ALGEBRA_SRC})
 set_target_properties(algebra PROPERTIES LINKER_LANGUAGE CXX)
 
 # ================================
-# Module ui
-# ================================
-file(GLOB MOD_UI_SRC "modules/ui/*.cpp" "modules/ui/*.h")
-add_library(ui)
-target_sources(ui PRIVATE ${MOD_UI_SRC})
-
-# ================================
 # Module config
 # ================================
 file(GLOB MOD_CONFIG_SRC "modules/config/*.cpp" "modules/config/*.h")
@@ -110,6 +103,17 @@ file(GLOB_RECURSE MOD_CONTEXT_SRC "modules/context/*.cpp" "modules/context/*.h")
 add_library(context)
 target_sources(context PRIVATE ${MOD_CONTEXT_SRC})
 target_link_libraries(context vulkan config)
+
+# ================================
+# Module ui
+# ================================
+file(GLOB MOD_UI_SRC "modules/ui/*.cpp")
+add_library(ui )
+target_sources(ui PUBLIC
+    FILE_SET 
+      CXX_MODULES FILES  
+      ${MOD_UI_SRC}
+)
 
 # ================================
 # Module io

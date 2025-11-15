@@ -140,8 +140,7 @@ export struct RenderVK final {
                                 { .width = width, .height = height } };
         vkCmdSetScissor( cb, 0, 1, &scissor );
 
-        auto scene = static_cast<SceneVK*>( scene_.get() );
-        scene->output( cb );
+        static_cast<SceneVK*>( scene_.get() )->output( cb );
 
         // NOTE: About draw few geometry sets within same command buffer AI dummy said:
         // "Synchronization: If the rendering of the two geometry sets has dependencies
