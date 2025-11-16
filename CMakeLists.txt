@@ -208,7 +208,7 @@ if (BUILD_QT)
         QuickControls2
         Qml
     )
-
+    
     add_executable(qtvk)
     set_target_properties(qtvk PROPERTIES AUTOMOC TRUE)
     file(GLOB_RECURSE EXE_QTVK_SRC "apps/qt/*.cpp" "apps/qt/*.h")
@@ -232,6 +232,21 @@ if (BUILD_QT)
         glfw3
         uv
     )
+    # target_compile_options(qtvk PUBLIC 
+    #     -fmodule-file=render=CMakeFiles/render.dir/render.pcm
+    #     -fmodule-file=render:render=CMakeFiles/render.dir/render-render.pcm
+    #     -fmodule-file=render:timer=CMakeFiles/render.dir/render-timer.pcm
+    #     -fmodule-file=render:scenevk=CMakeFiles/render.dir/render-scenevk.pcm
+    #     -fmodule-file=render:program=CMakeFiles/render.dir/render-program.pcm
+    #     -fmodule-file=render:pipeline=CMakeFiles/render.dir/render-pipeline.pcm
+    #     -fmodule-file=render:pipeline_test_box=CMakeFiles/render.dir/render-pipeline_test_box.pcm
+    #     -fmodule-file=render:test_box_shader=CMakeFiles/render.dir/render-test_box_shader.pcm
+    #     -fmodule-file=render:pipeline_vertex_buffer=CMakeFiles/render.dir/render-pipeline_vertex_buffer.pcm
+    #     -fmodule-file=render:plain_image=CMakeFiles/render.dir/render-plain_image.pcm
+    #     -fmodule-file=render:texture_image=CMakeFiles/render.dir/render-texture_image.pcm
+    #     -fmodule-file=render:plain_buffer=CMakeFiles/render.dir/render-plain_buffer.pcm
+    #     -fmodule-file=render:vertex_buffer=CMakeFiles/render.dir/render-vertex_buffer.pcm
+    # )
 endif()
 
 # Test subdirectories
