@@ -8,10 +8,9 @@ module;
 #include <concepts>
 #include <type_traits>
 
-#include "algebra/vector3.h"
-#include "algebra/vector4.h"
-
 export module image:color;
+
+import algebra;
 
 namespace tire {
 

@@ -6,11 +6,10 @@ module;
 
 #include "geometry/polytope.h"
 #include "geometry/bounding_volumes.h"
-#include "algebra/vector2.h"
-#include "algebra/vector3.h"
 
 export module scene:body;
 
+import algebra;
 import image;
 
 namespace tire {

@@ -7,10 +7,10 @@ module;
 #include "vulkan/vulkan_core.h"
 
 #include "context/context.h"
-#include "algebra/matrix4.h"
 
 export module render:scenevk;
 
+import algebra;
 import scene;
 
 import :pipeline;

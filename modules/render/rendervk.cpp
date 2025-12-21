@@ -13,12 +13,12 @@ module;
 #include "log/log.h"
 #include "config/config.h"
 #include "context/context.h"
-#include "algebra/matrix4.h"
 
 #define FRAMES_IN_FLIGHT_COUNT 2
 
 export module render:render;
 
+import algebra;
 import :timer;
 import :scenevk;
 import :pipeline;

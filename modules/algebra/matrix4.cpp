@@ -1,5 +1,5 @@
 
-#pragma once
+module;
 
 #include <cstddef>
 #include <initializer_list>
@@ -7,22 +7,25 @@
 #include <concepts>
 #include <numbers>
 #include <type_traits>
+#include <array>
 
-#include "common.h"
-#include "concepts.h"
-#include "vector3.h"
-#include "vector4.h"
+export module algebra:matrix4;
+
+import :common;
+import :concepts;
+import :vector3;
+import :vector4;
 
 namespace tire::algebra {
 
-template <Algebraic T>
+export template <Algebraic T>
 struct matrix4 final {
     using value_type = T;
     using self = matrix4<value_type>;
-    using reference = value_type &;
-    using const_reference = const value_type &;
-    using pointer = value_type *;
-    using const_pointer = const value_type *;
+    using reference = value_type&;
+    using const_reference = const value_type&;
+    using pointer = value_type*;
+    using const_pointer = const value_type*;
 
     matrix4() { idtt(); }
 
@@ -117,7 +120,7 @@ struct matrix4 final {
         }
     }
 
-    void multiply( const self &rhs ) {
+    void multiply( const self& rhs ) {
         /*
         auto this00 = ( *this )[0, 0];
         auto this01 = ( *this )[0, 1];
@@ -186,12 +189,12 @@ struct matrix4 final {
         }
     }
 
-    self &operator*( const self &rhs ) {
+    self& operator*( const self& rhs ) {
         this->multiply( rhs );
         return *this;
     }
 
-    vector3<value_type> mult_vector3( const vector3<value_type> &v ) const {
+    vector3<value_type> mult_vector3( const vector3<value_type>& v ) const {
         value_type w{};
 
         auto rx = v.x() * ( *this )[0] + v.y() * ( *this )[1] +
@@ -214,7 +217,7 @@ struct matrix4 final {
         return { value_type( rx ), value_type( ry ), value_type( rz ) };
     }
 
-    vector4<value_type> mult_vector4( const vector4<value_type> &v ) const {
+    vector4<value_type> mult_vector4( const vector4<value_type>& v ) const {
         vector4<value_type> rt;
 
         rt[0] = v[0] * ( *this )[0] + v[1] * ( *this )[1] +
@@ -410,9 +413,9 @@ struct matrix4 final {
         data_[15] = value_type{ 0 };
     }
 
-    void lookAt( const vector3<value_type> &eye,
-                 const vector3<value_type> &target,
-                 const vector3<value_type> &up ) {
+    void lookAt( const vector3<value_type>& eye,
+                 const vector3<value_type>& target,
+                 const vector3<value_type>& up ) {
         vector3<value_type> eyeDir;
 
         constexpr value_type floatEps =
@@ -504,7 +507,7 @@ struct matrix4 final {
         data_[15] = 1.0;
     }
 
-    void scale( const vector3<value_type> &offset ) {
+    void scale( const vector3<value_type>& offset ) {
         idtt();
 
         data_[0] = offset.x();
@@ -512,7 +515,7 @@ struct matrix4 final {
         data_[10] = offset.z();
     }
 
-    void translate( const vector3<value_type> &offset ) {
+    void translate( const vector3<value_type>& offset ) {
         idtt();
 
         data_[3] = offset.x();
@@ -595,7 +598,7 @@ struct matrix4 final {
         *this = y * p * r;
     }
 
-    void axis_angle( const vector3<value_type> &ax, value_type phi ) {
+    void axis_angle( const vector3<value_type>& ax, value_type phi ) {
         value_type cosphi, sinphi, vxvy, vxvz, vyvz, vx, vy, vz;
 
         cosphi = std::cos( degToRad( phi ) );
@@ -732,78 +735,80 @@ private:
     std::array<T, 16> data_{};
 };
 
-template <typename T>
-auto transpose( matrix4<T> &arg ) -> decltype( auto ) {
-    matrix4<T> rt{ arg };
-    rt.transpose();
-    return rt;
-}
+export {
+    template <typename T>
+    auto transpose( matrix4<T>& arg ) -> decltype( auto ) {
+        matrix4<T> rt{ arg };
+        rt.transpose();
+        return rt;
+    }
 
-template <typename T>
-matrix4<T> translate( T dx, T dy, T dz ) {
-    matrix4<T> rt{};
-    rt.translate( dx, dy, dz );
-    return rt;
-}
+    template <typename T>
+    matrix4<T> translate( T dx, T dy, T dz ) {
+        matrix4<T> rt{};
+        rt.translate( dx, dy, dz );
+        return rt;
+    }
 
-template <typename T>
-matrix4<T> translate( vector3<T> &offset ) {
-    matrix4<T> rt{};
-    rt.translate( offset );
-    return rt;
-}
+    template <typename T>
+    matrix4<T> translate( vector3<T>& offset ) {
+        matrix4<T> rt{};
+        rt.translate( offset );
+        return rt;
+    }
 
-template <typename T>
-matrix4<T> rotate( T dy, T dp, T dr ) {
-    matrix4<T> rt;
-    rt.euler( dy, dp, dr );
-    return rt;
-}
+    template <typename T>
+    matrix4<T> rotate( T dy, T dp, T dr ) {
+        matrix4<T> rt;
+        rt.euler( dy, dp, dr );
+        return rt;
+    }
 
-template <typename T>
-matrix4<T> rotate( vector3<T> ax, T phi ) {
-    matrix4<T> rt;
-    rt.axis_angle( ax, phi );
-    return rt;
-}
+    template <typename T>
+    matrix4<T> rotate( vector3<T> ax, T phi ) {
+        matrix4<T> rt;
+        rt.axis_angle( ax, phi );
+        return rt;
+    }
 
-template <typename T>
-matrix4<T> scale( T dx, T dy, T dz ) {
-    matrix4<T> rt;
-    rt.scale( { dx, dy, dz } );
-    return rt;
-}
+    template <typename T>
+    matrix4<T> scale( T dx, T dy, T dz ) {
+        matrix4<T> rt;
+        rt.scale( { dx, dy, dz } );
+        return rt;
+    }
 
-template <typename T>
-matrix4<T> perspective( float fov, float aspect, float ncp, float fcp ) {
-    matrix4<T> rt;
-    rt.perspective( fov, aspect, ncp, fcp );
-    return rt;
-}
+    template <typename T>
+    matrix4<T> perspective( float fov, float aspect, float ncp, float fcp ) {
+        matrix4<T> rt;
+        rt.perspective( fov, aspect, ncp, fcp );
+        return rt;
+    }
 
-template <typename T>
-matrix4<T> vperspective( float fov, float aspect, float ncp, float fcp ) {
-    matrix4<T> rt;
-    rt.vperspective( fov, aspect, ncp, fcp );
-    return rt;
-}
+    template <typename T>
+    matrix4<T> vperspective( float fov, float aspect, float ncp, float fcp ) {
+        matrix4<T> rt;
+        rt.vperspective( fov, aspect, ncp, fcp );
+        return rt;
+    }
 
-template <typename T>
-matrix4<T> vperspective2( float fov, float aspect, float ncp, float fcp ) {
-    matrix4<T> rt;
-    rt.vperspective2( fov, aspect, ncp, fcp );
-    return rt;
-}
+    template <typename T>
+    matrix4<T> vperspective2( float fov, float aspect, float ncp, float fcp ) {
+        matrix4<T> rt;
+        rt.vperspective2( fov, aspect, ncp, fcp );
+        return rt;
+    }
 
-template <typename T>
-matrix4<T> orthographic( T left, T right, T bottom, T top, T near, T far ) {
-    matrix4<T> rt;
-    rt.orthographic( left, right, bottom, top, near, far );
-    return rt;
-}
+    template <typename T>
+    matrix4<T> orthographic( T left, T right, T bottom, T top, T near, T far ) {
+        matrix4<T> rt;
+        rt.orthographic( left, right, bottom, top, near, far );
+        return rt;
+    }
 
-using matrix4l = matrix4<long long>;
-using matrix4f = matrix4<float>;
-using matrix4d = matrix4<double>;
+    using matrix4l = matrix4<long long>;
+    using matrix4f = matrix4<float>;
+    using matrix4d = matrix4<double>;
+}
 
 }  // namespace tire::algebra

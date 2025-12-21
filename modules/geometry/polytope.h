@@ -3,8 +3,9 @@
 
 #include <vector>
 
-#include "algebra/vector2.h"
 #include "geometry/bounding_volumes.h"
+
+import algebra;
 
 namespace tire {
 

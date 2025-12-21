@@ -3,9 +3,9 @@ module;
 
 #include <type_traits>
 
-#include "algebra/vector3.h"
-
 export module scene:light;
+
+import algebra;
 
 namespace tire {
 

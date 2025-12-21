@@ -1,16 +1,19 @@
 
-#pragma once
+module;
 
 #include <cstddef>
 #include <cmath>
 #include <array>
 
-#include "concepts.h"
+export module algebra:vector2;
+
+import :concepts;
 
 namespace tire::algebra {
 
-template <typename T>
-requires Algebraic<T> struct vector2 final {
+export template <typename T>
+    requires Algebraic<T>
+struct vector2 final {
     using value_type = T;
     using self = vector2<value_type>;
 
@@ -24,12 +27,12 @@ requires Algebraic<T> struct vector2 final {
         data_[1] = y;
     }
 
-    vector2( const std::array<value_type, 2> &arr ) {
+    vector2( const std::array<value_type, 2>& arr ) {
         data_[0] = arr[0];
         data_[1] = arr[1];
     }
 
-    vector2( const self &rhs ) {
+    vector2( const self& rhs ) {
         data_[0] = rhs.data_[0];
         data_[1] = rhs.data_[1];
     }
@@ -38,11 +41,11 @@ requires Algebraic<T> struct vector2 final {
 
     value_type y() { return data_[1]; }
 
-    void plus( const self &b ) {
+    void plus( const self& b ) {
         for ( size_t i = 0; i < 3; ++i ) data_[i] += b.data_[i];
     };
 
-    void minus( const self &b ) {
+    void minus( const self& b ) {
         for ( size_t i = 0; i < 3; ++i ) data_[i] -= b.data_[i];
     };
 
@@ -59,7 +62,7 @@ requires Algebraic<T> struct vector2 final {
         return { value_type( x ), value_type( y ) };
     }
 
-    value_type dot( const self &b ) const {
+    value_type dot( const self& b ) const {
         value_type rt{};
 
         for ( size_t i = 0; i < 3; ++i ) rt += data_[i] * b.data_[i];
@@ -84,38 +87,38 @@ requires Algebraic<T> struct vector2 final {
         }
     }
 
-    friend self operator+( const self &lhs, const self &rhs ) {
+    friend self operator+( const self& lhs, const self& rhs ) {
         auto rt = lhs;
         rt.plus( rhs );
         return rt;
     }
 
-    self &operator+=( const self &rhs ) {
+    self& operator+=( const self& rhs ) {
         ( *this ).plus( rhs );
         return *this;
     }
 
-    friend self operator-( const self &lhs, const self &rhs ) {
+    friend self operator-( const self& lhs, const self& rhs ) {
         auto rt = lhs;
         rt.minus( rhs );
         return rt;
     }
 
-    self &operator-=( const self &rhs ) {
+    self& operator-=( const self& rhs ) {
         ( *this ).minus( rhs );
         return *this;
     }
 
-    value_type *data() { return data_.data(); }
+    value_type* data() { return data_.data(); }
 
-    const value_type *data() const { return data_.data(); }
+    const value_type* data() const { return data_.data(); }
 
 private:
     std::array<value_type, 2> data_{};
 };
 
-using vector2l = vector2<long long>;
-using vector2f = vector2<float>;
-using vector2d = vector2<double>;
+export using vector2l = vector2<long long>;
+export using vector2f = vector2<float>;
+export using vector2d = vector2<double>;
 
 }  // namespace tire::algebra

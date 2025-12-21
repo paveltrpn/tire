@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.31)
+cmake_minimum_required(VERSION 4.2)
 
 set(USE_CLANG ON)
 #set(USE_SYSTEM_GCC ON)
@@ -9,7 +9,7 @@ if (USE_CLANG)
     message( "USE CLANG TOOLCHAIN")
     set(CMAKE_C_COMPILER clang)
     set(CMAKE_CXX_COMPILER clang++)
-    
+
     # Use clang stdlib - libc++
     #add_compile_options(-stdlib=libc++)
     #add_link_options(-stdlib=libc++)
@@ -84,9 +84,12 @@ set_target_properties(log PROPERTIES LINKER_LANGUAGE CXX)
 # ================================
 # Module algebra
 # ================================
-file(GLOB MOD_ALGEBRA_SRC "modules/algebra/*.cpp" "modules/algebra/*.h")
+file(GLOB MOD_ALGEBRA_SRC "modules/algebra/*.cpp")
 add_library(algebra)
-target_sources(algebra PRIVATE ${MOD_ALGEBRA_SRC})
+target_sources(algebra PUBLIC
+    FILE_SET
+      CXX_MODULES FILES
+     ${MOD_ALGEBRA_SRC})
 set_target_properties(algebra PROPERTIES LINKER_LANGUAGE CXX)
 
 # ================================
@@ -110,8 +113,8 @@ target_link_libraries(context vulkan config)
 file(GLOB MOD_UI_SRC "modules/ui/*.cpp")
 add_library(ui )
 target_sources(ui PUBLIC
-    FILE_SET 
-      CXX_MODULES FILES  
+    FILE_SET
+      CXX_MODULES FILES
       ${MOD_UI_SRC}
 )
 
@@ -120,9 +123,9 @@ target_sources(ui PUBLIC
 # ================================
 add_library(io)
 file(GLOB MOD_IO_SRC "modules/io/*.cpp")
-target_sources(io 
+target_sources(io
   PUBLIC
-    FILE_SET CXX_MODULES FILES 
+    FILE_SET CXX_MODULES FILES
     ${MOD_IO_SRC}
 )
 target_link_libraries(io uv log)
@@ -149,6 +152,7 @@ target_sources(image PUBLIC
       CXX_MODULES FILES
       ${MOD_IMAGE_SRC}
 )
+target_link_libraries(image algebra)
 
 # ================================
 # Module geometry
@@ -164,6 +168,7 @@ target_link_libraries(geometry algebra)
 file(GLOB MOD_WAVEFRONT_SRC "modules/wavefront/*.cpp" "modules/wavefront/*.h")
 add_library(wavefront)
 target_sources(wavefront PRIVATE ${MOD_WAVEFRONT_SRC})
+target_link_libraries(wavefront algebra)
 
 # ================================
 # Module scene
@@ -184,14 +189,14 @@ add_executable(barevk)
 file(GLOB_RECURSE EXE_BAREVK_SRC "apps/bare/*.cpp" "apps/bare/*.h")
 target_sources(barevk PRIVATE ${EXE_BAREVK_SRC})
 target_link_libraries(barevk PUBLIC
-    context 
-    log 
-    algebra 
-    scene 
-    config 
-    render 
+    context
+    log
+    algebra
+    scene
+    config
+    render
     glfw3
-    Vulkan::Vulkan 
+    Vulkan::Vulkan
     uv
 )
 
@@ -208,15 +213,15 @@ if (BUILD_QT)
         QuickControls2
         Qml
     )
-    
+
     add_executable(qtvk)
     set_target_properties(qtvk PROPERTIES AUTOMOC TRUE)
     file(GLOB_RECURSE EXE_QTVK_SRC "apps/qt/*.cpp" "apps/qt/*.h")
     target_sources(qtvk PRIVATE ${EXE_QTVK_SRC})
     target_link_libraries(qtvk PUBLIC
         stdc++
-        Vulkan::Vulkan 
-        render 
+        Vulkan::Vulkan
+        render
         Qt::Core
         Qt::Gui
         Qt::GuiPrivate
@@ -225,14 +230,14 @@ if (BUILD_QT)
         Qt::QuickControls2
         Qt::Qml
         context
-        log 
-        algebra 
-        scene 
-        config 
+        log
+        algebra
+        scene
+        config
         glfw3
         uv
     )
-    # target_compile_options(qtvk PUBLIC 
+    # target_compile_options(qtvk PUBLIC
     #     -fmodule-file=render=CMakeFiles/render.dir/render.pcm
     #     -fmodule-file=render:render=CMakeFiles/render.dir/render-render.pcm
     #     -fmodule-file=render:timer=CMakeFiles/render.dir/render-timer.pcm
@@ -252,5 +257,3 @@ endif()
 # Test subdirectories
 # ================================
 add_subdirectory(test)
-
-

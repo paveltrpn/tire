@@ -8,14 +8,11 @@ module;
 #include <vulkan/vk_enum_string_helper.h>
 
 #include "log/log.h"
-#include "algebra/vector3.h"
-#include "algebra/vector4.h"
-#include "algebra/matrix4.h"
-
 #include "context/context.h"
 
 export module render:pipeline_vertex_buffer;
 
+import algebra;
 import :pipeline;
 
 namespace tire {

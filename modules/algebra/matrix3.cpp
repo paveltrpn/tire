@@ -1,23 +1,27 @@
 
-#pragma once
+module;
 
 #include <cstddef>
 #include <initializer_list>
 #include <cmath>
+#include <array>
 
-#include "concepts.h"
-#include "vector3.h"
+export module algebra:matrix3;
+
+import :concepts;
+import :vector3;
 
 namespace tire::algebra {
 
-template <typename T>
-requires Algebraic<T> struct matrix3 final {
+export template <typename T>
+    requires Algebraic<T>
+struct matrix3 final {
     using value_type = T;
     using self = matrix3<value_type>;
-    using reference = value_type &;
-    using const_reference = const value_type &;
-    using pointer = value_type *;
-    using const_pointer = const value_type *;
+    using reference = value_type&;
+    using const_reference = const value_type&;
+    using pointer = value_type*;
+    using const_pointer = const value_type*;
 
     matrix3() { idtt(); }
 
@@ -90,7 +94,7 @@ requires Algebraic<T> struct matrix3 final {
         }
     }
 
-    void multiply( const self &rhs ) {
+    void multiply( const self& rhs ) {
         /*auto this00 = ( *this )[0, 0];
         auto this01 = ( *this )[0, 1];
 
@@ -122,14 +126,14 @@ requires Algebraic<T> struct matrix3 final {
                           ( *this )[2, 2] * rhs[2, 2];*/
     }
 
-    self operator*( const self &rhs ) {
+    self operator*( const self& rhs ) {
         auto tmp{ *this };
         tmp.multiply( rhs );
         *this = tmp;
         return *this;
     }
 
-    vector3<value_type> mult_vector3( const vector3<value_type> &v ) {
+    vector3<value_type> mult_vector3( const vector3<value_type>& v ) {
         vector3<value_type> rt;
         value_type w;
 
@@ -167,8 +171,8 @@ private:
     std::array<value_type, 9> data_;
 };
 
-using matrix3l = matrix3<long long>;
-using matrix3f = matrix3<float>;
-using matrix3d = matrix3<double>;
+export using matrix3l = matrix3<long long>;
+export using matrix3f = matrix3<float>;
+export using matrix3d = matrix3<double>;
 
 }  // namespace tire::algebra

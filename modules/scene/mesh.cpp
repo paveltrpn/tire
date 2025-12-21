@@ -6,11 +6,11 @@ module;
 #include <fstream>
 #include <format>
 
-#include "algebra/vector2.h"
-#include "algebra/vector3.h"
 #include "geometry/bounding_volumes.h"
 
 export module scene:mesh;
+
+import algebra;
 
 namespace tire {
 

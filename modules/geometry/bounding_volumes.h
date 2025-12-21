@@ -1,7 +1,8 @@
 #pragma once
 
-#include "algebra/vector3.h"
-#include "algebra/matrix4.h"
+#include <array>
+
+import algebra;
 
 namespace tire {
 

@@ -4,13 +4,11 @@ module;
 #include <string>
 #include <cstdint>
 
-#include "algebra/vector3.h"
-#include "algebra/matrix4.h"
-
-#include "algebra/vector3.h"
 #include "geometry/bounding_volumes.h"
 
 export module scene:flycam;
+
+import algebra;
 
 namespace tire {
 
