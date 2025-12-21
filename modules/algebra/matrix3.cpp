@@ -23,41 +23,62 @@ struct matrix3 final {
     using pointer = value_type*;
     using const_pointer = const value_type*;
 
-    matrix3() { idtt(); }
+    matrix3() {
+        //
+        idtt();
+    }
 
-    [[nodiscard]] reference operator[]( size_t index ) { return data_[index]; }
-
-    [[nodiscard]] const_reference operator[]( size_t index ) const {
+    [[nodiscard]]
+    auto operator[]( size_t index ) -> reference {
+        //
         return data_[index];
     }
 
-    [[nodiscard]] size_t size() { return data_.size(); }
+    [[nodiscard]]
+    auto operator[]( size_t index ) const -> const_reference {
+        //
+        return data_[index];
+    }
 
-    [[nodiscard]] pointer data() { return data_.data(); }
+    [[nodiscard]]
+    auto size() const -> size_t {
+        //
+        return data_.size();
+    }
 
-    [[nodiscard]] const_pointer data() const { return data_.data(); }
+    [[nodiscard]]
+    auto data() -> pointer {
+        //
+        return data_.data();
+    }
+
+    [[nodiscard]]
+    auto data() const -> const_pointer {
+        //
+        return data_.data();
+    }
 
     void zero() {
-        data_[0] = T{};
-        data_[1] = T{};
-        data_[2] = T{};
-        data_[3] = T{};
-        data_[4] = T{};
-        data_[5] = T{};
-        data_[6] = T{};
-        data_[7] = T{};
-        data_[8] = T{};
+        data_[0] = T{ 0 };
+        data_[1] = T{ 0 };
+        data_[2] = T{ 0 };
+        data_[3] = T{ 0 };
+        data_[4] = T{ 0 };
+        data_[5] = T{ 0 };
+        data_[6] = T{ 0 };
+        data_[7] = T{ 0 };
+        data_[8] = T{ 0 };
     }
 
     void idtt() {
         data_[0] = T{ 1 };
-        data_[1] = T{};
-        data_[2] = T{};
-        data_[3] = T{};
+        data_[2] = T{ 0 };
+        data_[3] = T{ 0 };
+        data_[1] = T{ 0 };
         data_[4] = T{ 1 };
-        data_[5] = T{};
-        data_[6] = T{};
-        data_[7] = T{};
+        data_[5] = T{ 0 };
+        data_[6] = T{ 0 };
+        data_[7] = T{ 0 };
         data_[8] = T{ 1 };
     }
 
@@ -68,7 +89,8 @@ struct matrix3 final {
         }
     }
 
-    [[nodiscard]] self transpose() {
+    [[nodiscard]]
+    auto transpose() -> self {
         value_type tmp;
         auto rt = *this;
 
@@ -83,7 +105,7 @@ struct matrix3 final {
         return rt;
     }
 
-    void transposeSelf() {
+    auto transposeSelf() -> void {
         value_type tmp;
         for ( size_t i = 0; i < 3; ++i ) {
             for ( size_t j = 0; j < i; ++j ) {
@@ -94,7 +116,7 @@ struct matrix3 final {
         }
     }
 
-    void multiply( const self& rhs ) {
+    auto multiply( const self& rhs ) -> void {
         /*auto this00 = ( *this )[0, 0];
         auto this01 = ( *this )[0, 1];
 
@@ -126,14 +148,14 @@ struct matrix3 final {
                           ( *this )[2, 2] * rhs[2, 2];*/
     }
 
-    self operator*( const self& rhs ) {
+    auto operator*( const self& rhs ) -> self {
         auto tmp{ *this };
         tmp.multiply( rhs );
         *this = tmp;
         return *this;
     }
 
-    vector3<value_type> mult_vector3( const vector3<value_type>& v ) {
+    auto mult_vector3( const vector3<value_type>& v ) -> vector3<value_type> {
         vector3<value_type> rt;
         value_type w;
 
@@ -144,9 +166,15 @@ struct matrix3 final {
         return rt;
     }
 
-    value_type determinant() {}
+    // NOTE: LLM generated.
+    [[nodiscard]]
+    auto determinant() -> value_type {
+        return data_[0] * ( data_[4] * data_[8] - data_[5] * data_[7] ) -
+               data_[1] * ( data_[3] * data_[8] - data_[5] * data_[6] ) +
+               data_[2] * ( data_[3] * data_[7] - data_[4] * data_[6] );
+    }
 
-    void rotation( value_type yaw, value_type pitch, value_type roll ) {
+    auto rotation( value_type yaw, value_type pitch, value_type roll ) -> void {
         auto siny = std::sin( yaw );
         auto cosy = std::cos( yaw );
         auto sinp = std::sin( pitch );

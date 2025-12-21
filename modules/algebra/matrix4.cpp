@@ -4,8 +4,6 @@ module;
 #include <cstddef>
 #include <initializer_list>
 #include <cmath>
-#include <concepts>
-#include <numbers>
 #include <type_traits>
 #include <array>
 
@@ -27,7 +25,10 @@ struct matrix4 final {
     using pointer = value_type*;
     using const_pointer = const value_type*;
 
-    matrix4() { idtt(); }
+    matrix4() {
+        //
+        idtt();
+    }
 
     matrix4( std::initializer_list<value_type> list ) {
         for ( auto i = 0; const auto e : list ) {
@@ -36,81 +37,86 @@ struct matrix4 final {
         }
     }
 
-    [[nodiscard]] reference operator[]( size_t index ) { return data_[index]; }
-
-    [[nodiscard]] const_reference operator[]( size_t index ) const {
+    [[nodiscard]]
+    auto operator[]( size_t index ) -> reference {
+        //
         return data_[index];
     }
 
-    [[nodiscard]] size_t size() { return data_.size(); }
-
-    [[nodiscard]] pointer data() { return data_.data(); }
-
-    [[nodiscard]] const_pointer data() const { return data_.data(); }
-
-    void zero() {
-        data_[0] = T{};
-        data_[1] = T{};
-        data_[2] = T{};
-        data_[3] = T{};
-        data_[4] = T{};
-        data_[5] = T{};
-        data_[6] = T{};
-        data_[7] = T{};
-        data_[8] = T{};
-        data_[9] = T{};
-        data_[10] = T{};
-        data_[11] = T{};
-        data_[12] = T{};
-        data_[13] = T{};
-        data_[14] = T{};
-        data_[15] = T{};
+    [[nodiscard]]
+    auto operator[]( size_t index ) const -> const_reference {
+        //
+        return data_[index];
     }
 
-    void idtt() {
+    [[nodiscard]]
+    auto size() const -> size_t {
+        //
+        return data_.size();
+    }
+
+    [[nodiscard]]
+    auto data() -> pointer {
+        return data_.data();
+    }
+
+    [[nodiscard]]
+    auto data() const -> const_pointer {
+        return data_.data();
+    }
+
+    auto zero() -> void {
+        data_[0] = T{ 0 };
+        data_[1] = T{ 0 };
+        data_[2] = T{ 0 };
+        data_[3] = T{ 0 };
+        data_[4] = T{ 0 };
+        data_[5] = T{ 0 };
+        data_[6] = T{ 0 };
+        data_[7] = T{ 0 };
+        data_[8] = T{ 0 };
+        data_[9] = T{ 0 };
+        data_[10] = T{ 0 };
+        data_[11] = T{ 0 };
+        data_[12] = T{ 0 };
+        data_[13] = T{ 0 };
+        data_[14] = T{ 0 };
+        data_[15] = T{ 0 };
+    }
+
+    auto idtt() -> void {
         data_[0] = T{ 1 };
-        data_[1] = T{};
-        data_[2] = T{};
-        data_[3] = T{};
-        data_[4] = T{};
+        data_[1] = T{ 0 };
+        data_[2] = T{ 0 };
+        data_[3] = T{ 0 };
+        data_[4] = T{ 0 };
         data_[5] = T{ 1 };
-        data_[6] = T{};
-        data_[7] = T{};
-        data_[8] = T{};
-        data_[9] = T{};
+        data_[6] = T{ 0 };
+        data_[7] = T{ 0 };
+        data_[8] = T{ 0 };
+        data_[9] = T{ 0 };
         data_[10] = T{ 1 };
-        data_[11] = T{};
-        data_[12] = T{};
-        data_[13] = T{};
-        data_[14] = T{};
+        data_[11] = T{ 0 };
+        data_[12] = T{ 0 };
+        data_[13] = T{ 0 };
+        data_[14] = T{ 0 };
         data_[15] = T{ 1 };
     }
 
-    [[nodiscard]] self transpose() const {
-        /* value_type tmp;
+    [[nodiscard]]
+    auto transpose() const -> self {
         auto rt = *this;
-
-        for ( size_t i = 0; i < 4; ++i ) {
-            for ( size_t j = 0; j < i; ++j ) {
-                tmp = rt[j, i];
-                rt[j, i] = rt[i, j];
-                rt[i, j] = tmp;
+        for ( int i = 0; i < 4; ++i ) {
+            for ( int j = i + 1; j < 4; ++j ) {
+                int ij = i * 4 + j;
+                int ji = j * 4 + i;
+                std::swap( rt[ij], rt[ji] );
             }
         }
-
-        return rt;*/
+        return rt;
     }
 
-    void transposeSelf() {
-        /* value_type tmp;
-        for ( size_t i = 0; i < 4; ++i ) {
-            for ( size_t j = 0; j < i; ++j ) {
-                tmp = ( *this )[j, i];
-                ( *this )[j, i] = ( *this )[i, j];
-                ( *this )[i, j] = tmp;
-            }
-        }*/
-
+    auto transpose_self() -> void {
         for ( int i = 0; i < 4; ++i ) {
             for ( int j = i + 1; j < 4; ++j ) {
                 int ij = i * 4 + j;
@@ -120,7 +126,7 @@ struct matrix4 final {
         }
     }
 
-    void multiply( const self& rhs ) {
+    auto multiply( const self& rhs ) -> void {
         /*
         auto this00 = ( *this )[0, 0];
         auto this01 = ( *this )[0, 1];
@@ -189,12 +195,14 @@ struct matrix4 final {
         }
     }
 
-    self& operator*( const self& rhs ) {
+    auto operator*( const self& rhs ) -> self& {
         this->multiply( rhs );
         return *this;
     }
 
-    vector3<value_type> mult_vector3( const vector3<value_type>& v ) const {
+    [[nodiscard]]
+    auto mult_vector3( const vector3<value_type>& v ) const
+        -> vector3<value_type> {
         value_type w{};
 
         auto rx = v.x() * ( *this )[0] + v.y() * ( *this )[1] +
@@ -206,8 +214,8 @@ struct matrix4 final {
         w = v.x() * ( *this )[12] + v.y() * ( *this )[13] +
             v.z() * ( *this )[14] + ( *this )[15];
 
-        // normalize if w is different than 1 (convert from homogeneous to Cartesian
-        // coordinates)
+        // Normalize if w is different than 1 (convert from homogeneous to Cartesian
+        // coordinates).
         if ( w != 1.0f ) {
             rx /= w;
             ry /= w;
@@ -217,7 +225,9 @@ struct matrix4 final {
         return { value_type( rx ), value_type( ry ), value_type( rz ) };
     }
 
-    vector4<value_type> mult_vector4( const vector4<value_type>& v ) const {
+    [[nodiscard]]
+    auto mult_vector4( const vector4<value_type>& v ) const
+        -> vector4<value_type> {
         vector4<value_type> rt;
 
         rt[0] = v[0] * ( *this )[0] + v[1] * ( *this )[1] +
@@ -232,9 +242,15 @@ struct matrix4 final {
         return rt;
     }
 
-    value_type determinant() {}
+    // NOTE: LLM ganerated.
+    [[nodiscard]]
+    auto determinant() -> value_type {
+        return data_[0] * ( data_[5] * data_[10] - data_[6] * data_[9] ) -
+               data_[1] * ( data_[4] * data_[10] - data_[6] * data_[8] ) +
+               data_[2] * ( data_[4] * data_[9] - data_[5] * data_[8] );
+    }
 
-    void rotation( value_type yaw, value_type pitch, value_type roll ) {
+    auto rotation( value_type yaw, value_type pitch, value_type roll ) -> void {
         auto siny = std::sin( yaw );
         auto cosy = std::cos( yaw );
         auto sinp = std::sin( pitch );
@@ -263,8 +279,8 @@ struct matrix4 final {
         data_[15] = 1.0;
     }
 
-    void perspective( value_type fov, value_type aspect, value_type near,
-                      value_type far ) {
+    auto perspective( value_type fov, value_type aspect, value_type near,
+                      value_type far ) -> void {
         const auto radFov = degToRad( fov );
 
         // NOTE: GNU related function sincos()
@@ -307,8 +323,8 @@ struct matrix4 final {
         }
     }
 
-    void vperspective( value_type fov, value_type aspect, value_type near,
-                       value_type far ) {
+    auto vperspective( value_type fov, value_type aspect, value_type near,
+                       value_type far ) -> void {
         const auto radFov = degToRad( fov );
 
         // NOTE: GNU related function sincos()
@@ -372,8 +388,8 @@ struct matrix4 final {
             */
     }
 
-    void vperspective2( value_type fov, value_type aspect, value_type near,
-                        value_type far ) {
+    auto vperspective2( value_type fov, value_type aspect, value_type near,
+                        value_type far ) -> void {
         const auto radFov = degToRad( fov );
 
         // NOTE: GNU related function sincos()
@@ -413,9 +429,9 @@ struct matrix4 final {
         data_[15] = value_type{ 0 };
     }
 
-    void lookAt( const vector3<value_type>& eye,
+    auto lookAt( const vector3<value_type>& eye,
                  const vector3<value_type>& target,
-                 const vector3<value_type>& up ) {
+                 const vector3<value_type>& up ) -> void {
         vector3<value_type> eyeDir;
 
         constexpr value_type floatEps =
@@ -484,8 +500,9 @@ struct matrix4 final {
         data_[15] = 1.0;
     }
 
-    void orthographic( value_type left, value_type right, value_type bottom,
-                       value_type top, value_type near, value_type far ) {
+    auto orthographic( value_type left, value_type right, value_type bottom,
+                       value_type top, value_type near, value_type far )
+        -> void {
         data_[0] = 2.0 / ( right - left );
         data_[1] = 0.0;
         data_[2] = 0.0;
@@ -507,7 +524,7 @@ struct matrix4 final {
         data_[15] = 1.0;
     }
 
-    void scale( const vector3<value_type>& offset ) {
+    auto scale( const vector3<value_type>& offset ) -> void {
         idtt();
 
         data_[0] = offset.x();
@@ -515,7 +532,7 @@ struct matrix4 final {
         data_[10] = offset.z();
     }
 
-    void translate( const vector3<value_type>& offset ) {
+    auto translate( const vector3<value_type>& offset ) -> void {
         idtt();
 
         data_[3] = offset.x();
@@ -523,7 +540,7 @@ struct matrix4 final {
         data_[11] = offset.z();
     }
 
-    void translate( value_type dx, value_type dy, value_type dz ) {
+    auto translate( value_type dx, value_type dy, value_type dz ) -> void {
         idtt();
 
         data_[3] = dx;
@@ -531,7 +548,7 @@ struct matrix4 final {
         data_[11] = dz;
     }
 
-    void rotation_yaw( value_type angl ) {
+    auto rotation_yaw( value_type angl ) -> void {
         idtt();
 
         value_type sa{}, ca{};
@@ -550,7 +567,7 @@ struct matrix4 final {
         data_[10] = ca;
     }
 
-    void rotation_pitch( value_type angl ) {
+    auto rotation_pitch( value_type angl ) -> void {
         idtt();
 
         value_type sa{}, ca{};
@@ -569,7 +586,7 @@ struct matrix4 final {
         data_[10] = ca;
     }
 
-    void rotation_roll( value_type angl ) {
+    auto rotation_roll( value_type angl ) -> void {
         idtt();
 
         value_type sa{}, ca{};
@@ -588,7 +605,7 @@ struct matrix4 final {
         data_[5] = ca;
     }
 
-    void euler( value_type yaw, value_type pitch, value_type roll ) {
+    auto euler( value_type yaw, value_type pitch, value_type roll ) -> void {
         self y, p, r;
 
         y.rotation_yaw( yaw );
@@ -598,7 +615,7 @@ struct matrix4 final {
         *this = y * p * r;
     }
 
-    void axis_angle( const vector3<value_type>& ax, value_type phi ) {
+    auto axis_angle( const vector3<value_type>& ax, value_type phi ) -> void {
         value_type cosphi, sinphi, vxvy, vxvz, vyvz, vx, vy, vz;
 
         cosphi = std::cos( degToRad( phi ) );
@@ -631,7 +648,7 @@ struct matrix4 final {
         data_[15] = 1.0f;
     }
 
-    self inverse() const {
+    auto inverse() const -> self {
         self inv;
         value_type det;
 

@@ -319,7 +319,7 @@ private:
         // =================================
         // Get transformation matricies
         auto offset = algebra::translate( 0.0f, 0.0f, -2.0f );
-        offset.transposeSelf();
+        offset.transpose_self();
 
         const auto [width, height] = context_->currentExtent();
         // NOTE: Choose right projection matrix!!!

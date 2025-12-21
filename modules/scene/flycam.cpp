@@ -140,7 +140,7 @@ export struct Flycam final {
 
         // Get offset matrix
         auto&& offset = algebra::translate<value_type>( eye_ );
-        offset.transposeSelf();
+        offset.transpose_self();
 
         return offset * er * ar * projection;
     }
