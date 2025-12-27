@@ -2,16 +2,14 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "wavefront/obj.h"
-
+import wavefront;
 import log;
 
-int main( int argc, char** argv ) {
+int main( int argc, char **argv ) {
     try {
-        tire::Obj demon{
-            "/mnt/main_disk/code/tiny_render/assets/demon_baby.obj" };
+        tire::Obj demon{ "/mnt/main_disk/code/tiny_render/assets/demon_baby.obj" };
         std::cout << demon;
-    } catch ( const std::runtime_error& e ) {
+    } catch ( const std::runtime_error &e ) {
         tire::log::error( "catch exception: {}", e.what() );
         return 0;
     }
