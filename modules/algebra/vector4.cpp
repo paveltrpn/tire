@@ -45,13 +45,32 @@ struct vector4 final {
         data_[3] = rhs.data_[3];
     }
 
-    value_type x() { return data_[0]; }
+    vector4( vector4 &&other ) = default;
 
-    value_type y() { return data_[1]; }
+    auto operator=( const vector4 &other ) -> vector4 & = default;
+    auto operator=( vector4 &&other ) -> vector4 & = default;
 
-    value_type z() { return data_[2]; }
+    ~vector4() = default;
 
-    value_type w() { return data_[3]; }
+    auto x() const -> value_type {
+        //
+        return data_[0];
+    }
+
+    auto y() const -> value_type {
+        // /
+        return data_[1];
+    }
+
+    auto z() const -> value_type {
+        //
+        return data_[2];
+    }
+
+    auto w() const -> value_type {
+        //
+        return data_[3];
+    }
 
     void plus( const self &b ) {
         for ( size_t i = 0; i < 3; ++i ) data_[i] += b.data_[i];
@@ -70,7 +89,7 @@ struct vector4 final {
     }
 
     template <typename U>
-    self scale( U factor ) {
+    auto scale( U factor ) -> self {
         const auto x = data_[0] * factor;
         const auto y = data_[1] * factor;
         const auto z = data_[2] * factor;
