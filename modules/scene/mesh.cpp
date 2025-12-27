@@ -3,8 +3,6 @@ module;
 
 #include <vector>
 #include <string>
-#include <fstream>
-#include <format>
 
 #include "geometry/bounding_volumes.h"
 
@@ -31,6 +29,11 @@ struct Mesh final {
         return vertices_.data();
     };
 
+    [[nodiscard]] auto indicesData() const -> const int * {
+        //
+        return indices_.data();
+    };
+
     [[nodiscard]] auto normalsData() const -> const vector3<value_type> * {
         //
         return normals_.data();
@@ -49,6 +52,11 @@ struct Mesh final {
     [[nodiscard]] auto vertecies() const -> const std::vector<vector3<value_type>> & {
         //
         return vertices_;
+    };
+
+    [[nodiscard]] auto indices() const -> const std::vector<int> & {
+        //
+        return indices_;
     };
 
     [[nodiscard]] auto normals() const -> const std::vector<vector3<value_type>> & {
@@ -76,10 +84,21 @@ struct Mesh final {
         return bounding_;
     }
 
-private:
+    [[nodiscard]] auto name() const -> const std::string & {
+        //
+        return name_;
+    }
+
+    auto setName( std::string_view name ) -> void {
+        //
+        name_ = name;
+    }
+
+    std::string name_{ "default_mesh" };
     long long trianglesCount_{};
 
     std::vector<vector3<value_type>> vertices_;
+    std::vector<int> indices_;
     std::vector<vector3<value_type>> normals_;
     std::vector<vector2<value_type>> texcrds_;
     std::vector<vector3<value_type>> vertclr_;

@@ -107,91 +107,50 @@ export {
         return result;
     }
 
-    std::shared_ptr<Mesh> readObjFile( const std::string &filePath ) {
+    [[nodiscard]]
+    auto readObjFile( const std::string &filePath ) -> std::shared_ptr<Mesh> {
+        // Assert file exist.
         if ( !std::filesystem::exists( filePath ) ) {
             throw std::runtime_error( "file not exist!" );
         }
-    }
 
-    struct Obj final {
-    public:
-        Obj() = delete;
+        // Open file.
+        std::ifstream fileHandle;
+        fileHandle.open( filePath );
+        if ( fileHandle ) {
+            throw std::runtime_error( "somehow file not opened!" );
+        }
 
-        Obj( const Obj &rhs ) = delete;
-        Obj( Obj &&rhs ) = delete;
-        auto operator=( const Obj &rhs ) -> Obj & = delete;
-        auto operator=( const Obj &&rhs ) -> Obj & = delete;
+        // Value to return.
+        auto mesh = new Mesh{};
 
-        Obj( std::string_view path ) {
-            assertFilePath( path );
-
-            file_.open( std::string{ path } );
-
-            if ( file_ ) {
-                collectObjectInfo();
-            } else {
-                throw std::runtime_error( "somehow file not opened!" );
+        // Read file content
+        std::string str;
+        while ( std::getline( fileHandle, str ) ) {
+            if ( str.starts_with( tokens_[ObjTokens::COMMENT] ) ) {
+                continue;
+            } else if ( str.starts_with( tokens_[ObjTokens::OBJECT_NAME] ) ) {
+                mesh->setName( str.erase( 0, 2 ) );
+                continue;
+            } else if ( str.starts_with( tokens_[ObjTokens::GEOMETRIC_VERTICES] ) ) {
+                //verteciesCount_++;
+                continue;
+            } else if ( str.starts_with( tokens_[ObjTokens::VERTEX_NORMALS] ) ) {
+                //normalsCount_++;
+                continue;
+            } else if ( str.starts_with( tokens_[ObjTokens::TEXTURE_VERTICES] ) ) {
+                //texCoordsCount_++;
+                continue;
+            } else if ( str.starts_with( tokens_[ObjTokens::FACE] ) ) {
+                //facesCount_++;
+                continue;
+            } else if ( str.starts_with( tokens_[ObjTokens::MATERIAL_LIBRARY] ) ) {
+                //matlibFileName_ = str.erase( 0, 7 );
+                continue;
             }
         }
 
-        ~Obj() = default;
-
-        auto assertFilePath( std::string_view path ) -> void {}
-
-        auto collectObjectInfo() -> void {
-            std::string str;
-            while ( std::getline( file_, str ) ) {
-                if ( str.starts_with( tokens_[ObjTokens::COMMENT] ) ) {
-                    continue;
-                } else if ( str.starts_with( tokens_[ObjTokens::OBJECT_NAME] ) ) {
-                    objectName_ = str.erase( 0, 2 );
-                    continue;
-                } else if ( str.starts_with( tokens_[ObjTokens::GEOMETRIC_VERTICES] ) ) {
-                    verteciesCount_++;
-                    continue;
-                } else if ( str.starts_with( tokens_[ObjTokens::VERTEX_NORMALS] ) ) {
-                    normalsCount_++;
-                    continue;
-                } else if ( str.starts_with( tokens_[ObjTokens::TEXTURE_VERTICES] ) ) {
-                    texCoordsCount_++;
-                    continue;
-                } else if ( str.starts_with( tokens_[ObjTokens::FACE] ) ) {
-                    facesCount_++;
-                    continue;
-                } else if ( str.starts_with( tokens_[ObjTokens::MATERIAL_LIBRARY] ) ) {
-                    matlibFileName_ = str.erase( 0, 7 );
-                    continue;
-                }
-            }
-
-            file_.seekg( 0, std::ios_base::beg );  // rewind
-        }
-
-        friend auto operator<<( std::ostream &os, const Obj &rhs ) -> std::ostream &;
-
-    private:
-        std::ifstream file_;
-
-        std::string objectName_{};
-        std::string matlibFileName_{};
-        size_t verteciesCount_{ 0 };
-        size_t normalsCount_{ 0 };
-        size_t texCoordsCount_{ 0 };
-        size_t facesCount_{ 0 };
-    };
-
-    auto operator<<( std::ostream &os, const Obj &rhs ) -> std::ostream & {
-        os << std::format(
-          R"foo(object name: {}
-material file: {}
-vertecies: {}
-normals: {}
-texture coordinates: {}
-faces: {}
-)foo",
-          rhs.objectName_, rhs.matlibFileName_, rhs.verteciesCount_, rhs.normalsCount_, rhs.texCoordsCount_,
-          rhs.facesCount_ );
-        return os;
+        return std::shared_ptr<Mesh>( mesh );
     }
 }
 
