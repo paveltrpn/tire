@@ -31,14 +31,14 @@ struct vector4 final {
         data_[3] = w;
     }
 
-    vector4( const std::array<value_type, 4>& arr ) {
+    vector4( const std::array<value_type, 4> &arr ) {
         data_[0] = arr[0];
         data_[1] = arr[1];
         data_[2] = arr[2];
         data_[3] = arr[3];
     }
 
-    vector4( const self& rhs ) {
+    vector4( const self &rhs ) {
         data_[0] = rhs.data_[0];
         data_[1] = rhs.data_[1];
         data_[2] = rhs.data_[2];
@@ -53,11 +53,11 @@ struct vector4 final {
 
     value_type w() { return data_[3]; }
 
-    void plus( const self& b ) {
+    void plus( const self &b ) {
         for ( size_t i = 0; i < 3; ++i ) data_[i] += b.data_[i];
     };
 
-    void minus( const self& b ) {
+    void minus( const self &b ) {
         for ( size_t i = 0; i < 3; ++i ) data_[i] -= b.data_[i];
     };
 
@@ -75,11 +75,10 @@ struct vector4 final {
         const auto y = data_[1] * factor;
         const auto z = data_[2] * factor;
         const auto w = data_[3] * factor;
-        return { value_type( x ), value_type( y ), value_type( z ),
-                 value_type( w ) };
+        return { value_type( x ), value_type( y ), value_type( z ), value_type( w ) };
     }
 
-    value_type dot( const self& b ) const {
+    value_type dot( const self &b ) const {
         value_type rt{};
 
         for ( size_t i = 0; i < 3; ++i ) rt += data_[i] * b.data_[i];
@@ -104,31 +103,31 @@ struct vector4 final {
         }
     }
 
-    friend self operator+( const self& lhs, const self& rhs ) {
+    friend self operator+( const self &lhs, const self &rhs ) {
         auto rt = lhs;
         rt.plus( rhs );
         return rt;
     }
 
-    self& operator+=( const self& rhs ) {
+    self &operator+=( const self &rhs ) {
         ( *this ).plus( rhs );
         return *this;
     }
 
-    friend self operator-( const self& lhs, const self& rhs ) {
+    friend self operator-( const self &lhs, const self &rhs ) {
         auto rt = lhs;
         rt.minus( rhs );
         return rt;
     }
 
-    self& operator-=( const self& rhs ) {
+    self &operator-=( const self &rhs ) {
         ( *this ).minus( rhs );
         return *this;
     }
 
-    value_type* data() { return data_.data(); }
+    value_type *data() { return data_.data(); }
 
-    const value_type* data() const { return data_.data(); }
+    const value_type *data() const { return data_.data(); }
 
 private:
     std::array<value_type, 4> data_{};
