@@ -11,8 +11,8 @@ if (USE_CLANG)
     set(CMAKE_CXX_COMPILER clang++)
 
     # Use clang stdlib - libc++
-    #add_compile_options(-stdlib=libc++)
-    #add_link_options(-stdlib=libc++)
+    add_compile_options(-stdlib=libc++)
+    add_link_options(-stdlib=libc++)
 elseif(USE_SYSTEM_GCC)
     message( "USE SYSTEM GCC")
     set(CMAKE_C_COMPILER gcc)

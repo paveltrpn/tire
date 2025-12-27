@@ -1,15 +1,10 @@
 tiny_render
 ===========
-Vulkan and OpenGL (highly likely will be dropped in future) driven graphics application.
-Utilize libuv for i/o event loop. Nowdays render also appears in event loop (by timer or idle callback) but 
-later there will be seperate threads for render and i/o. It stick to linux and X11 (xlib) and did't
-use any window creation library such as glfw or SDL, and use some linux related math routines
-such as sincos().
+Vulkan driven graphics application.
 
 Build:
-- - - 
-Need C++23 compatible compiler and library (tested with clang++19 and clang++20).
-Default cmake build script configured for clang.
+- - -
+Need C++23 compatible compiler and library (tested with latest clang).
 Build as usual cmake project, clone and:
 $ mkdir build && cd build
 $ cmake ..
@@ -23,8 +18,8 @@ OpenGL headers
 Vulkan SDK:
 https://vulkan.lunarg.com/sdk/home
 
-Xlib:
-$ apt install xlib-dev
+GLFW:
+$ apt install libglfw3-dev
 
 libuv:
 $ git clone https://github.com/libuv/libuv
@@ -51,5 +46,3 @@ $ export VK_SDK_PATH=$VULKAN_SDK
 $ export CPATH=$CPATH:$VULKAN_SDK/include
 $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VULKAN_SDK/lib
 $ export PATH=$PATH:$VULKAN_SDK/bin
-
-

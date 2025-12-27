@@ -76,7 +76,7 @@ constexpr char PARAM_OMNILIGHT_SPECULAR[] = "specular";
 constexpr char PARAM_NAME_GRAVITY_VEC[] = "gravity_vec";
 
 export struct Scene {
-    Scene( const std::filesystem::path& fname ) {
+    Scene( const std::filesystem::path &fname ) {
         const auto path = std::filesystem::path{ fname };
 
         log::info( "Scene === loading scene from file {}", fname.string() );
@@ -85,17 +85,16 @@ export struct Scene {
         if ( file ) {
             try {
                 scene_ = nlohmann::json::parse( file );
-            } catch ( const nlohmann::json::parse_error& e ) {
+            } catch ( const nlohmann::json::parse_error &e ) {
                 log::error(
-                    "config json parse error\n"
-                    "message:\t{}\n"
-                    "exception id:\t{}\n"
-                    "byte position of error:\t{}\n",
-                    e.what(), e.id, e.byte );
+                  "config json parse error\n"
+                  "message:\t{}\n"
+                  "exception id:\t{}\n"
+                  "byte position of error:\t{}\n",
+                  e.what(), e.id, e.byte );
             }
         } else {
-            throw std::runtime_error( std::format(
-                "Scene ===  file not found: {}\n", path.string() ) );
+            throw std::runtime_error( std::format( "Scene ===  file not found: {}\n", path.string() ) );
         }
 
         // Load meshes data.
@@ -105,10 +104,10 @@ export struct Scene {
         process();
     }
 
-    Scene( const Scene& other ) = delete;
-    Scene( Scene&& other ) = delete;
-    Scene& operator=( const Scene& other ) = delete;
-    Scene& operator=( Scene&& other ) = delete;
+    Scene( const Scene &other ) = delete;
+    Scene( Scene &&other ) = delete;
+    Scene &operator=( const Scene &other ) = delete;
+    Scene &operator=( Scene &&other ) = delete;
 
     virtual ~Scene() = default;
 
@@ -126,13 +125,9 @@ export struct Scene {
     // Switch to next camera.
     void nextCamera() { setActiveCamera( ++activeCamera_ ); }
 
-    [[nodiscard]] Flycam& camera() const {
-        return *cameras_[activeCamera_].get();
-    };
+    [[nodiscard]] Flycam &camera() const { return *cameras_[activeCamera_].get(); };
 
-    [[nodiscard]] const Colorf& backgroundColor() const {
-        return backgrounColor_;
-    };
+    [[nodiscard]] const Colorf &backgroundColor() const { return backgrounColor_; };
 
     virtual void submit() = 0;
     virtual void draw() = 0;
@@ -151,16 +146,14 @@ export struct Scene {
 private:
     void fillMeshBank() {
         const auto basePath = Config::instance()->getBasePath().string();
-        const std::filesystem::path meshFlesPath =
-            std::format( "{}/assets/mesh/", basePath );
+        const std::filesystem::path meshFlesPath = std::format( "{}/assets/mesh/", basePath );
 
         // Iterate over directory
-        for ( auto&& entry :
-              std::filesystem::directory_iterator{ meshFlesPath } ) {
+        for ( auto &&entry : std::filesystem::directory_iterator{ meshFlesPath } ) {
             std::vector<std::string> retItem;
             // Take only "name" part of filename, i.e. except
             // extension and path.
-            const auto& fileName = entry.path().stem().string();
+            const auto &fileName = entry.path().stem().string();
 
             auto mesh = std::make_shared<Mesh>( entry.path().string() );
             meshBank_.insert( { fileName, std::move( mesh ) } );
@@ -169,35 +162,31 @@ private:
 
     void process() {
         // Read "environment section"
-        const auto& environment = scene_[PARAM_ENVIRONMENT];
-        const auto& bg = environment[PARAM_BACKGROUND_COLOR];
+        const auto &environment = scene_[PARAM_ENVIRONMENT];
+        const auto &bg = environment[PARAM_BACKGROUND_COLOR];
         backgrounColor_ = Colorf( bg );
 
         // Read "objects" section
         if ( scene_.contains( PARAM_OBJECTS ) ) {
             const auto objects = scene_[PARAM_OBJECTS];
-            for ( const auto& item : objects ) {
-                const auto& type = item[PARAM_OBJECT_TYPE];
+            for ( const auto &item : objects ) {
+                const auto &type = item[PARAM_OBJECT_TYPE];
 
                 // Body spatial information
-                const std::array<float, 3> position =
-                    item[PARAM_OBJECT_POSITION];
+                const std::array<float, 3> position = item[PARAM_OBJECT_POSITION];
 
-                const std::array<float, 3> orientaion =
-                    item[PARAM_OBJECT_ORIENTATION];
+                const std::array<float, 3> orientaion = item[PARAM_OBJECT_ORIENTATION];
 
                 const std::array<float, 3> scale = item[PARAM_OBJECT_SCALE];
 
-                const std::array<float, 3> velosity =
-                    item[PARAM_OBJECT_VELOCITY];
+                const std::array<float, 3> velosity = item[PARAM_OBJECT_VELOCITY];
 
                 const std::array<float, 3> torque = item[PARAM_OBJECT_TORQUE];
 
                 // Body material information
-                const auto& albedoColor = item[PARAM_OBJECT_ALBEDO_COLOR];
+                const auto &albedoColor = item[PARAM_OBJECT_ALBEDO_COLOR];
 
-                const std::string& materialName =
-                    item[PARAM_OBJECT_MATERIAL_NAME];
+                const std::string &materialName = item[PARAM_OBJECT_MATERIAL_NAME];
 
                 // Body vertices data
                 auto node = std::make_shared<Body>();
@@ -247,59 +236,50 @@ private:
                 bodyList_.push_back( std::move( node ) );
             }
         } else {
-            throw std::runtime_error(
-                "there is can't be scene without objects!" );
+            throw std::runtime_error( "there is can't be scene without objects!" );
         }
 
         // Read "cameras" section
         if ( scene_.contains( PARAM_CAMERAS ) ) {
             const auto cameras = scene_[PARAM_CAMERAS];
-            for ( const auto& item : cameras ) {
-                const auto& type = item[PARAM_CAMERA_TYPE];
+            for ( const auto &item : cameras ) {
+                const auto &type = item[PARAM_CAMERA_TYPE];
                 if ( type == PARAM_CAMERA_PERSPECTIVE ) {
                     const std::array<double, 3> eye = item[PARAM_CAMERA_EYE];
                     const auto eyev = algebra::vector3d{ eye };
 
                     // Unused
-                    const std::array<double, 3> target =
-                        item[PARAM_CAMERA_TARGET];
+                    const std::array<double, 3> target = item[PARAM_CAMERA_TARGET];
 
                     const float azimuth = item[PARAM_CAMERA_AZIMUTH];
 
                     const float elevation = item[PARAM_CAMERA_ELEVATION];
 
-                    const auto& fov = item[PARAM_CAMERA_FOV];
-                    const auto& aspect = item[PARAM_CAMERA_ASPECT];
-                    const auto& ncp = item[PARAM_CAMERA_NCP];
-                    const auto& fcp = item[PARAM_CAMERA_FCP];
+                    const auto &fov = item[PARAM_CAMERA_FOV];
+                    const auto &aspect = item[PARAM_CAMERA_ASPECT];
+                    const auto &ncp = item[PARAM_CAMERA_NCP];
+                    const auto &fcp = item[PARAM_CAMERA_FCP];
 
-                    const std::string& name = item[PARAM_CAMERA_NAME];
+                    const std::string &name = item[PARAM_CAMERA_NAME];
 
-                    auto camera =
-                        std::make_shared<Flycam>( eye, azimuth, elevation );
+                    auto camera = std::make_shared<Flycam>( eye, azimuth, elevation );
 
-                    camera->setFov( fov )
-                        .setAspect( aspect )
-                        .setNcp( ncp )
-                        .setFcp( fcp )
-                        .setName( name );
+                    camera->setFov( fov ).setAspect( aspect ).setNcp( ncp ).setFcp( fcp ).setName( name );
 
                     cameras_.push_back( std::move( camera ) );
                 }
             }
         } else {
-            throw std::runtime_error(
-                "there is can't be scene without cameras!" );
+            throw std::runtime_error( "there is can't be scene without cameras!" );
         }
 
         // Read "lights" section
         if ( scene_.contains( PARAM_LIGHTS ) ) {
             const auto lights = scene_[PARAM_LIGHTS];
-            for ( const auto& item : lights ) {
-                const auto& type = item[PARAM_LIGHT_TYPE];
+            for ( const auto &item : lights ) {
+                const auto &type = item[PARAM_LIGHT_TYPE];
                 if ( type == PARAM_LIGHT_OMNI ) {
-                    const std::array<float, 3> position =
-                        item[PARAM_OMNILIGHT_POSITION];
+                    const std::array<float, 3> position = item[PARAM_OMNILIGHT_POSITION];
 
                     const float constant = item[PARAM_OMNILIGHT_CONSTANT];
 
@@ -307,31 +287,27 @@ private:
 
                     const float quadratic = item[PARAM_OMNILIGHT_QUADRATIC];
 
-                    const std::array<float, 3> ambient =
-                        item[PARAM_OMNILIGHT_AMBIENT];
+                    const std::array<float, 3> ambient = item[PARAM_OMNILIGHT_AMBIENT];
 
-                    const std::array<float, 3> diffuse =
-                        item[PARAM_OMNILIGHT_DIFFUSE];
+                    const std::array<float, 3> diffuse = item[PARAM_OMNILIGHT_DIFFUSE];
 
-                    const std::array<float, 3> specular =
-                        item[PARAM_OMNILIGHT_SPECULAR];
+                    const std::array<float, 3> specular = item[PARAM_OMNILIGHT_SPECULAR];
 
                     auto light = std::make_shared<OmniLight<float>>();
 
                     light->setPosition( { position } )
-                        .setConstant( constant )
-                        .setLinear( linear )
-                        .setQuadratic( quadratic )
-                        .setAmbient( { ambient } )
-                        .setDiffuse( { diffuse } )
-                        .setSpecular( { specular } );
+                      .setConstant( constant )
+                      .setLinear( linear )
+                      .setQuadratic( quadratic )
+                      .setAmbient( { ambient } )
+                      .setDiffuse( { diffuse } )
+                      .setSpecular( { specular } );
 
                     lightList_.push_back( light );
                 }
             }
         } else {
-            throw std::runtime_error(
-                "there is can't be scene without lights!" );
+            throw std::runtime_error( "there is can't be scene without lights!" );
         }
     }
 
