@@ -17,39 +17,64 @@ namespace tire {
 struct Mesh final {
     using value_type = float;
 
-    Mesh( const std::string &path ) {
-        std::ifstream file{ path };
-        if ( !file ) {
-            throw std::runtime_error( std::format( "Mesh === file not found: {}\n", path ) );
-        }
-
-        file.close();
-    }
-
+    Mesh() = default;
     Mesh( const Mesh &other ) = default;
     Mesh( Mesh &&other ) = default;
 
-    Mesh &operator=( const Mesh &other ) = default;
-    Mesh &operator=( Mesh &&other ) = default;
+    auto operator=( const Mesh &other ) -> Mesh & = default;
+    auto operator=( Mesh &&other ) -> Mesh & = default;
 
     ~Mesh() = default;
 
-    [[nodiscard]] const vector3<value_type> *verticesData() const {
+    [[nodiscard]] auto verticesData() const -> const vector3<value_type> * {
         //
         return vertices_.data();
     };
 
-    [[nodiscard]] const vector3<value_type> *normalsData() const { return normals_.data(); }
+    [[nodiscard]] auto normalsData() const -> const vector3<value_type> * {
+        //
+        return normals_.data();
+    }
 
-    [[nodiscard]] const vector2<value_type> *texcrdsData() const { return texcrds_.data(); }
+    [[nodiscard]] auto texcrdsData() const -> const vector2<value_type> * {
+        //
+        return texcrds_.data();
+    }
 
-    [[nodiscard]] const std::vector<vector3<value_type>> &vertecies() const { return vertices_; };
+    [[nodiscard]] auto vertclrData() const -> const vector3<value_type> * {
+        //
+        return vertclr_.data();
+    }
 
-    [[nodiscard]] const std::vector<vector3<value_type>> &normals() const { return normals_; }
+    [[nodiscard]] auto vertecies() const -> const std::vector<vector3<value_type>> & {
+        //
+        return vertices_;
+    };
 
-    [[nodiscard]] long long trianglesCount() { return trianglesCount_; }
+    [[nodiscard]] auto normals() const -> const std::vector<vector3<value_type>> & {
+        //
+        return normals_;
+    }
 
-    [[nodiscard]] AABoundingBox<value_type> bounding() { return bounding_; }
+    [[nodiscard]] auto texcrds() const -> const std::vector<vector2<value_type>> & {
+        //
+        return texcrds_;
+    }
+
+    [[nodiscard]] auto vertclr() const -> const std::vector<vector3<value_type>> & {
+        //
+        return vertclr_;
+    }
+
+    [[nodiscard]] auto trianglesCount() const -> long long {
+        //
+        return trianglesCount_;
+    }
+
+    [[nodiscard]] auto bounding() const -> AABoundingBox<value_type> {
+        //
+        return bounding_;
+    }
 
 private:
     long long trianglesCount_{};

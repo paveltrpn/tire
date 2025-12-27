@@ -155,7 +155,7 @@ private:
             // extension and path.
             const auto &fileName = entry.path().stem().string();
 
-            auto mesh = std::make_shared<Mesh>( entry.path().string() );
+            auto mesh = std::make_shared<Mesh>();
             meshBank_.insert( { fileName, std::move( mesh ) } );
         }
     }
