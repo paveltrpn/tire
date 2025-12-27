@@ -94,6 +94,32 @@ struct Mesh final {
         name_ = name;
     }
 
+    auto setVertices( std::vector<vector3<value_type>> vertices ) -> void {
+        //
+        vertices_ = std::move( vertices );
+    }
+
+    auto setIndices( std::vector<int> indices ) -> void {
+        //
+        indices_ = std::move( indices );
+    }
+
+    auto setNormals( std::vector<vector3<value_type>> normals ) -> void {
+        //
+        normals_ = std::move( normals );
+    }
+
+    auto setTexCoords( std::vector<vector2<value_type>> texCoords ) -> void {
+        //
+        texcrds_ = std::move( texCoords );
+    }
+
+    auto setVertexColors( std::vector<vector3<value_type>> vertexColors ) -> void {
+        //
+        vertclr_ = std::move( vertexColors );
+    }
+
+private:
     std::string name_{ "default_mesh" };
     long long trianglesCount_{};
 

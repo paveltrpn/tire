@@ -13,6 +13,10 @@ export module scene:obj;
 
 import :mesh;
 
+import algebra;
+
+using namespace tire::algebra;
+
 namespace tire {
 
 export {
@@ -123,6 +127,13 @@ export {
 
         // Value to return.
         auto mesh = new Mesh{};
+
+        // Buffers to read in.
+        std::vector<vector3<Mesh::value_type>> vertices_;
+        std::vector<int> indices_;
+        std::vector<vector3<Mesh::value_type>> normals_;
+        std::vector<vector2<Mesh::value_type>> texcrds_;
+        std::vector<vector3<Mesh::value_type>> vertclr_;
 
         // Read file content
         std::string str;
