@@ -6,9 +6,9 @@ module;
 #include "uv.h"
 #include <condition_variable>
 
-#include "log/log.h"
-
 export module io:event_scheduler;
+
+import log;
 
 import :list;
 

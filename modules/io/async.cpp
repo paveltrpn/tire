@@ -6,9 +6,9 @@ module;
 #include <exception>
 #include <uv.h>
 
-#include "log/log.h"
-
 export module io:async;
+
+import log;
 
 namespace tire::io {
 

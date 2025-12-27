@@ -6,6 +6,7 @@ module;
 #include <span>
 #include <vulkan/vulkan.h>
 #include <fstream>
+#include <format>
 #include <algorithm>
 
 #include <vulkan/vulkan.h>
@@ -13,9 +14,10 @@ module;
 #include <vulkan/vk_enum_string_helper.h>
 
 #include "context/context.h"
-#include "log/log.h"
 
 export module render:program;
+
+import log;
 
 namespace tire {
 

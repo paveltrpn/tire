@@ -1,8 +1,7 @@
 
 #include <stdexcept>
 
-#include "log/log.h"
-
+import log;
 import image;
 
 int main( int argc, char** argv ) {

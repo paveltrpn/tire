@@ -7,10 +7,9 @@ module;
 #include <fstream>
 #include <sstream>
 
-#include "log/log.h"
-
 export module image:image;
 
+import log;
 import :color;
 
 namespace tire {

@@ -7,12 +7,12 @@ module;
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "log/log.h"
 #include "context/context.h"
 
 export module render:pipeline_vertex_buffer;
 
 import algebra;
+import log;
 import :pipeline;
 
 namespace tire {

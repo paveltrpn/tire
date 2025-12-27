@@ -2,8 +2,9 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "log/log.h"
 #include "wavefront/obj.h"
+
+import log;
 
 int main( int argc, char** argv ) {
     try {

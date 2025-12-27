@@ -6,8 +6,9 @@
 
 #include "context_bare.h"
 
-#include "log/log.h"
 static constexpr bool DEBUG_OUTPUT_COMMAND_BUFFER_CPP{ true };
+
+import log;
 
 namespace tire {
 

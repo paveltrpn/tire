@@ -6,7 +6,6 @@ module;
 
 #include <vulkan/vulkan.h>
 
-#include "log/log.h"
 #include "nlohmann/json.hpp"
 #include "config/config.h"
 #include "geometry/polytope.h"
@@ -14,6 +13,7 @@ module;
 export module scene:scene;
 
 import image;
+import log;
 
 import :mesh;
 import :body;

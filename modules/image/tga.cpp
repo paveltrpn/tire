@@ -6,10 +6,9 @@ module;
 #include <format>
 #include <fstream>
 
-#include "log/log.h"
-
 export module image:tga;
 
+import log;
 import :image;
 
 namespace tire {

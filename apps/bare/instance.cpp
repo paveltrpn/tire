@@ -1,13 +1,17 @@
 
 #include <format>
+#include <iostream>
+
 #define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vk_enum_string_helper.h>
 
 #include "context_bare.h"
-#include "log/log.h"
+
 static constexpr bool DEBUG_OUTPUT_INSTANCE_CPP{ true };
 
 #include "config/config.h"
+
+import log;
 
 namespace tire {
 

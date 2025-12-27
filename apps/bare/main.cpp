@@ -1,7 +1,8 @@
 
-#include "log/log.h"
 #include "window.h"
 #include "config/config.h"
+
+import log;
 
 auto main( int argc, char** argv ) -> int {
     try {

@@ -10,7 +10,6 @@ module;
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "log/log.h"
 #include "config/config.h"
 #include "context/context.h"
 
@@ -19,6 +18,7 @@ module;
 export module render:render;
 
 import algebra;
+import log;
 import :timer;
 import :scenevk;
 import :pipeline;

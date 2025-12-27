@@ -76,10 +76,12 @@ find_package(Vulkan REQUIRED)
 # ================================
 # Module log
 # ================================
-file(GLOB MOD_LOG_SRC "modules/log/*.cpp" "modules/log/*.h")
+file(GLOB MOD_LOG_SRC "modules/log/*.cpp")
 add_library(log)
-target_sources(log PRIVATE ${MOD_LOG_SRC})
-set_target_properties(log PROPERTIES LINKER_LANGUAGE CXX)
+target_sources(log
+    PUBLIC FILE_SET
+      CXX_MODULES FILES ${MOD_LOG_SRC}
+)
 
 # ================================
 # Module algebra
@@ -98,6 +100,7 @@ set_target_properties(algebra PROPERTIES LINKER_LANGUAGE CXX)
 file(GLOB MOD_CONFIG_SRC "modules/config/*.cpp" "modules/config/*.h")
 add_library(config)
 target_sources(config PRIVATE ${MOD_CONFIG_SRC})
+target_link_libraries(config log)
 
 # ================================
 # Module context
@@ -152,7 +155,7 @@ target_sources(image PUBLIC
       CXX_MODULES FILES
       ${MOD_IMAGE_SRC}
 )
-target_link_libraries(image algebra)
+target_link_libraries(image algebra log)
 
 # ================================
 # Module geometry
@@ -200,7 +203,7 @@ target_link_libraries(barevk PUBLIC
     uv
 )
 
-set(BUILD_QT ON)
+set(BUILD_QT OFF)
 if (BUILD_QT)
     set(QT_VERSION 6.10)
     list(APPEND CMAKE_PREFIX_PATH $ENV{LOCAL_LATEST_QT})

@@ -1,6 +1,7 @@
 
 #include <memory>
 #include <format>
+#include <iostream>
 
 #include <GLFW/glfw3.h>
 
@@ -20,8 +21,8 @@
 #endif
 
 #include "config/config.h"
-#include "log/log.h"
 
+import log;
 import render;
 
 BareWindow::BareWindow() {

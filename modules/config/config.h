@@ -8,8 +8,9 @@
 #include <type_traits>
 #include <filesystem>
 
-#include "log/log.h"
 #include "nlohmann/json.hpp"
+
+import log;
 
 namespace tire {
 
