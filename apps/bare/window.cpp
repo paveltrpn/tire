@@ -20,8 +20,7 @@
 #include <wayland-client.h>
 #endif
 
-#include "config/config.h"
-
+import config;
 import log;
 import render;
 
@@ -31,7 +30,7 @@ BareWindow::BareWindow() {
     }
 
     glfwSetErrorCallback(
-        []( int, const char* err_str ) -> void { std::cout << std::format( "GLFW Error: {}\n", err_str ); } );
+      []( int, const char *err_str ) -> void { std::cout << std::format( "GLFW Error: {}\n", err_str ); } );
 
     glfwWindowHint( GLFW_CLIENT_API, GLFW_NO_API );
     glfwWindowHint( GLFW_RESIZABLE, GLFW_FALSE );
@@ -50,8 +49,8 @@ BareWindow::BareWindow() {
 
     glfwSetWindowUserPointer( window_, this );
 
-    glfwSetKeyCallback( window_, []( GLFWwindow* window, int key, int scancode, int action, int mods ) -> void {
-        const auto rndrHandle = static_cast<tire::RenderVK*>( glfwGetWindowUserPointer( window ) );
+    glfwSetKeyCallback( window_, []( GLFWwindow *window, int key, int scancode, int action, int mods ) -> void {
+        const auto rndrHandle = static_cast<tire::RenderVK *>( glfwGetWindowUserPointer( window ) );
 
         rndrHandle->keyPressEvent( key );
         rndrHandle->keyReleaseEvent( key );
@@ -61,20 +60,20 @@ BareWindow::BareWindow() {
         }
     } );
 
-    glfwSetMouseButtonCallback( window_, []( GLFWwindow* window, int button, int action, int mods ) -> void {
-        const auto rndrHandle = static_cast<tire::RenderVK*>( glfwGetWindowUserPointer( window ) );
+    glfwSetMouseButtonCallback( window_, []( GLFWwindow *window, int button, int action, int mods ) -> void {
+        const auto rndrHandle = static_cast<tire::RenderVK *>( glfwGetWindowUserPointer( window ) );
 
         rndrHandle->mouseButtonPressEvent( button );
         rndrHandle->mouseButtonReleaseEvent( button );
     } );
 
-    glfwSetCursorPosCallback( window_, []( GLFWwindow* window, double posX, double posY ) -> void {
-        const auto rndrHandle = static_cast<tire::RenderVK*>( glfwGetWindowUserPointer( window ) );
+    glfwSetCursorPosCallback( window_, []( GLFWwindow *window, double posX, double posY ) -> void {
+        const auto rndrHandle = static_cast<tire::RenderVK *>( glfwGetWindowUserPointer( window ) );
 
         // rndrHandle->mouseOffsetEvent( posX, posY );
     } );
 
-    glfwSetCursorEnterCallback( window_, []( GLFWwindow* window, int entered ) -> void {
+    glfwSetCursorEnterCallback( window_, []( GLFWwindow *window, int entered ) -> void {
 
     } );
 
@@ -98,7 +97,7 @@ BareWindow::BareWindow() {
 
 #ifdef SURFACE_X11
             context_ = std::make_unique<tire::ContextBare>(
-                /*"VK_KHR_xlib_surface"*/ );
+              /*"VK_KHR_xlib_surface"*/ );
 
             context_->makeInstance( "VK_KHR_xlib_surface" );
 
@@ -114,7 +113,7 @@ BareWindow::BareWindow() {
 
 #ifdef SURFACE_WAYLAND
             context_ = std::make_unique<tire::vk::ContextBare>(
-                /*"VK_KHR_wayland_surface"*/ );
+              /*"VK_KHR_wayland_surface"*/ );
 
             context_->makeInstance( "VK_KHR_wayland_surface" );
             const auto surface = glfwGetWaylandWindow( window_ );

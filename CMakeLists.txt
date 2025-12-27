@@ -97,9 +97,13 @@ set_target_properties(algebra PROPERTIES LINKER_LANGUAGE CXX)
 # ================================
 # Module config
 # ================================
-file(GLOB MOD_CONFIG_SRC "modules/config/*.cpp" "modules/config/*.h")
+file(GLOB MOD_CONFIG_SRC "modules/config/*.cpp")
 add_library(config)
-target_sources(config PRIVATE ${MOD_CONFIG_SRC})
+target_sources(config
+    PUBLIC
+      FILE_SET CXX_MODULES FILES
+      ${MOD_CONFIG_SRC}
+)
 target_link_libraries(config log)
 
 # ================================

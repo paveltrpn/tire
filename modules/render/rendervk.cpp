@@ -10,13 +10,13 @@ module;
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "config/config.h"
 #include "context/context.h"
 
 #define FRAMES_IN_FLIGHT_COUNT 2
 
 export module render:render;
 
+import config;
 import algebra;
 import log;
 import :timer;
@@ -37,38 +37,36 @@ struct SceneVK;
 export struct RenderVK final {
     RenderVK() = default;
 
-    RenderVK( const RenderVK& other ) = delete;
-    RenderVK( RenderVK&& other ) = delete;
-    auto operator=( const RenderVK& other ) -> RenderVK& = delete;
-    auto operator=( RenderVK&& other ) -> RenderVK& = delete;
+    RenderVK( const RenderVK &other ) = delete;
+    RenderVK( RenderVK &&other ) = delete;
+    auto operator=( const RenderVK &other ) -> RenderVK & = delete;
+    auto operator=( RenderVK &&other ) -> RenderVK & = delete;
 
     ~RenderVK() = default;
 
-    auto init( Context* context ) -> void {
+    auto init( Context *context ) -> void {
         context_ = context;
         try {
             const auto configHandle = Config::instance();
             const auto basePath = configHandle->getBasePath().string();
 
             // =============================================================
-            piplineVertexBuffer_ =
-                std::make_unique<PiplineVertexBuffer>( context_ );
+            piplineVertexBuffer_ = std::make_unique<PiplineVertexBuffer>( context_ );
             auto vertexBufferProgram = Program{ context_ };
             vertexBufferProgram.fill(
-                { basePath + "/shaders/spirv/vk_vertexBuffer_VERTEX.spv",
-                  basePath + "/shaders/spirv/vk_vertexBuffer_FRAGMENT.spv" } );
+              { basePath + "/shaders/spirv/vk_vertexBuffer_VERTEX.spv",
+                basePath + "/shaders/spirv/vk_vertexBuffer_FRAGMENT.spv" } );
             piplineVertexBuffer_->buildPipeline( vertexBufferProgram );
 
             // =============================================================
             piplineTestBox_ = std::make_unique<PiplineTestBox>( context_ );
             auto testBoxProgram = Program{ context_ };
             testBoxProgram.fill(
-                { { vk_simple_box_VERTEX, vertex_stage_suffix },
-                  { vk_simple_box_FRAGMENT, fragment_stage_suffix } } );
+              { { vk_simple_box_VERTEX, vertex_stage_suffix }, { vk_simple_box_FRAGMENT, fragment_stage_suffix } } );
             piplineTestBox_->buildPipeline( testBoxProgram );
 
             // context_->createFramebuffers( piplineVertexBuffer_.get() );
-        } catch ( const std::runtime_error& e ) {
+        } catch ( const std::runtime_error &e ) {
             throw std::runtime_error( e.what() );
         }
     }
@@ -81,9 +79,8 @@ export struct RenderVK final {
 
     };
 
-    void scene( const std::filesystem::path& path ) {
-        scene_ = std::make_shared<SceneVK>( path, context_,
-                                            piplineVertexBuffer_.get() );
+    void scene( const std::filesystem::path &path ) {
+        scene_ = std::make_shared<SceneVK>( path, context_, piplineVertexBuffer_.get() );
     }
 
     auto timeoutTestCoro( uint64_t t ) -> io::Task<void> {
@@ -122,12 +119,13 @@ export struct RenderVK final {
         // Take out work from pipeline creation.
         // NOTE: Define negative viewport size to use same projection matrix as
         // for OpenGL pipeline.
-        const VkViewport viewport{ .x = 0.0f,
-                                   .y = static_cast<float>( height ),
-                                   .width = static_cast<float>( width ),
-                                   .height = -static_cast<float>( height ),
-                                   .minDepth = 0.0f,
-                                   .maxDepth = 1.0f };
+        const VkViewport viewport{
+          .x = 0.0f,
+          .y = static_cast<float>( height ),
+          .width = static_cast<float>( width ),
+          .height = -static_cast<float>( height ),
+          .minDepth = 0.0f,
+          .maxDepth = 1.0f };
         // const VkViewport viewport{ .x = 0.0f,
         //    .y = 0.0f,
         //    .width = static_cast<float>( width ),
@@ -136,11 +134,10 @@ export struct RenderVK final {
         //                         .maxDepth = 1.0f };
         vkCmdSetViewport( cb, 0, 1, &viewport );
 
-        const VkRect2D scissor{ { .x = 0, .y = 0 },
-                                { .width = width, .height = height } };
+        const VkRect2D scissor{ { .x = 0, .y = 0 }, { .width = width, .height = height } };
         vkCmdSetScissor( cb, 0, 1, &scissor );
 
-        static_cast<SceneVK*>( scene_.get() )->output( cb );
+        static_cast<SceneVK *>( scene_.get() )->output( cb );
 
         // NOTE: About draw few geometry sets within same command buffer AI dummy said:
         // "Synchronization: If the rendering of the two geometry sets has dependencies
@@ -310,8 +307,7 @@ public:
         const auto yOffset = holdMouseY_ - y;
 
 #define MOUSE_SENSIVITY 0.002
-        scene_->camera().rotate( xOffset * MOUSE_SENSIVITY,
-                                 yOffset * MOUSE_SENSIVITY );
+        scene_->camera().rotate( xOffset * MOUSE_SENSIVITY, yOffset * MOUSE_SENSIVITY );
     }
 
 private:
@@ -324,8 +320,7 @@ private:
         const auto [width, height] = context_->currentExtent();
         // NOTE: Choose right projection matrix!!!
         const auto proj = algebra::perspective<float>(
-            50.0f, static_cast<float>( width ) / static_cast<float>( height ),
-            0.1f, 100.0f );
+          50.0f, static_cast<float>( width ) / static_cast<float>( height ), 0.1f, 100.0f );
         const auto viewMatrix = offset * proj;
         angle_ += timer_.floatFrameDuration() * 25.0f;
         algebra::vector3f ax{ 0.0f, 1.0f, 1.0f };
@@ -333,23 +328,20 @@ private:
         const auto modelMatrix = algebra::rotate( ax, angle_ );
         // =================================
 
-        vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS,
-                           piplineTestBox_->pipeline() );
+        vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS, piplineTestBox_->pipeline() );
 
-        vkCmdPushConstants( cb, piplineTestBox_->layout(),
-                            VK_SHADER_STAGE_VERTEX_BIT, 0,
-                            sizeof( algebra::matrix4f ), &viewMatrix );
+        vkCmdPushConstants(
+          cb, piplineTestBox_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( algebra::matrix4f ), &viewMatrix );
 
-        vkCmdPushConstants( cb, piplineTestBox_->layout(),
-                            VK_SHADER_STAGE_VERTEX_BIT,
-                            sizeof( algebra::matrix4f ),
-                            sizeof( algebra::matrix4f ), &modelMatrix );
+        vkCmdPushConstants(
+          cb, piplineTestBox_->layout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof( algebra::matrix4f ),
+          sizeof( algebra::matrix4f ), &modelMatrix );
 
         vkCmdDraw( cb, 36, 3, 0, 0 );
     }
 
 private:
-    Context* context_{};
+    Context *context_{};
 
     std::unique_ptr<Pipeline> piplineVertexBuffer_{};
     std::unique_ptr<Pipeline> piplineTestBox_{};

@@ -7,11 +7,11 @@ module;
 #include <vulkan/vulkan.h>
 
 #include "nlohmann/json.hpp"
-#include "config/config.h"
 #include "geometry/polytope.h"
 
 export module scene:scene;
 
+import config;
 import image;
 import log;
 
