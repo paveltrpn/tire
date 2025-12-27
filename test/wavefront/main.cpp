@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stdexcept>
 
-import wavefront;
+import scene;
 import log;
 
 int main( int argc, char **argv ) {

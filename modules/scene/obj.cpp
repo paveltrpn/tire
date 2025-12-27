@@ -7,8 +7,11 @@ module;
 #include <vector>
 #include <format>
 #include <filesystem>
+#include <memory>
 
-export module wavefront:obj;
+export module scene:obj;
+
+import :mesh;
 
 namespace tire {
 
@@ -92,7 +95,7 @@ export {
     };
 
     auto split( std::string_view str, char delim ) -> std::vector<std::string> {
-        std::vector<std::string> result;
+        std::vector<std::string> result{};
         auto left = str.begin();
         for ( auto it = left; it != str.end(); ++it ) {
             if ( *it == delim ) {
@@ -102,6 +105,12 @@ export {
         }
         if ( left != str.end() ) result.emplace_back( &*left, str.end() - left );
         return result;
+    }
+
+    std::shared_ptr<Mesh> readObjFile( const std::string &filePath ) {
+        if ( !std::filesystem::exists( filePath ) ) {
+            throw std::runtime_error( "file not exist!" );
+        }
     }
 
     struct Obj final {
@@ -127,11 +136,7 @@ export {
 
         ~Obj() = default;
 
-        auto assertFilePath( std::string_view path ) -> void {
-            if ( !std::filesystem::exists( path ) ) {
-                throw std::runtime_error( "file not exist!" );
-            }
-        }
+        auto assertFilePath( std::string_view path ) -> void {}
 
         auto collectObjectInfo() -> void {
             std::string str;

@@ -79,8 +79,8 @@ find_package(Vulkan REQUIRED)
 file(GLOB MOD_LOG_SRC "modules/log/*.cpp")
 add_library(log)
 target_sources(log
-    PUBLIC FILE_SET
-      CXX_MODULES FILES ${MOD_LOG_SRC}
+    PUBLIC FILE_SET CXX_MODULES FILES
+    ${MOD_LOG_SRC}
 )
 
 # ================================
@@ -88,10 +88,10 @@ target_sources(log
 # ================================
 file(GLOB MOD_ALGEBRA_SRC "modules/algebra/*.cpp")
 add_library(algebra)
-target_sources(algebra PUBLIC
-    FILE_SET
-      CXX_MODULES FILES
-     ${MOD_ALGEBRA_SRC})
+target_sources(algebra
+    PUBLIC FILE_SET CXX_MODULES FILES
+    ${MOD_ALGEBRA_SRC}
+)
 set_target_properties(algebra PROPERTIES LINKER_LANGUAGE CXX)
 
 # ================================
@@ -100,9 +100,8 @@ set_target_properties(algebra PROPERTIES LINKER_LANGUAGE CXX)
 file(GLOB MOD_CONFIG_SRC "modules/config/*.cpp")
 add_library(config)
 target_sources(config
-    PUBLIC
-      FILE_SET CXX_MODULES FILES
-      ${MOD_CONFIG_SRC}
+    PUBLIC FILE_SET CXX_MODULES FILES
+    ${MOD_CONFIG_SRC}
 )
 target_link_libraries(config log)
 
@@ -119,10 +118,9 @@ target_link_libraries(context vulkan config)
 # ================================
 file(GLOB MOD_UI_SRC "modules/ui/*.cpp")
 add_library(ui )
-target_sources(ui PUBLIC
-    FILE_SET
-      CXX_MODULES FILES
-      ${MOD_UI_SRC}
+target_sources(ui
+    PUBLIC FILE_SET CXX_MODULES FILES
+    ${MOD_UI_SRC}
 )
 
 # ================================
@@ -131,8 +129,7 @@ target_sources(ui PUBLIC
 add_library(io)
 file(GLOB MOD_IO_SRC "modules/io/*.cpp")
 target_sources(io
-  PUBLIC
-    FILE_SET CXX_MODULES FILES
+    PUBLIC FILE_SET CXX_MODULES FILES
     ${MOD_IO_SRC}
 )
 target_link_libraries(io uv log)
@@ -142,10 +139,9 @@ target_link_libraries(io uv log)
 # ================================
 file(GLOB_RECURSE MOD_RENDER_SRC "modules/render/*.cpp")
 add_library(render)
-target_sources(render PUBLIC
-    FILE_SET
-      CXX_MODULES FILES
-      ${MOD_RENDER_SRC}
+target_sources(render
+    PUBLIC FILE_SET CXX_MODULES FILES
+    ${MOD_RENDER_SRC}
 )
 target_link_libraries(render vulkan context ui scene config geometry algebra io)
 
@@ -154,10 +150,9 @@ target_link_libraries(render vulkan context ui scene config geometry algebra io)
 # ================================
 file(GLOB MOD_IMAGE_SRC "modules/image/*.cpp")
 add_library(image)
-target_sources(image PUBLIC
-    FILE_SET
-      CXX_MODULES FILES
-      ${MOD_IMAGE_SRC}
+target_sources(image
+    PUBLIC FILE_SET CXX_MODULES FILES
+    ${MOD_IMAGE_SRC}
 )
 target_link_libraries(image algebra log)
 
@@ -170,27 +165,15 @@ target_sources(geometry PRIVATE ${MOD_GEOMETRY_SRC})
 target_link_libraries(geometry algebra)
 
 # ================================
-# Module wavefront
-# ================================
-file(GLOB MOD_WAVEFRONT_SRC "modules/wavefront/*.cpp" "modules/wavefront/*.h")
-add_library(wavefront)
-target_sources(wavefront PUBLIC
-    FILE_SET
-      CXX_MODULES FILES ${MOD_WAVEFRONT_SRC}
-)
-target_link_libraries(wavefront algebra)
-
-# ================================
 # Module scene
 # ================================
 file(GLOB MOD_SCENE_SRC "modules/scene/*.cpp")
 add_library(scene)
 target_sources(scene
-  PUBLIC
-    FILE_SET CXX_MODULES FILES
+    PUBLIC FILE_SET CXX_MODULES FILES
     ${MOD_SCENE_SRC}
 )
-target_link_libraries(scene config image algebra geometry wavefront)
+target_link_libraries(scene config image algebra geometry)
 
 # ================================
 # Main apps subdirectories

@@ -3,7 +3,7 @@ module;
 #include <string>
 #include <format>
 
-export module wavefront:mtl;
+export module scene:mtl;
 
 namespace tire {
 
