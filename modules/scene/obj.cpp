@@ -134,10 +134,25 @@ export {
         return { u, v };
     }
 
-    [[nodiscard]] auto parseFaceString( std::string_view str ) -> std::vector<TriangleIndices> {
-    }
+    [[nodiscard]] auto parseTriangleString( std::string_view str ) -> TriangleIndices {
+        const auto indicesString = split( str, ' ' );
 
-    [[nodiscard]] auto parseMaterialLibraryString( std::string_view str ) -> std::string {
+        TriangleIndices triangle;
+
+        for ( int i = 0; auto &indexString : indicesString ) {
+            const auto indicies = split( indexString, '/' );
+            const auto [v, t, n] =
+              std::make_tuple( std::stoi( indicies[0] ), std::stoi( indicies[1] ), std::stoi( indicies[2] ) );
+
+            // In obj file indicies start from 1, but in our code we start from 0
+            triangle.vertexIndex[i] = v - 1;
+            triangle.normalIndex[i] = n - 1;
+            triangle.texCoordIndex[i] = t - 1;
+
+            ++i;
+        }
+
+        return triangle;
     }
 
     [[nodiscard]]
@@ -158,11 +173,11 @@ export {
         auto mesh = new Mesh{};
 
         // Buffers to read in.
-        std::vector<vector3<Mesh::value_type>> vertices_;
-        std::vector<vector3<Mesh::value_type>> normals_;
-        std::vector<int> indices_;
-        std::vector<vector2<float>> texcrds_;
-        std::vector<vector3<float>> vertclr_;
+        std::vector<vector3<Mesh::value_type>> vertices;
+        std::vector<vector3<Mesh::value_type>> normals;
+        std::vector<TriangleIndices> triangles;
+        std::vector<vector2<float>> texcrds;
+        std::vector<vector3<float>> vertclr;
 
         // Read file content
         std::string str;
@@ -175,26 +190,30 @@ export {
             } else if ( str.starts_with( tokens_[ObjTokens::GEOMETRIC_VERTICES] ) ) {
                 const auto vertexString = str.erase( 0, tokens_[ObjTokens::GEOMETRIC_VERTICES].length() );
                 const auto [x, y, z] = parseVertexString( vertexString );
-                vertices_.push_back( vector3<Mesh::value_type>{ x, y, z } );
+                vertices.push_back( vector3<Mesh::value_type>{ x, y, z } );
                 continue;
             } else if ( str.starts_with( tokens_[ObjTokens::VERTEX_NORMALS] ) ) {
                 const auto normalString = str.erase( 0, tokens_[ObjTokens::VERTEX_NORMALS].length() );
                 const auto [nx, ny, nz] = parseNormalString( normalString );
-                normals_.push_back( vector3<Mesh::value_type>{ nx, ny, nz } );
+                normals.push_back( vector3<Mesh::value_type>{ nx, ny, nz } );
                 continue;
             } else if ( str.starts_with( tokens_[ObjTokens::TEXTURE_VERTICES] ) ) {
-                const auto texcrtdString = str.erase( 0, tokens_[ObjTokens::TEXTURE_VERTICES].length() );
-                const auto [u, v] = parseTexCoordString( texcrtdString );
-                texcrds_.push_back( vector2<float>{ u, v } );
+                const auto texcrdString = str.erase( 0, tokens_[ObjTokens::TEXTURE_VERTICES].length() );
+                const auto [u, v] = parseTexCoordString( texcrdString );
+                texcrds.push_back( vector2<float>{ u, v } );
                 continue;
             } else if ( str.starts_with( tokens_[ObjTokens::FACE] ) ) {
-                //facesCount_++;
-                continue;
-            } else if ( str.starts_with( tokens_[ObjTokens::MATERIAL_LIBRARY] ) ) {
-                //matlibFileName_ = str.erase( 0, 7 );
+                const auto triangleString = str.erase( 0, tokens_[ObjTokens::FACE].length() );
+                const auto triangle = parseTriangleString( triangleString );
+                triangles.push_back( triangle );
                 continue;
             }
         }
+
+        mesh->setVertices( vertices );
+        mesh->setNormals( normals );
+        mesh->setTexCoords( texcrds );
+        mesh->setTriangles( triangles );
 
         return std::shared_ptr<Mesh>( mesh );
     }

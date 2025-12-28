@@ -105,9 +105,9 @@ export struct Mesh final {
         vertices_ = std::move( vertices );
     }
 
-    auto setIndices( std::vector<TriangleIndices> indices ) -> void {
+    auto setTriangles( std::vector<TriangleIndices> triangles ) -> void {
         //
-        triangles_ = std::move( indices );
+        triangles_ = std::move( triangles );
     }
 
     auto setNormals( std::vector<vector3<value_type>> normals ) -> void {
