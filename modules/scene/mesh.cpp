@@ -12,7 +12,13 @@ import algebra;
 
 namespace tire {
 
-struct Mesh final {
+export struct TriangleIndices {
+    int vertexIndex[3];
+    int normalIndex[3];
+    int texCoordIndex[3];
+};
+
+export struct Mesh final {
     using value_type = float;
 
     Mesh() = default;
@@ -29,9 +35,9 @@ struct Mesh final {
         return vertices_.data();
     };
 
-    [[nodiscard]] auto indicesData() const -> const int * {
+    [[nodiscard]] auto indicesData() const -> const TriangleIndices * {
         //
-        return indices_.data();
+        return triangles_.data();
     };
 
     [[nodiscard]] auto normalsData() const -> const vector3<value_type> * {
@@ -54,9 +60,9 @@ struct Mesh final {
         return vertices_;
     };
 
-    [[nodiscard]] auto indices() const -> const std::vector<int> & {
+    [[nodiscard]] auto indices() const -> const std::vector<TriangleIndices> & {
         //
-        return indices_;
+        return triangles_;
     };
 
     [[nodiscard]] auto normals() const -> const std::vector<vector3<value_type>> & {
@@ -99,9 +105,9 @@ struct Mesh final {
         vertices_ = std::move( vertices );
     }
 
-    auto setIndices( std::vector<int> indices ) -> void {
+    auto setIndices( std::vector<TriangleIndices> indices ) -> void {
         //
-        indices_ = std::move( indices );
+        triangles_ = std::move( indices );
     }
 
     auto setNormals( std::vector<vector3<value_type>> normals ) -> void {
@@ -124,10 +130,10 @@ private:
     long long trianglesCount_{};
 
     std::vector<vector3<value_type>> vertices_;
-    std::vector<int> indices_;
     std::vector<vector3<value_type>> normals_;
-    std::vector<vector2<value_type>> texcrds_;
-    std::vector<vector3<value_type>> vertclr_;
+    std::vector<TriangleIndices> triangles_;
+    std::vector<vector2<float>> texcrds_;
+    std::vector<vector3<float>> vertclr_;
 
     AABoundingBox<value_type> bounding_;
 };

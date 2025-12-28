@@ -111,8 +111,37 @@ export {
         return result;
     }
 
+    [[nodiscard]] auto parseVertexString( std::string_view str )
+      -> std::tuple<Mesh::value_type, Mesh::value_type, Mesh::value_type> {
+        const auto vertexValuesString = split( str, ' ' );
+        const auto [x, y, z] = std::make_tuple(
+          std::stof( vertexValuesString[0] ), std::stof( vertexValuesString[1] ), std::stof( vertexValuesString[2] ) );
+        return { x, y, z };
+    }
+
+    [[nodiscard]] auto parseNormalString( std::string_view str )
+      -> std::tuple<Mesh::value_type, Mesh::value_type, Mesh::value_type> {
+        const auto normalValuesString = split( str, ' ' );
+        const auto [x, y, z] = std::make_tuple(
+          std::stof( normalValuesString[0] ), std::stof( normalValuesString[1] ), std::stof( normalValuesString[2] ) );
+        return { x, y, z };
+    }
+
+    [[nodiscard]] auto parseTexCoordString( std::string_view str ) -> std::tuple<float, float> {
+        const auto texCoordValuesString = split( str, ' ' );
+        const auto [u, v] =
+          std::make_tuple( std::stof( texCoordValuesString[0] ), std::stof( texCoordValuesString[1] ) );
+        return { u, v };
+    }
+
+    [[nodiscard]] auto parseFaceString( std::string_view str ) -> std::vector<TriangleIndices> {
+    }
+
+    [[nodiscard]] auto parseMaterialLibraryString( std::string_view str ) -> std::string {
+    }
+
     [[nodiscard]]
-    auto readObjFile( const std::string &filePath ) -> std::shared_ptr<Mesh> {
+    auto readWavefrontObjFile( const std::string &filePath ) -> std::shared_ptr<Mesh> {
         // Assert file exist.
         if ( !std::filesystem::exists( filePath ) ) {
             throw std::runtime_error( "file not exist!" );
@@ -130,10 +159,10 @@ export {
 
         // Buffers to read in.
         std::vector<vector3<Mesh::value_type>> vertices_;
-        std::vector<int> indices_;
         std::vector<vector3<Mesh::value_type>> normals_;
-        std::vector<vector2<Mesh::value_type>> texcrds_;
-        std::vector<vector3<Mesh::value_type>> vertclr_;
+        std::vector<int> indices_;
+        std::vector<vector2<float>> texcrds_;
+        std::vector<vector3<float>> vertclr_;
 
         // Read file content
         std::string str;
@@ -141,16 +170,22 @@ export {
             if ( str.starts_with( tokens_[ObjTokens::COMMENT] ) ) {
                 continue;
             } else if ( str.starts_with( tokens_[ObjTokens::OBJECT_NAME] ) ) {
-                mesh->setName( str.erase( 0, 2 ) );
+                mesh->setName( str.erase( 0, tokens_[ObjTokens::OBJECT_NAME].length() ) );
                 continue;
             } else if ( str.starts_with( tokens_[ObjTokens::GEOMETRIC_VERTICES] ) ) {
-                //verteciesCount_++;
+                const auto vertexString = str.erase( 0, tokens_[ObjTokens::GEOMETRIC_VERTICES].length() );
+                const auto [x, y, z] = parseVertexString( vertexString );
+                vertices_.push_back( vector3<Mesh::value_type>{ x, y, z } );
                 continue;
             } else if ( str.starts_with( tokens_[ObjTokens::VERTEX_NORMALS] ) ) {
-                //normalsCount_++;
+                const auto normalString = str.erase( 0, tokens_[ObjTokens::VERTEX_NORMALS].length() );
+                const auto [nx, ny, nz] = parseNormalString( normalString );
+                normals_.push_back( vector3<Mesh::value_type>{ nx, ny, nz } );
                 continue;
             } else if ( str.starts_with( tokens_[ObjTokens::TEXTURE_VERTICES] ) ) {
-                //texCoordsCount_++;
+                const auto texcrtdString = str.erase( 0, tokens_[ObjTokens::TEXTURE_VERTICES].length() );
+                const auto [u, v] = parseTexCoordString( texcrtdString );
+                texcrds_.push_back( vector2<float>{ u, v } );
                 continue;
             } else if ( str.starts_with( tokens_[ObjTokens::FACE] ) ) {
                 //facesCount_++;
