@@ -125,6 +125,16 @@ export struct Mesh final {
         vertclr_ = std::move( vertexColors );
     }
 
+    [[nodiscard]] auto triangleCount() const -> size_t {
+        //
+        return triangles_.size();
+    }
+
+    [[nodiscard]] auto vertexCount() const -> size_t {
+        //
+        return vertices_.size();
+    }
+
 private:
     std::string name_{ "default_mesh" };
     long long trianglesCount_{};

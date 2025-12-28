@@ -137,7 +137,7 @@ export {
     [[nodiscard]] auto parseTriangleString( std::string_view str ) -> TriangleIndices {
         const auto indicesString = split( str, ' ' );
 
-        TriangleIndices triangle;
+        TriangleIndices triangle{};
 
         for ( int i = 0; auto &indexString : indicesString ) {
             const auto indicies = split( indexString, '/' );
@@ -159,14 +159,14 @@ export {
     auto readWavefrontObjFile( const std::string &filePath ) -> std::shared_ptr<Mesh> {
         // Assert file exist.
         if ( !std::filesystem::exists( filePath ) ) {
-            throw std::runtime_error( "file not exist!" );
+            throw std::runtime_error( std::format( "File \"{}\" not exist!", filePath ) );
         }
 
         // Open file.
         std::ifstream fileHandle;
         fileHandle.open( filePath );
         if ( fileHandle ) {
-            throw std::runtime_error( "somehow file not opened!" );
+            throw std::runtime_error( std::format( "Somehow file \"{}\" not opened!", filePath ) );
         }
 
         // Value to return.

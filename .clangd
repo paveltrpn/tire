@@ -47,7 +47,7 @@ Diagnostics:
       - "modernize-type-traits"
       #   - "modernize-macro-to-enum"
       - "modernize-use-designated-initializers"
-      #   - "misc-use-anonymous-namespace"
+      - "misc-use-anonymous-namespace"
       - "modernize-avoid-c-arrays"
       - "cppcoreguidelines-non-private-member-variables-in-classes"
       - "cppcoreguidelines-pro-bounds-array-to-pointer-decay"
@@ -58,5 +58,7 @@ Diagnostics:
       - "cppcoreguidelines-avoid-magic-numbers"
       - "cppcoreguidelines-macro-usage"
       - "performance-enum-size"
+      - "cppcoreguidelines-pro-bounds-constant-array-index"
+      - "cppcoreguidelines-pro-bounds-pointer-arithmetic"
     CheckOptions:
       readability-identifier-naming.VariableCase: CamelCase
