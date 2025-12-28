@@ -137,7 +137,6 @@ export struct Mesh final {
 
 private:
     std::string name_{ "default_mesh" };
-    long long trianglesCount_{};
 
     std::vector<vector3<value_type>> vertices_;
     std::vector<vector3<value_type>> normals_;

@@ -139,7 +139,7 @@ export {
 
         TriangleIndices triangle{};
 
-        for ( int i = 0; auto &indexString : indicesString ) {
+        for ( int i = 0; auto &&indexString : std::move( indicesString ) ) {
             const auto indicies = split( indexString, '/' );
             const auto [v, t, n] =
               std::make_tuple( std::stoi( indicies[0] ), std::stoi( indicies[1] ), std::stoi( indicies[2] ) );
