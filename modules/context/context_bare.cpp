@@ -12,6 +12,9 @@
 #include "vulkan/vulkan_core.h"
 #include <vulkan/vk_enum_string_helper.h>
 
+#define VMA_IMPLEMENTATION
+#include "vma/vk_mem_alloc.h"
+
 #include "context_bare.h"
 
 static constexpr bool DEBUG_OUTPUT_CONTEXT_CPP{ true };
@@ -34,6 +37,7 @@ static void vkDestroyDebugUtilsMessenger(
 auto ContextBare::init() -> void {
     collectPhysicalDevices();
     makeDevice();
+    createAllocator();
     makeCommandPool();
     makeSwapchain();
     initRenderPass();
@@ -114,6 +118,8 @@ ContextBare::~ContextBare() {
 
     vkDestroyDebugUtilsMessenger( instance_, debugMessenger_, nullptr );
 
+    vmaDestroyAllocator( allocator_ );
+
     vkDestroyInstance( instance_, nullptr );
 }
 
@@ -184,6 +190,22 @@ auto ContextBare::initRenderPass() -> void {
     } else {
         log::info( "vk::PipelineVertexBuffer === render pass created!" );
     }
+}
+
+auto ContextBare::createAllocator() -> void {
+    VmaVulkanFunctions vulkanFunctions = {};
+    vulkanFunctions.vkGetInstanceProcAddr = &vkGetInstanceProcAddr;
+    vulkanFunctions.vkGetDeviceProcAddr = &vkGetDeviceProcAddr;
+
+    VmaAllocatorCreateInfo allocatorCreateInfo = {};
+    allocatorCreateInfo.flags = VMA_ALLOCATOR_CREATE_EXT_MEMORY_BUDGET_BIT;
+    allocatorCreateInfo.vulkanApiVersion = VK_API_VERSION_1_3;
+    allocatorCreateInfo.physicalDevice = physDevice_;
+    allocatorCreateInfo.device = device_;
+    allocatorCreateInfo.instance = instance_;
+    allocatorCreateInfo.pVulkanFunctions = &vulkanFunctions;
+
+    vmaCreateAllocator( &allocatorCreateInfo, &allocator_ );
 }
 
 }  // namespace tire

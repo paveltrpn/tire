@@ -22,32 +22,29 @@ struct ContextBare final : Context {
     ContextBare() = default;
     ~ContextBare();
 
-    ContextBare( const ContextBare& other ) = delete;
-    ContextBare( Context&& other ) = delete;
-    auto operator=( const ContextBare& other ) -> ContextBare& = delete;
-    auto operator=( ContextBare&& other ) -> ContextBare& = delete;
+    ContextBare( const ContextBare &other ) = delete;
+    ContextBare( Context &&other ) = delete;
+    auto operator=( const ContextBare &other ) -> ContextBare & = delete;
+    auto operator=( ContextBare &&other ) -> ContextBare & = delete;
 
     // Init all context
     auto init() -> void override;
 
-    auto makeInstance( const std::string& surfaceExtension ) -> void;
+    auto makeInstance( const std::string &surfaceExtension ) -> void;
 
 #ifdef SURFACE_X11
-    auto makeXlibSurface( Display* display, Window window ) -> void;
+    auto makeXlibSurface( Display *display, Window window ) -> void;
 #elifdef SURFACE_WAYLAND
-    auto makeWaylandSurface( wl_display* display, wl_surface* surface ) -> void;
+    auto makeWaylandSurface( wl_display *display, wl_surface *surface ) -> void;
 #endif
 
-    [[nodiscard]] auto getFrameSyncSet( size_t id )
-        -> std::tuple<VkSemaphore, VkSemaphore, VkFence, VkCommandBuffer> {
-        return { frames_[id].imageAvailableSemaphore_,
-                 frames_[id].renderFinishedSemaphore_,
-                 frames_[id].inFlightFence_, frames_[id].cbPrimary_ };
+    [[nodiscard]] auto getFrameSyncSet( size_t id ) -> std::tuple<VkSemaphore, VkSemaphore, VkFence, VkCommandBuffer> {
+        return {
+          frames_[id].imageAvailableSemaphore_, frames_[id].renderFinishedSemaphore_, frames_[id].inFlightFence_,
+          frames_[id].cbPrimary_ };
     }
 
-    [[nodiscard]] auto framebuffer( size_t id ) const -> VkFramebuffer {
-        return frames_[id].framebuffer_;
-    };
+    [[nodiscard]] auto framebuffer( size_t id ) const -> VkFramebuffer { return frames_[id].framebuffer_; };
 
     [[nodiscard]] auto presentQueue() const -> VkQueue {
         //
@@ -68,9 +65,7 @@ struct ContextBare final : Context {
         return framesCount_;
     };
 
-    [[nodiscard]] auto commandPool() const -> VkCommandPool {
-        return commandPool_;
-    };
+    [[nodiscard]] auto commandPool() const -> VkCommandPool { return commandPool_; };
 
 private:
     auto collectPhysicalDevices() -> void;
@@ -79,6 +74,8 @@ private:
     auto makeSwapchain() -> void;
     auto initRenderPass() -> void;
     auto makeFrames() -> void;
+
+    auto createAllocator() -> void;
 
 private:
     struct PhysicalDevice final {
@@ -103,7 +100,7 @@ private:
 private:
     // Instance
     VkDebugUtilsMessengerEXT debugMessenger_{ VK_NULL_HANDLE };
-    std::vector<const char*> desiredValidationLayerList_{};
+    std::vector<const char *> desiredValidationLayerList_{};
     std::vector<VkExtensionProperties> extensionProperties_{};
     std::vector<VkLayerProperties> layerProperties_{};
 

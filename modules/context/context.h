@@ -5,42 +5,57 @@
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 
+#define VMA_STATIC_VULKAN_FUNCTIONS 0
+#define VMA_DYNAMIC_VULKAN_FUNCTIONS 1
+#include "vma/vk_mem_alloc.h"
+
 namespace tire {
 
 struct Context {
     Context() = default;
     virtual ~Context() = default;
 
-    Context( const Context& other ) = delete;
-    Context( Context&& other ) = delete;
-    auto operator=( const Context& other ) -> Context& = delete;
-    auto operator=( Context&& other ) -> Context& = delete;
+    Context( const Context &other ) = delete;
+    Context( Context &&other ) = delete;
+    auto operator=( const Context &other ) -> Context & = delete;
+    auto operator=( Context &&other ) -> Context & = delete;
 
     virtual auto init() -> void = 0;
 
-    [[nodiscard]] auto instance() const -> VkInstance { return instance_; };
-    [[nodiscard]] auto surface() const -> VkSurfaceKHR { return surface_; };
-    [[nodiscard]] auto device() const -> VkDevice { return device_; };
+    [[nodiscard]] auto instance() const -> VkInstance {
+        //
+        return instance_;
+    };
+
+    [[nodiscard]] auto surface() const -> VkSurfaceKHR {
+        //
+        return surface_;
+    };
+
+    [[nodiscard]] auto device() const -> VkDevice {
+        //
+        return device_;
+    };
+
     [[nodiscard]] auto swapchain() const -> VkSwapchainKHR {
+        //
         return swapchain_;
     };
 
     [[nodiscard]]
-    auto surfaceFormat() const -> const VkSurfaceFormatKHR& {
+    auto surfaceFormat() const -> const VkSurfaceFormatKHR & {
         return surfaceFormat_;
     };
 
     [[nodiscard]]
-    auto graphicsQueue() const -> const VkQueue& {
+    auto graphicsQueue() const -> const VkQueue & {
         return graphicsQueue_;
     }
 
-    [[nodiscard]] auto graphicsFamily() const -> uint32_t {
-        return graphicsFamilyQueueId_;
-    };
+    [[nodiscard]] auto graphicsFamily() const -> uint32_t { return graphicsFamilyQueueId_; };
 
     [[nodiscard]]
-    virtual auto currentExtent() const -> const VkExtent2D& {
+    virtual auto currentExtent() const -> const VkExtent2D & {
         return currentExtent_;
     };
 
@@ -55,20 +70,32 @@ struct Context {
     }
 
     [[nodiscard]]
-    auto memoryRequirements( uint32_t typeFilter,
-                             VkMemoryPropertyFlags properties ) const
-        -> uint32_t;
+    auto memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags properties ) const -> uint32_t;
 
     [[nodiscard]]
-    auto findSupportedFormat( const std::vector<VkFormat>& candidates,
-                              VkImageTiling tiling,
-                              VkFormatFeatureFlags features ) const -> VkFormat;
+    auto findSupportedFormat(
+      const std::vector<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features ) const -> VkFormat;
 
     [[nodiscard]] auto renderPass() const -> VkRenderPass {
+        //
         return renderPass_;
     };
 
+    [[nodiscard]] auto allocator() const -> VmaAllocator {
+        //
+        return allocator_;
+    }
+
+    [[nodiscard]] auto buffer() const -> VkBuffer {
+        //
+        return buffer_;
+    }
+
 protected:
+    VmaAllocator allocator_;
+    VkBuffer buffer_{ VK_NULL_HANDLE };
+    VmaAllocation allocation_{};
+
     VkInstance instance_{ VK_NULL_HANDLE };
     VkSurfaceKHR surface_{ VK_NULL_HANDLE };
     VkPhysicalDevice physDevice_{};
