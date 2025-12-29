@@ -263,6 +263,11 @@ export struct SeparatedBuffersMesh final {
         name_ = name;
     }
 
+    [[nodiscard]]
+    auto vertecieCount() const -> size_t {
+        return vertices_.size();
+    }
+
     std::vector<vector3<value_type>> vertices_;
     std::vector<vector3<value_type>> normals_;
     std::vector<vector2<float>> texcrds_;

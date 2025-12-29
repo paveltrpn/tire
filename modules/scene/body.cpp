@@ -44,27 +44,55 @@ struct Body final {
 
     const algebra::vector2f *texcrdsData() { return shapeData_->texcrdsData(); }
 
-    void setBounding( BoundingVolume<float> value ) { bounding_ = value; }
-    const BoundingVolume<float> bounding() { return bounding_; };
-
-    void setAlbedoColor( const std::string &name ) { albedoColor_ = Colorf{ name }; }
+    void setBounding( BoundingVolume<float> value ) {
+        //
+        bounding_ = value;
+    }
 
     [[nodiscard]]
-    Colorf albedoColor() const {
+    auto bounding() const -> BoundingVolume<float> {
+        return bounding_;
+    };
+
+    void setAlbedoColor( const std::string &name ) {
+        //
+        albedoColor_ = Colorf{ name };
+    }
+
+    [[nodiscard]]
+    auto albedoColor() const -> Colorf {
         return albedoColor_;
     };
 
-    void setPosition( const vector3<value_type> &value ) { position_ = value; }
+    void setPosition( const vector3<value_type> &value ) {
+        //
+        position_ = value;
+    }
 
-    void setOrientation( const vector3<value_type> &value ) { orientation_ = value; }
+    void setOrientation( const vector3<value_type> &value ) {
+        //
+        orientation_ = value;
+    }
 
-    void setScale( const vector3<value_type> &value ) { scale_ = value; }
+    void setScale( const vector3<value_type> &value ) {
+        //
+        scale_ = value;
+    }
 
-    void setVelocity( const vector3<value_type> &value ) { velocity_ = value; }
+    void setVelocity( const vector3<value_type> &value ) {
+        //
+        velocity_ = value;
+    }
 
-    void setTorque( const vector3<value_type> &value ) { torque_ = value; }
+    void setTorque( const vector3<value_type> &value ) {
+        //
+        torque_ = value;
+    }
 
-    void setMaterialName( const std::string &value ) { materialName_ = value; }
+    void setMaterialName( const std::string &value ) {
+        //
+        materialName_ = value;
+    }
 
     [[nodiscard]]
     vector3<value_type> position() const {
