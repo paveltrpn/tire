@@ -159,9 +159,11 @@ target_link_libraries(image algebra log)
 # ================================
 # Module geometry
 # ================================
-file(GLOB MOD_GEOMETRY_SRC "modules/geometry/*.cpp" "modules/geometry/*.h")
+file(GLOB MOD_GEOMETRY_SRC "modules/geometry/*.cpp")
 add_library(geometry)
-target_sources(geometry PRIVATE ${MOD_GEOMETRY_SRC})
+target_sources(geometry
+    PUBLIC FILE_SET CXX_MODULES FILES
+    ${MOD_GEOMETRY_SRC})
 target_link_libraries(geometry algebra)
 
 # ================================

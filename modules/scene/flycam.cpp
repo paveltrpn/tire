@@ -4,13 +4,14 @@ module;
 #include <string>
 #include <cstdint>
 
-#include "geometry/bounding_volumes.h"
-
 export module scene:flycam;
 
 import algebra;
+import geometry;
 
 namespace tire {
+
+using namespace algebra;
 
 // enum FlycamMoveBits {
 // NONE = 1 << 0,
@@ -38,8 +39,7 @@ export struct Flycam final {
 
     Flycam() = default;
 
-    Flycam( const algebra::vector3<value_type>& eye, value_type azimuth,
-            value_type elevation ) {
+    Flycam( const algebra::vector3<value_type> &eye, value_type azimuth, value_type elevation ) {
         azimuth_ = azimuth;
         elevation_ = elevation;
         roll_ = 0.0;
@@ -47,50 +47,46 @@ export struct Flycam final {
         eye_ = eye;
     }
 
-    Flycam( const Flycam& other ) = delete;
-    Flycam( Flycam&& other ) = delete;
-    auto operator=( const Flycam& other ) -> Flycam& = delete;
-    auto operator=( Flycam&& other ) -> Flycam& = delete;
+    Flycam( const Flycam &other ) = delete;
+    Flycam( Flycam &&other ) = delete;
+    auto operator=( const Flycam &other ) -> Flycam & = delete;
+    auto operator=( Flycam &&other ) -> Flycam & = delete;
 
     ~Flycam() = default;
 
-    auto setFov( value_type fov ) -> Flycam& {
+    auto setFov( value_type fov ) -> Flycam & {
         //
         fov_ = fov;
         return *this;
     }
 
-    auto setAspect( value_type aspect ) -> Flycam& {
+    auto setAspect( value_type aspect ) -> Flycam & {
         //
         aspect_ = aspect;
         return *this;
     }
 
-    auto setNcp( value_type ncp ) -> Flycam& {
+    auto setNcp( value_type ncp ) -> Flycam & {
         //
         ncp_ = ncp;
         return *this;
     }
 
-    auto setFcp( value_type fcp ) -> Flycam& {
+    auto setFcp( value_type fcp ) -> Flycam & {
         //
         fcp_ = fcp;
         return *this;
     }
 
-    auto setName( const std::string& value ) -> Flycam& {
+    auto setName( const std::string &value ) -> Flycam & {
         //
         name_ = value;
         return *this;
     };
 
-    void setMoveBit( FlycamMoveBits bit ) {
-        moveMask_ |= ( (uint32_t)1 << bit );
-    }
+    void setMoveBit( FlycamMoveBits bit ) { moveMask_ |= ( (uint32_t)1 << bit ); }
 
-    void unsetMoveBit( FlycamMoveBits bit ) {
-        moveMask_ &= ~( (uint32_t)1 << bit );
-    }
+    void unsetMoveBit( FlycamMoveBits bit ) { moveMask_ &= ~( (uint32_t)1 << bit ); }
 
     void unsetMoveAll() { moveMask_ = 0; }
 
@@ -108,29 +104,27 @@ export struct Flycam final {
         if ( elevation_ < -ELEVATION_BOUND ) elevation_ = -ELEVATION_BOUND;
     }
 
-    void setPosition( const algebra::vector3<value_type>& pos ) { eye_ = pos; }
+    void setPosition( const algebra::vector3<value_type> &pos ) { eye_ = pos; }
 
-    void setAngles( value_type azimuth, value_type elevation,
-                    value_type roll ) {
+    void setAngles( value_type azimuth, value_type elevation, value_type roll ) {
         azimuth_ = azimuth;
         elevation_ = elevation;
         roll_ = roll;
     }
     auto matrix() -> algebra::matrix4<value_type> {
         algebra::matrix4<value_type> projection;
-        projection =
-            algebra::perspective<value_type>( fov_, aspect_, ncp_, fcp_ );
+        projection = algebra::perspective<value_type>( fov_, aspect_, ncp_, fcp_ );
         // projection =
         // algebra::vperspective<value_type>( fov_, aspect_, ncp_, fcp_ );
 
         // Get azimuth rotation matrix
-        const auto& ar = algebra::rotate<value_type>( zenith_, azimuth_ );
+        const auto &ar = algebra::rotate<value_type>( zenith_, azimuth_ );
 
         // Get actual "right side" direction vector
         right_ = ar.mult_vector3( { 1.0f, 0.0f, 0.0f } );
 
         // Get elevation rotation matrix
-        const auto& er = algebra::rotate<value_type>( right_, elevation_ );
+        const auto &er = algebra::rotate<value_type>( right_, elevation_ );
 
         // Get actual look direction vector
         look_ = er.mult_vector3( right_.cross( zenith_ ) );
@@ -139,7 +133,7 @@ export struct Flycam final {
         //
 
         // Get offset matrix
-        auto&& offset = algebra::translate<value_type>( eye_ );
+        auto &&offset = algebra::translate<value_type>( eye_ );
         offset.transpose_self();
 
         return offset * er * ar * projection;
@@ -171,17 +165,13 @@ export struct Flycam final {
     };
 
     void traverse() {
-        if ( ( moveMask_ >> FlycamMoveBits::FORWARD ) & (uint32_t)1 )
-            velocity_ += look_;
+        if ( ( moveMask_ >> FlycamMoveBits::FORWARD ) & (uint32_t)1 ) velocity_ += look_;
 
-        if ( ( moveMask_ >> FlycamMoveBits::BACKWARD ) & (uint32_t)1 )
-            velocity_ += look_.inverse();
+        if ( ( moveMask_ >> FlycamMoveBits::BACKWARD ) & (uint32_t)1 ) velocity_ += look_.inverse();
 
-        if ( ( moveMask_ >> FlycamMoveBits::RIGHT ) & (uint32_t)1 )
-            velocity_ += right_.inverse();
+        if ( ( moveMask_ >> FlycamMoveBits::RIGHT ) & (uint32_t)1 ) velocity_ += right_.inverse();
 
-        if ( ( moveMask_ >> FlycamMoveBits::LEFT ) & (uint32_t)1 )
-            velocity_ += right_;
+        if ( ( moveMask_ >> FlycamMoveBits::LEFT ) & (uint32_t)1 ) velocity_ += right_;
 
         eye_.plus( velocity_.scale( 0.5 ) );
 
@@ -211,7 +201,7 @@ private:
     uint32_t moveMask_{};
 
     // Bounding and mass
-    BoundingSphere<value_type> bounding_{};
+    BoundingSphere bounding_{};
     value_type mass_{};
     algebra::vector3<value_type> velocity_{};
 

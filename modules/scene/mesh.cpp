@@ -4,13 +4,14 @@ module;
 #include <vector>
 #include <string>
 
-#include "geometry/bounding_volumes.h"
-
 export module scene:mesh;
 
 import algebra;
+import geometry;
 
 namespace tire {
+
+using namespace algebra;
 
 // Gloabal mesh vertex value type
 using MeshValueType = float;
@@ -85,7 +86,7 @@ struct ObjMesh final {
         return vertclr_;
     }
 
-    [[nodiscard]] auto bounding() const -> AABoundingBox<value_type> {
+    [[nodiscard]] auto bounding() const -> AABoundingBox {
         //
         return bounding_;
     }
@@ -144,7 +145,7 @@ struct ObjMesh final {
     std::vector<ObjTriangleIndices> triangles_{};
 
     std::string name_{};
-    AABoundingBox<value_type> bounding_{};
+    AABoundingBox bounding_{};
 };
 
 // ====================================================================
@@ -206,7 +207,7 @@ export struct InterleavedMesh final {
     std::vector<Vertex> vertices_;
 
     std::string name_{};
-    AABoundingBox<value_type> bounding_;
+    AABoundingBox bounding_;
 };
 
 // ====================================================================
@@ -273,7 +274,7 @@ export struct SeparatedBuffersMesh final {
     std::vector<vector2<float>> texcrds_;
 
     std::string name_{};
-    AABoundingBox<value_type> bounding_;
+    AABoundingBox bounding_;
 };
 
 }  // namespace tire

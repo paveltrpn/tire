@@ -4,11 +4,10 @@ module;
 #include <vector>
 #include <memory>
 
-#include "geometry/bounding_volumes.h"
-
 export module scene:body;
 
 import algebra;
+import geometry;
 import image;
 
 import :mesh;
@@ -65,13 +64,13 @@ struct Body final {
         return mesh_->texcrds_.data();
     }
 
-    void setBounding( BoundingVolume<float> value ) {
+    void setBounding( AABoundingBox value ) {
         //
         bounding_ = value;
     }
 
     [[nodiscard]]
-    auto bounding() const -> BoundingVolume<float> {
+    auto bounding() const -> AABoundingBox {
         return bounding_;
     };
 
@@ -192,7 +191,7 @@ private:
     std::vector<vector3<value_type>> localVertecies_{};
     std::vector<vector3<value_type>> localNormals_{};
 
-    BoundingVolume<value_type> bounding_{};
+    AABoundingBox bounding_{};
 
     // Body spatial information
     vector3<value_type> position_{};
