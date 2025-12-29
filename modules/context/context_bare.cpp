@@ -63,7 +63,7 @@ auto ContextBare::makeXlibSurface( Display *display, Window window ) -> void {
         throw std::runtime_error(
           std::format( "failed to create xlib surface with code {}\n!", string_VkResult( err ) ) );
     } else {
-        log::info( "vk::Surface === xlib surface created!" );
+        log::info( "Surface === xlib surface created!" );
     }
 }
 #elifdef SURFACE_WAYLAND
@@ -92,7 +92,7 @@ void ContextBare::makeCommandPool() {
         throw std::runtime_error(
           std::format( "failed to create command pool woth code {}!", string_VkResult( err ) ) );
     } else {
-        log::debug<DEBUG_OUTPUT_CONTEXT_CPP>( "vk::CommandPool === command pool created!" );
+        log::debug<DEBUG_OUTPUT_CONTEXT_CPP>( "CommandPool === command pool created!" );
     }
 }
 

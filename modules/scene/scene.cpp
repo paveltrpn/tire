@@ -1,7 +1,6 @@
 
 module;
 
-#include <print>
 #include <format>
 #include <filesystem>
 #include <fstream>
@@ -87,6 +86,12 @@ export struct Scene {
         if ( file ) {
             try {
                 scene_ = nlohmann::json::parse( file );
+
+                // Load meshes data.
+                fillBaseMeshPool();
+
+                // Parse json. Collect objects, cameras, lights and other scene entities
+                process();
             } catch ( const nlohmann::json::parse_error &e ) {
                 log::error(
                   "config json parse error\n"
@@ -94,22 +99,23 @@ export struct Scene {
                   "exception id:\t{}\n"
                   "byte position of error:\t{}\n",
                   e.what(), e.id, e.byte );
+
+                std::terminate();
+
+            } catch ( const std::exception &e ) {
+                log::error( "exception: {}", e.what() );
+
+                std::terminate();
             }
         } else {
             throw std::runtime_error( std::format( "Scene ===  file not found: {}\n", path.string() ) );
         }
-
-        // Load meshes data.
-        fillBaseMeshPool();
-
-        // Parse json. Collect objects, cameras, lights and other scene entities
-        process();
     }
 
     Scene( const Scene &other ) = delete;
     Scene( Scene &&other ) = delete;
-    Scene &operator=( const Scene &other ) = delete;
-    Scene &operator=( Scene &&other ) = delete;
+    auto operator=( const Scene &other ) -> Scene & = delete;
+    auto operator=( Scene &&other ) -> Scene & = delete;
 
     virtual ~Scene() = default;
 
@@ -164,7 +170,7 @@ private:
                 log::info( "Scene === mesh type \"{}\" added", meshType );
 
             } catch ( const std::exception &e ) {
-                std::println( "Error reading mesh file: {}", e.what() );
+                log::error( "Error reading mesh file: {}", e.what() );
                 std::terminate();
             }
         }

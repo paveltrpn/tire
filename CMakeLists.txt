@@ -25,6 +25,8 @@ endif()
 
 # Silence some deprecated declaration warnings from nlohmann json and Qt
 add_compile_options(-Wno-deprecated-declarations)
+# From Vulkan Memory Allocator
+add_compile_options(-Wno-nullability-completeness)
 
 # Set latest c++ standart.
 add_compile_options(-std=c++26)
