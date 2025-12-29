@@ -111,6 +111,7 @@ target_link_libraries(config log)
 file(GLOB_RECURSE MOD_VMA_SRC "vma/*.h" )
 add_library(VMA)
 target_sources(VMA PRIVATE ${MOD_VMA_SRC})
+set_target_properties(VMA PROPERTIES LINKER_LANGUAGE CXX)
 
 # ================================
 # Module context
