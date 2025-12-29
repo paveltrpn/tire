@@ -106,12 +106,19 @@ target_sources(config
 target_link_libraries(config log)
 
 # ================================
+# Module VMA
+# ================================
+file(GLOB_RECURSE MOD_VMA_SRC "vma/*.h" )
+add_library(VMA)
+target_sources(VMA PRIVATE ${MOD_VMA_SRC})
+
+# ================================
 # Module context
 # ================================
 file(GLOB_RECURSE MOD_CONTEXT_SRC "modules/context/*.cpp" "modules/context/*.h")
 add_library(context)
 target_sources(context PRIVATE ${MOD_CONTEXT_SRC})
-target_link_libraries(context vulkan config image)
+target_link_libraries(context vulkan config image VMA)
 
 # ================================
 # Module ui
