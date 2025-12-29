@@ -60,5 +60,6 @@ Diagnostics:
       - "performance-enum-size"
       - "cppcoreguidelines-pro-bounds-constant-array-index"
       - "cppcoreguidelines-pro-bounds-pointer-arithmetic"
+      - "misc-use-internal-linkage"
     CheckOptions:
       readability-identifier-naming.VariableCase: CamelCase

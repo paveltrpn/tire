@@ -1,6 +1,8 @@
 
 module;
 
+#include <print>
+#include <format>
 #include <filesystem>
 #include <fstream>
 
@@ -12,9 +14,10 @@ module;
 export module scene:scene;
 
 import config;
-import image;
 import log;
+import image;
 
+import :obj;
 import :mesh;
 import :body;
 import :light;
@@ -98,7 +101,7 @@ export struct Scene {
         }
 
         // Load meshes data.
-        fillMeshBank();
+        fillBaseMeshPool();
 
         // Parse json. Collect objects, cameras, lights and other scene entities
         process();
@@ -144,19 +147,24 @@ export struct Scene {
     }
 
 private:
-    void fillMeshBank() {
+    void fillBaseMeshPool() {
         const auto basePath = Config::instance()->getBasePath().string();
-        const std::filesystem::path meshFlesPath = std::format( "{}/assets/mesh/", basePath );
+        const std::filesystem::path meshFilesPath = std::format( "{}/assets/base_mesh/", basePath );
 
         // Iterate over directory
-        for ( auto &&entry : std::filesystem::directory_iterator{ meshFlesPath } ) {
+        for ( auto &&entry : std::filesystem::directory_iterator{ meshFilesPath } ) {
             std::vector<std::string> retItem;
             // Take only "name" part of filename, i.e. except
             // extension and path.
-            const auto &fileName = entry.path().stem().string();
+            const auto &meshType = entry.path().stem().string();
 
-            auto mesh = std::make_shared<InterleavedMesh>();
-            meshBank_.insert( { fileName, std::move( mesh ) } );
+            try {
+                auto mesh = readWavefrontObjFile( entry.path().string() );
+                baseMeshPool_.insert( { meshType, std::move( mesh ) } );
+            } catch ( const std::exception &e ) {
+                std::println( "Error reading mesh file: {}", e.what() );
+                std::terminate();
+            }
         }
     }
 
@@ -317,14 +325,14 @@ private:
 protected:
     Colorf backgrounColor_{ "black" };
 
+    std::unordered_map<std::string, std::shared_ptr<SeparatedBuffersMesh>> baseMeshPool_{};
+
     std::vector<std::shared_ptr<Body>> bodyList_{};
     std::vector<std::shared_ptr<OmniLight<float>>> lightList_{};
     std::vector<std::shared_ptr<Flycam>> cameras_{};
 
     // One camera exist anyway
     int activeCamera_{ 0 };
-
-    std::unordered_map<std::string, std::shared_ptr<InterleavedMesh>> meshBank_{};
 };
 
 }  // namespace tire

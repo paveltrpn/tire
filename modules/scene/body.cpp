@@ -134,7 +134,7 @@ struct Body final {
     }
 
 private:
-    std::shared_ptr<InterleavedMesh> mesh_;
+    std::shared_ptr<SeparatedBuffersMesh> mesh_;
 
     // Default body geometry data.
     std::shared_ptr<PolytopeData> shapeData_{};
