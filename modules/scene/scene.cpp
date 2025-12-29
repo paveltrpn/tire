@@ -161,6 +161,9 @@ private:
             try {
                 auto mesh = readWavefrontObjFile( entry.path().string() );
                 baseMeshPool_.insert( { meshType, std::move( mesh ) } );
+
+                log::info( "Scene === mesh type \"{}\" added", meshType );
+
             } catch ( const std::exception &e ) {
                 std::println( "Error reading mesh file: {}", e.what() );
                 std::terminate();
