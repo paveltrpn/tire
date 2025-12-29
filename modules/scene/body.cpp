@@ -4,7 +4,6 @@ module;
 #include <vector>
 #include <memory>
 
-#include "geometry/polytope.h"
 #include "geometry/bounding_volumes.h"
 
 export module scene:body;
@@ -24,22 +23,16 @@ struct Body final {
 
     Body() = default;
 
-    Body( std::shared_ptr<SeparatedBuffersMesh> mesh ) {
-        // shapeData_ = std::move( data );
-        localVertecies_.resize( mesh->verteciesCount() );
-        localNormals_.resize( mesh->verteciesCount() );
-    }
-
-    void setShapeData( std::shared_ptr<PolytopeData> data ) {
-        shapeData_ = std::move( data );
-        localVertecies_.resize( shapeData_->verteciesCount() );
-        localNormals_.resize( shapeData_->verteciesCount() );
+    Body( std::shared_ptr<SeparatedBuffersMesh> mesh )
+        : mesh_{ std::move( mesh ) } {
+        localVertecies_.resize( mesh_->verteciesCount() );
+        localNormals_.resize( mesh_->verteciesCount() );
     }
 
     [[nodiscard]]
     auto verteciesCount() const -> size_t {
         //
-        return shapeData_->verteciesCount();
+        return mesh_->verteciesCount();
     }
 
     [[nodiscard]]
@@ -69,7 +62,7 @@ struct Body final {
 
     [[nodiscard]]
     const algebra::vector2f *texcrdsData() {
-        return shapeData_->texcrdsData();
+        return mesh_->texcrds_.data();
     }
 
     void setBounding( BoundingVolume<float> value ) {
@@ -178,13 +171,13 @@ struct Body final {
 
         // Apply transformation matrix to default geometry data,
         // and copy this data into local buffers.
-        for ( auto i = 0; i < shapeData_->verteciesCount(); ++i ) {
+        for ( auto i = 0; i < mesh_->verteciesCount(); ++i ) {
             // Update vertex positions
-            auto vertex = shapeData_->vertecies()[i];
+            auto vertex = mesh_->vertices_[i];
             localVertecies_[i] = transform.mult_vector3( vertex );
 
             // Update normals
-            auto normal = shapeData_->normals()[i];
+            auto normal = mesh_->normals_[i];
             localNormals_[i] = itRotation.mult_vector3( normal );
         }
     }
@@ -192,15 +185,12 @@ struct Body final {
 private:
     std::shared_ptr<SeparatedBuffersMesh> mesh_;
 
-    // Default body geometry data.
-    std::shared_ptr<PolytopeData> shapeData_{};
-
     // Buffers for local geometry data. This buffers fill
     // every frame with geometry data taken from default
     // shape data and transform according to actual spatial
     // information
-    std::vector<vector3f> localVertecies_{};
-    std::vector<vector3f> localNormals_{};
+    std::vector<vector3<value_type>> localVertecies_{};
+    std::vector<vector3<value_type>> localNormals_{};
 
     BoundingVolume<value_type> bounding_{};
 

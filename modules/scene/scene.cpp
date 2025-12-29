@@ -9,7 +9,6 @@ module;
 #include <vulkan/vulkan.h>
 
 #include "nlohmann/json.hpp"
-#include "geometry/polytope.h"
 
 export module scene:scene;
 
@@ -181,8 +180,6 @@ private:
         if ( scene_.contains( PARAM_OBJECTS ) ) {
             const auto objects = scene_[PARAM_OBJECTS];
             for ( const auto &item : objects ) {
-                const auto &type = item[PARAM_OBJECT_TYPE];
-
                 // Body spatial information
                 const std::array<float, 3> position = item[PARAM_OBJECT_POSITION];
 
@@ -199,40 +196,10 @@ private:
 
                 const std::string &materialName = item[PARAM_OBJECT_MATERIAL_NAME];
 
-                // Body vertices data
-                auto node = std::make_shared<Body>();
-                if ( type == PARAM_OBJECT_TYPE_BOX ) {
-                    auto shapePtr = std::make_shared<BoxData>();
-                    node->setShapeData( std::move( shapePtr ) );
-
-                } else if ( type == PARAM_OBJECT_TYPE_FRAME ) {
-                    auto shapePtr = std::make_shared<FrameData>();
-                    node->setShapeData( std::move( shapePtr ) );
-
-                } else if ( type == PARAM_OBJECT_TYPE_DIAMOND ) {
-                    auto shapePtr = std::make_shared<DiamondData>();
-                    node->setShapeData( std::move( shapePtr ) );
-
-                } else if ( type == PARAM_OBJECT_TYPE_WALL01 ) {
-                    auto shapePtr = std::make_shared<Wall01Data>();
-                    node->setShapeData( std::move( shapePtr ) );
-
-                } else if ( type == PARAM_OBJECT_TYPE_ARCH01 ) {
-                    auto shapePtr = std::make_shared<Arch01Data>();
-                    node->setShapeData( std::move( shapePtr ) );
-
-                } else if ( type == PARAM_OBJECT_TYPE_PRISMHEXA ) {
-                    auto shapePtr = std::make_shared<PrismhexaData>();
-                    node->setShapeData( std::move( shapePtr ) );
-
-                } else if ( type == PARAM_OBJECT_TYPE_PRISM ) {
-                    auto shapePtr = std::make_shared<PrismData>();
-                    node->setShapeData( std::move( shapePtr ) );
-
-                } else if ( type == PARAM_OBJECT_TYPE_PYRAMIDCUT ) {
-                    auto shapePtr = std::make_shared<PyramidcutData>();
-                    node->setShapeData( std::move( shapePtr ) );
-                }
+                // Body mesh data
+                const auto &type = item[PARAM_OBJECT_TYPE];
+                auto bodyMesh = baseMeshPool_[type];
+                auto node = std::make_shared<Body>( std::move( bodyMesh ) );
 
                 // Set body properties
                 node->setPosition( position );
