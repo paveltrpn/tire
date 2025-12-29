@@ -112,7 +112,7 @@ export {
     }
 
     [[nodiscard]] auto parseVertexString( std::string_view str )
-      -> std::tuple<Mesh::value_type, Mesh::value_type, Mesh::value_type> {
+      -> std::tuple<MeshValueType, MeshValueType, MeshValueType> {
         const auto vertexValuesString = split( str, ' ' );
         const auto [x, y, z] = std::make_tuple(
           std::stof( vertexValuesString[0] ), std::stof( vertexValuesString[1] ), std::stof( vertexValuesString[2] ) );
@@ -120,7 +120,7 @@ export {
     }
 
     [[nodiscard]] auto parseNormalString( std::string_view str )
-      -> std::tuple<Mesh::value_type, Mesh::value_type, Mesh::value_type> {
+      -> std::tuple<MeshValueType, MeshValueType, MeshValueType> {
         const auto normalValuesString = split( str, ' ' );
         const auto [x, y, z] = std::make_tuple(
           std::stof( normalValuesString[0] ), std::stof( normalValuesString[1] ), std::stof( normalValuesString[2] ) );
@@ -134,10 +134,10 @@ export {
         return { u, v };
     }
 
-    [[nodiscard]] auto parseTriangleString( std::string_view str ) -> TriangleIndices {
+    [[nodiscard]] auto parseTriangleString( std::string_view str ) -> ObjTriangleIndices {
         const auto indicesString = split( str, ' ' );
 
-        TriangleIndices triangle{};
+        ObjTriangleIndices triangle{};
 
         for ( int i = 0; auto &&indexString : std::move( indicesString ) ) {
             const auto indicies = split( indexString, '/' );
@@ -156,7 +156,7 @@ export {
     }
 
     [[nodiscard]]
-    auto readWavefrontObjFile( const std::string &filePath ) -> std::shared_ptr<Mesh> {
+    auto readWavefrontObjFile( const std::string &filePath ) -> std::shared_ptr<InterleavedMesh> {
         // Assert file exist.
         if ( !std::filesystem::exists( filePath ) ) {
             throw std::runtime_error( std::format( "File \"{}\" not exist!", filePath ) );
@@ -169,15 +169,8 @@ export {
             throw std::runtime_error( std::format( "Somehow file \"{}\" not opened!", filePath ) );
         }
 
-        // Value to return.
-        auto mesh = new Mesh{};
-
-        // Buffers to read in.
-        std::vector<vector3<Mesh::value_type>> vertices;
-        std::vector<vector3<Mesh::value_type>> normals;
-        std::vector<TriangleIndices> triangles;
-        std::vector<vector2<float>> texcrds;
-        std::vector<vector3<float>> vertclr;
+        // Buffer to read in.
+        auto objMesh = ObjMesh{};
 
         // Read file content
         std::string str;
@@ -185,37 +178,35 @@ export {
             if ( str.starts_with( tokens_[ObjTokens::COMMENT] ) ) {
                 continue;
             } else if ( str.starts_with( tokens_[ObjTokens::OBJECT_NAME] ) ) {
-                mesh->setName( str.erase( 0, tokens_[ObjTokens::OBJECT_NAME].length() ) );
+                objMesh.setName( str.erase( 0, tokens_[ObjTokens::OBJECT_NAME].length() ) );
                 continue;
             } else if ( str.starts_with( tokens_[ObjTokens::GEOMETRIC_VERTICES] ) ) {
                 const auto vertexString = str.erase( 0, tokens_[ObjTokens::GEOMETRIC_VERTICES].length() );
                 const auto [x, y, z] = parseVertexString( vertexString );
-                vertices.push_back( vector3<Mesh::value_type>{ x, y, z } );
+                objMesh.vertices_.push_back( vector3<MeshValueType>{ x, y, z } );
                 continue;
             } else if ( str.starts_with( tokens_[ObjTokens::VERTEX_NORMALS] ) ) {
                 const auto normalString = str.erase( 0, tokens_[ObjTokens::VERTEX_NORMALS].length() );
                 const auto [nx, ny, nz] = parseNormalString( normalString );
-                normals.push_back( vector3<Mesh::value_type>{ nx, ny, nz } );
+                objMesh.normals_.push_back( vector3<MeshValueType>{ nx, ny, nz } );
                 continue;
             } else if ( str.starts_with( tokens_[ObjTokens::TEXTURE_VERTICES] ) ) {
                 const auto texcrdString = str.erase( 0, tokens_[ObjTokens::TEXTURE_VERTICES].length() );
                 const auto [u, v] = parseTexCoordString( texcrdString );
-                texcrds.push_back( vector2<float>{ u, v } );
+                objMesh.texcrds_.push_back( vector2<float>{ u, v } );
                 continue;
             } else if ( str.starts_with( tokens_[ObjTokens::FACE] ) ) {
                 const auto triangleString = str.erase( 0, tokens_[ObjTokens::FACE].length() );
                 const auto triangle = parseTriangleString( triangleString );
-                triangles.push_back( triangle );
+                objMesh.triangles_.push_back( triangle );
                 continue;
             }
         }
 
-        mesh->setVertices( vertices );
-        mesh->setNormals( normals );
-        mesh->setTexCoords( texcrds );
-        mesh->setTriangles( triangles );
+        // Obj -> interleaved conversion.
+        auto mesh = new InterleavedMesh{ objMesh };
 
-        return std::shared_ptr<Mesh>( mesh );
+        return std::shared_ptr<InterleavedMesh>( mesh );
     }
 }
 

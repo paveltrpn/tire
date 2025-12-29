@@ -12,30 +12,35 @@ import algebra;
 
 namespace tire {
 
-export struct TriangleIndices {
+// Gloabal mesh vertex value type
+using MeshValueType = float;
+
+// Dual-Indexing (Per-Face Normals/UVs).
+// Compatible with .obj, FBX, glTF
+struct ObjTriangleIndices {
     int vertexIndex[3];
     int normalIndex[3];
     int texCoordIndex[3];
 };
 
-export struct Mesh final {
-    using value_type = float;
+struct ObjMesh final {
+    using value_type = MeshValueType;
 
-    Mesh() = default;
-    Mesh( const Mesh &other ) = default;
-    Mesh( Mesh &&other ) = default;
+    ObjMesh() = default;
+    ObjMesh( const ObjMesh &other ) = default;
+    ObjMesh( ObjMesh &&other ) = default;
 
-    auto operator=( const Mesh &other ) -> Mesh & = default;
-    auto operator=( Mesh &&other ) -> Mesh & = default;
+    auto operator=( const ObjMesh &other ) -> ObjMesh & = default;
+    auto operator=( ObjMesh &&other ) -> ObjMesh & = default;
 
-    ~Mesh() = default;
+    ~ObjMesh() = default;
 
     [[nodiscard]] auto verticesData() const -> const vector3<value_type> * {
         //
         return vertices_.data();
     };
 
-    [[nodiscard]] auto indicesData() const -> const TriangleIndices * {
+    [[nodiscard]] auto indicesData() const -> const ObjTriangleIndices * {
         //
         return triangles_.data();
     };
@@ -60,7 +65,7 @@ export struct Mesh final {
         return vertices_;
     };
 
-    [[nodiscard]] auto indices() const -> const std::vector<TriangleIndices> & {
+    [[nodiscard]] auto indices() const -> const std::vector<ObjTriangleIndices> & {
         //
         return triangles_;
     };
@@ -80,24 +85,9 @@ export struct Mesh final {
         return vertclr_;
     }
 
-    [[nodiscard]] auto trianglesCount() const -> long long {
-        //
-        return trianglesCount_;
-    }
-
     [[nodiscard]] auto bounding() const -> AABoundingBox<value_type> {
         //
         return bounding_;
-    }
-
-    [[nodiscard]] auto name() const -> const std::string & {
-        //
-        return name_;
-    }
-
-    auto setName( std::string_view name ) -> void {
-        //
-        name_ = name;
     }
 
     auto setVertices( std::vector<vector3<value_type>> vertices ) -> void {
@@ -105,7 +95,7 @@ export struct Mesh final {
         vertices_ = std::move( vertices );
     }
 
-    auto setTriangles( std::vector<TriangleIndices> triangles ) -> void {
+    auto setTriangles( std::vector<ObjTriangleIndices> triangles ) -> void {
         //
         triangles_ = std::move( triangles );
     }
@@ -135,15 +125,59 @@ export struct Mesh final {
         return vertices_.size();
     }
 
-private:
-    std::string name_{ "default_mesh" };
+    [[nodiscard]] auto name() const -> const std::string & {
+        //
+        return name_;
+    }
+
+    auto setName( const std::string &name ) -> void {
+        //
+        name_ = name;
+    }
+
+    std::vector<vector3<value_type>> vertices_{};
+    std::vector<vector3<value_type>> normals_{};
+    std::vector<ObjTriangleIndices> triangles_{};
+    std::vector<vector2<float>> texcrds_{};
+    std::vector<vector3<float>> vertclr_{};
+
+    std::string name_{};
+    AABoundingBox<value_type> bounding_{};
+};
+
+// ====================================================================
+
+export struct InterleavedMesh final {
+    using value_type = MeshValueType;
+
+    InterleavedMesh() = default;
+    InterleavedMesh( const InterleavedMesh &other ) = default;
+    InterleavedMesh( InterleavedMesh &&other ) = default;
+
+    explicit InterleavedMesh( const ObjMesh &other ) {
+
+    };
+
+    auto operator=( const InterleavedMesh &other ) -> InterleavedMesh & = default;
+    auto operator=( InterleavedMesh &&other ) -> InterleavedMesh & = default;
+
+    ~InterleavedMesh() = default;
+
+    [[nodiscard]] auto name() const -> const std::string & {
+        //
+        return name_;
+    }
+
+    auto setName( const std::string &name ) -> void {
+        //
+        name_ = name;
+    }
 
     std::vector<vector3<value_type>> vertices_;
     std::vector<vector3<value_type>> normals_;
-    std::vector<TriangleIndices> triangles_;
     std::vector<vector2<float>> texcrds_;
-    std::vector<vector3<float>> vertclr_;
 
+    std::string name_{};
     AABoundingBox<value_type> bounding_;
 };
 

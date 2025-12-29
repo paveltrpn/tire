@@ -155,7 +155,7 @@ private:
             // extension and path.
             const auto &fileName = entry.path().stem().string();
 
-            auto mesh = std::make_shared<Mesh>();
+            auto mesh = std::make_shared<InterleavedMesh>();
             meshBank_.insert( { fileName, std::move( mesh ) } );
         }
     }
@@ -324,7 +324,7 @@ protected:
     // One camera exist anyway
     int activeCamera_{ 0 };
 
-    std::unordered_map<std::string, std::shared_ptr<Mesh>> meshBank_{};
+    std::unordered_map<std::string, std::shared_ptr<InterleavedMesh>> meshBank_{};
 };
 
 }  // namespace tire

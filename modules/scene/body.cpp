@@ -12,6 +12,9 @@ export module scene:body;
 import algebra;
 import image;
 
+import :mesh;
+import :material;
+
 namespace tire {
 
 using namespace algebra;
@@ -29,49 +32,39 @@ struct Body final {
 
     size_t verteciesCount() const { return shapeData_->verteciesCount(); }
 
-    size_t verteciesArraySize() const {
-        return verteciesCount() * 3 * sizeof( float );
-    }
+    size_t verteciesArraySize() const { return verteciesCount() * 3 * sizeof( float ); }
 
-    size_t normalsArraySize() const {
-        return verteciesCount() * 3 * sizeof( float );
-    };
+    size_t normalsArraySize() const { return verteciesCount() * 3 * sizeof( float ); };
 
-    size_t texcrdsArraySize() const {
-        return verteciesCount() * 2 * sizeof( float );
-    };
+    size_t texcrdsArraySize() const { return verteciesCount() * 2 * sizeof( float ); };
 
-    const vector3f* verteciesData() { return localVertecies_.data(); }
+    const vector3f *verteciesData() { return localVertecies_.data(); }
 
-    const vector3f* normalsData() { return localNormals_.data(); }
+    const vector3f *normalsData() { return localNormals_.data(); }
 
-    const algebra::vector2f* texcrdsData() { return shapeData_->texcrdsData(); }
+    const algebra::vector2f *texcrdsData() { return shapeData_->texcrdsData(); }
 
     void setBounding( BoundingVolume<float> value ) { bounding_ = value; }
     const BoundingVolume<float> bounding() { return bounding_; };
 
-    void setAlbedoColor( const std::string& name ) {
-        albedoColor_ = Colorf{ name };
-    }
+    void setAlbedoColor( const std::string &name ) { albedoColor_ = Colorf{ name }; }
 
     [[nodiscard]]
     Colorf albedoColor() const {
         return albedoColor_;
     };
 
-    void setPosition( const vector3<value_type>& value ) { position_ = value; }
+    void setPosition( const vector3<value_type> &value ) { position_ = value; }
 
-    void setOrientation( const vector3<value_type>& value ) {
-        orientation_ = value;
-    }
+    void setOrientation( const vector3<value_type> &value ) { orientation_ = value; }
 
-    void setScale( const vector3<value_type>& value ) { scale_ = value; }
+    void setScale( const vector3<value_type> &value ) { scale_ = value; }
 
-    void setVelocity( const vector3<value_type>& value ) { velocity_ = value; }
+    void setVelocity( const vector3<value_type> &value ) { velocity_ = value; }
 
-    void setTorque( const vector3<value_type>& value ) { torque_ = value; }
+    void setTorque( const vector3<value_type> &value ) { torque_ = value; }
 
-    void setMaterialName( const std::string& value ) { materialName_ = value; }
+    void setMaterialName( const std::string &value ) { materialName_ = value; }
 
     [[nodiscard]]
     vector3<value_type> position() const {
@@ -115,13 +108,11 @@ struct Body final {
         const auto scale = algebra::scale( scale_.x(), scale_.y(), scale_.z() );
 
         //
-        const auto rotation = algebra::rotate(
-            orientation_.x(), orientation_.y(), orientation_.z() );
+        const auto rotation = algebra::rotate( orientation_.x(), orientation_.y(), orientation_.z() );
         auto itRotation = rotation.inverse();
         itRotation.transpose_self();
 
-        const auto offset =
-            algebra::translate( position_.x(), position_.y(), position_.z() );
+        const auto offset = algebra::translate( position_.x(), position_.y(), position_.z() );
 
         // Get combined transformation matrix
         algebra::matrix4f transform{};
@@ -143,6 +134,8 @@ struct Body final {
     }
 
 private:
+    std::shared_ptr<InterleavedMesh> mesh_;
+
     // Default body geometry data.
     std::shared_ptr<PolytopeData> shapeData_{};
 
