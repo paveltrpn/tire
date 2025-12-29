@@ -5,7 +5,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "context_bare.h"
+#include "context/context_bare.h"
 
 namespace tire {
 struct RenderVK;
@@ -14,10 +14,10 @@ struct RenderVK;
 struct BareWindow final {
     BareWindow();
 
-    BareWindow( const BareWindow& other ) = delete;
-    BareWindow( BareWindow&& other ) = delete;
-    auto operator=( const BareWindow& other ) -> BareWindow& = delete;
-    auto operator=( BareWindow&& other ) -> BareWindow& = delete;
+    BareWindow( const BareWindow &other ) = delete;
+    BareWindow( BareWindow &&other ) = delete;
+    auto operator=( const BareWindow &other ) -> BareWindow & = delete;
+    auto operator=( BareWindow &&other ) -> BareWindow & = delete;
 
     ~BareWindow();
 
@@ -26,8 +26,8 @@ struct BareWindow final {
 private:
     bool run_{ true };
 
-    GLFWwindow* window_{};
-    GLFWmonitor* monitor_{};
+    GLFWwindow *window_{};
+    GLFWmonitor *monitor_{};
 
     // window properties
     int posx_{};
