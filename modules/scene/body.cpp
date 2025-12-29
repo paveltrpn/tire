@@ -20,9 +20,15 @@ namespace tire {
 using namespace algebra;
 
 struct Body final {
-    using value_type = float;
+    using value_type = SeparatedBuffersMesh::value_type;
 
     Body() = default;
+
+    Body( std::shared_ptr<SeparatedBuffersMesh> mesh ) {
+        // shapeData_ = std::move( data );
+        localVertecies_.resize( mesh->verteciesCount() );
+        localNormals_.resize( mesh->verteciesCount() );
+    }
 
     void setShapeData( std::shared_ptr<PolytopeData> data ) {
         shapeData_ = std::move( data );
@@ -30,19 +36,41 @@ struct Body final {
         localNormals_.resize( shapeData_->verteciesCount() );
     }
 
-    size_t verteciesCount() const { return shapeData_->verteciesCount(); }
+    [[nodiscard]]
+    auto verteciesCount() const -> size_t {
+        //
+        return shapeData_->verteciesCount();
+    }
 
-    size_t verteciesArraySize() const { return verteciesCount() * 3 * sizeof( float ); }
+    [[nodiscard]]
+    size_t verteciesArraySize() const {
+        return verteciesCount() * 3 * sizeof( value_type );
+    }
 
-    size_t normalsArraySize() const { return verteciesCount() * 3 * sizeof( float ); };
+    [[nodiscard]]
+    size_t normalsArraySize() const {
+        return verteciesCount() * 3 * sizeof( value_type );
+    };
 
-    size_t texcrdsArraySize() const { return verteciesCount() * 2 * sizeof( float ); };
+    [[nodiscard]]
+    size_t texcrdsArraySize() const {
+        return verteciesCount() * 2 * sizeof( value_type );
+    };
 
-    const vector3f *verteciesData() { return localVertecies_.data(); }
+    [[nodiscard]]
+    const vector3f *verteciesData() {
+        return localVertecies_.data();
+    }
 
-    const vector3f *normalsData() { return localNormals_.data(); }
+    [[nodiscard]]
+    const vector3f *normalsData() {
+        return localNormals_.data();
+    }
 
-    const algebra::vector2f *texcrdsData() { return shapeData_->texcrdsData(); }
+    [[nodiscard]]
+    const algebra::vector2f *texcrdsData() {
+        return shapeData_->texcrdsData();
+    }
 
     void setBounding( BoundingVolume<float> value ) {
         //

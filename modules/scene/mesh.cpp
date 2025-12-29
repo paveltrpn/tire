@@ -264,7 +264,7 @@ export struct SeparatedBuffersMesh final {
     }
 
     [[nodiscard]]
-    auto vertecieCount() const -> size_t {
+    auto verteciesCount() const -> size_t {
         return vertices_.size();
     }
 
