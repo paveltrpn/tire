@@ -21,13 +21,12 @@ struct VertexBuffer final {
     VertexBuffer( const VertexBuffer &other ) = delete;
     VertexBuffer( VertexBuffer &&other ) = delete;
 
-    VertexBuffer( const Context *context, size_t verteciesCount )
+    VertexBuffer( const Context *context, size_t size )
         : context_{ context }
-        , verteciesCount_{ verteciesCount } {
+        , size_{ size } {
         VkBufferCreateInfo bufferInfo{};
         bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-        // Buffer size = sizeof(floating type) * vertecies count * three float coordinate
-        bufferInfo.size = sizeof( value_type ) * verteciesCount_ * 3;
+        bufferInfo.size = size_;
         bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
         bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
@@ -61,8 +60,8 @@ struct VertexBuffer final {
 
     auto populate( const void *data ) -> void {
         void *mapAddress{};
-        vkMapMemory( context_->device(), bufferMemory_, 0, sizeof( value_type ) * verteciesCount_ * 3, 0, &mapAddress );
-        std::memcpy( mapAddress, data, sizeof( value_type ) * verteciesCount_ * 3 );
+        vkMapMemory( context_->device(), bufferMemory_, 0, size_, 0, &mapAddress );
+        std::memcpy( mapAddress, data, size_ );
         vkUnmapMemory( context_->device(), bufferMemory_ );
     }
 
@@ -79,9 +78,9 @@ struct VertexBuffer final {
     };
 
     [[nodiscard]]
-    auto verteciesCount() -> size_t {
+    auto size() -> size_t {
         //
-        return verteciesCount_;
+        return size_;
     }
 
     auto clean() -> void {
@@ -91,10 +90,10 @@ struct VertexBuffer final {
 
 private:
     const Context *context_{};
+    size_t size_{};
+
     VkBuffer buffer_{ VK_NULL_HANDLE };
     VkDeviceMemory bufferMemory_{ VK_NULL_HANDLE };
-
-    size_t verteciesCount_{};
 };
 
 }  // namespace tire

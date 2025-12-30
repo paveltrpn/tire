@@ -23,24 +23,24 @@ export struct SceneVK final : tire::Scene {
         : tire::Scene{ fname }
         , context_{ context }
         , pipeline_{ pipeline } {
-        // Create vulkan "vertex buffers"
+        // Create vulkan "vertex buffers".
         const auto nodeListSize = bodyList_.size();
         vertBuffersList_.reserve( nodeListSize );
         for ( size_t i{}; i < nodeListSize; ++i ) {
-            auto buf = std::make_shared<VertexBuffer>( context_, bodyList_[i]->verteciesCount() );
+            auto buf = std::make_shared<VertexBuffer>( context_, bodyList_[i]->bufferVerticesSize() );
             vertBuffersList_.push_back( std::move( buf ) );
         }
 
-        // Create vulkan "normal buffers"
+        // Create vulkan "normal buffers".
         nrmlBuffersList_.reserve( nodeListSize );
         for ( size_t i{}; i < nodeListSize; ++i ) {
-            auto buf = std::make_shared<VertexBuffer>( context_, bodyList_[i]->verteciesCount() );
+            auto buf = std::make_shared<VertexBuffer>( context_, bodyList_[i]->bufferNormalsSize() );
             nrmlBuffersList_.push_back( std::move( buf ) );
         }
     }
 
     void submit() override {
-        // Update data in vulkan "vertex" buffers, i.e. copy from CPU memory
+        // Update data in vulkan "vertex" buffers, i.e. copy from CPU memory.
         for ( size_t i = 0; auto &buffer : vertBuffersList_ ) {
             buffer->populate( reinterpret_cast<const void *>( bodyList_[i]->verteciesData() ) );
             ++i;
@@ -82,7 +82,7 @@ export struct SceneVK final : tire::Scene {
 
             auto vbo = vertBuffersList_[object]->buffer();
             auto nbo = nrmlBuffersList_[object]->buffer();
-            auto vCount = vertBuffersList_[object]->verteciesCount();
+            auto vCount = bodyList_[object]->verteciesCount();
 
             // NOTE: see https://docs.vulkan.org/guide/latest/vertex_input_data_processing.html
             std::array<VkBuffer, 2> vertexBuffers = { vbo, nbo };
