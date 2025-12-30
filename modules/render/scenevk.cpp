@@ -23,19 +23,20 @@ export struct SceneVK final : tire::Scene {
         : tire::Scene{ fname }
         , context_{ context }
         , pipeline_{ pipeline } {
-        // Create vulkan "vertex buffers".
+        //
         const auto nodeListSize = bodyList_.size();
-        vertBuffersList_.reserve( nodeListSize );
-        for ( size_t i{}; i < nodeListSize; ++i ) {
-            auto buf = std::make_shared<VertexBuffer>( context_, bodyList_[i]->bufferVerticesSize() );
-            vertBuffersList_.push_back( std::move( buf ) );
-        }
 
-        // Create vulkan "normal buffers".
+        vertBuffersList_.reserve( nodeListSize );
         nrmlBuffersList_.reserve( nodeListSize );
+
         for ( size_t i{}; i < nodeListSize; ++i ) {
-            auto buf = std::make_shared<VertexBuffer>( context_, bodyList_[i]->bufferNormalsSize() );
-            nrmlBuffersList_.push_back( std::move( buf ) );
+            // Create vulkan "vertex buffers".
+            auto vBuf = std::make_shared<VertexBuffer>( context_, bodyList_[i]->bufferVerticesSize() );
+            vertBuffersList_.push_back( std::move( vBuf ) );
+
+            // Create vulkan "normal buffers".
+            auto nBuf = std::make_shared<VertexBuffer>( context_, bodyList_[i]->bufferNormalsSize() );
+            nrmlBuffersList_.push_back( std::move( nBuf ) );
         }
     }
 
