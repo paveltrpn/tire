@@ -19,14 +19,14 @@ export module render:render;
 import config;
 import algebra;
 import log;
+import io;
+
 import :timer;
 import :scenevk;
 import :pipeline;
 import :pipeline_test_box;
 import :test_box_shader;
 import :pipeline_vertex_buffer;
-
-import io;
 
 // using namespace std::chrono_literals;
 
@@ -79,15 +79,15 @@ export struct RenderVK final {
         return run_;
     }
 
-    void displayRenderInfo() {
+    auto displayRenderInfo() -> void {
         //
     };
 
-    void setSwapInterval( int interval ) {
+    auto setSwapInterval( int interval ) -> void {
 
     };
 
-    void scene( const std::filesystem::path &path ) {
+    auto scene( const std::filesystem::path &path ) -> void {
         scene_ = std::make_shared<SceneVK>( path, context_, piplineVertexBuffer_.get() );
     }
 
@@ -98,7 +98,7 @@ export struct RenderVK final {
         log::info( "timeout {} exceeded again, coroutine done.", t );
     }
 
-    void preLoop() {
+    auto preLoop() -> void {
         log::notice( "vk::Render === render loop starts here..." );
 
         timeoutTestCoro( 1000 );
@@ -108,7 +108,7 @@ export struct RenderVK final {
         ioContext_.run();
     };
 
-    void preFrame() {
+    auto preFrame() -> void {
         // Update global timer
         timer_.update();
 
@@ -120,7 +120,7 @@ export struct RenderVK final {
         scene_->submit();
     };
 
-    void frame( VkCommandBuffer cb ) {
+    auto frame( VkCommandBuffer cb ) -> void {
         const auto [width, height] = context_->viewportSize();
 
         // Dynamic viewport. No performance penalty.
@@ -157,15 +157,15 @@ export struct RenderVK final {
         // drawTestCube( cb );
     };
 
-    void postFrame() {
+    auto postFrame() -> void {
 
     };
 
-    void swapBuffers() {
+    auto swapBuffers() -> void {
 
     };
 
-    void postLoop() {
+    auto postLoop() -> void {
         log::info( "vk::Render === wait device idle..." );
 
         // we should wait for the logical device to finish operations
@@ -175,154 +175,27 @@ export struct RenderVK final {
         scene_->clean();
     };
 
-    void createGraphicsPipeline();
-    void createSyncObjects();
+    auto createGraphicsPipeline() -> void;
+    auto createSyncObjects() -> void;
 
 public:
-    auto holdMouse() -> bool {
-        //
-        return holdMouse_;
-    }
+    auto holdMouse() -> bool;
 
-    void keyPressEvent( unsigned int key ) {
-        // log::info( "{}", key );
-        switch ( key ) {
-            case 81: {  // == 'q'
-                scene_->nextCamera();
-                break;
-            }
-            case 87: {  // == 'w'
-                scene_->camera().setMoveBit( FlycamMoveBits::FORWARD );
-                break;
-            }
-            case 26: {  // == 'e'
-                break;
-            }
-            case 27: {  // == 'r'
-                break;
-            }
-            case 28: {  // == 't'
-                break;
-            }
-            case 29: {  // == 'y'
-                break;
-            }
-            case 30: {  // == 'u'
-                break;
-            }
-            case 31: {  // == 'i'
-                break;
-            }
-            case 32: {  // == 'o'
-                break;
-            }
-            case 33: {  // == 'p'
-                break;
-            }
-            case 34: {  // == '['
-                break;
-            }
-            case 35: {  // == ']'
-                break;
-            }
-            case 65: {  // == 'a'
-                scene_->camera().setMoveBit( FlycamMoveBits::LEFT );
-                break;
-            }
-            case 83: {  // == 's'
-                scene_->camera().setMoveBit( FlycamMoveBits::BACKWARD );
-                break;
-            }
-            case 68: {  // == 'd'
-                scene_->camera().setMoveBit( FlycamMoveBits::RIGHT );
-                break;
-            }
-            case 41: {  // == 'f'
-                break;
-            }
-            case 71: {  // == 'g'
-                // Window grab/release the mouse pointer.
-                holdMouse_ = !holdMouse_;
-                break;
-            }
-            case 43: {  // == 'h'
-                break;
-            }
-            case 44: {  // == 'j'
-                break;
-            }
-            case 45: {  // == 'k'
-                break;
-            }
-            case 46: {  // == 'l'
-                break;
-            }
-            case 47: {  // == ';'
-                break;
-            }
-            case 48: {  // == '''
-                break;
-            }
-            case 52: {  // == 'z'
-                break;
-            }
-            case 256: {  // == ESC
-                run_ = false;
-                break;
-            }
-            default: {
-                break;
-            }
-        }
-    }
+    auto keyPressEvent( unsigned int key ) -> void;
 
-    void keyReleaseEvent( unsigned int key ) {
-        switch ( key ) {
-            case 87: {  // == 'w'
-                scene_->camera().unsetMoveBit( FlycamMoveBits::FORWARD );
-                break;
-            }
-            case 65: {  // == 'a'
-                scene_->camera().unsetMoveBit( FlycamMoveBits::LEFT );
-                break;
-            }
-            case 83: {  // == 's'
-                scene_->camera().unsetMoveBit( FlycamMoveBits::BACKWARD );
-                break;
-            }
-            case 68: {  // == 'd'
-                scene_->camera().unsetMoveBit( FlycamMoveBits::RIGHT );
-                break;
-            }
-            default: {
-                break;
-            }
-        }
-    }
+    auto keyReleaseEvent( unsigned int key ) -> void;
 
-    void mouseButtonPressEvent( unsigned int key ) {
-        //
-    }
+    auto mouseButtonPressEvent( unsigned int key ) -> void;
 
-    void mouseButtonReleaseEvent( unsigned int key ) {
-        //
-    }
+    auto mouseButtonReleaseEvent( unsigned int key ) -> void;
 
     // Call when mouse moves free upon window. "x" and "y"
     // represent current cursor position in window coordinates
-    void mouseMoveEvent( double x, double y ) {
-        //
-    }
+    auto mouseMoveEvent( double x, double y ) -> void;
 
     // Call when mouse holds in defined position. "x" and "y"
     // represent current cursor ofssets.
-    void mouseOffsetEvent( double x, double y, double holdX, double holdY ) {
-        const auto xOffset = holdX - x;
-        const auto yOffset = holdY - y;
-
-#define MOUSE_SENSIVITY 0.008
-        scene_->camera().rotate( xOffset * MOUSE_SENSIVITY, yOffset * MOUSE_SENSIVITY );
-    }
+    auto mouseOffsetEvent( double x, double y, double holdX, double holdY ) -> void;
 
 private:
     auto drawTestCube( VkCommandBuffer cb ) -> void {
@@ -368,9 +241,9 @@ private:
 
     bool holdMouse_{ false };
 
-    float angle_;
+    float angle_{};
 
-    io::IoContext ioContext_;
+    io::IoContext ioContext_{};
 };
 
 }  // namespace tire

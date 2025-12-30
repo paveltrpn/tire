@@ -13,3 +13,4 @@ export import :texture_image;
 export import :plain_buffer;
 export import :vertex_buffer;
 export import :timer;
+export import :input;
