@@ -152,7 +152,7 @@ export struct Scene {
 
     auto traverse( float duration ) -> void {
         for ( size_t i{ 0 }; i < bodyList_.size(); ++i ) {
-            bodyList_[i]->applyTransormations( duration );
+            bodyList_[i]->applyTransformations( duration );
         }
 
         // for ( auto &node : bodyList_ ) {

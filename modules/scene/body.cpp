@@ -22,12 +22,20 @@ struct Body final {
 
     Body() = default;
 
-    Body( std::shared_ptr<SeparatedBuffersMesh> mesh )
+    explicit Body( std::shared_ptr<SeparatedBuffersMesh> mesh )
         : mesh_{ std::move( mesh ) } {
         // Resize buffer to fit mesh size.
         buffer_.vertices_.resize( mesh_->verteciesCount() );
         buffer_.normals_.resize( mesh_->verteciesCount() );
     }
+
+    Body( const Body &other ) = default;
+    Body( Body &&other ) = default;
+
+    auto operator=( const Body &other ) -> Body & = default;
+    auto operator=( Body &&other ) -> Body & = default;
+
+    ~Body() = default;
 
     [[nodiscard]]
     auto verteciesCount() const -> size_t {
@@ -45,20 +53,15 @@ struct Body final {
         return verteciesCount() * 3 * sizeof( value_type );
     }
 
-    [[nodiscard]]
-    auto verteciesArraySize() const -> size_t {
-        return verteciesCount() * 3 * sizeof( value_type );
+    [[nodiscard]] auto bufferTexcrdsSize() const -> size_t {
+        //
+        return verteciesCount() * 2 * sizeof( value_type );
     }
 
-    [[nodiscard]]
-    size_t normalsArraySize() const {
-        return verteciesCount() * 3 * sizeof( value_type );
-    };
-
-    [[nodiscard]]
-    size_t texcrdsArraySize() const {
-        return verteciesCount() * 2 * sizeof( value_type );
-    };
+    [[nodiscard]] auto bufferVertclrsSize() const -> size_t {
+        //
+        return verteciesCount() * 4 * sizeof( value_type );
+    }
 
     [[nodiscard]]
     auto verteciesData() const -> const vector3<value_type> * {
@@ -71,21 +74,16 @@ struct Body final {
     }
 
     [[nodiscard]]
-    const algebra::vector2f *texcrdsData() {
+    auto texcrdsData() const -> const algebra::vector2<float> * {
         return mesh_->texcrds_.data();
-    }
-
-    void setBounding( AABoundingBox value ) {
-        //
-        bounding_ = value;
     }
 
     [[nodiscard]]
     auto bounding() const -> AABoundingBox {
-        return bounding_;
+        return mesh_->bounding_;
     };
 
-    void setAlbedoColor( const std::string &name ) {
+    auto setAlbedoColor( const std::string &name ) -> void {
         //
         albedoColor_ = Colorf{ name };
     }
@@ -95,70 +93,70 @@ struct Body final {
         return albedoColor_;
     };
 
-    void setPosition( const vector3<value_type> &value ) {
+    auto setPosition( const vector3<value_type> &value ) -> void {
         //
         position_ = value;
     }
 
-    void setOrientation( const vector3<value_type> &value ) {
+    auto setOrientation( const vector3<value_type> &value ) -> void {
         //
         orientation_ = value;
     }
 
-    void setScale( const vector3<value_type> &value ) {
+    auto setScale( const vector3<value_type> &value ) -> void {
         //
         scale_ = value;
     }
 
-    void setVelocity( const vector3<value_type> &value ) {
+    auto setVelocity( const vector3<value_type> &value ) -> void {
         //
         velocity_ = value;
     }
 
-    void setTorque( const vector3<value_type> &value ) {
+    auto setTorque( const vector3<value_type> &value ) -> void {
         //
         torque_ = value;
     }
 
-    void setMaterialName( const std::string &value ) {
+    auto setMaterialName( const std::string &value ) -> void {
         //
         materialName_ = value;
     }
 
     [[nodiscard]]
-    vector3<value_type> position() const {
+    auto position() const -> vector3<value_type> {
         return position_;
     }
 
     [[nodiscard]]
-    vector3<value_type> orientation() const {
+    auto orientation() const -> vector3<value_type> {
         return orientation_;
     }
 
     [[nodiscard]]
-    vector3<value_type> scale() const {
+    auto scale() const -> vector3<value_type> {
         return scale_;
     }
 
     [[nodiscard]]
-    vector3<value_type> velocity() const {
+    auto velocity() const -> vector3<value_type> {
         return velocity_;
     }
 
     [[nodiscard]]
-    vector3<value_type> torque() const {
+    auto torque() const -> vector3<value_type> {
         return torque_;
     }
 
     [[nodiscard]]
-    std::string materialName() const {
+    auto materialName() const -> std::string {
         return materialName_;
     };
 
     // Calculate transformation matrix, apply this
     // matrix to default geometry data and copy this data
     // into local buffers
-    void applyTransormations( float duration ) {
+    auto applyTransformations( float duration ) -> void {
         // Update body spatial parameters
         orientation_ += torque_.scale( duration );
         position_ += velocity_.scale( duration );
