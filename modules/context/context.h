@@ -92,10 +92,6 @@ struct Context {
     }
 
 protected:
-    VmaAllocator allocator_;
-    VkBuffer buffer_{ VK_NULL_HANDLE };
-    VmaAllocation allocation_{};
-
     VkInstance instance_{ VK_NULL_HANDLE };
     VkSurfaceKHR surface_{ VK_NULL_HANDLE };
     VkPhysicalDevice physDevice_{};
@@ -112,6 +108,11 @@ protected:
 
     uint32_t width_{};
     uint32_t height_{};
+
+    // Momory
+    VmaAllocator allocator_;
+    VkBuffer buffer_{ VK_NULL_HANDLE };
+    VmaAllocation allocation_{};
 };
 
 }  // namespace tire

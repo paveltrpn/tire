@@ -205,7 +205,27 @@ auto ContextBare::createAllocator() -> void {
     allocatorCreateInfo.instance = instance_;
     allocatorCreateInfo.pVulkanFunctions = &vulkanFunctions;
 
-    vmaCreateAllocator( &allocatorCreateInfo, &allocator_ );
+    {
+        const auto res = vmaCreateAllocator( &allocatorCreateInfo, &allocator_ );
+        if ( res != VK_SUCCESS ) {
+            throw std::runtime_error(
+              std::format( "failed to create allocator with code {}!", string_VkResult( res ) ) );
+        } else {
+            log::info( "Context === allocator created!" );
+        }
+    }
+
+    // Preallocate some buffer.
+    VkBufferCreateInfo bufferInfo = { VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO };
+    bufferInfo.size = 1024 * 1024 * 128;  // 128 Kb
+    // bufferInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+    bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+    bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+    VmaAllocationCreateInfo allocInfo = {};
+    allocInfo.usage = VMA_MEMORY_USAGE_AUTO;
+
+    vmaCreateBuffer( allocator_, &bufferInfo, &allocInfo, &buffer_, &allocation_, nullptr );
 }
 
 }  // namespace tire
