@@ -24,30 +24,16 @@ struct VertexBuffer final {
     VertexBuffer( const Context *context, size_t size )
         : context_{ context }
         , size_{ size } {
-        VkBufferCreateInfo bufferInfo{};
-        bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-        bufferInfo.size = size_;
-        bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-        bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        VkBufferCreateInfo bufCreateInfo = { VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO };
+        bufCreateInfo.size = size_;
+        bufCreateInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 
-        if ( vkCreateBuffer( context_->device(), &bufferInfo, nullptr, &buffer_ ) != VK_SUCCESS ) {
-            throw std::runtime_error( "failed to create vertex buffer!" );
-        }
+        VmaAllocationCreateInfo allocCreateInfo = {};
+        allocCreateInfo.usage = VMA_MEMORY_USAGE_AUTO;
+        allocCreateInfo.flags =
+          VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
 
-        VkMemoryRequirements memRequirements;
-        vkGetBufferMemoryRequirements( context_->device(), buffer_, &memRequirements );
-
-        VkMemoryAllocateInfo allocInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-        allocInfo.allocationSize = memRequirements.size;
-        allocInfo.memoryTypeIndex = context_->memoryRequirements(
-          memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT );
-
-        if ( vkAllocateMemory( context_->device(), &allocInfo, nullptr, &bufferMemory_ ) != VK_SUCCESS ) {
-            throw std::runtime_error( "failed to allocate vertex buffer memory!" );
-        }
-
-        vkBindBufferMemory( context_->device(), buffer_, bufferMemory_, 0 );
+        vmaCreateBuffer( context->allocator(), &bufCreateInfo, &allocCreateInfo, &buffer_, &allocation_, &allocInfo_ );
     }
 
     auto operator=( const VertexBuffer &other ) -> VertexBuffer & = delete;
@@ -59,10 +45,8 @@ struct VertexBuffer final {
     };
 
     auto populate( const void *data ) -> void {
-        void *mapAddress{};
-        vkMapMemory( context_->device(), bufferMemory_, 0, size_, 0, &mapAddress );
-        std::memcpy( mapAddress, data, size_ );
-        vkUnmapMemory( context_->device(), bufferMemory_ );
+        //
+        memcpy( allocInfo_.pMappedData, data, size_ );
     }
 
     [[nodiscard]]
@@ -72,28 +56,23 @@ struct VertexBuffer final {
     };
 
     [[nodiscard]]
-    auto bufferMemory() const -> VkDeviceMemory {
-        //
-        return bufferMemory_;
-    };
-
-    [[nodiscard]]
     auto size() -> size_t {
         //
         return size_;
     }
 
     auto clean() -> void {
-        vkDestroyBuffer( context_->device(), buffer_, nullptr );
-        vkFreeMemory( context_->device(), bufferMemory_, nullptr );
+        //
+        vmaDestroyBuffer( context_->allocator(), buffer_, allocation_ );
     }
 
 private:
     const Context *context_{};
     size_t size_{};
 
+    VmaAllocationInfo allocInfo_{};
     VkBuffer buffer_{ VK_NULL_HANDLE };
-    VkDeviceMemory bufferMemory_{ VK_NULL_HANDLE };
+    VmaAllocation allocation_{ VK_NULL_HANDLE };
 };
 
 }  // namespace tire
