@@ -17,6 +17,10 @@ namespace tire {
 struct VertexBuffer final {
     using value_type = float;
 
+    VertexBuffer() = delete;
+    VertexBuffer( const VertexBuffer &other ) = delete;
+    VertexBuffer( VertexBuffer &&other ) = delete;
+
     VertexBuffer( const Context *context, size_t verteciesCount )
         : context_{ context }
         , verteciesCount_{ verteciesCount } {
@@ -46,6 +50,14 @@ struct VertexBuffer final {
 
         vkBindBufferMemory( context_->device(), buffer_, bufferMemory_, 0 );
     }
+
+    auto operator=( const VertexBuffer &other ) -> VertexBuffer & = delete;
+    auto operator=( VertexBuffer &&other ) -> VertexBuffer & = delete;
+
+    ~VertexBuffer() {
+        //
+        clean();
+    };
 
     auto populate( const void *data ) -> void {
         void *mapAddress{};
