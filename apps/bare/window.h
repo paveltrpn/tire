@@ -24,8 +24,6 @@ struct BareWindow final {
     auto loop() -> void;
 
 private:
-    bool run_{ true };
-
     GLFWwindow *window_{};
     GLFWmonitor *monitor_{};
 

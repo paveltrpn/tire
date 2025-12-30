@@ -8,7 +8,7 @@ export module scene:flycam;
 
 import algebra;
 import geometry;
-
+import log;
 namespace tire {
 
 using namespace algebra;
@@ -82,13 +82,23 @@ export struct Flycam final {
         return *this;
     };
 
-    void setMoveBit( FlycamMoveBits bit ) { moveMask_ |= ( (uint32_t)1 << bit ); }
+    auto setMoveBit( FlycamMoveBits bit ) -> void {
+        //
+        log::info( "Flycam::setMoveBit" );
+        moveMask_ |= ( (uint32_t)1 << bit );
+    }
 
-    void unsetMoveBit( FlycamMoveBits bit ) { moveMask_ &= ~( (uint32_t)1 << bit ); }
+    auto unsetMoveBit( FlycamMoveBits bit ) -> void {
+        //
+        moveMask_ &= ~( (uint32_t)1 << bit );
+    }
 
-    void unsetMoveAll() { moveMask_ = 0; }
+    auto unsetMoveAll() -> void {
+        //
+        moveMask_ = 0;
+    }
 
-    void rotate( value_type azimuthOffset, value_type elevayionOffset ) {
+    auto rotate( value_type azimuthOffset, value_type elevayionOffset ) -> void {
         azimuth_ += azimuthOffset;
 
         // Clamp azimuth
@@ -102,9 +112,9 @@ export struct Flycam final {
         if ( elevation_ < -ELEVATION_BOUND ) elevation_ = -ELEVATION_BOUND;
     }
 
-    void setPosition( const algebra::vector3<value_type> &pos ) { eye_ = pos; }
+    auto setPosition( const algebra::vector3<value_type> &pos ) -> void { eye_ = pos; }
 
-    void setAngles( value_type azimuth, value_type elevation, value_type roll ) {
+    auto setAngles( value_type azimuth, value_type elevation, value_type roll ) -> void {
         azimuth_ = azimuth;
         elevation_ = elevation;
         roll_ = roll;

@@ -65,10 +65,18 @@ export struct RenderVK final {
               { { vk_simple_box_VERTEX, vertex_stage_suffix }, { vk_simple_box_FRAGMENT, fragment_stage_suffix } } );
             piplineTestBox_->buildPipeline( testBoxProgram );
 
+            // RUN!!!
+            run_ = true;
+
             // context_->createFramebuffers( piplineVertexBuffer_.get() );
         } catch ( const std::runtime_error &e ) {
             throw std::runtime_error( e.what() );
         }
+    }
+
+    [[nodiscard]]
+    auto run() -> bool {
+        return run_;
     }
 
     void displayRenderInfo() {
@@ -258,6 +266,10 @@ public:
             case 52: {  // == 'z'
                 break;
             }
+            case 256: {  // == ESC
+                run_ = false;
+                break;
+            }
             default: {
                 break;
             }
@@ -342,6 +354,7 @@ private:
 
 private:
     Context *context_{};
+    bool run_{};
 
     std::unique_ptr<Pipeline> piplineVertexBuffer_{};
     std::unique_ptr<Pipeline> piplineTestBox_{};
