@@ -29,7 +29,7 @@ export struct SceneVK final : tire::Scene {
         vertBuffersList_.reserve( nodeListSize );
         nrmlBuffersList_.reserve( nodeListSize );
 
-        for ( size_t i{}; i < nodeListSize; ++i ) {
+        for ( size_t i{ 0 }; i < nodeListSize; ++i ) {
             // Create vulkan "vertex buffers".
             auto vBuf = std::make_shared<VertexBuffer>( context_, bodyList_[i]->bufferVerticesSize() );
             vertBuffersList_.push_back( std::move( vBuf ) );
@@ -43,28 +43,24 @@ export struct SceneVK final : tire::Scene {
     void submit() override {
         const auto nodeListSize = bodyList_.size();
 
-        // Update data in vulkan "vertex" buffers, i.e. copy from CPU memory.
-        for ( size_t i = 0; auto &buffer : vertBuffersList_ ) {
-            buffer->populate( reinterpret_cast<const void *>( bodyList_[i]->verteciesData() ) );
-            ++i;
-        }
+        for ( size_t i{ 0 }; i < nodeListSize; ++i ) {
+            // Update data in vulkan "vertex" buffers, i.e. copy from CPU memory.
+            const auto vDataPtr = reinterpret_cast<const void *>( bodyList_[i]->verteciesData() );
+            vertBuffersList_[i]->populate( vDataPtr );
 
-        // Update data in vulkan "normal" buffers
-        for ( size_t i = 0; auto &buffer : nrmlBuffersList_ ) {
-            buffer->populate( reinterpret_cast<const void *>( bodyList_[i]->normalsData() ) );
-            ++i;
+            // Update data in vulkan "normal" buffers
+            const auto nDataPtr = reinterpret_cast<const void *>( bodyList_[i]->normalsData() );
+            nrmlBuffersList_[i]->populate( nDataPtr );
         }
     }
 
     void draw() override {};
 
     void clean() override {
-        for ( auto &buf : vertBuffersList_ ) {
-            buf->clean();
-        }
-
-        for ( auto &buf : nrmlBuffersList_ ) {
-            buf->clean();
+        const auto nodeListSize = bodyList_.size();
+        for ( size_t i{ 0 }; i < nodeListSize; ++i ) {
+            vertBuffersList_[i]->clean();
+            nrmlBuffersList_[i]->clean();
         }
     };
 
