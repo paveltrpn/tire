@@ -115,7 +115,7 @@ export struct RenderVK final {
         // Update scene objects
         scene_->traverse( timer_.frameDuration<float>() );
 
-        scene_->camera().traverse();
+        scene_->camera().update();
 
         scene_->submit();
     };
@@ -179,10 +179,15 @@ export struct RenderVK final {
     void createSyncObjects();
 
 public:
+    auto holdMouse() -> bool {
+        //
+        return holdMouse_;
+    }
+
     void keyPressEvent( unsigned int key ) {
-        log::info( "{}", key );
+        // log::info( "{}", key );
         switch ( key ) {
-            case 24: {  // == 'q'
+            case 81: {  // == 'q'
                 scene_->nextCamera();
                 break;
             }
@@ -235,14 +240,9 @@ public:
             case 41: {  // == 'f'
                 break;
             }
-            case 42: {  // == 'g'
-                // Window grab/release the mouse pointer
+            case 71: {  // == 'g'
+                // Window grab/release the mouse pointer.
                 holdMouse_ = !holdMouse_;
-                if ( holdMouse_ ) {
-                    //XFixesHideCursor( display_, window_ );
-                } else {
-                    //XFixesShowCursor( display_, window_ );
-                }
                 break;
             }
             case 43: {  // == 'h'
@@ -310,15 +310,17 @@ public:
 
     // Call when mouse moves free upon window. "x" and "y"
     // represent current cursor position in window coordinates
-    void mouseMoveEvent( unsigned int x, unsigned int y ) {}
+    void mouseMoveEvent( double x, double y ) {
+        //
+    }
 
     // Call when mouse holds in defined position. "x" and "y"
     // represent current cursor ofssets.
-    void mouseOffsetEvent( unsigned int x, unsigned int y ) {
-        const auto xOffset = holdMouseX_ - x;
-        const auto yOffset = holdMouseY_ - y;
+    void mouseOffsetEvent( double x, double y, double holdX, double holdY ) {
+        const auto xOffset = holdX - x;
+        const auto yOffset = holdY - y;
 
-#define MOUSE_SENSIVITY 0.002
+#define MOUSE_SENSIVITY 0.008
         scene_->camera().rotate( xOffset * MOUSE_SENSIVITY, yOffset * MOUSE_SENSIVITY );
     }
 
@@ -365,8 +367,6 @@ private:
     Timer timer_{};
 
     bool holdMouse_{ false };
-    unsigned int holdMouseX_{ 500 };
-    unsigned int holdMouseY_{ 500 };
 
     float angle_;
 

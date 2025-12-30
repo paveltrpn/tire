@@ -112,21 +112,44 @@ BareWindow::BareWindow() {
     glfwSetKeyCallback( window_, []( GLFWwindow *window, int key, int scancode, int action, int mods ) -> void {
         const auto rndrHandle = static_cast<tire::RenderVK *>( glfwGetWindowUserPointer( window ) );
 
-        rndrHandle->keyPressEvent( key );
-        rndrHandle->keyReleaseEvent( key );
+        if ( key == GLFW_KEY_G ) {
+            if ( rndrHandle->holdMouse() ) {
+                glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN );
+            } else {
+                glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_NORMAL );
+            }
+        }
+
+        if ( action == GLFW_PRESS ) {
+            rndrHandle->keyPressEvent( key );
+        }
+
+        if ( action == GLFW_RELEASE ) {
+            rndrHandle->keyReleaseEvent( key );
+        }
     } );
 
     glfwSetMouseButtonCallback( window_, []( GLFWwindow *window, int button, int action, int mods ) -> void {
         const auto rndrHandle = static_cast<tire::RenderVK *>( glfwGetWindowUserPointer( window ) );
 
-        rndrHandle->mouseButtonPressEvent( button );
-        rndrHandle->mouseButtonReleaseEvent( button );
+        if ( action == GLFW_PRESS ) {
+            rndrHandle->mouseButtonPressEvent( button );
+        }
+
+        if ( action == GLFW_RELEASE ) {
+            rndrHandle->mouseButtonReleaseEvent( button );
+        }
     } );
+
+#define WINDOW_HOLD_X 500.0
+#define WINDOW_HOLD_Y 500.0
 
     glfwSetCursorPosCallback( window_, []( GLFWwindow *window, double posX, double posY ) -> void {
         const auto rndrHandle = static_cast<tire::RenderVK *>( glfwGetWindowUserPointer( window ) );
 
-        // rndrHandle->mouseOffsetEvent( posX, posY );
+        if ( rndrHandle->holdMouse() ) {
+            rndrHandle->mouseOffsetEvent( posX, posY, WINDOW_HOLD_X, WINDOW_HOLD_Y );
+        }
     } );
 
     glfwSetCursorEnterCallback( window_, []( GLFWwindow *window, int entered ) -> void {
@@ -143,6 +166,10 @@ auto BareWindow::loop() -> void {
     render_->preLoop();
 
     while ( render_->run() ) {
+        if ( render_->holdMouse() ) {
+            glfwSetCursorPos( window_, WINDOW_HOLD_X, WINDOW_HOLD_Y );
+        }
+
         glfwPollEvents();
 
         render_->preFrame();
@@ -154,6 +181,7 @@ auto BareWindow::loop() -> void {
         context_->renderCommandEnd( currentFrame_ );
 
         render_->postFrame();
+
         render_->swapBuffers();
 
         currentFrame_ = ( currentFrame_ + 1 ) % context_->framesCount();

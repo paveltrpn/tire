@@ -172,7 +172,7 @@ export struct Flycam final {
         return name_;
     };
 
-    void traverse() {
+    auto update() -> void {
         if ( ( moveMask_ >> FlycamMoveBits::FORWARD ) & (uint32_t)1 ) {
             velocity_ += look_;
         }
