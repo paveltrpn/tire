@@ -24,8 +24,9 @@ struct Body final {
 
     Body( std::shared_ptr<SeparatedBuffersMesh> mesh )
         : mesh_{ std::move( mesh ) } {
-        localVertecies_.resize( mesh_->verteciesCount() );
-        localNormals_.resize( mesh_->verteciesCount() );
+        // Resize buffer to fit mesh size.
+        buffer_.vertices_.resize( mesh_->verteciesCount() );
+        buffer_.normals_.resize( mesh_->verteciesCount() );
     }
 
     [[nodiscard]]
@@ -34,8 +35,18 @@ struct Body final {
         return mesh_->verteciesCount();
     }
 
+    [[nodiscard]] auto bufferVerticesSize() const -> size_t {
+        //
+        return verteciesCount() * 3 * sizeof( value_type );
+    }
+
+    [[nodiscard]] auto bufferNormalsSize() const -> size_t {
+        //
+        return verteciesCount() * 3 * sizeof( value_type );
+    }
+
     [[nodiscard]]
-    size_t verteciesArraySize() const {
+    auto verteciesArraySize() const -> size_t {
         return verteciesCount() * 3 * sizeof( value_type );
     }
 
@@ -50,13 +61,13 @@ struct Body final {
     };
 
     [[nodiscard]]
-    const vector3f *verteciesData() {
-        return localVertecies_.data();
+    auto verteciesData() const -> const vector3<value_type> * {
+        return buffer_.vertices_.data();
     }
 
     [[nodiscard]]
-    const vector3f *normalsData() {
-        return localNormals_.data();
+    auto normalsData() const -> const vector3<value_type> * {
+        return buffer_.normals_.data();
     }
 
     [[nodiscard]]
@@ -173,11 +184,11 @@ struct Body final {
         for ( auto i = 0; i < mesh_->verteciesCount(); ++i ) {
             // Update vertex positions
             auto vertex = mesh_->vertices_[i];
-            localVertecies_[i] = transform.mult_vector3( vertex );
+            buffer_.vertices_[i] = transform.mult_vector3( vertex );
 
             // Update normals
             auto normal = mesh_->normals_[i];
-            localNormals_[i] = itRotation.mult_vector3( normal );
+            buffer_.normals_[i] = itRotation.mult_vector3( normal );
         }
     }
 
@@ -188,8 +199,11 @@ private:
     // every frame with geometry data taken from default
     // shape data and transform according to actual spatial
     // information
-    std::vector<vector3<value_type>> localVertecies_{};
-    std::vector<vector3<value_type>> localNormals_{};
+    struct LocalBuffer final {
+        std::vector<vector3<value_type>> vertices_;
+        std::vector<vector3<value_type>> normals_;
+    };
+    LocalBuffer buffer_{};
 
     AABoundingBox bounding_{};
 

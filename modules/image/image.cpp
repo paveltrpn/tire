@@ -36,7 +36,7 @@ export struct Image {
     };
 
     [[nodiscard]]
-    auto data() const -> uint8_t* {
+    auto data() const -> uint8_t * {
         //
         return data_;
     };
@@ -77,12 +77,11 @@ export struct Image {
     /**
      * @brief Base class exports as simple PPM format.
      */
-    virtual auto writeToFile( const std::string& path ) const -> void {
+    virtual auto writeToFile( const std::string &path ) const -> void {
         const auto filePath = std::filesystem::path{ path };
 
         if ( std::filesystem::exists( filePath ) ) {
-            log::info( "trying to overwrite existing file \"{}\"",
-                       filePath.filename().string() );
+            log::info( "trying to overwrite existing file \"{}\"", filePath.filename().string() );
         }
 
         std::ofstream file{ filePath.string(), std::ios::trunc };
@@ -100,7 +99,7 @@ export struct Image {
 protected:
     Image() = default;
 
-    Image( int32_t width, int32_t height, const Colori& dc ) {
+    Image( int32_t width, int32_t height, const Colori &dc ) {
         height_ = height;
         width_ = width;
 
@@ -123,7 +122,7 @@ protected:
         }
     };
 
-    explicit Image( const Image& other ) {
+    explicit Image( const Image &other ) {
         bpp_ = other.bpp_;
         width_ = other.width_;
         height_ = other.height_;
@@ -132,29 +131,28 @@ protected:
 
         data_ = new uint8_t[width_ * height_ * components];
 
-        std::copy( other.data_, other.data_ + width_ * height_ * components,
-                   data_ );
+        std::copy( other.data_, other.data_ + width_ * height_ * components, data_ );
     }
 
-    explicit Image( Image&& other ) noexcept {
+    explicit Image( Image &&other ) noexcept {
         bpp_ = std::exchange( other.bpp_, 0 );
         width_ = std::exchange( other.width_, 0 );
         height_ = std::exchange( other.height_, 0 );
         data_ = std::exchange( other.data_, nullptr );
     }
 
-    auto operator=( const Image& other ) noexcept -> Image& {
+    auto operator=( const Image &other ) noexcept -> Image & {
         Image{ other }.swap( *this );
         return *this;
     }
 
-    auto operator=( Image&& other ) noexcept -> Image& {
+    auto operator=( Image &&other ) noexcept -> Image & {
         Image{ std::move( other ) }.swap( *this );
         return *this;
     }
 
 private:
-    auto swap( Image& other ) noexcept -> void {
+    auto swap( Image &other ) noexcept -> void {
         using std::swap;
         swap( bpp_, other.bpp_ );
         swap( width_, other.width_ );
@@ -166,7 +164,7 @@ protected:
     int bpp_{};
     int width_{};
     int height_{};
-    uint8_t* data_{};
+    uint8_t *data_{};
 };
 
 }  // namespace tire

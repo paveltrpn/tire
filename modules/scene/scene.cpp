@@ -121,7 +121,7 @@ export struct Scene {
 
     // Set active camera, first camera - 0.
     // One default camera exist anyway.
-    void setActiveCamera( size_t id ) {
+    auto setActiveCamera( size_t id ) -> void {
         if ( id < cameras_.size() ) {
             activeCamera_ = id;
         } else {
@@ -131,17 +131,26 @@ export struct Scene {
     };
 
     // Switch to next camera.
-    void nextCamera() { setActiveCamera( ++activeCamera_ ); }
+    auto nextCamera() -> void {
+        //
+        setActiveCamera( ++activeCamera_ );
+    }
 
-    [[nodiscard]] Flycam &camera() const { return *cameras_[activeCamera_].get(); };
+    [[nodiscard]] auto camera() const -> Flycam & {
+        //
+        return *cameras_[activeCamera_].get();
+    };
 
-    [[nodiscard]] const Colorf &backgroundColor() const { return backgrounColor_; };
+    [[nodiscard]] auto backgroundColor() const -> const Colorf & {
+        //
+        return backgrounColor_;
+    };
 
     virtual void submit() = 0;
     virtual void draw() = 0;
     virtual void clean() = 0;
 
-    void traverse( float duration ) {
+    auto traverse( float duration ) -> void {
         for ( size_t i{ 0 }; i < bodyList_.size(); ++i ) {
             bodyList_[i]->applyTransormations( duration );
         }
@@ -152,7 +161,7 @@ export struct Scene {
     }
 
 private:
-    void fillBaseMeshPool() {
+    auto fillBaseMeshPool() -> void {
         const auto basePath = Config::instance()->getBasePath().string();
         const std::filesystem::path meshFilesPath = std::format( "{}/assets/base_mesh/", basePath );
 
@@ -176,7 +185,7 @@ private:
         }
     }
 
-    void process() {
+    auto process() -> void {
         // Read "environment section"
         const auto &environment = scene_[PARAM_ENVIRONMENT];
         const auto &bg = environment[PARAM_BACKGROUND_COLOR];

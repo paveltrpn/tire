@@ -16,6 +16,23 @@ using namespace algebra;
 // Gloabal mesh vertex value type
 using MeshValueType = float;
 
+// Mesh interface.
+struct Mesh {
+    using value_type = MeshValueType;
+
+    Mesh() = default;
+    Mesh( const Mesh &other ) = default;
+    Mesh( Mesh &&other ) = default;
+
+    auto operator=( const Mesh &other ) -> Mesh & = default;
+    auto operator=( Mesh &&other ) -> Mesh & = default;
+
+    virtual ~Mesh() = default;
+
+    [[nodiscard]] virtual auto verteciesCount() const -> size_t = 0;
+    [[nodiscard]] virtual auto tringlesCount() const -> size_t = 0;
+};
+
 // Dual-Indexing (Per-Face Normals/UVs).
 // Compatible with .obj, FBX, glTF
 struct ObjTriangleIndices {
@@ -24,7 +41,7 @@ struct ObjTriangleIndices {
     int texCoordIndex[3];
 };
 
-struct ObjMesh final {
+struct ObjMesh final : Mesh {
     using value_type = MeshValueType;
 
     ObjMesh() = default;
@@ -34,7 +51,7 @@ struct ObjMesh final {
     auto operator=( const ObjMesh &other ) -> ObjMesh & = default;
     auto operator=( ObjMesh &&other ) -> ObjMesh & = default;
 
-    ~ObjMesh() = default;
+    ~ObjMesh() override = default;
 
     [[nodiscard]] auto verticesData() const -> const vector3<value_type> * {
         //
@@ -86,11 +103,6 @@ struct ObjMesh final {
         return vertclr_;
     }
 
-    [[nodiscard]] auto bounding() const -> AABoundingBox {
-        //
-        return bounding_;
-    }
-
     auto setVertices( std::vector<vector3<value_type>> vertices ) -> void {
         //
         vertices_ = std::move( vertices );
@@ -116,14 +128,14 @@ struct ObjMesh final {
         vertclr_ = std::move( vertexColors );
     }
 
-    [[nodiscard]] auto triangleCount() const -> size_t {
+    [[nodiscard]] auto bounding() const -> AABoundingBox {
         //
-        return triangles_.size();
+        return bounding_;
     }
 
-    [[nodiscard]] auto vertexCount() const -> size_t {
+    auto setBounding( const AABoundingBox &bounding ) -> void {
         //
-        return vertices_.size();
+        bounding_ = bounding;
     }
 
     [[nodiscard]] auto name() const -> const std::string & {
@@ -135,6 +147,16 @@ struct ObjMesh final {
         //
         name_ = name;
     }
+
+    [[nodiscard]] auto verteciesCount() const -> size_t override {
+        //
+        return triangles_.size() * 3;
+    };
+
+    [[nodiscard]] auto tringlesCount() const -> size_t override {
+        //
+        return triangles_.size();
+    };
 
     std::vector<vector3<value_type>> vertices_{};
     std::vector<vector3<value_type>> normals_{};
@@ -150,7 +172,7 @@ struct ObjMesh final {
 
 // ====================================================================
 
-export struct InterleavedMesh final {
+export struct InterleavedMesh final : Mesh {
     using value_type = MeshValueType;
 
     struct Vertex {
@@ -192,7 +214,17 @@ export struct InterleavedMesh final {
     auto operator=( const InterleavedMesh &other ) -> InterleavedMesh & = default;
     auto operator=( InterleavedMesh &&other ) -> InterleavedMesh & = default;
 
-    ~InterleavedMesh() = default;
+    ~InterleavedMesh() override = default;
+
+    [[nodiscard]] auto bounding() const -> AABoundingBox {
+        //
+        return bounding_;
+    }
+
+    auto setBounding( const AABoundingBox &bounding ) -> void {
+        //
+        bounding_ = bounding;
+    }
 
     [[nodiscard]] auto name() const -> const std::string & {
         //
@@ -204,6 +236,16 @@ export struct InterleavedMesh final {
         name_ = name;
     }
 
+    [[nodiscard]] auto verteciesCount() const -> size_t override {
+        //
+        return vertices_.size();
+    };
+
+    [[nodiscard]] auto tringlesCount() const -> size_t override {
+        //
+        return vertices_.size() / 3;
+    };
+
     std::vector<Vertex> vertices_;
 
     std::string name_{};
@@ -212,7 +254,7 @@ export struct InterleavedMesh final {
 
 // ====================================================================
 
-export struct SeparatedBuffersMesh final {
+export struct SeparatedBuffersMesh final : Mesh {
     using value_type = MeshValueType;
 
     SeparatedBuffersMesh() = default;
@@ -252,7 +294,17 @@ export struct SeparatedBuffersMesh final {
     auto operator=( const SeparatedBuffersMesh &other ) -> SeparatedBuffersMesh & = default;
     auto operator=( SeparatedBuffersMesh &&other ) -> SeparatedBuffersMesh & = default;
 
-    ~SeparatedBuffersMesh() = default;
+    ~SeparatedBuffersMesh() override = default;
+
+    [[nodiscard]] auto bounding() const -> AABoundingBox {
+        //
+        return bounding_;
+    }
+
+    auto setBounding( const AABoundingBox &bounding ) -> void {
+        //
+        bounding_ = bounding;
+    }
 
     [[nodiscard]] auto name() const -> const std::string & {
         //
@@ -264,10 +316,15 @@ export struct SeparatedBuffersMesh final {
         name_ = name;
     }
 
-    [[nodiscard]]
-    auto verteciesCount() const -> size_t {
+    [[nodiscard]] auto verteciesCount() const -> size_t override {
+        //
         return vertices_.size();
-    }
+    };
+
+    [[nodiscard]] auto tringlesCount() const -> size_t override {
+        //
+        return vertices_.size() / 3;
+    };
 
     std::vector<vector3<value_type>> vertices_;
     std::vector<vector3<value_type>> normals_;
