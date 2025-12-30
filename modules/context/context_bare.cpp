@@ -193,11 +193,11 @@ auto ContextBare::initRenderPass() -> void {
 }
 
 auto ContextBare::createAllocator() -> void {
-    VmaVulkanFunctions vulkanFunctions = {};
+    VmaVulkanFunctions vulkanFunctions{};
     vulkanFunctions.vkGetInstanceProcAddr = &vkGetInstanceProcAddr;
     vulkanFunctions.vkGetDeviceProcAddr = &vkGetDeviceProcAddr;
 
-    VmaAllocatorCreateInfo allocatorCreateInfo = {};
+    VmaAllocatorCreateInfo allocatorCreateInfo{};
     allocatorCreateInfo.flags = VMA_ALLOCATOR_CREATE_EXT_MEMORY_BUDGET_BIT;
     allocatorCreateInfo.vulkanApiVersion = VK_API_VERSION_1_3;
     allocatorCreateInfo.physicalDevice = physDevice_;

@@ -39,18 +39,16 @@ export struct Flycam final {
 
     Flycam() = default;
 
-    Flycam( const algebra::vector3<value_type> &eye, value_type azimuth, value_type elevation ) {
-        azimuth_ = azimuth;
-        elevation_ = elevation;
-        roll_ = 0.0;
+    Flycam( const algebra::vector3<value_type> &eye, value_type azimuth, value_type elevation )
+        : azimuth_{ azimuth }
+        , elevation_{ elevation }
+        , eye_{ eye } {}
 
-        eye_ = eye;
-    }
+    Flycam( const Flycam &other ) = default;
+    Flycam( Flycam &&other ) = default;
 
-    Flycam( const Flycam &other ) = delete;
-    Flycam( Flycam &&other ) = delete;
-    auto operator=( const Flycam &other ) -> Flycam & = delete;
-    auto operator=( Flycam &&other ) -> Flycam & = delete;
+    auto operator=( const Flycam &other ) -> Flycam & = default;
+    auto operator=( Flycam &&other ) -> Flycam & = default;
 
     ~Flycam() = default;
 
@@ -165,13 +163,21 @@ export struct Flycam final {
     };
 
     void traverse() {
-        if ( ( moveMask_ >> FlycamMoveBits::FORWARD ) & (uint32_t)1 ) velocity_ += look_;
+        if ( ( moveMask_ >> FlycamMoveBits::FORWARD ) & (uint32_t)1 ) {
+            velocity_ += look_;
+        }
 
-        if ( ( moveMask_ >> FlycamMoveBits::BACKWARD ) & (uint32_t)1 ) velocity_ += look_.inverse();
+        if ( ( moveMask_ >> FlycamMoveBits::BACKWARD ) & (uint32_t)1 ) {
+            velocity_ += look_.inverse();
+        }
 
-        if ( ( moveMask_ >> FlycamMoveBits::RIGHT ) & (uint32_t)1 ) velocity_ += right_.inverse();
+        if ( ( moveMask_ >> FlycamMoveBits::RIGHT ) & (uint32_t)1 ) {
+            velocity_ += right_.inverse();
+        }
 
-        if ( ( moveMask_ >> FlycamMoveBits::LEFT ) & (uint32_t)1 ) velocity_ += right_;
+        if ( ( moveMask_ >> FlycamMoveBits::LEFT ) & (uint32_t)1 ) {
+            velocity_ += right_;
+        }
 
         eye_.plus( velocity_.scale( 0.5 ) );
 

@@ -86,11 +86,6 @@ struct Context {
         return allocator_;
     }
 
-    [[nodiscard]] auto buffer() const -> VkBuffer {
-        //
-        return buffer_;
-    }
-
 protected:
     VkInstance instance_{ VK_NULL_HANDLE };
     VkSurfaceKHR surface_{ VK_NULL_HANDLE };
@@ -111,8 +106,6 @@ protected:
 
     // Momory
     VmaAllocator allocator_;
-    VkBuffer buffer_{ VK_NULL_HANDLE };
-    VmaAllocation allocation_{};
 };
 
 }  // namespace tire
