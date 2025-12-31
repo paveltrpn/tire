@@ -31,15 +31,6 @@ constexpr char PARAM_LIGHTS[] = "lights";
 
 constexpr char PARAM_BACKGROUND_COLOR[] = "background_color";
 
-constexpr char PARAM_OBJECT_TYPE_BOX[] = "box";
-constexpr char PARAM_OBJECT_TYPE_FRAME[] = "frame";
-constexpr char PARAM_OBJECT_TYPE_DIAMOND[] = "diamond";
-constexpr char PARAM_OBJECT_TYPE_WALL01[] = "wall01";
-constexpr char PARAM_OBJECT_TYPE_ARCH01[] = "arch01";
-constexpr char PARAM_OBJECT_TYPE_PRISM[] = "prism";
-constexpr char PARAM_OBJECT_TYPE_PRISMHEXA[] = "prismhexa";
-constexpr char PARAM_OBJECT_TYPE_PYRAMIDCUT[] = "pyramidcut";
-
 constexpr char PARAM_OBJECT_TYPE[] = "type";
 
 constexpr char PARAM_OBJECT_POSITION[] = "position";
@@ -186,6 +177,7 @@ private:
         }
     }
 
+    [[nodiscard]]
     auto parseObjects( nlohmann::json objectsJson ) -> tire::generator<std::shared_ptr<tire::Body>> {
         for ( auto &&item : objectsJson ) {
             const auto &type = item[PARAM_OBJECT_TYPE];
@@ -213,6 +205,7 @@ private:
         }
     }
 
+    [[nodiscard]]
     auto parseCameras( nlohmann::json camerasJson ) -> tire::generator<std::shared_ptr<tire::Flycam>> {
         for ( auto &&item : camerasJson ) {
             const auto &type = item[PARAM_CAMERA_TYPE];
@@ -246,6 +239,7 @@ private:
         }
     }
 
+    [[nodiscard]]
     auto parseLights( nlohmann::json lightJson ) -> tire::generator<std::shared_ptr<tire::OmniLight<float>>> {
         for ( auto &&item : lightJson ) {
             const auto &type = item[PARAM_LIGHT_TYPE];
@@ -319,8 +313,8 @@ protected:
     std::unordered_map<std::string, std::shared_ptr<SeparatedBuffersMesh>> baseMeshPool_{};
 
     std::vector<std::shared_ptr<Body>> bodyList_{};
-    std::vector<std::shared_ptr<OmniLight<float>>> lightList_{};
     std::vector<std::shared_ptr<Flycam>> cameras_{};
+    std::vector<std::shared_ptr<OmniLight<float>>> lightList_{};
 
     // One camera exist anyway
     int activeCamera_{ 0 };
