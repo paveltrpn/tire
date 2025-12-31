@@ -186,7 +186,7 @@ private:
         }
     }
 
-    tire::generator<std::shared_ptr<tire::Body>> parseObjects( nlohmann::json objectsJson ) {
+    auto parseObjects( nlohmann::json objectsJson ) -> tire::generator<std::shared_ptr<tire::Body>> {
         for ( const auto &item : objectsJson ) {
             const auto &type = item[PARAM_OBJECT_TYPE];
             auto bodyMesh = baseMeshPool_[type];
@@ -201,7 +201,6 @@ private:
             const auto &albedoColor = item[PARAM_OBJECT_ALBEDO_COLOR];
             const std::string &materialName = item[PARAM_OBJECT_MATERIAL_NAME];
 
-            // Set body properties
             node->setPosition( position )
               .setOrientation( orientaion )
               .setScale( scale )
@@ -211,6 +210,67 @@ private:
               .setAlbedoColor( albedoColor );
 
             co_yield std::move( node );
+        }
+    }
+
+    auto parseCameras( nlohmann::json camerasJson ) -> tire::generator<std::shared_ptr<tire::Flycam>> {
+        for ( const auto &item : camerasJson ) {
+            const auto &type = item[PARAM_CAMERA_TYPE];
+            if ( type == PARAM_CAMERA_PERSPECTIVE ) {
+                auto camera = std::make_shared<Flycam>();
+
+                const std::array<double, 3> eye = item[PARAM_CAMERA_EYE];
+                const float azimuth = item[PARAM_CAMERA_AZIMUTH];
+                const float elevation = item[PARAM_CAMERA_ELEVATION];
+
+                // Unused
+                const std::array<double, 3> target = item[PARAM_CAMERA_TARGET];
+
+                const auto eyev = algebra::vector3d{ eye };
+                const auto &fov = item[PARAM_CAMERA_FOV];
+                const auto &aspect = item[PARAM_CAMERA_ASPECT];
+                const auto &ncp = item[PARAM_CAMERA_NCP];
+                const auto &fcp = item[PARAM_CAMERA_FCP];
+                const std::string &name = item[PARAM_CAMERA_NAME];
+
+                camera->setEye( algebra::vector3d{ eye } )
+                  .setAzimuth( azimuth )
+                  .setElevation( elevation )
+                  .setFov( fov )
+                  .setAspect( aspect )
+                  .setNcp( ncp )
+                  .setFcp( fcp )
+                  .setName( name );
+
+                co_yield std::move( camera );
+            }
+        }
+    }
+
+    auto parseLights( nlohmann::json lightJson ) -> tire::generator<std::shared_ptr<tire::OmniLight<float>>> {
+        for ( const auto &item : lightJson ) {
+            const auto &type = item[PARAM_LIGHT_TYPE];
+            if ( type == PARAM_LIGHT_OMNI ) {
+                auto light = std::make_shared<OmniLight<float>>();
+
+                const std::array<float, 3> position = item[PARAM_OMNILIGHT_POSITION];
+                const float constant = item[PARAM_OMNILIGHT_CONSTANT];
+                const float linear = item[PARAM_OMNILIGHT_LINEAR];
+                const float quadratic = item[PARAM_OMNILIGHT_QUADRATIC];
+                const std::array<float, 3> ambient = item[PARAM_OMNILIGHT_AMBIENT];
+                const std::array<float, 3> diffuse = item[PARAM_OMNILIGHT_DIFFUSE];
+                const std::array<float, 3> specular = item[PARAM_OMNILIGHT_SPECULAR];
+
+                light->setPosition( { position } )
+                  .setConstant( constant )
+                  .setLinear( linear )
+                  .setQuadratic( quadratic )
+                  .setAmbient( { ambient } )
+                  .setDiffuse( { diffuse } )
+                  .setSpecular( { specular } );
+
+                co_yield std::move( light );
+            }
         }
     }
 
@@ -232,33 +292,9 @@ private:
 
         // Read "cameras" section
         if ( scene_.contains( PARAM_CAMERAS ) ) {
-            const auto cameras = scene_[PARAM_CAMERAS];
-            for ( const auto &item : cameras ) {
-                const auto &type = item[PARAM_CAMERA_TYPE];
-                if ( type == PARAM_CAMERA_PERSPECTIVE ) {
-                    const std::array<double, 3> eye = item[PARAM_CAMERA_EYE];
-                    const auto eyev = algebra::vector3d{ eye };
-
-                    // Unused
-                    const std::array<double, 3> target = item[PARAM_CAMERA_TARGET];
-
-                    const float azimuth = item[PARAM_CAMERA_AZIMUTH];
-
-                    const float elevation = item[PARAM_CAMERA_ELEVATION];
-
-                    const auto &fov = item[PARAM_CAMERA_FOV];
-                    const auto &aspect = item[PARAM_CAMERA_ASPECT];
-                    const auto &ncp = item[PARAM_CAMERA_NCP];
-                    const auto &fcp = item[PARAM_CAMERA_FCP];
-
-                    const std::string &name = item[PARAM_CAMERA_NAME];
-
-                    auto camera = std::make_shared<Flycam>( eye, azimuth, elevation );
-
-                    camera->setFov( fov ).setAspect( aspect ).setNcp( ncp ).setFcp( fcp ).setName( name );
-
-                    cameras_.push_back( std::move( camera ) );
-                }
+            auto cameraGenerator = parseCameras( scene_[PARAM_CAMERAS] );
+            for ( auto &&camera : cameraGenerator ) {
+                cameras_.push_back( std::move( camera ) );
             }
         } else {
             throw std::runtime_error( "there is can't be scene without cameras!" );
@@ -267,35 +303,9 @@ private:
         // Read "lights" section
         if ( scene_.contains( PARAM_LIGHTS ) ) {
             const auto lights = scene_[PARAM_LIGHTS];
-            for ( const auto &item : lights ) {
-                const auto &type = item[PARAM_LIGHT_TYPE];
-                if ( type == PARAM_LIGHT_OMNI ) {
-                    const std::array<float, 3> position = item[PARAM_OMNILIGHT_POSITION];
-
-                    const float constant = item[PARAM_OMNILIGHT_CONSTANT];
-
-                    const float linear = item[PARAM_OMNILIGHT_LINEAR];
-
-                    const float quadratic = item[PARAM_OMNILIGHT_QUADRATIC];
-
-                    const std::array<float, 3> ambient = item[PARAM_OMNILIGHT_AMBIENT];
-
-                    const std::array<float, 3> diffuse = item[PARAM_OMNILIGHT_DIFFUSE];
-
-                    const std::array<float, 3> specular = item[PARAM_OMNILIGHT_SPECULAR];
-
-                    auto light = std::make_shared<OmniLight<float>>();
-
-                    light->setPosition( { position } )
-                      .setConstant( constant )
-                      .setLinear( linear )
-                      .setQuadratic( quadratic )
-                      .setAmbient( { ambient } )
-                      .setDiffuse( { diffuse } )
-                      .setSpecular( { specular } );
-
-                    lightList_.push_back( light );
-                }
+            auto lightsGenerator = parseLights( scene_[PARAM_LIGHTS] );
+            for ( auto &&light : lightsGenerator ) {
+                lightList_.push_back( std::move( light ) );
             }
         } else {
             throw std::runtime_error( "there is can't be scene without lights!" );

@@ -39,11 +39,6 @@ export struct Flycam final {
 
     Flycam() = default;
 
-    Flycam( const algebra::vector3<value_type> &eye, value_type azimuth, value_type elevation )
-        : azimuth_{ azimuth }
-        , elevation_{ elevation }
-        , eye_{ eye } {}
-
     Flycam( const Flycam &other ) = default;
     Flycam( Flycam &&other ) = default;
 
@@ -51,6 +46,24 @@ export struct Flycam final {
     auto operator=( Flycam &&other ) -> Flycam & = default;
 
     ~Flycam() = default;
+
+    auto setEye( const vector3<value_type> &value ) -> Flycam & {
+        //
+        eye_ = value;
+        return *this;
+    }
+
+    auto setAzimuth( value_type value ) -> Flycam & {
+        //
+        azimuth_ = value;
+        return *this;
+    }
+
+    auto setElevation( value_type value ) -> Flycam & {
+        //
+        elevation_ = value;
+        return *this;
+    }
 
     auto setFov( value_type fov ) -> Flycam & {
         //
