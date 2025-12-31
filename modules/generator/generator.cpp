@@ -179,7 +179,7 @@ struct generator {
 private:
     void fill() {
         if ( !full_ && !discarded_ ) {
-            num_evaluates++;
+            num_evaluates_++;
             h_();
             if ( h_.promise().exception_ ) {
                 std::rethrow_exception( h_.promise().exception_ );
@@ -192,7 +192,7 @@ public:
     handle_type h_;
 
     // Unused.
-    size_t num_evaluates = 0;
+    size_t num_evaluates_ = 0;
 
 private:
     bool discarded_ = false;

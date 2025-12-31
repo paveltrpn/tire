@@ -187,7 +187,7 @@ private:
     }
 
     auto parseObjects( nlohmann::json objectsJson ) -> tire::generator<std::shared_ptr<tire::Body>> {
-        for ( const auto &item : objectsJson ) {
+        for ( auto &&item : objectsJson ) {
             const auto &type = item[PARAM_OBJECT_TYPE];
             auto bodyMesh = baseMeshPool_[type];
 
@@ -214,19 +214,18 @@ private:
     }
 
     auto parseCameras( nlohmann::json camerasJson ) -> tire::generator<std::shared_ptr<tire::Flycam>> {
-        for ( const auto &item : camerasJson ) {
+        for ( auto &&item : camerasJson ) {
             const auto &type = item[PARAM_CAMERA_TYPE];
             if ( type == PARAM_CAMERA_PERSPECTIVE ) {
                 auto camera = std::make_shared<Flycam>();
 
-                const std::array<double, 3> eye = item[PARAM_CAMERA_EYE];
                 const float azimuth = item[PARAM_CAMERA_AZIMUTH];
                 const float elevation = item[PARAM_CAMERA_ELEVATION];
 
                 // Unused
                 const std::array<double, 3> target = item[PARAM_CAMERA_TARGET];
 
-                const auto eyev = algebra::vector3d{ eye };
+                const std::array<double, 3> eye = item[PARAM_CAMERA_EYE];
                 const auto &fov = item[PARAM_CAMERA_FOV];
                 const auto &aspect = item[PARAM_CAMERA_ASPECT];
                 const auto &ncp = item[PARAM_CAMERA_NCP];
@@ -248,7 +247,7 @@ private:
     }
 
     auto parseLights( nlohmann::json lightJson ) -> tire::generator<std::shared_ptr<tire::OmniLight<float>>> {
-        for ( const auto &item : lightJson ) {
+        for ( auto &&item : lightJson ) {
             const auto &type = item[PARAM_LIGHT_TYPE];
             if ( type == PARAM_LIGHT_OMNI ) {
                 auto light = std::make_shared<OmniLight<float>>();
