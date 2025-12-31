@@ -301,7 +301,6 @@ private:
 
         // Read "lights" section
         if ( scene_.contains( PARAM_LIGHTS ) ) {
-            const auto lights = scene_[PARAM_LIGHTS];
             auto lightsGenerator = parseLights( scene_[PARAM_LIGHTS] );
             for ( auto &&light : lightsGenerator ) {
                 lightList_.push_back( std::move( light ) );
