@@ -215,7 +215,7 @@ struct PiplineVertexBuffer final : Pipeline {
 
         // This pipeline layout initialization.
         // Setup push constants.
-        std::array<VkPushConstantRange, 1> constants;
+        std::array<VkPushConstantRange, 1> constants{};
 
         constants[0] = VkPushConstantRange{
           .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,

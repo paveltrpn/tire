@@ -84,7 +84,6 @@ export struct Flycam final {
 
     auto setMoveBit( FlycamMoveBits bit ) -> void {
         //
-        log::info( "Flycam::setMoveBit" );
         moveMask_ |= ( (uint32_t)1 << bit );
     }
 

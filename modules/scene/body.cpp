@@ -83,9 +83,10 @@ struct Body final {
         return mesh_->bounding_;
     };
 
-    auto setAlbedoColor( const std::string &name ) -> void {
+    auto setAlbedoColor( const std::string &name ) -> Body & {
         //
         albedoColor_ = Colorf{ name };
+        return *this;
     }
 
     [[nodiscard]]
@@ -93,34 +94,40 @@ struct Body final {
         return albedoColor_;
     };
 
-    auto setPosition( const vector3<value_type> &value ) -> void {
+    auto setPosition( const vector3<value_type> &value ) -> Body & {
         //
         position_ = value;
+        return *this;
     }
 
-    auto setOrientation( const vector3<value_type> &value ) -> void {
+    auto setOrientation( const vector3<value_type> &value ) -> Body & {
         //
         orientation_ = value;
+        return *this;
     }
 
-    auto setScale( const vector3<value_type> &value ) -> void {
+    auto setScale( const vector3<value_type> &value ) -> Body & {
         //
         scale_ = value;
+        return *this;
     }
 
-    auto setVelocity( const vector3<value_type> &value ) -> void {
+    auto setVelocity( const vector3<value_type> &value ) -> Body & {
         //
         velocity_ = value;
+        return *this;
     }
 
-    auto setTorque( const vector3<value_type> &value ) -> void {
+    auto setTorque( const vector3<value_type> &value ) -> Body & {
         //
         torque_ = value;
+        return *this;
     }
 
-    auto setMaterialName( const std::string &value ) -> void {
+    auto setMaterialName( const std::string &value ) -> Body & {
         //
         materialName_ = value;
+        return *this;
     }
 
     [[nodiscard]]

@@ -4,6 +4,7 @@ module;
 #include <format>
 #include <filesystem>
 #include <fstream>
+#include <coroutine>
 
 #include <vulkan/vulkan.h>
 
@@ -14,7 +15,7 @@ export module scene:scene;
 import config;
 import log;
 import image;
-
+import generator;
 import :obj;
 import :mesh;
 import :body;
@@ -185,6 +186,34 @@ private:
         }
     }
 
+    tire::generator<std::shared_ptr<tire::Body>> parseObjects( nlohmann::json objectsJson ) {
+        for ( const auto &item : objectsJson ) {
+            const auto &type = item[PARAM_OBJECT_TYPE];
+            auto bodyMesh = baseMeshPool_[type];
+
+            auto node = std::make_shared<Body>( std::move( bodyMesh ) );
+
+            const std::array<float, 3> position = item[PARAM_OBJECT_POSITION];
+            const std::array<float, 3> orientaion = item[PARAM_OBJECT_ORIENTATION];
+            const std::array<float, 3> scale = item[PARAM_OBJECT_SCALE];
+            const std::array<float, 3> velosity = item[PARAM_OBJECT_VELOCITY];
+            const std::array<float, 3> torque = item[PARAM_OBJECT_TORQUE];
+            const auto &albedoColor = item[PARAM_OBJECT_ALBEDO_COLOR];
+            const std::string &materialName = item[PARAM_OBJECT_MATERIAL_NAME];
+
+            // Set body properties
+            node->setPosition( position )
+              .setOrientation( orientaion )
+              .setScale( scale )
+              .setVelocity( velosity )
+              .setTorque( torque )
+              .setMaterialName( materialName )
+              .setAlbedoColor( albedoColor );
+
+            co_yield std::move( node );
+        }
+    }
+
     auto process() -> void {
         // Read "environment section"
         const auto &environment = scene_[PARAM_ENVIRONMENT];
@@ -193,40 +222,9 @@ private:
 
         // Read "objects" section
         if ( scene_.contains( PARAM_OBJECTS ) ) {
-            const auto objects = scene_[PARAM_OBJECTS];
-            for ( const auto &item : objects ) {
-                // Body spatial information
-                const std::array<float, 3> position = item[PARAM_OBJECT_POSITION];
-
-                const std::array<float, 3> orientaion = item[PARAM_OBJECT_ORIENTATION];
-
-                const std::array<float, 3> scale = item[PARAM_OBJECT_SCALE];
-
-                const std::array<float, 3> velosity = item[PARAM_OBJECT_VELOCITY];
-
-                const std::array<float, 3> torque = item[PARAM_OBJECT_TORQUE];
-
-                // Body material information
-                const auto &albedoColor = item[PARAM_OBJECT_ALBEDO_COLOR];
-
-                const std::string &materialName = item[PARAM_OBJECT_MATERIAL_NAME];
-
-                // Body mesh data
-                const auto &type = item[PARAM_OBJECT_TYPE];
-                auto bodyMesh = baseMeshPool_[type];
-                auto node = std::make_shared<Body>( std::move( bodyMesh ) );
-
-                // Set body properties
-                node->setPosition( position );
-                node->setOrientation( orientaion );
-                node->setScale( scale );
-                node->setVelocity( velosity );
-                node->setTorque( torque );
-                node->setMaterialName( materialName );
-                node->setAlbedoColor( albedoColor );
-
-                // Append body to list
-                bodyList_.push_back( std::move( node ) );
+            auto objectsGenerator = parseObjects( scene_[PARAM_OBJECTS] );
+            for ( auto &&body : objectsGenerator ) {
+                bodyList_.push_back( std::move( body ) );
             }
         } else {
             throw std::runtime_error( "there is can't be scene without objects!" );
