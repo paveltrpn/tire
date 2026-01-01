@@ -10,12 +10,11 @@ module;
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "context/context.h"
-
 #define FRAMES_IN_FLIGHT_COUNT 2
 
 export module render:render;
 
+import context;
 import config;
 import algebra;
 import log;

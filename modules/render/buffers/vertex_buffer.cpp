@@ -8,9 +8,11 @@ module;
 #include <vulkan/vk_enum_string_helper.h>
 #include <vulkan/vulkan_core.h>
 
-#include "context/context.h"
+#include "vma/vk_mem_alloc.h"
 
 export module render:vertex_buffer;
+
+import context;
 
 namespace tire {
 

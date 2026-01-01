@@ -5,7 +5,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "context/context.h"
+import context;
 
 namespace tire {
 struct RenderVK;

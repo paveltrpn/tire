@@ -1,4 +1,6 @@
 
+module;
+
 #include <set>
 
 #define VK_USE_PLATFORM_XLIB_KHR
@@ -6,10 +8,12 @@
 
 static constexpr bool DEBUG_OUTPUT_DEVICE_CPP{ true };
 
-#include "context.h"
+export module context:device;
 
 import config;
 import log;
+
+import :context;
 
 namespace tire {
 

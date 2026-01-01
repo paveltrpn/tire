@@ -5,9 +5,9 @@ module;
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "context/context.h"
-
 export module render:texture_image;
+
+import context;
 
 namespace tire::vk {
 

@@ -13,10 +13,9 @@ module;
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "context/context.h"
-
 export module render:program;
 
+import context;
 import log;
 
 namespace tire {
@@ -59,39 +58,32 @@ constexpr std::string clusterculling_stage_suffix{ "CLUSTERCULLING" };
 
 template <ShaderStageType Stage>
 concept ShaderStage =
-    ( Stage == ShaderStageType::VERTEX ) ||
-    ( Stage == ShaderStageType::FRAGMENT ) ||
-    ( Stage == ShaderStageType::TESSELATION_EVAL ) ||
-    ( Stage == ShaderStageType::TESSELATION_CTRL ) ||
-    ( Stage == ShaderStageType::GEOMETRY ) ||
-    ( Stage == ShaderStageType::COMPUTE ) ||
-    ( Stage == ShaderStageType::RAYGEN ) ||
-    ( Stage == ShaderStageType::ANYHIT ) ||
-    ( Stage == ShaderStageType::CLOSESTHIT ) ||
-    ( Stage == ShaderStageType::MISS ) ||
-    ( Stage == ShaderStageType::INTERSECTION ) ||
-    ( Stage == ShaderStageType::CALLABLE ) ||
-    ( Stage == ShaderStageType::TASK ) || ( Stage == ShaderStageType::MESH ) ||
-    ( Stage == ShaderStageType::SUBPASSSHADING ) ||
-    ( Stage == ShaderStageType::CLUSTERCULLING );
+  ( Stage == ShaderStageType::VERTEX ) || ( Stage == ShaderStageType::FRAGMENT ) ||
+  ( Stage == ShaderStageType::TESSELATION_EVAL ) || ( Stage == ShaderStageType::TESSELATION_CTRL ) ||
+  ( Stage == ShaderStageType::GEOMETRY ) || ( Stage == ShaderStageType::COMPUTE ) ||
+  ( Stage == ShaderStageType::RAYGEN ) || ( Stage == ShaderStageType::ANYHIT ) ||
+  ( Stage == ShaderStageType::CLOSESTHIT ) || ( Stage == ShaderStageType::MISS ) ||
+  ( Stage == ShaderStageType::INTERSECTION ) || ( Stage == ShaderStageType::CALLABLE ) ||
+  ( Stage == ShaderStageType::TASK ) || ( Stage == ShaderStageType::MESH ) ||
+  ( Stage == ShaderStageType::SUBPASSSHADING ) || ( Stage == ShaderStageType::CLUSTERCULLING );
 
 const std::unordered_map<ShaderStageType, std::string> StagesSuffixMap = {
-    { ShaderStageType::VERTEX, vertex_stage_suffix },
-    { ShaderStageType::FRAGMENT, fragment_stage_suffix },
-    { ShaderStageType::TESSELATION_EVAL, tesseval_stage_suffix },
-    { ShaderStageType::TESSELATION_CTRL, tessctrl_stage_suffix },
-    { ShaderStageType::GEOMETRY, geometry_stage_suffix },
-    { ShaderStageType::COMPUTE, compute_stage_suffix },
-    { ShaderStageType::RAYGEN, raygen_stage_suffix },
-    { ShaderStageType::ANYHIT, anyhit_stage_suffix },
-    { ShaderStageType::CLOSESTHIT, closeshit_stage_suffix },
-    { ShaderStageType::MISS, miss_stage_suffix },
-    { ShaderStageType::INTERSECTION, intersection_stage_suffix },
-    { ShaderStageType::CALLABLE, callable_stage_suffix },
-    { ShaderStageType::TASK, task_stage_suffix },
-    { ShaderStageType::MESH, mesh_stage_suffix },
-    { ShaderStageType::SUBPASSSHADING, subpassshading_stage_suffix },
-    { ShaderStageType::CLUSTERCULLING, clusterculling_stage_suffix },
+  { ShaderStageType::VERTEX, vertex_stage_suffix },
+  { ShaderStageType::FRAGMENT, fragment_stage_suffix },
+  { ShaderStageType::TESSELATION_EVAL, tesseval_stage_suffix },
+  { ShaderStageType::TESSELATION_CTRL, tessctrl_stage_suffix },
+  { ShaderStageType::GEOMETRY, geometry_stage_suffix },
+  { ShaderStageType::COMPUTE, compute_stage_suffix },
+  { ShaderStageType::RAYGEN, raygen_stage_suffix },
+  { ShaderStageType::ANYHIT, anyhit_stage_suffix },
+  { ShaderStageType::CLOSESTHIT, closeshit_stage_suffix },
+  { ShaderStageType::MISS, miss_stage_suffix },
+  { ShaderStageType::INTERSECTION, intersection_stage_suffix },
+  { ShaderStageType::CALLABLE, callable_stage_suffix },
+  { ShaderStageType::TASK, task_stage_suffix },
+  { ShaderStageType::MESH, mesh_stage_suffix },
+  { ShaderStageType::SUBPASSSHADING, subpassshading_stage_suffix },
+  { ShaderStageType::CLUSTERCULLING, clusterculling_stage_suffix },
 
 };
 
@@ -100,18 +92,17 @@ const std::unordered_map<ShaderStageType, std::string> StagesSuffixMap = {
 // of the vulkan specification demands at least one shader stage - VERTEX for graphics
 // pipeline or it can be COMPUTE shader for compute pipeline).
 struct Program final {
-    Program( const Context* context )
+    Program( const Context *context )
         : context_{ context } {}
 
-    Program( const Program& other ) = delete;
-    Program( Program&& other ) = delete;
-    Program& operator=( const Program& other ) = delete;
-    Program& operator=( Program&& other ) = delete;
+    Program( const Program &other ) = delete;
+    Program( Program &&other ) = delete;
+    Program &operator=( const Program &other ) = delete;
+    Program &operator=( Program &&other ) = delete;
 
     ~Program() {
-        for ( const auto& module : modules_ ) {
-            vkDestroyShaderModule( context_->device(), std::get<1>( module ),
-                                   nullptr );
+        for ( const auto &module : modules_ ) {
+            vkDestroyShaderModule( context_->device(), std::get<1>( module ), nullptr );
         }
     }
 
@@ -122,18 +113,18 @@ struct Program final {
     // 3) Shader mudules map contains one shader module per stage, i.e.
     // there is only one mudule for each stage and modules count
     // equal to vulkan shader stages types.
-    void add( const std::filesystem::path& path ) {
+    void add( const std::filesystem::path &path ) {
         const auto device = context_->device();
         if ( device == VK_NULL_HANDLE ) {
             throw std::runtime_error(
-                std::format( "can't use shaders before valid logical device is "
-                             "acquired!" ) );
+              std::format(
+                "can't use shaders before valid logical device is "
+                "acquired!" ) );
         }
 
         std::ifstream file( path, std::ios::ate | std::ios::binary );
         if ( !file.is_open() ) {
-            throw std::runtime_error(
-                std::format( "failed to open file {}!", path.string() ) );
+            throw std::runtime_error( std::format( "failed to open file {}!", path.string() ) );
         }
 
         // Future shader name, comes from filename. Have format:
@@ -145,37 +136,36 @@ struct Program final {
         // suffix - i.e. something from set "VERTEX", "FRAGMENT" etc.
         if ( !isValidName( name ) ) {
             throw std::runtime_error(
-                std::format( "vk::ShaderStorage == shader file name \"{}\" not "
-                             "satisfies naming "
-                             "convention",
-                             name ) );
+              std::format(
+                "vk::ShaderStorage == shader file name \"{}\" not "
+                "satisfies naming "
+                "convention",
+                name ) );
         }
 
         // Check if shader module with name exist in modules map
         if ( modules_.contains( name ) ) {
             log::warning(
-                "vk::ShaderStorage == shader module with name \"{}\" exist, no "
-                "need "
-                "to "
-                "replace it",
-                name );
+              "vk::ShaderStorage == shader module with name \"{}\" exist, no "
+              "need "
+              "to "
+              "replace it",
+              name );
             return;
         }
 
         // Split given string by seperator
-        auto split = []( const std::string& string, const char* sep ) {
+        auto split = []( const std::string &string, const char *sep ) {
             std::vector<std::string> list;
             std::string::size_type start{ 0 };
             std::string::size_type end;
 
             while ( ( end = string.find( sep, start ) ) != std::string::npos ) {
-                if ( start != end )
-                    list.push_back( string.substr( start, end - start ) );
+                if ( start != end ) list.push_back( string.substr( start, end - start ) );
                 start = end + 1;
             }
 
-            if ( start != string.size() )
-                list.push_back( string.substr( start ) );
+            if ( start != string.size() ) list.push_back( string.substr( start ) );
 
             return list;
         };
@@ -184,11 +174,11 @@ struct Program final {
         const auto suffix = split( name, "_" ).back();
         if ( checkStageExist( suffix ) ) {
             log::warning(
-                "vk::ShaderStorage == shader module for stage \"{}\" exist, no "
-                "need "
-                "to "
-                "replace it",
-                suffix );
+              "vk::ShaderStorage == shader module for stage \"{}\" exist, no "
+              "need "
+              "to "
+              "replace it",
+              suffix );
         }
 
         // Read SPIRV file from disk
@@ -201,48 +191,46 @@ struct Program final {
         // Cast file data readed as char to vulkan acceptable uint8_t
         std::vector<uint8_t> uint8Buf( fileSize );
         std::ranges::transform(
-            charBuf.begin(), charBuf.end(), uint8Buf.begin(),
-            []( char v ) { return static_cast<uint8_t>( v ); } );
+          charBuf.begin(), charBuf.end(), uint8Buf.begin(), []( char v ) { return static_cast<uint8_t>( v ); } );
 
         push( uint8Buf, name );
     }
 
     // Add shader stage as bytecode array
-    void add( std::span<uint8_t> bytecode, const std::string& name ) {
-        push( bytecode, name );
-    }
+    void add( std::span<uint8_t> bytecode, const std::string &name ) { push( bytecode, name ); }
 
-    void fill( const std::vector<std::filesystem::path>& files ) {
+    void fill( const std::vector<std::filesystem::path> &files ) {
         if ( files.size() < 2 ) {
-            throw std::runtime_error( std::format(
+            throw std::runtime_error(
+              std::format(
                 "vk::ShaderStorage == pipeline shader storage must "
                 "contains at least vertex and fragment shader stages!" ) );
         }
 
-        for ( const auto& item : files ) {
+        for ( const auto &item : files ) {
             add( item );
         }
     }
 
-    void fill( const std::vector<std::pair<std::span<uint8_t>, std::string>>&
-                   sources ) {
+    void fill( const std::vector<std::pair<std::span<uint8_t>, std::string>> &sources ) {
         if ( sources.size() < 2 ) {
-            throw std::runtime_error( std::format(
+            throw std::runtime_error(
+              std::format(
                 "vk::ShaderStorage == pipeline shader storage must "
                 "contains at least vertex and fragment shader stages!" ) );
         }
 
-        for ( const auto& item : sources ) {
+        for ( const auto &item : sources ) {
             auto [bytecode, name] = item;
             add( bytecode, name );
         }
     }
 
-    [[nodiscard]] VkShaderModule get( const std::string& name ) {
+    [[nodiscard]] VkShaderModule get( const std::string &name ) {
         VkShaderModule module{};
         try {
             module = modules_.at( name );
-        } catch ( std::out_of_range& e ) {
+        } catch ( std::out_of_range &e ) {
             log::warning( "module {} not exist!", name );
             return VK_NULL_HANDLE;
         }
@@ -257,25 +245,23 @@ struct Program final {
         // of concept keep invariant
         const std::string suffix = StagesSuffixMap.at( Stage );
 
-        for ( const auto& item : modules_ ) {
+        for ( const auto &item : modules_ ) {
             const auto [name, module] = item;
             if ( name.ends_with( suffix ) ) {
                 return module;
             }
         }
 
-        log::warning(
-            "vk::ShaderStorage == shader module with suffix \"{}\" not found!",
-            suffix );
+        log::warning( "vk::ShaderStorage == shader module with suffix \"{}\" not found!", suffix );
 
         return VK_NULL_HANDLE;
     }
 
-    void destroy( const std::string& name ) {
+    void destroy( const std::string &name ) {
         VkShaderModule module;
         try {
             module = modules_.at( name );
-        } catch ( std::out_of_range& e ) {
+        } catch ( std::out_of_range &e ) {
             log::warning( "module {} not exist!", name );
             return;
         }
@@ -284,61 +270,55 @@ struct Program final {
     }
 
     void list() {
-        for ( const auto& key : modules_ ) {
+        for ( const auto &key : modules_ ) {
             log::debug( "available shader module: \"{}\"", std::get<0>( key ) );
         }
     }
 
 private:
-    void push( std::span<uint8_t> bytecode, const std::string& name ) {
+    void push( std::span<uint8_t> bytecode, const std::string &name ) {
         // Create vulkan shader module
         VkShaderModuleCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
         createInfo.codeSize = bytecode.size();
-        createInfo.pCode = reinterpret_cast<const uint32_t*>( bytecode.data() );
+        createInfo.pCode = reinterpret_cast<const uint32_t *>( bytecode.data() );
 
         VkShaderModule module{};
-        if ( const auto err = vkCreateShaderModule(
-                 context_->device(), &createInfo, nullptr, &module );
+        if ( const auto err = vkCreateShaderModule( context_->device(), &createInfo, nullptr, &module );
              err != VK_SUCCESS ) {
             throw std::runtime_error(
-                std::format( "failed to create shader module {} with code {}!",
-                             name, string_VkResult( err ) ) );
+              std::format( "failed to create shader module {} with code {}!", name, string_VkResult( err ) ) );
         } else {
-            log::debug( "vk::ShaderStorage == shader module {} created!",
-                        name );
+            log::debug( "vk::ShaderStorage == shader module {} created!", name );
         }
 
         modules_[name] = module;
     }
 
-    bool checkStageExist( const std::string& stageSuffix ) {
+    bool checkStageExist( const std::string &stageSuffix ) {
         // Find shader stage module name in modules_ which have certain suffix
         const auto end = modules_.cend();
-        const auto it = std::find_if(
-            modules_.cbegin(), end,
-            [id = stageSuffix]( std::pair<std::string, VkShaderModule> item ) {
-                return std::get<0>( item ).ends_with( id );
-            } );
+        const auto it =
+          std::find_if( modules_.cbegin(), end, [id = stageSuffix]( std::pair<std::string, VkShaderModule> item ) {
+              return std::get<0>( item ).ends_with( id );
+          } );
 
         return it != end;
     }
 
-    bool isValidName( const std::string& name ) {
+    bool isValidName( const std::string &name ) {
         // Finds out that given shader file name contains somthing from
         // shader stage suffix set ("VERTEX", "FRAGMENT" etc.)
         const auto end = StagesSuffixMap.cend();
         const auto it = std::find_if(
-            StagesSuffixMap.cbegin(), end,
-            [id = name]( std::pair<ShaderStageType, std::string> item ) {
-                return id.ends_with( std::get<1>( item ) );
-            } );
+          StagesSuffixMap.cbegin(), end,
+          [id = name]( std::pair<ShaderStageType, std::string> item ) { return id.ends_with( std::get<1>( item ) ); } );
 
         return it != end;
     }
 
 private:
-    const Context* context_;
+    const Context *context_;
 
     // Contains shader stages vulkan shader mudules. One module per stage.
     std::unordered_map<std::string, VkShaderModule> modules_{};

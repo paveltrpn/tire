@@ -3,7 +3,18 @@
 #include <format>
 #include <iostream>
 
+#define SURFACE_X11
+
+#ifdef SURFACE_X11
+#define GLFW_EXPOSE_NATIVE_X11
 #include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
+#elifdef SURFACE_WAYLAND
+#define GLFW_EXPOSE_NATIVE_WAYLAND
+#include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
+#include <wayland-client.h>
+#endif
 
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
@@ -11,17 +22,7 @@
 
 #include "window.h"
 
-#define SURFACE_X11
-
-#ifdef SURFACE_X11
-#define GLFW_EXPOSE_NATIVE_X11
-#include <GLFW/glfw3native.h>
-#elifdef SURFACE_WAYLAND
-#define GLFW_EXPOSE_NATIVE_WAYLAND
-#include <GLFW/glfw3native.h>
-#include <wayland-client.h>
-#endif
-
+import context;
 import config;
 import log;
 import render;

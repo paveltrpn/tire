@@ -108,6 +108,21 @@ target_sources(config
 target_link_libraries(config log)
 
 # ================================
+# Module vma_usage
+# ================================
+file(
+    GLOB_RECURSE
+    MOD_VMA_USAGE_SRC
+    "modules/vma_usage/*.cpp" "modules/vma_usage/*.h"
+)
+add_library(vma_usage)
+target_sources(
+    vma_usage
+    PRIVATE
+    ${MOD_VMA_USAGE_SRC}
+)
+
+# ================================
 # Module VMA
 # ================================
 file(GLOB_RECURSE MOD_VMA_SRC "vma/*.h" )
@@ -118,10 +133,12 @@ set_target_properties(VMA PROPERTIES LINKER_LANGUAGE CXX)
 # ================================
 # Module context
 # ================================
-file(GLOB_RECURSE MOD_CONTEXT_SRC "modules/context/*.cpp" "modules/context/*.h")
+file(GLOB_RECURSE MOD_CONTEXT_SRC "modules/context/*.cpp" )
 add_library(context)
-target_sources(context PRIVATE ${MOD_CONTEXT_SRC})
-target_link_libraries(context vulkan config image VMA)
+target_sources(context
+    PUBLIC FILE_SET CXX_MODULES FILES
+    ${MOD_CONTEXT_SRC})
+target_link_libraries(context vulkan config image vma_usage VMA)
 
 # ================================
 # Module ui
@@ -153,7 +170,7 @@ target_sources(render
     PUBLIC FILE_SET CXX_MODULES FILES
     ${MOD_RENDER_SRC}
 )
-target_link_libraries(render vulkan context ui scene config geometry algebra io)
+target_link_libraries(render vulkan context ui scene config geometry algebra io vma_usage)
 
 # ================================
 # Module image

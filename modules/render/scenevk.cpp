@@ -6,12 +6,11 @@ module;
 #include <vulkan/vulkan.h>
 #include "vulkan/vulkan_core.h"
 
-#include "context/context.h"
-
 export module render:scenevk;
 
 import algebra;
 import scene;
+import context;
 
 import :pipeline;
 import :vertex_buffer;

@@ -5,22 +5,22 @@ module;
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "context/context.h"
-
 export module render:pipeline;
+
+import context;
 
 import :program;
 
 namespace tire {
 
 struct Pipeline {
-    Pipeline( const Context* context )
+    Pipeline( const Context *context )
         : context_{ context } {}
 
-    Pipeline( const Pipeline& other ) = delete;
-    Pipeline( Pipeline&& other ) = delete;
-    auto operator=( const Pipeline& other ) -> Pipeline& = delete;
-    auto operator=( Pipeline&& other ) -> Pipeline& = delete;
+    Pipeline( const Pipeline &other ) = delete;
+    Pipeline( Pipeline &&other ) = delete;
+    auto operator=( const Pipeline &other ) -> Pipeline & = delete;
+    auto operator=( Pipeline &&other ) -> Pipeline & = delete;
 
     virtual ~Pipeline() {
         vkDestroyPipelineLayout( context_->device(), layout_, nullptr );
@@ -43,10 +43,10 @@ struct Pipeline {
         return renderPass_;
     }
 
-    virtual auto buildPipeline( const Program& program ) -> void = 0;
+    virtual auto buildPipeline( const Program &program ) -> void = 0;
 
 protected:
-    const Context* context_;
+    const Context *context_;
 
     VkPipeline pipeline_{ VK_NULL_HANDLE };
     VkPipelineLayout layout_{ VK_NULL_HANDLE };

@@ -1,16 +1,20 @@
 
+module;
+
 #include <format>
 #include <iostream>
 
 #define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "context.h"
-
-static constexpr bool DEBUG_OUTPUT_INSTANCE_CPP{ true };
+export module context:instance;
 
 import config;
 import log;
+
+import :context;
+
+static constexpr bool DEBUG_OUTPUT_INSTANCE_CPP{ true };
 
 namespace tire {
 
