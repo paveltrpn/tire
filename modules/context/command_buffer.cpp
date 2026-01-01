@@ -91,9 +91,9 @@ auto Context::renderCommandEnd( uint32_t frameId ) -> void {
     const VkPresentInfoKHR presentInfo{
       .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
       .pNext = nullptr,
-      .waitSemaphoreCount = 1,
+      .waitSemaphoreCount = static_cast<uint32_t>( signalSemaphores.size() ),
       .pWaitSemaphores = signalSemaphores.data(),
-      .swapchainCount = 1,
+      .swapchainCount = static_cast<uint32_t>( swapChains.size() ),
       .pSwapchains = swapChains.data(),
       .pImageIndices = imageIds.data(),
       .pResults = nullptr };
