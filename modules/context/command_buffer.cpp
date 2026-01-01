@@ -72,12 +72,12 @@ auto Context::renderCommandEnd( uint32_t frameId ) -> void {
 
     const VkSubmitInfo submitInfo{
       .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-      .waitSemaphoreCount = 1,
+      .waitSemaphoreCount = static_cast<uint32_t>( waitsems.size() ),
       .pWaitSemaphores = waitsems.data(),
       .pWaitDstStageMask = waitStages.data(),
       .commandBufferCount = static_cast<uint32_t>( commands.size() ),
       .pCommandBuffers = commands.data(),
-      .signalSemaphoreCount = 1,
+      .signalSemaphoreCount = static_cast<uint32_t>( sgnlsems.size() ),
       .pSignalSemaphores = sgnlsems.data() };
 
     // NOTE: PRESET!
