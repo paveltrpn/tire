@@ -43,6 +43,7 @@ set(SURFACE_WAYLAND ON CACHE BOOL "Enable wayland surface backend.")
 
 include_directories("modules")
 
+# Search Vulkan SDK.
 if (DEFINED ENV{VULKAN_SDK} AND NOT "$ENV{VULKAN_SDK}" STREQUAL "")
     message( "VULKAN_SDK is set to $ENV{VULKAN_SDK}")
     include_directories($ENV{VULKAN_SDK}/include)
@@ -50,6 +51,7 @@ else()
     message(SEND_ERROR "VULKAN_SDK is not set")
 endif()
 
+# Search nlohmann json.
 if (DEFINED ENV{NLOHMANN_JSON_DIR} AND NOT "$ENV{NLOHMANN_JSON_DIR}" STREQUAL "")
     message( "NLOHMANN_JSON_DIR is set to $ENV{NLOHMANN_JSON_DIR}")
     include_directories($ENV{NLOHMANN_JSON_DIR}/include)
@@ -57,6 +59,7 @@ else()
     message(SEND_ERROR "NLOHMANN_JSON_DIR is not set")
 endif()
 
+# Search libuv.
 if (DEFINED ENV{LIBUV_DIR} AND NOT "$ENV{LIBUV_DIR}" STREQUAL "")
     message("LIBUV_DIR is set to $ENV{LIBUV_DIR}")
     include_directories($ENV{LIBUV_DIR}/include)
@@ -65,12 +68,21 @@ else()
     message(SEND_ERROR "LIBUV_DIR is not set")
 endif()
 
+# Search glfw.
 if (DEFINED ENV{LOCAL_GLFW} AND NOT "$ENV{LOCAL_GLFW}" STREQUAL "")
     message( "LOCAL_GLFW is set to $ENV{LOCAL_GLFW}")
     include_directories($ENV{LOCAL_GLFW}/include)
     link_directories($ENV{LOCAL_GLFW}/lib)
 else()
     message(SEND_ERROR "LOCAL_GLFW is not set")
+endif()
+
+# Search vulkan memory allocator.
+if (DEFINED ENV{VMA_DIR} AND NOT "$ENV{VMA_DIR}" STREQUAL "")
+    message( "VMA_DIR is set to $ENV{VMA_DIR}")
+    include_directories($ENV{VMA_DIR}/include)
+else()
+    message(SEND_ERROR "VMA_DIR is not set")
 endif()
 
 find_package(Vulkan REQUIRED)
@@ -123,14 +135,6 @@ target_sources(
 )
 
 # ================================
-# Module VMA
-# ================================
-file(GLOB_RECURSE MOD_VMA_SRC "vma/*.h" )
-add_library(VMA)
-target_sources(VMA PRIVATE ${MOD_VMA_SRC})
-set_target_properties(VMA PROPERTIES LINKER_LANGUAGE CXX)
-
-# ================================
 # Module context
 # ================================
 file(GLOB_RECURSE MOD_CONTEXT_SRC "modules/context/*.cpp" )
@@ -138,7 +142,7 @@ add_library(context)
 target_sources(context
     PUBLIC FILE_SET CXX_MODULES FILES
     ${MOD_CONTEXT_SRC})
-target_link_libraries(context vulkan config image vma_usage VMA)
+target_link_libraries(context vulkan config image vma_usage)
 
 # ================================
 # Module ui
