@@ -47,9 +47,13 @@ export struct SceneVK final : tire::Scene {
             const auto vDataPtr = reinterpret_cast<const void *>( bodyList_[i]->verteciesData() );
             vertBuffersList_[i]->populate( vDataPtr );
 
+            vertBuffersList_[i]->submit();
+
             // Update data in vulkan "normal" buffers
             const auto nDataPtr = reinterpret_cast<const void *>( bodyList_[i]->normalsData() );
             nrmlBuffersList_[i]->populate( nDataPtr );
+
+            nrmlBuffersList_[i]->submit();
         }
     }
 
