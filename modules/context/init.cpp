@@ -22,15 +22,6 @@ import :context;
 
 namespace tire {
 
-static void vkDestroyDebugUtilsMessenger(
-  VkInstance instance, VkDebugUtilsMessengerEXT messanger, const VkAllocationCallbacks *pAllocator ) {
-    auto func =
-      (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr( instance, "vkDestroyDebugUtilsMessengerEXT" );
-    if ( func != nullptr ) {
-        return func( instance, messanger, pAllocator );
-    }
-}
-
 auto Context::memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags properties ) const -> uint32_t {
     VkPhysicalDeviceMemoryProperties memProperties{};
     vkGetPhysicalDeviceMemoryProperties( physDevice_, &memProperties );

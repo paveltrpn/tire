@@ -35,6 +35,15 @@ import image;
 
 namespace tire {
 
+auto vkDestroyDebugUtilsMessenger(
+  VkInstance instance, VkDebugUtilsMessengerEXT messanger, const VkAllocationCallbacks *pAllocator ) -> void {
+    auto func =
+      (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr( instance, "vkDestroyDebugUtilsMessengerEXT" );
+    if ( func != nullptr ) {
+        return func( instance, messanger, pAllocator );
+    }
+}
+
 export struct Context final {
 #ifdef SURFACE_X11
     Context( uint32_t width, uint32_t height, Display *display, Window window )
@@ -276,7 +285,9 @@ protected:
     std::vector<VkExtensionProperties> extensionProperties_{};
     std::vector<VkLayerProperties> layerProperties_{};
 
+    // Surface
     VkSurfaceKHR surface_{ VK_NULL_HANDLE };
+    VkSurfaceFormatKHR surfaceFormat_{};
 
     // Physical and logical devices
     std::vector<PhysicalDevice> physicalDevices_{};
@@ -290,9 +301,8 @@ protected:
     VkPhysicalDevice physDevice_{};
     VkDevice device_{ VK_NULL_HANDLE };
 
-    VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
-
     // Swapchain
+    VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
     uint32_t framesCount_{};
     uint32_t swapchainImageCount_{};
     std::vector<Frame> frames_{};
@@ -301,7 +311,6 @@ protected:
     VkImageView depthImageView_;
 
     VkQueue graphicsQueue_{ VK_NULL_HANDLE };
-    VkSurfaceFormatKHR surfaceFormat_{};
     VkRenderPass renderPass_{ VK_NULL_HANDLE };
 
     uint32_t graphicsFamilyQueueId_{ UINT32_MAX };

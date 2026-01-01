@@ -1,7 +1,5 @@
 
 #include <memory>
-#include <format>
-#include <iostream>
 
 #define SURFACE_X11
 
@@ -32,8 +30,10 @@ BareWindow::BareWindow() {
         tire::log::fatal( "glfw init faild!" );
     }
 
-    glfwSetErrorCallback(
-      []( int, const char *err_str ) -> void { std::cout << std::format( "GLFW Error: {}\n", err_str ); } );
+    glfwSetErrorCallback( []( int, const char *err_str ) -> void {
+        //
+        tire::log::error( "GLFW Error: {}\n", err_str );
+    } );
 
     glfwWindowHint( GLFW_CLIENT_API, GLFW_NO_API );
     glfwWindowHint( GLFW_RESIZABLE, GLFW_FALSE );
