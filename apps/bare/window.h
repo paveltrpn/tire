@@ -5,7 +5,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "context/context_bare.h"
+#include "context/context.h"
 
 namespace tire {
 struct RenderVK;
@@ -34,7 +34,7 @@ private:
     int height_{ 1024 };
 
     // Render related
-    std::unique_ptr<tire::ContextBare> context_;
+    std::unique_ptr<tire::Context> context_;
     std::unique_ptr<tire::RenderVK> render_;
 
     uint32_t currentFrame_{ 0 };

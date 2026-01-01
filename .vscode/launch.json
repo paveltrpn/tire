@@ -1,21 +1,13 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "barevk",
-            "program": "${workspaceFolder}/build/barevk",
-            "args": [],
-            "cwd": "${workspaceFolder}/build"
-        },
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "qtvk",
-            "program": "${workspaceFolder}/build/qtvk",
-            "args": [],
-            "cwd": "${workspaceFolder}/build"
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "barevk",
+      "program": "${workspaceFolder}/build/barevk",
+      "args": [],
+      "cwd": "${workspaceFolder}/build",
+    },
+  ],
 }

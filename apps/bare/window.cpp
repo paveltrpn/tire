@@ -11,6 +11,8 @@
 
 #include "window.h"
 
+#define SURFACE_X11
+
 #ifdef SURFACE_X11
 #define GLFW_EXPOSE_NATIVE_X11
 #include <GLFW/glfw3native.h>
@@ -66,7 +68,7 @@ BareWindow::BareWindow() {
             tire::log::info( "glfw platform X11 is used!" );
 
 #ifdef SURFACE_X11
-            context_ = std::make_unique<tire::ContextBare>(
+            context_ = std::make_unique<tire::Context>(
               /*"VK_KHR_xlib_surface"*/ );
 
             context_->makeInstance( "VK_KHR_xlib_surface" );
@@ -82,7 +84,7 @@ BareWindow::BareWindow() {
             tire::log::info( "glfw platform WAYLAND is used!" );
 
 #ifdef SURFACE_WAYLAND
-            context_ = std::make_unique<tire::vk::ContextBare>(
+            context_ = std::make_unique<tire::vk::Context>(
               /*"VK_KHR_wayland_surface"*/ );
 
             context_->makeInstance( "VK_KHR_wayland_surface" );

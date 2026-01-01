@@ -4,11 +4,11 @@
 #define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "context_bare.h"
+#include "context.h"
 
 static constexpr bool DEBUG_OUTPUT_SWAPCHAIN_CPP{ true };
 
-#include "context_bare.h"
+#include "context.h"
 
 import config;
 import log;
@@ -130,7 +130,7 @@ void transitionImageLayout(
 
 }  // namespace
 
-void ContextBare::makeSwapchain() {
+void Context::makeSwapchain() {
     const auto congigHandle = Config::instance();
 
     log::info(
@@ -292,7 +292,7 @@ void ContextBare::makeSwapchain() {
       VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL );
 }
 
-void ContextBare::makeFrames() {
+void Context::makeFrames() {
     // Acquire all swapchain images at one call
     std::vector<VkImage> swapChainImages;
     swapChainImages.resize( framesCount_ );

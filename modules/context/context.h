@@ -1,6 +1,14 @@
 
 #pragma once
 
+#define SURFACE_X11
+
+#ifdef SURFACE_X11
+#define VK_USE_PLATFORM_XLIB_KHR
+#elifdef SURFACE_WAYLAND
+#define VK_USE_PLATFORM_WAYLAND_KHR
+#endif
+
 #include <vector>
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
@@ -9,18 +17,35 @@
 #define VMA_DYNAMIC_VULKAN_FUNCTIONS 1
 #include "vma/vk_mem_alloc.h"
 
+#ifdef SURFACE_X11
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#elifdef SURFACE_WAYLAND
+#include <wayland-client.h>
+#endif
+
 namespace tire {
 
-struct Context {
+struct Context final {
     Context() = default;
-    virtual ~Context() = default;
 
     Context( const Context &other ) = delete;
     Context( Context &&other ) = delete;
     auto operator=( const Context &other ) -> Context & = delete;
     auto operator=( Context &&other ) -> Context & = delete;
 
-    virtual auto init() -> void = 0;
+    ~Context();
+
+#ifdef SURFACE_X11
+    auto makeXlibSurface( Display *display, Window window ) -> void;
+#elifdef SURFACE_WAYLAND
+    auto makeWaylandSurface( wl_display *display, wl_surface *surface ) -> void;
+#endif
+
+    auto makeInstance( const std::string &surfaceExtension ) -> void;
+
+    // Init all context
+    auto init() -> void;
 
     [[nodiscard]] auto instance() const -> VkInstance {
         //
@@ -52,10 +77,13 @@ struct Context {
         return graphicsQueue_;
     }
 
-    [[nodiscard]] auto graphicsFamily() const -> uint32_t { return graphicsFamilyQueueId_; };
+    [[nodiscard]] auto graphicsFamily() const -> uint32_t {
+        //
+        return graphicsFamilyQueueId_;
+    };
 
     [[nodiscard]]
-    virtual auto currentExtent() const -> const VkExtent2D & {
+    auto currentExtent() const -> const VkExtent2D & {
         return currentExtent_;
     };
 
@@ -86,12 +114,96 @@ struct Context {
         return allocator_;
     }
 
+    [[nodiscard]] auto getFrameSyncSet( size_t id ) -> std::tuple<VkSemaphore, VkSemaphore, VkFence, VkCommandBuffer> {
+        return {
+          frames_[id].imageAvailableSemaphore_, frames_[id].renderFinishedSemaphore_, frames_[id].inFlightFence_,
+          frames_[id].cbPrimary_ };
+    }
+
+    [[nodiscard]] auto framebuffer( size_t id ) const -> VkFramebuffer { return frames_[id].framebuffer_; };
+
+    [[nodiscard]] auto presentQueue() const -> VkQueue {
+        //
+        return presentQueue_;
+    };
+
+    auto renderCommandBegin( uint32_t frameId ) -> void;
+    auto renderCommandEnd( uint32_t frameId ) -> void;
+
+    [[nodiscard]]
+    auto getDrawCommandBuffer( size_t id ) const -> VkCommandBuffer {
+        //
+        return frames_[id].cbPrimary_;
+    }
+
+    [[nodiscard]] auto framesCount() const -> uint32_t {
+        //
+        return framesCount_;
+    };
+
+    [[nodiscard]] auto commandPool() const -> VkCommandPool { return commandPool_; };
+
+private:
+    auto collectPhysicalDevices() -> void;
+    auto makeDevice() -> void;
+    auto makeCommandPool() -> void;
+    auto makeSwapchain() -> void;
+    auto initRenderPass() -> void;
+    auto makeFrames() -> void;
+
+    auto createAllocator() -> void;
+
+private:
+    struct PhysicalDevice final {
+        VkPhysicalDevice device{ VK_NULL_HANDLE };
+        VkPhysicalDeviceProperties properties{};
+        VkPhysicalDeviceFeatures features{};
+        std::vector<VkExtensionProperties> extensions{};
+        std::vector<VkQueueFamilyProperties> queueFamilyProperties{};
+    };
+
+    struct Frame final {
+        VkImage image_{};
+        VkImageView view_{};
+        VkFramebuffer framebuffer_{};
+        VkSemaphore imageAvailableSemaphore_{};
+        VkSemaphore renderFinishedSemaphore_{};
+        VkFence inFlightFence_{};
+        VkCommandBuffer cbPrimary_{ VK_NULL_HANDLE };
+        VkCommandBuffer cbSecondary_{ VK_NULL_HANDLE };
+    };
+
 protected:
+    // Instance
     VkInstance instance_{ VK_NULL_HANDLE };
+    VkDebugUtilsMessengerEXT debugMessenger_{ VK_NULL_HANDLE };
+    std::vector<const char *> desiredValidationLayerList_{};
+    std::vector<VkExtensionProperties> extensionProperties_{};
+    std::vector<VkLayerProperties> layerProperties_{};
+
     VkSurfaceKHR surface_{ VK_NULL_HANDLE };
+
+    // Physical and logical devices
+    std::vector<PhysicalDevice> physicalDevices_{};
+    int pickedPhysicalDeviceId_{ -1 };
+    uint32_t presentSupportQueueId_{ UINT32_MAX };
+    VkQueue presentQueue_{ VK_NULL_HANDLE };
+    VkSurfaceCapabilitiesKHR surfaceCapabilities_{};
+    std::vector<VkSurfaceFormatKHR> surfaceFormats_{};
+    std::vector<VkPresentModeKHR> presentModes_{};
+    VkPresentModeKHR presentMode_{};
     VkPhysicalDevice physDevice_{};
     VkDevice device_{ VK_NULL_HANDLE };
+
     VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
+
+    // Swapchain
+    uint32_t framesCount_{};
+    uint32_t swapchainImageCount_{};
+    std::vector<Frame> frames_{};
+    VkImage depthImage_;
+    VkDeviceMemory depthImageMemory_;
+    VkImageView depthImageView_;
 
     VkQueue graphicsQueue_{ VK_NULL_HANDLE };
     VkSurfaceFormatKHR surfaceFormat_{};
@@ -103,6 +215,12 @@ protected:
 
     uint32_t width_{};
     uint32_t height_{};
+
+    // Command pool
+    VkCommandPool commandPool_{ VK_NULL_HANDLE };
+
+    // Background color value
+    std::array<VkClearValue, 2> clearValues_{};
 
     // Momory
     VmaAllocator allocator_;

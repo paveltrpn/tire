@@ -6,14 +6,14 @@
 
 static constexpr bool DEBUG_OUTPUT_DEVICE_CPP{ true };
 
-#include "context_bare.h"
+#include "context.h"
 
 import config;
 import log;
 
 namespace tire {
 
-void ContextBare::collectPhysicalDevices() {
+void Context::collectPhysicalDevices() {
     uint32_t devCount{};
 
     // Enumerate physical devices
@@ -104,7 +104,7 @@ void ContextBare::collectPhysicalDevices() {
     }
 }
 
-void ContextBare::makeDevice() {
+void Context::makeDevice() {
     const auto configHandle = Config::instance();
 
     // Check which devices available on machine

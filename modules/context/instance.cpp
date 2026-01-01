@@ -5,7 +5,7 @@
 #define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "context_bare.h"
+#include "context.h"
 
 static constexpr bool DEBUG_OUTPUT_INSTANCE_CPP{ true };
 
@@ -54,7 +54,7 @@ static VkResult vkCreateDebugUtilsMessenger(
 
 }  // namespace
 
-void ContextBare::makeInstance( const std::string &surfaceExtension ) {
+void Context::makeInstance( const std::string &surfaceExtension ) {
     const auto configPtr = Config::instance();
 
     const auto applicationName = configPtr->getString( "application_name" );
@@ -233,4 +233,5 @@ void ContextBare::makeInstance( const std::string &surfaceExtension ) {
         }
     }
 }
+
 }  // namespace tire
