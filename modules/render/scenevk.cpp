@@ -37,6 +37,8 @@ export struct SceneVK final : tire::Scene {
             auto nBuf = std::make_shared<VertexBuffer>( context_, bodyList_[i]->bufferNormalsSize() );
             nrmlBuffersList_.push_back( std::move( nBuf ) );
         }
+
+        initUploadCommandBuffer();
     }
 
     void submit() override {
@@ -52,10 +54,50 @@ export struct SceneVK final : tire::Scene {
             nrmlBuffersList_[i]->populate( nDataPtr );
         }
 
+        VkCommandBufferUsageFlags usageFlags = { VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT };
+
+        const VkCommandBufferBeginInfo beginInfo{
+          .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, .flags = usageFlags, .pInheritanceInfo = nullptr };
+
+        std::array<VkFence, 1> fences = { uploadFence_ };
+
+        vkResetCommandBuffer( uploadCommandBuffer_, 0 );
+
+        vkBeginCommandBuffer( uploadCommandBuffer_, &beginInfo );
+
         for ( size_t i{ 0 }; i < nodeListSize; ++i ) {
-            vertBuffersList_[i]->submit();
-            nrmlBuffersList_[i]->submit();
+            VkBufferCopy copyVrt{ .srcOffset = 0, .dstOffset = 0, .size = vertBuffersList_[i]->size() };
+            vkCmdCopyBuffer(
+              uploadCommandBuffer_, vertBuffersList_[i]->stagingBuffer(), vertBuffersList_[i]->deviceBuffer(), 1,
+              &copyVrt );
+
+            VkBufferCopy copyNrm{ .srcOffset = 0, .dstOffset = 0, .size = nrmlBuffersList_[i]->size() };
+            vkCmdCopyBuffer(
+              uploadCommandBuffer_, nrmlBuffersList_[i]->stagingBuffer(), nrmlBuffersList_[i]->deviceBuffer(), 1,
+              &copyNrm );
         }
+
+        vkEndCommandBuffer( uploadCommandBuffer_ );
+
+        std::array<VkPipelineStageFlags, 0> waitStages = {};
+        std::array<VkSemaphore, 0> waitsems{};
+        std::array<VkSemaphore, 0> sgnlsems{};
+        std::array<VkCommandBuffer, 1> commands{ uploadCommandBuffer_ };
+
+        const VkSubmitInfo submitInfo{
+          .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+          .waitSemaphoreCount = waitsems.size(),
+          .pWaitSemaphores = waitsems.data(),
+          .pWaitDstStageMask = waitStages.data(),
+          .commandBufferCount = static_cast<uint32_t>( commands.size() ),
+          .pCommandBuffers = commands.data(),
+          .signalSemaphoreCount = sgnlsems.size(),
+          .pSignalSemaphores = sgnlsems.data() };
+
+        vkQueueSubmit( context_->graphicsQueue(), 1, &submitInfo, uploadFence_ );
+
+        vkWaitForFences( context_->device(), fences.size(), fences.data(), VK_TRUE, UINT64_MAX );
+        vkResetFences( context_->device(), fences.size(), fences.data() );
     }
 
     void output( const VkCommandBuffer cb ) {
@@ -74,8 +116,8 @@ export struct SceneVK final : tire::Scene {
               cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof( algebra::matrix4d ),
               sizeof( algebra::vector4f ), &c );
 
-            auto vbo = vertBuffersList_[object]->buffer();
-            auto nbo = nrmlBuffersList_[object]->buffer();
+            auto vbo = vertBuffersList_[object]->deviceBuffer();
+            auto nbo = nrmlBuffersList_[object]->deviceBuffer();
             auto vCount = bodyList_[object]->verteciesCount();
 
             // NOTE: see https://docs.vulkan.org/guide/latest/vertex_input_data_processing.html
@@ -87,7 +129,23 @@ export struct SceneVK final : tire::Scene {
         }
     }
 
+    auto initUploadCommandBuffer() -> void {
+        VkFenceCreateInfo fenceInfo{ .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, .pNext = nullptr, .flags = 0 };
+
+        vkCreateFence( context_->device(), &fenceInfo, nullptr, &uploadFence_ );
+
+        const VkCommandBufferAllocateInfo allocInfo{
+          .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+          .commandPool = context_->commandPool(),
+          .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+          .commandBufferCount = 1 };
+
+        vkAllocateCommandBuffers( context_->device(), &allocInfo, &uploadCommandBuffer_ );
+    }
+
     void clean() override {
+        vkDestroyFence( context_->device(), uploadFence_, nullptr );
+
         const auto nodeListSize = bodyList_.size();
         for ( size_t i{ 0 }; i < nodeListSize; ++i ) {
             vertBuffersList_[i]->clean();
@@ -103,6 +161,9 @@ private:
 
     std::vector<std::shared_ptr<VertexBuffer>> vertBuffersList_;
     std::vector<std::shared_ptr<VertexBuffer>> nrmlBuffersList_;
+
+    VkFence uploadFence_{};
+    VkCommandBuffer uploadCommandBuffer_{};
 };
 
 }  // namespace tire

@@ -29,7 +29,6 @@ struct VertexBuffer final {
         //
         initStagingBuffer( size );
         initDeviceBuffer( size );
-        initUploadCommandBuffer();
     }
 
     auto operator=( const VertexBuffer &other ) -> VertexBuffer & = delete;
@@ -40,9 +39,14 @@ struct VertexBuffer final {
         clean();
     };
 
-    auto buffer() -> VkBuffer {
+    auto deviceBuffer() -> VkBuffer {
         //
         return deviceBuffer_;
+    }
+
+    auto stagingBuffer() -> VkBuffer {
+        //
+        return stagingBuffer_;
     }
 
     auto populate( const void *data ) -> void {
@@ -50,47 +54,6 @@ struct VertexBuffer final {
         vmaMapMemory( context_->allocator(), stagingAllocation_, &mappedPtr );
         memcpy( mappedPtr, data, size_ );
         vmaUnmapMemory( context_->allocator(), stagingAllocation_ );
-    }
-
-    auto submit() -> void {
-        VkCommandBufferUsageFlags usageFlags = { VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT };
-
-        const VkCommandBufferBeginInfo beginInfo{
-          .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, .flags = usageFlags, .pInheritanceInfo = nullptr };
-
-        std::array<VkFence, 1> fences = { uploadFence_ };
-
-        vkResetCommandBuffer( uploadCommandBuffer_, 0 );
-
-        vkBeginCommandBuffer( uploadCommandBuffer_, &beginInfo );
-
-        // UPLOAD ITSELF
-        VkBufferCopy copy;
-        copy.dstOffset = 0;
-        copy.srcOffset = 0;
-        copy.size = size_;
-        vkCmdCopyBuffer( uploadCommandBuffer_, stagingBuffer_, deviceBuffer_, 1, &copy );
-
-        vkEndCommandBuffer( uploadCommandBuffer_ );
-
-        std::array<VkPipelineStageFlags, 0> waitStages = {};
-        std::array<VkSemaphore, 0> waitsems{};
-        std::array<VkSemaphore, 0> sgnlsems{};
-        std::array<VkCommandBuffer, 1> commands{ uploadCommandBuffer_ };
-
-        const VkSubmitInfo submitInfo{
-          .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-          .waitSemaphoreCount = waitsems.size(),
-          .pWaitSemaphores = waitsems.data(),
-          .pWaitDstStageMask = waitStages.data(),
-          .commandBufferCount = static_cast<uint32_t>( commands.size() ),
-          .pCommandBuffers = commands.data(),
-          .signalSemaphoreCount = sgnlsems.size(),
-          .pSignalSemaphores = sgnlsems.data() };
-
-        vkQueueSubmit( context_->graphicsQueue(), 1, &submitInfo, uploadFence_ );
-        vkWaitForFences( context_->device(), fences.size(), fences.data(), VK_TRUE, UINT64_MAX );
-        vkResetFences( context_->device(), fences.size(), fences.data() );
     }
 
     [[nodiscard]]
@@ -101,7 +64,6 @@ struct VertexBuffer final {
 
     auto clean() -> void {
         //
-        vkDestroyFence( context_->device(), uploadFence_, nullptr );
         vmaDestroyBuffer( context_->allocator(), deviceBuffer_, deviceAllocation_ );
         vmaDestroyBuffer( context_->allocator(), stagingBuffer_, stagingAllocation_ );
     }
@@ -136,26 +98,9 @@ private:
           context_->allocator(), &bufCreateInfo, &allocCreateInfo, &deviceBuffer_, &deviceAllocation_, nullptr );
     }
 
-    auto initUploadCommandBuffer() -> void {
-        VkFenceCreateInfo fenceInfo{ .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, .pNext = nullptr, .flags = 0 };
-
-        vkCreateFence( context_->device(), &fenceInfo, nullptr, &uploadFence_ );
-
-        const VkCommandBufferAllocateInfo allocInfo{
-          .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-          .commandPool = context_->commandPool(),
-          .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-          .commandBufferCount = 1 };
-
-        vkAllocateCommandBuffers( context_->device(), &allocInfo, &uploadCommandBuffer_ );
-    }
-
 private:
     const Context *context_{};
     size_t size_{};
-
-    VkFence uploadFence_{};
-    VkCommandBuffer uploadCommandBuffer_{};
 
     VkBuffer deviceBuffer_{ VK_NULL_HANDLE };
     VmaAllocation deviceAllocation_{ VK_NULL_HANDLE };
