@@ -61,7 +61,33 @@ export struct Context final {
     auto operator=( const Context &other ) -> Context & = delete;
     auto operator=( Context &&other ) -> Context & = delete;
 
-    ~Context();
+    // Destroy all Vulkan context here.
+    ~Context() {
+        vkDestroyImage( device_, depthImage_, nullptr );
+        vkDestroyImageView( device_, depthImageView_, nullptr );
+        vkFreeMemory( device_, depthImageMemory_, nullptr );
+
+        for ( auto i = 0; i < framesCount_; i++ ) {
+            vkDestroySemaphore( device_, frames_[i].imageAvailableSemaphore_, nullptr );
+            vkDestroySemaphore( device_, frames_[i].renderFinishedSemaphore_, nullptr );
+            vkDestroyFence( device_, frames_[i].inFlightFence_, nullptr );
+            vkDestroyFramebuffer( device_, frames_[i].framebuffer_, nullptr );
+            vkDestroyImageView( device_, frames_[i].view_, nullptr );
+        }
+
+        vkDestroyCommandPool( device_, commandPool_, nullptr );
+
+        vkDestroySwapchainKHR( device_, swapchain_, nullptr );
+
+        vkDestroyDevice( device_, nullptr );
+        vkDestroySurfaceKHR( instance_, surface_, nullptr );
+
+        vkDestroyDebugUtilsMessenger( instance_, debugMessenger_, nullptr );
+
+        vmaDestroyAllocator( allocator_ );
+
+        vkDestroyInstance( instance_, nullptr );
+    }
 
 #ifdef SURFACE_X11
     auto makeXlibSurface( Display *display, Window window ) -> void {
