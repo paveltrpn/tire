@@ -58,6 +58,13 @@ struct VertexBuffer final {
         const VkCommandBufferBeginInfo beginInfo{
           .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, .flags = usageFlags, .pInheritanceInfo = nullptr };
 
+        std::array<VkFence, 1> fences = { uploadFence_ };
+
+        vkWaitForFences( context_->device(), fences.size(), fences.data(), VK_TRUE, UINT64_MAX );
+        vkResetFences( context_->device(), fences.size(), fences.data() );
+
+        vkResetCommandBuffer( uploadCommandBuffer_, 0 );
+
         vkBeginCommandBuffer( uploadCommandBuffer_, &beginInfo );
 
         // UPLOAD ITSELF
@@ -85,11 +92,6 @@ struct VertexBuffer final {
           .pSignalSemaphores = sgnlsems.data() };
 
         vkQueueSubmit( context_->graphicsQueue(), 1, &submitInfo, uploadFence_ );
-
-        vkWaitForFences( context_->device(), 1, &uploadFence_, true, 9999999999 );
-        vkResetFences( context_->device(), 1, &uploadFence_ );
-
-        vkResetCommandBuffer( uploadCommandBuffer_, 0 );
     }
 
     [[nodiscard]]
@@ -107,7 +109,6 @@ struct VertexBuffer final {
 
 private:
     auto initStagingBuffer( size_t size ) -> void {
-        //Allocate staging buffer.
         VkBufferCreateInfo stagingBufferInfo{};
         stagingBufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
         stagingBufferInfo.pNext = nullptr;
@@ -115,11 +116,9 @@ private:
         stagingBufferInfo.size = size;
         stagingBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
 
-        //Let the VMA library know that this data should be on CPU RAM.
         VmaAllocationCreateInfo vmaallocInfo{};
         vmaallocInfo.usage = VMA_MEMORY_USAGE_CPU_ONLY;
 
-        //allocate the buffer
         vmaCreateBuffer(
           context_->allocator(), &stagingBufferInfo, &vmaallocInfo, &stagingBuffer_, &stagingAllocation_, nullptr );
     }
@@ -130,7 +129,6 @@ private:
         bufCreateInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 
         VmaAllocationCreateInfo allocCreateInfo = {};
-        // allocCreateInfo.usage = VMA_MEMORY_USAGE_AUTO;
         allocCreateInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
         allocCreateInfo.flags =
           VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
@@ -158,8 +156,8 @@ private:
     const Context *context_{};
     size_t size_{};
 
-    VkFence uploadFence_;
-    VkCommandBuffer uploadCommandBuffer_;
+    VkFence uploadFence_{};
+    VkCommandBuffer uploadCommandBuffer_{};
 
     VkBuffer deviceBuffer_{ VK_NULL_HANDLE };
     VmaAllocation deviceAllocation_{ VK_NULL_HANDLE };
