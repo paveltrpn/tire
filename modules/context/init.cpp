@@ -67,38 +67,6 @@ auto Context::findSupportedFormat(
     return {};
 }
 
-auto Context::init() -> void {
-    collectPhysicalDevices();
-    makeDevice();
-    createAllocator();
-    makeCommandPool();
-    makeSwapchain();
-    initRenderPass();
-    makeFrames();
-
-    // Note that the order of clearValues should be identical to the order of your
-    // attachments
-    const auto configHandle = tire::Config::instance();
-    const auto colorString = configHandle->get<std::string>( "background_color" );
-    const auto backgroundColor = Colorf( colorString );
-    clearValues_[0].color = { { backgroundColor.r(), backgroundColor.g(), backgroundColor.b(), 1.0f } };
-    clearValues_[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
-}
-
-void Context::makeCommandPool() {
-    VkCommandPoolCreateInfo poolInfo{};
-    poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-    poolInfo.queueFamilyIndex = graphicsFamilyQueueId_;
-
-    if ( const auto err = vkCreateCommandPool( device_, &poolInfo, nullptr, &commandPool_ ); err != VK_SUCCESS ) {
-        throw std::runtime_error(
-          std::format( "failed to create command pool woth code {}!", string_VkResult( err ) ) );
-    } else {
-        log::debug( "CommandPool === command pool created!" );
-    }
-}
-
 Context::~Context() {
     vkDestroyImage( device_, depthImage_, nullptr );
     vkDestroyImageView( device_, depthImageView_, nullptr );
@@ -124,6 +92,20 @@ Context::~Context() {
     vmaDestroyAllocator( allocator_ );
 
     vkDestroyInstance( instance_, nullptr );
+}
+
+void Context::makeCommandPool() {
+    VkCommandPoolCreateInfo poolInfo{};
+    poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+    poolInfo.queueFamilyIndex = graphicsFamilyQueueId_;
+
+    if ( const auto err = vkCreateCommandPool( device_, &poolInfo, nullptr, &commandPool_ ); err != VK_SUCCESS ) {
+        throw std::runtime_error(
+          std::format( "failed to create command pool woth code {}!", string_VkResult( err ) ) );
+    } else {
+        log::debug( "CommandPool === command pool created!" );
+    }
 }
 
 auto Context::initRenderPass() -> void {

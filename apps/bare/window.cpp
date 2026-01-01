@@ -66,43 +66,33 @@ BareWindow::BareWindow() {
             break;
         }
         case GLFW_PLATFORM_X11: {
+#ifdef SURFACE_X11
             tire::log::info( "glfw platform X11 is used!" );
 
-#ifdef SURFACE_X11
-            context_ = std::make_unique<tire::Context>(
-              /*"VK_KHR_xlib_surface"*/ );
-
-            context_->makeInstance( "VK_KHR_xlib_surface" );
-
-            const auto window = glfwGetX11Window( window_ );
             const auto display = glfwGetX11Display();
-            context_->makeXlibSurface( display, window );
-#endif
+            const auto window = glfwGetX11Window( window_ );
+
+            context_ = std::make_unique<tire::Context>( width, height, display, window );
+
             glfwSetWindowPos( window_, posx, posy );
+#endif
             break;
         }
         case GLFW_PLATFORM_WAYLAND: {
+#ifdef SURFACE_WAYLAND
             tire::log::info( "glfw platform WAYLAND is used!" );
 
-#ifdef SURFACE_WAYLAND
-            context_ = std::make_unique<tire::vk::Context>(
-              /*"VK_KHR_wayland_surface"*/ );
-
-            context_->makeInstance( "VK_KHR_wayland_surface" );
-            const auto surface = glfwGetWaylandWindow( window_ );
             const auto display = glfwGetWaylandDisplay();
-            context_->makeWaylandSurface( display, surface );
-#endif
+            const auto surface = glfwGetWaylandWindow( window_ );
 
+            context_ = std::make_unique<tire::vk::Context>( width, height, display, surface );
+#endif
             break;
         }
         default: {
             break;
         }
     }
-
-    context_->setViewportSize( width, height );
-    context_->init();
 
     render_ = std::make_unique<tire::RenderVK>();
     render_->init( context_.get() );

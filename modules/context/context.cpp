@@ -1,6 +1,8 @@
 
 module;
 
+#include <format>
+
 #define SURFACE_X11
 
 #ifdef SURFACE_X11
@@ -12,6 +14,7 @@ module;
 #include <vector>
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
+#include <vulkan/vk_enum_string_helper.h>
 
 #define VMA_STATIC_VULKAN_FUNCTIONS 0
 #define VMA_DYNAMIC_VULKAN_FUNCTIONS 1
@@ -26,10 +29,32 @@ module;
 
 export module context:context;
 
+import log;
+import config;
+import image;
+
 namespace tire {
 
 export struct Context final {
-    Context() = default;
+#ifdef SURFACE_X11
+    Context( uint32_t width, uint32_t height, Display *display, Window window )
+        : width_{ width }
+        , height_{ height } {
+        //
+        makeInstance( "VK_KHR_xlib_surface" );
+        makeXlibSurface( display, window );
+        initRest();
+    }
+#elifdef SURFACE_WAYLAND
+    Context( uint32_t width, uint32_t height, wl_display *display, wl_surface *surface )
+        : width_{ width }
+        , height_{ height } {
+        //
+        makeInstance( "VK_KHR_wayland_surface" );
+        makeWaylandSurface( display, surface );
+        initRest();
+    }
+#endif
 
     Context( const Context &other ) = delete;
     Context( Context &&other ) = delete;
@@ -39,15 +64,36 @@ export struct Context final {
     ~Context();
 
 #ifdef SURFACE_X11
-    auto makeXlibSurface( Display *display, Window window ) -> void;
+    auto makeXlibSurface( Display *display, Window window ) -> void {
+        VkXlibSurfaceCreateInfoKHR xlibSurfInfo{};
+        xlibSurfInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+        xlibSurfInfo.dpy = display;
+        xlibSurfInfo.window = window;
+
+        if ( const auto err = vkCreateXlibSurfaceKHR( instance_, &xlibSurfInfo, nullptr, &surface_ );
+             err != VK_SUCCESS ) {
+            throw std::runtime_error(
+              std::format( "failed to create xlib surface with code {}\n!", string_VkResult( err ) ) );
+        } else {
+            log::info( "Surface === xlib surface created!" );
+        }
+    }
 #elifdef SURFACE_WAYLAND
-    auto makeWaylandSurface( wl_display *display, wl_surface *surface ) -> void;
+    auto makeWaylandSurface( wl_display *display, wl_surface *surface ) -> void {
+        VkWaylandSurfaceCreateInfoKHR wlSurfInfo{};
+        wlSurfInfo.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
+        wlSurfInfo.display = display;
+        wlSurfInfo.surface = surface;
+
+        if ( const auto err = vkCreateWaylandSurfaceKHR( instance_, &wlSurfInfo, nullptr, &surface_ );
+             err != VK_SUCCESS ) {
+            throw std::runtime_error(
+              std::format( "failed to create wayland surface with code {}\n!", string_VkResult( err ) ) );
+        } else {
+            log::info( "Surface === xlib surface created!" );
+        }
+    }
 #endif
-
-    auto makeInstance( const std::string &surfaceExtension ) -> void;
-
-    // Init all context
-    auto init() -> void;
 
     [[nodiscard]] auto instance() const -> VkInstance {
         //
@@ -89,11 +135,6 @@ export struct Context final {
         return currentExtent_;
     };
 
-    auto setViewportSize( uint32_t width, uint32_t height ) -> void {
-        width_ = width;
-        height_ = height;
-    }
-
     [[nodiscard]]
     auto viewportSize() -> std::tuple<uint32_t, uint32_t> const {
         return { width_, height_ };
@@ -122,7 +163,10 @@ export struct Context final {
           frames_[id].cbPrimary_ };
     }
 
-    [[nodiscard]] auto framebuffer( size_t id ) const -> VkFramebuffer { return frames_[id].framebuffer_; };
+    [[nodiscard]] auto framebuffer( size_t id ) const -> VkFramebuffer {
+        //
+        return frames_[id].framebuffer_;
+    };
 
     [[nodiscard]] auto presentQueue() const -> VkQueue {
         //
@@ -143,9 +187,14 @@ export struct Context final {
         return framesCount_;
     };
 
-    [[nodiscard]] auto commandPool() const -> VkCommandPool { return commandPool_; };
+    [[nodiscard]] auto commandPool() const -> VkCommandPool {
+        //
+        return commandPool_;
+    };
 
 private:
+    // Init all context
+    auto makeInstance( const std::string &platformSurfaceExtension ) -> void;
     auto collectPhysicalDevices() -> void;
     auto makeDevice() -> void;
     auto makeCommandPool() -> void;
@@ -154,6 +203,24 @@ private:
     auto makeFrames() -> void;
 
     auto createAllocator() -> void;
+
+    auto initRest() -> void {
+        collectPhysicalDevices();
+        makeDevice();
+        createAllocator();
+        makeCommandPool();
+        makeSwapchain();
+        initRenderPass();
+        makeFrames();
+
+        // Note that the order of clearValues should be identical to the order of your
+        // attachments
+        const auto configHandle = tire::Config::instance();
+        const auto colorString = configHandle->get<std::string>( "background_color" );
+        const auto backgroundColor = Colorf( colorString );
+        clearValues_[0].color = { { backgroundColor.r(), backgroundColor.g(), backgroundColor.b(), 1.0f } };
+        clearValues_[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
+    };
 
 private:
     struct PhysicalDevice final {
