@@ -117,7 +117,9 @@ struct generator {
     };
 
     auto begin() -> iterator {
-        if ( discarded_ || ( h_ && h_.done() ) ) return end();
+        if ( discarded_ || ( h_ && h_.done() ) ) {
+            return end();
+        }
         return iterator( this, 0 );
     }
 
