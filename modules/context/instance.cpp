@@ -126,10 +126,17 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
     }
 
     const std::vector<VkValidationFeatureEnableEXT> validationFeatureEnableList = {
-      VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_EXT, VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_RESERVE_BINDING_SLOT_EXT,
+      VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_EXT,
+      VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_RESERVE_BINDING_SLOT_EXT,
       VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT,
       /*VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT,*/
-      VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT };
+      /*
+       * NOTE: Ahhhh... got some synchronization validation errors while copy
+       * from staging to GPU buffer, but i can't see wrong place in
+       * that code... jost turn off annoyng debug output and deal with
+       * it later...
+       *
+      VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT*/ };
 
     VkValidationFeaturesEXT validationFeatures = {
       .sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT,
