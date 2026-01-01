@@ -60,9 +60,6 @@ struct VertexBuffer final {
 
         std::array<VkFence, 1> fences = { uploadFence_ };
 
-        vkWaitForFences( context_->device(), fences.size(), fences.data(), VK_TRUE, UINT64_MAX );
-        vkResetFences( context_->device(), fences.size(), fences.data() );
-
         vkResetCommandBuffer( uploadCommandBuffer_, 0 );
 
         vkBeginCommandBuffer( uploadCommandBuffer_, &beginInfo );
@@ -92,6 +89,8 @@ struct VertexBuffer final {
           .pSignalSemaphores = sgnlsems.data() };
 
         vkQueueSubmit( context_->graphicsQueue(), 1, &submitInfo, uploadFence_ );
+        vkWaitForFences( context_->device(), fences.size(), fences.data(), VK_TRUE, UINT64_MAX );
+        vkResetFences( context_->device(), fences.size(), fences.data() );
     }
 
     [[nodiscard]]
@@ -138,8 +137,7 @@ private:
     }
 
     auto initUploadCommandBuffer() -> void {
-        VkFenceCreateInfo fenceInfo{
-          .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, .pNext = nullptr, .flags = VK_FENCE_CREATE_SIGNALED_BIT };
+        VkFenceCreateInfo fenceInfo{ .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, .pNext = nullptr, .flags = 0 };
 
         vkCreateFence( context_->device(), &fenceInfo, nullptr, &uploadFence_ );
 

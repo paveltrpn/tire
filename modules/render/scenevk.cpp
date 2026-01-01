@@ -47,25 +47,16 @@ export struct SceneVK final : tire::Scene {
             const auto vDataPtr = reinterpret_cast<const void *>( bodyList_[i]->verteciesData() );
             vertBuffersList_[i]->populate( vDataPtr );
 
-            vertBuffersList_[i]->submit();
-
             // Update data in vulkan "normal" buffers
             const auto nDataPtr = reinterpret_cast<const void *>( bodyList_[i]->normalsData() );
             nrmlBuffersList_[i]->populate( nDataPtr );
+        }
 
+        for ( size_t i{ 0 }; i < nodeListSize; ++i ) {
+            vertBuffersList_[i]->submit();
             nrmlBuffersList_[i]->submit();
         }
     }
-
-    void draw() override {};
-
-    void clean() override {
-        const auto nodeListSize = bodyList_.size();
-        for ( size_t i{ 0 }; i < nodeListSize; ++i ) {
-            vertBuffersList_[i]->clean();
-            nrmlBuffersList_[i]->clean();
-        }
-    };
 
     void output( const VkCommandBuffer cb ) {
         const auto view = camera().matrix();
@@ -95,6 +86,16 @@ export struct SceneVK final : tire::Scene {
             vkCmdDraw( cb, vCount, 3, 0, 0 );
         }
     }
+
+    void clean() override {
+        const auto nodeListSize = bodyList_.size();
+        for ( size_t i{ 0 }; i < nodeListSize; ++i ) {
+            vertBuffersList_[i]->clean();
+            nrmlBuffersList_[i]->clean();
+        }
+    };
+
+    void draw() override {};
 
 private:
     const Context *context_;
