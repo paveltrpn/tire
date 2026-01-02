@@ -13,6 +13,12 @@ layout( push_constant ) uniform constants_t {
     dvec3 eye;
 } constants;
 
+layout( location = 3 ) out vec3 EyePosition;
+layout( location = 4 ) out vec3 DiffuseColor;
+layout( location = 5 ) out vec2 TexCoord;
+layout( location = 6 ) out vec3 Normal;
+layout( location = 7 ) out vec3 FragmentPosition;
+
 void main() {
     vec3 ambientLight = vec3(0.3, 0.3, 0.3);
     vec3 lightpos = vec3(1.0, 1.0, 0.0);
@@ -31,4 +37,7 @@ void main() {
     fragColor.w = 1.0;
 
     texCrd = uv;
+
+    EyePosition = vec3(constants.eye.xyz);
+    FragmentPosition = vertex;
 }
