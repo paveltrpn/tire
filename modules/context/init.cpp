@@ -167,11 +167,13 @@ auto Context::createAllocator() -> void {
 
 auto Context::createDescriptorPool() -> void {
     std::vector<VkDescriptorPoolSize> sizes = {
+      //
       { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 10 },
       { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 10 },
       { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 10 },
-      //add combined-image-sampler descriptor types to the pool
-      { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 10 } };
+      { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 10 },
+      { VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK, 1024 /* bytes */ },
+    };
 
     const auto poolInfo = VkDescriptorPoolCreateInfo{
       //

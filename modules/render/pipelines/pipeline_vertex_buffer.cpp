@@ -248,9 +248,9 @@ struct PiplineVertexBuffer final : Pipeline {
           .pBindings = &textureBind,
         };
 
-        vkCreateDescriptorSetLayout( context_->device(), &set3info, nullptr, &singleTextureSetLayout_ );
+        vkCreateDescriptorSetLayout( context_->device(), &set3info, nullptr, &textureDescSetLayout_ );
 
-        std::array<VkDescriptorSetLayout, 1> texturedSetLayouts{ singleTextureSetLayout_ };
+        std::array<VkDescriptorSetLayout, 1> texturedSetLayouts{ textureDescSetLayout_ };
 
         // Setup push constants.
         std::array<VkPushConstantRange, 1> constants{};
@@ -308,13 +308,13 @@ struct PiplineVertexBuffer final : Pipeline {
     }
 
     [[nodiscard]]
-    auto singleTextureSetLayout() const -> VkDescriptorSetLayout {
+    auto textureDescSetLayout() const -> std::array<VkDescriptorSetLayout, 1> {
         //
-        return singleTextureSetLayout_;
+        return { textureDescSetLayout_ };
     }
 
 private:
-    VkDescriptorSetLayout singleTextureSetLayout_;
+    VkDescriptorSetLayout textureDescSetLayout_;
 };
 
 }  // namespace tire

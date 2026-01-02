@@ -221,8 +221,7 @@ export struct SceneVK final : tire::Scene {
 
         vkCreateSampler( context_->device(), &info, nullptr, &blockySampler_ );
 
-        auto s = dynamic_cast<const PiplineVertexBuffer *>( pipeline_ )->singleTextureSetLayout();
-        std::array<VkDescriptorSetLayout, 1> descSetLayouts = { s };
+        auto descSetLayouts = dynamic_cast<const PiplineVertexBuffer *>( pipeline_ )->textureDescSetLayout();
         const auto allocInfo = VkDescriptorSetAllocateInfo{
           //
           .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
