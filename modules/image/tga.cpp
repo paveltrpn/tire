@@ -104,6 +104,7 @@ export struct Tga final : Image {
         // Read file body.
 
         bpp_ = _header.bits;
+        components_ = bpp_ / 8;
         width_ = _header.width;
         height_ = _header.height;
 

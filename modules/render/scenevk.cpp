@@ -14,6 +14,7 @@ import context;
 
 import :pipeline;
 import :vertex_buffer;
+import :texture_image;
 
 namespace tire {
 
@@ -23,6 +24,13 @@ export struct SceneVK final : tire::Scene {
         , context_{ context }
         , pipeline_{ pipeline } {
         //
+        try {
+            testImage_ =
+              std::make_shared<TextureImage>( context_, "/mnt/main/code/assets/textures/PavingStones021_color.tga" );
+        } catch ( std::exception &e ) {
+            log::error( "Scene === test image {}", e.what() );
+        }
+
         const auto nodeListSize = bodyList_.size();
 
         vertBuffersList_.reserve( nodeListSize );
@@ -177,6 +185,8 @@ private:
 
     VkFence uploadFence_{};
     VkCommandBuffer uploadCommandBuffer_{};
+
+    std::shared_ptr<tire::TextureImage> testImage_;
 };
 
 }  // namespace tire

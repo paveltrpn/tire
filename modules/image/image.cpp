@@ -24,6 +24,12 @@ export struct Image {
     };
 
     [[nodiscard]]
+    auto components() const -> int {
+        //
+        return components_;
+    };
+
+    [[nodiscard]]
     auto width() const -> int {
         //
         return width_;
@@ -99,10 +105,9 @@ export struct Image {
 protected:
     Image() = default;
 
-    Image( int32_t width, int32_t height, const Colori &dc ) {
-        height_ = height;
-        width_ = width;
-
+    Image( int32_t width, int32_t height, const Colori &dc )
+        : height_{ height }
+        , width_{ width } {
         // NOTE: RGB
         bpp_ = static_cast<decltype( bpp_ )>( IMAGE_DEPTH::RGB );
 
@@ -122,20 +127,19 @@ protected:
         }
     };
 
-    explicit Image( const Image &other ) {
-        bpp_ = other.bpp_;
-        width_ = other.width_;
-        height_ = other.height_;
-
-        const auto components = bpp_ / 8;
-
-        data_ = new uint8_t[width_ * height_ * components];
-
-        std::copy( other.data_, other.data_ + width_ * height_ * components, data_ );
+    explicit Image( const Image &other )
+        : bpp_{ other.bpp_ }
+        , components_{ bpp_ / 8 }
+        , width_{ other.width_ }
+        , height_{ other.height_ }
+        , data_{ new uint8_t[width_ * height_ * components_] } {
+        //
+        std::copy( other.data_, other.data_ + width_ * height_ * components_, data_ );
     }
 
     explicit Image( Image &&other ) noexcept {
         bpp_ = std::exchange( other.bpp_, 0 );
+        components_ = std::exchange( other.components_, 0 );
         width_ = std::exchange( other.width_, 0 );
         height_ = std::exchange( other.height_, 0 );
         data_ = std::exchange( other.data_, nullptr );
@@ -155,6 +159,7 @@ private:
     auto swap( Image &other ) noexcept -> void {
         using std::swap;
         swap( bpp_, other.bpp_ );
+        swap( components_, other.components_ );
         swap( width_, other.width_ );
         swap( height_, other.height_ );
         swap( data_, other.data_ );
@@ -162,6 +167,7 @@ private:
 
 protected:
     int bpp_{};
+    int components_{};
     int width_{};
     int height_{};
     uint8_t *data_{};
