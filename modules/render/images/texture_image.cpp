@@ -40,10 +40,17 @@ export struct TextureImage final {
         initDeviceImage( imageSize );
         uploadToStaging( textureData_.data(), imageSize );
         upload();
+        initImageView();
     }
 
     auto operator=( const TextureImage &other ) -> TextureImage & = delete;
     auto operator=( TextureImage &&other ) -> TextureImage & = delete;
+
+    [[nodiscard]]
+    auto view() const -> VkImageView {
+        //
+        return imageView_;
+    }
 
     ~TextureImage() {
         //
@@ -54,6 +61,7 @@ export struct TextureImage final {
         //
         vmaDestroyImage( context_->allocator(), deviceImage_, deviceAllocation_ );
         vmaDestroyBuffer( context_->allocator(), stagingBuffer_, stagingAllocation_ );
+        vkDestroyImageView( context_->device(), imageView_, nullptr );
     }
 
 private:
@@ -226,6 +234,32 @@ private:
         }
     }
 
+    auto initImageView() -> void {
+        const auto subResRange = VkImageSubresourceRange{
+          .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+          .baseMipLevel = 0,
+          .levelCount = 1,
+          .baseArrayLayer = 0,
+          .layerCount = 1,
+
+        };
+
+        VkImageViewCreateInfo imageinfo = {
+          .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+          .image = deviceImage_,
+          .viewType = VK_IMAGE_VIEW_TYPE_2D,
+          .format = VK_FORMAT_R8G8B8A8_SRGB,
+          .subresourceRange = subResRange,
+        };
+
+        {
+            const auto err = vkCreateImageView( context_->device(), &imageinfo, nullptr, &imageView_ );
+            if ( err != VK_SUCCESS ) {
+                log::fatal( "TextureImage === error while create image view {}", string_VkResult( err ) );
+            }
+        }
+    }
+
 private:
     const Context *context_{};
 
@@ -241,6 +275,8 @@ private:
 
     VkBuffer stagingBuffer_{ VK_NULL_HANDLE };
     VmaAllocation stagingAllocation_{ VK_NULL_HANDLE };
+
+    VkImageView imageView_{};
 };  // namespace tire
 
 }  // namespace tire

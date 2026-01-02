@@ -32,6 +32,7 @@ export struct SceneVK final : tire::Scene {
         }
 
         initUploadCommandBuffer();
+        initTextureSmpler();
 
         const auto nodeListSize = bodyList_.size();
 
@@ -200,6 +201,54 @@ export struct SceneVK final : tire::Scene {
         vkAllocateCommandBuffers( context_->device(), &allocInfo, &uploadCommandBuffer_ );
     }
 
+    auto initTextureSmpler() -> void {
+        const auto info = VkSamplerCreateInfo{
+          //
+          .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
+          .pNext = nullptr,
+          .magFilter = VK_FILTER_NEAREST,
+          .minFilter = VK_FILTER_NEAREST,
+          .addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+          .addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+          .addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+        };
+
+        vkCreateSampler( context_->device(), &info, nullptr, &blockySampler_ );
+
+        /*
+        VkDescriptorSetAllocateInfo allocInfo = {};
+        allocInfo.pNext = nullptr;
+        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.descriptorPool = _descriptorPool;
+        allocInfo.descriptorSetCount = 1;
+        allocInfo.pSetLayouts = &_singleTextureSetLayout;
+
+        vkAllocateDescriptorSets( context_->device(), &allocInfo, &texturedMat->textureSet );
+
+        //write to the descriptor set so that it points to our empire_diffuse texture
+        VkDescriptorImageInfo imageBufferInfo;
+        imageBufferInfo.sampler = blockySampler_;
+        imageBufferInfo.imageView = testImage_->view();
+        imageBufferInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+        VkWriteDescriptorSet texture1 = {
+          //
+          .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+          .pNext = nullptr,
+          .dstBinding = 0,
+          .dstSet = texturedMat->textureSet,
+          .descriptorCount = 1,
+          .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+          .pImageInfo = &imageBufferInfo,
+        };
+
+        // VkWriteDescriptorSet texture1 = vkinit::write_descriptor_image(
+        // VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, texturedMat->textureSet, &imageBufferInfo, 0 );
+
+        vkUpdateDescriptorSets( context_->device(), 1, &texture1, 0, nullptr );
+        */
+    }
+
     void clean() override {
         vkDestroyFence( context_->device(), uploadFence_, nullptr );
 
@@ -225,6 +274,7 @@ private:
     VkCommandBuffer uploadCommandBuffer_{};
 
     std::shared_ptr<tire::TextureImage> testImage_;
+    VkSampler blockySampler_;
 };
 
 }  // namespace tire

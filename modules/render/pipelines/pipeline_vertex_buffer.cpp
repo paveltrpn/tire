@@ -230,6 +230,7 @@ struct PiplineVertexBuffer final : Pipeline {
 
         // This pipeline layout initialization.
 
+        // Setup descriptor sets.
         std::vector<VkDescriptorPoolSize> sizes = {
           { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 10 },
           { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 10 },
@@ -237,9 +238,6 @@ struct PiplineVertexBuffer final : Pipeline {
           //add combined-image-sampler descriptor types to the pool
           { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 10 } };
 
-        //other descriptor layouts
-
-        //another set, one that holds a single texture
         const auto textureBind = VkDescriptorSetLayoutBinding{
           .binding = 0,
           .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -269,6 +267,7 @@ struct PiplineVertexBuffer final : Pipeline {
           .size = sizeof( algebra::matrix4d ) + sizeof( algebra::vector4f ) };
 
         const auto pipelineLayoutInfo = VkPipelineLayoutCreateInfo{
+          //
           .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
           .setLayoutCount = texturedSetLayouts.size(),
           .pSetLayouts = texturedSetLayouts.data(),
@@ -286,7 +285,8 @@ struct PiplineVertexBuffer final : Pipeline {
         renderPass_ = context_->renderPass();
 
         // Create pipeline
-        const VkGraphicsPipelineCreateInfo pipelineInfo{
+        const auto pipelineInfo = VkGraphicsPipelineCreateInfo{
+          //
           .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
           .stageCount = static_cast<uint32_t>( shaderStages_.size() ),
           .pStages = shaderStages_.data(),
@@ -302,7 +302,8 @@ struct PiplineVertexBuffer final : Pipeline {
           .renderPass = renderPass_,
           .subpass = 0,
           .basePipelineHandle = VK_NULL_HANDLE,
-          .basePipelineIndex = -1 };
+          .basePipelineIndex = -1,
+        };
 
         if ( const auto err =
                vkCreateGraphicsPipelines( context_->device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline_ );
@@ -310,11 +311,6 @@ struct PiplineVertexBuffer final : Pipeline {
             log::fatal(
               "PiplineVertexBuffer === failed to create graphics pipeline with code {}!", string_VkResult( err ) );
         }
-
-        // There is no need to store this handle after pipeline creation and pass
-        // it to pipeline itself. It can be safeley removed after pipeline creation
-        // and pipelines thoose uses this pipeline layout stay valid.
-        // vkDestroyPipelineLayout( device_->handle(), layout, nullptr );
     }
 
 private:
