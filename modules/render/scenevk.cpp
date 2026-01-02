@@ -157,6 +157,11 @@ export struct SceneVK final : tire::Scene {
     void output( const VkCommandBuffer cb ) {
         const auto view = camera().matrix();
 
+        vkCmdBindDescriptorSets(
+          cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_->layout(), 0, 1, &textureSet_, 0, nullptr );
+
+        // =================================================================================
+
         vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_->pipeline() );
 
         vkCmdPushConstants(
@@ -216,37 +221,39 @@ export struct SceneVK final : tire::Scene {
 
         vkCreateSampler( context_->device(), &info, nullptr, &blockySampler_ );
 
-        /*
-        VkDescriptorSetAllocateInfo allocInfo = {};
-        allocInfo.pNext = nullptr;
-        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-        allocInfo.descriptorPool = _descriptorPool;
-        allocInfo.descriptorSetCount = 1;
-        allocInfo.pSetLayouts = static_cast<PiplineVertexBuffer *>( pipeline_ )->singleTextureSetLayout();
+        auto s = dynamic_cast<const PiplineVertexBuffer *>( pipeline_ )->singleTextureSetLayout();
+        std::array<VkDescriptorSetLayout, 1> descSetLayouts = { s };
+        const auto allocInfo = VkDescriptorSetAllocateInfo{
+          //
+          .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+          .pNext = nullptr,
+          .descriptorPool = context_->descriptorPool(),
+          .descriptorSetCount = 1,
+          .pSetLayouts = descSetLayouts.data(),
+        };
 
         vkAllocateDescriptorSets( context_->device(), &allocInfo, &textureSet_ );
 
         //write to the descriptor set so that it points to our empire_diffuse texture
-        VkDescriptorImageInfo imageBufferInfo;
-        imageBufferInfo.sampler = blockySampler_;
-        imageBufferInfo.imageView = testImage_->view();
-        imageBufferInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        const auto imageBufferInfo = VkDescriptorImageInfo{
+          //
+          .sampler = blockySampler_,
+          .imageView = testImage_->view(),
+          .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+        };
 
         VkWriteDescriptorSet texture1 = {
           //
           .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
           .pNext = nullptr,
+          .dstSet = textureSet_,
           .dstBinding = 0,
-          .dstSet = texturedMat->textureSet,
           .descriptorCount = 1,
           .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
           .pImageInfo = &imageBufferInfo,
         };
 
-        // VkWriteDescriptorSet texture1 = vkinit::write_descriptor_image(
-        // VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, texturedMat->textureSet, &imageBufferInfo, 0 );
-
-        vkUpdateDescriptorSets( context_->device(), 1, &texture1, 0, nullptr );*/
+        vkUpdateDescriptorSets( context_->device(), 1, &texture1, 0, nullptr );
     }
 
     void clean() override {

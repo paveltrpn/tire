@@ -180,7 +180,6 @@ auto Context::createDescriptorPool() -> void {
       .maxSets = 10,
       .poolSizeCount = static_cast<uint32_t>( sizes.size() ),
       .pPoolSizes = sizes.data(),
-
     };
 
     {
