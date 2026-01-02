@@ -70,29 +70,38 @@ struct VertexBuffer final {
 
 private:
     auto initStagingBuffer( size_t size ) -> void {
-        VkBufferCreateInfo stagingBufferInfo{};
-        stagingBufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-        stagingBufferInfo.pNext = nullptr;
+        const auto stagingBufferInfo = VkBufferCreateInfo{
+          //
+          .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+          .pNext = nullptr,
+          .size = size,
+          .usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 
-        stagingBufferInfo.size = size;
-        stagingBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+        };
 
-        VmaAllocationCreateInfo vmaallocInfo{};
-        vmaallocInfo.usage = VMA_MEMORY_USAGE_CPU_ONLY;
+        const auto vmaallocInfo = VmaAllocationCreateInfo{
+          //
+          .usage = VMA_MEMORY_USAGE_CPU_ONLY,
+        };
 
         vmaCreateBuffer(
           context_->allocator(), &stagingBufferInfo, &vmaallocInfo, &stagingBuffer_, &stagingAllocation_, nullptr );
     }
 
     auto initDeviceBuffer( size_t size ) -> void {
-        VkBufferCreateInfo bufCreateInfo = { VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO };
-        bufCreateInfo.size = size_;
-        bufCreateInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+        const auto bufCreateInfo = VkBufferCreateInfo{
+          //
+          .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+          .size = size_,
+          .usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+        };
 
-        VmaAllocationCreateInfo allocCreateInfo = {};
-        allocCreateInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
-        allocCreateInfo.flags =
-          VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
+        const auto allocCreateInfo = VmaAllocationCreateInfo{
+          //
+          .flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT,
+          .usage = VMA_MEMORY_USAGE_GPU_ONLY,
+
+        };
 
         vmaCreateBuffer(
           context_->allocator(), &bufCreateInfo, &allocCreateInfo, &deviceBuffer_, &deviceAllocation_, nullptr );

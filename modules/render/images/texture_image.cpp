@@ -33,6 +33,14 @@ export struct TextureImage final {
             imageFormat_ = VK_FORMAT_R8G8B8_SRGB;
         }
 
+        imageExtent_ = VkExtent3D{
+          //
+          .width = static_cast<uint32_t>( textureData_.width() ),
+          .height = static_cast<uint32_t>( textureData_.height() ),
+          .depth = 1,
+        };
+
+        initUploadCommandBuffer();
         initStagingBuffer( imageSize );
         uploadToStaging( textureData_.data(), imageSize );
         initDeviceImage( imageSize );
@@ -53,8 +61,18 @@ export struct TextureImage final {
     }
 
 private:
+    auto initUploadCommandBuffer() -> void {
+        const auto allocInfo = VkCommandBufferAllocateInfo{
+          .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+          .commandPool = context_->commandPool(),
+          .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+          .commandBufferCount = 1 };
+
+        vkAllocateCommandBuffers( context_->device(), &allocInfo, &uploadCommandBuffer_ );
+    }
+
     auto initStagingBuffer( VkDeviceSize size ) -> void {
-        VkBufferCreateInfo stagingBufferInfo{
+        const auto stagingBufferInfo = VkBufferCreateInfo{
           //
           .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
           .pNext = nullptr,
@@ -62,7 +80,7 @@ private:
           .usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
         };
 
-        VmaAllocationCreateInfo vmaallocInfo{
+        const auto vmaallocInfo = VmaAllocationCreateInfo{
           //
           .usage = VMA_MEMORY_USAGE_CPU_ONLY,
         };
@@ -79,22 +97,15 @@ private:
     }
 
     auto initDeviceImage( VkDeviceSize size ) -> void {
-        VkExtent3D imageExtent{
-          //
-          .width = static_cast<uint32_t>( textureData_.width() ),
-          .height = static_cast<uint32_t>( textureData_.height() ),
-          .depth = 1,
-        };
-
-        VkImageCreateInfo imgCreateInfo{
+        const auto imgCreateInfo = VkImageCreateInfo{
           //
           .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
           .format = imageFormat_,
-          .extent = imageExtent,
+          .extent = imageExtent_,
           .usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
         };
 
-        VmaAllocationCreateInfo allocCreateInfo = {
+        const auto allocCreateInfo = VmaAllocationCreateInfo{
           .flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT,
           .usage = VMA_MEMORY_USAGE_GPU_ONLY,
         };
@@ -103,18 +114,48 @@ private:
           context_->allocator(), &imgCreateInfo, &allocCreateInfo, &deviceImage_, &deviceAllocation_, nullptr );
     }
 
+    auto upload() -> void {
+        const auto range = VkImageSubresourceRange{
+          //
+          .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+          .baseMipLevel = 0,
+          .levelCount = 1,
+          .baseArrayLayer = 0,
+          .layerCount = 1,
+        };
+
+        const auto imageTransferBarrier = VkImageMemoryBarrier{
+          //
+          .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+          .srcAccessMask = 0,
+          .dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT,
+          .oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+          .newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+          .image = deviceImage_,
+          .subresourceRange = range,
+        };
+
+        //barrier the image into the transfer-receive layout
+        vkCmdPipelineBarrier(
+          uploadCommandBuffer_, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0,
+          nullptr, 1, &imageTransferBarrier );
+    }
+
 private:
     const Context *context_{};
 
     tire::Tga textureData_;
 
     VkFormat imageFormat_{};
+    VkExtent3D imageExtent_{};
+
+    VkCommandBuffer uploadCommandBuffer_{};
 
     VkImage deviceImage_{ VK_NULL_HANDLE };
     VmaAllocation deviceAllocation_{ VK_NULL_HANDLE };
 
     VkBuffer stagingBuffer_{ VK_NULL_HANDLE };
     VmaAllocation stagingAllocation_{ VK_NULL_HANDLE };
-};
+};  // namespace tire
 
 }  // namespace tire
