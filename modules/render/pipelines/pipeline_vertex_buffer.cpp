@@ -231,7 +231,7 @@ struct PiplineVertexBuffer final : Pipeline {
         // This pipeline layout initialization.
 
         // Setup descriptor sets.
-
+        // Texture sampler descriptor.
         const auto textureBind = VkDescriptorSetLayoutBinding{
           .binding = 0,
           .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -239,7 +239,7 @@ struct PiplineVertexBuffer final : Pipeline {
           .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
         };
 
-        const auto set3info = VkDescriptorSetLayoutCreateInfo{
+        const auto textureDescSetCreateInfo = VkDescriptorSetLayoutCreateInfo{
           //
           .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
           .pNext = nullptr,
@@ -248,9 +248,29 @@ struct PiplineVertexBuffer final : Pipeline {
           .pBindings = &textureBind,
         };
 
-        vkCreateDescriptorSetLayout( context_->device(), &set3info, nullptr, &textureDescSetLayout_ );
+        vkCreateDescriptorSetLayout( context_->device(), &textureDescSetCreateInfo, nullptr, &textureDescSetLayout_ );
 
-        std::array<VkDescriptorSetLayout, 1> texturedSetLayouts{ textureDescSetLayout_ };
+        // Omni lights data descriptor.
+        const auto omniLightsBind = VkDescriptorSetLayoutBinding{
+          .binding = 1,
+          .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+          .descriptorCount = 1,
+          .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+        };
+
+        const auto omniLightsDescSetCreateInfo = VkDescriptorSetLayoutCreateInfo{
+          //
+          .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+          .pNext = nullptr,
+          .flags = 0,
+          .bindingCount = 1,
+          .pBindings = &omniLightsBind,
+        };
+
+        vkCreateDescriptorSetLayout(
+          context_->device(), &omniLightsDescSetCreateInfo, nullptr, &omniLightsDescSetLayout_ );
+
+        std::array<VkDescriptorSetLayout, 2> texturedSetLayouts{ textureDescSetLayout_, omniLightsDescSetLayout_ };
 
         // Setup push constants.
         std::array<VkPushConstantRange, 1> constants{};
@@ -308,13 +328,14 @@ struct PiplineVertexBuffer final : Pipeline {
     }
 
     [[nodiscard]]
-    auto textureDescSetLayout() const -> std::array<VkDescriptorSetLayout, 1> {
+    auto pipelineSescSetsLayout() const -> std::array<VkDescriptorSetLayout, 2> {
         //
-        return { textureDescSetLayout_ };
+        return { textureDescSetLayout_, omniLightsDescSetLayout_ };
     }
 
 private:
-    VkDescriptorSetLayout textureDescSetLayout_;
+    VkDescriptorSetLayout textureDescSetLayout_{};
+    VkDescriptorSetLayout omniLightsDescSetLayout_{};
 };
 
 }  // namespace tire

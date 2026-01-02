@@ -11,17 +11,17 @@ namespace tire {
 
 using namespace algebra;
 
-template <typename T>
+export template <typename T>
     requires std::is_same_v<float, T> || std::is_same_v<double, T>
 struct OmniLight final {
     using value_type = T;
 
     OmniLight() = default;
 
-    OmniLight( const OmniLight& other ) = delete;
-    OmniLight( OmniLight&& other ) = delete;
-    OmniLight& operator=( const OmniLight& other ) = delete;
-    OmniLight& operator=( OmniLight&& other ) = delete;
+    OmniLight( const OmniLight &other ) = delete;
+    OmniLight( OmniLight &&other ) = delete;
+    OmniLight &operator=( const OmniLight &other ) = delete;
+    OmniLight &operator=( OmniLight &&other ) = delete;
 
     ~OmniLight() = default;
 
@@ -61,43 +61,43 @@ struct OmniLight final {
     };
 
     [[maybe_unused]]
-    OmniLight& setPosition( const vector3<value_type>& value ) {
+    OmniLight &setPosition( const vector3<value_type> &value ) {
         position_ = value;
         return *this;
     };
 
     [[maybe_unused]]
-    OmniLight& setConstant( value_type value ) {
+    OmniLight &setConstant( value_type value ) {
         constant_ = value;
         return *this;
     };
 
     [[maybe_unused]]
-    OmniLight& setLinear( value_type value ) {
+    OmniLight &setLinear( value_type value ) {
         linear_ = value;
         return *this;
     };
 
     [[maybe_unused]]
-    OmniLight& setQuadratic( value_type value ) {
+    OmniLight &setQuadratic( value_type value ) {
         quadratic_ = value;
         return *this;
     };
 
     [[maybe_unused]]
-    OmniLight& setAmbient( const vector3<value_type>& value ) {
+    OmniLight &setAmbient( const vector3<value_type> &value ) {
         ambient_ = value;
         return *this;
     };
 
     [[maybe_unused]]
-    OmniLight& setDiffuse( const vector3<value_type>& value ) {
+    OmniLight &setDiffuse( const vector3<value_type> &value ) {
         diffuse_ = value;
         return *this;
     };
 
     [[maybe_unused]]
-    OmniLight& setSpecular( const vector3<value_type>& value ) {
+    OmniLight &setSpecular( const vector3<value_type> &value ) {
         specular_ = value;
         return *this;
     };

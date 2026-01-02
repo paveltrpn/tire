@@ -5,6 +5,9 @@ module;
 
 #include <vulkan/vulkan.h>
 #include "vulkan/vulkan_core.h"
+#include <vulkan/vk_enum_string_helper.h>
+
+#include "vma/vk_mem_alloc.h"
 
 export module render:scenevk;
 
@@ -34,6 +37,8 @@ export struct SceneVK final : tire::Scene {
 
         initUploadCommandBuffer();
         initTextureSmpler();
+        initOmniLigtBuffer();
+        initDescriptorSets();
 
         const auto nodeListSize = bodyList_.size();
 
@@ -220,28 +225,60 @@ export struct SceneVK final : tire::Scene {
         };
 
         vkCreateSampler( context_->device(), &info, nullptr, &blockySampler_ );
+    }
 
-        auto descSetLayouts = dynamic_cast<const PiplineVertexBuffer *>( pipeline_ )->textureDescSetLayout();
-        const auto allocInfo = VkDescriptorSetAllocateInfo{
+    auto initOmniLigtBuffer() -> void {
+        const auto bufferInfo = VkBufferCreateInfo{
+          //
+          .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+          .pNext = nullptr,
+          .size = sizeof( tire::OmniLight<float> ),
+          .usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+        };
+
+        const auto vmaallocInfo = VmaAllocationCreateInfo{
+          //
+          .usage = VMA_MEMORY_USAGE_CPU_TO_GPU,
+        };
+
+        {
+            const auto err = vmaCreateBuffer(
+              context_->allocator(), &bufferInfo, &vmaallocInfo, &omniLightUniform_, &omniLightAllocation_, nullptr );
+            if ( err != VK_SUCCESS ) {
+                log::fatal( "SceneVK === error while creating omni light uniform buffer {}", string_VkResult( err ) );
+            }
+        }
+    }
+
+    void initDescriptorSets() {
+        auto pipelineDescSetLayouts = dynamic_cast<const PiplineVertexBuffer *>( pipeline_ )->pipelineSescSetsLayout();
+
+        // Write to the texture descriptor set.
+        auto texDescSetLayout = pipelineDescSetLayouts[0];
+        const auto texallocInfo = VkDescriptorSetAllocateInfo{
           //
           .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
           .pNext = nullptr,
           .descriptorPool = context_->descriptorPool(),
           .descriptorSetCount = 1,
-          .pSetLayouts = descSetLayouts.data(),
+          .pSetLayouts = &texDescSetLayout,
         };
 
-        vkAllocateDescriptorSets( context_->device(), &allocInfo, &textureSet_ );
+        {
+            const auto err = vkAllocateDescriptorSets( context_->device(), &texallocInfo, &textureSet_ );
+            if ( err != VK_SUCCESS ) {
+                log::fatal( "SceneVK === error while allocating descriptorSets {}", string_VkResult( err ) );
+            }
+        }
 
-        //write to the descriptor set so that it points to our empire_diffuse texture
-        const auto imageBufferInfo = VkDescriptorImageInfo{
+        const auto textureImageDescInfo = VkDescriptorImageInfo{
           //
           .sampler = blockySampler_,
           .imageView = testImage_->view(),
           .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
         };
 
-        VkWriteDescriptorSet texture1 = {
+        VkWriteDescriptorSet textureWrite = {
           //
           .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
           .pNext = nullptr,
@@ -249,14 +286,55 @@ export struct SceneVK final : tire::Scene {
           .dstBinding = 0,
           .descriptorCount = 1,
           .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-          .pImageInfo = &imageBufferInfo,
+          .pImageInfo = &textureImageDescInfo,
+          .pBufferInfo = nullptr,
         };
 
-        vkUpdateDescriptorSets( context_->device(), 1, &texture1, 0, nullptr );
+        vkUpdateDescriptorSets( context_->device(), 1, &textureWrite, 0, nullptr );
+
+        // Write to the omni light descriptor set.
+        auto lightDescSetLayout = pipelineDescSetLayouts[1];
+        const auto lightallocInfo = VkDescriptorSetAllocateInfo{
+          //
+          .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+          .pNext = nullptr,
+          .descriptorPool = context_->descriptorPool(),
+          .descriptorSetCount = 1,
+          .pSetLayouts = &lightDescSetLayout,
+        };
+
+        {
+            const auto err = vkAllocateDescriptorSets( context_->device(), &lightallocInfo, &omniLightSet_ );
+            if ( err != VK_SUCCESS ) {
+                log::fatal( "SceneVK === error while allocating descriptorSets {}", string_VkResult( err ) );
+            }
+        }
+
+        const auto omniLightBufferDescInfo = VkDescriptorBufferInfo{
+          //
+          .buffer = omniLightUniform_,
+          .offset = 0,
+          .range = sizeof( tire::OmniLight<float> ),
+        };
+
+        VkWriteDescriptorSet omniLightWrite = {
+          //
+          .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+          .pNext = nullptr,
+          .dstSet = omniLightSet_,
+          .dstBinding = 1,
+          .descriptorCount = 1,
+          .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+          .pImageInfo = nullptr,
+          .pBufferInfo = &omniLightBufferDescInfo,
+        };
+
+        vkUpdateDescriptorSets( context_->device(), 1, &omniLightWrite, 0, nullptr );
     }
 
     void clean() override {
         vkDestroyFence( context_->device(), uploadFence_, nullptr );
+        vmaDestroyBuffer( context_->allocator(), omniLightUniform_, omniLightAllocation_ );
 
         const auto nodeListSize = bodyList_.size();
         for ( size_t i{ 0 }; i < nodeListSize; ++i ) {
@@ -282,6 +360,10 @@ private:
     std::shared_ptr<tire::TextureImage> testImage_;
     VkSampler blockySampler_{};
     VkDescriptorSet textureSet_{};
+
+    VkBuffer omniLightUniform_{};
+    VmaAllocation omniLightAllocation_{};
+    VkDescriptorSet omniLightSet_{};
 };
 
 }  // namespace tire
