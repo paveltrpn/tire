@@ -44,6 +44,7 @@ export struct SceneVK final : tire::Scene {
     void submit() override {
         const auto nodeListSize = bodyList_.size();
 
+        // Fill CPU side buffer (staging) with new verticies data.
         for ( size_t i{ 0 }; i < nodeListSize; ++i ) {
             // Update data in vulkan "vertex" buffers, i.e. copy from CPU memory.
             const auto vDataPtr = reinterpret_cast<const void *>( bodyList_[i]->verteciesData() );
@@ -54,10 +55,14 @@ export struct SceneVK final : tire::Scene {
             nrmlBuffersList_[i]->populate( nDataPtr );
         }
 
+        // Record command to transfer data from CPU to GPU side.
         VkCommandBufferUsageFlags usageFlags = { VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT };
 
         const VkCommandBufferBeginInfo beginInfo{
-          .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, .flags = usageFlags, .pInheritanceInfo = nullptr };
+          //
+          .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+          .flags = usageFlags,
+          .pInheritanceInfo = nullptr };
 
         std::array<VkFence, 1> fences = { uploadFence_ };
 
@@ -79,7 +84,7 @@ export struct SceneVK final : tire::Scene {
 
         vkEndCommandBuffer( uploadCommandBuffer_ );
 
-        std::array<VkPipelineStageFlags, 0> waitStages = {};
+        std::array<VkPipelineStageFlags, 1> waitStages = { VK_PIPELINE_STAGE_TRANSFER_BIT };
         std::array<VkSemaphore, 0> waitsems{};
         std::array<VkSemaphore, 0> sgnlsems{};
         std::array<VkCommandBuffer, 1> commands{ uploadCommandBuffer_ };
@@ -96,6 +101,10 @@ export struct SceneVK final : tire::Scene {
 
         vkQueueSubmit( context_->graphicsQueue(), 1, &submitInfo, uploadFence_ );
 
+        // NOTE: This fence works but synchroniztion validation error
+        // SYNC-HAZARD-WRITE-AFTER-READ still occurs. Conflicting with vkCmdDraw later.
+        // Enable VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT in instance
+        // to see debug output.
         vkWaitForFences( context_->device(), fences.size(), fences.data(), VK_TRUE, UINT64_MAX );
         vkResetFences( context_->device(), fences.size(), fences.data() );
     }
@@ -130,7 +139,11 @@ export struct SceneVK final : tire::Scene {
     }
 
     auto initUploadCommandBuffer() -> void {
-        VkFenceCreateInfo fenceInfo{ .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, .pNext = nullptr, .flags = 0 };
+        VkFenceCreateInfo fenceInfo{
+          //
+          .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+          .pNext = nullptr,
+          .flags = 0 };
 
         vkCreateFence( context_->device(), &fenceInfo, nullptr, &uploadFence_ );
 
