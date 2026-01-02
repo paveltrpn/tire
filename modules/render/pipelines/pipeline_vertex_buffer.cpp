@@ -243,6 +243,7 @@ struct PiplineVertexBuffer final : Pipeline {
         const auto textureBind = VkDescriptorSetLayoutBinding{
           .binding = 0,
           .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+          .descriptorCount = 1,
           .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
         };
 
@@ -269,18 +270,16 @@ struct PiplineVertexBuffer final : Pipeline {
 
         const auto pipelineLayoutInfo = VkPipelineLayoutCreateInfo{
           .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-          .setLayoutCount = 0,
-          .pSetLayouts = nullptr,
+          .setLayoutCount = texturedSetLayouts.size(),
+          .pSetLayouts = texturedSetLayouts.data(),
           .pushConstantRangeCount = constants.size(),
           .pPushConstantRanges = constants.data(),
         };
 
         if ( const auto err = vkCreatePipelineLayout( context_->device(), &pipelineLayoutInfo, nullptr, &layout_ );
              err != VK_SUCCESS ) {
-            throw std::runtime_error(
-              std::format( "failed to create pipeline layout with code {}!", string_VkResult( err ) ) );
-        } else {
-            log::info( "vk::PiplineVertexBuffer === pipeline layout created!" );
+            log::fatal(
+              "PiplineVertexBuffer === failed to create pipeline layout with code {}!", string_VkResult( err ) );
         }
 
         // Init render pass.
@@ -308,10 +307,8 @@ struct PiplineVertexBuffer final : Pipeline {
         if ( const auto err =
                vkCreateGraphicsPipelines( context_->device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline_ );
              err != VK_SUCCESS ) {
-            throw std::runtime_error(
-              std::format( "failed to create graphics pipeline with code {}!", string_VkResult( err ) ) );
-        } else {
-            log::info( "vk::PiplineVertexBuffer === graphics pipeline created!" );
+            log::fatal(
+              "PiplineVertexBuffer === failed to create graphics pipeline with code {}!", string_VkResult( err ) );
         }
 
         // There is no need to store this handle after pipeline creation and pass
