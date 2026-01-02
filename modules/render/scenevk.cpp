@@ -202,7 +202,8 @@ export struct SceneVK final : tire::Scene {
           //
           .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
           .pNext = nullptr,
-          .flags = 0 };
+          .flags = 0,
+        };
 
         vkCreateFence( context_->device(), &fenceInfo, nullptr, &uploadFence_ );
 
