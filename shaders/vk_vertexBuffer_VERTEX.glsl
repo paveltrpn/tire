@@ -6,7 +6,7 @@ layout( location = 2 ) in vec2 uv;
 
 layout( location = 0 ) out vec4 fragColor;
 layout( location = 1 ) out vec3 vLighting;
-layout( location = 2 ) out vec2 fakeColor;
+layout( location = 2 ) out vec2 texCrd;
 
 layout( push_constant ) uniform constants_t {
     dmat4 view;
@@ -25,10 +25,11 @@ void main() {
     vLighting = ambientLight + (lightcolor * directional);
 
     gl_Position = mat4(constants.view) * vec4( vertex, 1.0 );
+
     fragColor.x = uv.x;
     fragColor.y = uv.y;
     fragColor.z = constants.color.z;
     fragColor.w = constants.color.w;
 
-    fakeColor = uv;
+    texCrd = uv;
 }

@@ -229,6 +229,36 @@ struct PiplineVertexBuffer final : Pipeline {
         // =============================================================================
 
         // This pipeline layout initialization.
+
+        std::vector<VkDescriptorPoolSize> sizes = {
+          { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 10 },
+          { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 10 },
+          { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 10 },
+          //add combined-image-sampler descriptor types to the pool
+          { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 10 } };
+
+        //other descriptor layouts
+
+        //another set, one that holds a single texture
+        const auto textureBind = VkDescriptorSetLayoutBinding{
+          .binding = 0,
+          .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+          .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+        };
+
+        const auto set3info = VkDescriptorSetLayoutCreateInfo{
+          //
+          .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+          .pNext = nullptr,
+          .flags = 0,
+          .bindingCount = 1,
+          .pBindings = &textureBind,
+        };
+
+        vkCreateDescriptorSetLayout( context_->device(), &set3info, nullptr, &singleTextureSetLayout_ );
+
+        std::array<VkDescriptorSetLayout, 1> texturedSetLayouts{ singleTextureSetLayout_ };
+
         // Setup push constants.
         std::array<VkPushConstantRange, 1> constants{};
 
@@ -237,12 +267,13 @@ struct PiplineVertexBuffer final : Pipeline {
           .offset = 0,
           .size = sizeof( algebra::matrix4d ) + sizeof( algebra::vector4f ) };
 
-        const VkPipelineLayoutCreateInfo pipelineLayoutInfo{
+        const auto pipelineLayoutInfo = VkPipelineLayoutCreateInfo{
           .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
           .setLayoutCount = 0,
           .pSetLayouts = nullptr,
           .pushConstantRangeCount = constants.size(),
-          .pPushConstantRanges = constants.data() };
+          .pPushConstantRanges = constants.data(),
+        };
 
         if ( const auto err = vkCreatePipelineLayout( context_->device(), &pipelineLayoutInfo, nullptr, &layout_ );
              err != VK_SUCCESS ) {
@@ -288,6 +319,9 @@ struct PiplineVertexBuffer final : Pipeline {
         // and pipelines thoose uses this pipeline layout stay valid.
         // vkDestroyPipelineLayout( device_->handle(), layout, nullptr );
     }
+
+private:
+    VkDescriptorSetLayout singleTextureSetLayout_;
 };
 
 }  // namespace tire
