@@ -31,6 +31,8 @@ export struct SceneVK final : tire::Scene {
             log::error( "Scene === test image {}", e.what() );
         }
 
+        initUploadCommandBuffer();
+
         const auto nodeListSize = bodyList_.size();
 
         vertBuffersList_.reserve( nodeListSize );
@@ -48,8 +50,6 @@ export struct SceneVK final : tire::Scene {
             auto tBuf = std::make_shared<VertexBuffer>( context_, bodyList_[i]->bufferTexcrdsSize() );
             texcBuffersList_.push_back( std::move( tBuf ) );
         }
-
-        initUploadCommandBuffer();
     }
 
     void submit() override {
