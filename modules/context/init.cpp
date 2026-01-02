@@ -165,4 +165,30 @@ auto Context::createAllocator() -> void {
     }
 }
 
+auto Context::createDescriptorPool() -> void {
+    std::vector<VkDescriptorPoolSize> sizes = {
+      { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 10 },
+      { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 10 },
+      { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 10 },
+      //add combined-image-sampler descriptor types to the pool
+      { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 10 } };
+
+    const auto poolInfo = VkDescriptorPoolCreateInfo{
+      //
+      .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+      .flags = 0,
+      .maxSets = 10,
+      .poolSizeCount = static_cast<uint32_t>( sizes.size() ),
+      .pPoolSizes = sizes.data(),
+
+    };
+
+    {
+        const auto err = vkCreateDescriptorPool( device_, &poolInfo, nullptr, &descriptorPool_ );
+        if ( err != VK_SUCCESS ) {
+            log::fatal( "Context === failed to create descriptor pool {}!", string_VkResult( err ) );
+        }
+    }
+}
+
 }  // namespace tire

@@ -231,12 +231,6 @@ struct PiplineVertexBuffer final : Pipeline {
         // This pipeline layout initialization.
 
         // Setup descriptor sets.
-        std::vector<VkDescriptorPoolSize> sizes = {
-          { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 10 },
-          { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 10 },
-          { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 10 },
-          //add combined-image-sampler descriptor types to the pool
-          { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 10 } };
 
         const auto textureBind = VkDescriptorSetLayoutBinding{
           .binding = 0,

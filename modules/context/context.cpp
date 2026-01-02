@@ -76,6 +76,8 @@ export struct Context final {
         vkDestroyImageView( device_, depthImageView_, nullptr );
         vkFreeMemory( device_, depthImageMemory_, nullptr );
 
+        vkDestroyDescriptorPool( device_, descriptorPool_, nullptr );
+
         for ( auto i = 0; i < framesCount_; i++ ) {
             vkDestroySemaphore( device_, frames_[i].imageAvailableSemaphore_, nullptr );
             vkDestroySemaphore( device_, frames_[i].renderFinishedSemaphore_, nullptr );
@@ -227,6 +229,11 @@ export struct Context final {
         return commandPool_;
     };
 
+    [[nodiscard]] auto descriptorPool() const -> VkDescriptorPool {
+        //
+        return descriptorPool_;
+    };
+
 private:
     // Init all context
     auto makeInstance( const std::string &platformSurfaceExtension ) -> void;
@@ -236,8 +243,8 @@ private:
     auto makeSwapchain() -> void;
     auto initRenderPass() -> void;
     auto makeFrames() -> void;
-
     auto createAllocator() -> void;
+    auto createDescriptorPool() -> void;
 
     auto initRest() -> void {
         collectPhysicalDevices();
@@ -247,6 +254,7 @@ private:
         makeSwapchain();
         initRenderPass();
         makeFrames();
+        createDescriptorPool();
 
         // Note that the order of clearValues should be identical to the order of your
         // attachments
@@ -328,6 +336,9 @@ protected:
 
     // Momory
     VmaAllocator allocator_;
+
+    //
+    VkDescriptorPool descriptorPool_{};
 };
 
 }  // namespace tire
