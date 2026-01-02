@@ -160,25 +160,37 @@ export struct SceneVK final : tire::Scene {
     }
 
     void output( const VkCommandBuffer cb ) {
-        const auto view = camera().matrix();
+        vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_->pipeline() );
+
+        // =================================================================================
 
         vkCmdBindDescriptorSets(
           cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_->layout(), 0, 1, &textureSet_, 0, nullptr );
 
         // =================================================================================
 
-        vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_->pipeline() );
+        void *data{};
+        vmaMapMemory( context_->allocator(), omniLightAllocation_, &data );
+        memcpy( data, lightList_.data(), sizeof( tire::OmniLight<float> ) * lightList_.size() );
+        vmaUnmapMemory( context_->allocator(), omniLightAllocation_ );
 
+        vkCmdBindDescriptorSets(
+          cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_->layout(), 1, 1, &omniLightSet_, 0, nullptr );
+
+        // =================================================================================
+
+        const auto view = camera().matrix();
         vkCmdPushConstants(
           cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( algebra::matrix4d ), &view );
+
+        const auto eye = camera().eye();
+        vkCmdPushConstants(
+          cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof( algebra::matrix4d ), sizeof( algebra::vector3d ),
+          &eye );
 
         // Record draw commands for all scene objects in command buffer
         for ( size_t object = 0; object < bodyList_.size(); ++object ) {
             const auto c = bodyList_[object]->albedoColor().asVector4f();
-
-            vkCmdPushConstants(
-              cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof( algebra::matrix4d ),
-              sizeof( algebra::vector4f ), &c );
 
             auto vbo = vertBuffersList_[object]->deviceBuffer();
             auto nbo = nrmlBuffersList_[object]->deviceBuffer();
@@ -232,7 +244,7 @@ export struct SceneVK final : tire::Scene {
           //
           .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
           .pNext = nullptr,
-          .size = sizeof( tire::OmniLight<float> ),
+          .size = sizeof( tire::OmniLight<float> ) * lightList_.size(),
           .usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
         };
 
@@ -314,7 +326,7 @@ export struct SceneVK final : tire::Scene {
           //
           .buffer = omniLightUniform_,
           .offset = 0,
-          .range = sizeof( tire::OmniLight<float> ),
+          .range = sizeof( tire::OmniLight<float> ) * lightList_.size(),
         };
 
         VkWriteDescriptorSet omniLightWrite = {

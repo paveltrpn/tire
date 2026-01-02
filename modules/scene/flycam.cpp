@@ -160,7 +160,7 @@ export struct Flycam final {
     }
 
     [[nodiscard]]
-    auto position() const -> algebra::vector3<value_type> {
+    auto eye() const -> vector3<value_type> {
         return eye_;
     };
 

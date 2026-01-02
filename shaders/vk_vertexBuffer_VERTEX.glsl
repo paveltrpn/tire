@@ -10,9 +10,8 @@ layout( location = 2 ) out vec2 texCrd;
 
 layout( push_constant ) uniform constants_t {
     dmat4 view;
-    vec4 color;
+    dvec3 eye;
 } constants;
-
 
 void main() {
     vec3 ambientLight = vec3(0.3, 0.3, 0.3);
@@ -28,8 +27,8 @@ void main() {
 
     fragColor.x = uv.x;
     fragColor.y = uv.y;
-    fragColor.z = constants.color.z;
-    fragColor.w = constants.color.w;
+    fragColor.z = 0.5;
+    fragColor.w = 1.0;
 
     texCrd = uv;
 }

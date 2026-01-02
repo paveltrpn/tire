@@ -16,15 +16,6 @@ export template <typename T>
 struct OmniLight final {
     using value_type = T;
 
-    OmniLight() = default;
-
-    OmniLight( const OmniLight &other ) = delete;
-    OmniLight( OmniLight &&other ) = delete;
-    OmniLight &operator=( const OmniLight &other ) = delete;
-    OmniLight &operator=( OmniLight &&other ) = delete;
-
-    ~OmniLight() = default;
-
     [[nodiscard]]
     vector3<value_type> position() {
         return position_;
@@ -102,7 +93,6 @@ struct OmniLight final {
         return *this;
     };
 
-private:
     vector3<value_type> position_{ 0.0, 0.0, 0.0 };
 
     value_type constant_{ 1.0 };
