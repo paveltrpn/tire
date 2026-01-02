@@ -92,10 +92,16 @@ export struct SceneVK final : tire::Scene {
 
         vkEndCommandBuffer( uploadCommandBuffer_ );
 
-        std::array<VkPipelineStageFlags, 1> waitStages = { VK_PIPELINE_STAGE_TRANSFER_BIT };
+        std::array<VkPipelineStageFlags, 1> waitStages{
+          //
+          VK_PIPELINE_STAGE_TRANSFER_BIT,
+        };
         std::array<VkSemaphore, 0> waitsems{};
         std::array<VkSemaphore, 0> sgnlsems{};
-        std::array<VkCommandBuffer, 1> commands{ uploadCommandBuffer_ };
+        std::array<VkCommandBuffer, 1> commands{
+          //
+          uploadCommandBuffer_,
+        };
 
         const VkSubmitInfo submitInfo{
           .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,

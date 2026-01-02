@@ -23,15 +23,10 @@ export struct TextureImage final {
 
     TextureImage( const Context *context, const std::string &fname )
         : context_{ context }
+        , imageFormat_{ VK_FORMAT_R8G8B8A8_SRGB }
         , textureData_{ fname } {
         //
         VkDeviceSize imageSize = textureData_.width() * textureData_.height() * textureData_.components();
-
-        if ( textureData_.components() == 4 ) {
-            imageFormat_ = VK_FORMAT_R8G8B8A8_SRGB;
-        } else if ( textureData_.components() == 3 ) {
-            imageFormat_ = VK_FORMAT_R8G8B8_SRGB;
-        }
 
         imageExtent_ = VkExtent3D{
           //
@@ -42,8 +37,9 @@ export struct TextureImage final {
 
         initUploadCommandBuffer();
         initStagingBuffer( imageSize );
-        uploadToStaging( textureData_.data(), imageSize );
         initDeviceImage( imageSize );
+        uploadToStaging( textureData_.data(), imageSize );
+        upload();
     }
 
     auto operator=( const TextureImage &other ) -> TextureImage & = delete;
@@ -85,8 +81,13 @@ private:
           .usage = VMA_MEMORY_USAGE_CPU_ONLY,
         };
 
-        vmaCreateBuffer(
-          context_->allocator(), &stagingBufferInfo, &vmaallocInfo, &stagingBuffer_, &stagingAllocation_, nullptr );
+        {
+            const auto err = vmaCreateBuffer(
+              context_->allocator(), &stagingBufferInfo, &vmaallocInfo, &stagingBuffer_, &stagingAllocation_, nullptr );
+            if ( err != VK_SUCCESS ) {
+                log::fatal( "TextureImage === error while creating staging buffer {}", string_VkResult( err ) );
+            }
+        }
     }
 
     auto uploadToStaging( const void *data, VkDeviceSize size ) -> void {
@@ -100,21 +101,46 @@ private:
         const auto imgCreateInfo = VkImageCreateInfo{
           //
           .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+          .flags = 0,  // Optional
+          .imageType = VK_IMAGE_TYPE_2D,
           .format = imageFormat_,
           .extent = imageExtent_,
+          .mipLevels = 1,
+          .arrayLayers = 1,
+          .samples = VK_SAMPLE_COUNT_1_BIT,
+          .tiling = VK_IMAGE_TILING_OPTIMAL,
           .usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
+          .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+          .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
         };
 
         const auto allocCreateInfo = VmaAllocationCreateInfo{
-          .flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT,
+          .flags = 0,
           .usage = VMA_MEMORY_USAGE_GPU_ONLY,
         };
 
-        vmaCreateImage(
-          context_->allocator(), &imgCreateInfo, &allocCreateInfo, &deviceImage_, &deviceAllocation_, nullptr );
+        {
+            const auto err = vmaCreateImage(
+              context_->allocator(), &imgCreateInfo, &allocCreateInfo, &deviceImage_, &deviceAllocation_, nullptr );
+            if ( err != VK_SUCCESS ) {
+                log::fatal( "TextureImage === error while creating device image {}", string_VkResult( err ) );
+            }
+        }
     }
 
     auto upload() -> void {
+        VkCommandBufferUsageFlags usageFlags = { VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT };
+
+        const VkCommandBufferBeginInfo beginInfo{
+          //
+          .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+          .flags = usageFlags,
+          .pInheritanceInfo = nullptr };
+
+        vkResetCommandBuffer( uploadCommandBuffer_, 0 );
+
+        vkBeginCommandBuffer( uploadCommandBuffer_, &beginInfo );
+
         const auto range = VkImageSubresourceRange{
           //
           .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
@@ -139,6 +165,65 @@ private:
         vkCmdPipelineBarrier(
           uploadCommandBuffer_, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0,
           nullptr, 1, &imageTransferBarrier );
+
+        const auto imageSubresource = VkImageSubresourceLayers{
+          //
+          .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+          .mipLevel = 0,
+          .baseArrayLayer = 0,
+          .layerCount = 1,
+
+        };
+
+        const auto copyRegion = VkBufferImageCopy{
+          //
+          .bufferOffset = 0,           .bufferRowLength = 0,
+          .bufferImageHeight = 0,      .imageSubresource = imageSubresource,
+          .imageExtent = imageExtent_,
+        };
+
+        //copy the buffer into the image
+        vkCmdCopyBufferToImage(
+          uploadCommandBuffer_, stagingBuffer_, deviceImage_, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion );
+
+        VkImageMemoryBarrier imageReadableBarrier = imageTransferBarrier;
+
+        imageReadableBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        imageReadableBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        imageReadableBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        imageReadableBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+        //barrier the image into the shader readable layout
+        vkCmdPipelineBarrier(
+          uploadCommandBuffer_, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0,
+          nullptr, 1, &imageReadableBarrier );
+
+        vkEndCommandBuffer( uploadCommandBuffer_ );
+
+        std::array<VkPipelineStageFlags, 0> waitStages{};
+        std::array<VkSemaphore, 0> waitsems{};
+        std::array<VkSemaphore, 0> sgnlsems{};
+        std::array<VkCommandBuffer, 1> commands{
+          //
+          uploadCommandBuffer_,
+        };
+
+        const VkSubmitInfo submitInfo{
+          .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+          .waitSemaphoreCount = waitsems.size(),
+          .pWaitSemaphores = waitsems.data(),
+          .pWaitDstStageMask = waitStages.data(),
+          .commandBufferCount = static_cast<uint32_t>( commands.size() ),
+          .pCommandBuffers = commands.data(),
+          .signalSemaphoreCount = sgnlsems.size(),
+          .pSignalSemaphores = sgnlsems.data() };
+
+        {
+            const auto err = vkQueueSubmit( context_->graphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE );
+            if ( err != VK_SUCCESS ) {
+                log::fatal( "TextureImage === error while submitting upload command {}", string_VkResult( err ) );
+            }
+        }
     }
 
 private:

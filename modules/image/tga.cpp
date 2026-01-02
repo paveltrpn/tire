@@ -64,7 +64,7 @@ struct STGAHeader {
 
 export struct Tga final : Image {
     Tga( std::string_view fname ) {
-        uint8_t color[4] = { 0, 0, 0, 0 };
+        uint8_t color[4] = { 0, 0, 0, 255 };
         uint8_t blockInfo{}, isPacked{};
         uint32_t numPixels{};
         size_t i{}, k{};
@@ -102,32 +102,34 @@ export struct Tga final : Image {
         }
 
         // Read file body.
-
-        bpp_ = _header.bits;
-        components_ = bpp_ / 8;
         width_ = _header.width;
         height_ = _header.height;
 
-        const auto channels = _header.bits / 8;
+        // Actual image format.
+        const auto availableComponents = _header.bits / 8;
 
-        data_ = new uint8_t[_header.width * _header.height * channels];
+        // Always expand RGB to RGBA image.
+        if ( _header.bits == 24 ) {
+            bpp_ = _header.bits + 8;
+        }
 
-        auto getByte = [&_fileStream, channels]( uint8_t *c ) {
-            // channels can be == 3 or 4. Hence we read 4 bytes in 4-bytes array
+        components_ = bpp_ / 8;
+
+        data_ = new uint8_t[_header.width * _header.height * components_];
+
+        auto getByte = [&_fileStream, availableComponents]( uint8_t *c ) {
+            // availableComponents can be == 3 or 4. Hence we read 4 bytes in 4-bytes array
             // or read 3 bytes and leave 4-th byte unused.
-            _fileStream.read( reinterpret_cast<char *>( c ), channels );
+            _fileStream.read( reinterpret_cast<char *>( c ), availableComponents );
         };
 
-        auto setByte = [this, channels]( size_t i, uint8_t c[4] ) {
-            // TGA store pixel as BGR, write it to decompressed
-            // array as RGB.
-            data_[i * channels + 0] = c[2];
-            data_[i * channels + 1] = c[1];
-            data_[i * channels + 2] = c[0];
-
-            if ( channels == 4 ) {
-                data_[i * channels + 3] = c[3];
-            }
+        auto setByte = [this]( size_t i, uint8_t c[4] ) {
+            // TGA store pixel as BGRA, write it to decompressed
+            // array as RGBA.
+            data_[i * components_ + 0] = c[2];
+            data_[i * components_ + 1] = c[1];
+            data_[i * components_ + 2] = c[0];
+            data_[i * components_ + 3] = c[3];
         };
 
         // Read TGA as non compressed data.

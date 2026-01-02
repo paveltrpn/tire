@@ -14,7 +14,11 @@ import :color;
 
 namespace tire {
 
-export enum class IMAGE_DEPTH { RGB = 24, RGBA = 32 };
+export enum class IMAGE_DEPTH {
+    //
+    RGB = 24,
+    RGBA = 32,
+};
 
 export struct Image {
     [[nodiscard]]
@@ -109,7 +113,7 @@ protected:
         : height_{ height }
         , width_{ width } {
         // NOTE: RGB
-        bpp_ = static_cast<decltype( bpp_ )>( IMAGE_DEPTH::RGB );
+        bpp_ = static_cast<decltype( bpp_ )>( IMAGE_DEPTH::RGBA );
 
         const auto components = bpp_ / 8;
 
