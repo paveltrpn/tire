@@ -25,12 +25,17 @@ export struct TextureImage final {
         : context_{ context }
         , textureData_{ fname } {
         //
-        VkDeviceSize imageSize = textureData_.width() * textureData_.height() * textureData_.bpp() / 8;
+        VkDeviceSize imageSize = textureData_.width() * textureData_.height() * textureData_.components();
 
-        VkFormat imageFormat = VK_FORMAT_R8G8B8A8_SRGB;
+        if ( textureData_.components() == 4 ) {
+            imageFormat_ = VK_FORMAT_R8G8B8A8_SRGB;
+        } else if ( textureData_.components() == 3 ) {
+            imageFormat_ = VK_FORMAT_R8G8B8_SRGB;
+        }
 
         initStagingBuffer( imageSize );
         uploadToStaging( textureData_.data(), imageSize );
+        initDeviceImage( imageSize );
     }
 
     auto operator=( const TextureImage &other ) -> TextureImage & = delete;
@@ -43,21 +48,24 @@ export struct TextureImage final {
 
     auto clean() -> void {
         //
-        vmaDestroyBuffer( context_->allocator(), deviceBuffer_, deviceAllocation_ );
+        vmaDestroyImage( context_->allocator(), deviceImage_, deviceAllocation_ );
         vmaDestroyBuffer( context_->allocator(), stagingBuffer_, stagingAllocation_ );
     }
 
 private:
     auto initStagingBuffer( VkDeviceSize size ) -> void {
-        VkBufferCreateInfo stagingBufferInfo{};
-        stagingBufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-        stagingBufferInfo.pNext = nullptr;
+        VkBufferCreateInfo stagingBufferInfo{
+          //
+          .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+          .pNext = nullptr,
+          .size = size,
+          .usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+        };
 
-        stagingBufferInfo.size = size;
-        stagingBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-
-        VmaAllocationCreateInfo vmaallocInfo{};
-        vmaallocInfo.usage = VMA_MEMORY_USAGE_CPU_ONLY;
+        VmaAllocationCreateInfo vmaallocInfo{
+          //
+          .usage = VMA_MEMORY_USAGE_CPU_ONLY,
+        };
 
         vmaCreateBuffer(
           context_->allocator(), &stagingBufferInfo, &vmaallocInfo, &stagingBuffer_, &stagingAllocation_, nullptr );
@@ -70,18 +78,29 @@ private:
         vmaUnmapMemory( context_->allocator(), stagingAllocation_ );
     }
 
-    auto initDeviceBuffer( VkDeviceSize size ) -> void {
-        VkBufferCreateInfo bufCreateInfo = { VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO };
-        bufCreateInfo.size = size;
-        bufCreateInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+    auto initDeviceImage( VkDeviceSize size ) -> void {
+        VkExtent3D imageExtent{
+          //
+          .width = static_cast<uint32_t>( textureData_.width() ),
+          .height = static_cast<uint32_t>( textureData_.height() ),
+          .depth = 1,
+        };
 
-        VmaAllocationCreateInfo allocCreateInfo = {};
-        allocCreateInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
-        allocCreateInfo.flags =
-          VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
+        VkImageCreateInfo imgCreateInfo{
+          //
+          .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+          .format = imageFormat_,
+          .extent = imageExtent,
+          .usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
+        };
 
-        vmaCreateBuffer(
-          context_->allocator(), &bufCreateInfo, &allocCreateInfo, &deviceBuffer_, &deviceAllocation_, nullptr );
+        VmaAllocationCreateInfo allocCreateInfo = {
+          .flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT,
+          .usage = VMA_MEMORY_USAGE_GPU_ONLY,
+        };
+
+        vmaCreateImage(
+          context_->allocator(), &imgCreateInfo, &allocCreateInfo, &deviceImage_, &deviceAllocation_, nullptr );
     }
 
 private:
@@ -89,7 +108,9 @@ private:
 
     tire::Tga textureData_;
 
-    VkBuffer deviceBuffer_{ VK_NULL_HANDLE };
+    VkFormat imageFormat_{};
+
+    VkImage deviceImage_{ VK_NULL_HANDLE };
     VmaAllocation deviceAllocation_{ VK_NULL_HANDLE };
 
     VkBuffer stagingBuffer_{ VK_NULL_HANDLE };
