@@ -235,7 +235,7 @@ export struct SceneVK final : tire::Scene {
           //
           .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
           .pNext = nullptr,
-          .size = sizeof( tire::OmniLight<float> ) * lightList_.size(),
+          .size = sizeof( tire::OmniLight ) * lightList_.size(),
           .usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
         };
 
@@ -254,7 +254,7 @@ export struct SceneVK final : tire::Scene {
 
         void *data{};
         vmaMapMemory( context_->allocator(), omniLightAllocation_, &data );
-        memcpy( data, lightList_.data(), sizeof( tire::OmniLight<float> ) * lightList_.size() );
+        memcpy( data, lightList_.data(), sizeof( tire::OmniLight ) * lightList_.size() );
         vmaUnmapMemory( context_->allocator(), omniLightAllocation_ );
     }
 
@@ -322,7 +322,7 @@ export struct SceneVK final : tire::Scene {
           //
           .buffer = omniLightUniform_,
           .offset = 0,
-          .range = sizeof( tire::OmniLight<float> ) * lightList_.size(),
+          .range = sizeof( tire::OmniLight ) * lightList_.size(),
         };
 
         VkWriteDescriptorSet omniLightWrite = {

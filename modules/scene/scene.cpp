@@ -240,11 +240,11 @@ private:
     }
 
     [[nodiscard]]
-    auto parseLights( nlohmann::json lightJson ) -> tire::generator<tire::OmniLight<float>> {
+    auto parseLights( nlohmann::json lightJson ) -> tire::generator<tire::OmniLight> {
         for ( auto &&item : lightJson ) {
             const auto &type = item[PARAM_LIGHT_TYPE];
             if ( type == PARAM_LIGHT_OMNI ) {
-                auto light = OmniLight<float>{};
+                auto light = OmniLight{};
 
                 const std::array<float, 3> position = item[PARAM_OMNILIGHT_POSITION];
                 const float constant = item[PARAM_OMNILIGHT_CONSTANT];
@@ -314,7 +314,7 @@ protected:
 
     std::vector<std::shared_ptr<Body>> bodyList_{};
     std::vector<std::shared_ptr<Flycam>> cameras_{};
-    std::vector<OmniLight<float>> lightList_{};
+    std::vector<OmniLight> lightList_{};
 
     // One camera exist anyway
     int activeCamera_{ 0 };

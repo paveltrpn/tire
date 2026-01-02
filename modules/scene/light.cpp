@@ -11,10 +11,8 @@ namespace tire {
 
 using namespace algebra;
 
-export template <typename T>
-    requires std::is_same_v<float, T> || std::is_same_v<double, T>
-struct OmniLight final {
-    using value_type = T;
+export struct OmniLight final {
+    using value_type = float;
 
     [[nodiscard]]
     vector3<value_type> position() {
