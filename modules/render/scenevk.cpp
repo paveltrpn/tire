@@ -13,6 +13,7 @@ import scene;
 import context;
 
 import :pipeline;
+import :pipeline_vertex_buffer;
 import :vertex_buffer;
 import :texture_image;
 
@@ -221,9 +222,9 @@ export struct SceneVK final : tire::Scene {
         allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
         allocInfo.descriptorPool = _descriptorPool;
         allocInfo.descriptorSetCount = 1;
-        allocInfo.pSetLayouts = &_singleTextureSetLayout;
+        allocInfo.pSetLayouts = static_cast<PiplineVertexBuffer *>( pipeline_ )->singleTextureSetLayout();
 
-        vkAllocateDescriptorSets( context_->device(), &allocInfo, &texturedMat->textureSet );
+        vkAllocateDescriptorSets( context_->device(), &allocInfo, &textureSet_ );
 
         //write to the descriptor set so that it points to our empire_diffuse texture
         VkDescriptorImageInfo imageBufferInfo;
@@ -245,8 +246,7 @@ export struct SceneVK final : tire::Scene {
         // VkWriteDescriptorSet texture1 = vkinit::write_descriptor_image(
         // VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, texturedMat->textureSet, &imageBufferInfo, 0 );
 
-        vkUpdateDescriptorSets( context_->device(), 1, &texture1, 0, nullptr );
-        */
+        vkUpdateDescriptorSets( context_->device(), 1, &texture1, 0, nullptr );*/
     }
 
     void clean() override {
@@ -274,7 +274,8 @@ private:
     VkCommandBuffer uploadCommandBuffer_{};
 
     std::shared_ptr<tire::TextureImage> testImage_;
-    VkSampler blockySampler_;
+    VkSampler blockySampler_{};
+    VkDescriptorSet textureSet_{};
 };
 
 }  // namespace tire

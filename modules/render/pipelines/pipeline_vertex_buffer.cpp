@@ -313,6 +313,12 @@ struct PiplineVertexBuffer final : Pipeline {
         }
     }
 
+    [[nodiscard]]
+    auto singleTextureSetLayout() const -> VkDescriptorSetLayout {
+        //
+        return singleTextureSetLayout_;
+    }
+
 private:
     VkDescriptorSetLayout singleTextureSetLayout_;
 };
