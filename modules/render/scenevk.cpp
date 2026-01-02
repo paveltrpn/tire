@@ -164,18 +164,9 @@ export struct SceneVK final : tire::Scene {
 
         // =================================================================================
 
+        std::array<VkDescriptorSet, 2> setsToBind{ textureSet_, omniLightSet_ };
         vkCmdBindDescriptorSets(
-          cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_->layout(), 0, 1, &textureSet_, 0, nullptr );
-
-        // =================================================================================
-
-        void *data{};
-        vmaMapMemory( context_->allocator(), omniLightAllocation_, &data );
-        memcpy( data, lightList_.data(), sizeof( tire::OmniLight<float> ) * lightList_.size() );
-        vmaUnmapMemory( context_->allocator(), omniLightAllocation_ );
-
-        vkCmdBindDescriptorSets(
-          cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_->layout(), 1, 1, &omniLightSet_, 0, nullptr );
+          cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_->layout(), 0, 2, setsToBind.data(), 0, nullptr );
 
         // =================================================================================
 
@@ -260,6 +251,11 @@ export struct SceneVK final : tire::Scene {
                 log::fatal( "SceneVK === error while creating omni light uniform buffer {}", string_VkResult( err ) );
             }
         }
+
+        void *data{};
+        vmaMapMemory( context_->allocator(), omniLightAllocation_, &data );
+        memcpy( data, lightList_.data(), sizeof( tire::OmniLight<float> ) * lightList_.size() );
+        vmaUnmapMemory( context_->allocator(), omniLightAllocation_ );
     }
 
     void initDescriptorSets() {

@@ -10,7 +10,7 @@ layout( location = 6 ) flat in int LightsCount;
 
 layout( location = 0 ) out vec4 outColor;
 
-layout(set = 0, binding = 0) uniform sampler2D tex1;
+layout(set = 0, binding = 0) uniform sampler2D diffuseTex;
 
 struct OmniLight {    
     vec3 position;
@@ -24,8 +24,8 @@ struct OmniLight {
     vec3 specular;
 };  
 
-#define MAX_LIGHTS 15  
-layout(set = 1, binding = 1) uniform OmniLights {
+#define MAX_LIGHTS 4  
+layout(std140, set = 1, binding = 1) uniform OmniLights {
     OmniLight data[MAX_LIGHTS];
 } omniLights;
 
@@ -50,11 +50,11 @@ vec3 CalcPointLight(OmniLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
   			     light.quadratic * (distance * distance));    
 
     // combine results
-    vec3 ambient  = light.ambient * vec3(texture(tex1, TexCoord));
+    vec3 ambient  = light.ambient * vec3(texture(diffuseTex, TexCoord));
 
      // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse  = light.diffuse  * diff * vec3(texture(tex1, TexCoord));
+    vec3 diffuse  = light.diffuse  * diff * vec3(texture(diffuseTex, TexCoord));
 
      // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
@@ -82,9 +82,10 @@ void main() {
     vec3 viewDir = normalize(EyePosition - FragmentPosition);
 
     vec3 result = vec3(0.0, 0.0, 0.0);
-    for(int i = 0; i < LightsCount; i++)
+    for(int i = 0; i < LightsCount; i++) {
         result += CalcPointLight(omniLights.data[i], norm, FragmentPosition, viewDir);    
-    
+    }
+
     // outColor = vec4(DiffuseColor.rgb*result, 1.0);
     vec3 color  = vec3(DiffuseColor.rgb*result);
 
