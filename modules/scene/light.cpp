@@ -13,78 +13,78 @@ export struct OmniLight final {
     using value_type = float;
 
     [[nodiscard]]
-    vector3<value_type> position() {
+    auto position() const -> vector3<value_type> {
         return position_;
     };
 
     [[nodiscard]]
-    value_type constant() {
+    auto constant() -> value_type {
         return constant_;
     };
 
     [[nodiscard]]
-    value_type linear() {
+    auto linear() -> value_type {
         return linear_;
     };
 
     [[nodiscard]]
-    value_type quadratic() {
+    auto quadratic() -> value_type {
         return quadratic_;
     };
 
     [[nodiscard]]
-    vector3<value_type> ambient() {
+    auto ambient() -> vector3<value_type> {
         return ambient_;
     };
 
     [[nodiscard]]
-    vector3<value_type> diffuse() {
+    auto diffuse() -> vector3<value_type> {
         return diffuse_;
     };
 
     [[nodiscard]]
-    vector3<value_type> specular() {
+    auto specular() -> vector3<value_type> {
         return specular_;
     };
 
     [[maybe_unused]]
-    OmniLight &setPosition( const vector3<value_type> &value ) {
+    auto setPosition( const vector3<value_type> &value ) -> OmniLight & {
         position_ = value;
         return *this;
     };
 
     [[maybe_unused]]
-    OmniLight &setConstant( value_type value ) {
+    auto setConstant( value_type value ) -> OmniLight & {
         constant_ = value;
         return *this;
     };
 
     [[maybe_unused]]
-    OmniLight &setLinear( value_type value ) {
+    auto setLinear( value_type value ) -> OmniLight & {
         linear_ = value;
         return *this;
     };
 
     [[maybe_unused]]
-    OmniLight &setQuadratic( value_type value ) {
+    auto setQuadratic( value_type value ) -> OmniLight & {
         quadratic_ = value;
         return *this;
     };
 
     [[maybe_unused]]
-    OmniLight &setAmbient( const vector3<value_type> &value ) {
+    auto setAmbient( const vector3<value_type> &value ) -> OmniLight & {
         ambient_ = value;
         return *this;
     };
 
     [[maybe_unused]]
-    OmniLight &setDiffuse( const vector3<value_type> &value ) {
+    auto setDiffuse( const vector3<value_type> &value ) -> OmniLight & {
         diffuse_ = value;
         return *this;
     };
 
     [[maybe_unused]]
-    OmniLight &setSpecular( const vector3<value_type> &value ) {
+    auto setSpecular( const vector3<value_type> &value ) -> OmniLight & {
         specular_ = value;
         return *this;
     };

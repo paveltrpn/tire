@@ -146,7 +146,7 @@ struct vector4 final {
         return rt;
     }
 
-    self &operator+=( const self &rhs ) {
+    auto operator+=( const self &rhs ) -> self & {
         ( *this ).plus( rhs );
         return *this;
     }
@@ -157,17 +157,17 @@ struct vector4 final {
         return rt;
     }
 
-    self &operator-=( const self &rhs ) {
+    auto operator-=( const self &rhs ) -> self & {
         ( *this ).minus( rhs );
         return *this;
     }
 
-    value_type *data() {
+    auto data() -> value_type * {
         //
         return data_.data();
     }
 
-    const value_type *data() const {
+    auto data() const -> const value_type * {
         //
         return data_.data();
     }
