@@ -97,9 +97,20 @@ export struct OmniLight final {
     value_type linear_{ 1.0 };
     value_type quadratic_{ 1.0 };
 
+    // NOTE: remove alignment!!!!!!
+    char p1[8]{};
+
     vector3<value_type> ambient_{ 1.0, 1.0, 1.0 };
+
+    char p2[4]{};
+
     vector3<value_type> diffuse_{ 1.0, 1.0, 1.0 };
+
+    char p3[4]{};
+
     vector3<value_type> specular_{ 1.0, 1.0, 1.0 };
+
+    char p4[4]{};
 };
 
 }  // namespace tire

@@ -24,7 +24,7 @@ struct OmniLight {
     vec3 specular;
 };
 
-#define MAX_LIGHTS 4
+#define MAX_LIGHTS 15
 layout(std140, set = 1, binding = 1) uniform OmniLights {
     OmniLight data[MAX_LIGHTS];
 } omniLights;

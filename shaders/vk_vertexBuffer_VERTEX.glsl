@@ -16,7 +16,7 @@ layout( location = 3 ) out vec3 Normal;
 layout( location = 4 ) out vec3 FragmentPosition;
 
 // For normal mapping
-layout( location =  5) out vec2 FragmentTexcrd;  
+layout( location =  5) out vec2 FragmentTexcrd;
 
 // Current scene lights count
 layout( location =  6) flat out int LightsCount;
@@ -26,7 +26,7 @@ void main() {
     EyePosition = vec3(constants.eye.xyz);
 
     vec3 diffuseColor = vec3(0.5, 0.5, 0.5);
-    int lightsCount = 4;
+    int lightsCount = 5;
 
     FragmentPosition = vertex;
     FragmentTexcrd = uv;
