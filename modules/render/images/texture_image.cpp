@@ -35,12 +35,12 @@ export struct TextureImage final {
           .depth = 1,
         };
 
-        initUploadCommandBuffer();
         initStagingBuffer( imageSize );
         initDeviceImage( imageSize );
         uploadToStaging( textureData_.data(), imageSize );
-        upload();
+        uploadCmd();
         initImageView();
+        generateMipmaps( deviceImage_, imageExtent_.width, imageExtent_.height );
     }
 
     auto operator=( const TextureImage &other ) -> TextureImage & = delete;
@@ -65,16 +65,6 @@ export struct TextureImage final {
     }
 
 private:
-    auto initUploadCommandBuffer() -> void {
-        const auto allocInfo = VkCommandBufferAllocateInfo{
-          .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-          .commandPool = context_->commandPool(),
-          .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-          .commandBufferCount = 1 };
-
-        vkAllocateCommandBuffers( context_->device(), &allocInfo, &uploadCommandBuffer_ );
-    }
-
     auto initStagingBuffer( VkDeviceSize size ) -> void {
         const auto stagingBufferInfo = VkBufferCreateInfo{
           //
@@ -113,11 +103,11 @@ private:
           .imageType = VK_IMAGE_TYPE_2D,
           .format = imageFormat_,
           .extent = imageExtent_,
-          .mipLevels = 1,
+          .mipLevels = mipLevels_,
           .arrayLayers = 1,
           .samples = VK_SAMPLE_COUNT_1_BIT,
           .tiling = VK_IMAGE_TILING_OPTIMAL,
-          .usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
+          .usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
           .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
           .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
         };
@@ -125,6 +115,7 @@ private:
         const auto allocCreateInfo = VmaAllocationCreateInfo{
           .flags = 0,
           .usage = VMA_MEMORY_USAGE_GPU_ONLY,
+          .requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
         };
 
         {
@@ -136,7 +127,17 @@ private:
         }
     }
 
-    auto upload() -> void {
+    auto uploadCmd() -> void {
+        // Allocate command buffer.
+        const auto allocInfo = VkCommandBufferAllocateInfo{
+          .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+          .commandPool = context_->commandPool(),
+          .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+          .commandBufferCount = 1 };
+
+        vkAllocateCommandBuffers( context_->device(), &allocInfo, &uploadCommandBuffer_ );
+
+        // Record command.
         VkCommandBufferUsageFlags usageFlags = { VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT };
 
         const VkCommandBufferBeginInfo beginInfo{
@@ -260,11 +261,96 @@ private:
         }
     }
 
+    auto generateMipmaps( VkImage image, int32_t texWidth, int32_t texHeight ) -> void {
+        VkCommandBuffer commandBuffer = context_->beginSingleCommand();
+
+        const auto subResource = VkImageSubresourceRange{
+          //
+          .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+          .levelCount = 1,
+          .baseArrayLayer = 0,
+          .layerCount = 1,
+        };
+
+        VkImageMemoryBarrier barrier{
+          //
+          .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+          .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+          .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+          .image = image,
+          .subresourceRange = subResource,
+        };
+
+        int32_t mipWidth = texWidth;
+        int32_t mipHeight = texHeight;
+
+        for ( uint32_t i = 1; i < mipLevels_; i++ ) {
+            barrier.subresourceRange.baseMipLevel = i - 1;
+            barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+            barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+            barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+            barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+
+            vkCmdPipelineBarrier(
+              commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0, nullptr,
+              1, &barrier );
+
+            VkImageBlit blit{};
+            blit.srcOffsets[0] = { 0, 0, 0 };
+            blit.srcOffsets[1] = { mipWidth, mipHeight, 1 };
+            blit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            blit.srcSubresource.mipLevel = i - 1;
+            blit.srcSubresource.baseArrayLayer = 0;
+            blit.srcSubresource.layerCount = 1;
+            blit.dstOffsets[0] = { 0, 0, 0 };
+            blit.dstOffsets[1] = { mipWidth > 1 ? mipWidth / 2 : 1, mipHeight > 1 ? mipHeight / 2 : 1, 1 };
+            blit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            blit.dstSubresource.mipLevel = i;
+            blit.dstSubresource.baseArrayLayer = 0;
+            blit.dstSubresource.layerCount = 1;
+
+            vkCmdBlitImage(
+              commandBuffer, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+              1, &blit, VK_FILTER_LINEAR );
+
+            barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+            barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+            barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+            vkCmdPipelineBarrier(
+              commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0,
+              nullptr, 1, &barrier );
+
+            if ( mipWidth > 1 ) mipWidth /= 2;
+            if ( mipHeight > 1 ) mipHeight /= 2;
+        }
+
+        barrier.subresourceRange.baseMipLevel = mipLevels_ - 1;
+        barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+        vkCmdPipelineBarrier(
+          commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0,
+          nullptr, 1, &barrier );
+
+        context_->endSingleCommand( commandBuffer );
+    }
+
+    [[nodiscard]]
+    auto mipLevels() const -> uint32_t {
+        //
+        return mipLevels_;
+    }
+
 private:
     const Context *context_{};
 
     tire::Tga textureData_;
 
+    uint32_t mipLevels_{ 4 };
     VkFormat imageFormat_{};
     VkExtent3D imageExtent_{};
 

@@ -252,7 +252,7 @@ struct PiplineVertexBuffer final : Pipeline {
 
         // Omni lights data descriptor.
         const auto omniLightsBind = VkDescriptorSetLayoutBinding{
-          .binding = 1,
+          .binding = 0,
           .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
           .descriptorCount = 1,
           .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,

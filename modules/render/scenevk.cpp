@@ -211,7 +211,8 @@ export struct SceneVK final : tire::Scene {
           .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
           .commandPool = context_->commandPool(),
           .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-          .commandBufferCount = 1 };
+          .commandBufferCount = 1,
+        };
 
         vkAllocateCommandBuffers( context_->device(), &allocInfo, &uploadCommandBuffer_ );
     }
@@ -221,11 +222,15 @@ export struct SceneVK final : tire::Scene {
           //
           .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
           .pNext = nullptr,
-          .magFilter = VK_FILTER_NEAREST,
-          .minFilter = VK_FILTER_NEAREST,
+          .magFilter = VK_FILTER_LINEAR,
+          .minFilter = VK_FILTER_LINEAR,
+          .mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
           .addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
           .addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
           .addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+          .mipLodBias = 0.0f,
+          .minLod = 0.0f,
+          .maxLod = VK_LOD_CLAMP_NONE,
         };
 
         vkCreateSampler( context_->device(), &info, nullptr, &blockySampler_ );
@@ -331,7 +336,7 @@ export struct SceneVK final : tire::Scene {
           .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
           .pNext = nullptr,
           .dstSet = omniLightSet_,
-          .dstBinding = 1,
+          .dstBinding = 0,
           .descriptorCount = 1,
           .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
           .pImageInfo = nullptr,

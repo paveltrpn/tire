@@ -24,7 +24,7 @@ struct OmniLight {
 };
 
 #define MAX_LIGHTS 16
-layout(std140, set = 1, binding = 1) uniform OmniLights {
+layout(std140, set = 1, binding = 0) uniform OmniLights {
     OmniLight data[MAX_LIGHTS];
 } omniLights;
 

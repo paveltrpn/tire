@@ -2,6 +2,7 @@
 module;
 
 #include <format>
+#include <vector>
 
 #define SURFACE_X11
 
@@ -11,7 +12,6 @@ module;
 #define VK_USE_PLATFORM_WAYLAND_KHR
 #endif
 
-#include <vector>
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
@@ -233,6 +233,9 @@ export struct Context final {
         //
         return descriptorPool_;
     };
+
+    auto beginSingleCommand() const -> VkCommandBuffer;
+    auto endSingleCommand( VkCommandBuffer commandBuffer ) const -> void;
 
 private:
     // Init all context
