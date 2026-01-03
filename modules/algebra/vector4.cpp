@@ -8,6 +8,7 @@ module;
 export module algebra:vector4;
 
 import :concepts;
+import :vector3;
 
 namespace tire::algebra {
 
@@ -36,6 +37,20 @@ struct vector4 final {
         data_[1] = arr[1];
         data_[2] = arr[2];
         data_[3] = arr[3];
+    }
+
+    vector4( const std::array<value_type, 3> &arr, value_type w = 0.0 ) {
+        data_[0] = arr[0];
+        data_[1] = arr[1];
+        data_[2] = arr[2];
+        data_[3] = w;
+    }
+
+    vector4( const vector3<value_type> other, value_type w = 0.0 ) {
+        data_[0] = other.x();
+        data_[1] = other.y();
+        data_[2] = other.z();
+        data_[3] = w;
     }
 
     vector4( const self &rhs ) {
@@ -72,11 +87,11 @@ struct vector4 final {
         return data_[3];
     }
 
-    void plus( const self &b ) {
+    auto plus( const self &b ) -> void {
         for ( size_t i = 0; i < 3; ++i ) data_[i] += b.data_[i];
     };
 
-    void minus( const self &b ) {
+    auto minus( const self &b ) -> void {
         for ( size_t i = 0; i < 3; ++i ) data_[i] -= b.data_[i];
     };
 
@@ -97,7 +112,7 @@ struct vector4 final {
         return { value_type( x ), value_type( y ), value_type( z ), value_type( w ) };
     }
 
-    value_type dot( const self &b ) const {
+    auto dot( const self &b ) const -> value_type {
         value_type rt{};
 
         for ( size_t i = 0; i < 3; ++i ) rt += data_[i] * b.data_[i];
@@ -105,14 +120,17 @@ struct vector4 final {
         return rt;
     }
 
-    value_type sqLength() const { return dot( *this ); }
+    auto sqLength() const -> value_type {
+        //
+        return dot( *this );
+    }
 
     auto length() -> value_type const {
         // TODO: call proper square root function for float and double
         return std::sqrt( sqLength() );
     }
 
-    void normalizeSelf() {
+    auto normalizeSelf() -> void {
         value_type len = length();
 
         if ( len > 0.0 ) {
@@ -144,9 +162,15 @@ struct vector4 final {
         return *this;
     }
 
-    value_type *data() { return data_.data(); }
+    value_type *data() {
+        //
+        return data_.data();
+    }
 
-    const value_type *data() const { return data_.data(); }
+    const value_type *data() const {
+        //
+        return data_.data();
+    }
 
     // std::get overload for structured binding vector4 types
     template <size_t I>
