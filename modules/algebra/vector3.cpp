@@ -120,6 +120,16 @@ struct vector3 final {
         return { x, y, z };
     }
 
+    auto operator[]( size_t index ) -> value_type & {
+        //
+        return data_[index];
+    }
+
+    auto operator[]( size_t index ) const -> const value_type & {
+        //
+        return data_[index];
+    }
+
     friend auto operator+( const self &lhs, const self &rhs ) -> self {
         auto rt = lhs;
         rt.plus( rhs );

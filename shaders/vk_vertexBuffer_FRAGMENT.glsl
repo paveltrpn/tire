@@ -13,18 +13,17 @@ layout( location = 0 ) out vec4 outColor;
 layout(set = 0, binding = 0) uniform sampler2D diffuseTex;
 
 struct OmniLight {
-    vec3 position;
+    vec4 aPosition;
 
-    float constant;
-    float linear;
-    float quadratic;
+    // Arrange as [CONSTANT, LINEAR, QUADRATIC]
+    vec4 saturationComponents;
 
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec4 aAmbient;
+    vec4 aDiffuse;
+    vec4 aSpecular;
 };
 
-#define MAX_LIGHTS 15
+#define MAX_LIGHTS 16
 layout(std140, set = 1, binding = 1) uniform OmniLights {
     OmniLight data[MAX_LIGHTS];
 } omniLights;
@@ -42,33 +41,44 @@ vec3 ToSRGB(vec3 v)   { return PowVec3(v, 1.0/gamma); }
 
 vec3 CalcPointLight(OmniLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
-    vec3 lightDir = normalize(light.position - fragPos);
+    vec3 position = light.aPosition.xyz;
+
+    float constant  = light.saturationComponents.x;
+    float linear    = light.saturationComponents.y;
+    float quadratic = light.saturationComponents.z;
+
+    vec3 ambient  = light.aAmbient.xyz;
+    vec3 diffuse  = light.aDiffuse.xyz;
+    vec3 specular = light.aSpecular.xyz;
+
+    vec3 lightDir = normalize(position - fragPos);
 
     // attenuation
-    float distance    = length(light.position - fragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * distance +
-  			     light.quadratic * (distance * distance));
+    float distance    = length(position - fragPos);
+    float attenuation = 1.0 / (constant + linear * distance +
+  			     quadratic * (distance * distance));
 
     // combine results
-    vec3 ambient  = light.ambient * vec3(texture(diffuseTex, TexCoord));
+    vec3 ambientColor  = ambient * vec3(texture(diffuseTex, TexCoord));
 
      // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse  = light.diffuse  * diff * vec3(texture(diffuseTex, TexCoord));
+    vec3 diffuseColor  = diffuse  * diff * vec3(texture(diffuseTex, TexCoord));
 
      // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
     float materialShininess = 128;
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), materialShininess);
-    //vec3 specular = light.specular * spec * vec3(texture(roughnessTexture, TexCoord));
+
+    // vec3 specularColor = light.specular * spec * vec3(texture(roughnessTexture, TexCoord));
+    vec3 specularColor = specular * spec * vec3(0.5, 0.5, 0.5);
 
 
-    ambient  *= attenuation;
-    diffuse  *= attenuation;
-    //specular *= attenuation;
+    ambientColor  *= attenuation;
+    diffuseColor  *= attenuation;
+    specularColor *= attenuation;
 
-    //return (diffuse + ambient + specular);
-    return (diffuse + ambient);
+    return (diffuseColor + ambientColor + specularColor);
 }
 
 void main() {

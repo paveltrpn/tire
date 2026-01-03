@@ -65,6 +65,26 @@ struct vector4 final {
     auto operator=( const vector4 &other ) -> vector4 & = default;
     auto operator=( vector4 &&other ) -> vector4 & = default;
 
+    auto operator=( const vector3<value_type> &other ) -> vector4 & {
+        //
+        data_[0] = other.x();
+        data_[1] = other.y();
+        data_[2] = other.z();
+        data_[3] = 0.0;
+
+        return *this;
+    }
+
+    auto operator=( vector3<value_type> &&other ) -> vector4 & {
+        //
+        data_[0] = other.x();
+        data_[1] = other.y();
+        data_[2] = other.z();
+        data_[3] = 0.0;
+
+        return *this;
+    }
+
     ~vector4() = default;
 
     auto x() const -> value_type {
@@ -138,6 +158,16 @@ struct vector4 final {
                 data_[i] /= len;
             }
         }
+    }
+
+    auto operator[]( size_t index ) -> value_type & {
+        //
+        return data_[index];
+    }
+
+    auto operator[]( size_t index ) const -> const value_type & {
+        //
+        return data_[index];
     }
 
     friend auto operator+( const self &lhs, const self &rhs ) -> self {
