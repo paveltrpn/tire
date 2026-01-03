@@ -93,7 +93,7 @@ struct vector4 final {
     }
 
     auto y() const -> value_type {
-        // /
+        //
         return data_[1];
     }
 
@@ -108,11 +108,15 @@ struct vector4 final {
     }
 
     auto plus( const self &b ) -> void {
-        for ( size_t i = 0; i < 3; ++i ) data_[i] += b.data_[i];
+        for ( size_t i = 0; i < 4; ++i ) {
+            data_[i] += b.data_[i];
+        }
     };
 
     auto minus( const self &b ) -> void {
-        for ( size_t i = 0; i < 3; ++i ) data_[i] -= b.data_[i];
+        for ( size_t i = 0; i < 4; ++i ) {
+            data_[i] -= b.data_[i];
+        }
     };
 
     template <typename U>

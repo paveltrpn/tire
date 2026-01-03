@@ -115,6 +115,8 @@ export struct OmniLight final {
     };
 
 private:
+    // All data is vec4 to preserve GLSL compatible alignment.
+
     vector4<value_type> position_{ 0.0, 0.0, 0.0, 0.0 };
 
     // Arrange as [CONSTANT, LINEAR, QUADRATIC]
