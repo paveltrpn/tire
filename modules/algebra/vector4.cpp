@@ -148,6 +148,44 @@ struct vector4 final {
 
     const value_type *data() const { return data_.data(); }
 
+    // std::get overload for structured binding vector4 types
+    template <size_t I>
+    auto get() -> value_type & {
+        if constexpr ( I == 0 )
+            return data_[0];
+        else if constexpr ( I == 1 )
+            return data_[1];
+        else if constexpr ( I == 2 )
+            return data_[2];
+        else if constexpr ( I == 3 )
+            return data_[3];
+    }
+
+    template <size_t I>
+    auto get() const -> value_type const & {
+        if constexpr ( I == 0 )
+            return data_[0];
+        else if constexpr ( I == 1 )
+            return data_[1];
+        else if constexpr ( I == 2 )
+            return data_[2];
+        else if constexpr ( I == 3 )
+            return data_[3];
+    }
+
+    template <size_t I>
+    auto get() -> value_type && {
+        if constexpr ( I == 0 )
+            return std::move( data_[0] );
+        else if constexpr ( I == 1 )
+            return std::move( data_[1] );
+        else if constexpr ( I == 2 )
+            return std::move( data_[2] );
+        else if constexpr ( I == 3 )
+            return std::move( data_[3] );
+        ;
+    }
+
 private:
     std::array<value_type, 4> data_{};
 };
@@ -157,3 +195,56 @@ export using vector4f = vector4<float>;
 export using vector4d = vector4<double>;
 
 }  // namespace tire::algebra
+
+// NOTE: namespace std!!!
+namespace std {
+
+// Structured binding for vector3f
+template <>
+struct tuple_size<tire::algebra::vector4f> : std::integral_constant<size_t, 4> {};
+
+template <>
+struct tuple_element<0, tire::algebra::vector4f> {
+    using type = float;
+};
+
+template <>
+struct tuple_element<1, tire::algebra::vector4f> {
+    using type = float;
+};
+
+template <>
+struct tuple_element<2, tire::algebra::vector4f> {
+    using type = float;
+};
+
+template <>
+struct tuple_element<3, tire::algebra::vector4f> {
+    using type = float;
+};
+
+// Structured binding for vector3d
+template <>
+struct tuple_size<tire::algebra::vector4d> : std::integral_constant<size_t, 4> {};
+
+template <>
+struct tuple_element<0, tire::algebra::vector4d> {
+    using type = double;
+};
+
+template <>
+struct tuple_element<1, tire::algebra::vector4d> {
+    using type = double;
+};
+
+template <>
+struct tuple_element<2, tire::algebra::vector4d> {
+    using type = double;
+};
+
+template <>
+struct tuple_element<3, tire::algebra::vector4d> {
+    using type = double;
+};
+
+}  // namespace std

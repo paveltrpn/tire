@@ -1,8 +1,6 @@
 
 module;
 
-#include <type_traits>
-
 export module scene:light;
 
 import algebra;
