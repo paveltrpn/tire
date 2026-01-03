@@ -140,7 +140,7 @@ struct vector4 final {
         }
     }
 
-    friend self operator+( const self &lhs, const self &rhs ) {
+    friend auto operator+( const self &lhs, const self &rhs ) -> self {
         auto rt = lhs;
         rt.plus( rhs );
         return rt;
@@ -151,7 +151,7 @@ struct vector4 final {
         return *this;
     }
 
-    friend self operator-( const self &lhs, const self &rhs ) {
+    friend auto operator-( const self &lhs, const self &rhs ) -> self {
         auto rt = lhs;
         rt.minus( rhs );
         return rt;
