@@ -29,13 +29,13 @@ struct vector3 final {
         data_[2] = z;
     }
 
-    vector3( const std::array<value_type, 3>& arr ) {
+    vector3( const std::array<value_type, 3> &arr ) {
         data_[0] = arr[0];
         data_[1] = arr[1];
         data_[2] = arr[2];
     }
 
-    vector3( const self& rhs ) {
+    vector3( const self &rhs ) {
         data_[0] = rhs.data_[0];
         data_[1] = rhs.data_[1];
         data_[2] = rhs.data_[2];
@@ -45,11 +45,11 @@ struct vector3 final {
     value_type y() const { return data_[1]; }
     value_type z() const { return data_[2]; }
 
-    void plus( const self& b ) {
+    void plus( const self &b ) {
         for ( size_t i = 0; i < 3; ++i ) data_[i] += b.data_[i];
     };
 
-    void minus( const self& b ) {
+    void minus( const self &b ) {
         for ( size_t i = 0; i < 3; ++i ) data_[i] -= b.data_[i];
     };
 
@@ -70,7 +70,7 @@ struct vector3 final {
         return { value_type( x ), value_type( y ), value_type( z ) };
     }
 
-    value_type dot( const self& b ) const {
+    value_type dot( const self &b ) const {
         value_type rt{};
 
         for ( size_t i = 0; i < 3; ++i ) rt += data_[i] * b.data_[i];
@@ -95,7 +95,7 @@ struct vector3 final {
         }
     }
 
-    self cross( const self& other ) const {
+    self cross( const self &other ) const {
         auto x = data_[1] * other.data_[2] - data_[2] * other.data_[1];
         auto y = data_[2] * other.data_[0] - data_[0] * other.data_[2];
         auto z = data_[0] * other.data_[1] - data_[1] * other.data_[0];
@@ -103,35 +103,35 @@ struct vector3 final {
         return { x, y, z };
     }
 
-    friend self operator+( const self& lhs, const self& rhs ) {
+    friend self operator+( const self &lhs, const self &rhs ) {
         auto rt = lhs;
         rt.plus( rhs );
         return rt;
     }
 
-    self& operator+=( const self& rhs ) {
+    self &operator+=( const self &rhs ) {
         ( *this ).plus( rhs );
         return *this;
     }
 
-    friend self operator-( const self& lhs, const self& rhs ) {
+    friend self operator-( const self &lhs, const self &rhs ) {
         auto rt = lhs;
         rt.minus( rhs );
         return rt;
     }
 
-    self& operator-=( const self& rhs ) {
+    self &operator-=( const self &rhs ) {
         ( *this ).minus( rhs );
         return *this;
     }
 
     // Internal data pointer getter
-    value_type* data() { return data_.data(); }
-    const value_type* data() const { return data_.data(); }
+    value_type *data() { return data_.data(); }
+    const value_type *data() const { return data_.data(); }
 
     // std::get overload for structured binding vector3 types
     template <size_t I>
-    auto& get() & {
+    auto get() -> value_type & {
         if constexpr ( I == 0 )
             return data_[0];
         else if constexpr ( I == 1 )
@@ -141,7 +141,7 @@ struct vector3 final {
     }
 
     template <size_t I>
-    auto const& get() const& {
+    auto get() const -> value_type const & {
         if constexpr ( I == 0 )
             return data_[0];
         else if constexpr ( I == 1 )
@@ -151,7 +151,7 @@ struct vector3 final {
     }
 
     template <size_t I>
-    auto&& get() && {
+    auto get() -> value_type && {
         if constexpr ( I == 0 )
             return std::move( data_[0] );
         else if constexpr ( I == 1 )
@@ -175,8 +175,7 @@ namespace std {
 
 // Structured binding for vector3f
 template <>
-struct tuple_size<tire::algebra::vector3f>
-    : std::integral_constant<size_t, 3> {};
+struct tuple_size<tire::algebra::vector3f> : std::integral_constant<size_t, 3> {};
 
 template <>
 struct tuple_element<0, tire::algebra::vector3f> {
@@ -195,8 +194,7 @@ struct tuple_element<2, tire::algebra::vector3f> {
 
 // Structured binding for vector3d
 template <>
-struct tuple_size<tire::algebra::vector3d>
-    : std::integral_constant<size_t, 3> {};
+struct tuple_size<tire::algebra::vector3d> : std::integral_constant<size_t, 3> {};
 
 template <>
 struct tuple_element<0, tire::algebra::vector3d> {

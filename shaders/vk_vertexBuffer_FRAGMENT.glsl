@@ -4,27 +4,27 @@ layout( location = 0 ) in vec3 EyePosition;
 layout( location = 1 ) in vec3 DiffuseColor;
 layout( location = 2 ) in vec2 TexCoord;
 layout( location = 3 ) in vec3 Normal;
-layout( location = 4 ) in vec3 FragmentPosition; 
-layout( location = 5 ) in vec2 FragmentTexcrd;  
+layout( location = 4 ) in vec3 FragmentPosition;
+layout( location = 5 ) in vec2 FragmentTexcrd;
 layout( location = 6 ) flat in int LightsCount;
 
 layout( location = 0 ) out vec4 outColor;
 
 layout(set = 0, binding = 0) uniform sampler2D diffuseTex;
 
-struct OmniLight {    
+struct OmniLight {
     vec3 position;
-    
+
     float constant;
     float linear;
-    float quadratic;  
+    float quadratic;
 
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-};  
+};
 
-#define MAX_LIGHTS 4  
+#define MAX_LIGHTS 4
 layout(std140, set = 1, binding = 1) uniform OmniLights {
     OmniLight data[MAX_LIGHTS];
 } omniLights;
@@ -46,8 +46,8 @@ vec3 CalcPointLight(OmniLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
     // attenuation
     float distance    = length(light.position - fragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * distance + 
-  			     light.quadratic * (distance * distance));    
+    float attenuation = 1.0 / (light.constant + light.linear * distance +
+  			     light.quadratic * (distance * distance));
 
     // combine results
     vec3 ambient  = light.ambient * vec3(texture(diffuseTex, TexCoord));
@@ -69,7 +69,7 @@ vec3 CalcPointLight(OmniLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
     //return (diffuse + ambient + specular);
     return (diffuse + ambient);
-} 
+}
 
 void main() {
     // Pass alreaady normalized?
@@ -77,13 +77,13 @@ void main() {
 
     // Get normal from normal map, but we need tangent space...
     //vec3 norm = texture(normalmapTexture, FragmentTexcrd).rgb;
-    //norm = normalize(norm * 2.0 - 1.0);  
+    //norm = normalize(norm * 2.0 - 1.0);
 
     vec3 viewDir = normalize(EyePosition - FragmentPosition);
 
     vec3 result = vec3(0.0, 0.0, 0.0);
     for(int i = 0; i < LightsCount; i++) {
-        result += CalcPointLight(omniLights.data[i], norm, FragmentPosition, viewDir);    
+        result += CalcPointLight(omniLights.data[i], norm, FragmentPosition, viewDir);
     }
 
     // outColor = vec4(DiffuseColor.rgb*result, 1.0);
