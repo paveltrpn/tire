@@ -191,4 +191,24 @@ auto Context::createDescriptorPool() -> void {
     }
 }
 
+auto Context::initCopyCommandBuffer() -> void {
+    VkFenceCreateInfo fenceInfo{
+      //
+      .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+      .pNext = nullptr,
+      .flags = 0,
+    };
+
+    vkCreateFence( device_, &fenceInfo, nullptr, &copyCommandFence_ );
+
+    const VkCommandBufferAllocateInfo allocInfo{
+      .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+      .commandPool = commandPool_,
+      .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+      .commandBufferCount = 1,
+    };
+
+    vkAllocateCommandBuffers( device_, &allocInfo, &copyCommandBuffer_ );
+}
+
 }  // namespace tire

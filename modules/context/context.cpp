@@ -74,6 +74,8 @@ export struct Context final {
 
     // Destroy all Vulkan context here.
     ~Context() {
+        vkDestroyFence( device_, copyCommandFence_, nullptr );
+
         vkDestroyImage( device_, depthImage_, nullptr );
         vkDestroyImageView( device_, depthImageView_, nullptr );
         vkFreeMemory( device_, depthImageMemory_, nullptr );
@@ -240,6 +242,9 @@ export struct Context final {
     auto renderCommand( uint32_t frameId ) -> CommandRoutine;
 
     [[nodiscard]]
+    auto copyBufferCommand() const -> CommandRoutine;
+
+    [[nodiscard]]
     auto immidiateCommand() const -> CommandRoutine;
 
 private:
@@ -253,6 +258,7 @@ private:
     auto makeFrames() -> void;
     auto createAllocator() -> void;
     auto createDescriptorPool() -> void;
+    auto initCopyCommandBuffer() -> void;
 
     auto initRest() -> void {
         collectPhysicalDevices();
@@ -263,6 +269,7 @@ private:
         initRenderPass();
         makeFrames();
         createDescriptorPool();
+        initCopyCommandBuffer();
 
         // Note that the order of clearValues should be identical to the order of your
         // attachments
@@ -347,6 +354,10 @@ protected:
 
     //
     VkDescriptorPool descriptorPool_{};
+
+    // Reusable command buffer with fence.
+    VkFence copyCommandFence_{};
+    VkCommandBuffer copyCommandBuffer_{};
 };
 
 }  // namespace tire

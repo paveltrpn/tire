@@ -112,11 +112,14 @@ export struct RenderVK final {
 
         scene_->camera().update();
 
-        scene_->submit();
+        {
+            auto cb = context_->copyBufferCommand();
+            scene_->upload( cb.buf() );
+        }
 
         {
             auto cb = context_->renderCommand( currentFrame_ );
-            scene_->output( cb.buf() );
+            scene_->draw( cb.buf() );
         }
 
         // NOTE: About draw few geometry sets within same command buffer AI dummy said:

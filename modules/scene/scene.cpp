@@ -138,8 +138,6 @@ export struct Scene {
         return backgrounColor_;
     };
 
-    virtual void submit() = 0;
-    virtual void draw() = 0;
     virtual void clean() = 0;
 
     auto traverse( float duration ) -> void {

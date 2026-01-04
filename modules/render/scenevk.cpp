@@ -35,7 +35,6 @@ export struct SceneVK final : tire::Scene {
             log::error( "Scene === test image {}", e.what() );
         }
 
-        initUploadCommandBuffer();
         initTextureSmpler();
         initOmniLigtBuffer();
         initDescriptorSets();
@@ -59,7 +58,7 @@ export struct SceneVK final : tire::Scene {
         }
     }
 
-    void submit() override {
+    void upload( const VkCommandBuffer cb ) {
         const auto nodeListSize = bodyList_.size();
 
         // Fill CPU side buffer (staging) with new verticies data.
@@ -76,21 +75,6 @@ export struct SceneVK final : tire::Scene {
             texcBuffersList_[i]->populate( tDataPtr );
         }
 
-        // Record command to transfer data from CPU to GPU side.
-        VkCommandBufferUsageFlags usageFlags = { VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT };
-
-        const VkCommandBufferBeginInfo beginInfo{
-          //
-          .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-          .flags = usageFlags,
-          .pInheritanceInfo = nullptr };
-
-        std::array<VkFence, 1> fences = { uploadFence_ };
-
-        vkResetCommandBuffer( uploadCommandBuffer_, 0 );
-
-        vkBeginCommandBuffer( uploadCommandBuffer_, &beginInfo );
-
         for ( size_t i{ 0 }; i < nodeListSize; ++i ) {
             VkBufferCopy copyVrt{
               //
@@ -100,8 +84,7 @@ export struct SceneVK final : tire::Scene {
             };
 
             vkCmdCopyBuffer(
-              uploadCommandBuffer_, vertBuffersList_[i]->stagingBuffer(), vertBuffersList_[i]->deviceBuffer(), 1,
-              &copyVrt );
+              cb, vertBuffersList_[i]->stagingBuffer(), vertBuffersList_[i]->deviceBuffer(), 1, &copyVrt );
 
             VkBufferCopy copyNrm{
               //
@@ -111,8 +94,7 @@ export struct SceneVK final : tire::Scene {
             };
 
             vkCmdCopyBuffer(
-              uploadCommandBuffer_, nrmlBuffersList_[i]->stagingBuffer(), nrmlBuffersList_[i]->deviceBuffer(), 1,
-              &copyNrm );
+              cb, nrmlBuffersList_[i]->stagingBuffer(), nrmlBuffersList_[i]->deviceBuffer(), 1, &copyNrm );
 
             VkBufferCopy copyTxc{
               //
@@ -122,44 +104,11 @@ export struct SceneVK final : tire::Scene {
             };
 
             vkCmdCopyBuffer(
-              uploadCommandBuffer_, texcBuffersList_[i]->stagingBuffer(), texcBuffersList_[i]->deviceBuffer(), 1,
-              &copyTxc );
+              cb, texcBuffersList_[i]->stagingBuffer(), texcBuffersList_[i]->deviceBuffer(), 1, &copyTxc );
         }
-
-        vkEndCommandBuffer( uploadCommandBuffer_ );
-
-        std::array<VkPipelineStageFlags, 1> waitStages{
-          //
-          VK_PIPELINE_STAGE_TRANSFER_BIT,
-        };
-        std::array<VkSemaphore, 0> waitsems{};
-        std::array<VkSemaphore, 0> sgnlsems{};
-        std::array<VkCommandBuffer, 1> commands{
-          //
-          uploadCommandBuffer_,
-        };
-
-        const VkSubmitInfo submitInfo{
-          .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-          .waitSemaphoreCount = waitsems.size(),
-          .pWaitSemaphores = waitsems.data(),
-          .pWaitDstStageMask = waitStages.data(),
-          .commandBufferCount = static_cast<uint32_t>( commands.size() ),
-          .pCommandBuffers = commands.data(),
-          .signalSemaphoreCount = sgnlsems.size(),
-          .pSignalSemaphores = sgnlsems.data() };
-
-        vkQueueSubmit( context_->graphicsQueue(), 1, &submitInfo, uploadFence_ );
-
-        // NOTE: This fence works but synchroniztion validation error
-        // SYNC-HAZARD-WRITE-AFTER-READ still occurs. Conflicting with vkCmdDraw later.
-        // Enable VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT in instance
-        // to see debug output.
-        vkWaitForFences( context_->device(), fences.size(), fences.data(), VK_TRUE, UINT64_MAX );
-        vkResetFences( context_->device(), fences.size(), fences.data() );
     }
 
-    void output( const VkCommandBuffer cb ) {
+    void draw( const VkCommandBuffer cb ) {
         vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_->pipeline() );
 
         // =================================================================================
@@ -195,26 +144,6 @@ export struct SceneVK final : tire::Scene {
             vkCmdBindVertexBuffers( cb, 0, vertexBuffers.size(), vertexBuffers.data(), offsets.data() );
             vkCmdDraw( cb, vCount, 3, 0, 0 );
         }
-    }
-
-    auto initUploadCommandBuffer() -> void {
-        VkFenceCreateInfo fenceInfo{
-          //
-          .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-          .pNext = nullptr,
-          .flags = 0,
-        };
-
-        vkCreateFence( context_->device(), &fenceInfo, nullptr, &uploadFence_ );
-
-        const VkCommandBufferAllocateInfo allocInfo{
-          .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-          .commandPool = context_->commandPool(),
-          .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-          .commandBufferCount = 1,
-        };
-
-        vkAllocateCommandBuffers( context_->device(), &allocInfo, &uploadCommandBuffer_ );
     }
 
     auto initTextureSmpler() -> void {
@@ -347,7 +276,6 @@ export struct SceneVK final : tire::Scene {
     }
 
     void clean() override {
-        vkDestroyFence( context_->device(), uploadFence_, nullptr );
         vmaDestroyBuffer( context_->allocator(), omniLightUniform_, omniLightAllocation_ );
 
         const auto nodeListSize = bodyList_.size();
@@ -358,8 +286,6 @@ export struct SceneVK final : tire::Scene {
         }
     };
 
-    void draw() override {};
-
 private:
     const Context *context_;
     const Pipeline *pipeline_;
@@ -367,9 +293,6 @@ private:
     std::vector<std::shared_ptr<VertexBuffer>> vertBuffersList_;
     std::vector<std::shared_ptr<VertexBuffer>> nrmlBuffersList_;
     std::vector<std::shared_ptr<VertexBuffer>> texcBuffersList_;
-
-    VkFence uploadFence_{};
-    VkCommandBuffer uploadCommandBuffer_{};
 
     std::shared_ptr<tire::TextureImage> testImage_;
     VkSampler blockySampler_{};
