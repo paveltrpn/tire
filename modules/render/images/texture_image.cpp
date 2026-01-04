@@ -202,6 +202,8 @@ private:
           .image = deviceImage_,
           .viewType = VK_IMAGE_VIEW_TYPE_2D,
           .format = VK_FORMAT_R8G8B8A8_SRGB,
+          .components =
+            { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A },
           .subresourceRange = subResRange,
         };
 
