@@ -128,27 +128,7 @@ private:
     }
 
     auto uploadCmd() -> void {
-        // Allocate command buffer.
-        const auto allocInfo = VkCommandBufferAllocateInfo{
-          .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-          .commandPool = context_->commandPool(),
-          .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-          .commandBufferCount = 1 };
-
-        vkAllocateCommandBuffers( context_->device(), &allocInfo, &uploadCommandBuffer_ );
-
-        // Record command.
-        VkCommandBufferUsageFlags usageFlags = { VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT };
-
-        const VkCommandBufferBeginInfo beginInfo{
-          //
-          .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-          .flags = usageFlags,
-          .pInheritanceInfo = nullptr };
-
-        vkResetCommandBuffer( uploadCommandBuffer_, 0 );
-
-        vkBeginCommandBuffer( uploadCommandBuffer_, &beginInfo );
+        auto c = context_->immidiateCommand();
 
         const auto range = VkImageSubresourceRange{
           //
@@ -172,8 +152,8 @@ private:
 
         //barrier the image into the transfer-receive layout
         vkCmdPipelineBarrier(
-          uploadCommandBuffer_, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0,
-          nullptr, 1, &imageTransferBarrier );
+          c.buf(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0, nullptr, 1,
+          &imageTransferBarrier );
 
         const auto imageSubresource = VkImageSubresourceLayers{
           //
@@ -193,7 +173,7 @@ private:
 
         //copy the buffer into the image
         vkCmdCopyBufferToImage(
-          uploadCommandBuffer_, stagingBuffer_, deviceImage_, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion );
+          c.buf(), stagingBuffer_, deviceImage_, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion );
 
         VkImageMemoryBarrier imageReadableBarrier = imageTransferBarrier;
 
@@ -204,35 +184,8 @@ private:
 
         //barrier the image into the shader readable layout
         vkCmdPipelineBarrier(
-          uploadCommandBuffer_, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0,
-          nullptr, 1, &imageReadableBarrier );
-
-        vkEndCommandBuffer( uploadCommandBuffer_ );
-
-        std::array<VkPipelineStageFlags, 0> waitStages{};
-        std::array<VkSemaphore, 0> waitsems{};
-        std::array<VkSemaphore, 0> sgnlsems{};
-        std::array<VkCommandBuffer, 1> commands{
-          //
-          uploadCommandBuffer_,
-        };
-
-        const VkSubmitInfo submitInfo{
-          .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-          .waitSemaphoreCount = waitsems.size(),
-          .pWaitSemaphores = waitsems.data(),
-          .pWaitDstStageMask = waitStages.data(),
-          .commandBufferCount = static_cast<uint32_t>( commands.size() ),
-          .pCommandBuffers = commands.data(),
-          .signalSemaphoreCount = sgnlsems.size(),
-          .pSignalSemaphores = sgnlsems.data() };
-
-        {
-            const auto err = vkQueueSubmit( context_->graphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE );
-            if ( err != VK_SUCCESS ) {
-                log::fatal( "TextureImage === error while submitting upload command {}", string_VkResult( err ) );
-            }
-        }
+          c.buf(), VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1,
+          &imageReadableBarrier );
     }
 
     auto initImageView() -> void {
@@ -261,7 +214,7 @@ private:
         }
     }
 
-    auto generateMipmaps( VkImage image, int32_t texWidth, int32_t texHeight ) -> void {
+    auto generateMipmaps( VkImage image, uint32_t texWidth, uint32_t texHeight ) -> void {
         //VkCommandBuffer commandBuffer = context_->beginSingleCommand();
         auto c = context_->immidiateCommand();
 
@@ -282,8 +235,8 @@ private:
           .subresourceRange = subResource,
         };
 
-        int32_t mipWidth = texWidth;
-        int32_t mipHeight = texHeight;
+        int32_t mipWidth = static_cast<int32_t>( texWidth );
+        int32_t mipHeight = static_cast<int32_t>( texHeight );
 
         for ( uint32_t i = 1; i < mipLevels_; i++ ) {
             barrier.subresourceRange.baseMipLevel = i - 1;
@@ -354,8 +307,6 @@ private:
     uint32_t mipLevels_{ 4 };
     VkFormat imageFormat_{};
     VkExtent3D imageExtent_{};
-
-    VkCommandBuffer uploadCommandBuffer_{};
 
     VkImage deviceImage_{ VK_NULL_HANDLE };
     VmaAllocation deviceAllocation_{ VK_NULL_HANDLE };

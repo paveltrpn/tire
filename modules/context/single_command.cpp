@@ -10,6 +10,8 @@ module;
 
 export module context:single_command;
 
+import log;
+
 import :context;
 
 namespace tire {
@@ -55,8 +57,15 @@ export struct CommandRoutine {
         std::exception_ptr exception_;
     };
 
+    CommandRoutine() = delete;
     CommandRoutine( handle_type h )
         : h_( h ) {}
+
+    CommandRoutine( const CommandRoutine &other ) = delete;
+    CommandRoutine( CommandRoutine &&other ) = delete;
+
+    auto operator=( const CommandRoutine &other ) = delete;
+    auto operator=( CommandRoutine &&other ) = delete;
 
     ~CommandRoutine() {
         //
@@ -131,10 +140,13 @@ auto Context::immidiateCommand() const -> CommandRoutine {
     VkCommandBuffer commandBuffer{};
     vkAllocateCommandBuffers( device_, &allocInfo, &commandBuffer );
 
-    const auto beginInfo = VkCommandBufferBeginInfo{
+    VkCommandBufferUsageFlags usageFlags = { VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT };
+
+    const VkCommandBufferBeginInfo beginInfo{
       //
       .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-      .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+      .flags = usageFlags,
+      .pInheritanceInfo = nullptr,
     };
 
     vkBeginCommandBuffer( commandBuffer, &beginInfo );
@@ -143,14 +155,31 @@ auto Context::immidiateCommand() const -> CommandRoutine {
 
     vkEndCommandBuffer( commandBuffer );
 
-    const auto submitInfo = VkSubmitInfo{
+    std::array<VkPipelineStageFlags, 0> waitStages{};
+    std::array<VkSemaphore, 0> waitsems{};
+    std::array<VkSemaphore, 0> sgnlsems{};
+    std::array<VkCommandBuffer, 1> commands{
       //
-      .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-      .commandBufferCount = 1,
-      .pCommandBuffers = &commandBuffer,
+      commandBuffer,
     };
 
-    vkQueueSubmit( graphicsQueue_, 1, &submitInfo, VK_NULL_HANDLE );
+    const VkSubmitInfo submitInfo{
+      .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+      .waitSemaphoreCount = waitsems.size(),
+      .pWaitSemaphores = waitsems.data(),
+      .pWaitDstStageMask = waitStages.data(),
+      .commandBufferCount = static_cast<uint32_t>( commands.size() ),
+      .pCommandBuffers = commands.data(),
+      .signalSemaphoreCount = sgnlsems.size(),
+      .pSignalSemaphores = sgnlsems.data() };
+
+    {
+        const auto err = vkQueueSubmit( graphicsQueue_, 1, &submitInfo, VK_NULL_HANDLE );
+        if ( err != VK_SUCCESS ) {
+            log::fatal( "Context === error while command coroutine {}", string_VkResult( err ) );
+        }
+    }
+
     vkQueueWaitIdle( graphicsQueue_ );
 
     vkFreeCommandBuffers( device_, commandPool_, 1, &commandBuffer );
