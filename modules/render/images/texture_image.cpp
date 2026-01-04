@@ -23,21 +23,22 @@ export struct TextureImage final {
 
     TextureImage( const Context *context, const std::string &fname )
         : context_{ context }
-        , imageFormat_{ VK_FORMAT_R8G8B8A8_SRGB }
-        , textureData_{ fname } {
+        , imageFormat_{ VK_FORMAT_R8G8B8A8_SRGB } {
         //
-        VkDeviceSize imageSize = textureData_.width() * textureData_.height() * textureData_.components();
+        tire::Tga textureData{ fname };
+
+        VkDeviceSize imageSize = textureData.width() * textureData.height() * textureData.components();
 
         imageExtent_ = VkExtent3D{
           //
-          .width = static_cast<uint32_t>( textureData_.width() ),
-          .height = static_cast<uint32_t>( textureData_.height() ),
+          .width = static_cast<uint32_t>( textureData.width() ),
+          .height = static_cast<uint32_t>( textureData.height() ),
           .depth = 1,
         };
 
         initStagingBuffer( imageSize );
         initDeviceImage( imageSize );
-        uploadToStaging( textureData_.data(), imageSize );
+        uploadToStaging( textureData.data(), imageSize );
         uploadCmd();
         generateMipmaps( deviceImage_, imageExtent_.width, imageExtent_.height );
         initImageView();
@@ -134,7 +135,7 @@ private:
           //
           .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
           .baseMipLevel = 0,
-          .levelCount = mipLevels_,
+          .levelCount = 1,
           .baseArrayLayer = 0,
           .layerCount = 1,
         };
@@ -300,8 +301,6 @@ private:
 
 private:
     const Context *context_{};
-
-    tire::Tga textureData_;
 
     uint32_t mipLevels_{ 8 };
     VkFormat imageFormat_{};
