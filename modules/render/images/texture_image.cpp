@@ -39,8 +39,8 @@ export struct TextureImage final {
         initDeviceImage( imageSize );
         uploadToStaging( textureData_.data(), imageSize );
         uploadCmd();
-        initImageView();
         generateMipmaps( deviceImage_, imageExtent_.width, imageExtent_.height );
+        initImageView();
     }
 
     auto operator=( const TextureImage &other ) -> TextureImage & = delete;
@@ -134,7 +134,7 @@ private:
           //
           .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
           .baseMipLevel = 0,
-          .levelCount = 1,
+          .levelCount = mipLevels_,
           .baseArrayLayer = 0,
           .layerCount = 1,
         };
@@ -150,7 +150,7 @@ private:
           .subresourceRange = range,
         };
 
-        //barrier the image into the transfer-receive layout
+        // Barrier the image into the transfer-receive layout.
         vkCmdPipelineBarrier(
           c.buf(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0, nullptr, 1,
           &imageTransferBarrier );
@@ -161,7 +161,6 @@ private:
           .mipLevel = 0,
           .baseArrayLayer = 0,
           .layerCount = 1,
-
         };
 
         const auto copyRegion = VkBufferImageCopy{
@@ -171,7 +170,7 @@ private:
           .imageExtent = imageExtent_,
         };
 
-        //copy the buffer into the image
+        // Copy the buffer into the image.
         vkCmdCopyBufferToImage(
           c.buf(), stagingBuffer_, deviceImage_, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion );
 
@@ -182,7 +181,7 @@ private:
         imageReadableBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
         imageReadableBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
-        //barrier the image into the shader readable layout
+        // Barrier the image into the shader readable layout.
         vkCmdPipelineBarrier(
           c.buf(), VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1,
           &imageReadableBarrier );
@@ -192,7 +191,7 @@ private:
         const auto subResRange = VkImageSubresourceRange{
           .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
           .baseMipLevel = 0,
-          .levelCount = 1,
+          .levelCount = mipLevels_,
           .baseArrayLayer = 0,
           .layerCount = 1,
 
@@ -220,6 +219,7 @@ private:
         const auto subResource = VkImageSubresourceRange{
           //
           .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+          .baseMipLevel = 0,
           .levelCount = 1,
           .baseArrayLayer = 0,
           .layerCount = 1,
@@ -234,12 +234,12 @@ private:
           .subresourceRange = subResource,
         };
 
-        int32_t mipWidth = static_cast<int32_t>( texWidth );
-        int32_t mipHeight = static_cast<int32_t>( texHeight );
+        auto mipWidth = static_cast<int32_t>( texWidth );
+        auto mipHeight = static_cast<int32_t>( texHeight );
 
         for ( uint32_t i = 1; i < mipLevels_; i++ ) {
             barrier.subresourceRange.baseMipLevel = i - 1;
-            barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+            barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
             barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
             barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
             barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
@@ -301,7 +301,7 @@ private:
 
     tire::Tga textureData_;
 
-    uint32_t mipLevels_{ 4 };
+    uint32_t mipLevels_{ 8 };
     VkFormat imageFormat_{};
     VkExtent3D imageExtent_{};
 
