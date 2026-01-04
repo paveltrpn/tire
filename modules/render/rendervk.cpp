@@ -103,7 +103,7 @@ export struct RenderVK final {
         ioContext_.run();
     };
 
-    auto preFrame() -> void {
+    auto frame() -> void {
         // Update global timer
         timer_.update();
 
@@ -113,10 +113,11 @@ export struct RenderVK final {
         scene_->camera().update();
 
         scene_->submit();
-    };
 
-    auto frame( VkCommandBuffer cb ) -> void {
-        static_cast<SceneVK *>( scene_.get() )->output( cb );
+        {
+            auto cb = context_->renderCommand( currentFrame_ );
+            scene_->output( cb.buf() );
+        }
 
         // NOTE: About draw few geometry sets within same command buffer AI dummy said:
         // "Synchronization: If the rendering of the two geometry sets has dependencies
@@ -126,6 +127,8 @@ export struct RenderVK final {
         // render pass, Vulkan handles some synchronization implicitly.""
 
         // drawTestCube( cb );
+
+        currentFrame_ = ( currentFrame_ + 1 ) % context_->framesCount();
     };
 
     auto postLoop() -> void {
@@ -190,6 +193,8 @@ private:
 private:
     Context *context_{};
     bool run_{};
+
+    uint32_t currentFrame_{ 0 };
 
     std::unique_ptr<Pipeline> piplineVertexBuffer_{};
     std::unique_ptr<Pipeline> piplineTestBox_{};

@@ -165,14 +165,7 @@ auto BareWindow::loop() -> void {
 
         glfwPollEvents();
 
-        render_->preFrame();
-
-        {
-            auto cb = context_->renderCommand( currentFrame_ );
-            render_->frame( cb.buf() );
-        }
-
-        currentFrame_ = ( currentFrame_ + 1 ) % context_->framesCount();
+        render_->frame();
     }
 
     glfwSetWindowShouldClose( window_, GLFW_TRUE );
