@@ -262,7 +262,8 @@ private:
     }
 
     auto generateMipmaps( VkImage image, int32_t texWidth, int32_t texHeight ) -> void {
-        VkCommandBuffer commandBuffer = context_->beginSingleCommand();
+        //VkCommandBuffer commandBuffer = context_->beginSingleCommand();
+        auto c = context_->immidiateCommand();
 
         const auto subResource = VkImageSubresourceRange{
           //
@@ -292,8 +293,8 @@ private:
             barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
 
             vkCmdPipelineBarrier(
-              commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0, nullptr,
-              1, &barrier );
+              c.buf(), VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0, nullptr, 1,
+              &barrier );
 
             VkImageBlit blit{};
             blit.srcOffsets[0] = { 0, 0, 0 };
@@ -310,8 +311,8 @@ private:
             blit.dstSubresource.layerCount = 1;
 
             vkCmdBlitImage(
-              commandBuffer, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-              1, &blit, VK_FILTER_LINEAR );
+              c.buf(), image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1,
+              &blit, VK_FILTER_LINEAR );
 
             barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
             barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -319,8 +320,8 @@ private:
             barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
             vkCmdPipelineBarrier(
-              commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0,
-              nullptr, 1, &barrier );
+              c.buf(), VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr,
+              1, &barrier );
 
             if ( mipWidth > 1 ) mipWidth /= 2;
             if ( mipHeight > 1 ) mipHeight /= 2;
@@ -333,10 +334,10 @@ private:
         barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
         vkCmdPipelineBarrier(
-          commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0,
-          nullptr, 1, &barrier );
+          c.buf(), VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1,
+          &barrier );
 
-        context_->endSingleCommand( commandBuffer );
+        //context_->endSingleCommand( commandBuffer );
     }
 
     [[nodiscard]]

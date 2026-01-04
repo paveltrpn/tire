@@ -35,6 +35,8 @@ import image;
 
 namespace tire {
 
+export struct CommandRoutine;
+
 auto vkDestroyDebugUtilsMessenger(
   VkInstance instance, VkDebugUtilsMessengerEXT messanger, const VkAllocationCallbacks *pAllocator ) -> void {
     auto func =
@@ -234,8 +236,13 @@ export struct Context final {
         return descriptorPool_;
     };
 
+    [[nodiscard]]
     auto beginSingleCommand() const -> VkCommandBuffer;
+
     auto endSingleCommand( VkCommandBuffer commandBuffer ) const -> void;
+
+    [[nodiscard]]
+    auto immidiateCommand() const -> CommandRoutine;
 
 private:
     // Init all context

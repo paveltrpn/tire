@@ -5,7 +5,6 @@ module;
 #include <memory>
 #include <coroutine>
 #include <exception>
-#include <print>
 
 export module generator:generator;
 
