@@ -120,30 +120,6 @@ export struct RenderVK final {
     };
 
     auto frame( VkCommandBuffer cb ) -> void {
-        const auto [width, height] = context_->viewportSize();
-
-        // Dynamic viewport. No performance penalty.
-        // Take out work from pipeline creation.
-        // NOTE: Define negative viewport size to use same projection matrix as
-        // for OpenGL pipeline.
-        const VkViewport viewport{
-          .x = 0.0f,
-          .y = static_cast<float>( height ),
-          .width = static_cast<float>( width ),
-          .height = -static_cast<float>( height ),
-          .minDepth = 0.0f,
-          .maxDepth = 1.0f };
-        // const VkViewport viewport{ .x = 0.0f,
-        //    .y = 0.0f,
-        //    .width = static_cast<float>( width ),
-        //    .height = static_cast<float>( height ),
-        //    .minDepth = 0.0f,
-        //                         .maxDepth = 1.0f };
-        vkCmdSetViewport( cb, 0, 1, &viewport );
-
-        const VkRect2D scissor{ { .x = 0, .y = 0 }, { .width = width, .height = height } };
-        vkCmdSetScissor( cb, 0, 1, &scissor );
-
         static_cast<SceneVK *>( scene_.get() )->output( cb );
 
         // NOTE: About draw few geometry sets within same command buffer AI dummy said:
@@ -156,14 +132,6 @@ export struct RenderVK final {
         // drawTestCube( cb );
     };
 
-    auto postFrame() -> void {
-
-    };
-
-    auto swapBuffers() -> void {
-
-    };
-
     auto postLoop() -> void {
         log::info( "vk::Render === wait device idle..." );
 
@@ -173,9 +141,6 @@ export struct RenderVK final {
 
         scene_->clean();
     };
-
-    auto createGraphicsPipeline() -> void;
-    auto createSyncObjects() -> void;
 
 public:
     auto holdMouse() -> bool;

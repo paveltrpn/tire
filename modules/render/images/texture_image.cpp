@@ -215,7 +215,6 @@ private:
     }
 
     auto generateMipmaps( VkImage image, uint32_t texWidth, uint32_t texHeight ) -> void {
-        //VkCommandBuffer commandBuffer = context_->beginSingleCommand();
         auto c = context_->immidiateCommand();
 
         const auto subResource = VkImageSubresourceRange{
@@ -289,8 +288,6 @@ private:
         vkCmdPipelineBarrier(
           c.buf(), VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1,
           &barrier );
-
-        //context_->endSingleCommand( commandBuffer );
     }
 
     [[nodiscard]]

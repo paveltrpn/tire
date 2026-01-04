@@ -173,10 +173,6 @@ auto BareWindow::loop() -> void {
 
         context_->renderCommandEnd( currentFrame_ );
 
-        render_->postFrame();
-
-        render_->swapBuffers();
-
         currentFrame_ = ( currentFrame_ + 1 ) % context_->framesCount();
     }
 
