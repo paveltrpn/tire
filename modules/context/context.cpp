@@ -237,9 +237,7 @@ export struct Context final {
     };
 
     [[nodiscard]]
-    auto beginSingleCommand() const -> VkCommandBuffer;
-
-    auto endSingleCommand( VkCommandBuffer commandBuffer ) const -> void;
+    auto renderCommand( uint32_t frameId ) -> CommandRoutine;
 
     [[nodiscard]]
     auto immidiateCommand() const -> CommandRoutine;

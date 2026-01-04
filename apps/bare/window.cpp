@@ -167,11 +167,10 @@ auto BareWindow::loop() -> void {
 
         render_->preFrame();
 
-        context_->renderCommandBegin( currentFrame_ );
-
-        render_->frame( context_->getDrawCommandBuffer( currentFrame_ ) );
-
-        context_->renderCommandEnd( currentFrame_ );
+        {
+            auto cb = context_->renderCommand( currentFrame_ );
+            render_->frame( cb.buf() );
+        }
 
         currentFrame_ = ( currentFrame_ + 1 ) % context_->framesCount();
     }

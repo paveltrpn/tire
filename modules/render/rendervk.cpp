@@ -82,10 +82,6 @@ export struct RenderVK final {
         //
     };
 
-    auto setSwapInterval( int interval ) -> void {
-
-    };
-
     auto scene( const std::filesystem::path &path ) -> void {
         scene_ = std::make_shared<SceneVK>( path, context_, piplineVertexBuffer_.get() );
     }
