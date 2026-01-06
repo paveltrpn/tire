@@ -19,7 +19,7 @@ import :depth_image;
 
 namespace tire {
 
-void Context::makeSwapchain() {
+auto Context::makeSwapchain() -> void {
     const auto congigHandle = Config::instance();
 
     log::info(
@@ -52,22 +52,27 @@ void Context::makeSwapchain() {
       "{}",
       framesCount_ );
 
-    VkSwapchainCreateInfoKHR createInfo{};
-    createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    createInfo.surface = surface_;
-
-    // The implementation will either create the swapchain with at least
-    // that many images, or it will fail to create the swapchain.
-    createInfo.minImageCount = framesCount_;
-
-    // Use instead of extent ackuired from surface data.
+    // Use instead of extent acuired from surface data.
     const auto [viewportWidth, viewportHeight] = viewportSize();
 
-    createInfo.imageFormat = surfaceFormat_.format;
-    createInfo.imageColorSpace = surfaceFormat_.colorSpace;
-    createInfo.imageExtent = { viewportWidth, viewportHeight };  //currentExtent_;
-    createInfo.imageArrayLayers = 1;
-    createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+    VkSwapchainCreateInfoKHR createInfo{
+      //
+      .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
+      .surface = surface_,
+      // The implementation will either create the swapchain with at least
+      // that many images, or it will fail to create the swapchain.
+      .minImageCount = framesCount_,
+      .imageFormat = surfaceFormat_.format,
+      .imageColorSpace = surfaceFormat_.colorSpace,
+      .imageExtent = { viewportWidth, viewportHeight },  //currentExtent_,
+      .imageArrayLayers = 1,
+      .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+      .preTransform = surfaceCapabilities_.currentTransform,
+      .compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
+      .presentMode = presentMode_,
+      .clipped = VK_TRUE,
+      .oldSwapchain = VK_NULL_HANDLE,
+    };
 
     // const uint32_t graphicsFamily{ device_->graphicsFamily() };
     // const uint32_t presentFamily{ device_->presentFamily() };
@@ -81,12 +86,6 @@ void Context::makeSwapchain() {
         createInfo.queueFamilyIndexCount = 0;      // Optional
         createInfo.pQueueFamilyIndices = nullptr;  // Optional
     }
-
-    createInfo.preTransform = surfaceCapabilities_.currentTransform;
-    createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-    createInfo.presentMode = presentMode_;
-    createInfo.clipped = VK_TRUE;
-    createInfo.oldSwapchain = VK_NULL_HANDLE;
 
     if ( const auto err = vkCreateSwapchainKHR( device_, &createInfo, nullptr, &swapchain_ ); err != VK_SUCCESS ) {
         log::fatal( "failed to create swapchain code {}\n!", string_VkResult( err ) );
@@ -108,7 +107,7 @@ void Context::makeSwapchain() {
     depthImage_ = std::make_shared<DepthImage>( this, viewportWidth, viewportHeight );
 }
 
-void Context::makeFrames() {
+auto Context::makeFrames() -> void {
     // Acquire all swapchain images at one call
     std::vector<VkImage> swapChainImages;
     swapChainImages.resize( framesCount_ );
