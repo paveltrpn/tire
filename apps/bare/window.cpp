@@ -94,11 +94,7 @@ BareWindow::BareWindow() {
         }
     }
 
-    render_ = std::make_unique<tire::RenderVK>();
-    render_->init( context_.get() );
-
-    const auto basePath = configHandle->getBasePath();
-    render_->scene( basePath.string() + "/assets/m01.json" );
+    render_ = std::make_unique<tire::RenderVK>( context_.get() );
 
     glfwSetWindowUserPointer( window_, render_.get() );
 

@@ -20,9 +20,6 @@ import :timer;
 import :scenevk;
 import :test_box;
 import :pipeline;
-import :pipeline_test_box;
-
-import :pipeline_vertex_buffer;
 
 // using namespace std::chrono_literals;
 
@@ -33,27 +30,13 @@ struct SceneVK;
 export struct RenderVK final {
     RenderVK() = default;
 
-    RenderVK( const RenderVK &other ) = delete;
-    RenderVK( RenderVK &&other ) = delete;
-    auto operator=( const RenderVK &other ) -> RenderVK & = delete;
-    auto operator=( RenderVK &&other ) -> RenderVK & = delete;
-
-    ~RenderVK() = default;
-
-    auto init( Context *context ) -> void {
-        context_ = context;
+    explicit RenderVK( Context *context )
+        : context_{ context } {
         try {
             const auto configHandle = Config::instance();
-            const auto basePath = configHandle->getBasePath().string();
+            const auto basePath = configHandle->getBasePath();
 
-            // =============================================================
-            piplineVertexBuffer_ = std::make_unique<PiplineVertexBuffer>( context_ );
-            auto vertexBufferProgram = Program{ context_ };
-            vertexBufferProgram.fill(
-              { basePath + "/shaders/spirv/vk_vertexBuffer_VERTEX.spv",
-                basePath + "/shaders/spirv/vk_vertexBuffer_FRAGMENT.spv" } );
-            piplineVertexBuffer_->buildPipeline( vertexBufferProgram );
-
+            scene_ = std::make_shared<SceneVK>( basePath.string() + "/assets/m01.json", context_ );
             testBox_ = std::make_shared<TestBox>( context_ );
 
             // RUN!!!
@@ -65,6 +48,14 @@ export struct RenderVK final {
         }
     }
 
+    RenderVK( const RenderVK &other ) = delete;
+    RenderVK( RenderVK &&other ) = delete;
+
+    auto operator=( const RenderVK &other ) -> RenderVK & = delete;
+    auto operator=( RenderVK &&other ) -> RenderVK & = delete;
+
+    ~RenderVK() = default;
+
     [[nodiscard]]
     auto run() -> bool {
         return run_;
@@ -73,10 +64,6 @@ export struct RenderVK final {
     auto displayRenderInfo() -> void {
         //
     };
-
-    auto scene( const std::filesystem::path &path ) -> void {
-        scene_ = std::make_shared<SceneVK>( path, context_, piplineVertexBuffer_.get() );
-    }
 
     auto timeoutTestCoro( uint64_t t ) -> io::Task<void> {
         co_await ioContext_.timeout( t );
@@ -157,15 +144,10 @@ public:
     auto mouseOffsetEvent( double x, double y, double holdX, double holdY ) -> void;
 
 private:
-    auto drawTestCube( VkCommandBuffer cb ) -> void {}
-
-private:
     Context *context_{};
     bool run_{};
 
     uint32_t currentFrame_{ 0 };
-
-    std::unique_ptr<Pipeline> piplineVertexBuffer_{};
 
     // Test box.
     std::shared_ptr<TestBox> testBox_{};

@@ -14,6 +14,7 @@ export module render:scenevk;
 import algebra;
 import scene;
 import context;
+import config;
 
 import :pipeline;
 import :pipeline_vertex_buffer;
@@ -23,11 +24,20 @@ import :texture_image;
 namespace tire {
 
 export struct SceneVK final : tire::Scene {
-    SceneVK( const std::filesystem::path &fname, const Context *context, const Pipeline *pipeline )
+    SceneVK( const std::filesystem::path &fname, const Context *context )
         : tire::Scene{ fname }
-        , context_{ context }
-        , pipeline_{ pipeline } {
+        , context_{ context } {
         //
+        const auto configHandle = Config::instance();
+        const auto basePath = configHandle->getBasePath().string();
+
+        pipeline_ = std::make_unique<PiplineVertexBuffer>( context_ );
+        auto vertexBufferProgram = Program{ context_ };
+        vertexBufferProgram.fill(
+          { basePath + "/shaders/spirv/vk_vertexBuffer_VERTEX.spv",
+            basePath + "/shaders/spirv/vk_vertexBuffer_FRAGMENT.spv" } );
+        pipeline_->buildPipeline( vertexBufferProgram );
+
         try {
             testImage_ =
               std::make_shared<TextureImage>( context_, "/mnt/main/code/assets/textures/PavingStones021_color.tga" );
@@ -194,7 +204,7 @@ export struct SceneVK final : tire::Scene {
     }
 
     void initDescriptorSets() {
-        auto pipelineDescSetLayouts = dynamic_cast<const PiplineVertexBuffer *>( pipeline_ )->pipelineSescSetsLayout();
+        auto pipelineDescSetLayouts = pipeline_->pipelineSescSetsLayout();
 
         // Write to the texture descriptor set.
         auto texDescSetLayout = pipelineDescSetLayouts[0];
@@ -288,7 +298,7 @@ export struct SceneVK final : tire::Scene {
 
 private:
     const Context *context_;
-    const Pipeline *pipeline_;
+    std::unique_ptr<PiplineVertexBuffer> pipeline_{};
 
     std::vector<std::shared_ptr<VertexBuffer>> vertBuffersList_;
     std::vector<std::shared_ptr<VertexBuffer>> nrmlBuffersList_;
