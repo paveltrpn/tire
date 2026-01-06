@@ -53,17 +53,20 @@ vec3 CalcPointLight(OmniLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
     vec3 lightDir = normalize(position - fragPos);
 
+    // vec3 diffuseSample = vec3(texture(diffuseTex, TexCoord));
+    vec3 diffuseSample = vec3(0.5, 0.5, 0.5);
+
     // attenuation
     float distance    = length(position - fragPos);
     float attenuation = 1.0 / (constant + linear * distance +
   			     quadratic * (distance * distance));
 
     // combine results
-    vec3 ambientColor  = ambient * vec3(texture(diffuseTex, TexCoord));
+    vec3 ambientColor  = ambient * diffuseSample;
 
      // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
-    vec3 diffuseColor  = diffuse  * diff * vec3(texture(diffuseTex, TexCoord));
+    vec3 diffuseColor  = diffuse  * diff * diffuseSample;
 
      // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
