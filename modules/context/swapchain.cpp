@@ -43,9 +43,6 @@ auto Context::makeSwapchain() -> void {
     //      "surface image count limits" );
     //}
 
-    // Reserve space for frames images render into
-    frames_.resize( framesCount_ );
-
     log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>(
       "Swapchain === vulkan swapchain surface capabilities image count "
       "set to "
@@ -114,6 +111,9 @@ auto Context::makeSwapchain() -> void {
 }
 
 auto Context::makeFrames() -> void {
+    // Reserve space for frames images render into
+    frames_.resize( framesCount_ );
+
     // Acquire all swapchain images at one call
     std::vector<VkImage> swapChainImages;
     swapChainImages.resize( framesCount_ );
