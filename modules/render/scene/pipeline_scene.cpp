@@ -15,8 +15,8 @@ import log;
 
 namespace tire {
 
-struct PiplineVertexBuffer final : Pipeline {
-    PiplineVertexBuffer( const Context *context )
+struct PiplineScene final : Pipeline {
+    PiplineScene( const Context *context )
         : Pipeline( context ) {}
 
 #define SHADER_ENTRY_POINT "main"

@@ -30,7 +30,7 @@ export struct SceneVK final : tire::Scene {
         const auto configHandle = Config::instance();
         const auto basePath = configHandle->getBasePath().string();
 
-        pipeline_ = std::make_unique<PiplineVertexBuffer>( context_ );
+        pipeline_ = std::make_unique<PiplineScene>( context_ );
         auto vertexBufferProgram = Program{ context_ };
         vertexBufferProgram.fill(
           { basePath + "/shaders/spirv/vk_vertexBuffer_VERTEX.spv",
@@ -297,7 +297,7 @@ export struct SceneVK final : tire::Scene {
 
 private:
     const Context *context_;
-    std::unique_ptr<PiplineVertexBuffer> pipeline_{};
+    std::unique_ptr<PiplineScene> pipeline_{};
 
     std::vector<std::shared_ptr<VertexBuffer>> vertBuffersList_;
     std::vector<std::shared_ptr<VertexBuffer>> nrmlBuffersList_;
