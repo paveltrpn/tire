@@ -120,12 +120,22 @@ void Context::makeFrames() {
     }
 
     // Create frame related vulkan entities - images, image views, framebuffers and sync primitieves.
-    for ( size_t i{}; i < framesCount_; ++i ) {
+    for ( size_t i{ 0 }; i < framesCount_; ++i ) {
         // Frame image
         frames_[i].image_ = swapChainImages[i];
 
         // Frame image view
+        const auto subResRange = VkImageSubresourceRange{
+          //
+          .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+          .baseMipLevel = 0,
+          .levelCount = 1,
+          .baseArrayLayer = 0,
+          .layerCount = 1,
+        };
+
         const VkImageViewCreateInfo createInfo{
+          //
           .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
           .image = swapChainImages[i],
           .viewType = VK_IMAGE_VIEW_TYPE_2D,
@@ -133,18 +143,15 @@ void Context::makeFrames() {
           .components =
             { VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY,
               VK_COMPONENT_SWIZZLE_IDENTITY },
-          .subresourceRange = {
-            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-            .baseMipLevel = 0,
-            .levelCount = 1,
-            .baseArrayLayer = 0,
-            .layerCount = 1 } };
+          .subresourceRange = subResRange,
+        };
 
         if ( const auto err = vkCreateImageView( device_, &createInfo, nullptr, &frames_[i].view_ );
              err != VK_SUCCESS ) {
-            log::fatal( "failed to create swapchain image views with code {}\n!", string_VkResult( err ) );
+            log::fatal(
+              "Swapchain === failed to create swapchain image views with code {}\n!", string_VkResult( err ) );
         } else {
-            log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>( "vk::Swapchain === image view {} created!", i );
+            log::debug( "Swapchain === image view {} created!", i );
         }
 
         // Frame framebuffer
@@ -177,7 +184,7 @@ void Context::makeFrames() {
           vkCreateSemaphore( device_, &semaphoreInfo, nullptr, &frames_[i].imageAvailableSemaphore_ ) != VK_SUCCESS ||
           vkCreateSemaphore( device_, &semaphoreInfo, nullptr, &frames_[i].renderFinishedSemaphore_ ) != VK_SUCCESS ||
           vkCreateFence( device_, &fenceInfo, nullptr, &frames_[i].inFlightFence_ ) != VK_SUCCESS ) {
-            throw std::runtime_error( std::format( "failed to create semaphores!" ) );
+            log::fatal( "Swapchain === failed to create semaphores!" );
         }
 
         const VkCommandBufferAllocateInfo allocInfo{
@@ -188,10 +195,9 @@ void Context::makeFrames() {
 
         const auto err = vkAllocateCommandBuffers( device(), &allocInfo, &frames_[i].cbPrimary_ );
         if ( err != VK_SUCCESS ) {
-            throw std::runtime_error(
-              std::format( "failed to allocate command buffers with code {}!", string_VkResult( err ) ) );
+            log::fatal( "Swapchain === failed to allocate command buffers with code {}!", string_VkResult( err ) );
         } else {
-            log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>( "vk::Context === primary command buffer created!" );
+            log::debug( "Context === primary command buffer created!" );
         };
     }
 }
