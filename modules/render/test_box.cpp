@@ -25,7 +25,6 @@ export struct TestBox final {
     TestBox( const Context *context )
         : context_{ context } {
         //
-        // =============================================================
         pipeline_ = std::make_unique<PiplineTestBox>( context_ );
         auto testBoxProgram = Program{ context_ };
         testBoxProgram.fill(
@@ -35,14 +34,13 @@ export struct TestBox final {
 
     auto draw( const VkCommandBuffer cb, float duration ) -> void {
         // =================================
-        // Get transformation matricies
-        auto offset = algebra::translate( 0.0f, 0.0f, -2.0f );
+        auto offset = algebra::translate( -8.5f, 4.5f, -15.0f );
         offset.transpose_self();
 
         const auto [width, height] = context_->currentExtent();
         // NOTE: Choose right projection matrix!!!
         const auto proj = algebra::perspective<float>(
-          50.0f, static_cast<float>( width ) / static_cast<float>( height ), 0.1f, 100.0f );
+          40.0f, static_cast<float>( width ) / static_cast<float>( height ), 0.1f, 100.0f );
         const auto viewMatrix = offset * proj;
         angle_ += duration * 25.0f;
         algebra::vector3f ax{ 0.0f, 1.0f, 1.0f };
