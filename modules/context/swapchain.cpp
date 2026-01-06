@@ -20,10 +20,10 @@ import :depth_image;
 namespace tire {
 
 auto Context::makeSwapchain() -> void {
-    const auto congigHandle = Config::instance();
+    const auto configHandle = Config::instance();
 
     log::info(
-      "vk::Swapchain === surface capabilities minImageCount: {}, "
+      "Swapchain === surface capabilities minImageCount: {}, "
       "maxImageCount: {}",
       surfaceCapabilities_.minImageCount, surfaceCapabilities_.maxImageCount );
 
@@ -34,7 +34,7 @@ auto Context::makeSwapchain() -> void {
     // rendering is slower than vsync. Consider setting minImageCount to 3 to use
     // triple buffering to maximize performance in such cases.
     // Skip all logic above, just use value from config
-    framesCount_ = congigHandle->get<int>( "frame_count" );
+    framesCount_ = configHandle->get<int>( "frame_count" );
 
     //if ( ( framesCount_ < surfaceCapabilities_.minImageCount ) ||
     //    ( framesCount_ > surfaceCapabilities_.maxImageCount ) ) {
@@ -47,7 +47,7 @@ auto Context::makeSwapchain() -> void {
     frames_.resize( framesCount_ );
 
     log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>(
-      "vk::Swapchain === vulkan swapchain surface capabilities image count "
+      "Swapchain === vulkan swapchain surface capabilities image count "
       "set to "
       "{}",
       framesCount_ );
