@@ -7,8 +7,6 @@ module;
 #define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vk_enum_string_helper.h>
 
-static constexpr bool DEBUG_OUTPUT_SWAPCHAIN_CPP{ true };
-
 export module context:swapchain;
 
 import config;
@@ -23,7 +21,7 @@ auto Context::makeSwapchain() -> void {
     const auto configHandle = Config::instance();
 
     log::info(
-      "Swapchain === surface capabilities minImageCount: {}, "
+      "Context === surface capabilities minImageCount: {}, "
       "maxImageCount: {}",
       surfaceCapabilities_.minImageCount, surfaceCapabilities_.maxImageCount );
 
@@ -43,8 +41,8 @@ auto Context::makeSwapchain() -> void {
     //      "surface image count limits" );
     //}
 
-    log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>(
-      "Swapchain === vulkan swapchain surface capabilities image count "
+    log::debug(
+      "Context === vulkan swapchain surface capabilities image count "
       "set to "
       "{}",
       framesCount_ );
@@ -89,7 +87,7 @@ auto Context::makeSwapchain() -> void {
         if ( err != VK_SUCCESS ) {
             log::fatal( "failed to create swapchain code {}\n!", string_VkResult( err ) );
         } else {
-            log::info( "vk::Swapchain ===  vulkan swapchain created!" );
+            log::info( "Swapchain ===  vulkan swapchain created!" );
         }
     }
 
@@ -99,10 +97,9 @@ auto Context::makeSwapchain() -> void {
     {
         const auto err = vkGetSwapchainImagesKHR( device_, swapchain_, &swapchainImageCount_, nullptr );
         if ( err != VK_SUCCESS ) {
-            log::fatal( "failed to get swapchain images count with code {}\n!", string_VkResult( err ) );
+            log::fatal( "Context === failed to get swapchain images count with code {}\n!", string_VkResult( err ) );
         } else {
-            log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>(
-              "vk::Swapchain === swapchain images count: {}", swapchainImageCount_ );
+            log::debug( "Context === swapchain images count: {}", swapchainImageCount_ );
         }
     }
 
@@ -119,9 +116,9 @@ auto Context::makeFrames() -> void {
     swapChainImages.resize( framesCount_ );
     if ( const auto err = vkGetSwapchainImagesKHR( device_, swapchain_, &framesCount_, swapChainImages.data() );
          err != VK_SUCCESS ) {
-        log::fatal( "failed to get swapchain images with code {}\n!", string_VkResult( err ) );
+        log::fatal( "Context === failed to get swapchain images with code {}\n!", string_VkResult( err ) );
     } else {
-        log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>( "vk::Swapchain === images acquired!" );
+        log::debug( "Context === images acquired!" );
     }
 
     // Create frame related vulkan entities - images, image views, framebuffers and sync primitieves.
@@ -153,10 +150,9 @@ auto Context::makeFrames() -> void {
 
         if ( const auto err = vkCreateImageView( device_, &createInfo, nullptr, &frames_[i].view_ );
              err != VK_SUCCESS ) {
-            log::fatal(
-              "Swapchain === failed to create swapchain image views with code {}\n!", string_VkResult( err ) );
+            log::fatal( "Context === failed to create swapchain image views with code {}\n!", string_VkResult( err ) );
         } else {
-            log::debug( "Swapchain === image view {} created!", i );
+            log::debug( "Context === image view {} created!", i );
         }
 
         // Frame framebuffer
@@ -173,9 +169,9 @@ auto Context::makeFrames() -> void {
 
         if ( const auto err = vkCreateFramebuffer( device_, &framebufferInfo, nullptr, &frames_[i].framebuffer_ );
              err != VK_SUCCESS ) {
-            log::fatal( "failed to create framebuffer at {} with code {}!", i, string_VkResult( err ) );
+            log::fatal( "Context === failed to create framebuffer at {} with code {}!", i, string_VkResult( err ) );
         } else {
-            log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>( "vk::Swapchain === framebuffer {} created!", i );
+            log::debug( "Context === framebuffer {} created!", i );
         }
 
         // Frame synchronization primitieves
@@ -189,7 +185,7 @@ auto Context::makeFrames() -> void {
           vkCreateSemaphore( device_, &semaphoreInfo, nullptr, &frames_[i].imageAvailableSemaphore_ ) != VK_SUCCESS ||
           vkCreateSemaphore( device_, &semaphoreInfo, nullptr, &frames_[i].renderFinishedSemaphore_ ) != VK_SUCCESS ||
           vkCreateFence( device_, &fenceInfo, nullptr, &frames_[i].inFlightFence_ ) != VK_SUCCESS ) {
-            log::fatal( "Swapchain === failed to create semaphores!" );
+            log::fatal( "Context === failed to create semaphores!" );
         }
 
         const VkCommandBufferAllocateInfo allocInfo{
@@ -200,7 +196,7 @@ auto Context::makeFrames() -> void {
 
         const auto err = vkAllocateCommandBuffers( device(), &allocInfo, &frames_[i].cbPrimary_ );
         if ( err != VK_SUCCESS ) {
-            log::fatal( "Swapchain === failed to allocate command buffers with code {}!", string_VkResult( err ) );
+            log::fatal( "Context === failed to allocate command buffers with code {}!", string_VkResult( err ) );
         } else {
             log::debug( "Context === primary command buffer created!" );
         };
