@@ -38,6 +38,24 @@ struct DepthImage final {
     auto operator=( const DepthImage &other ) -> DepthImage & = delete;
     auto operator=( DepthImage &&other ) -> DepthImage & = delete;
 
+    [[nodiscard]]
+    auto view() const -> VkImageView {
+        //
+        return depthImageView_;
+    }
+
+    auto clean() -> void {
+        //
+        vmaDestroyImage( context_->allocator(), depthImage_, depthImageAllocation_ );
+        vkDestroyImageView( context_->device(), depthImageView_, nullptr );
+    }
+
+    ~DepthImage() {
+        //
+        clean();
+    };
+
+private:
     auto initDeviceImage() -> void {
         const auto imageExtent = VkExtent3D{
           //
@@ -49,7 +67,7 @@ struct DepthImage final {
         const auto imgCreateInfo = VkImageCreateInfo{
           //
           .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-          .flags = 0,  // Optional
+          .flags = 0,
           .imageType = VK_IMAGE_TYPE_2D,
           .format = depthFormat_,
           .extent = imageExtent,
@@ -176,46 +194,29 @@ struct DepthImage final {
             log::fatal( "DepthImage === unsupported layout transition!" );
         }
         /*
-                if ( oldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
-                     newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL ) {
-                    barrier.srcAccessMask = 0;
-                    barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+            if ( oldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
+                 newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL ) {
+                barrier.srcAccessMask = 0;
+                barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 
-                    sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-                    destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-                } else if ( oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL &&
-                            newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ) {
-                    barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-                    barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+                sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+                destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+            } else if ( oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL &&
+                        newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ) {
+                barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+                barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
-                    sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-                    destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-                } else {
-                    throw std::invalid_argument( "unsupported layout transition!" );
-                }
-               */
+                sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+            } else {
+                throw std::invalid_argument( "unsupported layout transition!" );
+            }
+           */
 
         vkCmdPipelineBarrier( c.buf(), sourceStage, destinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier );
     }
 
     [[nodiscard]]
-    auto view() const -> VkImageView {
-        //
-        return depthImageView_;
-    }
-
-    auto clean() -> void {
-        //
-        vmaDestroyImage( context_->allocator(), depthImage_, depthImageAllocation_ );
-        vkDestroyImageView( context_->device(), depthImageView_, nullptr );
-    }
-
-    ~DepthImage() {
-        //
-        clean();
-    };
-
-private:
     auto findSupportedFormat(
       const std::vector<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features ) const -> VkFormat {
         for ( VkFormat format : candidates ) {

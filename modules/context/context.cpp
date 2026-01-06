@@ -71,6 +71,7 @@ export struct Context final {
 
     Context( const Context &other ) = delete;
     Context( Context &&other ) = delete;
+
     auto operator=( const Context &other ) -> Context & = delete;
     auto operator=( Context &&other ) -> Context & = delete;
 
@@ -351,7 +352,7 @@ protected:
     std::array<VkClearValue, 2> clearValues_{};
 
     // Momory
-    VmaAllocator allocator_;
+    VmaAllocator allocator_{};
 
     //
     VkDescriptorPool descriptorPool_{};
