@@ -7,7 +7,7 @@ module;
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-export module render:pipeline_vertex_buffer;
+export module render:pipeline_scene;
 
 import context;
 import algebra;
