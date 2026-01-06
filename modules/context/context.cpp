@@ -172,6 +172,11 @@ export struct Context final {
     };
 
     [[nodiscard]]
+    auto physicalDevice() const -> VkPhysicalDevice {
+        return physDevice_;
+    }
+
+    [[nodiscard]]
     auto currentExtent() const -> const VkExtent2D & {
         return currentExtent_;
     };
