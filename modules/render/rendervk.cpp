@@ -41,8 +41,6 @@ export struct RenderVK final {
 
             // RUN!!!
             run_ = true;
-
-            // context_->createFramebuffers( piplineVertexBuffer_.get() );
         } catch ( const std::runtime_error &e ) {
             throw std::runtime_error( e.what() );
         }
@@ -58,6 +56,7 @@ export struct RenderVK final {
 
     [[nodiscard]]
     auto run() -> bool {
+        //
         return run_;
     }
 
@@ -102,23 +101,14 @@ export struct RenderVK final {
             testBox_->draw( cb.buf(), timer_.floatFrameDuration() );
         }
 
-        // NOTE: About draw few geometry sets within same command buffer AI dummy said:
-        // "Synchronization: If the rendering of the two geometry sets has dependencies
-        // (e.g., one writes to a resource that the other reads), appropriate pipeline
-        // barriers or synchronization primitives might be required. However,
-        // for independent rendering to the same attachments within a single
-        // render pass, Vulkan handles some synchronization implicitly.""
-
-        // drawTestCube( cb );
-
         currentFrame_ = ( currentFrame_ + 1 ) % context_->framesCount();
     };
 
     auto postLoop() -> void {
         log::info( "vk::Render === wait device idle..." );
 
-        // we should wait for the logical device to finish operations
-        // before exiting mainLoop and destroying the window
+        // We should wait for the logical device to finish operations
+        // before exiting mainLoop and destroying the window.
         vkDeviceWaitIdle( context_->device() );
 
         scene_->clean();
