@@ -95,9 +95,7 @@ export struct Scene {
                 std::terminate();
 
             } catch ( const std::exception &e ) {
-                log::error( "exception: {}", e.what() );
-
-                std::terminate();
+                log::fatal( "exception: {}", e.what() );
             }
         } else {
             throw std::runtime_error( std::format( "Scene ===  file not found: {}\n", path.string() ) );

@@ -5,15 +5,15 @@ module;
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-export module render:pipeline;
+export module context:pipeline;
 
-import context;
+import :context;
 
 import :program;
 
 namespace tire {
 
-struct Pipeline {
+export struct Pipeline {
     Pipeline( const Context *context )
         : context_{ context } {}
 

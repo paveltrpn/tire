@@ -12,7 +12,6 @@ export module render:pipeline_vertex_buffer;
 import context;
 import algebra;
 import log;
-import :pipeline;
 
 namespace tire {
 

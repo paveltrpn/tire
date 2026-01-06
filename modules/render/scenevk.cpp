@@ -16,7 +16,6 @@ import scene;
 import context;
 import config;
 
-import :pipeline;
 import :pipeline_vertex_buffer;
 import :vertex_buffer;
 import :texture_image;

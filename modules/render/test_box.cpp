@@ -14,9 +14,7 @@ export module render:test_box;
 import algebra;
 import context;
 
-import :program;
 import :test_box_shader;
-import :pipeline;
 import :pipeline_test_box;
 
 namespace tire {

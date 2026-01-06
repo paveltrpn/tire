@@ -12,7 +12,6 @@ export module render:pipeline_test_box;
 
 import context;
 import log;
-import :pipeline;
 
 namespace tire {
 

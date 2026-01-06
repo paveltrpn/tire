@@ -19,7 +19,6 @@ import io;
 import :timer;
 import :scenevk;
 import :test_box;
-import :pipeline;
 
 // using namespace std::chrono_literals;
 
