@@ -326,6 +326,7 @@ protected:
     std::vector<VkPresentModeKHR> presentModes_{};
     VkPresentModeKHR presentMode_{};
     VkPhysicalDevice physDevice_{};
+    // The logical device itself.
     VkDevice device_{ VK_NULL_HANDLE };
 
     // Swapchain
@@ -336,12 +337,11 @@ protected:
     std::shared_ptr<DepthImage> depthImage_;
 
     VkQueue graphicsQueue_{ VK_NULL_HANDLE };
-    VkRenderPass renderPass_{ VK_NULL_HANDLE };
-
     uint32_t graphicsFamilyQueueId_{ UINT32_MAX };
 
-    VkExtent2D currentExtent_{};
+    VkRenderPass renderPass_{ VK_NULL_HANDLE };
 
+    VkExtent2D currentExtent_{};
     uint32_t width_{};
     uint32_t height_{};
 
