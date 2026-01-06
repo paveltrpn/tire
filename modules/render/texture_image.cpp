@@ -129,7 +129,7 @@ private:
     }
 
     auto uploadCmd() -> void {
-        auto c = context_->immidiateCommand();
+        auto c = context_->immediateCommand();
 
         const auto range = VkImageSubresourceRange{
           //
@@ -217,7 +217,7 @@ private:
     }
 
     auto generateMipmaps( VkImage image, uint32_t texWidth, uint32_t texHeight ) -> void {
-        auto c = context_->immidiateCommand();
+        auto c = context_->immediateCommand();
 
         const auto subResource = VkImageSubresourceRange{
           //

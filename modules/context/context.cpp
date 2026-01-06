@@ -249,7 +249,7 @@ export struct Context final {
     auto copyBufferCommand() const -> CommandRoutine;
 
     [[nodiscard]]
-    auto immidiateCommand() const -> CommandRoutine;
+    auto immediateCommand() const -> CommandRoutine;
 
 private:
     // Init all context

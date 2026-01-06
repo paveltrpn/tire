@@ -124,7 +124,7 @@ private:
 
     auto transitionImageLayout() -> void {
         //
-        auto c = context_->immidiateCommand();
+        auto c = context_->immediateCommand();
 
         const auto oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         const auto newLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;

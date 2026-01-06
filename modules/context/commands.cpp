@@ -89,7 +89,7 @@ private:
     handle_type h_;
 };
 
-auto Context::immidiateCommand() const -> CommandRoutine {
+auto Context::immediateCommand() const -> CommandRoutine {
     const auto allocInfo = VkCommandBufferAllocateInfo{
       //
       .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
