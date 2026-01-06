@@ -32,7 +32,7 @@ export struct SceneVK final : tire::Scene {
             testImage_ =
               std::make_shared<TextureImage>( context_, "/mnt/main/code/assets/textures/PavingStones021_color.tga" );
         } catch ( std::exception &e ) {
-            log::error( "Scene === test image {}", e.what() );
+            log::fatal( "Scene === test image {}", e.what() );
         }
 
         initTextureSmpler();

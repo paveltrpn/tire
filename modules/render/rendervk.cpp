@@ -18,9 +18,10 @@ import io;
 
 import :timer;
 import :scenevk;
+import :test_box;
 import :pipeline;
 import :pipeline_test_box;
-import :test_box_shader;
+
 import :pipeline_vertex_buffer;
 
 // using namespace std::chrono_literals;
@@ -53,12 +54,7 @@ export struct RenderVK final {
                 basePath + "/shaders/spirv/vk_vertexBuffer_FRAGMENT.spv" } );
             piplineVertexBuffer_->buildPipeline( vertexBufferProgram );
 
-            // =============================================================
-            piplineTestBox_ = std::make_unique<PiplineTestBox>( context_ );
-            auto testBoxProgram = Program{ context_ };
-            testBoxProgram.fill(
-              { { vk_simple_box_VERTEX, vertex_stage_suffix }, { vk_simple_box_FRAGMENT, fragment_stage_suffix } } );
-            piplineTestBox_->buildPipeline( testBoxProgram );
+            testBox_ = std::make_shared<TestBox>( context_ );
 
             // RUN!!!
             run_ = true;
@@ -116,6 +112,7 @@ export struct RenderVK final {
         {
             auto cb = context_->renderCommand( currentFrame_ );
             scene_->draw( cb.buf() );
+            testBox_->draw( cb.buf(), timer_.floatFrameDuration() );
         }
 
         // NOTE: About draw few geometry sets within same command buffer AI dummy said:
@@ -160,34 +157,7 @@ public:
     auto mouseOffsetEvent( double x, double y, double holdX, double holdY ) -> void;
 
 private:
-    auto drawTestCube( VkCommandBuffer cb ) -> void {
-        // =================================
-        // Get transformation matricies
-        auto offset = algebra::translate( 0.0f, 0.0f, -2.0f );
-        offset.transpose_self();
-
-        const auto [width, height] = context_->currentExtent();
-        // NOTE: Choose right projection matrix!!!
-        const auto proj = algebra::perspective<float>(
-          50.0f, static_cast<float>( width ) / static_cast<float>( height ), 0.1f, 100.0f );
-        const auto viewMatrix = offset * proj;
-        angle_ += timer_.floatFrameDuration() * 25.0f;
-        algebra::vector3f ax{ 0.0f, 1.0f, 1.0f };
-        ax.normalizeSelf();
-        const auto modelMatrix = algebra::rotate( ax, angle_ );
-        // =================================
-
-        vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS, piplineTestBox_->pipeline() );
-
-        vkCmdPushConstants(
-          cb, piplineTestBox_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( algebra::matrix4f ), &viewMatrix );
-
-        vkCmdPushConstants(
-          cb, piplineTestBox_->layout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof( algebra::matrix4f ),
-          sizeof( algebra::matrix4f ), &modelMatrix );
-
-        vkCmdDraw( cb, 36, 3, 0, 0 );
-    }
+    auto drawTestCube( VkCommandBuffer cb ) -> void {}
 
 private:
     Context *context_{};
@@ -196,7 +166,9 @@ private:
     uint32_t currentFrame_{ 0 };
 
     std::unique_ptr<Pipeline> piplineVertexBuffer_{};
-    std::unique_ptr<Pipeline> piplineTestBox_{};
+
+    // Test box.
+    std::shared_ptr<TestBox> testBox_{};
 
     // The Scene
     std::shared_ptr<SceneVK> scene_{};
@@ -204,8 +176,6 @@ private:
     Timer timer_{};
 
     bool holdMouse_{ false };
-
-    float angle_{};
 
     io::IoContext ioContext_{};
 };
