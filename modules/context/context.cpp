@@ -34,9 +34,10 @@ import log;
 import config;
 import image;
 
+import :command_routine;
+
 namespace tire {
 
-export struct CommandRoutine;
 struct DepthImage;
 
 auto vkDestroyDebugUtilsMessenger(

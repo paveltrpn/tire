@@ -61,7 +61,7 @@ export struct TestBox final {
     }
 
     auto clean() -> void {
-
+        //
     };
 
 private:
