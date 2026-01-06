@@ -1,16 +1,12 @@
 
 module;
 
-// #include <thread>
-// #include <chrono>
 #include <coroutine>
 #include <filesystem>
 
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
-
-#define FRAMES_IN_FLIGHT_COUNT 2
 
 export module render:render;
 
