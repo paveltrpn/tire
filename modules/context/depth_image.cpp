@@ -21,7 +21,7 @@ struct DepthImage final {
     DepthImage( const DepthImage &other ) = delete;
     DepthImage( DepthImage &&other ) = delete;
 
-    DepthImage( const Context *context, uint32_t width, uint32_t height, VkFormat depthFormat )
+    DepthImage( const Context *context, uint32_t width, uint32_t height )
         : context_{ context }
         , width_{ width }
         , height_{ height }
@@ -79,7 +79,8 @@ struct DepthImage final {
 
     auto initImageView() -> void {
         const auto subResRange = VkImageSubresourceRange{
-          .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+          //
+          .aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT,
           .baseMipLevel = 0,
           .levelCount = 1,
           .baseArrayLayer = 0,
@@ -88,12 +89,11 @@ struct DepthImage final {
         };
 
         VkImageViewCreateInfo imageinfo = {
+          //
           .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
           .image = depthImage_,
           .viewType = VK_IMAGE_VIEW_TYPE_2D,
-          .format = VK_FORMAT_R8G8B8A8_SRGB,
-          .components =
-            { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A },
+          .format = depthFormat_,
           .subresourceRange = subResRange,
         };
 

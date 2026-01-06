@@ -3,6 +3,7 @@ module;
 
 #include <format>
 #include <vector>
+#include <memory>
 
 #define SURFACE_X11
 
@@ -36,6 +37,7 @@ import image;
 namespace tire {
 
 export struct CommandRoutine;
+struct DepthImage;
 
 auto vkDestroyDebugUtilsMessenger(
   VkInstance instance, VkDebugUtilsMessengerEXT messanger, const VkAllocationCallbacks *pAllocator ) -> void {
@@ -75,10 +77,6 @@ export struct Context final {
     // Destroy all Vulkan context here.
     ~Context() {
         vkDestroyFence( device_, copyCommandFence_, nullptr );
-
-        vkDestroyImage( device_, depthImage_, nullptr );
-        vkDestroyImageView( device_, depthImageView_, nullptr );
-        vkFreeMemory( device_, depthImageMemory_, nullptr );
 
         vkDestroyDescriptorPool( device_, descriptorPool_, nullptr );
 
@@ -334,9 +332,7 @@ protected:
     uint32_t framesCount_{};
     uint32_t swapchainImageCount_{};
     std::vector<Frame> frames_{};
-    VkImage depthImage_;
-    VkDeviceMemory depthImageMemory_;
-    VkImageView depthImageView_;
+    std::shared_ptr<DepthImage> depthImage_;
 
     VkQueue graphicsQueue_{ VK_NULL_HANDLE };
     VkRenderPass renderPass_{ VK_NULL_HANDLE };
