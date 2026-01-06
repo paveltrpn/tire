@@ -74,8 +74,8 @@ auto Context::makeSwapchain() -> void {
       .oldSwapchain = VK_NULL_HANDLE,
     };
 
-    // const uint32_t graphicsFamily{ device_->graphicsFamily() };
-    // const uint32_t presentFamily{ device_->presentFamily() };
+    // Choose image sharing mode for swapchain images. That useful if graphics queue
+    // dont support present and we intendet to use differt queue to preset.
     std::array<uint32_t, 2> queueFamilyIndices = { graphicsFamilyQueueId_, presentSupportQueueId_ };
     if ( graphicsFamilyQueueId_ != presentSupportQueueId_ ) {
         createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
@@ -83,24 +83,30 @@ auto Context::makeSwapchain() -> void {
         createInfo.pQueueFamilyIndices = queueFamilyIndices.data();
     } else {
         createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-        createInfo.queueFamilyIndexCount = 0;      // Optional
-        createInfo.pQueueFamilyIndices = nullptr;  // Optional
+        createInfo.queueFamilyIndexCount = 0;
+        createInfo.pQueueFamilyIndices = nullptr;
     }
 
-    if ( const auto err = vkCreateSwapchainKHR( device_, &createInfo, nullptr, &swapchain_ ); err != VK_SUCCESS ) {
-        log::fatal( "failed to create swapchain code {}\n!", string_VkResult( err ) );
-    } else {
-        log::info( "vk::Swapchain ===  vulkan swapchain created!" );
+    {
+        const auto err = vkCreateSwapchainKHR( device_, &createInfo, nullptr, &swapchain_ );
+        if ( err != VK_SUCCESS ) {
+            log::fatal( "failed to create swapchain code {}\n!", string_VkResult( err ) );
+        } else {
+            log::info( "vk::Swapchain ===  vulkan swapchain created!" );
+        }
     }
 
     // Get swapchain images count. Sudden, this number is
     // equal to previously defined in VkSwapchainCreateInfoKHR.minImageCount (== framesCount_).
     // But we still try to get image count that way.
-    if ( const auto err = vkGetSwapchainImagesKHR( device_, swapchain_, &swapchainImageCount_, nullptr );
-         err != VK_SUCCESS ) {
-        log::fatal( "failed to get swapchain images count with code {}\n!", string_VkResult( err ) );
-    } else {
-        log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>( "vk::Swapchain === swapchain images count: {}", swapchainImageCount_ );
+    {
+        const auto err = vkGetSwapchainImagesKHR( device_, swapchain_, &swapchainImageCount_, nullptr );
+        if ( err != VK_SUCCESS ) {
+            log::fatal( "failed to get swapchain images count with code {}\n!", string_VkResult( err ) );
+        } else {
+            log::debug<DEBUG_OUTPUT_SWAPCHAIN_CPP>(
+              "vk::Swapchain === swapchain images count: {}", swapchainImageCount_ );
+        }
     }
 
     // Depth image
