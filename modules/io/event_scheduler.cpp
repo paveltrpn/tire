@@ -56,7 +56,7 @@ struct EventScheduler {
 
     auto run() -> void {
         if ( run_ ) {
-            log::warning( "EventScheduler === can't do run(), context already active!" );
+            log::warning()( "can't do run(), context already active!" );
             return;
         }
 
@@ -71,9 +71,8 @@ struct EventScheduler {
 
     auto syncWait() -> void {
         if ( run_ ) {
-            log::warning(
-              "EventScheduler === can't do syncWait(), context already "
-              "active!" );
+            log::warning()( "can't do syncWait(), context already "
+                            "active!" );
             return;
         }
 

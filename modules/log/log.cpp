@@ -48,7 +48,7 @@ constexpr auto elideRight( const char *str, int after ) -> std::string {
     auto elided = std::stringstream{};
 
     if ( length > after ) {
-        elided << std::format( "...{}", std::string_view( str ).substr( length, length - after ) );
+        elided << std::format( "{}...", std::string_view( str ).substr( length, length - after ) );
     } else {
         elided << str;
     }
@@ -128,11 +128,20 @@ export {
     }
 
 #define ENABLE_WARNING_OUTPUT true
-    template <bool enable = ENABLE_WARNING_OUTPUT, typename... Ts>
-    void warning( std::format_string<Ts...> msg, Ts &&...args ) {
+    template <bool enable = ENABLE_WARNING_OUTPUT>
+    auto warning( const std::source_location &location = std::source_location::current() ) {
         if constexpr ( enable ) {
-            constexpr char preamble[] = "\033[3;33m[warning] \033[0m\t";
-            std::cout << preamble << std::vformat( msg.get(), std::make_format_args( args... ) ) << "\n";
+            return [&, location]<typename... Ts>( std::format_string<Ts...> msg = "", Ts &&...args ) -> void {
+                constexpr char preamble[] = "\033[3;33m[warning] \033[0m";
+
+                const auto elided = elideLeft( location.file_name(), ELIDE_AFTER );
+
+                const auto sourceInfo = std::format( "\033[3;90m[{}({})] \033[0m", elided, location.line() );
+
+                const auto message = std::vformat( msg.get(), std::make_format_args( args... ) );
+
+                std::cout << std::format( "{}\t{} : {}\n", preamble, sourceInfo, message );
+            };
         }
     }
 

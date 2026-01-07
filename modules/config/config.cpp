@@ -47,7 +47,7 @@ public:
             }
             instance_.reset( this );
         } else {
-            log::warning( "Config === attempt to reinitialize Config instance!" );
+            log::warning()( "attempt to reinitialize Config instance!" );
         }
     }
 
@@ -77,11 +77,11 @@ public:
             if ( config_.contains( param ) ) {
                 return config_[param];
             } else {
-                log::warning( "no such config parameter \"{}\", default value used", param );
+                log::warning()( "no such config parameter \"{}\", default value used", param );
                 return dflt;
             }
         } catch ( nlohmann::json::exception &e ) {
-            log::warning(
+            log::warning()(
               "json exception handled... config param error \"{}\", what: "
               "{}, default value used",
               param, e.what() );

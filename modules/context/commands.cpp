@@ -256,7 +256,7 @@ auto Context::renderCommand( uint32_t frameId ) -> CommandRoutine {
     // exactly or swap chain has become incompatible
     // with the surface and can no longer be used for rendering
     if ( const auto res = vkQueuePresentKHR( presentQueue_, &presentInfo ); res != VK_SUCCESS ) {
-        log::warning( "queue present result {}, is it normal?", string_VkResult( res ) );
+        log::warning()( "queue present result {}, is it normal?", string_VkResult( res ) );
     }
 }
 

@@ -116,7 +116,7 @@ export struct Scene {
             activeCamera_ = id;
         } else {
             activeCamera_ = 0;
-            log::warning( "Scene === try to get not existing camera - {}", id );
+            log::warning()( "try to get not existing camera - {}", id );
         }
     };
 

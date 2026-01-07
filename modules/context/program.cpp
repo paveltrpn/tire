@@ -146,7 +146,7 @@ export struct Program final {
 
         // Check if shader module with name exist in modules map
         if ( modules_.contains( name ) ) {
-            log::warning(
+            log::warning()(
               "vk::ShaderStorage == shader module with name \"{}\" exist, no "
               "need "
               "to "
@@ -174,8 +174,8 @@ export struct Program final {
         // Check if same shader stage already occupied
         const auto suffix = split( name, "_" ).back();
         if ( checkStageExist( suffix ) ) {
-            log::warning(
-              "vk::ShaderStorage == shader module for stage \"{}\" exist, no "
+            log::warning()(
+              "shader module for stage \"{}\" exist, no "
               "need "
               "to "
               "replace it",
@@ -232,7 +232,7 @@ export struct Program final {
         try {
             module = modules_.at( name );
         } catch ( std::out_of_range &e ) {
-            log::warning( "module {} not exist!", name );
+            log::warning()( "module {} not exist!", name );
             return VK_NULL_HANDLE;
         }
         return module;
@@ -253,7 +253,7 @@ export struct Program final {
             }
         }
 
-        log::warning( "vk::ShaderStorage == shader module with suffix \"{}\" not found!", suffix );
+        log::warning()( "shader module with suffix \"{}\" not found!", suffix );
 
         return VK_NULL_HANDLE;
     }
@@ -263,7 +263,7 @@ export struct Program final {
         try {
             module = modules_.at( name );
         } catch ( std::out_of_range &e ) {
-            log::warning( "module {} not exist!", name );
+            log::warning()( "module {} not exist!", name );
             return;
         }
         vkDestroyShaderModule( context_->device(), module, nullptr );
