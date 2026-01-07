@@ -68,7 +68,7 @@ void Context::makeCommandPool() {
         throw std::runtime_error(
           std::format( "failed to create command pool woth code {}!", string_VkResult( err ) ) );
     } else {
-        log::debug( "CommandPool === command pool created!" );
+        log::debug()( "command pool created!" );
     }
 }
 

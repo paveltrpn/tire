@@ -41,8 +41,8 @@ auto Context::makeSwapchain() -> void {
     //      "surface image count limits" );
     //}
 
-    log::debug(
-      "Context === vulkan swapchain surface capabilities image count "
+    log::debug()(
+      "vulkan swapchain surface capabilities image count "
       "set to "
       "{}",
       framesCount_ );
@@ -99,7 +99,7 @@ auto Context::makeSwapchain() -> void {
         if ( err != VK_SUCCESS ) {
             log::fatal( "Context === failed to get swapchain images count with code {}\n!", string_VkResult( err ) );
         } else {
-            log::debug( "Context === swapchain images count: {}", swapchainImageCount_ );
+            log::debug()( "swapchain images count: {}", swapchainImageCount_ );
         }
     }
 
@@ -118,7 +118,7 @@ auto Context::makeFrames() -> void {
          err != VK_SUCCESS ) {
         log::fatal( "Context === failed to get swapchain images with code {}\n!", string_VkResult( err ) );
     } else {
-        log::debug( "Context === images acquired!" );
+        log::debug()( "images acquired!" );
     }
 
     // Create frame related vulkan entities - images, image views, framebuffers and sync primitieves.
@@ -152,7 +152,7 @@ auto Context::makeFrames() -> void {
              err != VK_SUCCESS ) {
             log::fatal( "Context === failed to create swapchain image views with code {}\n!", string_VkResult( err ) );
         } else {
-            log::debug( "Context === image view {} created!", i );
+            log::debug()( "image view {} created!", i );
         }
 
         // Frame framebuffer
@@ -171,7 +171,7 @@ auto Context::makeFrames() -> void {
              err != VK_SUCCESS ) {
             log::fatal( "Context === failed to create framebuffer at {} with code {}!", i, string_VkResult( err ) );
         } else {
-            log::debug( "Context === framebuffer {} created!", i );
+            log::debug()( "framebuffer {} created!", i );
         }
 
         // Frame synchronization primitieves
@@ -198,7 +198,7 @@ auto Context::makeFrames() -> void {
         if ( err != VK_SUCCESS ) {
             log::fatal( "Context === failed to allocate command buffers with code {}!", string_VkResult( err ) );
         } else {
-            log::debug( "Context === primary command buffer created!" );
+            log::debug()( "primary command buffer created!" );
         };
     }
 }

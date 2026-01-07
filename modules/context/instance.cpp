@@ -77,7 +77,7 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
     if ( const auto err = vkEnumerateInstanceLayerProperties( &layersCount, nullptr ); err != VK_SUCCESS ) {
         log::fatal( "can't enumerate instance layer properties with code: {}\n", string_VkResult( err ) );
     } else {
-        log::debug<DEBUG_OUTPUT_INSTANCE_CPP>( "vk::Instance === layer properties value: {}", layersCount );
+        log::debug()( "layer properties value: {}", layersCount );
     }
 
     layerProperties_.resize( layersCount );
@@ -209,7 +209,7 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
           "properties with code: {}\n",
           string_VkResult( err ) );
     } else {
-        log::debug<DEBUG_OUTPUT_INSTANCE_CPP>( "vk::Instance === extension properties value: {}", extCount );
+        log::debug()( "extension properties value: {}", extCount );
     }
 
     extensionProperties_.resize( extCount );
@@ -239,7 +239,7 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
              err != VK_SUCCESS ) {
             log::fatal( "failed to set up debug messenger with code {}!\n", string_VkResult( err ) );
         } else {
-            log::debug<DEBUG_OUTPUT_INSTANCE_CPP>( "vk::Instance === vkCreateDebugUtilsMessenger success!" );
+            log::debug()( "vkCreateDebugUtilsMessenger success!" );
         }
     }
 }

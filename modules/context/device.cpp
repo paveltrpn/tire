@@ -6,8 +6,6 @@ module;
 #define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vk_enum_string_helper.h>
 
-static constexpr bool DEBUG_OUTPUT_DEVICE_CPP{ true };
-
 export module context:device;
 
 import config;
@@ -24,7 +22,7 @@ void Context::collectPhysicalDevices() {
     if ( const auto err = vkEnumeratePhysicalDevices( instance_, &devCount, nullptr ); err != VK_SUCCESS ) {
         log::fatal( "can't enumerate physical devices with code: \n", string_VkResult( err ) );
     } else {
-        log::debug<DEBUG_OUTPUT_DEVICE_CPP>( "vk::Device === physical devices enumerate success, count: {}", devCount );
+        log::debug()( "physical devices enumerate success, count: {}", devCount );
     }
 
     if ( devCount == 0 ) {
@@ -39,7 +37,7 @@ void Context::collectPhysicalDevices() {
          err != VK_SUCCESS ) {
         log::fatal( "can't acquire physical devices with code: {}\n", string_VkResult( err ) );
     } else {
-        log::debug<DEBUG_OUTPUT_DEVICE_CPP>( "vk::Device === physical devices acquire success" );
+        log::debug()( "physical devices acquire success" );
     }
 
     // Get physical device info for each device
@@ -61,7 +59,7 @@ void Context::collectPhysicalDevices() {
         std::vector<VkQueueFamilyProperties> qfp{};
         qfp.resize( queueFamilyCount );
         vkGetPhysicalDeviceQueueFamilyProperties( device, &queueFamilyCount, qfp.data() );
-        log::debug<DEBUG_OUTPUT_DEVICE_CPP>( "vk::Device === device queue family count: {}", queueFamilyCount );
+        log::debug()( "device queue family count: {}", queueFamilyCount );
 
         // Collect physical device extensions info
         uint32_t extensionCount{};
@@ -72,8 +70,8 @@ void Context::collectPhysicalDevices() {
               "with code: {}\n",
               string_VkResult( err ) );
         } else {
-            log::debug<DEBUG_OUTPUT_DEVICE_CPP>(
-              "vk::Device === physical device extensions enumerated for "
+            log::debug()(
+              "physical device extensions enumerated for "
               "device: {}, "
               "count: {}",
               devProps.deviceName, extensionCount );
@@ -90,8 +88,8 @@ void Context::collectPhysicalDevices() {
               "with code: {}\n",
               string_VkResult( err ) );
         } else {
-            log::debug<DEBUG_OUTPUT_DEVICE_CPP>(
-              "vk::Device === physical device extensions acquired for "
+            log::debug()(
+              "physical device extensions acquired for "
               "device: "
               "{}",
               devProps.deviceName );
@@ -203,8 +201,8 @@ void Context::makeDevice() {
           "another queue family?" );
     }
 
-    log::debug<DEBUG_OUTPUT_DEVICE_CPP>( "vk::Device === graphics family: {}", graphicsFamilyQueueId_ );
-    log::debug<DEBUG_OUTPUT_DEVICE_CPP>( "vk::Device === present family: {}", presentSupportQueueId_ );
+    log::debug()( "graphics family: {}", graphicsFamilyQueueId_ );
+    log::debug()( "present family: {}", presentSupportQueueId_ );
 
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
     const std::set<uint32_t> uniqueQueueFamilies = { graphicsFamilyQueueId_, presentSupportQueueId_ };
@@ -276,8 +274,8 @@ void Context::makeDevice() {
          err != VK_SUCCESS ) {
         log::fatal( "failed to obtain surface capabilities with code {}!\n", string_VkResult( err ) );
     } else {
-        log::debug<DEBUG_OUTPUT_DEVICE_CPP>( "vk::Device === physical device surface capabilities acquire "
-                                             "success!" );
+        log::debug()( "physical device surface capabilities acquire "
+                      "success!" );
     }
 
     // Application window size (extent) givet at startup.
@@ -294,8 +292,8 @@ void Context::makeDevice() {
           "count with code {}!\n",
           string_VkResult( err ) );
     } else {
-        log::debug<DEBUG_OUTPUT_DEVICE_CPP>(
-          "vk::Device === physical device surface formats count obtain "
+        log::debug()(
+          "physical device surface formats count obtain "
           "success, "
           "count: "
           "{}",
@@ -312,8 +310,8 @@ void Context::makeDevice() {
           "count with code {}!\n",
           string_VkResult( err ) );
     } else {
-        log::debug<DEBUG_OUTPUT_DEVICE_CPP>( "vk::Device === physical device surface formats acquire "
-                                             "success!" );
+        log::debug()( "physical device surface formats acquire "
+                      "success!" );
     }
 
     for ( const auto &item : surfaceFormats_ ) {
@@ -330,8 +328,8 @@ void Context::makeDevice() {
           "count with code {}!\n",
           string_VkResult( err ) );
     } else {
-        log::debug<DEBUG_OUTPUT_DEVICE_CPP>(
-          "vk::Device === physical device present modes count obtain "
+        log::debug()(
+          "physical device present modes count obtain "
           "success, "
           "count: "
           "{}",
@@ -348,7 +346,7 @@ void Context::makeDevice() {
           "with code {}!\n",
           string_VkResult( err ) );
     } else {
-        log::debug<DEBUG_OUTPUT_DEVICE_CPP>( "vk::Device === physical device present modes acquire success!" );
+        log::debug()( "physical device present modes acquire success!" );
     }
 
     for ( const auto &item : presentModes_ ) {
@@ -360,14 +358,14 @@ void Context::makeDevice() {
     // swapchain in particular.
     surfaceFormat_ = surfaceFormats_[CHOSEN_SURFACE_FORMAT];
 
-    log::debug<DEBUG_OUTPUT_DEVICE_CPP>( "vk::Device === format is {}", string_VkFormat( surfaceFormat_.format ) );
+    log::debug()( "format is {}", string_VkFormat( surfaceFormat_.format ) );
 
 #define CHOSEN_PRESENT_MODE VK_PRESENT_MODE_FIFO_KHR
     // This present mode will be used across application, in
     // swapchain in particular.
     presentMode_ = CHOSEN_PRESENT_MODE;  // presentModes_[0];
 
-    log::debug<DEBUG_OUTPUT_DEVICE_CPP>( "vk::Device === present mode is {}", string_VkPresentModeKHR( presentMode_ ) );
+    log::debug()( "present mode is {}", string_VkPresentModeKHR( presentMode_ ) );
 }
 
 }  // namespace tire

@@ -43,6 +43,19 @@ namespace tire::log {
  * inverse off      27
  **/
 
+constexpr auto elideRight( const char *str, int after ) -> std::string {
+    const auto length = std::strlen( str );
+    auto elided = std::stringstream{};
+
+    if ( length > after ) {
+        elided << std::format( "...{}", std::string_view( str ).substr( length, length - after ) );
+    } else {
+        elided << str;
+    }
+
+    return elided.str();
+}
+
 constexpr auto elideLeft( const char *str, int after ) -> std::string {
     const auto length = std::strlen( str );
     auto elided = std::stringstream{};
@@ -58,14 +71,7 @@ constexpr auto elideLeft( const char *str, int after ) -> std::string {
 
 export {
     //
-    template <bool enable = true, typename... Ts>
-    void print_source( const std::source_location &location = std::source_location::current(), Ts &&...args ) {
-        constexpr char preamble[] = "\033[3;34m[source] \033[0m";
-        std::cout << preamble << "file: " << location.file_name() << '(' << location.line() << ':' << location.column()
-                  << ") `" << location.function_name() << "`" << '\n';
-    }
-
-#define ELIDE_AFTER 24
+#define ELIDE_AFTER 18
 
 #define ENABLE_INFO_OUTPUT true
     template <bool enable = ENABLE_INFO_OUTPUT>
@@ -104,11 +110,20 @@ export {
     }
 
 #define ENABLE_DEBUG_OUTPUT true
-    template <bool enable = ENABLE_DEBUG_OUTPUT, typename... Ts>
-    void debug( std::format_string<Ts...> msg, Ts &&...args ) {
+    template <bool enable = ENABLE_DEBUG_OUTPUT>
+    auto debug( const std::source_location &location = std::source_location::current() ) {
         if constexpr ( enable ) {
-            constexpr char preamble[] = "\033[3;35m[debug] \033[0m\t";
-            std::cout << preamble << std::vformat( msg.get(), std::make_format_args( args... ) ) << "\n";
+            return [&, location]<typename... Ts>( std::format_string<Ts...> msg = "", Ts &&...args ) -> void {
+                constexpr char preamble[] = "\033[3;35m[debug] \033[0m";
+
+                const auto elided = elideLeft( location.file_name(), ELIDE_AFTER );
+
+                const auto sourceInfo = std::format( "\033[3;90m[{}({})] \033[0m", elided, location.line() );
+
+                const auto message = std::vformat( msg.get(), std::make_format_args( args... ) );
+
+                std::cout << std::format( "{}\t{} : {}\n", preamble, sourceInfo, message );
+            };
         }
     }
 
@@ -137,6 +152,13 @@ export {
 
         // Terminate
         std::terminate();
+    }
+
+    template <bool enable = true, typename... Ts>
+    void print_source( const std::source_location &location = std::source_location::current() ) {
+        constexpr char preamble[] = "\033[3;34m[source] \033[0m";
+        std::cout << preamble << "file: " << location.file_name() << '(' << location.line() << ':' << location.column()
+                  << ") `" << location.function_name() << "`" << '\n';
     }
 }
 

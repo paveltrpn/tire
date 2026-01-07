@@ -272,7 +272,7 @@ export struct Program final {
 
     void list() {
         for ( const auto &key : modules_ ) {
-            log::debug( "available shader module: \"{}\"", std::get<0>( key ) );
+            log::debug()( "available shader module: \"{}\"", std::get<0>( key ) );
         }
     }
 
@@ -290,7 +290,7 @@ private:
             throw std::runtime_error(
               std::format( "failed to create shader module {} with code {}!", name, string_VkResult( err ) ) );
         } else {
-            log::debug( "vk::ShaderStorage == shader module {} created!", name );
+            log::debug()( "shader module {} created!", name );
         }
 
         modules_[name] = module;

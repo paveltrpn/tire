@@ -168,8 +168,6 @@ auto readWavefrontObjFile( const std::string &filePath ) -> std::shared_ptr<Sepa
         throw std::runtime_error( std::format( "Somehow file \"{}\" not opened!", filePath ) );
     }
 
-    log::debug( "Scene === reading file \"{}\"", filePath );
-
     // Buffer to read in.
     auto objMesh = ObjMesh{};
 
