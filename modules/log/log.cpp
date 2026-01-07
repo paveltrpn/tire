@@ -1,6 +1,7 @@
 
 module;
 
+#include <concepts>
 #include <sstream>
 #include <iostream>
 #include <format>
@@ -42,6 +43,19 @@ namespace tire::log {
  * inverse off      27
  **/
 
+constexpr auto elideLeft( const char *str, int after ) -> std::string {
+    const auto length = std::strlen( str );
+    auto elided = std::stringstream{};
+
+    if ( length > after ) {
+        elided << std::format( "...{}", std::string_view( str ).substr( length - after, length ) );
+    } else {
+        elided << str;
+    }
+
+    return elided.str();
+}
+
 export {
     //
     template <bool enable = true, typename... Ts>
@@ -51,6 +65,8 @@ export {
                   << ") `" << location.function_name() << "`" << '\n';
     }
 
+#define ELIDE_AFTER 24
+
 #define ENABLE_INFO_OUTPUT true
     template <bool enable = ENABLE_INFO_OUTPUT>
     auto info( const std::source_location &location = std::source_location::current() ) {
@@ -58,33 +74,32 @@ export {
             return [&, location]<typename... Ts>( std::format_string<Ts...> msg = "", Ts &&...args ) -> void {
                 constexpr char preamble[] = "\033[3;32m[info] \033[0m";
 
-                const auto length = std::strlen( location.file_name() );
-                auto elided = std::stringstream{};
+                const auto elided = elideLeft( location.file_name(), ELIDE_AFTER );
 
-#define ELIDE_AFTER 24
-
-                if ( length > ELIDE_AFTER ) {
-                    elided << std::format(
-                      "...{}", std::string_view( location.file_name() ).substr( length - ELIDE_AFTER, length ) );
-                } else {
-                    elided << std::string{ location.file_name() };
-                }
-
-                const auto sourceInfo = std::format( "\033[3;90m[{}({})] \033[0m", elided.str(), location.line() );
+                const auto sourceInfo = std::format( "\033[3;90m[{}({})] \033[0m", elided, location.line() );
 
                 const auto message = std::vformat( msg.get(), std::make_format_args( args... ) );
 
-                std::cout << std::format( "{}\t{} : {}\n", preamble, sourceInfo, message );
+                std::cout << std::format( "{}\t\t{} : {}\n", preamble, sourceInfo, message );
             };
         }
     }
 
 #define ENABLE_NOTICE_OUTPUT true
-    template <bool enable = ENABLE_NOTICE_OUTPUT, typename... Ts>
-    void notice( std::format_string<Ts...> msg, Ts &&...args ) {
+    template <bool enable = ENABLE_NOTICE_OUTPUT>
+    auto notice( const std::source_location &location = std::source_location::current() ) {
         if constexpr ( enable || ENABLE_NOTICE_OUTPUT ) {
-            constexpr char preamble[] = "\033[3;36m[notice] \033[0m\t";
-            std::cout << preamble << std::vformat( msg.get(), std::make_format_args( args... ) ) << "\n";
+            return [&, location]<typename... Ts>( std::format_string<Ts...> msg = "", Ts &&...args ) -> void {
+                constexpr char preamble[] = "\033[3;36m[notice] \033[0m";
+
+                const auto elided = elideLeft( location.file_name(), ELIDE_AFTER );
+
+                const auto sourceInfo = std::format( "\033[3;90m[{}({})] \033[0m", elided, location.line() );
+
+                const auto message = std::vformat( msg.get(), std::make_format_args( args... ) );
+
+                std::cout << std::format( "{}\t{} : {}\n", preamble, sourceInfo, message );
+            };
         }
     }
 

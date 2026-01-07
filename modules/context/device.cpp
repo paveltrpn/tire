@@ -317,7 +317,7 @@ void Context::makeDevice() {
     }
 
     for ( const auto &item : surfaceFormats_ ) {
-        log::notice( "vk::Device === format: {}", string_VkFormat( item.format ) );
+        log::notice()( "format: {}", string_VkFormat( item.format ) );
     }
 
     // Physical device present modes
@@ -352,7 +352,7 @@ void Context::makeDevice() {
     }
 
     for ( const auto &item : presentModes_ ) {
-        log::notice( "vk::Device === mode: {}", string_VkPresentModeKHR( item ) );
+        log::notice()( "mode: {}", string_VkPresentModeKHR( item ) );
     }
 
 #define CHOSEN_SURFACE_FORMAT 0

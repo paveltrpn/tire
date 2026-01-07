@@ -21,9 +21,7 @@ struct Task<void> {
     using handle_type = std::coroutine_handle<promise_type>;
 
     struct promise_type {
-        Task get_return_object() {
-            return Task<void>{ handle_type::from_promise( *this ) };
-        };
+        Task get_return_object() { return Task<void>{ handle_type::from_promise( *this ) }; };
 
         auto initial_suspend() noexcept { return std::suspend_never{}; }
         auto final_suspend() noexcept { return std::suspend_never{}; }
@@ -39,12 +37,12 @@ struct Task<void> {
 
     Task() = default;
 
-    Task( Task&& t ) noexcept
+    Task( Task &&t ) noexcept
         : handle_( t.handle_ ) {
         t.handle_ = nullptr;
     }
 
-    Task& operator=( Task&& other ) noexcept {
+    Task &operator=( Task &&other ) noexcept {
         if ( std::addressof( other ) != this ) {
             // Destroy this handle, but it allowed only when
             // coroutine is suspended.
@@ -59,8 +57,8 @@ struct Task<void> {
         return *this;
     }
 
-    Task( const Task& ) = delete;
-    Task& operator=( const Task& ) = delete;
+    Task( const Task & ) = delete;
+    Task &operator=( const Task & ) = delete;
 
     ~Task() = default;
 
@@ -75,9 +73,7 @@ struct Task<void> {
         }
     }
 
-    [[nodiscard]] constexpr bool empty() const noexcept {
-        return handle_ == nullptr;
-    }
+    [[nodiscard]] constexpr bool empty() const noexcept { return handle_ == nullptr; }
 
     constexpr explicit operator bool() const noexcept { return !empty(); }
 
@@ -132,27 +128,22 @@ struct TimeoutAwaitable final {
 
 template <typename T>
 struct FilesystemWatchAwaitable final {
-    FilesystemWatchAwaitable( uv_loop_t* loop, const std::string& path )
+    FilesystemWatchAwaitable( uv_loop_t *loop, const std::string &path )
         : loop_( loop )
         , path_{ path } {};
 
     [[nodiscard]] auto await_ready() const noexcept -> bool { return false; }
 
-    void await_suspend(
-        std::coroutine_handle<typename T::promise_type> handle ) noexcept {
-        auto cb = []( uv_fs_event_t* watcher, const char* filename, int events,
-                      int status ) -> void {
-            auto self =
-                static_cast<FilesystemWatchAwaitable<T>*>( watcher->data );
+    void await_suspend( std::coroutine_handle<typename T::promise_type> handle ) noexcept {
+        auto cb = []( uv_fs_event_t *watcher, const char *filename, int events, int status ) -> void {
+            auto self = static_cast<FilesystemWatchAwaitable<T> *>( watcher->data );
             self->event_ = static_cast<uv_fs_event>( events );
             self->handle_.resume();
         };
 
         auto promise = handle.promise();
         if ( promise.scheduleDestroy_ ) {
-            log::notice(
-                "FilesystemWatchAwaitable === coroutine destruction "
-                "pending..." );
+            log::notice()( "coroutine destruction pending..." );
             handle.destroy();
             return;
         }
@@ -173,7 +164,7 @@ struct FilesystemWatchAwaitable final {
     }
 
     std::coroutine_handle<typename T::promise_type> handle_;
-    uv_loop_t* loop_;
+    uv_loop_t *loop_;
     std::string path_;
     uv_fs_event_t watcher_;
     uv_fs_event event_{};
