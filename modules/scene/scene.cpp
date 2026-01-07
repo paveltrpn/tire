@@ -72,7 +72,7 @@ export struct Scene {
     Scene( const std::filesystem::path &fname ) {
         const auto path = std::filesystem::path{ fname };
 
-        log::info( "Scene === loading scene from file {}", fname.string() );
+        log::info()( "loading scene from file {}", fname.string() );
 
         std::ifstream file{ path };
         if ( file ) {
@@ -164,7 +164,7 @@ private:
                 auto mesh = readWavefrontObjFile( entry.path().string() );
                 baseMeshPool_.insert( { meshType, std::move( mesh ) } );
 
-                log::info( "Scene === mesh type \"{}\" added", meshType );
+                log::info()( "mesh type \"{}\" added", meshType );
 
             } catch ( const std::exception &e ) {
                 log::error( "Error reading mesh file: {}", e.what() );

@@ -43,13 +43,13 @@ void Context::collectPhysicalDevices() {
     }
 
     // Get physical device info for each device
-    log::info( "vk::Device === collect physical device info..." );
+    log::info()( "collect physical device info..." );
     for ( const auto device : physicalDevices ) {
         // Collect physical devices and its properties
 
         VkPhysicalDeviceProperties devProps;
         vkGetPhysicalDeviceProperties( device, &devProps );
-        log::info( "vk::Device === name: {}", devProps.deviceName );
+        log::info()( "device name: {}", devProps.deviceName );
 
         VkPhysicalDeviceFeatures devFeatures;
         vkGetPhysicalDeviceFeatures( device, &devFeatures );
@@ -161,7 +161,7 @@ void Context::makeDevice() {
     // Base class member.
     physDevice_ = physicalDevices_[pickedPhysicalDeviceId_].device;
 
-    log::info( "vk::Device === pick {}", physicalDevices_[pickedPhysicalDeviceId_].properties.deviceName );
+    log::info()( "pick {}", physicalDevices_[pickedPhysicalDeviceId_].properties.deviceName );
 
     // Choose queue family with VK_QUEUE_GRAPHICS_BIT.
     // The good news is that
@@ -223,7 +223,7 @@ void Context::makeDevice() {
     desiredExtensionsList.emplace_back( "VK_KHR_swapchain" );
 
     if ( configHandle->get<bool>( "enable_raytracing_extensions" ) ) {
-        log::info( "vk::Device === raytracing extansions enabled" );
+        log::info()( "raytracing extansions enabled" );
 
         desiredExtensionsList.emplace_back( "VK_KHR_ray_query" );
         desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_pipeline" );
@@ -236,7 +236,7 @@ void Context::makeDevice() {
         desiredExtensionsList.emplace_back( "VK_KHR_spirv_1_4" );
         desiredExtensionsList.emplace_back( "VK_KHR_shader_float_controls" );
     } else {
-        log::info( "vk::Device === raytracing extansions disabled" );
+        log::info()( "raytracing extansions disabled" );
     }
 
     VkDeviceCreateInfo deviceCreateInfo{};
@@ -264,7 +264,7 @@ void Context::makeDevice() {
     if ( const auto err = vkCreateDevice( physDevice_, &deviceCreateInfo, nullptr, &device_ ); err != VK_SUCCESS ) {
         log::fatal( "failed to create logical device with code {}!\n", string_VkResult( err ) );
     } else {
-        log::info( "vk::Device === logical device create success!" );
+        log::info()( "logical device create success!" );
     }
 
     // Graphic and present queue id

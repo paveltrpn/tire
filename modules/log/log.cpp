@@ -1,6 +1,7 @@
 
 module;
 
+#include <sstream>
 #include <iostream>
 #include <format>
 #include <source_location>
@@ -43,13 +44,38 @@ namespace tire::log {
 
 export {
     //
+    template <bool enable = true, typename... Ts>
+    void print_source( const std::source_location &location = std::source_location::current(), Ts &&...args ) {
+        constexpr char preamble[] = "\033[3;34m[source] \033[0m";
+        std::cout << preamble << "file: " << location.file_name() << '(' << location.line() << ':' << location.column()
+                  << ") `" << location.function_name() << "`" << '\n';
+    }
 
 #define ENABLE_INFO_OUTPUT true
-    template <bool enable = ENABLE_INFO_OUTPUT, typename... Ts>
-    void info( std::format_string<Ts...> msg, Ts &&...args ) {
+    template <bool enable = ENABLE_INFO_OUTPUT>
+    auto info( const std::source_location &location = std::source_location::current() ) {
         if constexpr ( enable ) {
-            constexpr char preamble[] = "\033[3;32m[info] \033[0m\t\t";
-            std::cout << preamble << std::vformat( msg.get(), std::make_format_args( args... ) ) << "\n";
+            return [&, location]<typename... Ts>( std::format_string<Ts...> msg = "", Ts &&...args ) -> void {
+                constexpr char preamble[] = "\033[3;32m[info] \033[0m";
+
+                const auto length = std::strlen( location.file_name() );
+                auto elided = std::stringstream{};
+
+#define ELIDE_AFTER 24
+
+                if ( length > ELIDE_AFTER ) {
+                    elided << std::format(
+                      "...{}", std::string_view( location.file_name() ).substr( length - ELIDE_AFTER, length ) );
+                } else {
+                    elided << std::string{ location.file_name() };
+                }
+
+                const auto sourceInfo = std::format( "\033[3;90m[{}({})] \033[0m", elided.str(), location.line() );
+
+                const auto message = std::vformat( msg.get(), std::make_format_args( args... ) );
+
+                std::cout << std::format( "{}\t{} : {}\n", preamble, sourceInfo, message );
+            };
         }
     }
 
@@ -96,12 +122,6 @@ export {
 
         // Terminate
         std::terminate();
-    }
-
-    void print_source( const std::source_location location ) {
-        constexpr char preamble[] = "\033[3;34m[source] \033[0m";
-        std::cout << preamble << "file: " << location.file_name() << '(' << location.line() << ':' << location.column()
-                  << ") `" << location.function_name() << "`" << '\n';
     }
 }
 

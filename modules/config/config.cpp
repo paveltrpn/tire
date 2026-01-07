@@ -58,7 +58,7 @@ public:
 
     ~Config() {
         //
-        log::info( "Config === deleted..." );
+        log::info()( "config deleted..." );
     }
 
     [[nodiscard]] auto getBasePath() const -> const std::filesystem::path & { return basePath_; };

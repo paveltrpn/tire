@@ -87,7 +87,7 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
          err != VK_SUCCESS ) {
         log::fatal( "can't acquire instance layer properties with code: {}\n", string_VkResult( err ) );
     } else {
-        log::info( "vk::Instance === layer properties acquired" );
+        log::info()( "layer properties acquired" );
     }
     /*
     // Layers optimal order:
@@ -222,14 +222,14 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
           "with code: {}\n",
           string_VkResult( err ) );
     } else {
-        log::info( "vk::Instance === extension properties aquired" );
+        log::info()( "extension properties aquired" );
     }
 
     // Create vulkan instance
     if ( const auto err = vkCreateInstance( &instanceCreateInfo, nullptr, &instance_ ); err != VK_SUCCESS ) {
         log::fatal( "can't create vk instance with code: {}\n", string_VkResult( err ) );
     } else {
-        log::info( "vk::Instance === vulkan instance created!" );
+        log::info()( "vulkan instance created!" );
     }
 
     // Create debug utils messanger

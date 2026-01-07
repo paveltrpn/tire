@@ -16,8 +16,7 @@ namespace tire::io {
 
 struct EventScheduler {
     EventScheduler()
-        : loop_{
-              static_cast<uv_loop_t*>( std::malloc( sizeof( uv_loop_t ) ) ) } {
+        : loop_{ static_cast<uv_loop_t *>( std::malloc( sizeof( uv_loop_t ) ) ) } {
         // Try to allocate main loop handle.
 
         // We not yet in loop thread. Calling this is safe.
@@ -36,15 +35,15 @@ struct EventScheduler {
             // Start event loop.
             uv_run( loop_, UV_RUN_DEFAULT );
 
-            log::info( "EventScheduler === uv loop closed!" );
+            log::info()( "uv loop closed!" );
         } );
     }
 
     // Not copyable not moveable "service-like" object.
-    EventScheduler( const EventScheduler& other ) = delete;
-    EventScheduler( EventScheduler&& other ) = delete;
-    auto operator=( const EventScheduler& other ) -> EventScheduler& = delete;
-    auto operator=( EventScheduler&& other ) -> EventScheduler& = delete;
+    EventScheduler( const EventScheduler &other ) = delete;
+    EventScheduler( EventScheduler &&other ) = delete;
+    auto operator=( const EventScheduler &other ) -> EventScheduler & = delete;
+    auto operator=( EventScheduler &&other ) -> EventScheduler & = delete;
 
     virtual ~EventScheduler() {
         // We already left loop thread.
@@ -57,8 +56,7 @@ struct EventScheduler {
 
     auto run() -> void {
         if ( run_ ) {
-            log::warning(
-                "EventScheduler === can't do run(), context already active!" );
+            log::warning( "EventScheduler === can't do run(), context already active!" );
             return;
         }
 
@@ -74,8 +72,8 @@ struct EventScheduler {
     auto syncWait() -> void {
         if ( run_ ) {
             log::warning(
-                "EventScheduler === can't do syncWait(), context already "
-                "active!" );
+              "EventScheduler === can't do syncWait(), context already "
+              "active!" );
             return;
         }
 
@@ -93,11 +91,9 @@ protected:
     // Submit callback to event loop.
     // That async handle contain a pointer to specific data, that will be
     // used in callback and callback to perform action on event loop thread itself.
-    auto schedule( void* payload, std::invocable<uv_async_t*> auto cb )
-        -> void {
+    auto schedule( void *payload, std::invocable<uv_async_t *> auto cb ) -> void {
         // Allocate uv_async_t handle. Will be deleted in close callback.
-        const auto j =
-            static_cast<uv_async_t*>( std::malloc( sizeof( uv_async_t ) ) );
+        const auto j = static_cast<uv_async_t *>( std::malloc( sizeof( uv_async_t ) ) );
 
         // Store payload pointer in async handle
         j->data = payload;
@@ -114,7 +110,7 @@ protected:
 
 private:
     // Main and only uv loop handle.
-    uv_loop_t* loop_{};
+    uv_loop_t *loop_{};
 
     // Loop thread.
     std::unique_ptr<std::thread> thread_;

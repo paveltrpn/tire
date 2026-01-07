@@ -20,8 +20,8 @@ namespace tire {
 auto Context::makeSwapchain() -> void {
     const auto configHandle = Config::instance();
 
-    log::info(
-      "Context === surface capabilities minImageCount: {}, "
+    log::info()(
+      "surface capabilities minImageCount: {}, "
       "maxImageCount: {}",
       surfaceCapabilities_.minImageCount, surfaceCapabilities_.maxImageCount );
 
@@ -87,7 +87,7 @@ auto Context::makeSwapchain() -> void {
         if ( err != VK_SUCCESS ) {
             log::fatal( "failed to create swapchain code {}\n!", string_VkResult( err ) );
         } else {
-            log::info( "Swapchain ===  vulkan swapchain created!" );
+            log::info()( "vulkan swapchain created!" );
         }
     }
 

@@ -116,7 +116,7 @@ export struct Context final {
             throw std::runtime_error(
               std::format( "failed to create xlib surface with code {}\n!", string_VkResult( err ) ) );
         } else {
-            log::info( "Surface === xlib surface created!" );
+            log::info()( "xlib surface created!" );
         }
     }
 #elifdef SURFACE_WAYLAND
@@ -131,7 +131,7 @@ export struct Context final {
             throw std::runtime_error(
               std::format( "failed to create wayland surface with code {}\n!", string_VkResult( err ) ) );
         } else {
-            log::info( "Surface === xlib surface created!" );
+            log::info()( "wayland surface created!" );
         }
     }
 #endif

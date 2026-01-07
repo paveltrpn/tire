@@ -65,9 +65,9 @@ export struct RenderVK final {
 
     auto timeoutTestCoro( uint64_t t ) -> io::Task<void> {
         co_await ioContext_.timeout( t );
-        log::info( "timeout {} exceeded once...", t );
+        log::info()( "timeout {} exceeded once...", t );
         co_await ioContext_.timeout( t );
-        log::info( "timeout {} exceeded again, coroutine done.", t );
+        log::info()( "timeout {} exceeded again, coroutine done.", t );
     }
 
     auto preLoop() -> void {
@@ -104,7 +104,7 @@ export struct RenderVK final {
     };
 
     auto postLoop() -> void {
-        log::info( "vk::Render === wait device idle..." );
+        log::info()( "wait device idle..." );
 
         // We should wait for the logical device to finish operations
         // before exiting mainLoop and destroying the window.

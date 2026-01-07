@@ -67,7 +67,7 @@ BareWindow::BareWindow() {
         }
         case GLFW_PLATFORM_X11: {
 #ifdef SURFACE_X11
-            tire::log::info( "glfw platform X11 is used!" );
+            tire::log::info()( "glfw platform X11 is used!" );
 
             const auto display = glfwGetX11Display();
             const auto window = glfwGetX11Window( window_ );
@@ -80,7 +80,7 @@ BareWindow::BareWindow() {
         }
         case GLFW_PLATFORM_WAYLAND: {
 #ifdef SURFACE_WAYLAND
-            tire::log::info( "glfw platform WAYLAND is used!" );
+            tire::log::info()( "glfw platform WAYLAND is used!" );
 
             const auto display = glfwGetWaylandDisplay();
             const auto surface = glfwGetWaylandWindow( window_ );

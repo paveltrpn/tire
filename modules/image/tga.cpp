@@ -98,7 +98,7 @@ export struct Tga final : Image {
         }
 
         if ( _header.imageType == TGA_IMGTYPE_BW_FLAG ) {
-            log::info( "note that tga image is grayscale!" );
+            log::info()( "note that tga image is grayscale!" );
         }
 
         // Read file body.

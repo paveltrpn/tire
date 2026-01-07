@@ -137,7 +137,7 @@ auto Context::initRenderPass() -> void {
     if ( const auto err = vkCreateRenderPass( device(), &renderPassInfo, nullptr, &renderPass_ ); err != VK_SUCCESS ) {
         throw std::runtime_error( std::format( "failed to create render pass with code {}!", string_VkResult( err ) ) );
     } else {
-        log::info( "PipelineVertexBuffer === render pass created!" );
+        log::info()( "render pass created!" );
     }
 }
 
@@ -160,7 +160,7 @@ auto Context::createAllocator() -> void {
             throw std::runtime_error(
               std::format( "failed to create allocator with code {}!", string_VkResult( res ) ) );
         } else {
-            log::info( "Context === allocator created!" );
+            log::info()( "allocator created!" );
         }
     }
 }

@@ -91,7 +91,7 @@ export struct Image {
         const auto filePath = std::filesystem::path{ path };
 
         if ( std::filesystem::exists( filePath ) ) {
-            log::info( "trying to overwrite existing file \"{}\"", filePath.filename().string() );
+            log::info()( "trying to overwrite existing file \"{}\"", filePath.filename().string() );
         }
 
         std::ofstream file{ filePath.string(), std::ios::trunc };

@@ -184,7 +184,7 @@ struct PiplineTestBox final : Pipeline {
             throw std::runtime_error(
               std::format( "failed to create pipeline layout with code {}!", string_VkResult( err ) ) );
         } else {
-            log::info( "vk::PipelineMatrixReady === pipeline layout created!" );
+            log::info()( "pipeline layout created!" );
         }
 
         VkPipelineViewportStateCreateInfo viewportState{};
@@ -235,7 +235,7 @@ struct PiplineTestBox final : Pipeline {
             throw std::runtime_error(
               std::format( "failed to create graphics pipeline with code {}!", string_VkResult( err ) ) );
         } else {
-            log::info( "vk::Pipeline === graphics pipeline created!" );
+            log::info()( "graphics pipeline created!" );
         }
     }
 
