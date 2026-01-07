@@ -20,13 +20,13 @@ void Context::collectPhysicalDevices() {
 
     // Enumerate physical devices
     if ( const auto err = vkEnumeratePhysicalDevices( instance_, &devCount, nullptr ); err != VK_SUCCESS ) {
-        log::fatal( "can't enumerate physical devices with code: \n", string_VkResult( err ) );
+        log::fatal()( "can't enumerate physical devices with code: \n", string_VkResult( err ) );
     } else {
         log::debug()( "physical devices enumerate success, count: {}", devCount );
     }
 
     if ( devCount == 0 ) {
-        log::fatal( "no vulkan physical devices in system\n" );
+        log::fatal()( "no vulkan physical devices in system\n" );
     }
 
     std::vector<VkPhysicalDevice> physicalDevices{};
@@ -35,7 +35,7 @@ void Context::collectPhysicalDevices() {
     // Get physical devices
     if ( const auto err = vkEnumeratePhysicalDevices( instance_, &devCount, physicalDevices.data() );
          err != VK_SUCCESS ) {
-        log::fatal( "can't acquire physical devices with code: {}\n", string_VkResult( err ) );
+        log::fatal()( "can't acquire physical devices with code: {}\n", string_VkResult( err ) );
     } else {
         log::debug()( "physical devices acquire success" );
     }
@@ -65,7 +65,7 @@ void Context::collectPhysicalDevices() {
         uint32_t extensionCount{};
         if ( const auto err = vkEnumerateDeviceExtensionProperties( device, nullptr, &extensionCount, nullptr );
              err != VK_SUCCESS ) {
-            log::fatal(
+            log::fatal()(
               "can't enumerate physical device extensions "
               "with code: {}\n",
               string_VkResult( err ) );
@@ -83,7 +83,7 @@ void Context::collectPhysicalDevices() {
         if ( const auto err =
                vkEnumerateDeviceExtensionProperties( device, nullptr, &extensionCount, availableExtensions.data() );
              err != VK_SUCCESS ) {
-            log::fatal(
+            log::fatal()(
               "can't acquire physical device extensions "
               "with code: {}\n",
               string_VkResult( err ) );
@@ -153,7 +153,7 @@ void Context::makeDevice() {
     } else if ( cpuGpuId != -1 ) {
         pickedPhysicalDeviceId_ = cpuGpuId;
     } else {
-        log::fatal( "vk::Device === no suitable vulkan devices found! " );
+        log::fatal()( "vk::Device === no suitable vulkan devices found! " );
     }
 
     // Base class member.
@@ -174,9 +174,8 @@ void Context::makeDevice() {
     }
 
     if ( graphicsFamilyQueueId_ == UINT32_MAX ) {
-        log::fatal(
-          "failed to get device with queue family that "
-          "VK_QUEUE_GRAPHICS_BIT" );
+        log::fatal()( "failed to get device with queue family that "
+                      "VK_QUEUE_GRAPHICS_BIT" );
     }
 
     // Check if picked queue family (with VK_QUEUE_GRAPHICS_BIT) support present.
@@ -187,7 +186,7 @@ void Context::makeDevice() {
     if ( const auto err = vkGetPhysicalDeviceSurfaceSupportKHR(
            physicalDevices_[pickedPhysicalDeviceId_].device, graphicsFamilyQueueId_, surface_, &presentSupport );
          err != VK_SUCCESS ) {
-        log::fatal(
+        log::fatal()(
           "failed to get device surface support for "
           "presentation with code {}!\n",
           string_VkResult( err ) );
@@ -196,9 +195,8 @@ void Context::makeDevice() {
     if ( presentSupport ) {
         presentSupportQueueId_ = graphicsFamilyQueueId_;
     } else {
-        log::fatal(
-          "queue with VK_QUEUE_GRAPHICS_BIT not support present! Maybe check "
-          "another queue family?" );
+        log::fatal()( "queue with VK_QUEUE_GRAPHICS_BIT not support present! Maybe check "
+                      "another queue family?" );
     }
 
     log::debug()( "graphics family: {}", graphicsFamilyQueueId_ );
@@ -260,7 +258,7 @@ void Context::makeDevice() {
 
     // Create a logical device
     if ( const auto err = vkCreateDevice( physDevice_, &deviceCreateInfo, nullptr, &device_ ); err != VK_SUCCESS ) {
-        log::fatal( "failed to create logical device with code {}!\n", string_VkResult( err ) );
+        log::fatal()( "failed to create logical device with code {}!\n", string_VkResult( err ) );
     } else {
         log::info()( "logical device create success!" );
     }
@@ -272,7 +270,7 @@ void Context::makeDevice() {
     // Physical device surface capabilities
     if ( const auto err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR( physDevice_, surface_, &surfaceCapabilities_ );
          err != VK_SUCCESS ) {
-        log::fatal( "failed to obtain surface capabilities with code {}!\n", string_VkResult( err ) );
+        log::fatal()( "failed to obtain surface capabilities with code {}!\n", string_VkResult( err ) );
     } else {
         log::debug()( "physical device surface capabilities acquire "
                       "success!" );
@@ -287,7 +285,7 @@ void Context::makeDevice() {
     uint32_t formatCount{};
     if ( const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR( physDevice_, surface_, &formatCount, nullptr );
          err != VK_SUCCESS ) {
-        log::fatal(
+        log::fatal()(
           "failed to obtain physical device surface formats "
           "count with code {}!\n",
           string_VkResult( err ) );
@@ -305,7 +303,7 @@ void Context::makeDevice() {
     if ( const auto err =
            vkGetPhysicalDeviceSurfaceFormatsKHR( physDevice_, surface_, &formatCount, surfaceFormats_.data() );
          err != VK_SUCCESS ) {
-        log::fatal(
+        log::fatal()(
           "failed to acquire physical device surface formats "
           "count with code {}!\n",
           string_VkResult( err ) );
@@ -323,7 +321,7 @@ void Context::makeDevice() {
     if ( const auto err =
            vkGetPhysicalDeviceSurfacePresentModesKHR( physDevice_, surface_, &presentModeCount, nullptr );
          err != VK_SUCCESS ) {
-        log::fatal(
+        log::fatal()(
           "failed to obtain physical device present modes "
           "count with code {}!\n",
           string_VkResult( err ) );
@@ -341,7 +339,7 @@ void Context::makeDevice() {
     if ( const auto err =
            vkGetPhysicalDeviceSurfacePresentModesKHR( physDevice_, surface_, &presentModeCount, presentModes_.data() );
          err != VK_SUCCESS ) {
-        log::fatal(
+        log::fatal()(
           "failed to acquire physical device present modes "
           "with code {}!\n",
           string_VkResult( err ) );

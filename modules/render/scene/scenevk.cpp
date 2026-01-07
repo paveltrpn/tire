@@ -41,7 +41,7 @@ export struct SceneVK final : tire::Scene {
             testImage_ =
               std::make_shared<TextureImage>( context_, "/mnt/main/code/assets/textures/PavingStones021_color.tga" );
         } catch ( std::exception &e ) {
-            log::fatal( "Scene === test image {}", e.what() );
+            log::fatal()( "test image {}", e.what() );
         }
 
         initTextureSmpler();
@@ -192,7 +192,7 @@ export struct SceneVK final : tire::Scene {
             const auto err = vmaCreateBuffer(
               context_->allocator(), &bufferInfo, &vmaallocInfo, &omniLightUniform_, &omniLightAllocation_, nullptr );
             if ( err != VK_SUCCESS ) {
-                log::fatal( "SceneVK === error while creating omni light uniform buffer {}", string_VkResult( err ) );
+                log::fatal()( "error while creating omni light uniform buffer {}", string_VkResult( err ) );
             }
         }
 
@@ -219,7 +219,7 @@ export struct SceneVK final : tire::Scene {
         {
             const auto err = vkAllocateDescriptorSets( context_->device(), &texallocInfo, &textureSet_ );
             if ( err != VK_SUCCESS ) {
-                log::fatal( "SceneVK === error while allocating descriptorSets {}", string_VkResult( err ) );
+                log::fatal()( "error while allocating descriptorSets {}", string_VkResult( err ) );
             }
         }
 
@@ -258,7 +258,7 @@ export struct SceneVK final : tire::Scene {
         {
             const auto err = vkAllocateDescriptorSets( context_->device(), &lightallocInfo, &omniLightSet_ );
             if ( err != VK_SUCCESS ) {
-                log::fatal( "SceneVK === error while allocating descriptorSets {}", string_VkResult( err ) );
+                log::fatal()( "error while allocating descriptorSets {}", string_VkResult( err ) );
             }
         }
 

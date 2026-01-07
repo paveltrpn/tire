@@ -70,7 +70,7 @@ auto Context::immediateCommand() const -> CommandRoutine {
     {
         const auto err = vkQueueSubmit( graphicsQueue_, 1, &submitInfo, VK_NULL_HANDLE );
         if ( err != VK_SUCCESS ) {
-            log::fatal( "Context === error while command coroutine {}", string_VkResult( err ) );
+            log::fatal()( "error while command coroutine {}", string_VkResult( err ) );
         }
     }
 

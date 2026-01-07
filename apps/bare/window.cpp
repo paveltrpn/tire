@@ -27,7 +27,7 @@ import render;
 
 BareWindow::BareWindow() {
     if ( glfwInit() != GLFW_TRUE ) {
-        tire::log::fatal( "glfw init faild!" );
+        tire::log::fatal()( "glfw init faild!" );
     }
 
     glfwSetErrorCallback( []( int, const char *err_str ) -> void {
@@ -47,22 +47,22 @@ BareWindow::BareWindow() {
     window_ = glfwCreateWindow( width, height, "glfw", nullptr, nullptr );
 
     if ( !window_ ) {
-        tire::log::fatal( "glfw window create faild!" );
+        tire::log::fatal()( "glfw window create faild!" );
     }
 
     const auto platform = glfwGetPlatform();
 
     switch ( platform ) {
         case GLFW_PLATFORM_NULL: {
-            tire::log::fatal( "glfw platform undefined!" );
+            tire::log::fatal()( "glfw platform undefined!" );
             break;
         }
         case GLFW_PLATFORM_WIN32: {
-            tire::log::fatal( "glfw platform win32 not supported!" );
+            tire::log::fatal()( "glfw platform win32 not supported!" );
             break;
         }
         case GLFW_PLATFORM_COCOA: {
-            tire::log::fatal( "glfw platform cocoa not supported!" );
+            tire::log::fatal()( "glfw platform cocoa not supported!" );
             break;
         }
         case GLFW_PLATFORM_X11: {

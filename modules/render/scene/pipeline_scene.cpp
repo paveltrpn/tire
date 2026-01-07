@@ -290,8 +290,7 @@ struct PiplineScene final : Pipeline {
 
         if ( const auto err = vkCreatePipelineLayout( context_->device(), &pipelineLayoutInfo, nullptr, &layout_ );
              err != VK_SUCCESS ) {
-            log::fatal(
-              "PiplineVertexBuffer === failed to create pipeline layout with code {}!", string_VkResult( err ) );
+            log::fatal()( "failed to create pipeline layout with code {}!", string_VkResult( err ) );
         }
 
         // Init render pass.
@@ -321,8 +320,7 @@ struct PiplineScene final : Pipeline {
         if ( const auto err =
                vkCreateGraphicsPipelines( context_->device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline_ );
              err != VK_SUCCESS ) {
-            log::fatal(
-              "PiplineVertexBuffer === failed to create graphics pipeline with code {}!", string_VkResult( err ) );
+            log::fatal()( "failed to create graphics pipeline with code {}!", string_VkResult( err ) );
         }
     }
 

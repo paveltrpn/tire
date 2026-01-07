@@ -33,7 +33,7 @@ auto Context::memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags pro
         }
     }
 
-    log::fatal( "failed to find suitable memory type!" );
+    log::fatal()( "failed to find suitable memory type!" );
 
     // Silence warning
     return {};
@@ -52,7 +52,7 @@ auto Context::findSupportedFormat(
         }
     }
 
-    throw std::runtime_error( std::format( "failed to find supported format!" ) );
+    log::fatal()( "failed to find supported format!" );
 
     // Silence warning
     return {};
@@ -65,8 +65,7 @@ void Context::makeCommandPool() {
     poolInfo.queueFamilyIndex = graphicsFamilyQueueId_;
 
     if ( const auto err = vkCreateCommandPool( device_, &poolInfo, nullptr, &commandPool_ ); err != VK_SUCCESS ) {
-        throw std::runtime_error(
-          std::format( "failed to create command pool woth code {}!", string_VkResult( err ) ) );
+        log::fatal()( "failed to create command pool woth code {}!", string_VkResult( err ) );
     } else {
         log::debug()( "command pool created!" );
     }
@@ -135,7 +134,7 @@ auto Context::initRenderPass() -> void {
     renderPassInfo.pDependencies = &dependency;
 
     if ( const auto err = vkCreateRenderPass( device(), &renderPassInfo, nullptr, &renderPass_ ); err != VK_SUCCESS ) {
-        throw std::runtime_error( std::format( "failed to create render pass with code {}!", string_VkResult( err ) ) );
+        log::fatal()( "failed to create render pass with code {}!", string_VkResult( err ) );
     } else {
         log::info()( "render pass created!" );
     }
@@ -157,8 +156,7 @@ auto Context::createAllocator() -> void {
     {
         const auto res = vmaCreateAllocator( &allocatorCreateInfo, &allocator_ );
         if ( res != VK_SUCCESS ) {
-            throw std::runtime_error(
-              std::format( "failed to create allocator with code {}!", string_VkResult( res ) ) );
+            log::fatal()( "failed to create allocator with code {}!", string_VkResult( res ) );
         } else {
             log::info()( "allocator created!" );
         }
@@ -186,7 +184,7 @@ auto Context::createDescriptorPool() -> void {
     {
         const auto err = vkCreateDescriptorPool( device_, &poolInfo, nullptr, &descriptorPool_ );
         if ( err != VK_SUCCESS ) {
-            log::fatal( "Context === failed to create descriptor pool {}!", string_VkResult( err ) );
+            log::fatal()( "failed to create descriptor pool {}!", string_VkResult( err ) );
         }
     }
 }

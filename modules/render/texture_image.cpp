@@ -84,7 +84,7 @@ private:
             const auto err = vmaCreateBuffer(
               context_->allocator(), &stagingBufferInfo, &vmaallocInfo, &stagingBuffer_, &stagingAllocation_, nullptr );
             if ( err != VK_SUCCESS ) {
-                log::fatal( "TextureImage === error while creating staging buffer {}", string_VkResult( err ) );
+                log::fatal()( "error while creating staging buffer {}", string_VkResult( err ) );
             }
         }
     }
@@ -123,7 +123,7 @@ private:
             const auto err = vmaCreateImage(
               context_->allocator(), &imgCreateInfo, &allocCreateInfo, &deviceImage_, &deviceAllocation_, nullptr );
             if ( err != VK_SUCCESS ) {
-                log::fatal( "TextureImage === error while creating device image {}", string_VkResult( err ) );
+                log::fatal()( "error while creating device image {}", string_VkResult( err ) );
             }
         }
     }
@@ -211,7 +211,7 @@ private:
         {
             const auto err = vkCreateImageView( context_->device(), &imageinfo, nullptr, &imageView_ );
             if ( err != VK_SUCCESS ) {
-                log::fatal( "TextureImage === error while create image view {}", string_VkResult( err ) );
+                log::fatal()( "error while create image view {}", string_VkResult( err ) );
             }
         }
     }

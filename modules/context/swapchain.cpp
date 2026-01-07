@@ -85,7 +85,7 @@ auto Context::makeSwapchain() -> void {
     {
         const auto err = vkCreateSwapchainKHR( device_, &createInfo, nullptr, &swapchain_ );
         if ( err != VK_SUCCESS ) {
-            log::fatal( "failed to create swapchain code {}\n!", string_VkResult( err ) );
+            log::fatal()( "failed to create swapchain code {}\n!", string_VkResult( err ) );
         } else {
             log::info()( "vulkan swapchain created!" );
         }
@@ -97,7 +97,7 @@ auto Context::makeSwapchain() -> void {
     {
         const auto err = vkGetSwapchainImagesKHR( device_, swapchain_, &swapchainImageCount_, nullptr );
         if ( err != VK_SUCCESS ) {
-            log::fatal( "Context === failed to get swapchain images count with code {}\n!", string_VkResult( err ) );
+            log::fatal()( "failed to get swapchain images count with code {}\n!", string_VkResult( err ) );
         } else {
             log::debug()( "swapchain images count: {}", swapchainImageCount_ );
         }
@@ -116,7 +116,7 @@ auto Context::makeFrames() -> void {
     swapChainImages.resize( framesCount_ );
     if ( const auto err = vkGetSwapchainImagesKHR( device_, swapchain_, &framesCount_, swapChainImages.data() );
          err != VK_SUCCESS ) {
-        log::fatal( "Context === failed to get swapchain images with code {}\n!", string_VkResult( err ) );
+        log::fatal()( "failed to get swapchain images with code {}\n!", string_VkResult( err ) );
     } else {
         log::debug()( "images acquired!" );
     }
@@ -150,7 +150,7 @@ auto Context::makeFrames() -> void {
 
         if ( const auto err = vkCreateImageView( device_, &createInfo, nullptr, &frames_[i].view_ );
              err != VK_SUCCESS ) {
-            log::fatal( "Context === failed to create swapchain image views with code {}\n!", string_VkResult( err ) );
+            log::fatal()( "failed to create swapchain image views with code {}\n!", string_VkResult( err ) );
         } else {
             log::debug()( "image view {} created!", i );
         }
@@ -169,7 +169,7 @@ auto Context::makeFrames() -> void {
 
         if ( const auto err = vkCreateFramebuffer( device_, &framebufferInfo, nullptr, &frames_[i].framebuffer_ );
              err != VK_SUCCESS ) {
-            log::fatal( "Context === failed to create framebuffer at {} with code {}!", i, string_VkResult( err ) );
+            log::fatal()( "failed to create framebuffer at {} with code {}!", i, string_VkResult( err ) );
         } else {
             log::debug()( "framebuffer {} created!", i );
         }
@@ -185,7 +185,7 @@ auto Context::makeFrames() -> void {
           vkCreateSemaphore( device_, &semaphoreInfo, nullptr, &frames_[i].imageAvailableSemaphore_ ) != VK_SUCCESS ||
           vkCreateSemaphore( device_, &semaphoreInfo, nullptr, &frames_[i].renderFinishedSemaphore_ ) != VK_SUCCESS ||
           vkCreateFence( device_, &fenceInfo, nullptr, &frames_[i].inFlightFence_ ) != VK_SUCCESS ) {
-            log::fatal( "Context === failed to create semaphores!" );
+            log::fatal()( "failed to create semaphores!" );
         }
 
         const VkCommandBufferAllocateInfo allocInfo{
@@ -196,7 +196,7 @@ auto Context::makeFrames() -> void {
 
         const auto err = vkAllocateCommandBuffers( device(), &allocInfo, &frames_[i].cbPrimary_ );
         if ( err != VK_SUCCESS ) {
-            log::fatal( "Context === failed to allocate command buffers with code {}!", string_VkResult( err ) );
+            log::fatal()( "failed to allocate command buffers with code {}!", string_VkResult( err ) );
         } else {
             log::debug()( "primary command buffer created!" );
         };

@@ -75,7 +75,7 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
     // Enumerate instance layers
     uint32_t layersCount;
     if ( const auto err = vkEnumerateInstanceLayerProperties( &layersCount, nullptr ); err != VK_SUCCESS ) {
-        log::fatal( "can't enumerate instance layer properties with code: {}\n", string_VkResult( err ) );
+        log::fatal()( "can't enumerate instance layer properties with code: {}\n", string_VkResult( err ) );
     } else {
         log::debug()( "layer properties value: {}", layersCount );
     }
@@ -85,7 +85,7 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
     // Collect instance layers
     if ( const auto err = vkEnumerateInstanceLayerProperties( &layersCount, layerProperties_.data() );
          err != VK_SUCCESS ) {
-        log::fatal( "can't acquire instance layer properties with code: {}\n", string_VkResult( err ) );
+        log::fatal()( "can't acquire instance layer properties with code: {}\n", string_VkResult( err ) );
     } else {
         log::info()( "layer properties acquired" );
     }
@@ -204,7 +204,7 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
     // Enumerate instance extensions properties
     uint32_t extCount{};
     if ( const auto err = vkEnumerateInstanceExtensionProperties( nullptr, &extCount, nullptr ); err != VK_SUCCESS ) {
-        log::fatal(
+        log::fatal()(
           "can't enumerate instance extension "
           "properties with code: {}\n",
           string_VkResult( err ) );
@@ -217,7 +217,7 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
     // Collect instance extensions properties
     if ( const auto err = vkEnumerateInstanceExtensionProperties( nullptr, &extCount, extensionProperties_.data() );
          err != VK_SUCCESS ) {
-        log::fatal(
+        log::fatal()(
           "can't acquire instance extension properties "
           "with code: {}\n",
           string_VkResult( err ) );
@@ -227,7 +227,7 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
 
     // Create vulkan instance
     if ( const auto err = vkCreateInstance( &instanceCreateInfo, nullptr, &instance_ ); err != VK_SUCCESS ) {
-        log::fatal( "can't create vk instance with code: {}\n", string_VkResult( err ) );
+        log::fatal()( "can't create vk instance with code: {}\n", string_VkResult( err ) );
     } else {
         log::info()( "vulkan instance created!" );
     }
@@ -237,7 +237,7 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
         if ( const auto err =
                vkCreateDebugUtilsMessenger( instance_, &debugUtilsMessengerCreateInfo, nullptr, &debugMessenger_ );
              err != VK_SUCCESS ) {
-            log::fatal( "failed to set up debug messenger with code {}!\n", string_VkResult( err ) );
+            log::fatal()( "failed to set up debug messenger with code {}!\n", string_VkResult( err ) );
         } else {
             log::debug()( "vkCreateDebugUtilsMessenger success!" );
         }

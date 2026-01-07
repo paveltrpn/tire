@@ -95,10 +95,10 @@ export struct Scene {
                 std::terminate();
 
             } catch ( const std::exception &e ) {
-                log::fatal( "exception: {}", e.what() );
+                log::fatal()( "exception: {}", e.what() );
             }
         } else {
-            throw std::runtime_error( std::format( "Scene ===  file not found: {}\n", path.string() ) );
+            log::fatal()( "file not found: {}\n", path.string() );
         }
     }
 

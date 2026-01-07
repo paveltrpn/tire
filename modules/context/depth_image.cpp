@@ -90,7 +90,7 @@ private:
             const auto err = vmaCreateImage(
               context_->allocator(), &imgCreateInfo, &allocCreateInfo, &depthImage_, &depthImageAllocation_, nullptr );
             if ( err != VK_SUCCESS ) {
-                log::fatal( "DepthImage === error while creating device image {}", string_VkResult( err ) );
+                log::fatal()( "error while creating device image {}", string_VkResult( err ) );
             }
         }
     }
@@ -117,7 +117,7 @@ private:
         {
             const auto err = vkCreateImageView( context_->device(), &imageinfo, nullptr, &depthImageView_ );
             if ( err != VK_SUCCESS ) {
-                log::fatal( "DepthImage === error while create image view {}", string_VkResult( err ) );
+                log::fatal()( "error while create image view {}", string_VkResult( err ) );
             }
         }
     }
@@ -190,7 +190,7 @@ private:
 
             destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
         } else {
-            log::fatal( "DepthImage === unsupported layout transition!" );
+            log::fatal()( "unsupported layout transition!" );
         }
         /*
             if ( oldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
@@ -229,7 +229,7 @@ private:
             }
         }
 
-        log::fatal( "DepthImage === failed to find supported format!" );
+        log::fatal()( "failed to find supported format!" );
 
         // Silence warning
         return {};

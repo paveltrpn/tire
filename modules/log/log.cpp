@@ -154,13 +154,21 @@ export {
         }
     }
 
-    template <typename... Ts>
-    void fatal( std::format_string<Ts...> msg, Ts &&...args ) {
-        constexpr char preamble[] = "\033[3;31m[fatal] \033[0m\t";
-        std::cout << preamble << std::vformat( msg.get(), std::make_format_args( args... ) ) << "\n";
+    auto fatal( const std::source_location &location = std::source_location::current() ) {
+        return [&, location]<typename... Ts>( std::format_string<Ts...> msg = "", Ts &&...args ) -> void {
+            constexpr char preamble[] = "\033[3;31m[fatal] \033[0m";
 
-        // Terminate
-        std::terminate();
+            const auto elided = elideLeft( location.file_name(), ELIDE_AFTER );
+
+            const auto sourceInfo = std::format( "\033[3;90m[{}({})] \033[0m", elided, location.line() );
+
+            const auto message = std::vformat( msg.get(), std::make_format_args( args... ) );
+
+            std::cout << std::format( "{}\t{} : {}\n", preamble, sourceInfo, message );
+
+            // Terminate!!!
+            std::terminate();
+        };
     }
 
     template <bool enable = true, typename... Ts>
