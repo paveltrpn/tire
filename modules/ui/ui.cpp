@@ -24,7 +24,7 @@ export struct Ui {
     auto operator=( const Ui &other ) -> Ui & = delete;
     auto operator=( Ui &&other ) -> Ui & = delete;
 
-    ~Ui() = default;
+    virtual ~Ui() = default;
 
     auto label( int px, int py, const std::string &msg ) -> void {
         //

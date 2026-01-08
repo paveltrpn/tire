@@ -153,7 +153,7 @@ target_sources(ui
     PUBLIC FILE_SET CXX_MODULES FILES
     ${MOD_UI_SRC}
 )
-target_link_libraries(ui log algebra)
+target_link_libraries(ui log algebra image)
 
 # ================================
 # Module io
