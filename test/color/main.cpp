@@ -26,7 +26,7 @@ int main( int argc, char **argv ) {
           "deepskybluei r = {}; g = {}; b = {}; a = {}", deepskyblue.r(), deepskyblue.g(), deepskyblue.b(),
           deepskyblue.a() );
     } catch ( const std::runtime_error &e ) {
-        tire::log::error( "catch exception: {}", e.what() );
+        tire::log::error()( "catch exception: {}", e.what() );
         return 0;
     }
 

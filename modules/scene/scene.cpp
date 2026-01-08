@@ -85,11 +85,11 @@ export struct Scene {
                 // Parse json. Collect objects, cameras, lights and other scene entities
                 process();
             } catch ( const nlohmann::json::parse_error &e ) {
-                log::error(
+                log::error()(
                   "config json parse error\n"
                   "message:\t{}\n"
                   "exception id:\t{}\n"
-                  "byte position of error:\t{}\n",
+                  "byte position of error:\t{}",
                   e.what(), e.id, e.byte );
 
                 std::terminate();
@@ -167,8 +167,7 @@ private:
                 log::info()( "mesh type \"{}\" added", meshType );
 
             } catch ( const std::exception &e ) {
-                log::error( "Error reading mesh file: {}", e.what() );
-                std::terminate();
+                log::fatal()( "Error reading mesh file: {}", e.what() );
             }
         }
     }

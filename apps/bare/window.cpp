@@ -32,7 +32,7 @@ BareWindow::BareWindow() {
 
     glfwSetErrorCallback( []( int, const char *err_str ) -> void {
         //
-        tire::log::error( "GLFW Error: {}\n", err_str );
+        tire::log::error()( "GLFW Error: {}", err_str );
     } );
 
     glfwWindowHint( GLFW_CLIENT_API, GLFW_NO_API );

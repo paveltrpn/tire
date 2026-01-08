@@ -20,24 +20,26 @@ void Context::collectPhysicalDevices() {
 
     // Enumerate physical devices
     if ( const auto err = vkEnumeratePhysicalDevices( instance_, &devCount, nullptr ); err != VK_SUCCESS ) {
-        log::fatal()( "can't enumerate physical devices with code: \n", string_VkResult( err ) );
+        log::fatal()( "can't enumerate physical devices with code: {}", string_VkResult( err ) );
     } else {
         log::debug()( "physical devices enumerate success, count: {}", devCount );
     }
 
     if ( devCount == 0 ) {
-        log::fatal()( "no vulkan physical devices in system\n" );
+        log::fatal()( "no vulkan physical devices in system" );
     }
 
     std::vector<VkPhysicalDevice> physicalDevices{};
     physicalDevices.resize( devCount );
 
     // Get physical devices
-    if ( const auto err = vkEnumeratePhysicalDevices( instance_, &devCount, physicalDevices.data() );
-         err != VK_SUCCESS ) {
-        log::fatal()( "can't acquire physical devices with code: {}\n", string_VkResult( err ) );
-    } else {
-        log::debug()( "physical devices acquire success" );
+    {
+        const auto err = vkEnumeratePhysicalDevices( instance_, &devCount, physicalDevices.data() );
+        if ( err != VK_SUCCESS ) {
+            log::fatal()( "can't acquire physical devices with code: {}", string_VkResult( err ) );
+        } else {
+            log::debug()( "physical devices acquire success" );
+        }
     }
 
     // Get physical device info for each device
@@ -85,7 +87,7 @@ void Context::collectPhysicalDevices() {
              err != VK_SUCCESS ) {
             log::fatal()(
               "can't acquire physical device extensions "
-              "with code: {}\n",
+              "with code: {}",
               string_VkResult( err ) );
         } else {
             log::debug()(
@@ -153,7 +155,7 @@ void Context::makeDevice() {
     } else if ( cpuGpuId != -1 ) {
         pickedPhysicalDeviceId_ = cpuGpuId;
     } else {
-        log::fatal()( "vk::Device === no suitable vulkan devices found! " );
+        log::fatal()( "vk::Device === no suitable vulkan devices found!" );
     }
 
     // Base class member.

@@ -35,11 +35,11 @@ public:
                 try {
                     config_ = nlohmann::json::parse( file );
                 } catch ( const nlohmann::json::parse_error &e ) {
-                    log::error(
+                    log::error()(
                       "config json parse error\n"
                       "message:\t{}\n"
                       "exception id:\t{}\n"
-                      "byte position of error:\t{}\n",
+                      "byte position of error:\t{}",
                       e.what(), e.id, e.byte );
                 }
             } else {
@@ -91,7 +91,7 @@ public:
 
     static auto instance() -> Config * {
         if ( !instance_ ) {
-            log::error( "Config === global instance must be initialized explicitly!" );
+            log::fatal()( "global instance must be initialized explicitly!" );
         }
         return instance_.get();
     }

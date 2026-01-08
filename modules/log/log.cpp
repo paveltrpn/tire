@@ -86,7 +86,7 @@ export {
 
                 const auto message = std::vformat( msg.get(), std::make_format_args( args... ) );
 
-                std::cout << std::format( "{}\t\t{} : {}\n", preamble, sourceInfo, message );
+                std::cout << std::format( "{}\t\t{} {}\n", preamble, sourceInfo, message );
             };
         }
     }
@@ -104,7 +104,7 @@ export {
 
                 const auto message = std::vformat( msg.get(), std::make_format_args( args... ) );
 
-                std::cout << std::format( "{}\t{} : {}\n", preamble, sourceInfo, message );
+                std::cout << std::format( "{}\t{} {}\n", preamble, sourceInfo, message );
             };
         }
     }
@@ -122,7 +122,7 @@ export {
 
                 const auto message = std::vformat( msg.get(), std::make_format_args( args... ) );
 
-                std::cout << std::format( "{}\t{} : {}\n", preamble, sourceInfo, message );
+                std::cout << std::format( "{}\t{} {}\n", preamble, sourceInfo, message );
             };
         }
     }
@@ -140,31 +140,50 @@ export {
 
                 const auto message = std::vformat( msg.get(), std::make_format_args( args... ) );
 
-                std::cout << std::format( "{}\t{} : {}\n", preamble, sourceInfo, message );
+                std::cout << std::format( "{}\t{} {}\n", preamble, sourceInfo, message );
             };
         }
     }
 
 #define ENABLE_ERROR_OUTPUT true
-    template <bool enable = ENABLE_ERROR_OUTPUT, typename... Ts>
-    void error( std::format_string<Ts...> msg, Ts &&...args ) {
+    template <bool enable = ENABLE_ERROR_OUTPUT>
+    auto error( const std::source_location &location = std::source_location::current() ) {
         if constexpr ( enable ) {
-            constexpr char preamble[] = "\033[3;31m[error] \033[0m\t";
-            std::cout << preamble << std::vformat( msg.get(), std::make_format_args( args... ) ) << "\n";
+            return [&, location]<typename... Ts>( std::format_string<Ts...> msg = "", Ts &&...args ) -> void {
+                constexpr char preamble[] = "\033[3;31m[error] \033[0m\t";
+                const auto message = std::vformat( msg.get(), std::make_format_args( args... ) );
+
+                std::cout << std::format( "{}\t{}\n", preamble, message );
+
+                const auto source = elideLeft( location.file_name(), ELIDE_AFTER );
+                const auto sourceInfo = std::format( "\033[3;90m[{}({})] \033[0m", source, location.line() );
+
+                std::cout << std::format( "\t\tfile: {}\n", sourceInfo );
+
+                const auto function = location.function_name();
+                const auto functionInfo = std::format( "\033[3;90m[{}] \033[0m", function );
+
+                std::cout << std::format( "\t\tfunc: {}\n", functionInfo );
+            };
         }
     }
 
     auto fatal( const std::source_location &location = std::source_location::current() ) {
         return [&, location]<typename... Ts>( std::format_string<Ts...> msg = "", Ts &&...args ) -> void {
             constexpr char preamble[] = "\033[3;31m[fatal] \033[0m";
-
-            const auto elided = elideLeft( location.file_name(), ELIDE_AFTER );
-
-            const auto sourceInfo = std::format( "\033[3;90m[{}({})] \033[0m", elided, location.line() );
-
             const auto message = std::vformat( msg.get(), std::make_format_args( args... ) );
 
-            std::cout << std::format( "{}\t{} : {}\n", preamble, sourceInfo, message );
+            std::cout << std::format( "{}\t{}\n", preamble, message );
+
+            const auto source = elideLeft( location.file_name(), ELIDE_AFTER );
+            const auto sourceInfo = std::format( "\033[3;90m[{}({})] \033[0m", source, location.line() );
+
+            std::cout << std::format( "\t\tfile: {}\n", sourceInfo );
+
+            const auto function = location.function_name();
+            const auto functionInfo = std::format( "\033[3;90m[{}] \033[0m", function );
+
+            std::cout << std::format( "\t\tfunc: {}\n", functionInfo );
 
             // Terminate!!!
             std::terminate();
