@@ -3,10 +3,10 @@ module;
 
 export module ui:label;
 
-namespace tire::ui {
+namespace tire {
 
 struct Label final {
 private:
 };
 
-}  // namespace tire::ui
+}  // namespace tire

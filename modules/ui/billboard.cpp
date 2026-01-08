@@ -3,10 +3,10 @@ module;
 
 export module ui:billboard;
 
-namespace tire::ui {
+namespace tire {
 
 struct Billboard final {
 private:
 };
 
-}  // namespace tire::ui
+}  // namespace tire

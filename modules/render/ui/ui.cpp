@@ -3,10 +3,12 @@ module;
 
 export module render:ui;
 
-namespace tire::ui {
+import ui;
 
-struct Ui {
+namespace tire {
+
+struct UiVk final : tire::Ui {
 private:
 };
 
-}  // namespace tire::ui
+}  // namespace tire
