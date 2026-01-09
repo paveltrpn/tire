@@ -112,6 +112,7 @@ auto Context::copyBufferCommand() const -> CommandRoutine {
       //
       VK_PIPELINE_STAGE_TRANSFER_BIT,
     };
+
     std::array<VkSemaphore, 0> waitsems{};
     std::array<VkSemaphore, 0> sgnlsems{};
     std::array<VkCommandBuffer, 1> commands{
@@ -132,10 +133,6 @@ auto Context::copyBufferCommand() const -> CommandRoutine {
 
     vkQueueSubmit( graphicsQueue_, 1, &submitInfo, copyCommandFence_ );
 
-    // NOTE: This fence works but synchroniztion validation error
-    // SYNC-HAZARD-WRITE-AFTER-READ still occurs. Conflicting with vkCmdDraw later.
-    // Enable VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT in instance
-    // to see debug output.
     vkWaitForFences( device_, fences.size(), fences.data(), VK_TRUE, UINT64_MAX );
     vkResetFences( device_, fences.size(), fences.data() );
 }
