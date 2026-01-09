@@ -40,13 +40,18 @@ struct Label final {
         //
     }
 
+    auto setLabelPos( float x, float y ) -> void {
+        text_pos_x = x;
+        text_pos_y = y;
+    }
+
     auto draw( const std::string &string ) -> void {
         // Смещение квада с i-ым символом, зависит от ширины квадов и зазора между ними
-        float offset;
+        float offset{};
         // Столбец, в котором находится символ
-        int32_t glyph_x;
+        int32_t glyph_x{};
         // Строка, в котором находится символ
-        int32_t glyph_y;
+        int32_t glyph_y{};
         // Размер ячейки с символом в долях текстурных координат по горизонтали
         float tc_gap_x = 1.0f / static_cast<float>( fontColumnCount );
         // Размер ячейки с символом в долях текстурных координат по вертикали

@@ -3,10 +3,10 @@ module;
 
 export module render:pipeline_ui;
 
-namespace tire::ui {
+namespace tire {
 
-struct PipelineUi {
+export struct PipelineUi {
 private:
 };
 
-}  // namespace tire::ui
+}  // namespace tire

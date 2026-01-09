@@ -1,8 +1,9 @@
 
 module;
 
+#include <string>
 #include <variant>
-#include <vector>
+#include <forward_list>
 
 export module ui:ui;
 
@@ -16,7 +17,10 @@ namespace tire {
 using UiComponent = std::variant<tire::Label, tire::Billboard>;
 
 export struct Ui {
-    Ui() = default;
+    Ui() {
+        // Preallocate.
+        // componentsList_.resize( 32 );
+    };
 
     Ui( const Ui &other ) = delete;
     Ui( Ui &&other ) = delete;
@@ -26,16 +30,23 @@ export struct Ui {
 
     virtual ~Ui() = default;
 
-    auto label( int px, int py, const std::string &msg ) -> void {
+    auto label( float px, float py, const std::string &msg ) -> void {
+        auto l = tire::Label{};
+
+        l.setLabelPos( px, py );
+        l.draw( msg );
+
+        componentsList_.emplace_front( std::move( l ) );
+    }
+
+    auto billboard( float px, float py, float sx, float sy ) -> void {
         //
     }
 
-    auto billboard( int px, int py, int sx, int sy ) -> void {
-        //
-    }
+    virtual auto flush() -> void = 0;
 
-private:
-    std::vector<UiComponent> componentsList_{};
+protected:
+    std::forward_list<UiComponent> componentsList_{};
 };
 
 }  // namespace tire
