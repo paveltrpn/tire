@@ -94,13 +94,17 @@ export struct RenderVK final {
         {
             auto cb = context_->copyBufferCommand();
             scene_->upload( cb.buf() );
+            ui_->upload( cb.buf() );
         }
 
         {
             auto cb = context_->renderCommand( currentFrame_ );
             scene_->draw( cb.buf() );
             testBox_->draw( cb.buf(), timer_.floatFrameDuration() );
+            ui_->draw( cb.buf() );
         }
+
+        ui_->flush();
 
         currentFrame_ = ( currentFrame_ + 1 ) % context_->framesCount();
     };
