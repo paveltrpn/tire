@@ -48,7 +48,7 @@ constexpr auto elideRight( const char *str, int after ) -> std::string {
     auto elided = std::stringstream{};
 
     if ( length > after ) {
-        elided << std::format( "{}...", std::string_view( str ).substr( length, length - after ) );
+        elided << std::format( "{}...", std::string_view( str ).substr( 0, length - after ) );
     } else {
         elided << str;
     }
@@ -72,6 +72,7 @@ constexpr auto elideLeft( const char *str, int after ) -> std::string {
 export {
     //
 #define ELIDE_AFTER 18
+#define LOG_FILE std::cout
 
 #define ENABLE_INFO_OUTPUT true
     template <bool enable = ENABLE_INFO_OUTPUT>
@@ -86,7 +87,7 @@ export {
 
                 const auto message = std::vformat( msg.get(), std::make_format_args( args... ) );
 
-                std::cout << std::format( "{}\t\t{} {}\n", preamble, sourceInfo, message );
+                LOG_FILE << std::format( "{}\t\t{} {}\n", preamble, sourceInfo, message );
             };
         }
     }
@@ -104,7 +105,7 @@ export {
 
                 const auto message = std::vformat( msg.get(), std::make_format_args( args... ) );
 
-                std::cout << std::format( "{}\t{} {}\n", preamble, sourceInfo, message );
+                LOG_FILE << std::format( "{}\t{} {}\n", preamble, sourceInfo, message );
             };
         }
     }
@@ -122,7 +123,7 @@ export {
 
                 const auto message = std::vformat( msg.get(), std::make_format_args( args... ) );
 
-                std::cout << std::format( "{}\t{} {}\n", preamble, sourceInfo, message );
+                LOG_FILE << std::format( "{}\t{} {}\n", preamble, sourceInfo, message );
             };
         }
     }
@@ -140,7 +141,7 @@ export {
 
                 const auto message = std::vformat( msg.get(), std::make_format_args( args... ) );
 
-                std::cout << std::format( "{}\t{} {}\n", preamble, sourceInfo, message );
+                LOG_FILE << std::format( "{}\t{} {}\n", preamble, sourceInfo, message );
             };
         }
     }
@@ -163,7 +164,7 @@ export {
                 const auto function = location.function_name();
                 const auto functionInfo = std::format( "\033[3;90m[{}] \033[0m", function );
 
-                std::cout << std::format( "\t\tfunc: {}\n", functionInfo );
+                LOG_FILE << std::format( "\t\tfunc: {}\n", functionInfo );
             };
         }
     }
@@ -183,7 +184,7 @@ export {
             const auto function = location.function_name();
             const auto functionInfo = std::format( "\033[3;90m[{}] \033[0m", function );
 
-            std::cout << std::format( "\t\tfunc: {}\n", functionInfo );
+            LOG_FILE << std::format( "\t\tfunc: {}\n", functionInfo );
 
             // Terminate!!!
             std::terminate();
