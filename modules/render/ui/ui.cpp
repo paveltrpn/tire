@@ -41,9 +41,9 @@ struct UiVK final : tire::Ui {
         pipeline_->buildPipeline( program );
 
 #define BUF_SIZE 1024 * 1024
-        auto vBuf = std::make_shared<VertexBuffer>( context_, BUF_SIZE );
-        auto nBuf = std::make_shared<VertexBuffer>( context_, BUF_SIZE );
-        auto tBuf = std::make_shared<VertexBuffer>( context_, BUF_SIZE );
+        vBuf_ = std::make_shared<VertexBuffer>( context_, BUF_SIZE );
+        cBuf_ = std::make_shared<VertexBuffer>( context_, BUF_SIZE );
+        tBuf_ = std::make_shared<VertexBuffer>( context_, BUF_SIZE );
     }
 
     auto upload( const VkCommandBuffer cb ) -> void {
@@ -70,7 +70,7 @@ private:
     std::shared_ptr<PipelineUi> pipeline_{};
 
     std::shared_ptr<VertexBuffer> vBuf_;
-    std::shared_ptr<VertexBuffer> cBuf;
+    std::shared_ptr<VertexBuffer> cBuf_;
     std::shared_ptr<VertexBuffer> tBuf_;
 };
 

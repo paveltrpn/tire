@@ -65,17 +65,18 @@ struct Label final {
             glyph_y = ( string[i] / fontColumnCount ) - 1;
 
             // Build character quad vertecies data.
-            const algebra::vector2f topLeftVt = { ( offset + 0.0f ) + text_pos_x, 0.0f + text_pos_y };
-            const algebra::vector2f topRightVt = { ( offset + glyph_quad_wdt ) + text_pos_x, 0.0f + text_pos_y };
-            const algebra::vector2f bottomRightVt = {
-              ( offset + glyph_quad_wdt ) + text_pos_x, -glyph_quad_hgt + text_pos_y };
-            const algebra::vector2f bottomLeftVt = { ( offset + 0.0f ) + text_pos_x, -glyph_quad_hgt + text_pos_y };
+            const algebra::vector3f topLeftVt = { ( offset + 0.0f ) + text_pos_x, 0.0f + text_pos_y, 0.0f };
+            const algebra::vector3f topRightVt = { ( offset + glyph_quad_wdt ) + text_pos_x, 0.0f + text_pos_y, 0.0f };
+            const algebra::vector3f bottomRightVt = {
+              ( offset + glyph_quad_wdt ) + text_pos_x, -glyph_quad_hgt + text_pos_y, 0.0f };
+            const algebra::vector3f bottomLeftVt = {
+              ( offset + 0.0f ) + text_pos_x, -glyph_quad_hgt + text_pos_y, 0.0f };
 
             // Build character quad texture coordinates data.
-            letterQuadsVertecies_[( ( bufferPos_ + i ) * 4 ) + 0] = topLeftVt;
-            letterQuadsVertecies_[( ( bufferPos_ + i ) * 4 ) + 1] = topRightVt;
-            letterQuadsVertecies_[( ( bufferPos_ + i ) * 4 ) + 2] = bottomRightVt;
-            letterQuadsVertecies_[( ( bufferPos_ + i ) * 4 ) + 3] = bottomLeftVt;
+            letterQuadsVertecies_[( i * 4 ) + 0] = topLeftVt;
+            letterQuadsVertecies_[( i * 4 ) + 1] = topRightVt;
+            letterQuadsVertecies_[( i * 4 ) + 2] = bottomRightVt;
+            letterQuadsVertecies_[( i * 4 ) + 3] = bottomLeftVt;
 
             const algebra::vector2f topLeftTc{ ( tc_gap_x * glyph_x ) + 0.0f, ( tc_gap_y * glyph_y ) + 0.0f };
 
@@ -85,31 +86,34 @@ struct Label final {
 
             const algebra::vector2f bottomLeftTc{ ( tc_gap_x * glyph_x ) + 0.0f, ( tc_gap_y * glyph_y ) + tc_gap_y };
 
-            letterQuadsTexcrds_[( ( bufferPos_ + i ) * 4 ) + 0] = topLeftTc;
-            letterQuadsTexcrds_[( ( bufferPos_ + i ) * 4 ) + 1] = topRightTc;
-            letterQuadsTexcrds_[( ( bufferPos_ + i ) * 4 ) + 2] = bottomRightTc;
-            letterQuadsTexcrds_[( ( bufferPos_ + i ) * 4 ) + 3] = bottomLeftTc;
+            letterQuadsTexcrds_[( i * 4 ) + 0] = topLeftTc;
+            letterQuadsTexcrds_[( i * 4 ) + 1] = topRightTc;
+            letterQuadsTexcrds_[( i * 4 ) + 2] = bottomRightTc;
+            letterQuadsTexcrds_[( i * 4 ) + 3] = bottomLeftTc;
 
             // Build character quad color data.
             const auto color = color_.asVector3f();
-            letterQuadsColors_[( ( bufferPos_ + i ) * 4 ) + 0] = color;
-            letterQuadsColors_[( ( bufferPos_ + i ) * 4 ) + 1] = color;
-            letterQuadsColors_[( ( bufferPos_ + i ) * 4 ) + 2] = color;
-            letterQuadsColors_[( ( bufferPos_ + i ) * 4 ) + 3] = color;
+            letterQuadsColors_[( i * 4 ) + 0] = color;
+            letterQuadsColors_[( i * 4 ) + 1] = color;
+            letterQuadsColors_[( i * 4 ) + 2] = color;
+            letterQuadsColors_[( i * 4 ) + 3] = color;
         }
-        // Save count of symbols that allready have been ocupied space in buffer,
-        // because there can be many of draw() calls before flush() that actualy
-        // render text geometry and set all counter and buffers to zero
-        bufferPos_ += i;
+        // Save count of symbols that allready have been ocupied space in buffer.
+        lettersCount_ += i;
+    }
+
+    auto lettersCount() -> size_t {
+        //
+        return lettersCount_;
     }
 
 private:
 // Size of "Letters buffer" - this is the number of all characters
 // from all draw() calls that can one instance of this class operates
-#define LETTERS_COUNT 512
-    std::array<algebra::vector2f, LETTERS_COUNT * 4> letterQuadsVertecies_{};
-    std::array<algebra::vector3f, LETTERS_COUNT * 4> letterQuadsColors_{};
-    std::array<algebra::vector2f, LETTERS_COUNT * 4> letterQuadsTexcrds_{};
+#define MAX_LETTERS_COUNT 64
+    std::array<algebra::vector3f, MAX_LETTERS_COUNT * 4> letterQuadsVertecies_{};
+    std::array<algebra::vector4f, MAX_LETTERS_COUNT * 4> letterQuadsColors_{};
+    std::array<algebra::vector2f, MAX_LETTERS_COUNT * 4> letterQuadsTexcrds_{};
 
     std::unique_ptr<Tga> fontImage_{};
 
@@ -131,8 +135,7 @@ private:
     int32_t fontColumnCount{ 32 };  // Количество столбцов символов в шрифте
     int32_t fontRowCount{ 8 };      // Количество строк символов в шрифте
 
-    // Must be set to zero in flush()
-    size_t bufferPos_{};
+    size_t lettersCount_{};
 
     Colorf color_{};
 };

@@ -91,6 +91,8 @@ export struct RenderVK final {
 
         scene_->camera().update();
 
+        ui_->label( 0.0f, 0.0f, "test text" );
+
         {
             auto cb = context_->copyBufferCommand();
             scene_->upload( cb.buf() );
