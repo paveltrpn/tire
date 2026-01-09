@@ -1,7 +1,6 @@
 
 module;
 
-#include <concepts>
 #include <sstream>
 #include <iostream>
 #include <format>
@@ -43,7 +42,7 @@ namespace tire::log {
  * inverse off      27
  **/
 
-constexpr auto elideRight( const char *str, int after ) -> std::string {
+auto elideRight( const char *str, int after ) -> std::string {
     const auto length = std::strlen( str );
     auto elided = std::stringstream{};
 
@@ -56,7 +55,7 @@ constexpr auto elideRight( const char *str, int after ) -> std::string {
     return elided.str();
 }
 
-constexpr auto elideLeft( const char *str, int after ) -> std::string {
+auto elideLeft( const char *str, int after ) -> std::string {
     const auto length = std::strlen( str );
     auto elided = std::stringstream{};
 
