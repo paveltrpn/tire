@@ -36,6 +36,7 @@ export struct RenderVK final {
             const auto configHandle = Config::instance();
             const auto basePath = configHandle->getBasePath();
 
+            ui_ = std::make_shared<UiVK>( context_ );
             scene_ = std::make_shared<SceneVK>( basePath.string() + "/assets/m01.json", context_ );
             testBox_ = std::make_shared<TestBox>( context_ );
 

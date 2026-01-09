@@ -106,8 +106,8 @@ struct PipelineUi final : Pipeline {
         bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
         bindingDescriptions[0].binding = 0;
 
-        // Prepare descriptors for NORMALS data
-        bindingDescriptions[1].stride = sizeof( algebra::vector3f );
+        // Prepare descriptors for COLORS data
+        bindingDescriptions[1].stride = sizeof( algebra::vector4f );
         bindingDescriptions[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
         bindingDescriptions[1].binding = 1;
 
@@ -229,62 +229,21 @@ struct PipelineUi final : Pipeline {
         // =============================================================================
 
         // This pipeline layout initialization.
-
-        // Setup descriptor sets.
-        // Texture sampler descriptor.
-        const auto textureBind = VkDescriptorSetLayoutBinding{
-          .binding = 0,
-          .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-          .descriptorCount = 1,
-          .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-        };
-
-        const auto textureDescSetCreateInfo = VkDescriptorSetLayoutCreateInfo{
-          //
-          .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-          .pNext = nullptr,
-          .flags = 0,
-          .bindingCount = 1,
-          .pBindings = &textureBind,
-        };
-
-        vkCreateDescriptorSetLayout( context_->device(), &textureDescSetCreateInfo, nullptr, &textureDescSetLayout_ );
-
-        // Omni lights data descriptor.
-        const auto omniLightsBind = VkDescriptorSetLayoutBinding{
-          .binding = 0,
-          .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-          .descriptorCount = 1,
-          .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-        };
-
-        const auto omniLightsDescSetCreateInfo = VkDescriptorSetLayoutCreateInfo{
-          //
-          .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-          .pNext = nullptr,
-          .flags = 0,
-          .bindingCount = 1,
-          .pBindings = &omniLightsBind,
-        };
-
-        vkCreateDescriptorSetLayout(
-          context_->device(), &omniLightsDescSetCreateInfo, nullptr, &omniLightsDescSetLayout_ );
-
-        std::array<VkDescriptorSetLayout, 2> texturedSetLayouts{ textureDescSetLayout_, omniLightsDescSetLayout_ };
-
         // Setup push constants.
         std::array<VkPushConstantRange, 1> constants{};
 
         constants[0] = VkPushConstantRange{
+          //
           .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
           .offset = 0,
-          .size = sizeof( algebra::matrix4d ) + sizeof( algebra::vector3d ) };
+          .size = sizeof( algebra::matrix4f ),
+        };
 
         const auto pipelineLayoutInfo = VkPipelineLayoutCreateInfo{
           //
           .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-          .setLayoutCount = texturedSetLayouts.size(),
-          .pSetLayouts = texturedSetLayouts.data(),
+          .setLayoutCount = 0,
+          .pSetLayouts = nullptr,
           .pushConstantRangeCount = constants.size(),
           .pPushConstantRanges = constants.data(),
         };
@@ -325,15 +284,7 @@ struct PipelineUi final : Pipeline {
         }
     }
 
-    [[nodiscard]]
-    auto pipelineSescSetsLayout() const -> std::array<VkDescriptorSetLayout, 2> {
-        //
-        return { textureDescSetLayout_, omniLightsDescSetLayout_ };
-    }
-
 private:
-    VkDescriptorSetLayout textureDescSetLayout_{};
-    VkDescriptorSetLayout omniLightsDescSetLayout_{};
 };
 
 }  // namespace tire

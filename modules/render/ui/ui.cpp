@@ -2,11 +2,13 @@
 module;
 
 #include <memory>
+#include <filesystem>
 
 export module render:ui;
 
 import ui;
 import context;
+import config;
 
 import :pipeline_ui;
 import :vertex_buffer;
@@ -17,11 +19,20 @@ struct UiVK final : tire::Ui {
     UiVK( const Context *context )
         : context_{ context } {
         //
-        // pipeline_ = std::make_unique<PipelineUi>( context_ );
-        // auto testBoxProgram = Program{ context_ };
-        // testBoxProgram.fill(
-        //   { { vk_simple_box_VERTEX, vertex_stage_suffix }, { vk_simple_box_FRAGMENT, fragment_stage_suffix } } );
-        // pipeline_->buildPipeline( testBoxProgram );
+
+        const auto configHandle = Config::instance();
+        const auto basePath = configHandle->getBasePath().string();
+
+        pipeline_ = std::make_unique<PipelineUi>( context_ );
+
+        auto program = Program{ context_ };
+        program.fill( {
+          //
+          basePath + "/shaders/spirv/vk_ui_VERTEX.spv",
+          basePath + "/shaders/spirv/vk_ui_FRAGMENT.spv",
+        } );
+
+        pipeline_->buildPipeline( program );
     }
 
     auto flush() -> void override {
