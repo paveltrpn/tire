@@ -19,6 +19,7 @@ import io;
 import :timer;
 import :scenevk;
 import :test_box;
+import :ui;
 
 // using namespace std::chrono_literals;
 
@@ -137,6 +138,9 @@ private:
     bool run_{};
 
     uint32_t currentFrame_{ 0 };
+
+    // Ui.
+    std::shared_ptr<UiVK> ui_{};
 
     // Test box.
     std::shared_ptr<TestBox> testBox_{};
