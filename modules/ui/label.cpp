@@ -11,7 +11,7 @@ import image;
 
 namespace tire {
 
-struct Label final {
+export struct Label final {
     auto set_glyph_width( float value ) -> void {
         //
     }

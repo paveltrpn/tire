@@ -3,6 +3,8 @@ module;
 
 #include <memory>
 #include <filesystem>
+#include <variant>
+#include <iostream>
 
 #include <vulkan/vulkan.h>
 #include "vulkan/vulkan_core.h"
@@ -21,7 +23,17 @@ import :vertex_buffer;
 
 namespace tire {
 
-struct UiVK final : tire::Ui {
+struct UiComponentVisitor final {
+    auto operator()( const tire::Label &item ) -> void {
+        //
+    }
+
+    auto operator()( const tire::Billboard &item ) -> void {
+        //
+    }
+};
+
+export struct UiVK final : tire::Ui {
     UiVK( const Context *context )
         : context_{ context } {
         //
@@ -48,6 +60,9 @@ struct UiVK final : tire::Ui {
 
     auto upload( const VkCommandBuffer cb ) -> void {
         //
+        for ( auto &&item : componentsList_ ) {
+            std::visit( UiComponentVisitor{}, item );
+        }
     }
 
     auto draw( const VkCommandBuffer cb ) -> void {
@@ -56,12 +71,12 @@ struct UiVK final : tire::Ui {
         // vkCmdPushConstants(
         // cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( algebra::matrix4f ), &viewMatrix );
 
-        // vkCmdDraw( cb, 36, 3, 0, 0 );
+        vkCmdDraw( cb, 36, 3, 0, 0 );
     }
 
     auto flush() -> void override {
         //
-
+        submittedPrimitievesCount_ = 0;
         componentsList_.clear();
     }
 
@@ -72,6 +87,8 @@ private:
     std::shared_ptr<VertexBuffer> vBuf_;
     std::shared_ptr<VertexBuffer> cBuf_;
     std::shared_ptr<VertexBuffer> tBuf_;
+
+    uint32_t submittedPrimitievesCount_{};
 };
 
 }  // namespace tire

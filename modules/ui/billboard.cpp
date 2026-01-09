@@ -5,7 +5,7 @@ export module ui:billboard;
 
 namespace tire {
 
-struct Billboard final {
+export struct Billboard final {
 private:
 };
 

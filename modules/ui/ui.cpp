@@ -41,6 +41,9 @@ export struct Ui {
 
     auto billboard( float px, float py, float sx, float sy ) -> void {
         //
+        auto b = tire::Billboard{};
+
+        componentsList_.emplace_front( std::move( b ) );
     }
 
     virtual auto flush() -> void = 0;
