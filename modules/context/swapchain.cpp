@@ -165,7 +165,8 @@ auto Context::makeFrames() -> void {
           .pAttachments = attachments.data(),
           .width = viewportWidth,
           .height = viewportHeight,
-          .layers = 1 };
+          .layers = 1,
+        };
 
         if ( const auto err = vkCreateFramebuffer( device_, &framebufferInfo, nullptr, &frames_[i].framebuffer_ );
              err != VK_SUCCESS ) {
@@ -176,7 +177,11 @@ auto Context::makeFrames() -> void {
 
         // Frame synchronization primitieves
         VkSemaphoreCreateInfo semaphoreInfo{
-          .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO, .pNext = nullptr, .flags = 0 };
+          //
+          .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
+          .pNext = nullptr,
+          .flags = 0,
+        };
 
         VkFenceCreateInfo fenceInfo{
           .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, .pNext = nullptr, .flags = VK_FENCE_CREATE_SIGNALED_BIT };
@@ -192,7 +197,8 @@ auto Context::makeFrames() -> void {
           .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
           .commandPool = commandPool(),
           .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-          .commandBufferCount = 1 };
+          .commandBufferCount = 1,
+        };
 
         const auto err = vkAllocateCommandBuffers( device(), &allocInfo, &frames_[i].cbPrimary_ );
         if ( err != VK_SUCCESS ) {
