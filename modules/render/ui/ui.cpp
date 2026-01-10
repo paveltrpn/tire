@@ -41,7 +41,7 @@ export struct UiVK final : tire::Ui {
         const auto configHandle = Config::instance();
         const auto basePath = configHandle->getBasePath().string();
 
-        pipeline_ = std::make_unique<PipelineUi>( context_ );
+        pipeline_ = std::make_shared<PipelineUi>( context_ );
 
         auto program = Program{ context_ };
         program.fill( {

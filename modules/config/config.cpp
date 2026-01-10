@@ -23,7 +23,10 @@ concept ConfigParamType =
 
 export struct Config final {
 private:
-    Config() { basePath_ = std::filesystem::canonical( "/proc/self/exe" ).parent_path().parent_path(); };
+    Config() {
+        //
+        basePath_ = std::filesystem::canonical( "/proc/self/exe" ).parent_path().parent_path();
+    };
 
 public:
     explicit Config( const std::filesystem::path &fname )
