@@ -137,7 +137,7 @@ export struct SceneVK final : tire::Scene {
           cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof( algebra::matrix4d ), sizeof( algebra::vector3d ),
           &eye );
 
-        // Record draw commands for all scene objects in command buffer
+        // Record draw commands for all scene objects into command buffer.
         for ( size_t object = 0; object < bodyList_.size(); ++object ) {
             const auto c = bodyList_[object]->albedoColor().asVector4f();
 

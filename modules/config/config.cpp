@@ -56,20 +56,32 @@ public:
     auto operator=( const Config &rhs ) -> Config & = delete;
     auto operator=( Config &&rhs ) -> Config & = delete;
 
-    ~Config() {
+    ~Config() = default;
+
+    [[nodiscard]] auto getBasePath() const -> const std::filesystem::path & {
         //
-        log::info()( "config deleted..." );
+        return basePath_;
+    };
+
+    [[nodiscard]] auto getString( std::string_view param ) const -> std::string {
+        //
+        return config_[param];
     }
 
-    [[nodiscard]] auto getBasePath() const -> const std::filesystem::path & { return basePath_; };
+    [[nodiscard]] auto getBool( std::string_view param ) const -> bool {
+        //
+        return config_[param];
+    }
 
-    [[nodiscard]] auto getString( std::string_view param ) const -> std::string { return config_[param]; }
+    [[nodiscard]] auto getNumber( std::string_view param ) const -> double {
+        //
+        return config_[param];
+    }
 
-    [[nodiscard]] auto getBool( std::string_view param ) const -> bool { return config_[param]; }
-
-    [[nodiscard]] auto getNumber( std::string_view param ) const -> double { return config_[param]; }
-
-    [[nodiscard]] auto getJson( std::string_view param ) const -> nlohmann::json { return config_[param]; }
+    [[nodiscard]] auto getJson( std::string_view param ) const -> nlohmann::json {
+        //
+        return config_[param];
+    }
 
     template <ConfigParamType T>
     [[nodiscard]] auto get( std::string_view param, T dflt = {} ) const -> T {
@@ -89,6 +101,11 @@ public:
         }
     }
 
+private:
+    nlohmann::json config_;
+    std::filesystem::path basePath_{};
+
+public:
     static auto instance() -> Config * {
         if ( !instance_ ) {
             log::fatal()( "global instance must be initialized explicitly!" );
@@ -98,10 +115,6 @@ public:
 
 private:
     static std::unique_ptr<Config> instance_;
-
-private:
-    nlohmann::json config_;
-    std::filesystem::path basePath_{};
 };
 
 std::unique_ptr<Config> Config::instance_ = nullptr;
