@@ -153,7 +153,7 @@ target_sources(ui
     PUBLIC FILE_SET CXX_MODULES FILES
     ${MOD_UI_SRC}
 )
-target_link_libraries(ui log algebra image)
+target_link_libraries(ui log algebra image event)
 
 # ================================
 # Module io
@@ -175,7 +175,7 @@ target_sources(render
     PUBLIC FILE_SET CXX_MODULES FILES
     ${MOD_RENDER_SRC}
 )
-target_link_libraries(render vulkan context ui scene config geometry algebra io vma_usage)
+target_link_libraries(render vulkan context ui scene config geometry algebra io vma_usage event)
 
 # ================================
 # Module image
@@ -207,7 +207,7 @@ target_sources(scene
     PUBLIC FILE_SET CXX_MODULES FILES
     ${MOD_SCENE_SRC}
 )
-target_link_libraries(scene config image algebra geometry generator)
+target_link_libraries(scene config image algebra geometry generator event)
 
 # ================================
 # Module generator
@@ -219,6 +219,17 @@ target_sources(generator
     ${MOD_GENERATOR_SRC}
 )
 target_link_libraries(generator)
+
+# ================================
+# Module event
+# ================================
+file(GLOB MOD_EVENT_SRC "modules/event/*.cpp")
+add_library(event)
+target_sources(event
+    PUBLIC FILE_SET CXX_MODULES FILES
+    ${MOD_EVENT_SRC}
+)
+target_link_libraries(event)
 
 # ================================
 # Main apps subdirectories
