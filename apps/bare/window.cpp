@@ -1,7 +1,7 @@
 
 #include <memory>
 
-#define SURFACE_X11
+#define SURFACE_WAYLAND
 
 #ifdef SURFACE_X11
 #define GLFW_EXPOSE_NATIVE_X11
@@ -85,7 +85,7 @@ BareWindow::BareWindow() {
             const auto display = glfwGetWaylandDisplay();
             const auto surface = glfwGetWaylandWindow( window_ );
 
-            context_ = std::make_unique<tire::vk::Context>( width, height, display, surface );
+            context_ = std::make_unique<tire::Context>( width, height, display, surface );
 #endif
             break;
         }

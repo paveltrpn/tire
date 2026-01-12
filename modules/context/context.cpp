@@ -5,7 +5,7 @@ module;
 #include <vector>
 #include <memory>
 
-#define SURFACE_X11
+#define SURFACE_WAYLAND
 
 #ifdef SURFACE_X11
 #define VK_USE_PLATFORM_XLIB_KHR

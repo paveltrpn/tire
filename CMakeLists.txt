@@ -37,8 +37,8 @@ set(CMAKE_BUILD_TYPE Debug)
 
 project (tiny_render)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON )
-set(SURFACE_X11 CACHE BOOL "Enable X11 surface backend.")
+# set(CMAKE_EXPORT_COMPILE_COMMANDS ON )
+# set(SURFACE_X11 CACHE BOOL "Enable X11 surface backend.")
 set(SURFACE_WAYLAND ON CACHE BOOL "Enable wayland surface backend.")
 
 include_directories("modules")

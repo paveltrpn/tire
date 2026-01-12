@@ -38,8 +38,10 @@ export struct SceneVK final : tire::Scene {
         pipeline_->buildPipeline( vertexBufferProgram );
 
         try {
+            // testImage_ =
+            // std::make_shared<TextureImage>( context_, "/mnt/main/code/assets/textures/PavingStones021_color.tga" );
             testImage_ =
-              std::make_shared<TextureImage>( context_, "/mnt/main/code/assets/textures/PavingStones021_color.tga" );
+              std::make_shared<TextureImage>( context_, "/home/pavel/code/assets/textures/PavingStones021_color.tga" );
         } catch ( std::exception &e ) {
             log::fatal()( "test image {}", e.what() );
         }

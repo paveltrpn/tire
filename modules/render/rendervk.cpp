@@ -43,7 +43,7 @@ export struct RenderVK final {
             // RUN!!!
             run_ = true;
         } catch ( const std::runtime_error &e ) {
-            throw std::runtime_error( e.what() );
+            log::fatal()( "error white creating render {}", e.what() );
         }
     }
 
