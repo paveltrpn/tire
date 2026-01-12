@@ -4,19 +4,19 @@ Vulkan driven graphics application.
 
 Build:
 - - -
-Need C++23 compatible compiler and library (tested with latest clang).
+Need C++26 compatible compiler and library (tested with latest clang).
 Build as usual cmake project, clone and:
 $ mkdir build && cd build
 $ cmake ..
 $ ninja -j {num threads)
-Executables will appear in /{some}/{path}/tiny_render/bin
 
 Dependencies:
 - - - - - - -
-OpenGL headers
-
 Vulkan SDK:
 https://vulkan.lunarg.com/sdk/home
+
+VulkanMemoryAllocator
+$ git clone https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
 
 GLFW:
 $ apt install libglfw3-dev
@@ -38,6 +38,9 @@ $ export LIBUV_DIR=/{some}/{path}/libuv
 
 nlohmann-json
 $ export NLOHMANN_JSON_DIR=/{some}/{path}/json
+
+VulkanMemoryAllocator
+$export VMA_DIR=/{some}/{path}/{to}/VulkanMemoryAllocator
 
 vulkan sdk
 $ export VULKAN_SDK=/{some}/{path}/vulkansdk_{version}/x86_64
