@@ -16,6 +16,8 @@ import context;
 
 namespace tire {
 
+using namespace algebra;
+
 struct PipelineUi final : Pipeline {
     PipelineUi( const Context *context )
         : Pipeline( context ) {}
@@ -95,46 +97,56 @@ struct PipelineUi final : Pipeline {
             shaderStages_.push_back( stage );
         }
 
+        // ===========================================================================
         // Init fixed stages
+        // ===========================================================================
 
         // NOTE: https://docs.vulkan.org/guide/latest/vertex_input_data_processing.html
 
-        std::array<VkVertexInputBindingDescription, 3> bindingDescriptions{};
+        const auto vericiesBindingDescription = VkVertexInputBindingDescription{
+          .binding = 0,
+          .stride = sizeof( vector3f ),
+          .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
+        };
 
-        // Prepare descriptors for VERTEX data
-        bindingDescriptions[0].stride = sizeof( algebra::vector3f );
-        bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-        bindingDescriptions[0].binding = 0;
+        const auto texcrdsBindingDescription = VkVertexInputBindingDescription{
+          .binding = 1,
+          .stride = sizeof( algebra::vector2f ),
+          .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
+        };
 
-        // Prepare descriptors for UV data
-        bindingDescriptions[1].stride = sizeof( algebra::vector2f );
-        bindingDescriptions[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-        bindingDescriptions[1].binding = 1;
+        const auto vclrsBindingDescription = VkVertexInputBindingDescription{
+          .binding = 2,
+          .stride = sizeof( algebra::vector4f ),
+          .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
+        };
 
-        // Prepare descriptors for COLORS data
-        bindingDescriptions[2].stride = sizeof( algebra::vector4f );
-        bindingDescriptions[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-        bindingDescriptions[2].binding = 2;
+        std::array<VkVertexInputBindingDescription, 3> bindingDescriptions{
+          vericiesBindingDescription, texcrdsBindingDescription, texcrdsBindingDescription };
 
-        std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
+        const auto verticiesInputAttrDesc = VkVertexInputAttributeDescription{
+          .location = 0,
+          .binding = 0,
+          .format = VK_FORMAT_R32G32B32_SFLOAT,
+          .offset = 0,
+        };
 
-        // Prepare descriptors for VERTEX data
-        attributeDescriptions[0].binding = 0;
-        attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-        attributeDescriptions[0].offset = 0;
-        attributeDescriptions[0].location = 0;
+        const auto texcrdsInputAttrDesc = VkVertexInputAttributeDescription{
+          .location = 1,
+          .binding = 1,
+          .format = VK_FORMAT_R32G32_SFLOAT,
+          .offset = 0,
+        };
 
-        // Prepare descriptors for UV data
-        attributeDescriptions[1].binding = 1;
-        attributeDescriptions[1].format = VK_FORMAT_R32G32_SFLOAT;
-        attributeDescriptions[1].offset = 0;
-        attributeDescriptions[1].location = 1;
+        const auto vclrsInputAttrDesc = VkVertexInputAttributeDescription{
+          .location = 2,
+          .binding = 2,
+          .format = VK_FORMAT_R32G32B32A32_SFLOAT,
+          .offset = 0,
+        };
 
-        // Prepare descriptors for COLORS data
-        attributeDescriptions[2].binding = 2;
-        attributeDescriptions[2].format = VK_FORMAT_R32G32B32A32_SFLOAT;
-        attributeDescriptions[2].offset = 0;
-        attributeDescriptions[2].location = 2;
+        std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{
+          verticiesInputAttrDesc, texcrdsInputAttrDesc, vclrsInputAttrDesc };
 
         const VkPipelineVertexInputStateCreateInfo vertexInput{
           .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
