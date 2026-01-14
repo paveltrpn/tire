@@ -60,7 +60,7 @@ struct VertexBuffer final {
 
         char *offsettedPtr = static_cast<char *>( mappedPtr ) + offset;
 
-        std::memcpy( offsettedPtr + offset, data, size );
+        std::memcpy( offsettedPtr, data, size );
 
         vmaUnmapMemory( context_->allocator(), stagingAllocation_ );
     }
