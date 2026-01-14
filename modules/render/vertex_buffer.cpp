@@ -50,14 +50,18 @@ struct VertexBuffer final {
         return stagingBuffer_;
     }
 
-    auto memcpy( const void *data, size_t size ) -> void {
+    auto memcpy( const void *data, size_t size, size_t offset = 0 ) -> void {
         if ( size > size_ ) {
             log::warning()( "target memory chunk larger than allocated!" );
         }
 
         void *mappedPtr{};
         vmaMapMemory( context_->allocator(), stagingAllocation_, &mappedPtr );
-        std::memcpy( mappedPtr, data, size );
+
+        char *offsettedPtr = static_cast<char *>( mappedPtr ) + offset;
+
+        std::memcpy( offsettedPtr + offset, data, size );
+
         vmaUnmapMemory( context_->allocator(), stagingAllocation_ );
     }
 

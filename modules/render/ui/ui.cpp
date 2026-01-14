@@ -41,40 +41,40 @@ struct UiComponentVisitor final {
     auto operator()( const tire::Label &item ) -> void {
         //
         const auto vDataPtr = reinterpret_cast<const void *>( item.verteciesData() );
-        vBuf_->memcpy( vDataPtr, item.bufferVerticesSize() );
+        vBuf_->memcpy( vDataPtr, item.bufferVerticesSize(), ( *primitievsCount_ ) * 3 * sizeof( float ) );
 
-        const auto tDataPtr = reinterpret_cast<const void *>( item.texcrdsData() );
-        cBuf_->memcpy( tDataPtr, item.bufferTexcrdsSize() );
+        const auto tDataPtr = reinterpret_cast<const void *>( item.clrsData() );
+        tBuf_->memcpy( tDataPtr, item.bufferTexcrdsSize(), ( *primitievsCount_ ) * 2 * sizeof( float ) );
 
-        const auto cDataPtr = reinterpret_cast<const void *>( item.clrsData() );
-        tBuf_->memcpy( tDataPtr, item.bufferVertclrsSize() );
+        const auto cDataPtr = reinterpret_cast<const void *>( item.texcrdsData() );
+        cBuf_->memcpy( cDataPtr, item.bufferVertclrsSize(), ( *primitievsCount_ ) * 4 * sizeof( float ) );
 
         VkBufferCopy copyVrt{
           //
-          .srcOffset = 0,
-          .dstOffset = 0,
+          .srcOffset = ( *primitievsCount_ ) * 3 * sizeof( float ),
+          .dstOffset = ( *primitievsCount_ ) * 3 * sizeof( float ),
           .size = vBuf_->size(),
         };
 
         vkCmdCopyBuffer( cb_, vBuf_->stagingBuffer(), vBuf_->deviceBuffer(), 1, &copyVrt );
 
-        VkBufferCopy copyNrm{
-          //
-          .srcOffset = 0,
-          .dstOffset = 0,
-          .size = cBuf_->size(),
-        };
-
-        vkCmdCopyBuffer( cb_, cBuf_->stagingBuffer(), cBuf_->deviceBuffer(), 1, &copyNrm );
-
         VkBufferCopy copyTxc{
           //
-          .srcOffset = 0,
-          .dstOffset = 0,
+          .srcOffset = ( *primitievsCount_ ) * 2 * sizeof( float ),
+          .dstOffset = ( *primitievsCount_ ) * 2 * sizeof( float ),
           .size = tBuf_->size(),
         };
 
         vkCmdCopyBuffer( cb_, tBuf_->stagingBuffer(), tBuf_->deviceBuffer(), 1, &copyTxc );
+
+        VkBufferCopy copyClrs{
+          //
+          .srcOffset = ( *primitievsCount_ ) * 4 * sizeof( float ),
+          .dstOffset = ( *primitievsCount_ ) * 4 * sizeof( float ),
+          .size = cBuf_->size(),
+        };
+
+        vkCmdCopyBuffer( cb_, cBuf_->stagingBuffer(), cBuf_->deviceBuffer(), 1, &copyClrs );
 
         ( *primitievsCount_ ) += item.lettersCount() * VERTICIES_PER_QUAD;
     }

@@ -91,8 +91,8 @@ export struct RenderVK final {
 
         scene_->camera().update();
 
-        ui_->label( 0.0f, 0.0f, "test textaaaaa" );
-        ui_->label( 0.0f, 4.0f, "test text" );
+        ui_->label( -30.0f, 25.0f, "test textaaaaa" );
+        ui_->label( -30.0f, 21.0f, "test text" );
         //ui_->billboard( 0, 0, 0, 0 );
 
         {
