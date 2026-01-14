@@ -157,8 +157,6 @@ private:
     std::array<vector2_type, MAX_LETTERS_COUNT * VERTICIES_PER_QUAD> letterQuadsTexcrds_{};
     std::array<vector4_type, MAX_LETTERS_COUNT * VERTICIES_PER_QUAD> letterQuadsColors_{};
 
-    std::unique_ptr<Tga> fontImage_{};
-
     float glyphScale_{ 1.3f };
 #define GLYPH_WIDTH 0.4f
 #define GLYPH_HEIGHT 1.55f

@@ -228,7 +228,28 @@ struct PipelineUi final : Pipeline {
 
         // =============================================================================
 
-        // This pipeline layout initialization.
+        // Setup descriptor sets.
+        // Texture sampler descriptor.
+        const auto textureBind = VkDescriptorSetLayoutBinding{
+          .binding = 0,
+          .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+          .descriptorCount = 1,
+          .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+        };
+
+        const auto textureDescSetCreateInfo = VkDescriptorSetLayoutCreateInfo{
+          //
+          .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+          .pNext = nullptr,
+          .flags = 0,
+          .bindingCount = 1,
+          .pBindings = &textureBind,
+        };
+
+        vkCreateDescriptorSetLayout( context_->device(), &textureDescSetCreateInfo, nullptr, &textureDescSetLayout_ );
+
+        std::array<VkDescriptorSetLayout, 1> descSetLayouts{ textureDescSetLayout_ };
+
         // Setup push constants.
         std::array<VkPushConstantRange, 1> constants{};
 
@@ -242,8 +263,8 @@ struct PipelineUi final : Pipeline {
         const auto pipelineLayoutInfo = VkPipelineLayoutCreateInfo{
           //
           .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-          .setLayoutCount = 0,
-          .pSetLayouts = nullptr,
+          .setLayoutCount = descSetLayouts.size(),
+          .pSetLayouts = descSetLayouts.data(),
           .pushConstantRangeCount = constants.size(),
           .pPushConstantRanges = constants.data(),
         };
@@ -284,7 +305,14 @@ struct PipelineUi final : Pipeline {
         }
     }
 
+    [[nodiscard]]
+    auto pipelineSescSetsLayout() const -> std::array<VkDescriptorSetLayout, 1> {
+        //
+        return { textureDescSetLayout_ };
+    }
+
 private:
+    VkDescriptorSetLayout textureDescSetLayout_{};
 };
 
 }  // namespace tire

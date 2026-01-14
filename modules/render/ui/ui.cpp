@@ -18,9 +18,11 @@ import algebra;
 import ui;
 import context;
 import config;
+import image;
 
 import :pipeline_ui;
 import :vertex_buffer;
+import :texture_image;
 
 namespace tire {
 
@@ -96,9 +98,15 @@ export struct UiVK final : tire::Ui {
     UiVK( const Context *context )
         : context_{ context } {
         //
-
         const auto configHandle = Config::instance();
         const auto basePath = configHandle->getBasePath().string();
+        const auto fontFile = configHandle->get<std::string>( "ui_font" );
+
+        try {
+            testImage_ = std::make_shared<TextureImage>( context_, basePath + "/assets/img_fonts/" + fontFile );
+        } catch ( std::exception &e ) {
+            log::fatal()( "font image {}", e.what() );
+        }
 
         pipeline_ = std::make_shared<PipelineUi>( context_ );
 
@@ -117,6 +125,9 @@ export struct UiVK final : tire::Ui {
           std::make_shared<VertexBuffer>( context_, OUTPUT_QUADS_COUNT * VERTICIES_PER_QUAD * 2 * sizeof( float ) );
         cBuf_ =
           std::make_shared<VertexBuffer>( context_, OUTPUT_QUADS_COUNT * VERTICIES_PER_QUAD * 4 * sizeof( float ) );
+
+        initTextureSmpler();
+        initDescriptorSets();
     }
 
     auto upload( const VkCommandBuffer cb ) -> void {
@@ -129,6 +140,14 @@ export struct UiVK final : tire::Ui {
 
     auto draw( const VkCommandBuffer cb, matrix4f m ) -> void {
         vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_->pipeline() );
+
+        // =================================================================================
+
+        std::array<VkDescriptorSet, 1> setsToBind{ fontDescSet_ };
+        vkCmdBindDescriptorSets(
+          cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_->layout(), 0, 1, setsToBind.data(), 0, nullptr );
+
+        // =================================================================================
 
         vkCmdPushConstants( cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( matrix4f ), &m );
 
@@ -152,6 +171,69 @@ export struct UiVK final : tire::Ui {
     }
 
 private:
+    void initDescriptorSets() {
+        auto pipelineDescSetLayouts = pipeline_->pipelineSescSetsLayout();
+
+        // Write to the texture descriptor set.
+        auto texDescSetLayout = pipelineDescSetLayouts[0];
+        const auto texallocInfo = VkDescriptorSetAllocateInfo{
+          //
+          .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+          .pNext = nullptr,
+          .descriptorPool = context_->descriptorPool(),
+          .descriptorSetCount = 1,
+          .pSetLayouts = &texDescSetLayout,
+        };
+
+        {
+            const auto err = vkAllocateDescriptorSets( context_->device(), &texallocInfo, &fontDescSet_ );
+            if ( err != VK_SUCCESS ) {
+                log::fatal()( "error while allocating descriptorSets {}", string_VkResult( err ) );
+            }
+        }
+
+        const auto textureImageDescInfo = VkDescriptorImageInfo{
+          //
+          .sampler = fontSampler_,
+          .imageView = testImage_->view(),
+          .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+        };
+
+        VkWriteDescriptorSet textureWrite = {
+          //
+          .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+          .pNext = nullptr,
+          .dstSet = fontDescSet_,
+          .dstBinding = 0,
+          .descriptorCount = 1,
+          .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+          .pImageInfo = &textureImageDescInfo,
+          .pBufferInfo = nullptr,
+        };
+
+        vkUpdateDescriptorSets( context_->device(), 1, &textureWrite, 0, nullptr );
+    }
+
+    auto initTextureSmpler() -> void {
+        const auto info = VkSamplerCreateInfo{
+          //
+          .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
+          .pNext = nullptr,
+          .magFilter = VK_FILTER_LINEAR,
+          .minFilter = VK_FILTER_LINEAR,
+          .mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
+          .addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+          .addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+          .addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+          .mipLodBias = 0.0f,
+          .minLod = 0.0f,
+          .maxLod = VK_LOD_CLAMP_NONE,
+        };
+
+        vkCreateSampler( context_->device(), &info, nullptr, &fontSampler_ );
+    }
+
+private:
     const Context *context_;
     std::shared_ptr<PipelineUi> pipeline_{};
 
@@ -160,6 +242,10 @@ private:
     std::shared_ptr<VertexBuffer> cBuf_;
 
     uint32_t submittedPrimitievesCount_{};
+
+    std::shared_ptr<tire::TextureImage> testImage_;
+    VkSampler fontSampler_{};
+    VkDescriptorSet fontDescSet_{};
 };
 
 }  // namespace tire
