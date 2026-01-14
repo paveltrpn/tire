@@ -17,5 +17,5 @@
   "enable_api_dump_validation_layers": false,
   "enable_raytracing_extensions": false, 
   "verbose_vulkan_output": false,
-  "ui_font": "DejaVu-Sans-Mono-1024-512-32-64.tga"
+  "ui_font": "DejaVu-Sans-Mono-1024-512-32-64-alpha.tga"
 }

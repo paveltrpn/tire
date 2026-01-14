@@ -34,7 +34,7 @@ export struct Ui {
         auto l = tire::Label{};
 
         l.setColor( { "white" } );
-        l.setGlyphGap( 0.5f );
+        l.setGlyphGap( 0.1f );
         l.setLabelPos( px, py );
         l.draw( msg );
 

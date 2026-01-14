@@ -3,6 +3,7 @@ module;
 
 #include <coroutine>
 #include <filesystem>
+#include <format>
 
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
@@ -85,14 +86,16 @@ export struct RenderVK final {
     auto frame() -> void {
         // Update global timer
         timer_.update();
+        const auto duration = timer_.frameDuration<float>();
 
         // Update scene objects
-        scene_->traverse( timer_.frameDuration<float>() );
+        scene_->traverse( duration );
 
         scene_->camera().update();
 
-        ui_->label( -30.0f, 25.0f, "test textaaaaa" );
-        ui_->label( -30.0f, 21.0f, "test text" );
+        ui_->label( -30.0f, 22.0f, "TEST string" );
+        const auto seconsString = std::format( "duration = {}", duration );
+        ui_->label( -30.0f, 20.0f, seconsString );
         //ui_->billboard( 0, 0, 0, 0 );
 
         {

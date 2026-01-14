@@ -111,6 +111,8 @@ export struct Tga final : Image {
         // Always expand RGB to RGBA image.
         if ( _header.bits == 24 ) {
             bpp_ = _header.bits + 8;
+        } else {
+            bpp_ = _header.bits;
         }
 
         components_ = bpp_ / 8;
