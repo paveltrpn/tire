@@ -43,17 +43,17 @@ struct UiComponentVisitor final {
         const auto vDataPtr = reinterpret_cast<const void *>( item.verteciesData() );
         vBuf_->memcpy( vDataPtr, item.bufferVerticesSize(), ( *primitievsCount_ ) * 3 * sizeof( float ) );
 
-        const auto tDataPtr = reinterpret_cast<const void *>( item.clrsData() );
+        const auto tDataPtr = reinterpret_cast<const void *>( item.texcrdsData() );
         tBuf_->memcpy( tDataPtr, item.bufferTexcrdsSize(), ( *primitievsCount_ ) * 2 * sizeof( float ) );
 
-        const auto cDataPtr = reinterpret_cast<const void *>( item.texcrdsData() );
+        const auto cDataPtr = reinterpret_cast<const void *>( item.clrsData() );
         cBuf_->memcpy( cDataPtr, item.bufferVertclrsSize(), ( *primitievsCount_ ) * 4 * sizeof( float ) );
 
         VkBufferCopy copyVrt{
           //
           .srcOffset = ( *primitievsCount_ ) * 3 * sizeof( float ),
           .dstOffset = ( *primitievsCount_ ) * 3 * sizeof( float ),
-          .size = vBuf_->size(),
+          .size = item.bufferVerticesSize(),
         };
 
         vkCmdCopyBuffer( cb_, vBuf_->stagingBuffer(), vBuf_->deviceBuffer(), 1, &copyVrt );
@@ -62,7 +62,7 @@ struct UiComponentVisitor final {
           //
           .srcOffset = ( *primitievsCount_ ) * 2 * sizeof( float ),
           .dstOffset = ( *primitievsCount_ ) * 2 * sizeof( float ),
-          .size = tBuf_->size(),
+          .size = item.bufferTexcrdsSize(),
         };
 
         vkCmdCopyBuffer( cb_, tBuf_->stagingBuffer(), tBuf_->deviceBuffer(), 1, &copyTxc );
@@ -71,7 +71,7 @@ struct UiComponentVisitor final {
           //
           .srcOffset = ( *primitievsCount_ ) * 4 * sizeof( float ),
           .dstOffset = ( *primitievsCount_ ) * 4 * sizeof( float ),
-          .size = cBuf_->size(),
+          .size = item.bufferVertclrsSize(),
         };
 
         vkCmdCopyBuffer( cb_, cBuf_->stagingBuffer(), cBuf_->deviceBuffer(), 1, &copyClrs );

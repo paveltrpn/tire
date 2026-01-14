@@ -33,6 +33,7 @@ export struct Ui {
     auto label( float px, float py, const std::string &msg ) -> void {
         auto l = tire::Label{};
 
+        l.setColor( { "navy" } );
         l.setGlyphGap( 0.5f );
         l.setLabelPos( px, py );
         l.draw( msg );
