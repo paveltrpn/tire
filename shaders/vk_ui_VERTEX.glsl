@@ -46,4 +46,5 @@ void main() {
    gl_Position = orthomatrix*vec4(pos, 1.0);
    TexCoord = txc;
    Color = clr;
+   // Color = vec4(txc, txc);
 }

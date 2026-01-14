@@ -108,7 +108,7 @@ struct PipelineUi final : Pipeline {
 
         // Prepare descriptors for UV data
         bindingDescriptions[1].stride = sizeof( algebra::vector2f );
-        bindingDescriptions[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+        bindingDescriptions[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
         bindingDescriptions[1].binding = 1;
 
         // Prepare descriptors for COLORS data

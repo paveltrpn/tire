@@ -31,7 +31,7 @@ using namespace algebra;
 
 struct UiComponentVisitor final {
     UiComponentVisitor(
-      VkCommandBuffer cb, VertexBuffer *vBuf, VertexBuffer *cBuf, VertexBuffer *tBuf, uint32_t *primitievsCount )
+      VkCommandBuffer cb, VertexBuffer *vBuf, VertexBuffer *tBuf, VertexBuffer *cBuf, uint32_t *primitievsCount )
         : cb_{ cb }
         , vBuf_{ vBuf }
         , tBuf_{ tBuf }
@@ -86,8 +86,8 @@ struct UiComponentVisitor final {
     VkCommandBuffer cb_;
 
     VertexBuffer *vBuf_;
-    VertexBuffer *cBuf_;
     VertexBuffer *tBuf_;
+    VertexBuffer *cBuf_;
 
     uint32_t *primitievsCount_{};
 };
