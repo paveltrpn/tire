@@ -6,6 +6,7 @@ module;
 
 export module ui:label;
 
+import log;
 import algebra;
 import image;
 
@@ -28,8 +29,9 @@ export struct Label final {
         //
     }
 
-    auto set_glyph_gap( float value ) -> void {
+    auto setGlyphGap( float value ) -> void {
         //
+        glyphGap_ = value;
     }
 
     auto set_text_position( float x, float y ) -> void {
@@ -63,7 +65,7 @@ export struct Label final {
         float tc_gap_y = 1.0f / static_cast<float>( fontRowCount );
 
         for ( size_t i{ 0 }; i < string.length(); ++i ) {
-            offset = ( glyph_quad_wdt + glyph_quad_gap ) * static_cast<float>( i );
+            offset = ( glyph_quad_wdt + glyphGap_ ) * static_cast<float>( i );
 
             glyph_x = string[i] % fontColumnCount;
             glyph_y = ( string[i] / fontColumnCount ) - 1;
@@ -107,12 +109,12 @@ export struct Label final {
             letterQuadsColors_[( i * VERTEX_PER_LETTER ) + 3] = color;
             letterQuadsColors_[( i * VERTEX_PER_LETTER ) + 4] = color;
             letterQuadsColors_[( i * VERTEX_PER_LETTER ) + 5] = color;
-            lettersCount_ += i;
+            lettersCount_++;
         }
-        // Save count of symbols that allready have been ocupied space in buffer.
     }
 
-    auto lettersCount() -> size_t {
+    [[nodiscard]]
+    auto lettersCount() const -> size_t {
         //
         return lettersCount_;
     }
@@ -151,9 +153,9 @@ private:
 // Size of "Letters buffer" - this is the number of all characters
 // from all draw() calls that can one instance of this class operates
 #define MAX_LETTERS_COUNT 64
-    std::array<algebra::vector3<value_type>, MAX_LETTERS_COUNT * VERTEX_PER_LETTER> letterQuadsVertecies_{};
-    std::array<algebra::vector2<value_type>, MAX_LETTERS_COUNT * VERTEX_PER_LETTER> letterQuadsTexcrds_{};
-    std::array<algebra::vector4<value_type>, MAX_LETTERS_COUNT * VERTEX_PER_LETTER> letterQuadsColors_{};
+    std::array<vector3<value_type>, MAX_LETTERS_COUNT * VERTEX_PER_LETTER> letterQuadsVertecies_{};
+    std::array<vector2<value_type>, MAX_LETTERS_COUNT * VERTEX_PER_LETTER> letterQuadsTexcrds_{};
+    std::array<vector4<value_type>, MAX_LETTERS_COUNT * VERTEX_PER_LETTER> letterQuadsColors_{};
 
     std::unique_ptr<Tga> fontImage_{};
 
@@ -163,7 +165,7 @@ private:
     float glyph_quad_wdt{ GLYPH_WIDTH * glyphScale_ };
     float glyph_quad_hgt{ GLYPH_HEIGHT * glyphScale_ };
 #define GLYPH_GAP 0.0f
-    float glyph_quad_gap{ GLYPH_GAP };
+    float glyphGap_{ GLYPH_GAP };
 
     float text_pos_x = { 0.0f };
     float text_pos_y = { 0.0f };

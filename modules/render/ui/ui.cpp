@@ -26,12 +26,17 @@ namespace tire {
 
 using namespace algebra;
 
+#define VERTICIES_PER_QUAD 6
+#define OUTPUT_QUADS_COUNT 128
+
 struct UiComponentVisitor final {
-    UiComponentVisitor( VkCommandBuffer cb, VertexBuffer *vBuf, VertexBuffer *cBuf, VertexBuffer *tBuf )
+    UiComponentVisitor(
+      VkCommandBuffer cb, VertexBuffer *vBuf, VertexBuffer *cBuf, VertexBuffer *tBuf, uint32_t *primitievsCount )
         : cb_{ cb }
         , vBuf_{ vBuf }
         , tBuf_{ tBuf }
-        , cBuf_{ cBuf } {}
+        , cBuf_{ cBuf }
+        , primitievsCount_{ primitievsCount } {}
 
     auto operator()( const tire::Label &item ) -> void {
         //
@@ -70,6 +75,8 @@ struct UiComponentVisitor final {
         };
 
         vkCmdCopyBuffer( cb_, tBuf_->stagingBuffer(), tBuf_->deviceBuffer(), 1, &copyTxc );
+
+        ( *primitievsCount_ ) += item.lettersCount() * VERTICIES_PER_QUAD;
     }
 
     auto operator()( const tire::Billboard &item ) -> void {
@@ -81,6 +88,8 @@ struct UiComponentVisitor final {
     VertexBuffer *vBuf_;
     VertexBuffer *cBuf_;
     VertexBuffer *tBuf_;
+
+    uint32_t *primitievsCount_{};
 };
 
 export struct UiVK final : tire::Ui {
@@ -102,25 +111,38 @@ export struct UiVK final : tire::Ui {
 
         pipeline_->buildPipeline( program );
 
-#define BUF_SIZE 1024 * 1024
-        vBuf_ = std::make_shared<VertexBuffer>( context_, BUF_SIZE );
-        cBuf_ = std::make_shared<VertexBuffer>( context_, BUF_SIZE );
-        tBuf_ = std::make_shared<VertexBuffer>( context_, BUF_SIZE );
+        vBuf_ =
+          std::make_shared<VertexBuffer>( context_, OUTPUT_QUADS_COUNT * VERTICIES_PER_QUAD * 3 * sizeof( float ) );
+        tBuf_ =
+          std::make_shared<VertexBuffer>( context_, OUTPUT_QUADS_COUNT * VERTICIES_PER_QUAD * 2 * sizeof( float ) );
+        cBuf_ =
+          std::make_shared<VertexBuffer>( context_, OUTPUT_QUADS_COUNT * VERTICIES_PER_QUAD * 4 * sizeof( float ) );
     }
 
     auto upload( const VkCommandBuffer cb ) -> void {
         //
         for ( auto &&item : componentsList_ ) {
-            std::visit( UiComponentVisitor{ cb, vBuf_.get(), tBuf_.get(), cBuf_.get() }, item );
+            std::visit(
+              UiComponentVisitor{ cb, vBuf_.get(), tBuf_.get(), cBuf_.get(), &submittedPrimitievesCount_ }, item );
         }
     }
 
     auto draw( const VkCommandBuffer cb, matrix4f m ) -> void {
         vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_->pipeline() );
 
-        vkCmdPushConstants( cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( algebra::matrix4f ), &m );
+        vkCmdPushConstants( cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( matrix4f ), &m );
 
-        vkCmdDraw( cb, 9 * 6, 3, 0, 0 );
+        auto vbo = vBuf_->deviceBuffer();
+        auto tbo = tBuf_->deviceBuffer();
+        auto cbo = cBuf_->deviceBuffer();
+
+        // NOTE: see https://docs.vulkan.org/guide/latest/vertex_input_data_processing.html
+        std::array<VkBuffer, 3> vertexBuffers = { vbo, tbo, cbo };
+        std::array<VkDeviceSize, 3> offsets = { 0, 0, 0 };
+
+        vkCmdBindVertexBuffers( cb, 0, vertexBuffers.size(), vertexBuffers.data(), offsets.data() );
+
+        vkCmdDraw( cb, submittedPrimitievesCount_, 3, 0, 0 );
     }
 
     auto flush() -> void override {
@@ -134,8 +156,8 @@ private:
     std::shared_ptr<PipelineUi> pipeline_{};
 
     std::shared_ptr<VertexBuffer> vBuf_;
-    std::shared_ptr<VertexBuffer> cBuf_;
     std::shared_ptr<VertexBuffer> tBuf_;
+    std::shared_ptr<VertexBuffer> cBuf_;
 
     uint32_t submittedPrimitievesCount_{};
 };
