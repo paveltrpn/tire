@@ -40,17 +40,19 @@ struct VertexBuffer final {
         clean();
     };
 
-    auto deviceBuffer() -> VkBuffer {
+    [[nodiscard]]
+    auto deviceBuffer() const -> VkBuffer {
         //
         return deviceBuffer_;
     }
 
-    auto stagingBuffer() -> VkBuffer {
+    [[nodiscard]]
+    auto stagingBuffer() const -> VkBuffer {
         //
         return stagingBuffer_;
     }
 
-    auto memcpy( const void *data, size_t size, size_t offset = 0 ) -> void {
+    auto memcpy( const void *data, size_t size, size_t offset = 0 ) const -> void {
         if ( size > size_ ) {
             log::warning()( "target memory chunk larger than allocated!" );
         }
@@ -66,7 +68,7 @@ struct VertexBuffer final {
     }
 
     [[nodiscard]]
-    auto size() -> size_t {
+    auto size() const -> size_t {
         //
         return size_;
     }
