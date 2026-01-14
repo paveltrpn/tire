@@ -5,8 +5,8 @@ layout( location = 1 ) in vec3 normal;
 layout( location = 2 ) in vec2 uv;
 
 layout( push_constant ) uniform constants_t {
-    dmat4 view;
-    dvec3 eye;
+    mat4 view;
+    vec3 eye;
 } constants;
 
 layout( location = 0 ) out vec3 EyePosition;

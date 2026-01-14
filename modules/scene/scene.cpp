@@ -211,16 +211,16 @@ private:
                 const float elevation = item[PARAM_CAMERA_ELEVATION];
 
                 // Unused
-                const std::array<double, 3> target = item[PARAM_CAMERA_TARGET];
+                const std::array<float, 3> target = item[PARAM_CAMERA_TARGET];
 
-                const std::array<double, 3> eye = item[PARAM_CAMERA_EYE];
+                const std::array<float, 3> eye = item[PARAM_CAMERA_EYE];
                 const auto &fov = item[PARAM_CAMERA_FOV];
                 const auto &aspect = item[PARAM_CAMERA_ASPECT];
                 const auto &ncp = item[PARAM_CAMERA_NCP];
                 const auto &fcp = item[PARAM_CAMERA_FCP];
                 const std::string &name = item[PARAM_CAMERA_NAME];
 
-                camera->setEye( algebra::vector3d{ eye } )
+                camera->setEye( algebra::vector3f{ eye } )
                   .setAzimuth( azimuth )
                   .setElevation( elevation )
                   .setFov( fov )

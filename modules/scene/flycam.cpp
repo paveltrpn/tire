@@ -34,8 +34,7 @@ export enum FlycamMoveBits {
 };
 
 export struct Flycam final {
-    // NOTE: 64-bit prescision float!
-    using value_type = double;
+    using value_type = float;
 
     Flycam() = default;
 

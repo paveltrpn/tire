@@ -22,6 +22,8 @@ import :texture_image;
 
 namespace tire {
 
+using namespace algebra;
+
 export struct SceneVK final : tire::Scene {
     SceneVK( const std::filesystem::path &fname, const Context *context )
         : tire::Scene{ fname }
@@ -38,10 +40,10 @@ export struct SceneVK final : tire::Scene {
         pipeline_->buildPipeline( vertexBufferProgram );
 
         try {
-            // testImage_ =
-            // std::make_shared<TextureImage>( context_, "/mnt/main/code/assets/textures/PavingStones021_color.tga" );
             testImage_ =
-              std::make_shared<TextureImage>( context_, "/home/pavel/code/assets/textures/PavingStones021_color.tga" );
+              std::make_shared<TextureImage>( context_, "/mnt/main/code/assets/textures/PavingStones021_color.tga" );
+            // testImage_ =
+            // std::make_shared<TextureImage>( context_, "/home/pavel/code/assets/textures/PavingStones021_color.tga" );
         } catch ( std::exception &e ) {
             log::fatal()( "test image {}", e.what() );
         }
@@ -76,14 +78,14 @@ export struct SceneVK final : tire::Scene {
         for ( size_t i{ 0 }; i < nodeListSize; ++i ) {
             // Update data in vulkan "vertex" buffers, i.e. copy from CPU memory.
             const auto vDataPtr = reinterpret_cast<const void *>( bodyList_[i]->verteciesData() );
-            vertBuffersList_[i]->populate( vDataPtr );
+            vertBuffersList_[i]->memcpy( vDataPtr, bodyList_[i]->bufferVerticesSize() );
 
             // Update data in vulkan "normal" buffers
             const auto nDataPtr = reinterpret_cast<const void *>( bodyList_[i]->normalsData() );
-            nrmlBuffersList_[i]->populate( nDataPtr );
+            nrmlBuffersList_[i]->memcpy( nDataPtr, bodyList_[i]->bufferNormalsSize() );
 
             const auto tDataPtr = reinterpret_cast<const void *>( bodyList_[i]->texcrdsData() );
-            texcBuffersList_[i]->populate( tDataPtr );
+            texcBuffersList_[i]->memcpy( tDataPtr, bodyList_[i]->bufferTexcrdsSize() );
         }
 
         for ( size_t i{ 0 }; i < nodeListSize; ++i ) {
@@ -131,13 +133,11 @@ export struct SceneVK final : tire::Scene {
         // =================================================================================
 
         const auto view = camera().matrix();
-        vkCmdPushConstants(
-          cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( algebra::matrix4d ), &view );
+        vkCmdPushConstants( cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( matrix4f ), &view );
 
         const auto eye = camera().eye();
         vkCmdPushConstants(
-          cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof( algebra::matrix4d ), sizeof( algebra::vector3d ),
-          &eye );
+          cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof( matrix4f ), sizeof( vector3f ), &eye );
 
         // Record draw commands for all scene objects into command buffer.
         for ( size_t object = 0; object < bodyList_.size(); ++object ) {
@@ -200,7 +200,7 @@ export struct SceneVK final : tire::Scene {
 
         void *data{};
         vmaMapMemory( context_->allocator(), omniLightAllocation_, &data );
-        memcpy( data, lightList_.data(), sizeof( tire::OmniLight ) * lightList_.size() );
+        std::memcpy( data, lightList_.data(), sizeof( tire::OmniLight ) * lightList_.size() );
         vmaUnmapMemory( context_->allocator(), omniLightAllocation_ );
     }
 

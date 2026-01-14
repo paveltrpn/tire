@@ -1,7 +1,7 @@
 
 #include <memory>
 
-#define SURFACE_WAYLAND
+#define SURFACE_X11
 
 #ifdef SURFACE_X11
 #define GLFW_EXPOSE_NATIVE_X11
@@ -90,6 +90,7 @@ BareWindow::BareWindow() {
             break;
         }
         default: {
+            tire::log::fatal()( "can`t determine target platform!" );
             break;
         }
     }

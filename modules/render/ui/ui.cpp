@@ -14,6 +14,7 @@ module;
 
 export module render:ui;
 
+import algebra;
 import ui;
 import context;
 import config;
@@ -23,14 +24,63 @@ import :vertex_buffer;
 
 namespace tire {
 
+using namespace algebra;
+
 struct UiComponentVisitor final {
+    UiComponentVisitor( VkCommandBuffer cb, VertexBuffer *vBuf, VertexBuffer *cBuf, VertexBuffer *tBuf )
+        : cb_{ cb }
+        , vBuf_{ vBuf }
+        , tBuf_{ tBuf }
+        , cBuf_{ cBuf } {}
+
     auto operator()( const tire::Label &item ) -> void {
         //
+        const auto vDataPtr = reinterpret_cast<const void *>( item.verteciesData() );
+        vBuf_->memcpy( vDataPtr, item.bufferVerticesSize() );
+
+        const auto tDataPtr = reinterpret_cast<const void *>( item.texcrdsData() );
+        cBuf_->memcpy( tDataPtr, item.bufferTexcrdsSize() );
+
+        const auto cDataPtr = reinterpret_cast<const void *>( item.clrsData() );
+        tBuf_->memcpy( tDataPtr, item.bufferVertclrsSize() );
+
+        VkBufferCopy copyVrt{
+          //
+          .srcOffset = 0,
+          .dstOffset = 0,
+          .size = vBuf_->size(),
+        };
+
+        vkCmdCopyBuffer( cb_, vBuf_->stagingBuffer(), vBuf_->deviceBuffer(), 1, &copyVrt );
+
+        VkBufferCopy copyNrm{
+          //
+          .srcOffset = 0,
+          .dstOffset = 0,
+          .size = cBuf_->size(),
+        };
+
+        vkCmdCopyBuffer( cb_, cBuf_->stagingBuffer(), cBuf_->deviceBuffer(), 1, &copyNrm );
+
+        VkBufferCopy copyTxc{
+          //
+          .srcOffset = 0,
+          .dstOffset = 0,
+          .size = tBuf_->size(),
+        };
+
+        vkCmdCopyBuffer( cb_, tBuf_->stagingBuffer(), tBuf_->deviceBuffer(), 1, &copyTxc );
     }
 
     auto operator()( const tire::Billboard &item ) -> void {
         //
     }
+
+    VkCommandBuffer cb_;
+
+    VertexBuffer *vBuf_;
+    VertexBuffer *cBuf_;
+    VertexBuffer *tBuf_;
 };
 
 export struct UiVK final : tire::Ui {
@@ -61,17 +111,16 @@ export struct UiVK final : tire::Ui {
     auto upload( const VkCommandBuffer cb ) -> void {
         //
         for ( auto &&item : componentsList_ ) {
-            std::visit( UiComponentVisitor{}, item );
+            std::visit( UiComponentVisitor{ cb, vBuf_.get(), tBuf_.get(), cBuf_.get() }, item );
         }
     }
 
-    auto draw( const VkCommandBuffer cb ) -> void {
+    auto draw( const VkCommandBuffer cb, matrix4f m ) -> void {
         vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_->pipeline() );
 
-        // vkCmdPushConstants(
-        // cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( algebra::matrix4f ), &viewMatrix );
+        vkCmdPushConstants( cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( algebra::matrix4f ), &m );
 
-        vkCmdDraw( cb, 36, 3, 0, 0 );
+        vkCmdDraw( cb, 9 * 6, 3, 0, 0 );
     }
 
     auto flush() -> void override {

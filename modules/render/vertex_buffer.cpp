@@ -12,6 +12,7 @@ module;
 
 export module render:vertex_buffer;
 
+import log;
 import context;
 
 namespace tire {
@@ -49,10 +50,14 @@ struct VertexBuffer final {
         return stagingBuffer_;
     }
 
-    auto populate( const void *data ) -> void {
+    auto memcpy( const void *data, size_t size ) -> void {
+        if ( size > size_ ) {
+            log::warning()( "target memory chunk larger than allocated!" );
+        }
+
         void *mappedPtr{};
         vmaMapMemory( context_->allocator(), stagingAllocation_, &mappedPtr );
-        memcpy( mappedPtr, data, size_ );
+        std::memcpy( mappedPtr, data, size );
         vmaUnmapMemory( context_->allocator(), stagingAllocation_ );
     }
 

@@ -106,13 +106,13 @@ struct PipelineUi final : Pipeline {
         bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
         bindingDescriptions[0].binding = 0;
 
-        // Prepare descriptors for COLORS data
-        bindingDescriptions[1].stride = sizeof( algebra::vector4f );
-        bindingDescriptions[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+        // Prepare descriptors for UV data
+        bindingDescriptions[1].stride = sizeof( algebra::vector2f );
+        bindingDescriptions[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
         bindingDescriptions[1].binding = 1;
 
-        // Prepare descriptors for UV data
-        bindingDescriptions[2].stride = sizeof( algebra::vector2f );
+        // Prepare descriptors for COLORS data
+        bindingDescriptions[2].stride = sizeof( algebra::vector4f );
         bindingDescriptions[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
         bindingDescriptions[2].binding = 2;
 
@@ -124,15 +124,15 @@ struct PipelineUi final : Pipeline {
         attributeDescriptions[0].offset = 0;
         attributeDescriptions[0].location = 0;
 
-        // Prepare descriptors for NORMALS data
+        // Prepare descriptors for UV data
         attributeDescriptions[1].binding = 1;
-        attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+        attributeDescriptions[1].format = VK_FORMAT_R32G32_SFLOAT;
         attributeDescriptions[1].offset = 0;
         attributeDescriptions[1].location = 1;
 
-        // Prepare descriptors for UV data
+        // Prepare descriptors for COLORS data
         attributeDescriptions[2].binding = 2;
-        attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+        attributeDescriptions[2].format = VK_FORMAT_R32G32B32A32_SFLOAT;
         attributeDescriptions[2].offset = 0;
         attributeDescriptions[2].location = 2;
 

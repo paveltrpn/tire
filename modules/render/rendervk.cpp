@@ -92,8 +92,8 @@ export struct RenderVK final {
         scene_->camera().update();
 
         ui_->label( 0.0f, 0.0f, "test text" );
-        ui_->label( 0.0f, 0.0f, "test text" );
-        ui_->billboard( 0, 0, 0, 0 );
+        //ui_->label( 0.0f, 0.0f, "test text" );
+        //ui_->billboard( 0, 0, 0, 0 );
 
         {
             auto cb = context_->copyBufferCommand();
@@ -105,7 +105,10 @@ export struct RenderVK final {
             auto cb = context_->renderCommand( currentFrame_ );
             scene_->draw( cb.buf() );
             testBox_->draw( cb.buf(), timer_.floatFrameDuration() );
-            ui_->draw( cb.buf() );
+
+            matrix4f viewm = scene_->camera().matrix();
+
+            ui_->draw( cb.buf(), viewm );
         }
 
         ui_->flush();

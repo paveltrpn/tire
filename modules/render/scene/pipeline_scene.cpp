@@ -277,7 +277,7 @@ struct PiplineScene final : Pipeline {
         constants[0] = VkPushConstantRange{
           .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
           .offset = 0,
-          .size = sizeof( algebra::matrix4d ) + sizeof( algebra::vector3d ) };
+          .size = sizeof( algebra::matrix4f ) + sizeof( algebra::vector3f ) };
 
         const auto pipelineLayoutInfo = VkPipelineLayoutCreateInfo{
           //
