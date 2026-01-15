@@ -8,8 +8,8 @@ layout( location = 0 ) out vec4 FragColor;
 layout(set = 0, binding = 0) uniform sampler2D fontTexture;
 
 layout( push_constant ) uniform Constants {
-    ivec4 view;
-} texureFlag;
+    ivec4 texureFlag;
+} constants;
 
 void main() {
     FragColor = texture(fontTexture, TexCoord) * Color;

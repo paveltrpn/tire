@@ -32,29 +32,42 @@ using namespace algebra;
 #define VERTICIES_PER_QUAD 6
 #define OUTPUT_QUADS_COUNT 128
 
+struct QuadDrawBuffer final {
+    QuadDrawBuffer( const Context *context, size_t quadsCount )
+        : context_{ context } {
+        vBuf_ = std::make_shared<VertexBuffer>( context_, quadsCount * VERTICIES_PER_QUAD * 3 * sizeof( float ) );
+        tBuf_ = std::make_shared<VertexBuffer>( context_, quadsCount * VERTICIES_PER_QUAD * 2 * sizeof( float ) );
+        cBuf_ = std::make_shared<VertexBuffer>( context_, quadsCount * VERTICIES_PER_QUAD * 4 * sizeof( float ) );
+    }
+
+    const Context *context_;
+
+    std::shared_ptr<VertexBuffer> vBuf_;
+    std::shared_ptr<VertexBuffer> tBuf_;
+    std::shared_ptr<VertexBuffer> cBuf_;
+
+    uint32_t primitievsCount_{};
+};
+
 struct UiComponentVisitor final {
-    UiComponentVisitor(
-      VkCommandBuffer cb, const VertexBuffer *vBuf, const VertexBuffer *tBuf, const VertexBuffer *cBuf,
-      uint32_t *primitievsCount )
+    UiComponentVisitor( VkCommandBuffer cb, QuadDrawBuffer *labelBuffer, QuadDrawBuffer *billboardBuffer )
         : cb_{ cb }
-        , vBuf_{ vBuf }
-        , tBuf_{ tBuf }
-        , cBuf_{ cBuf }
-        , primitievsCount_{ primitievsCount } {}
+        , labelBuffer_{ labelBuffer }
+        , billboardBuffer_{ billboardBuffer } {}
 
     auto operator()( const tire::Label &item ) -> void {
-        const auto vOffset = ( *primitievsCount_ ) * 3 * sizeof( float );
-        const auto tOffset = ( *primitievsCount_ ) * 2 * sizeof( float );
-        const auto cOffset = ( *primitievsCount_ ) * 4 * sizeof( float );
+        const auto vOffset = labelBuffer_->primitievsCount_ * 3 * sizeof( float );
+        const auto tOffset = labelBuffer_->primitievsCount_ * 2 * sizeof( float );
+        const auto cOffset = labelBuffer_->primitievsCount_ * 4 * sizeof( float );
 
         const auto vDataPtr = reinterpret_cast<const void *>( item.verteciesData() );
-        vBuf_->memcpy( vDataPtr, item.bufferVerticesSize(), vOffset );
+        labelBuffer_->vBuf_->memcpy( vDataPtr, item.bufferVerticesSize(), vOffset );
 
         const auto tDataPtr = reinterpret_cast<const void *>( item.texcrdsData() );
-        tBuf_->memcpy( tDataPtr, item.bufferTexcrdsSize(), tOffset );
+        labelBuffer_->tBuf_->memcpy( tDataPtr, item.bufferTexcrdsSize(), tOffset );
 
         const auto cDataPtr = reinterpret_cast<const void *>( item.clrsData() );
-        cBuf_->memcpy( cDataPtr, item.bufferVertclrsSize(), cOffset );
+        labelBuffer_->cBuf_->memcpy( cDataPtr, item.bufferVertclrsSize(), cOffset );
 
         VkBufferCopy copyVrt{
           //
@@ -63,7 +76,7 @@ struct UiComponentVisitor final {
           .size = item.bufferVerticesSize(),
         };
 
-        vkCmdCopyBuffer( cb_, vBuf_->stagingBuffer(), vBuf_->deviceBuffer(), 1, &copyVrt );
+        vkCmdCopyBuffer( cb_, labelBuffer_->vBuf_->stagingBuffer(), labelBuffer_->vBuf_->deviceBuffer(), 1, &copyVrt );
 
         VkBufferCopy copyTxc{
           //
@@ -72,7 +85,7 @@ struct UiComponentVisitor final {
           .size = item.bufferTexcrdsSize(),
         };
 
-        vkCmdCopyBuffer( cb_, tBuf_->stagingBuffer(), tBuf_->deviceBuffer(), 1, &copyTxc );
+        vkCmdCopyBuffer( cb_, labelBuffer_->tBuf_->stagingBuffer(), labelBuffer_->tBuf_->deviceBuffer(), 1, &copyTxc );
 
         VkBufferCopy copyClrs{
           //
@@ -81,9 +94,9 @@ struct UiComponentVisitor final {
           .size = item.bufferVertclrsSize(),
         };
 
-        vkCmdCopyBuffer( cb_, cBuf_->stagingBuffer(), cBuf_->deviceBuffer(), 1, &copyClrs );
+        vkCmdCopyBuffer( cb_, labelBuffer_->cBuf_->stagingBuffer(), labelBuffer_->cBuf_->deviceBuffer(), 1, &copyClrs );
 
-        ( *primitievsCount_ ) += item.lettersCount() * VERTICIES_PER_QUAD;
+        labelBuffer_->primitievsCount_ += item.lettersCount() * VERTICIES_PER_QUAD;
     }
 
     auto operator()( const tire::Billboard &item ) -> void {
@@ -92,11 +105,8 @@ struct UiComponentVisitor final {
 
     VkCommandBuffer cb_;
 
-    const VertexBuffer *vBuf_;
-    const VertexBuffer *tBuf_;
-    const VertexBuffer *cBuf_;
-
-    uint32_t *primitievsCount_{};
+    QuadDrawBuffer *labelBuffer_{};
+    QuadDrawBuffer *billboardBuffer_{};
 };
 
 export struct UiVK final : tire::Ui {
@@ -124,13 +134,6 @@ export struct UiVK final : tire::Ui {
 
         pipeline_->buildPipeline( program );
 
-        vBuf_ =
-          std::make_shared<VertexBuffer>( context_, OUTPUT_QUADS_COUNT * VERTICIES_PER_QUAD * 3 * sizeof( float ) );
-        tBuf_ =
-          std::make_shared<VertexBuffer>( context_, OUTPUT_QUADS_COUNT * VERTICIES_PER_QUAD * 2 * sizeof( float ) );
-        cBuf_ =
-          std::make_shared<VertexBuffer>( context_, OUTPUT_QUADS_COUNT * VERTICIES_PER_QUAD * 4 * sizeof( float ) );
-
         initTextureSmpler();
         initDescriptorSets();
     }
@@ -138,8 +141,7 @@ export struct UiVK final : tire::Ui {
     auto upload( const VkCommandBuffer cb ) -> void {
         //
         for ( auto &&item : componentsList_ ) {
-            std::visit(
-              UiComponentVisitor{ cb, vBuf_.get(), tBuf_.get(), cBuf_.get(), &submittedPrimitievesCount_ }, item );
+            std::visit( UiComponentVisitor{ cb, &labelBuffer_, &billboardBuffer_ }, item );
         }
     }
 
@@ -154,17 +156,19 @@ export struct UiVK final : tire::Ui {
 
         // =================================================================================
 
+        // Pass viewport size.
         const auto v = std::array<float, 4>{ 32, 32, 32, 32 };
         vkCmdPushConstants( cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( float ) * 4, &v );
 
+        // Pass enable texture flag.
         const auto f = std::array<uint32_t, 4>{ 1, 0, 0, 0 };
         vkCmdPushConstants(
           cb, pipeline_->layout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof( float ) * 4, sizeof( uint32_t ) * 4,
           f.data() );
 
-        auto vbo = vBuf_->deviceBuffer();
-        auto tbo = tBuf_->deviceBuffer();
-        auto cbo = cBuf_->deviceBuffer();
+        auto vbo = labelBuffer_.vBuf_->deviceBuffer();
+        auto tbo = labelBuffer_.tBuf_->deviceBuffer();
+        auto cbo = labelBuffer_.cBuf_->deviceBuffer();
 
         // NOTE: see https://docs.vulkan.org/guide/latest/vertex_input_data_processing.html
         std::array<VkBuffer, 3> vertexBuffers = { vbo, tbo, cbo };
@@ -172,12 +176,12 @@ export struct UiVK final : tire::Ui {
 
         vkCmdBindVertexBuffers( cb, 0, vertexBuffers.size(), vertexBuffers.data(), offsets.data() );
 
-        vkCmdDraw( cb, submittedPrimitievesCount_, 3, 0, 0 );
+        vkCmdDraw( cb, labelBuffer_.primitievsCount_, 3, 0, 0 );
     }
 
     auto flush() -> void override {
         //
-        submittedPrimitievesCount_ = 0;
+        labelBuffer_.primitievsCount_ = 0;
         componentsList_.clear();
     }
 
@@ -248,11 +252,8 @@ private:
     const Context *context_;
     std::shared_ptr<PipelineUi> pipeline_{};
 
-    std::shared_ptr<VertexBuffer> vBuf_;
-    std::shared_ptr<VertexBuffer> tBuf_;
-    std::shared_ptr<VertexBuffer> cBuf_;
-
-    uint32_t submittedPrimitievesCount_{};
+    QuadDrawBuffer labelBuffer_{ context_, OUTPUT_QUADS_COUNT };
+    QuadDrawBuffer billboardBuffer_{ context_, OUTPUT_QUADS_COUNT };
 
     std::shared_ptr<tire::TextureImage> testImage_;
     VkSampler fontSampler_{};
