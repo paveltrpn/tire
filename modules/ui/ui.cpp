@@ -45,6 +45,9 @@ export struct Ui {
         //
         auto b = tire::Billboard{};
 
+        b.setColor( { "white" } );
+        b.draw();
+
         componentsList_.emplace_front( std::move( b ) );
     }
 

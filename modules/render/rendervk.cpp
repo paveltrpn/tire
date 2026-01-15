@@ -96,7 +96,7 @@ export struct RenderVK final {
         ui_->label( -30.0f, 22.0f, "TEST string" );
         const auto seconsString = std::format( "duration = {}", duration );
         ui_->label( -30.0f, 20.0f, seconsString );
-        //ui_->billboard( 0, 0, 0, 0 );
+        ui_->billboard( 0, 0, 0, 0 );
 
         {
             auto cb = context_->copyBufferCommand();

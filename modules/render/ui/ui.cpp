@@ -56,18 +56,29 @@ struct UiComponentVisitor final {
         , billboardBuffer_{ billboardBuffer } {}
 
     auto operator()( const tire::Label &item ) -> void {
-        const auto vOffset = labelBuffer_->primitievsCount_ * 3 * sizeof( float );
-        const auto tOffset = labelBuffer_->primitievsCount_ * 2 * sizeof( float );
-        const auto cOffset = labelBuffer_->primitievsCount_ * 4 * sizeof( float );
+        //
+        dispath( item, labelBuffer_ );
+    }
+
+    auto operator()( const tire::Billboard &item ) -> void {
+        //
+        dispath( item, billboardBuffer_ );
+    }
+
+    template <typename T>
+    auto dispath( const T &item, QuadDrawBuffer *buffer ) -> void {
+        const auto vOffset = buffer->primitievsCount_ * 3 * sizeof( float );
+        const auto tOffset = buffer->primitievsCount_ * 2 * sizeof( float );
+        const auto cOffset = buffer->primitievsCount_ * 4 * sizeof( float );
 
         const auto vDataPtr = reinterpret_cast<const void *>( item.verteciesData() );
-        labelBuffer_->vBuf_->memcpy( vDataPtr, item.bufferVerticesSize(), vOffset );
+        buffer->vBuf_->memcpy( vDataPtr, item.bufferVerticesSize(), vOffset );
 
         const auto tDataPtr = reinterpret_cast<const void *>( item.texcrdsData() );
-        labelBuffer_->tBuf_->memcpy( tDataPtr, item.bufferTexcrdsSize(), tOffset );
+        buffer->tBuf_->memcpy( tDataPtr, item.bufferTexcrdsSize(), tOffset );
 
         const auto cDataPtr = reinterpret_cast<const void *>( item.clrsData() );
-        labelBuffer_->cBuf_->memcpy( cDataPtr, item.bufferVertclrsSize(), cOffset );
+        buffer->cBuf_->memcpy( cDataPtr, item.bufferVertclrsSize(), cOffset );
 
         VkBufferCopy copyVrt{
           //
@@ -76,7 +87,7 @@ struct UiComponentVisitor final {
           .size = item.bufferVerticesSize(),
         };
 
-        vkCmdCopyBuffer( cb_, labelBuffer_->vBuf_->stagingBuffer(), labelBuffer_->vBuf_->deviceBuffer(), 1, &copyVrt );
+        vkCmdCopyBuffer( cb_, buffer->vBuf_->stagingBuffer(), buffer->vBuf_->deviceBuffer(), 1, &copyVrt );
 
         VkBufferCopy copyTxc{
           //
@@ -85,7 +96,7 @@ struct UiComponentVisitor final {
           .size = item.bufferTexcrdsSize(),
         };
 
-        vkCmdCopyBuffer( cb_, labelBuffer_->tBuf_->stagingBuffer(), labelBuffer_->tBuf_->deviceBuffer(), 1, &copyTxc );
+        vkCmdCopyBuffer( cb_, buffer->tBuf_->stagingBuffer(), buffer->tBuf_->deviceBuffer(), 1, &copyTxc );
 
         VkBufferCopy copyClrs{
           //
@@ -94,13 +105,9 @@ struct UiComponentVisitor final {
           .size = item.bufferVertclrsSize(),
         };
 
-        vkCmdCopyBuffer( cb_, labelBuffer_->cBuf_->stagingBuffer(), labelBuffer_->cBuf_->deviceBuffer(), 1, &copyClrs );
+        vkCmdCopyBuffer( cb_, buffer->cBuf_->stagingBuffer(), buffer->cBuf_->deviceBuffer(), 1, &copyClrs );
 
-        labelBuffer_->primitievsCount_ += item.lettersCount() * VERTICIES_PER_QUAD;
-    }
-
-    auto operator()( const tire::Billboard &item ) -> void {
-        //
+        buffer->primitievsCount_ += item.lettersCount() * VERTICIES_PER_QUAD;
     }
 
     VkCommandBuffer cb_;
@@ -166,22 +173,37 @@ export struct UiVK final : tire::Ui {
           cb, pipeline_->layout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof( float ) * 4, sizeof( uint32_t ) * 4,
           f.data() );
 
-        auto vbo = labelBuffer_.vBuf_->deviceBuffer();
-        auto tbo = labelBuffer_.tBuf_->deviceBuffer();
-        auto cbo = labelBuffer_.cBuf_->deviceBuffer();
+        {
+            auto vbo = labelBuffer_.vBuf_->deviceBuffer();
+            auto tbo = labelBuffer_.tBuf_->deviceBuffer();
+            auto cbo = labelBuffer_.cBuf_->deviceBuffer();
 
-        // NOTE: see https://docs.vulkan.org/guide/latest/vertex_input_data_processing.html
-        std::array<VkBuffer, 3> vertexBuffers = { vbo, tbo, cbo };
-        std::array<VkDeviceSize, 3> offsets = { 0, 0, 0 };
+            std::array<VkBuffer, 3> vertexBuffers = { vbo, tbo, cbo };
+            std::array<VkDeviceSize, 3> offsets = { 0, 0, 0 };
 
-        vkCmdBindVertexBuffers( cb, 0, vertexBuffers.size(), vertexBuffers.data(), offsets.data() );
+            vkCmdBindVertexBuffers( cb, 0, vertexBuffers.size(), vertexBuffers.data(), offsets.data() );
 
-        vkCmdDraw( cb, labelBuffer_.primitievsCount_, 3, 0, 0 );
+            vkCmdDraw( cb, labelBuffer_.primitievsCount_, 3, 0, 0 );
+        }
+
+        {
+            auto vbo = billboardBuffer_.vBuf_->deviceBuffer();
+            auto tbo = billboardBuffer_.tBuf_->deviceBuffer();
+            auto cbo = billboardBuffer_.cBuf_->deviceBuffer();
+
+            std::array<VkBuffer, 3> vertexBuffers = { vbo, tbo, cbo };
+            std::array<VkDeviceSize, 3> offsets = { 0, 0, 0 };
+
+            vkCmdBindVertexBuffers( cb, 0, vertexBuffers.size(), vertexBuffers.data(), offsets.data() );
+
+            vkCmdDraw( cb, billboardBuffer_.primitievsCount_, 3, 0, 0 );
+        }
     }
 
     auto flush() -> void override {
         //
         labelBuffer_.primitievsCount_ = 0;
+        billboardBuffer_.primitievsCount_ = 0;
         componentsList_.clear();
     }
 
