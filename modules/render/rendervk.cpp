@@ -108,10 +108,7 @@ export struct RenderVK final {
             auto cb = context_->renderCommand( currentFrame_ );
             scene_->draw( cb.buf() );
             testBox_->draw( cb.buf(), timer_.floatFrameDuration() );
-
-            matrix4f viewm = scene_->camera().matrix();
-
-            ui_->draw( cb.buf(), viewm );
+            ui_->draw( cb.buf() );
         }
 
         ui_->flush();

@@ -263,14 +263,22 @@ struct PipelineUi final : Pipeline {
         std::array<VkDescriptorSetLayout, 1> descSetLayouts{ textureDescSetLayout_ };
 
         // Setup push constants.
-        std::array<VkPushConstantRange, 1> constants{};
 
-        constants[0] = VkPushConstantRange{
+        const auto viewInfoPc = VkPushConstantRange{
           //
           .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
           .offset = 0,
-          .size = sizeof( algebra::matrix4f ),
+          .size = sizeof( float ) * 4,
         };
+
+        const auto textureFlagPc = VkPushConstantRange{
+          //
+          .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+          .offset = sizeof( float ) * 4,
+          .size = sizeof( uint32_t ) * 4,
+        };
+
+        std::array<VkPushConstantRange, 2> constants{ viewInfoPc, textureFlagPc };
 
         const auto pipelineLayoutInfo = VkPipelineLayoutCreateInfo{
           //

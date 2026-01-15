@@ -12,7 +12,7 @@
   "frame_count": 3,
   "enable_vsync": true,
   "enable_debug_output": false,
-  "enable_validation_layers": false,
+  "enable_validation_layers": true,
   "enable_additional_validation_layers": false,
   "enable_api_dump_validation_layers": false,
   "enable_raytracing_extensions": false, 

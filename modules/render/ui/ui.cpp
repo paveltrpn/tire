@@ -1,6 +1,7 @@
 
 module;
 
+#include <array>
 #include <memory>
 #include <filesystem>
 #include <variant>
@@ -142,7 +143,7 @@ export struct UiVK final : tire::Ui {
         }
     }
 
-    auto draw( const VkCommandBuffer cb, matrix4f m ) -> void {
+    auto draw( const VkCommandBuffer cb ) -> void {
         vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_->pipeline() );
 
         // =================================================================================
@@ -153,7 +154,13 @@ export struct UiVK final : tire::Ui {
 
         // =================================================================================
 
-        vkCmdPushConstants( cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( matrix4f ), &m );
+        const auto v = std::array<float, 4>{ 32, 32, 32, 32 };
+        vkCmdPushConstants( cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( float ) * 4, &v );
+
+        const auto f = std::array<uint32_t, 4>{ 1, 0, 0, 0 };
+        vkCmdPushConstants(
+          cb, pipeline_->layout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof( float ) * 4, sizeof( uint32_t ) * 4,
+          f.data() );
 
         auto vbo = vBuf_->deviceBuffer();
         auto tbo = tBuf_->deviceBuffer();
