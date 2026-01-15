@@ -167,13 +167,12 @@ export struct UiVK final : tire::Ui {
         const auto v = std::array<float, 4>{ 32, 32, 32, 32 };
         vkCmdPushConstants( cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( float ) * 4, &v );
 
-        // Pass enable texture flag.
-        const auto f = std::array<uint32_t, 4>{ 1, 0, 0, 0 };
-        vkCmdPushConstants(
-          cb, pipeline_->layout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof( float ) * 4, sizeof( uint32_t ) * 4,
-          f.data() );
-
         {
+            // Pass enable texture flag.
+            const auto f = std::array<uint32_t, 4>{ 1, 0, 0, 0 };
+            vkCmdPushConstants(
+              cb, pipeline_->layout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof( float ) * 4, sizeof( uint32_t ) * 4, &f );
+
             auto vbo = labelBuffer_.vBuf_->deviceBuffer();
             auto tbo = labelBuffer_.tBuf_->deviceBuffer();
             auto cbo = labelBuffer_.cBuf_->deviceBuffer();
@@ -187,6 +186,11 @@ export struct UiVK final : tire::Ui {
         }
 
         {
+            // Pass disable texture flag.
+            const auto f = std::array<uint32_t, 4>{ 0, 0, 0, 0 };
+            vkCmdPushConstants(
+              cb, pipeline_->layout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof( float ) * 4, sizeof( uint32_t ) * 4, &f );
+
             auto vbo = billboardBuffer_.vBuf_->deviceBuffer();
             auto tbo = billboardBuffer_.tBuf_->deviceBuffer();
             auto cbo = billboardBuffer_.cBuf_->deviceBuffer();

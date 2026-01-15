@@ -15,80 +15,80 @@ import algebra;
 namespace tire {
 
 const std::map<std::string, std::string> htmlColors{
-    { "white", "#FFFFFF" },
-    { "powderblue", "#B0E0E6" },
-    { "lightblue", "#ADD8E6" },
-    { "lightskyblue", "#87CEFA" },
-    { "skyblue", "#87CEEB" },
-    { "deepskyblue", "#00BFFF" },
-    { "lightsteelblue", "#B0C4DE" },
-    { "dodgerblue", "#1E90FF" },
-    { "cornflowerblue", "#6495ED" },
-    { "steelblue", "#4682B4" },
-    { "royalblue", "#4169E1" },
-    { "blue", "#0000FF" },
-    { "mediumblue", "#0000CD" },
-    { "darkblue", "#00008B" },
-    { "navy", "#000080" },
-    { "midnightblue", "#191970" },
-    { "mediumslateblue", "#7B68EE" },
-    { "slateblue", "#6A5ACD" },
-    { "darkslateblue", "#483D8B" },
-    { "lawngreen", "#7CFC00" },
-    { "chartreuse", "#7FFF00" },
-    { "limegreen", "#32CD32" },
-    { "lime", "#00FF00" },
-    { "forestgreen", "#228B22" },
-    { "green", "#008000" },
-    { "darkgreen", "#006400" },
-    { "greenyellow", "#ADFF2F" },
-    { "yellowgreen", "#9ACD32" },
-    { "springgreen", "#00FF7F" },
-    { "mediumspringgreen", "#00FA9A" },
-    { "lightgreen", "#90EE90" },
-    { "palegreen", "#98FB98" },
-    { "darkseagreen", "#8FBC8F" },
-    { "mediumseagreen", "#3CB371" },
-    { "seagreen", "#2E8B57" },
-    { "olive", "#808000" },
-    { "darkolivegreen", "#556B2F" },
-    { "olivedrab", "#6B8E23" },
-    { "lightsalmon", "#FFA07A" },
-    { "salmon", "#FA8072" },
-    { "darksalmon", "#E9967A" },
-    { "lightcoral", "#F08080" },
-    { "indianred", "#CD5C5C" },
-    { "crimson", "#DC143C" },
-    { "firebrick", "#B22222" },
-    { "red", "#FF0000" },
-    { "darkred", "#8B0000" },
-    { "gainsboro", "#DCDCDC" },
-    { "lightgray", "#D3D3D3" },
-    { "silver", "#C0C0C0" },
-    { "darkgray", "#A9A9A9" },
-    { "gray", "#808080" },
-    { "dimgray", "#696969" },
-    { "lightslategray", "#778899" },
-    { "slategray", "#708090" },
-    { "darkslategray", "#2F4F4F" },
-    { "black", "#000000" },
-    { "Gainsboro", "#DCDCDC" },
-    { "LightGrey", "#D3D3D3" },
-    { "LightGray", "#D3D3D3" },
-    { "Silver", "#C0C0C0" },
-    { "DarkGray", "#A9A9A9" },
-    { "DarkGrey", "#A9A9A9" },
-    { "Gray", "#808080" },
-    { "Grey", "#808080" },
-    { "DimGray", "#696969" },
-    { "DimGrey", "#696969" },
-    { "LightSlateGray", "#778899" },
-    { "LightSlateGrey", "#778899" },
-    { "SlateGray", "#708090" },
-    { "SlateGrey", "#708090" },
-    { "DarkSlateGray", "#2F4F4F" },
-    { "DarkSlateGrey", "#2F4F4F" },
-    { "Black", "#00000" },
+  { "white", "#FFFFFF" },
+  { "powderblue", "#B0E0E6" },
+  { "lightblue", "#ADD8E6" },
+  { "lightskyblue", "#87CEFA" },
+  { "skyblue", "#87CEEB" },
+  { "deepskyblue", "#00BFFF" },
+  { "lightsteelblue", "#B0C4DE" },
+  { "dodgerblue", "#1E90FF" },
+  { "cornflowerblue", "#6495ED" },
+  { "steelblue", "#4682B4" },
+  { "royalblue", "#4169E1" },
+  { "blue", "#0000FF" },
+  { "mediumblue", "#0000CD" },
+  { "darkblue", "#00008B" },
+  { "navy", "#000080" },
+  { "midnightblue", "#191970" },
+  { "mediumslateblue", "#7B68EE" },
+  { "slateblue", "#6A5ACD" },
+  { "darkslateblue", "#483D8B" },
+  { "lawngreen", "#7CFC00" },
+  { "chartreuse", "#7FFF00" },
+  { "limegreen", "#32CD32" },
+  { "lime", "#00FF00" },
+  { "forestgreen", "#228B22" },
+  { "green", "#008000" },
+  { "darkgreen", "#006400" },
+  { "greenyellow", "#ADFF2F" },
+  { "yellowgreen", "#9ACD32" },
+  { "springgreen", "#00FF7F" },
+  { "mediumspringgreen", "#00FA9A" },
+  { "lightgreen", "#90EE90" },
+  { "palegreen", "#98FB98" },
+  { "darkseagreen", "#8FBC8F" },
+  { "mediumseagreen", "#3CB371" },
+  { "seagreen", "#2E8B57" },
+  { "olive", "#808000" },
+  { "darkolivegreen", "#556B2F" },
+  { "olivedrab", "#6B8E23" },
+  { "lightsalmon", "#FFA07A" },
+  { "salmon", "#FA8072" },
+  { "darksalmon", "#E9967A" },
+  { "lightcoral", "#F08080" },
+  { "indianred", "#CD5C5C" },
+  { "crimson", "#DC143C" },
+  { "firebrick", "#B22222" },
+  { "red", "#FF0000" },
+  { "darkred", "#8B0000" },
+  { "gainsboro", "#DCDCDC" },
+  { "lightgray", "#D3D3D3" },
+  { "silver", "#C0C0C0" },
+  { "darkgray", "#A9A9A9" },
+  { "gray", "#808080" },
+  { "dimgray", "#696969" },
+  { "lightslategray", "#778899" },
+  { "slategray", "#708090" },
+  { "darkslategray", "#2F4F4F" },
+  { "black", "#000000" },
+  { "Gainsboro", "#DCDCDC" },
+  { "LightGrey", "#D3D3D3" },
+  { "LightGray", "#D3D3D3" },
+  { "Silver", "#C0C0C0" },
+  { "DarkGray", "#A9A9A9" },
+  { "DarkGrey", "#A9A9A9" },
+  { "Gray", "#808080" },
+  { "Grey", "#808080" },
+  { "DimGray", "#696969" },
+  { "DimGrey", "#696969" },
+  { "LightSlateGray", "#778899" },
+  { "LightSlateGrey", "#778899" },
+  { "SlateGray", "#708090" },
+  { "SlateGrey", "#708090" },
+  { "DarkSlateGray", "#2F4F4F" },
+  { "DarkSlateGrey", "#2F4F4F" },
+  { "Black", "#00000" },
 };
 
 template <typename T>
@@ -101,8 +101,7 @@ struct Rgba {
 
 template <typename T>
 concept ColorValue =
-    (std::unsigned_integral<T> && std::is_same_v<T, uint8_t>) ||
-    ( std::floating_point<T> && std::is_same_v<T, float> );
+  (std::unsigned_integral<T> && std::is_same_v<T, uint8_t>) || ( std::floating_point<T> && std::is_same_v<T, float> );
 
 export template <ColorValue T>
 struct Color {
@@ -129,16 +128,14 @@ protected:
         const auto length = letters.length();
         size_t l{};
 
-        if ( ( length == 1 ) || ( length < 7 ) || ( ( length % 2 ) == 0 ) ||
-             ( length > 9 ) ) {
+        if ( ( length == 1 ) || ( length < 7 ) || ( ( length % 2 ) == 0 ) || ( length > 9 ) ) {
             // NOTE: Silently set to white if theres is no such color string.
             return { 255, 255, 255, 255 };
         }
 
         for ( size_t i = 1; i < letters.length(); i += 2 ) {
             const auto byteString = letters.substr( i, 2 );
-            const auto byteValue = static_cast<char_type>(
-                std::stoi( std::string{ byteString }, nullptr, 16 ) );
+            const auto byteValue = static_cast<char_type>( std::stoi( std::string{ byteString }, nullptr, 16 ) );
             ret[l] = byteValue;
             ++l;
         }
@@ -165,23 +162,23 @@ export struct Colorf final : Color<float> {
     Colorf( float r, float g, float b, float a )
         : Color{ r, g, b, a } {}
 
-    Colorf( const std::string& str )
+    Colorf( const std::string &str )
         : Color{} {
         if ( str.starts_with( "#" ) ) {
             const auto [r, g, b, a] = charFromHex( str );
-            r_ = r / 255.0f;
-            g_ = g / 255.0f;
-            b_ = b / 255.0f;
-            a_ = a / 255.0f;
+            r_ = static_cast<float>( r ) / 255.0f;
+            g_ = static_cast<float>( g ) / 255.0f;
+            b_ = static_cast<float>( b ) / 255.0f;
+            a_ = static_cast<float>( a ) / 255.0f;
         } else {
             try {
-                const auto& hex = htmlColors.at( str );
+                const auto &hex = htmlColors.at( str );
                 const auto [r, g, b, a] = charFromHex( hex );
-                r_ = r / 255.0f;
-                g_ = g / 255.0f;
-                b_ = b / 255.0f;
-                a_ = a / 255.0f;
-            } catch ( std::out_of_range& e ) {
+                r_ = static_cast<float>( r ) / 255.0f;
+                g_ = static_cast<float>( g ) / 255.0f;
+                b_ = static_cast<float>( b ) / 255.0f;
+                a_ = static_cast<float>( a ) / 255.0f;
+            } catch ( std::out_of_range &e ) {
                 // NOTE: Silently set to white if theres is no such color string.
                 r_ = g_ = b_ = a_ = 1.0f;
             }
@@ -206,7 +203,7 @@ export struct Colori final : Color<uint8_t> {
     Colori()
         : Color{} {}
 
-    Colori( const std::string& str )
+    Colori( const std::string &str )
         : Color{} {
         if ( str.starts_with( "#" ) ) {
             const auto [r, g, b, a] = charFromHex( str );
@@ -216,13 +213,13 @@ export struct Colori final : Color<uint8_t> {
             a_ = a;
         } else {
             try {
-                const auto& hex = htmlColors.at( str );
+                const auto &hex = htmlColors.at( str );
                 const auto [r, g, b, a] = charFromHex( hex );
                 r_ = r;
                 g_ = g;
                 b_ = b;
                 a_ = a;
-            } catch ( std::out_of_range& e ) {
+            } catch ( std::out_of_range &e ) {
                 // NOTE: Silently set to white if theres is no such color string.
                 r_ = g_ = b_ = a_ = 255;
             }
