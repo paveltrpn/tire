@@ -101,8 +101,8 @@ struct VertexBuffer final {
 
     auto clean() -> void {
         //
-        // vmaDestroyBuffer( context_->allocator(), deviceBuffer_, deviceAllocation_ );
-        // vmaDestroyBuffer( context_->allocator(), stagingBuffer_, stagingAllocation_ );
+        vmaDestroyBuffer( context_->allocator(), deviceBuffer_, deviceAllocation_ );
+        vmaDestroyBuffer( context_->allocator(), stagingBuffer_, stagingAllocation_ );
     }
 
 private:
