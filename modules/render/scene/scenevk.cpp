@@ -54,18 +54,12 @@ export struct SceneVK final : tire::Scene {
 
         vertBuffersList_.reserve( nodeListSize );
         nrmlBuffersList_.reserve( nodeListSize );
+        texcBuffersList_.reserve( nodeListSize );
 
         for ( size_t i{ 0 }; i < nodeListSize; ++i ) {
-            // Create vulkan "vertex buffers".
-            auto vBuf = std::make_shared<VertexBuffer>( context_, bodyList_[i]->bufferVerticesSize() );
-            vertBuffersList_.push_back( std::move( vBuf ) );
-
-            // Create vulkan "normal buffers".
-            auto nBuf = std::make_shared<VertexBuffer>( context_, bodyList_[i]->bufferNormalsSize() );
-            nrmlBuffersList_.push_back( std::move( nBuf ) );
-
-            auto tBuf = std::make_shared<VertexBuffer>( context_, bodyList_[i]->bufferTexcrdsSize() );
-            texcBuffersList_.push_back( std::move( tBuf ) );
+            vertBuffersList_.emplace_back( context_, bodyList_[i]->bufferVerticesSize() );
+            nrmlBuffersList_.emplace_back( context_, bodyList_[i]->bufferNormalsSize() );
+            texcBuffersList_.emplace_back( context_, bodyList_[i]->bufferTexcrdsSize() );
         }
     }
 
@@ -74,16 +68,14 @@ export struct SceneVK final : tire::Scene {
 
         // Fill CPU side buffer (staging) with new verticies data.
         for ( size_t i{ 0 }; i < nodeListSize; ++i ) {
-            // Update data in vulkan "vertex" buffers, i.e. copy from CPU memory.
-            const auto vDataPtr = reinterpret_cast<const void *>( bodyList_[i]->verteciesData() );
-            vertBuffersList_[i]->memcpy( vDataPtr, bodyList_[i]->bufferVerticesSize() );
+            const auto vDataPtr = static_cast<const void *>( bodyList_[i]->verteciesData() );
+            vertBuffersList_[i].memcpy( vDataPtr, bodyList_[i]->bufferVerticesSize() );
 
-            // Update data in vulkan "normal" buffers
-            const auto nDataPtr = reinterpret_cast<const void *>( bodyList_[i]->normalsData() );
-            nrmlBuffersList_[i]->memcpy( nDataPtr, bodyList_[i]->bufferNormalsSize() );
+            const auto nDataPtr = static_cast<const void *>( bodyList_[i]->normalsData() );
+            nrmlBuffersList_[i].memcpy( nDataPtr, bodyList_[i]->bufferNormalsSize() );
 
-            const auto tDataPtr = reinterpret_cast<const void *>( bodyList_[i]->texcrdsData() );
-            texcBuffersList_[i]->memcpy( tDataPtr, bodyList_[i]->bufferTexcrdsSize() );
+            const auto tDataPtr = static_cast<const void *>( bodyList_[i]->texcrdsData() );
+            texcBuffersList_[i].memcpy( tDataPtr, bodyList_[i]->bufferTexcrdsSize() );
         }
 
         for ( size_t i{ 0 }; i < nodeListSize; ++i ) {
@@ -91,31 +83,28 @@ export struct SceneVK final : tire::Scene {
               //
               .srcOffset = 0,
               .dstOffset = 0,
-              .size = vertBuffersList_[i]->size(),
+              .size = vertBuffersList_[i].size(),
             };
 
-            vkCmdCopyBuffer(
-              cb, vertBuffersList_[i]->stagingBuffer(), vertBuffersList_[i]->deviceBuffer(), 1, &copyVrt );
+            vkCmdCopyBuffer( cb, vertBuffersList_[i].stagingBuffer(), vertBuffersList_[i].deviceBuffer(), 1, &copyVrt );
 
             VkBufferCopy copyNrm{
               //
               .srcOffset = 0,
               .dstOffset = 0,
-              .size = nrmlBuffersList_[i]->size(),
+              .size = nrmlBuffersList_[i].size(),
             };
 
-            vkCmdCopyBuffer(
-              cb, nrmlBuffersList_[i]->stagingBuffer(), nrmlBuffersList_[i]->deviceBuffer(), 1, &copyNrm );
+            vkCmdCopyBuffer( cb, nrmlBuffersList_[i].stagingBuffer(), nrmlBuffersList_[i].deviceBuffer(), 1, &copyNrm );
 
             VkBufferCopy copyTxc{
               //
               .srcOffset = 0,
               .dstOffset = 0,
-              .size = texcBuffersList_[i]->size(),
+              .size = texcBuffersList_[i].size(),
             };
 
-            vkCmdCopyBuffer(
-              cb, texcBuffersList_[i]->stagingBuffer(), texcBuffersList_[i]->deviceBuffer(), 1, &copyTxc );
+            vkCmdCopyBuffer( cb, texcBuffersList_[i].stagingBuffer(), texcBuffersList_[i].deviceBuffer(), 1, &copyTxc );
         }
     }
 
@@ -141,9 +130,9 @@ export struct SceneVK final : tire::Scene {
         for ( size_t object = 0; object < bodyList_.size(); ++object ) {
             const auto c = bodyList_[object]->albedoColor().asVector4f();
 
-            auto vbo = vertBuffersList_[object]->deviceBuffer();
-            auto nbo = nrmlBuffersList_[object]->deviceBuffer();
-            auto tbo = texcBuffersList_[object]->deviceBuffer();
+            auto vbo = vertBuffersList_[object].deviceBuffer();
+            auto nbo = nrmlBuffersList_[object].deviceBuffer();
+            auto tbo = texcBuffersList_[object].deviceBuffer();
             auto vCount = bodyList_[object]->verteciesCount();
 
             // NOTE: see https://docs.vulkan.org/guide/latest/vertex_input_data_processing.html
@@ -285,23 +274,17 @@ export struct SceneVK final : tire::Scene {
     }
 
     void clean() override {
+        //
         vmaDestroyBuffer( context_->allocator(), omniLightUniform_, omniLightAllocation_ );
-
-        const auto nodeListSize = bodyList_.size();
-        for ( size_t i{ 0 }; i < nodeListSize; ++i ) {
-            vertBuffersList_[i]->clean();
-            nrmlBuffersList_[i]->clean();
-            texcBuffersList_[i]->clean();
-        }
     };
 
 private:
     const Context *context_;
     std::unique_ptr<PiplineScene> pipeline_{};
 
-    std::vector<std::shared_ptr<VertexBuffer>> vertBuffersList_;
-    std::vector<std::shared_ptr<VertexBuffer>> nrmlBuffersList_;
-    std::vector<std::shared_ptr<VertexBuffer>> texcBuffersList_;
+    std::vector<VertexBuffer> vertBuffersList_;
+    std::vector<VertexBuffer> nrmlBuffersList_;
+    std::vector<VertexBuffer> texcBuffersList_;
 
     std::shared_ptr<tire::TextureImage> testImage_;
     VkSampler blockySampler_{};
