@@ -1,6 +1,8 @@
 
 module;
 
+#include <cstddef>
+#include <utility>
 #include <cstring>
 #include <format>
 
@@ -22,7 +24,18 @@ struct VertexBuffer final {
 
     VertexBuffer() = delete;
     VertexBuffer( const VertexBuffer &other ) = delete;
-    VertexBuffer( VertexBuffer &&other ) = delete;
+
+    VertexBuffer( VertexBuffer &&other ) noexcept {
+        //
+        context_ = std::exchange( other.context_, nullptr );
+        size_ = std::exchange( other.size_, 0 );
+
+        deviceBuffer_ = std::exchange( other.deviceBuffer_, VK_NULL_HANDLE );
+        deviceAllocation_ = std::exchange( other.deviceAllocation_, VK_NULL_HANDLE );
+
+        stagingBuffer_ = std::exchange( other.stagingBuffer_, VK_NULL_HANDLE );
+        stagingAllocation_ = std::exchange( other.stagingAllocation_, VK_NULL_HANDLE );
+    }
 
     VertexBuffer( const Context *context, size_t size )
         : context_{ context }
@@ -33,7 +46,20 @@ struct VertexBuffer final {
     }
 
     auto operator=( const VertexBuffer &other ) -> VertexBuffer & = delete;
-    auto operator=( VertexBuffer &&other ) -> VertexBuffer & = delete;
+
+    auto operator=( VertexBuffer &&other ) noexcept -> VertexBuffer & {
+        //
+        context_ = std::exchange( other.context_, nullptr );
+        size_ = std::exchange( other.size_, 0 );
+
+        deviceBuffer_ = std::exchange( other.deviceBuffer_, VK_NULL_HANDLE );
+        deviceAllocation_ = std::exchange( other.deviceAllocation_, VK_NULL_HANDLE );
+
+        stagingBuffer_ = std::exchange( other.stagingBuffer_, VK_NULL_HANDLE );
+        stagingAllocation_ = std::exchange( other.stagingAllocation_, VK_NULL_HANDLE );
+
+        return *this;
+    }
 
     ~VertexBuffer() {
         //
@@ -75,8 +101,8 @@ struct VertexBuffer final {
 
     auto clean() -> void {
         //
-        vmaDestroyBuffer( context_->allocator(), deviceBuffer_, deviceAllocation_ );
-        vmaDestroyBuffer( context_->allocator(), stagingBuffer_, stagingAllocation_ );
+        // vmaDestroyBuffer( context_->allocator(), deviceBuffer_, deviceAllocation_ );
+        // vmaDestroyBuffer( context_->allocator(), stagingBuffer_, stagingAllocation_ );
     }
 
 private:

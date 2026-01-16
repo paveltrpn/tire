@@ -79,7 +79,6 @@ export struct Context final {
     // Destroy all Vulkan context here.
     ~Context() {
         vkDestroyFence( device_, copyCommandFence_, nullptr );
-
         vkDestroyDescriptorPool( device_, descriptorPool_, nullptr );
 
         for ( auto i = 0; i < framesCount_; i++ ) {
@@ -91,16 +90,12 @@ export struct Context final {
         }
 
         vkDestroyCommandPool( device_, commandPool_, nullptr );
-
-        vkDestroySwapchainKHR( device_, swapchain_, nullptr );
-
-        vkDestroyDevice( device_, nullptr );
         vkDestroySurfaceKHR( instance_, surface_, nullptr );
-
         vkDestroyDebugUtilsMessenger( instance_, debugMessenger_, nullptr );
-
         vmaDestroyAllocator( allocator_ );
 
+        vkDestroySwapchainKHR( device_, swapchain_, nullptr );
+        vkDestroyDevice( device_, nullptr );
         vkDestroyInstance( instance_, nullptr );
     }
 

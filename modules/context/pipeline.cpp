@@ -23,8 +23,8 @@ export struct Pipeline {
     auto operator=( Pipeline &&other ) -> Pipeline & = delete;
 
     virtual ~Pipeline() {
-        vkDestroyPipelineLayout( context_->device(), layout_, nullptr );
         vkDestroyRenderPass( context_->device(), renderPass_, nullptr );
+        vkDestroyPipelineLayout( context_->device(), layout_, nullptr );
         vkDestroyPipeline( context_->device(), pipeline_, nullptr );
     }
 

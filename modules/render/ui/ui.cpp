@@ -34,23 +34,22 @@ using namespace algebra;
 
 struct QuadDrawBuffer final {
     QuadDrawBuffer( const Context *context, size_t quadsCount )
-        : context_{ context } {
-        vBuf_ = std::make_shared<VertexBuffer>( context_, quadsCount * VERTICIES_PER_QUAD * 3 * sizeof( float ) );
-        tBuf_ = std::make_shared<VertexBuffer>( context_, quadsCount * VERTICIES_PER_QUAD * 2 * sizeof( float ) );
-        cBuf_ = std::make_shared<VertexBuffer>( context_, quadsCount * VERTICIES_PER_QUAD * 4 * sizeof( float ) );
-    }
+        : context_{ context }
+        , vBuf_{ VertexBuffer{ context_, quadsCount * VERTICIES_PER_QUAD * 3 * sizeof( float ) } }
+        , tBuf_{ VertexBuffer{ context_, quadsCount * VERTICIES_PER_QUAD * 2 * sizeof( float ) } }
+        , cBuf_{ VertexBuffer{ context_, quadsCount * VERTICIES_PER_QUAD * 4 * sizeof( float ) } } {}
 
     const Context *context_;
 
-    std::shared_ptr<VertexBuffer> vBuf_;
-    std::shared_ptr<VertexBuffer> tBuf_;
-    std::shared_ptr<VertexBuffer> cBuf_;
+    VertexBuffer vBuf_;
+    VertexBuffer tBuf_;
+    VertexBuffer cBuf_;
 
     uint32_t primitievsCount_{};
 };
 
 struct UiComponentVisitor final {
-    UiComponentVisitor( VkCommandBuffer cb, QuadDrawBuffer *labelBuffer, QuadDrawBuffer *billboardBuffer )
+    UiComponentVisitor( VkCommandBuffer cb, QuadDrawBuffer &labelBuffer, QuadDrawBuffer &billboardBuffer )
         : cb_{ cb }
         , labelBuffer_{ labelBuffer }
         , billboardBuffer_{ billboardBuffer } {}
@@ -66,19 +65,19 @@ struct UiComponentVisitor final {
     }
 
     template <typename T>
-    auto dispath( const T &item, QuadDrawBuffer *buffer ) -> void {
-        const auto vOffset = buffer->primitievsCount_ * 3 * sizeof( float );
-        const auto tOffset = buffer->primitievsCount_ * 2 * sizeof( float );
-        const auto cOffset = buffer->primitievsCount_ * 4 * sizeof( float );
+    auto dispath( const T &item, QuadDrawBuffer &buffer ) -> void {
+        const auto vOffset = buffer.primitievsCount_ * 3 * sizeof( float );
+        const auto tOffset = buffer.primitievsCount_ * 2 * sizeof( float );
+        const auto cOffset = buffer.primitievsCount_ * 4 * sizeof( float );
 
         const auto vDataPtr = reinterpret_cast<const void *>( item.verteciesData() );
-        buffer->vBuf_->memcpy( vDataPtr, item.bufferVerticesSize(), vOffset );
+        buffer.vBuf_.memcpy( vDataPtr, item.bufferVerticesSize(), vOffset );
 
         const auto tDataPtr = reinterpret_cast<const void *>( item.texcrdsData() );
-        buffer->tBuf_->memcpy( tDataPtr, item.bufferTexcrdsSize(), tOffset );
+        buffer.tBuf_.memcpy( tDataPtr, item.bufferTexcrdsSize(), tOffset );
 
         const auto cDataPtr = reinterpret_cast<const void *>( item.clrsData() );
-        buffer->cBuf_->memcpy( cDataPtr, item.bufferVertclrsSize(), cOffset );
+        buffer.cBuf_.memcpy( cDataPtr, item.bufferVertclrsSize(), cOffset );
 
         VkBufferCopy copyVrt{
           //
@@ -87,7 +86,7 @@ struct UiComponentVisitor final {
           .size = item.bufferVerticesSize(),
         };
 
-        vkCmdCopyBuffer( cb_, buffer->vBuf_->stagingBuffer(), buffer->vBuf_->deviceBuffer(), 1, &copyVrt );
+        vkCmdCopyBuffer( cb_, buffer.vBuf_.stagingBuffer(), buffer.vBuf_.deviceBuffer(), 1, &copyVrt );
 
         VkBufferCopy copyTxc{
           //
@@ -96,7 +95,7 @@ struct UiComponentVisitor final {
           .size = item.bufferTexcrdsSize(),
         };
 
-        vkCmdCopyBuffer( cb_, buffer->tBuf_->stagingBuffer(), buffer->tBuf_->deviceBuffer(), 1, &copyTxc );
+        vkCmdCopyBuffer( cb_, buffer.tBuf_.stagingBuffer(), buffer.tBuf_.deviceBuffer(), 1, &copyTxc );
 
         VkBufferCopy copyClrs{
           //
@@ -105,15 +104,15 @@ struct UiComponentVisitor final {
           .size = item.bufferVertclrsSize(),
         };
 
-        vkCmdCopyBuffer( cb_, buffer->cBuf_->stagingBuffer(), buffer->cBuf_->deviceBuffer(), 1, &copyClrs );
+        vkCmdCopyBuffer( cb_, buffer.cBuf_.stagingBuffer(), buffer.cBuf_.deviceBuffer(), 1, &copyClrs );
 
-        buffer->primitievsCount_ += item.lettersCount() * VERTICIES_PER_QUAD;
+        buffer.primitievsCount_ += item.lettersCount() * VERTICIES_PER_QUAD;
     }
 
     VkCommandBuffer cb_;
 
-    QuadDrawBuffer *labelBuffer_{};
-    QuadDrawBuffer *billboardBuffer_{};
+    QuadDrawBuffer &labelBuffer_;
+    QuadDrawBuffer &billboardBuffer_;
 };
 
 export struct UiVK final : tire::Ui {
@@ -148,7 +147,7 @@ export struct UiVK final : tire::Ui {
     auto upload( const VkCommandBuffer cb ) -> void {
         //
         for ( auto &&item : componentsList_ ) {
-            std::visit( UiComponentVisitor{ cb, &labelBuffer_, &billboardBuffer_ }, item );
+            std::visit( UiComponentVisitor{ cb, labelBuffer_, billboardBuffer_ }, item );
         }
     }
 
@@ -164,7 +163,7 @@ export struct UiVK final : tire::Ui {
         // =================================================================================
 
         // Pass viewport size.
-        const auto v = std::array<float, 4>{ 32, 32, 32, 32 };
+        const auto v = std::array<float, 4>{ 48, 48, 48, 48 };
         vkCmdPushConstants( cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( float ) * 4, &v );
 
         {
@@ -173,9 +172,9 @@ export struct UiVK final : tire::Ui {
             vkCmdPushConstants(
               cb, pipeline_->layout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof( float ) * 4, sizeof( uint32_t ) * 4, &f );
 
-            auto vbo = labelBuffer_.vBuf_->deviceBuffer();
-            auto tbo = labelBuffer_.tBuf_->deviceBuffer();
-            auto cbo = labelBuffer_.cBuf_->deviceBuffer();
+            auto vbo = labelBuffer_.vBuf_.deviceBuffer();
+            auto tbo = labelBuffer_.tBuf_.deviceBuffer();
+            auto cbo = labelBuffer_.cBuf_.deviceBuffer();
 
             std::array<VkBuffer, 3> vertexBuffers = { vbo, tbo, cbo };
             std::array<VkDeviceSize, 3> offsets = { 0, 0, 0 };
@@ -191,9 +190,9 @@ export struct UiVK final : tire::Ui {
             vkCmdPushConstants(
               cb, pipeline_->layout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof( float ) * 4, sizeof( uint32_t ) * 4, &f );
 
-            auto vbo = billboardBuffer_.vBuf_->deviceBuffer();
-            auto tbo = billboardBuffer_.tBuf_->deviceBuffer();
-            auto cbo = billboardBuffer_.cBuf_->deviceBuffer();
+            auto vbo = billboardBuffer_.vBuf_.deviceBuffer();
+            auto tbo = billboardBuffer_.tBuf_.deviceBuffer();
+            auto cbo = billboardBuffer_.cBuf_.deviceBuffer();
 
             std::array<VkBuffer, 3> vertexBuffers = { vbo, tbo, cbo };
             std::array<VkDeviceSize, 3> offsets = { 0, 0, 0 };
