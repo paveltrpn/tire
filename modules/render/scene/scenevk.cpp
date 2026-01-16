@@ -39,19 +39,9 @@ export struct SceneVK final : tire::Scene {
             basePath + "/shaders/spirv/vk_vertexBuffer_FRAGMENT.spv" } );
         pipeline_->buildPipeline( vertexBufferProgram );
 
-        try {
-            testImage_ =
-              std::make_shared<TextureImage>( context_, basePath + "/assets/textures/PavingStones021_color.tga" );
-        } catch ( std::exception &e ) {
-            log::fatal()( "test image {}", e.what() );
-        }
-
-        initTextureSmpler();
-        initOmniLigtBuffer();
-        initDescriptorSets();
-
         const auto nodeListSize = bodyList_.size();
 
+        testImage_.reserve( nodeListSize );
         vertBuffersList_.reserve( nodeListSize );
         nrmlBuffersList_.reserve( nodeListSize );
         texcBuffersList_.reserve( nodeListSize );
@@ -60,7 +50,20 @@ export struct SceneVK final : tire::Scene {
             vertBuffersList_.emplace_back( context_, bodyList_[i]->bufferVerticesSize() );
             nrmlBuffersList_.emplace_back( context_, bodyList_[i]->bufferNormalsSize() );
             texcBuffersList_.emplace_back( context_, bodyList_[i]->bufferTexcrdsSize() );
+
+            log::notice()( "{}", bodyList_[i]->materialName() );
+            try {
+                testImage_.push_back(
+                  std::make_shared<TextureImage>(
+                    context_, basePath + "/assets/textures/" + bodyList_[i]->materialName() + "_color.tga" ) );
+            } catch ( std::exception &e ) {
+                log::fatal()( "test image {}", e.what() );
+            }
         }
+
+        initTextureSmpler();
+        initOmniLigtBuffer();
+        initDescriptorSets();
     }
 
     void upload( const VkCommandBuffer cb ) {
@@ -215,7 +218,7 @@ export struct SceneVK final : tire::Scene {
         const auto textureImageDescInfo = VkDescriptorImageInfo{
           //
           .sampler = blockySampler_,
-          .imageView = testImage_->view(),
+          .imageView = testImage_[4]->view(),
           .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
         };
 
@@ -286,7 +289,8 @@ private:
     std::vector<VertexBuffer> nrmlBuffersList_;
     std::vector<VertexBuffer> texcBuffersList_;
 
-    std::shared_ptr<tire::TextureImage> testImage_;
+    std::vector<std::shared_ptr<tire::TextureImage>> testImage_;
+
     VkSampler blockySampler_{};
     VkDescriptorSet textureSet_{};
 
