@@ -13,8 +13,6 @@ namespace tire {
 
 using namespace algebra;
 
-constexpr size_t VERTICIES_PER_QUAD = 6;
-
 export struct Billboard final {
     using value_type = float;
     using vector2_type = vector2<value_type>;
@@ -60,25 +58,28 @@ export struct Billboard final {
         quadsColors_[5] = vector4f{ 1.0, 0.0, 0.0, 0.5 };  //color;
     }
 
+#define VERTICIES_PER_QUAD 6
+#define JUST_SINGLE_QUAD 1
+
     [[nodiscard]]
     auto lettersCount() const -> size_t {
         //
-        return 1;
+        return JUST_SINGLE_QUAD;
     }
 
     [[nodiscard]] auto bufferVerticesSize() const -> size_t {
         //
-        return 1 * VERTICIES_PER_QUAD * sizeof( vector3_type );
+        return JUST_SINGLE_QUAD * VERTICIES_PER_QUAD * sizeof( vector3_type );
     }
 
     [[nodiscard]] auto bufferTexcrdsSize() const -> size_t {
         //
-        return 1 * VERTICIES_PER_QUAD * sizeof( vector2_type );
+        return JUST_SINGLE_QUAD * VERTICIES_PER_QUAD * sizeof( vector2_type );
     }
 
     [[nodiscard]] auto bufferVertclrsSize() const -> size_t {
         //
-        return 1 * VERTICIES_PER_QUAD * sizeof( vector4_type );
+        return JUST_SINGLE_QUAD * VERTICIES_PER_QUAD * sizeof( vector4_type );
     }
 
     [[nodiscard]]
@@ -97,9 +98,9 @@ export struct Billboard final {
     }
 
 private:
-    std::array<vector3_type, 1 * VERTICIES_PER_QUAD> quadVerticies_{};
-    std::array<vector2_type, 1 * VERTICIES_PER_QUAD> quadTexcrds_{};
-    std::array<vector4_type, 1 * VERTICIES_PER_QUAD> quadsColors_{};
+    std::array<vector3_type, JUST_SINGLE_QUAD * VERTICIES_PER_QUAD> quadVerticies_{};
+    std::array<vector2_type, JUST_SINGLE_QUAD * VERTICIES_PER_QUAD> quadTexcrds_{};
+    std::array<vector4_type, JUST_SINGLE_QUAD * VERTICIES_PER_QUAD> quadsColors_{};
 
     Colorf color_{};
 };

@@ -20,11 +20,11 @@ export struct Label final {
     using vector3_type = vector3<value_type>;
     using vector4_type = vector4<value_type>;
 
-    auto set_glyph_width( float value ) -> void {
+    auto setGlyphWidth( float value ) -> void {
         //
     }
 
-    auto set_glyph_height( float value ) -> void {
+    auto setGlyphHeight( float value ) -> void {
         //
     }
 
@@ -37,7 +37,7 @@ export struct Label final {
         glyphGap_ = value;
     }
 
-    auto set_text_position( float x, float y ) -> void {
+    auto setTextPosition( float x, float y ) -> void {
         //
     }
 
@@ -46,40 +46,38 @@ export struct Label final {
         color_ = value;
     }
 
-    auto resetStringParapeters() -> void {
+    auto resetStringParameters() -> void {
         //
     }
 
     auto setLabelPos( float x, float y ) -> void {
-        text_pos_x = x;
-        text_pos_y = y;
+        textPosX_ = x;
+        textPosY_ = y;
     }
 
 #define VERTICIES_PER_QUAD 6
     auto draw( const std::string &string ) -> void {
-        // Смещение квада с i-ым символом, зависит от ширины квадов и зазора между ними
-        float offset{};
-        // Столбец, в котором находится символ
-        int32_t glyph_x{};
-        // Строка, в котором находится символ
-        int32_t glyph_y{};
         // Размер ячейки с символом в долях текстурных координат по горизонтали
-        float tc_gap_x = 1.0f / static_cast<float>( fontColumnCount );
+        float tcGapX = 1.0f / static_cast<float>( fontColumnCount_ );
         // Размер ячейки с символом в долях текстурных координат по вертикали
-        float tc_gap_y = 1.0f / static_cast<float>( fontRowCount );
+        float tcGapY = 1.0f / static_cast<float>( fontRowCount_ );
 
         for ( size_t i{ 0 }; i < string.length(); ++i ) {
-            offset = ( glyph_quad_wdt + glyphGap_ ) * static_cast<float>( i );
+            // Смещение квада с i-ым символом, зависит от ширины квадов и зазора между ними
+            const auto offset = ( glyphQuadWdt_ + glyphGap_ ) * static_cast<float>( i );
 
-            glyph_x = string[i] % fontColumnCount;
-            glyph_y = ( string[i] / fontColumnCount ) - 1;
+            // Столбец, в котором находится символ
+            const auto glyphX = static_cast<float>( string[i] % fontColumnCount_ );
+
+            // Строка, в котором находится символ
+            const auto glyphY = static_cast<float>( ( string[i] / fontColumnCount_ ) - 1 );
 
             // Build character quad vertecies data.
-            const vector3_type topLeftVt = { ( offset + 0.0f ) + text_pos_x, 0.0f + text_pos_y, 0.0f };
-            const vector3_type topRightVt = { ( offset + glyph_quad_wdt ) + text_pos_x, 0.0f + text_pos_y, 0.0f };
+            const vector3_type topLeftVt = { ( offset + 0.0f ) + textPosX_, 0.0f + textPosY_, 0.0f };
+            const vector3_type topRightVt = { ( offset + glyphQuadWdt_ ) + textPosX_, 0.0f + textPosY_, 0.0f };
             const vector3_type bottomRightVt = {
-              ( offset + glyph_quad_wdt ) + text_pos_x, -glyph_quad_hgt + text_pos_y, 0.0f };
-            const vector3_type bottomLeftVt = { ( offset + 0.0f ) + text_pos_x, -glyph_quad_hgt + text_pos_y, 0.0f };
+              ( offset + glyphQuadWdt_ ) + textPosX_, -glyphQuadHgt_ + textPosY_, 0.0f };
+            const vector3_type bottomLeftVt = { ( offset + 0.0f ) + textPosX_, -glyphQuadHgt_ + textPosY_, 0.0f };
 
             // Build character quad texture coordinates data.
             letterQuadsVertecies_[( i * VERTICIES_PER_QUAD ) + 0] = topLeftVt;
@@ -89,10 +87,10 @@ export struct Label final {
             letterQuadsVertecies_[( i * VERTICIES_PER_QUAD ) + 4] = bottomLeftVt;
             letterQuadsVertecies_[( i * VERTICIES_PER_QUAD ) + 5] = topLeftVt;
 
-            const vector2_type topLeftTc{ ( tc_gap_x * glyph_x ) + 0.0f, ( tc_gap_y * glyph_y ) + 0.0f };
-            const vector2_type topRightTc{ ( tc_gap_x * glyph_x ) + tc_gap_x, ( tc_gap_y * glyph_y ) + 0.0f };
-            const vector2_type bottomRightTc{ ( tc_gap_x * glyph_x ) + tc_gap_x, ( tc_gap_y * glyph_y ) + tc_gap_y };
-            const vector2_type bottomLeftTc{ ( tc_gap_x * glyph_x ) + 0.0f, ( tc_gap_y * glyph_y ) + tc_gap_y };
+            const vector2_type topLeftTc{ ( tcGapX * glyphX ) + 0.0f, ( tcGapY * glyphY ) + 0.0f };
+            const vector2_type topRightTc{ ( tcGapX * glyphX ) + tcGapX, ( tcGapY * glyphY ) + 0.0f };
+            const vector2_type bottomRightTc{ ( tcGapX * glyphX ) + tcGapX, ( tcGapY * glyphY ) + tcGapY };
+            const vector2_type bottomLeftTc{ ( tcGapX * glyphX ) + 0.0f, ( tcGapY * glyphY ) + tcGapY };
 
             letterQuadsTexcrds_[( i * VERTICIES_PER_QUAD ) + 0] = topLeftTc;
             letterQuadsTexcrds_[( i * VERTICIES_PER_QUAD ) + 1] = topRightTc;
@@ -160,20 +158,20 @@ private:
     float glyphScale_{ 1.3f };
 #define GLYPH_WIDTH 0.4f
 #define GLYPH_HEIGHT 1.55f
-    float glyph_quad_wdt{ GLYPH_WIDTH * glyphScale_ };
-    float glyph_quad_hgt{ GLYPH_HEIGHT * glyphScale_ };
+    float glyphQuadWdt_{ GLYPH_WIDTH * glyphScale_ };
+    float glyphQuadHgt_{ GLYPH_HEIGHT * glyphScale_ };
 #define GLYPH_GAP 0.0f
     float glyphGap_{ GLYPH_GAP };
 
-    float text_pos_x = { 0.0f };
-    float text_pos_y = { 0.0f };
+    float textPosX_{ 0.0f };
+    float textPosY_{ 0.0f };
 
     // Формат шрифта - изображение TGA с началом сверху слева,
     // 32 столбца на 8 строк символов, первый символ - 32 ("пробел").
     // Размер ячейки с символом получается делением горизонтального и вертикального
     // размера изображения на количество столбцов и строк соответственно.
-    int32_t fontColumnCount{ 32 };  // Количество столбцов символов в шрифте
-    int32_t fontRowCount{ 8 };      // Количество строк символов в шрифте
+    int32_t fontColumnCount_{ 32 };  // Количество столбцов символов в шрифте
+    int32_t fontRowCount_{ 8 };      // Количество строк символов в шрифте
 
     size_t lettersCount_{};
 
