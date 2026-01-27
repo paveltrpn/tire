@@ -155,14 +155,16 @@ struct PipelineUi final : Pipeline {
           .vertexBindingDescriptionCount = bindingDescriptions.size(),
           .pVertexBindingDescriptions = bindingDescriptions.data(),
           .vertexAttributeDescriptionCount = static_cast<uint32_t>( attributeDescriptions.size() ),
-          .pVertexAttributeDescriptions = attributeDescriptions.data() };
+          .pVertexAttributeDescriptions = attributeDescriptions.data(),
+        };
 
         const VkPipelineInputAssemblyStateCreateInfo inputAssembly{
           .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
           .pNext = nullptr,
           .flags = 0,
           .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-          .primitiveRestartEnable = VK_FALSE };
+          .primitiveRestartEnable = VK_FALSE,
+        };
 
         const VkPipelineRasterizationStateCreateInfo rasterizer{
           .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
@@ -177,7 +179,8 @@ struct PipelineUi final : Pipeline {
           .depthBiasConstantFactor = 0.0f,
           .depthBiasClamp = 0.0f,
           .depthBiasSlopeFactor = 0.0f,
-          .lineWidth = 1.0f };
+          .lineWidth = 1.0f,
+        };
 
         const VkPipelineMultisampleStateCreateInfo multisampling{
           .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
@@ -188,18 +191,20 @@ struct PipelineUi final : Pipeline {
           .minSampleShading = 1.0f,
           .pSampleMask = nullptr,
           .alphaToCoverageEnable = VK_FALSE,
-          .alphaToOneEnable = VK_FALSE };
+          .alphaToOneEnable = VK_FALSE,
+        };
 
         const VkPipelineColorBlendAttachmentState colorBlendAttachment{
           .blendEnable = VK_TRUE,
           .srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA,
           .dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
           .colorBlendOp = VK_BLEND_OP_ADD,
-          .srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE,
-          .dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,
-          .alphaBlendOp = VK_BLEND_OP_ADD,
+          .srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA,
+          .dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+          .alphaBlendOp = VK_BLEND_OP_SUBTRACT,
           .colorWriteMask =
-            VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT };
+            VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT,
+        };
 
         const VkPipelineColorBlendStateCreateInfo colorBlending{
           .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
@@ -212,14 +217,18 @@ struct PipelineUi final : Pipeline {
           .blendConstants = { 0.0f, 0.0f, 0.0f, 0.0f } };
 
         const std::vector<VkDynamicState> dynamicStates = {
-          VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR, VK_DYNAMIC_STATE_LINE_WIDTH };
+          VK_DYNAMIC_STATE_VIEWPORT,
+          VK_DYNAMIC_STATE_SCISSOR,
+          VK_DYNAMIC_STATE_LINE_WIDTH,
+        };
 
         const VkPipelineDynamicStateCreateInfo dynamicState{
           .sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
           .pNext = nullptr,
           .flags = 0,
           .dynamicStateCount = static_cast<uint32_t>( dynamicStates.size() ),
-          .pDynamicStates = dynamicStates.data() };
+          .pDynamicStates = dynamicStates.data(),
+        };
 
         VkPipelineViewportStateCreateInfo viewportState{};
         viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -228,7 +237,7 @@ struct PipelineUi final : Pipeline {
 
         VkPipelineDepthStencilStateCreateInfo depthStencil{};
         depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-        depthStencil.depthTestEnable = VK_FALSE;
+        depthStencil.depthTestEnable = VK_TRUE;
         depthStencil.depthWriteEnable = VK_TRUE;
         depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
         depthStencil.depthBoundsTestEnable = VK_FALSE;

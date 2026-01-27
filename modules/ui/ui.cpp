@@ -35,16 +35,19 @@ export struct Ui {
 
         l.setColor( { "white" } );
         l.setGlyphGap( 0.1f );
-        l.setLabelPos( px, py );
+        l.setPos( px, py );
         l.draw( msg );
 
         componentsList_.emplace_front( std::move( l ) );
     }
 
-    auto billboard( float px, float py, float sx, float sy ) -> void {
+    auto billboard( float px, float py, float sx, float sy, float z ) -> void {
         //
         auto b = tire::Billboard{};
 
+        b.setPos( px, py );
+        b.setSize( sx, sy );
+        b.setZ( z );
         b.setColor( { "#ff00001c" } );
         b.draw();
 

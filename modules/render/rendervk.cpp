@@ -93,10 +93,13 @@ export struct RenderVK final {
 
         scene_->camera().update();
 
-        ui_->label( -30.0f, 22.0f, "TEST string" );
+#define LABEL_POS_X -45.f
+#define LABEL_POS_Y 27.0f
+
+        ui_->label( LABEL_POS_X, LABEL_POS_Y, "TEST STRING" );
         const auto seconsString = std::format( "duration = {}", duration );
-        ui_->label( -30.0f, 20.0f, seconsString );
-        ui_->billboard( 0, 0, 0, 0 );
+        ui_->label( LABEL_POS_X, LABEL_POS_Y - 2.0f, seconsString );
+        ui_->billboard( LABEL_POS_X - 2.0f, LABEL_POS_Y + 2.0f, 16.0f, 9.0f, 0.1f );
 
         {
             auto cb = context_->copyBufferCommand();

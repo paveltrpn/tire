@@ -50,7 +50,7 @@ export struct Label final {
         //
     }
 
-    auto setLabelPos( float x, float y ) -> void {
+    auto setPos( float x, float y ) -> void {
         textPosX_ = x;
         textPosY_ = y;
     }

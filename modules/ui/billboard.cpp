@@ -24,18 +24,35 @@ export struct Billboard final {
         color_ = value;
     }
 
+    auto setPos( float px, float py ) -> void {
+        //
+        posX_ = px;
+        posY_ = py;
+    }
+
+    auto setSize( float width, float height ) -> void {
+        //
+        width_ = width;
+        height_ = height;
+    }
+
+    auto setZ( float z ) -> void {
+        //
+        z_ = z;
+    }
+
     auto draw() -> void {
-        const vector3_type topLeftVt = { -10.0f, -10.0f, 0.0f };
-        const vector3_type topRightVt = { 10.0f, -10.0f, 0.0f };
-        const vector3_type bottomRightVt = { 10.0f, 10.0f, 0.0f };
-        const vector3_type bottomLeftVt = { -10.0f, 10.0f, 0.0f };
+        const vector3_type topLeftVt = { posX_, posY_, z_ };
+        const vector3_type topRightVt = { posX_ + width_, posY_, z_ };
+        const vector3_type bottomRightVt = { posX_ + width_, posY_ - height_, z_ };
+        const vector3_type bottomLeftVt = { posX_, posY_ - height_, z_ };
 
         quadVerticies_[0] = topLeftVt;
         quadVerticies_[1] = topRightVt;
         quadVerticies_[2] = bottomRightVt;
-        quadVerticies_[3] = bottomRightVt;
-        quadVerticies_[4] = bottomLeftVt;
-        quadVerticies_[5] = topLeftVt;
+        quadVerticies_[3] = topLeftVt;
+        quadVerticies_[4] = bottomRightVt;
+        quadVerticies_[5] = bottomLeftVt;
 
         const vector2_type topLeftTc{ 0.0f, 0.0f };
         const vector2_type topRightTc{ 1.0f, 0.0f };
@@ -103,6 +120,13 @@ private:
     std::array<vector4_type, JUST_SINGLE_QUAD * VERTICIES_PER_QUAD> quadsColors_{};
 
     Colorf color_{};
+
+    float posX_{ 0.0f };
+    float posY_{ 0.0f };
+    float z_{ 0.0f };
+
+    float width_{ 1.0f };
+    float height_{ 1.0f };
 };
 
 }  // namespace tire
