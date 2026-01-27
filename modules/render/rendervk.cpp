@@ -41,7 +41,7 @@ export struct RenderVK final {
             scene_ = std::make_shared<SceneVK>( basePath.string() + "/assets/m01.json", context_ );
 
             testBox_ = std::make_shared<TestBox>( context_ );
-            testBox_->setPosition( -8.0f, 4.3f, -15.0f );
+            testBox_->setPosition( 8.4f, 4.3f, -15.0f );
 
             // RUN!!!
             run_ = true;
@@ -96,12 +96,12 @@ export struct RenderVK final {
         scene_->camera().update();
 
 #define LABEL_POS_X -45.f
-#define LABEL_POS_Y 27.0f
+#define LABEL_POS_Y 45.0f
 
-        ui_->label( LABEL_POS_X, LABEL_POS_Y, "TEST STRING" );
-        const auto seconsString = std::format( "duration = {}", duration );
-        ui_->label( LABEL_POS_X, LABEL_POS_Y - 2.0f, seconsString );
-        ui_->billboard( LABEL_POS_X - 2.0f, LABEL_POS_Y + 2.0f, 16.0f, 8.0f, -0.1f );
+        ui_->label( LABEL_POS_X, LABEL_POS_Y, "toggle \"g\" for capture cursor" );
+        const auto frameDuration = std::format( "frame duration = {}", duration );
+        ui_->label( LABEL_POS_X, LABEL_POS_Y - 2.0f, frameDuration );
+        ui_->billboard( LABEL_POS_X - 1.0f, LABEL_POS_Y + 1.0f, 19.8f, 6.2f, -0.1f );
 
         {
             auto cb = context_->copyBufferCommand();
