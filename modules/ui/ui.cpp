@@ -48,7 +48,7 @@ export struct Ui {
         b.setPos( px, py );
         b.setSize( sx, sy );
         b.setZ( z );
-        b.setColor( { "#ff00001c" } );
+        b.setColor( { "#b852ac33" } );
         b.draw();
 
         componentsList_.emplace_front( std::move( b ) );

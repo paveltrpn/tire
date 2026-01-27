@@ -67,12 +67,12 @@ export struct Billboard final {
         quadTexcrds_[5] = topLeftTc;
 
         const vector4_type color = color_.asVector4f();
-        quadsColors_[0] = vector4f{ 1.0, 0.0, 0.0, 0.5 };  //color;
-        quadsColors_[1] = vector4f{ 1.0, 0.0, 0.0, 0.5 };  //color;
-        quadsColors_[2] = vector4f{ 1.0, 0.0, 0.0, 0.5 };  //color;
-        quadsColors_[3] = vector4f{ 1.0, 0.0, 0.0, 0.5 };  //color;
-        quadsColors_[4] = vector4f{ 1.0, 0.0, 0.0, 0.5 };  //color;
-        quadsColors_[5] = vector4f{ 1.0, 0.0, 0.0, 0.5 };  //color;
+        quadsColors_[0] = color;
+        quadsColors_[1] = color;
+        quadsColors_[2] = color;
+        quadsColors_[3] = color;
+        quadsColors_[4] = color;
+        quadsColors_[5] = color;
     }
 
 #define VERTICIES_PER_QUAD 6

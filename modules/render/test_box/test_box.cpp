@@ -32,7 +32,7 @@ export struct TestBox final {
 
     auto draw( const VkCommandBuffer cb, float duration ) -> void {
         // =================================
-        auto offset = algebra::translate( -8.5f, 4.5f, -15.0f );
+        auto offset = algebra::translate( position_ );
         offset.transpose_self();
 
         const auto [width, height] = context_->currentExtent();
@@ -58,6 +58,16 @@ export struct TestBox final {
         vkCmdDraw( cb, 36, 3, 0, 0 );
     }
 
+    auto setPosition( float x, float y, float z ) -> void {
+        //
+        position_ = algebra::vector3f{ x, y, z };
+    }
+
+    auto setPosition( algebra::vector3f p ) -> void {
+        //
+        position_ = p;
+    }
+
     auto clean() -> void {
         //
     };
@@ -65,6 +75,8 @@ export struct TestBox final {
 private:
     const Context *context_;
     std::unique_ptr<Pipeline> pipeline_{};
+
+    algebra::vector3f position_{ 0.0, 0.0, 0.0 };
 
     float angle_{};
 };

@@ -167,24 +167,6 @@ export struct UiVK final : tire::Ui {
         vkCmdPushConstants( cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( float ) * 4, &v );
 
         {
-            // Pass enable texture flag.
-            const auto f = std::array<uint32_t, 4>{ 1, 0, 0, 0 };
-            vkCmdPushConstants(
-              cb, pipeline_->layout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof( float ) * 4, sizeof( uint32_t ) * 4, &f );
-
-            auto vbo = labelBuffer_.vBuf_.deviceBuffer();
-            auto tbo = labelBuffer_.tBuf_.deviceBuffer();
-            auto cbo = labelBuffer_.cBuf_.deviceBuffer();
-
-            std::array<VkBuffer, 3> vertexBuffers = { vbo, tbo, cbo };
-            std::array<VkDeviceSize, 3> offsets = { 0, 0, 0 };
-
-            vkCmdBindVertexBuffers( cb, 0, vertexBuffers.size(), vertexBuffers.data(), offsets.data() );
-
-            vkCmdDraw( cb, labelBuffer_.primitievsCount_, 3, 0, 0 );
-        }
-
-        {
             // Pass disable texture flag.
             const auto f = std::array<uint32_t, 4>{ 0, 0, 0, 0 };
             vkCmdPushConstants(
@@ -200,6 +182,24 @@ export struct UiVK final : tire::Ui {
             vkCmdBindVertexBuffers( cb, 0, vertexBuffers.size(), vertexBuffers.data(), offsets.data() );
 
             vkCmdDraw( cb, billboardBuffer_.primitievsCount_, 3, 0, 0 );
+        }
+
+        {
+            // Pass enable texture flag.
+            const auto f = std::array<uint32_t, 4>{ 1, 0, 0, 0 };
+            vkCmdPushConstants(
+              cb, pipeline_->layout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof( float ) * 4, sizeof( uint32_t ) * 4, &f );
+
+            auto vbo = labelBuffer_.vBuf_.deviceBuffer();
+            auto tbo = labelBuffer_.tBuf_.deviceBuffer();
+            auto cbo = labelBuffer_.cBuf_.deviceBuffer();
+
+            std::array<VkBuffer, 3> vertexBuffers = { vbo, tbo, cbo };
+            std::array<VkDeviceSize, 3> offsets = { 0, 0, 0 };
+
+            vkCmdBindVertexBuffers( cb, 0, vertexBuffers.size(), vertexBuffers.data(), offsets.data() );
+
+            vkCmdDraw( cb, labelBuffer_.primitievsCount_, 3, 0, 0 );
         }
     }
 

@@ -122,7 +122,7 @@ struct PipelineUi final : Pipeline {
         };
 
         std::array<VkVertexInputBindingDescription, 3> bindingDescriptions{
-          vericiesBindingDescription, texcrdsBindingDescription, texcrdsBindingDescription };
+          vericiesBindingDescription, texcrdsBindingDescription, vclrsBindingDescription };
 
         const auto verticiesInputAttrDesc = VkVertexInputAttributeDescription{
           .location = 0,
@@ -201,7 +201,7 @@ struct PipelineUi final : Pipeline {
           .colorBlendOp = VK_BLEND_OP_ADD,
           .srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA,
           .dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
-          .alphaBlendOp = VK_BLEND_OP_SUBTRACT,
+          .alphaBlendOp = VK_BLEND_OP_ADD,
           .colorWriteMask =
             VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT,
         };
@@ -230,22 +230,24 @@ struct PipelineUi final : Pipeline {
           .pDynamicStates = dynamicStates.data(),
         };
 
-        VkPipelineViewportStateCreateInfo viewportState{};
-        viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-        viewportState.viewportCount = 1;
-        viewportState.scissorCount = 1;
+        const auto viewportState = VkPipelineViewportStateCreateInfo{
+          .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+          .viewportCount = 1,
+          .scissorCount = 1,
+        };
 
-        VkPipelineDepthStencilStateCreateInfo depthStencil{};
-        depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-        depthStencil.depthTestEnable = VK_TRUE;
-        depthStencil.depthWriteEnable = VK_TRUE;
-        depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
-        depthStencil.depthBoundsTestEnable = VK_FALSE;
-        depthStencil.minDepthBounds = 0.0f;
-        depthStencil.maxDepthBounds = 1.0f;
-        depthStencil.stencilTestEnable = VK_FALSE;
-        depthStencil.front = {};
-        depthStencil.back = {};
+        const auto depthStencil = VkPipelineDepthStencilStateCreateInfo{
+          .sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+          .depthTestEnable = VK_FALSE,
+          .depthWriteEnable = VK_TRUE,
+          .depthCompareOp = VK_COMPARE_OP_LESS,
+          .depthBoundsTestEnable = VK_FALSE,
+          .stencilTestEnable = VK_FALSE,
+          .front = {},
+          .back = {},
+          .minDepthBounds = 0.0f,
+          .maxDepthBounds = 1.0f,
+        };
 
         // =============================================================================
 

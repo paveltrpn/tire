@@ -39,7 +39,9 @@ export struct RenderVK final {
 
             ui_ = std::make_shared<UiVK>( context_ );
             scene_ = std::make_shared<SceneVK>( basePath.string() + "/assets/m01.json", context_ );
+
             testBox_ = std::make_shared<TestBox>( context_ );
+            testBox_->setPosition( -8.0f, 4.3f, -15.0f );
 
             // RUN!!!
             run_ = true;
@@ -99,7 +101,7 @@ export struct RenderVK final {
         ui_->label( LABEL_POS_X, LABEL_POS_Y, "TEST STRING" );
         const auto seconsString = std::format( "duration = {}", duration );
         ui_->label( LABEL_POS_X, LABEL_POS_Y - 2.0f, seconsString );
-        ui_->billboard( LABEL_POS_X - 2.0f, LABEL_POS_Y + 2.0f, 16.0f, 9.0f, 0.1f );
+        ui_->billboard( LABEL_POS_X - 2.0f, LABEL_POS_Y + 2.0f, 16.0f, 8.0f, -0.1f );
 
         {
             auto cb = context_->copyBufferCommand();
