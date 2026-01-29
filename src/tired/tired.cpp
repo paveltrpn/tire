@@ -2,6 +2,7 @@
 #include <vsg/app/Viewer.h>
 
 #include <iostream>
+#include <print>
 
 #ifdef vsgXchange_FOUND
 #include <vsgXchange/all.h>
@@ -79,8 +80,13 @@ auto Tired::initWindow( vsg::ref_ptr<vsg::WindowTraits> traits, QWindow* parent 
     // compute the bounds of the scene graph to help position camera
     vsg::ComputeBounds computeBounds;
     theRoot_->accept( computeBounds );
-    vsg::dvec3 centre = ( computeBounds.bounds.min + computeBounds.bounds.max ) * 0.8;
-    double radius = vsg::length( computeBounds.bounds.max - computeBounds.bounds.min ) * 0.6;
+    // vsg::dvec3 centre = ( computeBounds.bounds.min + computeBounds.bounds.max ) * 0.8;
+    auto centre = vsg::dvec3{ -120.11600000000035, 120.31199999999954, 2284 };
+    // double radius = vsg::length( computeBounds.bounds.max - computeBounds.bounds.min ) * 0.6;
+    double radius = 8366.0;
+
+    std::println( "{} {} {}", centre.x, centre.y, centre.z );
+
     double nearFarRatio = 0.001;
 
     uint32_t width = window->traits->width;

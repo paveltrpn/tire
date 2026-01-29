@@ -61,32 +61,11 @@ int main( int argc, char* argv[] ) {
 
     // Main objects initialization.
     auto tired = std::make_unique<tired::Tired>();
-    auto tiredUi = std::make_unique<tired::TiredUi>( tired.get() );
+    auto tiredUi = std::make_unique<tired::TiredUi>( tired.get(), filename, options );
     // ============================
 
-    tired->loadTestScene( filename, options );
-
-    auto* mainWindow = new QMainWindow{};
-    auto* centralWidget = new QWidget{ mainWindow };
-    mainWindow->setCentralWidget( centralWidget );
-
-    auto* layout = new QHBoxLayout( mainWindow );
-    centralWidget->setLayout( layout );
-    layout->setContentsMargins( 0, 0, 0, 0 );
-    layout->setSpacing( 0 );
-
-    mainWindow->setGeometry( windowTraits->x, windowTraits->y, windowTraits->width, windowTraits->height );
-
-    auto vsgWindow = tired->initWindow( windowTraits, nullptr );
-    auto vsgWidget = QWidget::createWindowContainer( vsgWindow, mainWindow );
-
     tired->viewerCompile( interval, continuousUpdate );
-
-    layout->addWidget( tiredUi->leftPanelWidget(), 3 );
-    layout->addWidget( vsgWidget, 11 );
-    layout->addWidget( tiredUi->rightPanelWidget(), 1 );
-
-    mainWindow->show();
+    tiredUi->show();
 
     return application.exec();
 }

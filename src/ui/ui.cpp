@@ -1,9 +1,11 @@
 
+#include <QHBoxLayout>
+
 #include "ui.h"
 
 namespace tired {
 
-TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
+TiredUi::TiredUi( tired::Tired *tired, vsg::Path filename, vsg::ref_ptr<vsg::Options> options, QObject *parent )
     : tired_{ tired }
     , engine_{ new QQmlEngine{ this } }
     , context_{ engine_->rootContext() }
@@ -23,6 +25,37 @@ TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
     rightPanel_->setResizeMode( QQuickWidget::SizeRootObjectToView );
 
     rightPanel_->setStyleSheet( "border: none;" );
+
+    centralWidget_ = new QWidget{ this };
+    setCentralWidget( centralWidget_ );
+
+    auto *layout = new QHBoxLayout( this );
+    centralWidget_->setLayout( layout );
+    layout->setContentsMargins( 0, 0, 0, 0 );
+    layout->setSpacing( 0 );
+
+    setGeometry( 0, 0, 1920, 1080 );
+
+    auto windowTraits = vsg::WindowTraits::create();
+    windowTraits->windowTitle = "vsgQt viewer";
+    // windowTraits->debugLayer = arguments.read( { "--debug", "-d" } );
+    // windowTraits->apiDumpLayer = arguments.read( { "--api", "-a" } );
+
+    // windowTraits->samples
+    windowTraits->width = 1920;
+    windowTraits->height = 1080;
+
+    tired->loadTestScene( filename, options );
+
+    auto vsgWindow = tired->initWindow( windowTraits, nullptr );
+    auto vsgWidget = QWidget::createWindowContainer( vsgWindow, this );
+
+    bool continuousUpdate = false;  //!arguments.read( { "--event-driven", "--ed" } );
+    auto interval = 8;              // arguments.value<int>( 8, "--interval" );
+
+    layout->addWidget( leftPanelWidget(), 3 );
+    layout->addWidget( vsgWidget, 11 );
+    layout->addWidget( rightPanelWidget(), 1 );
 
     // setAttribute( Qt::WA_TranslucentBackground );
     // setClearColor( Qt::transparent );
