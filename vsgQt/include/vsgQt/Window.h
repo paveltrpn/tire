@@ -13,7 +13,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 </editor-fold> */
 
 //#include <QVulkanInstance>
-#include <QWindow>
+#include <QQuickView>
 
 #include <vsg/app/Window.h>
 
@@ -23,7 +23,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 namespace vsgQt
 {
 
-    class VSGQT_DECLSPEC Window : public QWindow
+    class VSGQT_DECLSPEC Window : public QQuickView
     {
     public:
         Window(QScreen* targetScreen = nullptr);

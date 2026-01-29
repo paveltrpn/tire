@@ -60,6 +60,7 @@ void Viewer::request()
 
 void Viewer::render(double simulationTime)
 {
+
     if (!continuousUpdate && requests.load() == 0)
     {
         //vsg::info("render() no render : requests = ", requests.load());

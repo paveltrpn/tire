@@ -20,7 +20,7 @@ vsg_setup_dir_vars()
 vsg_setup_build_vars()
 
 # if Qt5 then we need 5.10 or later
-find_package(${QT_PACKAGE_NAME} COMPONENTS Widgets REQUIRED)
+find_package(${QT_PACKAGE_NAME} COMPONENTS Gui Core Widgets Quick QuickWidgets QuickControls2 Qml REQUIRED)
 
 vsg_add_target_clang_format(
     FILES

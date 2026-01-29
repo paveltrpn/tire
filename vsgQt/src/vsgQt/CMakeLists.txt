@@ -68,6 +68,10 @@ target_include_directories(vsgQt
 target_link_libraries(vsgQt
     PUBLIC
         ${QT_PACKAGE_NAME}::Widgets
+        ${QT_PACKAGE_NAME}::Quick
+        ${QT_PACKAGE_NAME}::QuickWidgets
+        ${QT_PACKAGE_NAME}::QuickControls2
+        ${QT_PACKAGE_NAME}::Qml
         vsg::vsg
 )
 

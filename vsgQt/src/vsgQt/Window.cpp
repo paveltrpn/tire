@@ -35,7 +35,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 using namespace vsgQt;
 
 Window::Window(QScreen* targetScreen) :
-    QWindow(targetScreen),
+    QQuickView(),
     traits(vsg::WindowTraits::create()),
     keyboardMap(KeyboardMap::create())
 {
@@ -46,7 +46,7 @@ Window::Window(QScreen* targetScreen) :
 }
 
 Window::Window(QWindow* parent) :
-    QWindow(parent),
+    QQuickView(parent),
     traits(vsg::WindowTraits::create()),
     keyboardMap(KeyboardMap::create())
 {
@@ -57,7 +57,7 @@ Window::Window(QWindow* parent) :
 }
 
 Window::Window(vsg::ref_ptr<vsg::WindowTraits> in_traits, QScreen* targetScreen) :
-    QWindow(targetScreen),
+    QQuickView(),
     keyboardMap(KeyboardMap::create())
 {
     if (in_traits)
@@ -76,7 +76,7 @@ Window::Window(vsg::ref_ptr<vsg::WindowTraits> in_traits, QScreen* targetScreen)
 }
 
 Window::Window(vsg::ref_ptr<vsg::WindowTraits> in_traits, QWindow* parent) :
-    QWindow(parent),
+    QQuickView(),
     keyboardMap(KeyboardMap::create())
 {
     if (in_traits)
@@ -95,7 +95,7 @@ Window::Window(vsg::ref_ptr<vsg::WindowTraits> in_traits, QWindow* parent) :
 }
 
 Window::Window(vsg::ref_ptr<vsgQt::Viewer> in_viewer, vsg::ref_ptr<vsg::WindowTraits> in_traits, QScreen* targetScreen) :
-    QWindow(targetScreen),
+    QQuickView(),
     viewer(in_viewer),
     keyboardMap(KeyboardMap::create())
 {
@@ -115,10 +115,12 @@ Window::Window(vsg::ref_ptr<vsgQt::Viewer> in_viewer, vsg::ref_ptr<vsg::WindowTr
 }
 
 Window::Window(vsg::ref_ptr<vsgQt::Viewer> in_viewer, vsg::ref_ptr<vsg::WindowTraits> in_traits, QWindow* parent) :
-    QWindow(parent),
+    QQuickView(parent),
     viewer(in_viewer),
     keyboardMap(KeyboardMap::create())
 {
+    setSource(QUrl::fromLocalFile("../src/qml/Main.qml"));
+
     if (in_traits)
     {
         traits = vsg::WindowTraits::create(*in_traits);
@@ -185,6 +187,7 @@ void Window::cleanup()
 
 bool Window::event(QEvent* e)
 {
+    /*
     switch (e->type())
     {
     case QEvent::PlatformSurface: {
@@ -202,7 +205,7 @@ bool Window::event(QEvent* e)
     default:
         break;
     }
-
+*/
     return QWindow::event(e);
 }
 
@@ -213,7 +216,7 @@ void Window::exposeEvent(QExposeEvent* /*e*/)
         initializeWindow();
     }
 
-    if (viewer) viewer->request();
+    // if (viewer) viewer->request();
 }
 
 void Window::hideEvent(QHideEvent* /*e*/)
@@ -229,7 +232,7 @@ void Window::resizeEvent(QResizeEvent* /*e*/)
 
     windowAdapter->resize();
 
-    if (viewer) viewer->request();
+    //if (viewer) viewer->request();
 }
 
 void Window::keyPressEvent(QKeyEvent* e)
@@ -245,7 +248,7 @@ void Window::keyPressEvent(QKeyEvent* e)
         windowAdapter->bufferedEvents.push_back(vsg::KeyPressEvent::create(windowAdapter, event_time, keySymbol, modifiedKeySymbol, keyModifier));
     }
 
-    if (viewer) viewer->request();
+    //if (viewer) viewer->request();
 }
 
 void Window::keyReleaseEvent(QKeyEvent* e)
@@ -261,7 +264,7 @@ void Window::keyReleaseEvent(QKeyEvent* e)
         windowAdapter->bufferedEvents.push_back(vsg::KeyReleaseEvent::create(windowAdapter, event_time, keySymbol, modifiedKeySymbol, keyModifier));
     }
 
-    if (viewer) viewer->request();
+    //if (viewer) viewer->request();
 }
 
 void Window::mouseMoveEvent(QMouseEvent* e)
@@ -275,7 +278,7 @@ void Window::mouseMoveEvent(QMouseEvent* e)
 
     windowAdapter->bufferedEvents.push_back(vsg::MoveEvent::create(windowAdapter, event_time, x, y, mask));
 
-    if (viewer) viewer->request();
+    //if (viewer) viewer->request();
 }
 
 void Window::mousePressEvent(QMouseEvent* e)
@@ -289,7 +292,7 @@ void Window::mousePressEvent(QMouseEvent* e)
 
     windowAdapter->bufferedEvents.push_back(vsg::ButtonPressEvent::create(windowAdapter, event_time, x, y, mask, button));
 
-    if (viewer) viewer->request();
+    //if (viewer) viewer->request();
 }
 
 void Window::mouseReleaseEvent(QMouseEvent* e)
@@ -313,7 +316,7 @@ void Window::wheelEvent(QWheelEvent* e)
     vsg::clock::time_point event_time = vsg::clock::now();
     windowAdapter->bufferedEvents.push_back(vsg::ScrollWheelEvent::create(windowAdapter, event_time, e->angleDelta().y() < 0 ? vsg::vec3(0.0f, -1.0f, 0.0f) : vsg::vec3(0.0f, 1.0f, 0.0f)));
 
-    if (viewer) viewer->request();
+    //if (viewer) viewer->request();
 }
 
 std::pair<vsg::ButtonMask, uint32_t> Window::convertMouseButtons(QMouseEvent* e) const
