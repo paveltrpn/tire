@@ -78,23 +78,22 @@ set_target_properties(${PROJECT_NAME} PROPERTIES AUTOMOC TRUE)
 
 target_link_libraries(${PROJECT_NAME}
     xcb
-    vsgQt 
-    vsg 
+    vsgQt
+    vsg
     vsgXchange
-    vulkan 
+    vulkan
     GenericCodeGen
     glslang
     glslang-default-resource-limits
     MachineIndependent
     OSDependent
     SPIRV-Tools-opt
-    SPIRV-Tools 
-    SPIRV-Tools-diff 
+    SPIRV-Tools
+    SPIRV-Tools-diff
     SPIRV-Tools-link
     SPIRV-Tools-lint
     SPIRV-Tools-reduce
-    SPIRV-Tools-shared
-    SPIRV 
+    SPIRV
     Qt::Core
     Qt::Gui
     Qt6::GuiPrivate
