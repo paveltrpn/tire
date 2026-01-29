@@ -12,6 +12,10 @@ Item {
     width: 512
     height: 512
 
+    Component.onCompleted: {
+        console.log("qml loaded")
+    }
+
     Rectangle {
         anchors {
             centerIn: parent

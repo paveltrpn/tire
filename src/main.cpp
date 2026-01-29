@@ -6,6 +6,7 @@
 
 #include <iostream>
 
+#include <QVBoxLayout>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
 
@@ -110,7 +111,13 @@ int main( int argc, char* argv[] ) {
         return 1;
     }
 
-    auto* mainWindow = new tired::MainWindow{};
+    auto* mainWindow = new QMainWindow{};
+
+    auto* qmlScene = new tired::MainWindow{};
+    QWidget* quickWidget = QWidget::createWindowContainer( qmlScene );
+    // QVBoxLayout* layout = new QVBoxLayout( mainWindow );
+    auto* layout = mainWindow->layout();
+    layout->addWidget( quickWidget );
 
     // create the viewer that will manage all the rendering of the views
     auto viewer = vsgQt::Viewer::create();

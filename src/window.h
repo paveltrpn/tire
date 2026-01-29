@@ -2,15 +2,14 @@
 #pragma once
 
 #include <QtWidgets/QMainWindow>
-#include <QtQuickWidgets/QQuickWidget>
+#include <QQuickView>
 
 namespace tired {
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QQuickView {
     Q_OBJECT
 public:
-    MainWindow(QWidget *parent = nullptr) ;
+    MainWindow( QWidget *parent = nullptr );
 };
 
-}
+}  // namespace tired
