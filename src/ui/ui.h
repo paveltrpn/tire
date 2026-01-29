@@ -6,6 +6,8 @@
 #include <QQuickView>
 #include <QQuickWidget>
 
+#include "appearance.h"
+
 namespace tired {
 
 struct TiredUi final : QObject {
@@ -17,8 +19,13 @@ public:
     auto rightPanelWidget() const -> QQuickWidget *;
 
 private:
+    QQmlEngine *engine_;
+    QQmlContext *context_;
+
     std::shared_ptr<QQuickWidget> leftPanel_{};
     std::shared_ptr<QQuickWidget> rightPanel_{};
+
+    Appearance *theme_;
 };
 
 }  // namespace tired

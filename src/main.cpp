@@ -133,7 +133,7 @@ int main( int argc, char* argv[] ) {
     auto tiredUi = std::make_unique<tired::TiredUi>();
 
     layout->addWidget( tiredUi->leftPanelWidget(), 3 );
-    layout->addWidget( vsgWidget, 5 );
+    layout->addWidget( vsgWidget, 11 );
     layout->addWidget( tiredUi->rightPanelWidget(), 1 );
 
     mainWindow->setCentralWidget( centralWidget );

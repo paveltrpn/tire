@@ -5,15 +5,21 @@ import Qt5Compat.GraphicalEffects
 import Qt.labs.lottieqt 1.0
 
 import Tire 1.0
-import "components"
+import "../components"
 
 Rectangle {
-    id: mainWindow
+    id: servicesInfoComponent
 
     readonly property var _fonts: Appearence.fonts
     readonly property var _gaps: Appearence.gaps
     readonly property var _radius: Appearence.radius
     readonly property var _color: Appearence.colors
 
-    color: _color.background
+    width: 128
+    height: 512
+
+    z: parent.z
+
+    radius: _radius.half
+    color: _color.background_additional_40
 }
