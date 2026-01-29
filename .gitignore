@@ -1,0 +1,9 @@
+build/
+.vscode/
+.qtcreator/
+CMakeLists.txt.user
+assets/shaders/spirv/*.spv
+*.cap
+*.foz
+tmp/*
+settings.ini
