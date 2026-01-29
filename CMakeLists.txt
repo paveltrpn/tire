@@ -27,6 +27,14 @@ else()
     message(SEND_ERROR "vsg_DIR is not set")
 endif()
 
+if (DEFINED ENV{vsgqt_DIR} AND NOT "$ENV{vsgqt_DIR}" STREQUAL "")
+    message( "vsgqt_DIR is set to $ENV{vsgqt_DIR}")
+    include_directories($ENV{vsgqt_DIR}/include)
+    link_directories($ENV{vsgqt_DIR}/lib)
+else()
+    message(SEND_ERROR "vsgqt_DIR is not set")
+endif()
+
 if (DEFINED ENV{vsgXchange_DIR} AND NOT "$ENV{vsgXchange_DIR}" STREQUAL "")
     message( "vsgXchange_DIR is set to $ENV{vsgXchange_DIR}")
     include_directories($ENV{vsgXchange_DIR}/include)
@@ -42,9 +50,6 @@ if (DEFINED ENV{glslang_DIR} AND NOT "$ENV{glslang_DIR}" STREQUAL "")
 else()
     message(SEND_ERROR "glslang_DIR is not set")
 endif()
-
-include_directories(vsgQt/include)
-link_directories(vsgQt/build)
 
 set(QT_VERSION 6.10)
 list(APPEND CMAKE_PREFIX_PATH $ENV{LOCAL_LATEST_QT})
@@ -64,10 +69,6 @@ if (vsgXchange_FOUND)
     target_compile_definitions(${PROJECT_NAME} PRIVATE vsgXchange_FOUND)
     target_link_libraries(${PROJECT_NAME} vsgXchange::vsgXchange)
 endif()
-
-# install(TARGETS vsgqtviewer DESTINATION bin)
-
-add_subdirectory(vsgQt)
 
 file(GLOB MAIN_APP "src/*.cpp" "src/*.h")
 add_executable(${PROJECT_NAME} ${MAIN_APP})

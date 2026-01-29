@@ -7,3 +7,4 @@ assets/shaders/spirv/*.spv
 *.foz
 tmp/*
 settings.ini
+models/

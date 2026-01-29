@@ -6,9 +6,9 @@
 
 #include <iostream>
 
-#include <QVBoxLayout>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
+#include <QVBoxLayout>
 
 #include <vsgQt/Window.h>
 
@@ -121,6 +121,17 @@ int main( int argc, char* argv[] ) {
     auto widget = QWidget::createWindowContainer( window, mainWindow );
 
     mainWindow->setCentralWidget( widget );
+
+    auto* qmlView = new tired::MainWindow{};
+    QWidget* qmlContainer = QWidget::createWindowContainer( qmlView, mainWindow, Qt::Widget );
+    qmlContainer->setGeometry( QRect{ 0, 0, 512, mainWindow->height() } );
+
+    auto layout = mainWindow->layout();
+    QWidget* centralWidget = new QWidget( mainWindow );
+    QVBoxLayout* boxLayout = new QVBoxLayout( centralWidget );
+    // boxLayout->addWidget( qmlContainer );
+    // boxLayout->addStretch();
+    // layout->addItem( boxLayout );
 
     mainWindow->setGeometry( windowTraits->x, windowTraits->y, windowTraits->width, windowTraits->height );
 
