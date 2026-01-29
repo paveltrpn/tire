@@ -9,7 +9,7 @@ import "components"
 import "info"
 
 Rectangle {
-    id: mainWindow
+    id: leftPanelMainComponent
 
     readonly property var _fonts: Appearence.fonts
     readonly property var _gaps: Appearence.gaps
@@ -19,10 +19,10 @@ Rectangle {
     color: _color.background
 
     Item {
-        id: mainUiComponentBackground
+        id: leftPanelComponentBackground
 
-        width: mainWindow.width
-        height: mainWindow.height
+        width: leftPanelMainComponent.width
+        height: leftPanelMainComponent.height
 
         property bool isUiHidden: hidePanelButtom.checked
 
@@ -38,14 +38,14 @@ Rectangle {
             anchors {
                 left: parent.left
                 top: parent.top
-                topMargin: mainWindow._gaps.half
+                topMargin: leftPanelMainComponent._gaps.half
             }
 
             width: 40
 
-            color: mainWindow._color.background_additional_40
-            topRightRadius: mainWindow._radius.half
-            bottomRightRadius: mainWindow._radius.half
+            color: leftPanelMainComponent._color.background_additional_40
+            topRightRadius: leftPanelMainComponent._radius.half
+            bottomRightRadius: leftPanelMainComponent._radius.half
             topLeftRadius: 0
             bottomLeftRadius: 0
 
@@ -53,7 +53,7 @@ Rectangle {
                 id: hidePanelButtom
                 anchors {
                     top: parent.top
-                    topMargin: mainWindow._gaps.half
+                    topMargin: leftPanelMainComponent._gaps.half
                     horizontalCenter: parent.horizontalCenter
                 }
 
@@ -67,7 +67,7 @@ Rectangle {
                 id: closeButton
                 anchors {
                     bottom: parent.bottom
-                    bottomMargin: mainWindow._gaps.half
+                    bottomMargin: leftPanelMainComponent._gaps.half
                     horizontalCenter: parent.horizontalCenter
                 }
                 icon.source: "icons/power.svg"
@@ -78,14 +78,14 @@ Rectangle {
 
             states: [
                 State {
-                    when: mainUiComponentBackground.isUiHidden
+                    when: leftPanelComponentBackground.isUiHidden
                     PropertyChanges {
                         target: mainLeftPanel
                         height: hidePanelButtom.height + closeButton.height + 8 * 3
                     }
                 },
                 State {
-                    when: !mainUiComponentBackground.isUiHidden
+                    when: !leftPanelComponentBackground.isUiHidden
                     PropertyChanges {
                         target: mainLeftPanel
                         height: parent.height - 16
@@ -100,14 +100,14 @@ Rectangle {
                     left: parent.left
                     right: parent.right
                     top: hidePanelButtom.bottom
-                    topMargin: mainWindow._gaps.half
+                    topMargin: leftPanelMainComponent._gaps.half
                     bottom: closeButton.top
-                    bottomMargin: mainWindow._gaps.half
+                    bottomMargin: leftPanelMainComponent._gaps.half
                 }
 
                 color: "transparent"
 
-                visible: !mainUiComponentBackground.isUiHidden
+                visible: !leftPanelComponentBackground.isUiHidden
 
                 NpButton {
                     id: showInfo
@@ -131,18 +131,18 @@ Rectangle {
                 top: mainLeftPanel.top
                 bottom: mainLeftPanel.bottom
                 left: mainLeftPanel.right
-                right: mainUiComponentBackground.right
-                rightMargin: mainWindow._gaps.half
+                right: leftPanelComponentBackground.right
+                rightMargin: leftPanelMainComponent._gaps.half
             }
 
-            visible: showInfo.checked && !mainUiComponentBackground.isUiHidden
+            visible: showInfo.checked && !leftPanelComponentBackground.isUiHidden
 
             Services {
                 id: servicesInfoWidget
                 anchors {
                     top: parent.top
                     left: parent.left
-                    leftMargin: mainWindow._gaps.half
+                    leftMargin: leftPanelMainComponent._gaps.half
                     right: parent.right
                 }
             }

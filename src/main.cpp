@@ -5,6 +5,7 @@
 #endif
 
 #include <iostream>
+#include <print>
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
@@ -52,7 +53,7 @@ int main( int argc, char* argv[] ) {
     }
 
     if ( argc <= 1 ) {
-        std::cout << "Please specify a 3d model or image file on the command line." << std::endl;
+        std::println( "Please specify a 3d model or image file on the command line." );
         return 1;
     }
 
@@ -60,12 +61,14 @@ int main( int argc, char* argv[] ) {
 
     // Main objects initialization.
     auto tired = std::make_unique<tired::Tired>();
-    auto tiredUi = std::make_unique<tired::TiredUi>();
+    auto tiredUi = std::make_unique<tired::TiredUi>( tired.get() );
+    // ============================
 
     tired->loadTestScene( filename, options );
 
     auto* mainWindow = new QMainWindow{};
     auto* centralWidget = new QWidget{ mainWindow };
+    mainWindow->setCentralWidget( centralWidget );
 
     auto* layout = new QHBoxLayout( mainWindow );
     centralWidget->setLayout( layout );
@@ -77,15 +80,13 @@ int main( int argc, char* argv[] ) {
     auto vsgWindow = tired->initWindow( windowTraits, nullptr );
     auto vsgWidget = QWidget::createWindowContainer( vsgWindow, mainWindow );
 
+    tired->viewerCompile( interval, continuousUpdate );
+
     layout->addWidget( tiredUi->leftPanelWidget(), 3 );
     layout->addWidget( vsgWidget, 11 );
     layout->addWidget( tiredUi->rightPanelWidget(), 1 );
 
-    mainWindow->setCentralWidget( centralWidget );
-
     mainWindow->show();
-
-    tired->viewerCompile( interval, continuousUpdate );
 
     return application.exec();
 }

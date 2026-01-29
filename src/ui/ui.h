@@ -7,18 +7,21 @@
 #include <QQuickWidget>
 
 #include "appearance.h"
+#include "tired/tired.h"
 
 namespace tired {
 
 struct TiredUi final : QObject {
     Q_OBJECT
 public:
-    TiredUi( QObject *parent = nullptr );
+    TiredUi( tired::Tired *tired, QObject *parent = nullptr );
 
     auto leftPanelWidget() const -> QQuickWidget *;
     auto rightPanelWidget() const -> QQuickWidget *;
 
 private:
+    tired::Tired *tired_{};
+
     QQmlEngine *engine_;
     QQmlContext *context_;
 

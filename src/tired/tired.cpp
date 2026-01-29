@@ -62,6 +62,7 @@ auto Tired::loadTestScene( vsg::Path filename, vsg::ref_ptr<vsg::Options> option
 }
 
 Q_INVOKABLE void Tired::setCameraToBounds() {
+    qDebug() << "first call";
 }
 
 auto Tired::initWindow( vsg::ref_ptr<vsg::WindowTraits> traits, QWindow* parent ) -> vsgQt::Window* {

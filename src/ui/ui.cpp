@@ -3,8 +3,9 @@
 
 namespace tired {
 
-TiredUi::TiredUi( QObject *parent )
-    : engine_{ new QQmlEngine{ this } }
+TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
+    : tired_{ tired }
+    , engine_{ new QQmlEngine{ this } }
     , context_{ engine_->rootContext() }
     , leftPanel_{ new QQuickWidget{ engine_, nullptr } }
     , rightPanel_{ new QQuickWidget{ engine_, nullptr } }
@@ -13,6 +14,7 @@ TiredUi::TiredUi( QObject *parent )
 
     // Pass Appearence object pointer to qml.
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Appearence", theme_ );
+    qmlRegisterSingletonInstance( "Tire", 1, 0, "Tired", tired_ );
 
     leftPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/LeftPanel.qml" ) );
     leftPanel_->setResizeMode( QQuickWidget::SizeRootObjectToView );
