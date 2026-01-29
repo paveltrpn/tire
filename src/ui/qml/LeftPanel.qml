@@ -37,21 +37,23 @@ Rectangle {
 
             anchors {
                 left: parent.left
-                leftMargin: 16
                 top: parent.top
-                topMargin: 16
+                topMargin: mainWindow._gaps.half
             }
 
-            width: 56
+            width: 40
 
-            color: _color.background_additional_40
-            radius: 8
+            color: mainWindow._color.background_additional_40
+            topRightRadius: mainWindow._radius.half
+            bottomRightRadius: mainWindow._radius.half
+            topLeftRadius: 0
+            bottomLeftRadius: 0
 
             NpButton {
                 id: hidePanelButtom
                 anchors {
                     top: parent.top
-                    topMargin: 8
+                    topMargin: mainWindow._gaps.half
                     horizontalCenter: parent.horizontalCenter
                 }
 
@@ -65,7 +67,7 @@ Rectangle {
                 id: closeButton
                 anchors {
                     bottom: parent.bottom
-                    bottomMargin: 8
+                    bottomMargin: mainWindow._gaps.half
                     horizontalCenter: parent.horizontalCenter
                 }
                 icon.source: "icons/power.svg"
@@ -86,7 +88,7 @@ Rectangle {
                     when: !mainUiComponentBackground.isUiHidden
                     PropertyChanges {
                         target: mainLeftPanel
-                        height: parent.height - 32
+                        height: parent.height - 16
                     }
                 }
             ]
@@ -98,9 +100,9 @@ Rectangle {
                     left: parent.left
                     right: parent.right
                     top: hidePanelButtom.bottom
-                    topMargin: 8
+                    topMargin: mainWindow._gaps.half
                     bottom: closeButton.top
-                    bottomMargin: 8
+                    bottomMargin: mainWindow._gaps.half
                 }
 
                 color: "transparent"
@@ -130,18 +132,18 @@ Rectangle {
                 bottom: mainLeftPanel.bottom
                 left: mainLeftPanel.right
                 right: mainUiComponentBackground.right
-                rightMargin: _gaps.full
+                rightMargin: mainWindow._gaps.half
             }
 
-            visible: showInfo.checked
-                     && !mainUiComponentBackground.isUiHidden
+            visible: showInfo.checked && !mainUiComponentBackground.isUiHidden
 
             Services {
                 id: servicesInfoWidget
                 anchors {
                     top: parent.top
                     left: parent.left
-                    leftMargin: 16
+                    leftMargin: mainWindow._gaps.half
+                    right: parent.right
                 }
             }
         }

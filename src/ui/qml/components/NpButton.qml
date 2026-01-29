@@ -47,15 +47,14 @@ QuickTemplates.Button {
     // implicitContentWidth + leftPadding + rightPadding)
     // implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset,
     // implicitContentHeight + topPadding + bottomPadding)
-    width: 40
-    height: 40
+    width: 32
+    height: 32
 
-    topPadding: 4
-    bottomPadding: 4
-    leftPadding: 4
-    rightPadding: 4
+    topPadding: 2
+    bottomPadding: 2
+    leftPadding: 2
+    rightPadding: 2
 
-    // spacing: 8
     background: Rectangle {
         id: backgroundItem
         anchors.fill: parent

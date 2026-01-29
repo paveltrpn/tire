@@ -12,6 +12,7 @@
 #include <QGraphicsOpacityEffect>
 #include <QLabel>
 #include <QPushButton>
+
 #include <vsgQt/Window.h>
 
 #include "ui/ui.h"
@@ -30,34 +31,26 @@ vsgQt::Window* createWindow( vsg::ref_ptr<vsgQt::Viewer> viewer, vsg::ref_ptr<vs
     // compute the bounds of the scene graph to help position camera
     vsg::ComputeBounds computeBounds;
     vsg_scene->accept( computeBounds );
-    vsg::dvec3 centre = ( computeBounds.bounds.min + computeBounds.bounds.max ) * 0.5;
+    vsg::dvec3 centre = ( computeBounds.bounds.min + computeBounds.bounds.max ) * 0.8;
     double radius = vsg::length( computeBounds.bounds.max - computeBounds.bounds.min ) * 0.6;
     double nearFarRatio = 0.001;
 
     uint32_t width = window->traits->width;
     uint32_t height = window->traits->height;
 
-    vsg::ref_ptr<vsg::EllipsoidModel> ellipsoidModel( vsg_scene->getObject<vsg::EllipsoidModel>( "EllipsoidModel" ) );
     vsg::ref_ptr<vsg::Camera> camera;
     {
         // set up the camera
         auto lookAt =
             vsg::LookAt::create( centre + vsg::dvec3( 0.0, -radius * 3.5, 0.0 ), centre, vsg::dvec3( 0.0, 0.0, 1.0 ) );
 
-        vsg::ref_ptr<vsg::ProjectionMatrix> perspective;
-        if ( ellipsoidModel ) {
-            perspective = vsg::EllipsoidPerspective::create(
-                lookAt, ellipsoidModel, 30.0, static_cast<double>( width ) / static_cast<double>( height ),
-                nearFarRatio, false );
-        } else {
-            perspective = vsg::Perspective::create( 30.0, static_cast<double>( width ) / static_cast<double>( height ),
-                                                    nearFarRatio * radius, radius * 4.5 );
-        }
+        vsg::ref_ptr<vsg::ProjectionMatrix> perspective = vsg::Perspective::create(
+            30.0, static_cast<double>( width ) / static_cast<double>( height ), nearFarRatio * radius, radius * 4.5 );
 
         camera = vsg::Camera::create( perspective, lookAt, vsg::ViewportState::create( VkExtent2D{ width, height } ) );
     }
 
-    auto trackball = vsg::Trackball::create( camera, ellipsoidModel );
+    auto trackball = vsg::Trackball::create( camera, nullptr );
     trackball->addWindow( *window );
 
     viewer->addEventHandler( trackball );
@@ -98,7 +91,9 @@ int main( int argc, char* argv[] ) {
     bool continuousUpdate = !arguments.read( { "--event-driven", "--ed" } );
     auto interval = arguments.value<int>( 8, "--interval" );
 
-    if ( arguments.errors() ) return arguments.writeErrorMessages( std::cerr );
+    if ( arguments.errors() ) {
+        return arguments.writeErrorMessages( std::cerr );
+    }
 
     if ( argc <= 1 ) {
         std::cout << "Please specify a 3d model or image file on the command line." << std::endl;
@@ -107,6 +102,11 @@ int main( int argc, char* argv[] ) {
 
     vsg::Path filename = arguments[1];
 
+    auto sceneRootNode = vsg::ref_ptr<vsg::Group>{ new vsg::Group{} };
+    auto mainMatrixTranform =
+        vsg::ref_ptr<vsg::MatrixTransform>{ new vsg::MatrixTransform{ vsg::scale( 10.0, 10.0, 10.0 ) } };
+
+    // mainMatrixTranform->transform(vsg::dmat4:)
     auto vsg_scene = vsg::read_cast<vsg::Node>( filename, options );
     if ( !vsg_scene ) {
         std::cout << "Failed to load a valid scene graph. Please specify a valid 3d "
@@ -114,6 +114,9 @@ int main( int argc, char* argv[] ) {
                   << std::endl;
         return 1;
     }
+
+    mainMatrixTranform->addChild( vsg_scene );
+    sceneRootNode->addChild( mainMatrixTranform );
 
     auto* mainWindow = new QMainWindow{};
     auto* centralWidget = new QWidget{ mainWindow };
@@ -127,7 +130,7 @@ int main( int argc, char* argv[] ) {
 
     // create the viewer that will manage all the rendering of the views
     auto viewer = vsgQt::Viewer::create();
-    auto vsgWindow = createWindow( viewer, windowTraits, vsg_scene, nullptr, "First Window" );
+    auto vsgWindow = createWindow( viewer, windowTraits, sceneRootNode, nullptr, "First Window" );
     auto vsgWidget = QWidget::createWindowContainer( vsgWindow, mainWindow );
 
     auto tiredUi = std::make_unique<tired::TiredUi>();
@@ -140,7 +143,10 @@ int main( int argc, char* argv[] ) {
 
     mainWindow->show();
 
-    if ( interval >= 0 ) viewer->setInterval( interval );
+    if ( interval >= 0 ) {
+        viewer->setInterval( interval );
+    }
+
     viewer->continuousUpdate = continuousUpdate;
 
     viewer->addEventHandler( vsg::CloseHandler::create( viewer ) );

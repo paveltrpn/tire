@@ -15,7 +15,6 @@ Rectangle {
     readonly property var _radius: Appearence.radius
     readonly property var _color: Appearence.colors
 
-    width: 128
     height: 512
 
     z: parent.z

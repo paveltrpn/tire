@@ -71,8 +71,9 @@ if (vsgXchange_FOUND)
 endif()
 
 file(GLOB MAIN_APP "src/*.cpp" "src/*.h")
-file(GLOB MAIN_APP_UI "src/ui/*.cpp" "src/ui/*.h")
-add_executable(${PROJECT_NAME} ${MAIN_APP}  ${MAIN_APP_UI})
+file(GLOB UI_SRC "src/ui/*.cpp" "src/ui/*.h")
+file(GLOB TIRED_SRC "src/tired/*.cpp" "src/tired/*.h")
+add_executable(${PROJECT_NAME} ${MAIN_APP}  ${UI_SRC} ${TIRED_SRC})
 set_target_properties(${PROJECT_NAME} PROPERTIES AUTOMOC TRUE)
 
 target_link_libraries(${PROJECT_NAME}
