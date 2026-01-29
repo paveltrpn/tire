@@ -89,9 +89,11 @@ int main( int argc, char* argv[] ) {
     windowTraits->windowTitle = "vsgQt viewer";
     windowTraits->debugLayer = arguments.read( { "--debug", "-d" } );
     windowTraits->apiDumpLayer = arguments.read( { "--api", "-a" } );
-    arguments.read( "--samples", windowTraits->samples );
-    arguments.read( { "--window", "-w" }, windowTraits->width, windowTraits->height );
-    if ( arguments.read( { "--fullscreen", "--fs" } ) ) windowTraits->fullscreen = true;
+
+    // windowTraits->samples
+    windowTraits->width = 1920;
+    windowTraits->height = 1080;
+    // windowTraits->fullscreen = true;
 
     bool continuousUpdate = !arguments.read( { "--event-driven", "--ed" } );
     auto interval = arguments.value<int>( 8, "--interval" );
@@ -118,6 +120,8 @@ int main( int argc, char* argv[] ) {
 
     auto* layout = new QHBoxLayout( mainWindow );
     centralWidget->setLayout( layout );
+    layout->setContentsMargins( 0, 0, 0, 0 );
+    layout->setSpacing( 0 );
 
     mainWindow->setGeometry( windowTraits->x, windowTraits->y, windowTraits->width, windowTraits->height );
 
@@ -128,9 +132,9 @@ int main( int argc, char* argv[] ) {
 
     auto tiredUi = std::make_unique<tired::TiredUi>();
 
-    layout->addWidget( tiredUi->leftPanelWidget() );
-    layout->addWidget( vsgWidget );
-    layout->addWidget( tiredUi->rightPanelWidget() );
+    layout->addWidget( tiredUi->leftPanelWidget(), 3 );
+    layout->addWidget( vsgWidget, 5 );
+    layout->addWidget( tiredUi->rightPanelWidget(), 1 );
 
     mainWindow->setCentralWidget( centralWidget );
 

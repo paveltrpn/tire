@@ -12,6 +12,8 @@ TiredUi::TiredUi( QObject *parent )
     rightPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/RightPanel.qml" ) );
     rightPanel_->setResizeMode( QQuickWidget::SizeRootObjectToView );
 
+    rightPanel_->setStyleSheet( "border: none;" );
+
     // setAttribute( Qt::WA_TranslucentBackground );
     // setClearColor( Qt::transparent );
     // setAttribute( Qt::WA_AlwaysStackOnTop );
