@@ -16,6 +16,7 @@
 #include <vsgQt/Window.h>
 
 #include "ui/ui.h"
+#include "tired/tired.h"
 
 vsgQt::Window* createWindow( vsg::ref_ptr<vsgQt::Viewer> viewer, vsg::ref_ptr<vsg::WindowTraits> traits,
                              vsg::ref_ptr<vsg::Node> vsg_scene, QWindow* parent, const QString& title = {} ) {
@@ -102,21 +103,11 @@ int main( int argc, char* argv[] ) {
 
     vsg::Path filename = arguments[1];
 
-    auto sceneRootNode = vsg::ref_ptr<vsg::Group>{ new vsg::Group{} };
-    auto mainMatrixTranform =
-        vsg::ref_ptr<vsg::MatrixTransform>{ new vsg::MatrixTransform{ vsg::scale( 10.0, 10.0, 10.0 ) } };
+    // Main objects initialization.
+    auto tired = std::make_unique<tired::Tired>();
+    auto tiredUi = std::make_unique<tired::TiredUi>();
 
-    // mainMatrixTranform->transform(vsg::dmat4:)
-    auto vsg_scene = vsg::read_cast<vsg::Node>( filename, options );
-    if ( !vsg_scene ) {
-        std::cout << "Failed to load a valid scene graph. Please specify a valid 3d "
-                     "model or image file on the command line."
-                  << std::endl;
-        return 1;
-    }
-
-    mainMatrixTranform->addChild( vsg_scene );
-    sceneRootNode->addChild( mainMatrixTranform );
+    tired->loadTestScene( filename, options );
 
     auto* mainWindow = new QMainWindow{};
     auto* centralWidget = new QWidget{ mainWindow };
@@ -128,12 +119,9 @@ int main( int argc, char* argv[] ) {
 
     mainWindow->setGeometry( windowTraits->x, windowTraits->y, windowTraits->width, windowTraits->height );
 
-    // create the viewer that will manage all the rendering of the views
-    auto viewer = vsgQt::Viewer::create();
-    auto vsgWindow = createWindow( viewer, windowTraits, sceneRootNode, nullptr, "First Window" );
-    auto vsgWidget = QWidget::createWindowContainer( vsgWindow, mainWindow );
+    auto vsgWindow = createWindow( tired->viewer(), windowTraits, tired->rootNode(), nullptr, "First Window" );
 
-    auto tiredUi = std::make_unique<tired::TiredUi>();
+    auto vsgWidget = QWidget::createWindowContainer( vsgWindow, mainWindow );
 
     layout->addWidget( tiredUi->leftPanelWidget(), 3 );
     layout->addWidget( vsgWidget, 11 );
@@ -143,14 +131,7 @@ int main( int argc, char* argv[] ) {
 
     mainWindow->show();
 
-    if ( interval >= 0 ) {
-        viewer->setInterval( interval );
-    }
-
-    viewer->continuousUpdate = continuousUpdate;
-
-    viewer->addEventHandler( vsg::CloseHandler::create( viewer ) );
-    viewer->compile();
+    tired->viewerCompile( interval, continuousUpdate );
 
     return application.exec();
 }
