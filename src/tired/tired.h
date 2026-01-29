@@ -15,13 +15,20 @@ public:
     Tired( QObject* parent = nullptr );
 
     auto loadTestScene( vsg::Path filename, vsg::ref_ptr<vsg::Options> options ) -> int;
+    auto initWindow( vsg::ref_ptr<vsg::WindowTraits> traits, QWindow* parent ) -> vsgQt::Window*;
     auto viewerCompile( int interval, bool continuousUpdate ) -> void;
 
     auto viewer() -> vsg::ref_ptr<vsgQt::Viewer>;
     auto rootNode() -> vsg::ref_ptr<vsg::Node>;
+    auto camera() -> vsg::ref_ptr<vsg::Camera>;
+
+    Q_INVOKABLE void setCameraToBounds();
 
 private:
     vsg::ref_ptr<vsgQt::Viewer> viewer_{};
+    vsg::ref_ptr<vsg::Camera> camera_{};
+    vsg::ref_ptr<vsg::Trackball> trackball_{};
+
     vsg::ref_ptr<vsg::Group> theRoot_{};
 
     vsg::ref_ptr<vsg::Node> testScene_{};
