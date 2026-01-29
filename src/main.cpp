@@ -9,10 +9,12 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
 #include <QVBoxLayout>
-
+#include <QGraphicsOpacityEffect>
+#include <QLabel>
+#include <QPushButton>
 #include <vsgQt/Window.h>
 
-#include "window.h"
+#include "ui/ui.h"
 
 vsgQt::Window* createWindow( vsg::ref_ptr<vsgQt::Viewer> viewer, vsg::ref_ptr<vsg::WindowTraits> traits,
                              vsg::ref_ptr<vsg::Node> vsg_scene, QWindow* parent, const QString& title = {} ) {
@@ -112,28 +114,25 @@ int main( int argc, char* argv[] ) {
     }
 
     auto* mainWindow = new QMainWindow{};
+    auto* centralWidget = new QWidget{ mainWindow };
+
+    auto* layout = new QHBoxLayout( mainWindow );
+    centralWidget->setLayout( layout );
+
+    mainWindow->setGeometry( windowTraits->x, windowTraits->y, windowTraits->width, windowTraits->height );
 
     // create the viewer that will manage all the rendering of the views
     auto viewer = vsgQt::Viewer::create();
+    auto vsgWindow = createWindow( viewer, windowTraits, vsg_scene, nullptr, "First Window" );
+    auto vsgWidget = QWidget::createWindowContainer( vsgWindow, mainWindow );
 
-    auto window = createWindow( viewer, windowTraits, vsg_scene, nullptr, "First Window" );
+    auto tiredUi = std::make_unique<tired::TiredUi>();
 
-    auto widget = QWidget::createWindowContainer( window, mainWindow );
+    layout->addWidget( tiredUi->leftPanelWidget() );
+    layout->addWidget( vsgWidget );
+    layout->addWidget( tiredUi->rightPanelWidget() );
 
-    mainWindow->setCentralWidget( widget );
-
-    auto* qmlView = new tired::MainWindow{};
-    QWidget* qmlContainer = QWidget::createWindowContainer( qmlView, mainWindow, Qt::Widget );
-    qmlContainer->setGeometry( QRect{ 0, 0, 512, mainWindow->height() } );
-
-    auto layout = mainWindow->layout();
-    QWidget* centralWidget = new QWidget( mainWindow );
-    QVBoxLayout* boxLayout = new QVBoxLayout( centralWidget );
-    // boxLayout->addWidget( qmlContainer );
-    // boxLayout->addStretch();
-    // layout->addItem( boxLayout );
-
-    mainWindow->setGeometry( windowTraits->x, windowTraits->y, windowTraits->width, windowTraits->height );
+    mainWindow->setCentralWidget( centralWidget );
 
     mainWindow->show();
 

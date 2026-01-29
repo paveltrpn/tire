@@ -4,14 +4,18 @@ import QtQuick.Layouts 1.3
 import Qt5Compat.GraphicalEffects
 import Qt.labs.lottieqt 1.0
 
-Item {
+Rectangle {
     id: mainWindow
 
     anchors.fill: parent
 
     Component.onCompleted: {
-        console.log("=== qml loaded")
+        console.log("qml loaded")
     }
+
+     color: "darkblue"
+    // width: 512
+    // height: 512
 
     Rectangle {
         anchors {
