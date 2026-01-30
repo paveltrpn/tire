@@ -1,10 +1,16 @@
 
 #pragma once
 
-#include <memory>
+#include <vsg/all.h>
 
 #include <QQuickWidget>
 #include <QMainWindow>
+
+#ifdef vsgXchange_FOUND
+#include <vsgXchange/all.h>
+#endif
+
+#include <vsgQt/Window.h>
 
 #include "appearance.h"
 #include "tired/tired.h"
@@ -26,6 +32,7 @@ private:
     QQmlEngine *engine_;
     QQmlContext *context_;
 
+    vsgQt::Window *vsgWindow_{};
     QWidget *vsgWidget_{};
     QQuickWidget *topPanel_{};
     QQuickWidget *leftPanel_{};

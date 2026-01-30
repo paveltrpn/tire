@@ -1,7 +1,15 @@
+#include <vsg/all.h>
+#include <vsg/app/Viewer.h>
 
 #include <QHBoxLayout>
 #include <QSplitter>
 #include <QWidget>
+
+#ifdef vsgXchange_FOUND
+#include <vsgXchange/all.h>
+#endif
+
+#include <vsgQt/Window.h>
 
 #include "ui.h"
 
@@ -22,12 +30,11 @@ TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
 
     setGeometry( 0, 0, 1920, 1080 );
 
-    // Pass Appearence object pointer to qml.
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Appearence", theme_ );
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Tired", tired_ );
 
     auto windowTraits = vsg::WindowTraits::create();
-    windowTraits->windowTitle = "vsgQt viewer";
+    windowTraits->windowTitle = "tire editor";
 
     // windowTraits->samples
     windowTraits->width = 1920;
@@ -66,16 +73,20 @@ TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
 
     vLayout->addWidget( vSplitter );
 
-    tired->loadTestScene();
+    vsgWindow_ = new vsgQt::Window( tired->viewer(), windowTraits );
+    vsgWindow_->setTitle( "title" );
+    vsgWindow_->initializeWindow();
 
-    auto vsgWindow = tired->initWindow( windowTraits, nullptr );
-    vsgWidget_ = QWidget::createWindowContainer( vsgWindow, this );
+    // if this is the first window to be created, use its device for future window creation.
+    if ( !windowTraits->device ) {
+        windowTraits->device = vsgWindow_->windowAdapter->getOrCreateDevice();
+    }
+
+    tired->initCamera( vsgWindow_, windowTraits->width, windowTraits->height );
+    vsgWidget_ = QWidget::createWindowContainer( vsgWindow_, this );
 
     bool continuousUpdate = false;  // arguments.read( { "--event-driven", "--ed" } );
     auto interval = 8;              // arguments.value<int>( 8, "--interval" );
-
-    // hLayout->addWidget( topPanel_, 1 );
-    // hLayout->addWidget( vsgWidget, 13 );
 
     auto *hSplitter = new QSplitter{ this };
     hSplitter->setOrientation( Qt::Vertical );

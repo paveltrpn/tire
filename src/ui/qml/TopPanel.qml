@@ -35,19 +35,15 @@ Rectangle {
             anchors {
                 right: parent.right
                 rightMargin: _gaps.half
-                left: parent.left
-                leftMargin: _gaps.half
-                top: parent.top
+                verticalCenter: parent.verticalCenter
             }
 
-            height: 40
+            height: 32
+            width: 256
 
             color: rightPanelMainComponent._color.background_additional_40
 
-            topRightRadius: 0
-            bottomRightRadius: rightPanelMainComponent._radius.half
-            topLeftRadius: 0
-            bottomLeftRadius: rightPanelMainComponent._radius.half
+            radius: rightPanelMainComponent._radius.half
         }
     }
 }

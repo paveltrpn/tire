@@ -15,7 +15,7 @@ public:
     Tired( QObject* parent = nullptr );
 
     auto loadTestScene() -> void;
-    auto initWindow( vsg::ref_ptr<vsg::WindowTraits> traits, QWindow* parent ) -> vsgQt::Window*;
+    auto initCamera( vsgQt::Window* window, uint32_t width, uint32_t height ) -> void;
     auto viewerCompile( int interval, bool continuousUpdate ) -> void;
 
     auto viewer() -> vsg::ref_ptr<vsgQt::Viewer>;

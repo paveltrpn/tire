@@ -18,9 +18,7 @@ namespace tired {
 Tired::Tired( QObject* parent )
     : QObject{ parent }
     , viewer_{ vsgQt::Viewer::create() }
-    , theRoot_{ new vsg::Group{} } {
-
-      };
+    , theRoot_{ new vsg::Group{} } {};
 
 auto Tired::viewerCompile( int interval, bool continuousUpdate ) -> void {
     if ( interval >= 0 ) {
@@ -64,47 +62,27 @@ Q_INVOKABLE void Tired::addExBox( float px, float py, float pz, float rx, float 
     vsg::updateViewer( *viewer_, res );
 }
 
-auto Tired::initWindow( vsg::ref_ptr<vsg::WindowTraits> traits, QWindow* parent ) -> vsgQt::Window* {
-    auto window = new vsgQt::Window( viewer_, traits, parent );
+auto Tired::initCamera( vsgQt::Window* window, uint32_t width, uint32_t height ) -> void {
+    // set up the camera
+    auto lookAt =
+        vsg::LookAt::create( vsg::dvec3( 0.0, -4.0, 1.5 ), vsg::dvec3{ 0.0, 0.0, 0.0 }, vsg::dvec3( 0.0, 0.0, 1.0 ) );
 
-    window->setTitle( "title" );
-    window->initializeWindow();
+    vsg::ref_ptr<vsg::ProjectionMatrix> perspective =
+        vsg::Perspective::create( 30.0, static_cast<double>( width ) / static_cast<double>( height ), 0.01, 500.0 );
 
-    // if this is the first window to be created, use its device for future window creation.
-    if ( !traits->device ) {
-        traits->device = window->windowAdapter->getOrCreateDevice();
-    }
-
-    // compute the bounds of the scene graph to help position camera
-    vsg::ComputeBounds computeBounds;
-    theRoot_->accept( computeBounds );
-    // vsg::dvec3 centre = ( computeBounds.bounds.min + computeBounds.bounds.max ) * 0.8;
-    // double radius = vsg::length( computeBounds.bounds.max - computeBounds.bounds.min ) * 0.6;
-
-    uint32_t width = window->traits->width;
-    uint32_t height = window->traits->height;
-
-    {
-        // set up the camera
-        auto lookAt = vsg::LookAt::create( vsg::dvec3( 0.0, -4.0, 1.5 ), vsg::dvec3{ 0.0, 0.0, 0.0 },
-                                           vsg::dvec3( 0.0, 0.0, 1.0 ) );
-
-        vsg::ref_ptr<vsg::ProjectionMatrix> perspective =
-            vsg::Perspective::create( 30.0, static_cast<double>( width ) / static_cast<double>( height ), 0.01, 500.0 );
-
-        camera_ = vsg::Camera::create( perspective, lookAt, vsg::ViewportState::create( VkExtent2D{ width, height } ) );
-    }
+    camera_ = vsg::Camera::create( perspective, lookAt, vsg::ViewportState::create( VkExtent2D{ width, height } ) );
 
     trackball_ = vsg::Trackball::create( camera_, nullptr );
     trackball_->addWindow( *window );
 
     viewer_->addEventHandler( trackball_ );
 
+    qDebug() << "here";
     auto commandGraph = vsg::createCommandGraphForView( *window, camera_, theRoot_ );
 
     viewer_->addRecordAndSubmitTaskAndPresentation( { commandGraph } );
 
-    return window;
+    loadTestScene();
 }
 
 auto Tired::addTexturePipelineNode() -> void {
