@@ -1,5 +1,6 @@
 
 #include <QHBoxLayout>
+#include <QSplitter>
 
 #include "ui.h"
 
@@ -20,6 +21,13 @@ TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Appearence", theme_ );
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Tired", tired_ );
 
+    auto windowTraits = vsg::WindowTraits::create();
+    windowTraits->windowTitle = "vsgQt viewer";
+
+    // windowTraits->samples
+    windowTraits->width = 1920;
+    windowTraits->height = 1080;
+
     topPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/TopPanel.qml" ) );
     topPanel_->setResizeMode( QQuickWidget::SizeRootObjectToView );
 
@@ -29,35 +37,51 @@ TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
     centralWidget_ = new QWidget{ this };
     setCentralWidget( centralWidget_ );
 
-    auto *vLayout = new QVBoxLayout( this );
+    auto *vLayout = new QHBoxLayout{};
     vLayout->setContentsMargins( 0, 0, 0, 0 );
     vLayout->setSpacing( 0 );
-    vLayout->addWidget( topPanel_, 1 );
 
-    auto *hLayout = new QHBoxLayout( this );
+    auto *vSplitter = new QSplitter{};
+    vSplitter->setOrientation( Qt::Horizontal );
+    vSplitter->setStyleSheet( "QSplitter::handle { background-color:  #2a2b3b;; }" );
+    vSplitter->setHandleWidth( 6 );
+
     centralWidget_->setLayout( vLayout );
+
+    auto *hLayout = new QVBoxLayout{};
     hLayout->setContentsMargins( 0, 0, 0, 0 );
-    hLayout->setSpacing( 0 );
+    hLayout->setSpacing( 6 );
 
-    vLayout->addLayout( hLayout, 15 );
+    auto rightElementsWidget = new QWidget{};
 
-    auto windowTraits = vsg::WindowTraits::create();
-    windowTraits->windowTitle = "vsgQt viewer";
+    rightElementsWidget->setLayout( hLayout );
+    vSplitter->addWidget( leftPanel_ );
+    vSplitter->addWidget( rightElementsWidget );
+    vSplitter->setSizes( { 384, 1920 - 384 } );
 
-    // windowTraits->samples
-    windowTraits->width = 1920;
-    windowTraits->height = 1080;
+    vLayout->addWidget( vSplitter );
 
     tired->loadTestScene();
 
     auto vsgWindow = tired->initWindow( windowTraits, nullptr );
     auto vsgWidget = QWidget::createWindowContainer( vsgWindow, this );
 
-    bool continuousUpdate = false;  //!arguments.read( { "--event-driven", "--ed" } );
+    bool continuousUpdate = false;  // arguments.read( { "--event-driven", "--ed" } );
     auto interval = 8;              // arguments.value<int>( 8, "--interval" );
 
-    hLayout->addWidget( leftPanel_, 3 );
-    hLayout->addWidget( vsgWidget, 11 );
+    // hLayout->addWidget( topPanel_, 1 );
+    // hLayout->addWidget( vsgWidget, 13 );
+
+    auto *hSplitter = new QSplitter{};
+    hSplitter->setOrientation( Qt::Vertical );
+    hSplitter->setStyleSheet( "QSplitter::handle { background-color: #2a2b3b; }" );
+    hSplitter->setHandleWidth( 6 );
+
+    hSplitter->addWidget( topPanel_ );
+    hSplitter->addWidget( vsgWidget );
+    hSplitter->setSizes( { 56, 1080 - 56 } );
+
+    hLayout->addWidget( hSplitter );
 }
 
 }  // namespace tired
