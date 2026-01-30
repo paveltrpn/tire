@@ -18,6 +18,20 @@
 namespace tired {
 
 // ====================================================================
+// ========== Window ==================================================
+// ====================================================================
+
+struct Window final : vsgQt::Window {
+public:
+    Window( vsg::ref_ptr<vsgQt::Viewer> in_viewer, vsg::ref_ptr<vsg::WindowTraits> in_traits )
+        : vsgQt::Window{ in_viewer, in_traits } {}
+
+    void mouseMoveEvent( QMouseEvent *event ) override;
+
+private:
+};
+
+// ====================================================================
 // ========== TiredUi =================================================
 // ====================================================================
 
@@ -32,7 +46,7 @@ private:
     QQmlEngine *engine_;
     QQmlContext *context_;
 
-    vsgQt::Window *vsgWindow_{};
+    Window *vsgWindow_{};
     QWidget *vsgWidget_{};
     QQuickWidget *topPanel_{};
     QQuickWidget *leftPanel_{};

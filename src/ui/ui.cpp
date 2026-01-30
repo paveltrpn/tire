@@ -16,6 +16,14 @@
 namespace tired {
 
 // ====================================================================
+// ========== Window ==================================================
+// ====================================================================
+
+void Window::mouseMoveEvent( QMouseEvent *event ) {
+    qDebug() << "Mouse moved at:" << event->pos();
+};
+
+// ====================================================================
 // ========== TiredUi =================================================
 // ====================================================================
 
@@ -73,14 +81,9 @@ TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
 
     vLayout->addWidget( vSplitter );
 
-    vsgWindow_ = new vsgQt::Window( tired->viewer(), windowTraits );
+    vsgWindow_ = new Window( tired->viewer(), windowTraits );
     vsgWindow_->setTitle( "title" );
     vsgWindow_->initializeWindow();
-
-    // if this is the first window to be created, use its device for future window creation.
-    if ( !windowTraits->device ) {
-        windowTraits->device = vsgWindow_->windowAdapter->getOrCreateDevice();
-    }
 
     tired->initCamera( vsgWindow_, windowTraits->width, windowTraits->height );
     vsgWidget_ = QWidget::createWindowContainer( vsgWindow_, this );

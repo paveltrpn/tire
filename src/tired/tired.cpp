@@ -44,8 +44,6 @@ auto Tired::camera() -> vsg::ref_ptr<vsg::Camera> {
 }
 
 auto Tired::loadTestScene() -> void {
-    addTexturePipelineNode();
-
     auto box = vsg::ref_ptr<ExBox>(
         new ExBox{ vsg::dvec3{ 0.0, 0.0, 0.0 }, vsg::dvec3{ 0.0, 0.0, 0.0 }, vsg::dvec3{ 1.0, 1.0, 1.0 } } );
     texturePipelineNode_->addChild( box );
@@ -77,11 +75,11 @@ auto Tired::initCamera( vsgQt::Window* window, uint32_t width, uint32_t height )
 
     viewer_->addEventHandler( trackball_ );
 
-    qDebug() << "here";
     auto commandGraph = vsg::createCommandGraphForView( *window, camera_, theRoot_ );
 
     viewer_->addRecordAndSubmitTaskAndPresentation( { commandGraph } );
 
+    addTexturePipelineNode();
     loadTestScene();
 }
 
