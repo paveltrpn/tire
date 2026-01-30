@@ -21,4 +21,16 @@ Rectangle {
 
     radius: _radius.half
     color: _color.background_additional_40
+
+    NpButton {
+        id: saveBoxButton
+        anchors {
+            bottom: parent.bottom
+            bottomMargin: _gaps.half
+            horizontalCenter: parent.horizontalCenter
+        }
+        icon.source: "icons/info.svg"
+        onClicked: {
+        }
+    }
 }
