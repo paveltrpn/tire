@@ -119,8 +119,12 @@ Rectangle {
                     }
                     icon.source: "icons/cube_01.svg"
                     onClicked: {
-                        leftPanelMainComponent.resetAllButtons()
-                        addBoxButtom.checked = !addBoxButtom.checked
+                        if (addBoxButtom.checked) {
+                            addBoxButtom.checked = false
+                        } else {
+                            leftPanelMainComponent.resetAllButtons()
+                            addBoxButtom.checked = !addBoxButtom.checked
+                        }
                     }
                 }
 
@@ -132,8 +136,12 @@ Rectangle {
                     }
                     icon.source: "icons/info.svg"
                     onClicked: {
-                        leftPanelMainComponent.resetAllButtons()
-                        showInfo.checked = !showInfo.checked
+                        if (showInfo.checked) {
+                            showInfo.checked = false
+                        } else {
+                            leftPanelMainComponent.resetAllButtons()
+                            showInfo.checked = !showInfo.checked
+                        }
                     }
                 }
             }

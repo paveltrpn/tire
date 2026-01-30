@@ -47,19 +47,6 @@ Rectangle {
             bottomRightRadius: 0
             topLeftRadius: rightPanelMainComponent._radius.half
             bottomLeftRadius: rightPanelMainComponent._radius.half
-
-            NpButton {
-                id: testPanelButtom
-                anchors {
-                    top: parent.top
-                    topMargin: rightPanelMainComponent._gaps.half
-                    horizontalCenter: parent.horizontalCenter
-                }
-
-                icon.source: "icons/exit_up.svg"
-                onClicked: {
-                }
-            }
         }
     }
 }
