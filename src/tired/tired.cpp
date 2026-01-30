@@ -11,6 +11,7 @@
 #include <vsgQt/Window.h>
 
 #include "tired.h"
+#include "box/box.h"
 
 namespace tired {
 
@@ -58,6 +59,9 @@ auto Tired::loadTestScene( vsg::Path filename, vsg::ref_ptr<vsg::Options> option
 
     mainMatrixTranform->addChild( scene );
     theRoot_->addChild( mainMatrixTranform );
+
+    auto box = vsg::ref_ptr<Box>( new Box{ vsg::dvec3{}, vsg::dvec3{} } );
+    mainMatrixTranform->addChild( box );
 
     return 0;
 }

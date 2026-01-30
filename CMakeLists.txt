@@ -51,6 +51,8 @@ else()
     message(SEND_ERROR "glslang_DIR is not set")
 endif()
 
+include_directories("src/modules")
+
 # ================================
 # Module box
 # ================================
