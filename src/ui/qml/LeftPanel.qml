@@ -119,6 +119,7 @@ Rectangle {
                     }
                     icon.source: "icons/cube_01.svg"
                     onClicked: {
+                        leftPanelMainComponent.resetAllButtons()
                         addBoxButtom.checked = !addBoxButtom.checked
                     }
                 }
@@ -131,46 +132,39 @@ Rectangle {
                     }
                     icon.source: "icons/info.svg"
                     onClicked: {
+                        leftPanelMainComponent.resetAllButtons()
                         showInfo.checked = !showInfo.checked
                     }
                 }
             }
         }
 
-        Rectangle {
-            id: infoWrapper
-
-            color: "transparent"
+        Services {
+            id: servicesInfoWidget
             anchors {
                 top: mainLeftPanel.top
-                bottom: mainLeftPanel.bottom
                 left: mainLeftPanel.right
-                right: leftPanelComponentBackground.right
+                leftMargin: leftPanelMainComponent._gaps.half
+                right: parent.right
                 rightMargin: leftPanelMainComponent._gaps.half
             }
 
             visible: showInfo.checked
                      && !leftPanelComponentBackground.isUiHidden
+        }
 
-            AddBox {
-                id: addBoxWidget
-                anchors {
-                    top: parent.top
-                    left: parent.left
-                    leftMargin: leftPanelMainComponent._gaps.half
-                    right: parent.right
-                }
+        AddBox {
+            id: addBoxWidget
+            anchors {
+                top: mainLeftPanel.top
+                left: mainLeftPanel.right
+                leftMargin: leftPanelMainComponent._gaps.half
+                right: parent.right
+                rightMargin: leftPanelMainComponent._gaps.half
             }
 
-            Services {
-                id: servicesInfoWidget
-                anchors {
-                    top: parent.top
-                    left: parent.left
-                    leftMargin: leftPanelMainComponent._gaps.half
-                    right: parent.right
-                }
-            }
+            visible: addBoxButtom.checked
+                     && !leftPanelComponentBackground.isUiHidden
         }
 
 
@@ -188,5 +182,10 @@ Rectangle {
             color: _color.background
         }
         */
+    }
+
+    function resetAllButtons() {
+        addBoxButtom.checked = false
+        showInfo.checked = false
     }
 }
