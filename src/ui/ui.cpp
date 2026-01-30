@@ -19,7 +19,7 @@ namespace tired {
 // ========== Window ==================================================
 // ====================================================================
 
-QPoint Window::mousePos() {
+QPoint Window::mousePos() const {
     return mousePos_;
 }
 
