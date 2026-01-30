@@ -19,8 +19,13 @@ namespace tired {
 // ========== Window ==================================================
 // ====================================================================
 
+QPoint Window::mousePos() {
+    return mousePos_;
+}
+
 void Window::mouseMoveEvent( QMouseEvent *event ) {
-    qDebug() << "Mouse moved at:" << event->pos();
+    mousePos_ = event->pos();
+    vsgQt::Window::mouseMoveEvent( event );
 };
 
 // ====================================================================
@@ -63,7 +68,7 @@ TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
 
     auto *vSplitter = new QSplitter{ this };
     vSplitter->setOrientation( Qt::Horizontal );
-    vSplitter->setStyleSheet( "QSplitter::handle { background-color:  #2a2b3b;; }" );
+    vSplitter->setStyleSheet( "QSplitter::handle { background-color:  #2a2b3b; }" );
     vSplitter->setHandleWidth( 6 );
 
     centralWidget->setLayout( vLayout );

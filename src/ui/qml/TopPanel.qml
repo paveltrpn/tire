@@ -44,6 +44,28 @@ Rectangle {
             color: rightPanelMainComponent._color.background_additional_40
 
             radius: rightPanelMainComponent._radius.half
+
+            Text {
+                id: sclLabel
+                anchors {
+                    fill: parent
+                }
+
+                height: 24
+
+                text: {
+                    // const pos = Window.mousePos()
+                     return `X: ${0} Y: ${0}`
+                }
+
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
+
+                padding: 8
+
+                color: _color.main_contrast
+                font: _fonts.label
+            }
         }
     }
 }

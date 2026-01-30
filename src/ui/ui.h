@@ -26,9 +26,12 @@ public:
     Window( vsg::ref_ptr<vsgQt::Viewer> in_viewer, vsg::ref_ptr<vsg::WindowTraits> in_traits )
         : vsgQt::Window{ in_viewer, in_traits } {}
 
+    Q_INVOKABLE QPoint mousePos();
+
     void mouseMoveEvent( QMouseEvent *event ) override;
 
 private:
+    QPoint mousePos_{};
 };
 
 // ====================================================================
