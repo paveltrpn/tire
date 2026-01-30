@@ -86,7 +86,7 @@ auto Tired::initWindow( vsg::ref_ptr<vsg::WindowTraits> traits, QWindow* parent 
 
     {
         // set up the camera
-        auto lookAt = vsg::LookAt::create( vsg::dvec3( 0.0, -9.0, 3.0 ), vsg::dvec3{ 0.0, 0.0, 0.0 },
+        auto lookAt = vsg::LookAt::create( vsg::dvec3( 0.0, -4.0, 1.5 ), vsg::dvec3{ 0.0, 0.0, 0.0 },
                                            vsg::dvec3( 0.0, 0.0, 1.0 ) );
 
         vsg::ref_ptr<vsg::ProjectionMatrix> perspective =
