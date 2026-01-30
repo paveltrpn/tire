@@ -47,13 +47,13 @@ auto Tired::camera() -> vsg::ref_ptr<vsg::Camera> {
 }
 
 auto Tired::loadTestScene() -> void {
-    addCustomPipelineNode();
+    addTexturePipelineNode();
 
-    auto box = vsg::ref_ptr<Box>( new Box{ vsg::dvec3{ 0.0, -1.5, 3.0 }, vsg::dvec3{ 500.0, 500.0, 500.0 } } );
-    costomPipelineNode_->addChild( box );
+    auto box = vsg::ref_ptr<Box>( new Box{ vsg::dvec3{ 0.0, -1.0, 0.0 }, vsg::dvec3{ 10.0, 10.0, 10.0 } } );
+    texturePipelineNode_->addChild( box );
 
-    auto exbox = vsg::ref_ptr<ExBox>( new ExBox{ vsg::dvec3{ 0.0, 1.5, 3.0 }, vsg::dvec3{ 500.0, 500.0, 500.0 } } );
-    costomPipelineNode_->addChild( exbox );
+    auto exbox = vsg::ref_ptr<ExBox>( new ExBox{ vsg::dvec3{ 0.0, 1.0, 0.0 }, vsg::dvec3{ 10.0, 10.0, 10.0 } } );
+    texturePipelineNode_->addChild( exbox );
 }
 
 Q_INVOKABLE void Tired::setCameraToBounds() {
@@ -82,7 +82,7 @@ auto Tired::initWindow( vsg::ref_ptr<vsg::WindowTraits> traits, QWindow* parent 
 
     {
         // set up the camera
-        auto lookAt = vsg::LookAt::create( vsg::dvec3( 0.0, -8000.0, 6000.0 ), vsg::dvec3{ 0.0, 0.0, 500.0 },
+        auto lookAt = vsg::LookAt::create( vsg::dvec3( 0.0, -80.0, 60.0 ), vsg::dvec3{ 0.0, 0.0, 0.0 },
                                            vsg::dvec3( 0.0, 0.0, 1.0 ) );
 
         vsg::ref_ptr<vsg::ProjectionMatrix> perspective = vsg::Perspective::create(
@@ -103,7 +103,7 @@ auto Tired::initWindow( vsg::ref_ptr<vsg::WindowTraits> traits, QWindow* parent 
     return window;
 }
 
-auto Tired::addCustomPipelineNode() -> void {
+auto Tired::addTexturePipelineNode() -> void {
     // load shaders
     vsg::Paths searchPaths = std::vector<vsg::Path>{ "/mnt/main/sources/vsgExamples/data" };
 
@@ -172,16 +172,16 @@ auto Tired::addCustomPipelineNode() -> void {
         vsg::BindDescriptorSet::create( VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, descriptorSet );
 
     // create StateGroup as the root of the scene/command graph to hold the GraphicsPipeline, and binding of Descriptors to decorate the whole graph
-    auto scenegraph = vsg::StateGroup::create();
-    scenegraph->add( bindGraphicsPipeline );
-    scenegraph->add( bindDescriptorSet );
+    auto stateGroup = vsg::StateGroup::create();
+    stateGroup->add( bindGraphicsPipeline );
+    stateGroup->add( bindDescriptorSet );
 
     // set up model transformation node
-    costomPipelineNode_ = vsg::MatrixTransform::create();  // VK_SHADER_STAGE_VERTEX_BIT
+    texturePipelineNode_ = vsg::MatrixTransform::create();  // VK_SHADER_STAGE_VERTEX_BIT
 
-    scenegraph->addChild( costomPipelineNode_ );
+    stateGroup->addChild( texturePipelineNode_ );
 
-    theRoot_->addChild( scenegraph );
+    theRoot_->addChild( stateGroup );
 }
 
 }  // namespace tired

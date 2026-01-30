@@ -24,7 +24,8 @@ public:
 
     Q_INVOKABLE void setCameraToBounds();
 
-    auto addCustomPipelineNode() -> void;
+private:
+    auto addTexturePipelineNode() -> void;
 
 private:
     vsg::ref_ptr<vsgQt::Viewer> viewer_{};
@@ -32,7 +33,7 @@ private:
     vsg::ref_ptr<vsg::Trackball> trackball_{};
 
     vsg::ref_ptr<vsg::Group> theRoot_{};
-    vsg::ref_ptr<vsg::MatrixTransform> costomPipelineNode_{};
+    vsg::ref_ptr<vsg::MatrixTransform> texturePipelineNode_{};
 
     vsg::ref_ptr<vsg::Node> testScene_{};
 };

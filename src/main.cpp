@@ -4,9 +4,6 @@
 #include <vsgXchange/all.h>
 #endif
 
-#include <iostream>
-#include <print>
-
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
 #include <QVBoxLayout>
@@ -47,17 +44,6 @@ int main( int argc, char* argv[] ) {
 
     bool continuousUpdate = !arguments.read( { "--event-driven", "--ed" } );
     auto interval = arguments.value<int>( 8, "--interval" );
-
-    if ( arguments.errors() ) {
-        return arguments.writeErrorMessages( std::cerr );
-    }
-
-    if ( argc <= 1 ) {
-        std::println( "Please specify a 3d model or image file on the command line." );
-        return 1;
-    }
-
-    vsg::Path filename = arguments[1];
 
     // Main objects initialization.
     auto tired = std::make_unique<tired::Tired>();
