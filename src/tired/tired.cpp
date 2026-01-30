@@ -51,13 +51,15 @@ auto Tired::loadTestScene() -> void {
 
     auto box = vsg::ref_ptr<Box>( new Box{ vsg::dvec3{ 0.0, -1.0, 0.0 }, vsg::dvec3{ 10.0, 10.0, 10.0 } } );
     texturePipelineNode_->addChild( box );
-
-    auto exbox = vsg::ref_ptr<ExBox>( new ExBox{ vsg::dvec3{ 0.0, 1.0, 0.0 }, vsg::dvec3{ 10.0, 10.0, 10.0 } } );
-    texturePipelineNode_->addChild( exbox );
 }
 
 Q_INVOKABLE void Tired::setCameraToBounds() {
-    qDebug() << "first call";
+    auto exbox = vsg::ref_ptr<ExBox>( new ExBox{ vsg::dvec3{ 0.0, 1.0, 0.0 }, vsg::dvec3{ 10.0, 10.0, 10.0 } } );
+    texturePipelineNode_->addChild( exbox );
+
+    viewer_->compileManager->compile( texturePipelineNode_ );
+    vsg::CompileResult res{};
+    vsg::updateViewer( *viewer_, res );
 }
 
 auto Tired::initWindow( vsg::ref_ptr<vsg::WindowTraits> traits, QWindow* parent ) -> vsgQt::Window* {
@@ -85,8 +87,8 @@ auto Tired::initWindow( vsg::ref_ptr<vsg::WindowTraits> traits, QWindow* parent 
         auto lookAt = vsg::LookAt::create( vsg::dvec3( 0.0, -80.0, 60.0 ), vsg::dvec3{ 0.0, 0.0, 0.0 },
                                            vsg::dvec3( 0.0, 0.0, 1.0 ) );
 
-        vsg::ref_ptr<vsg::ProjectionMatrix> perspective = vsg::Perspective::create(
-            30.0, static_cast<double>( width ) / static_cast<double>( height ), 0.01, 50000.0 );
+        vsg::ref_ptr<vsg::ProjectionMatrix> perspective =
+            vsg::Perspective::create( 30.0, static_cast<double>( width ) / static_cast<double>( height ), 0.01, 500.0 );
 
         camera_ = vsg::Camera::create( perspective, lookAt, vsg::ViewportState::create( VkExtent2D{ width, height } ) );
     }
