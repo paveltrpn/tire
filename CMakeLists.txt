@@ -51,6 +51,15 @@ else()
     message(SEND_ERROR "glslang_DIR is not set")
 endif()
 
+# ================================
+# Module box
+# ================================
+file(GLOB MOD_BOX_SRC "src/modules/box/*.cpp" "src/modules/box/*.h")
+add_library(box)
+target_sources(box PRIVATE ${MOD_BOX_SRC})
+set_target_properties(box PROPERTIES LINKER_LANGUAGE CXX)
+target_link_libraries(box vsg)
+
 set(QT_VERSION 6.10)
 list(APPEND CMAKE_PREFIX_PATH $ENV{LOCAL_LATEST_QT})
 set(QML_IMPORT_PATH  $ENV{LOCAL_LATEST_QT}/qml client_vk/qml client_vk/qml/info CACHE STRING "Extra QML Import Paths for Qt Creator" FORCE)
@@ -101,6 +110,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt::QuickWidgets
     Qt::QuickControls2
     Qt::Qml
+    box
 )
 
     
