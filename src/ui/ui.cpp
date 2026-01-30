@@ -1,10 +1,15 @@
 
 #include <QHBoxLayout>
 #include <QSplitter>
+#include <QWidget>
 
 #include "ui.h"
 
 namespace tired {
+
+// ====================================================================
+// ========== TiredUi =================================================
+// ====================================================================
 
 TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
     : tired_{ tired }
