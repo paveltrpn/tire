@@ -22,7 +22,7 @@ private:
     QQmlEngine *engine_;
     QQmlContext *context_;
 
-    QWidget *centralWidget_{};
+    QWidget *vsgWidget_{};
     QQuickWidget *topPanel_{};
     QQuickWidget *leftPanel_{};
 
