@@ -9,37 +9,40 @@ TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
     : tired_{ tired }
     , engine_{ new QQmlEngine{ this } }
     , context_{ engine_->rootContext() }
-    , leftPanel_{ new QQuickWidget{ engine_, nullptr } }
-    , rightPanel_{ new QQuickWidget{ engine_, nullptr } }
+    , topPanel_{ new QQuickWidget{ engine_, this } }
+    , leftPanel_{ new QQuickWidget{ engine_, this } }
     , theme_{ new Appearance{ this } } {
     //
+
+    setGeometry( 0, 0, 1920, 1080 );
 
     // Pass Appearence object pointer to qml.
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Appearence", theme_ );
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Tired", tired_ );
 
+    topPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/TopPanel.qml" ) );
+    topPanel_->setResizeMode( QQuickWidget::SizeRootObjectToView );
+
     leftPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/LeftPanel.qml" ) );
     leftPanel_->setResizeMode( QQuickWidget::SizeRootObjectToView );
-
-    rightPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/RightPanel.qml" ) );
-    rightPanel_->setResizeMode( QQuickWidget::SizeRootObjectToView );
-
-    rightPanel_->setStyleSheet( "border: none;" );
 
     centralWidget_ = new QWidget{ this };
     setCentralWidget( centralWidget_ );
 
-    auto *layout = new QHBoxLayout( this );
-    centralWidget_->setLayout( layout );
-    layout->setContentsMargins( 0, 0, 0, 0 );
-    layout->setSpacing( 0 );
+    auto *vLayout = new QVBoxLayout( this );
+    vLayout->setContentsMargins( 0, 0, 0, 0 );
+    vLayout->setSpacing( 0 );
+    vLayout->addWidget( topPanel_, 1 );
 
-    setGeometry( 0, 0, 1920, 1080 );
+    auto *hLayout = new QHBoxLayout( this );
+    centralWidget_->setLayout( vLayout );
+    hLayout->setContentsMargins( 0, 0, 0, 0 );
+    hLayout->setSpacing( 0 );
+
+    vLayout->addLayout( hLayout, 15 );
 
     auto windowTraits = vsg::WindowTraits::create();
     windowTraits->windowTitle = "vsgQt viewer";
-    // windowTraits->debugLayer = arguments.read( { "--debug", "-d" } );
-    // windowTraits->apiDumpLayer = arguments.read( { "--api", "-a" } );
 
     // windowTraits->samples
     windowTraits->width = 1920;
@@ -53,20 +56,8 @@ TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
     bool continuousUpdate = false;  //!arguments.read( { "--event-driven", "--ed" } );
     auto interval = 8;              // arguments.value<int>( 8, "--interval" );
 
-    layout->addWidget( leftPanelWidget(), 3 );
-    layout->addWidget( vsgWidget, 11 );
-    layout->addWidget( rightPanelWidget(), 1 );
-
-    // setAttribute( Qt::WA_TranslucentBackground );
-    // setClearColor( Qt::transparent );
-    // setAttribute( Qt::WA_AlwaysStackOnTop );
-}
-
-auto TiredUi::leftPanelWidget() const -> QQuickWidget * {
-    return leftPanel_.get();
-}
-auto TiredUi::rightPanelWidget() const -> QQuickWidget * {
-    return rightPanel_.get();
+    hLayout->addWidget( leftPanel_, 3 );
+    hLayout->addWidget( vsgWidget, 11 );
 }
 
 }  // namespace tired

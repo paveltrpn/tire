@@ -16,9 +16,6 @@ struct TiredUi final : QMainWindow {
 public:
     TiredUi( tired::Tired *tired, QObject *parent = nullptr );
 
-    auto leftPanelWidget() const -> QQuickWidget *;
-    auto rightPanelWidget() const -> QQuickWidget *;
-
 private:
     tired::Tired *tired_{};
 
@@ -26,8 +23,8 @@ private:
     QQmlContext *context_;
 
     QWidget *centralWidget_{};
-    std::shared_ptr<QQuickWidget> leftPanel_{};
-    std::shared_ptr<QQuickWidget> rightPanel_{};
+    QQuickWidget *topPanel_{};
+    QQuickWidget *leftPanel_{};
 
     Appearance *theme_;
 };

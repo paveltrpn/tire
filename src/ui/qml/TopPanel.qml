@@ -24,7 +24,7 @@ Rectangle {
         height: rightPanelMainComponent.height
 
         Rectangle {
-            id: mainLeftPanel
+            id: mainPanel
 
             Behavior on height {
                 NumberAnimation {
@@ -34,18 +34,19 @@ Rectangle {
 
             anchors {
                 right: parent.right
+                rightMargin: _gaps.half
+                left: parent.left
+                leftMargin: _gaps.half
                 top: parent.top
-                topMargin: rightPanelMainComponent._gaps.half
             }
 
-            width: 40
-            height: parent.height - 16
+            height: 40
 
             color: rightPanelMainComponent._color.background_additional_40
 
             topRightRadius: 0
-            bottomRightRadius: 0
-            topLeftRadius: rightPanelMainComponent._radius.half
+            bottomRightRadius: rightPanelMainComponent._radius.half
+            topLeftRadius: 0
             bottomLeftRadius: rightPanelMainComponent._radius.half
         }
     }
