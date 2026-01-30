@@ -61,7 +61,7 @@ auto Tired::loadTestScene( vsg::Path filename, vsg::ref_ptr<vsg::Options> option
     mainMatrixTranform->addChild( scene );
     theRoot_->addChild( mainMatrixTranform );
 
-    auto box = vsg::ref_ptr<Box>( new Box{ vsg::dvec3{ 1000.0, 0.0, 0.0 }, vsg::dvec3{ 500.0, 500.0, 500.0 } } );
+    auto box = vsg::ref_ptr<Box>( new Box{ vsg::dvec3{ 500.0, 0.0, 0.0 }, vsg::dvec3{ 500.0, 500.0, 500.0 } } );
     theRoot_->addChild( box );
 
     auto exbox = vsg::ref_ptr<ExBox>( new ExBox{ vsg::dvec3{}, vsg::dvec3{ 500.0, 500.0, 500.0 } } );
