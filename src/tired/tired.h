@@ -22,7 +22,8 @@ public:
     auto rootNode() -> vsg::ref_ptr<vsg::Node>;
     auto camera() -> vsg::ref_ptr<vsg::Camera>;
 
-    Q_INVOKABLE void setCameraToBounds();
+    Q_INVOKABLE void addExBox( float px, float py, float pz, float rx, float ry, float rz, float sx, float sy,
+                               float sz );
 
 private:
     auto addTexturePipelineNode() -> void;

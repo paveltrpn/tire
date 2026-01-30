@@ -6,7 +6,8 @@
 namespace tired {
 
 struct ExBox final : vsg::MatrixTransform {
-    ExBox( vsg::dvec3 pos = vsg::dvec3{ 0.0, 0.0, 0.0 }, vsg::dvec3 scale = vsg::dvec3{ 1.0, 1.0, 1.0 } );
+    ExBox( vsg::dvec3 pos = vsg::dvec3{ 0.0, 0.0, 0.0 }, vsg::dvec3 rt = vsg::dvec3{ 1.0, 1.0, 1.0 },
+           vsg::dvec3 scale = vsg::dvec3{ 0.0, 0.0, 0.0 } );
 
 private:
 };

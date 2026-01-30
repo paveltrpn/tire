@@ -4,7 +4,7 @@
 
 namespace tired {
 
-ExBox::ExBox( vsg::dvec3 pos, vsg::dvec3 scale ) {
+ExBox::ExBox( vsg::dvec3 pos, vsg::dvec3 rt, vsg::dvec3 scale ) {
     // VK_FORMAT_R32G32B32_SFLOAT, VK_VERTEX_INPUT_RATE_INSTANCE, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_SHARING_MODE_EXCLUSIVE
     auto vertices = vsg::vec3Array::create( { { -0.5f, -0.5f, 0.5f },
                                               { 0.5f, -0.5f, 0.5f },
@@ -49,7 +49,11 @@ ExBox::ExBox( vsg::dvec3 pos, vsg::dvec3 scale ) {
     drawCommands->addChild( vsg::BindIndexBuffer::create( indices ) );
     drawCommands->addChild( vsg::DrawIndexed::create( 36, 1, 0, 0, 0 ) );
 
-    this->matrix = vsg::scale( scale ) * vsg::translate( pos );
+    const auto rtX = vsg::rotate( vsg::radians( rt.x ), vsg::dvec3{ 1.0, 0.0, 0.0 } );
+    const auto rtY = vsg::rotate( vsg::radians( rt.y ), vsg::dvec3{ 0.0, 1.0, 0.0 } );
+    const auto rtZ = vsg::rotate( vsg::radians( rt.z ), vsg::dvec3{ 0.0, 0.0, 1.0 } );
+
+    this->matrix = vsg::translate( pos ) * ( rtX * rtY * rtZ ) * vsg::scale( scale );
 
     this->addChild( drawCommands );
 }

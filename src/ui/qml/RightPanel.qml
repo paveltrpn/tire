@@ -58,7 +58,6 @@ Rectangle {
 
                 icon.source: "icons/exit_up.svg"
                 onClicked: {
-                    Tired.setCameraToBounds()
                 }
             }
         }

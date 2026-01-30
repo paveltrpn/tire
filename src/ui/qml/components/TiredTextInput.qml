@@ -1,0 +1,32 @@
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.3
+
+import Tire 1.0
+
+TextInput {
+    id: textInputComponent
+
+    readonly property var _fonts: Appearence.fonts
+    readonly property var _gaps: Appearence.gaps
+    readonly property var _radius: Appearence.radius
+    readonly property var _color: Appearence.colors
+
+    height: 32
+    color: _color.main_contrast
+    font: _fonts.label
+    verticalAlignment: Text.AlignVCenter
+    padding: _gaps.half
+
+    clip: true
+
+    Rectangle {
+        z: -1 // Place behind the TextInput
+        anchors.fill: parent
+        color: _color.background_additional_30
+
+        border.color: _color.main_contrast_20
+        border.width: 2
+        radius: _radius.half
+    }
+}
