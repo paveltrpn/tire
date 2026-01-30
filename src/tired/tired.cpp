@@ -12,6 +12,7 @@
 
 #include "tired.h"
 #include "box/box.h"
+#include "box/ex_box.h"
 
 namespace tired {
 
@@ -60,8 +61,11 @@ auto Tired::loadTestScene( vsg::Path filename, vsg::ref_ptr<vsg::Options> option
     mainMatrixTranform->addChild( scene );
     theRoot_->addChild( mainMatrixTranform );
 
-    auto box = vsg::ref_ptr<Box>( new Box{ vsg::dvec3{}, vsg::dvec3{} } );
-    mainMatrixTranform->addChild( box );
+    // auto box = vsg::ref_ptr<Box>( new Box{ vsg::dvec3{}, vsg::dvec3{} } );
+    // theRoot_->addChild( box );
+
+    auto box = vsg::ref_ptr<ExBox>( new ExBox{ vsg::dvec3{}, vsg::dvec3{ 500.0, 500.0, 500.0 } } );
+    theRoot_->addChild( box );
 
     return 0;
 }
@@ -85,9 +89,9 @@ auto Tired::initWindow( vsg::ref_ptr<vsg::WindowTraits> traits, QWindow* parent 
     vsg::ComputeBounds computeBounds;
     theRoot_->accept( computeBounds );
     // vsg::dvec3 centre = ( computeBounds.bounds.min + computeBounds.bounds.max ) * 0.8;
-    auto centre = vsg::dvec3{ -120.11600000000035, 120.31199999999954, 2284 };
+    auto centre = vsg::dvec3{ 0.0, 0.0, 0.0 };
     // double radius = vsg::length( computeBounds.bounds.max - computeBounds.bounds.min ) * 0.6;
-    double radius = 8366.0;
+    double radius = 5000.0 * 3.0;
 
     std::println( "{} {} {}", centre.x, centre.y, centre.z );
 
@@ -98,8 +102,7 @@ auto Tired::initWindow( vsg::ref_ptr<vsg::WindowTraits> traits, QWindow* parent 
 
     {
         // set up the camera
-        auto lookAt =
-            vsg::LookAt::create( centre + vsg::dvec3( 0.0, -radius * 3.5, 0.0 ), centre, vsg::dvec3( 0.0, 0.0, 1.0 ) );
+        auto lookAt = vsg::LookAt::create( vsg::dvec3( 0.0, -radius, 0.0 ), centre, vsg::dvec3( 0.0, 0.0, 1.0 ) );
 
         vsg::ref_ptr<vsg::ProjectionMatrix> perspective = vsg::Perspective::create(
             30.0, static_cast<double>( width ) / static_cast<double>( height ), nearFarRatio * radius, radius * 4.5 );
