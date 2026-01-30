@@ -7,6 +7,7 @@ import Qt.labs.lottieqt 1.0
 import Tire 1.0
 import "components"
 import "info"
+import "add_forms"
 
 Rectangle {
     id: leftPanelMainComponent
@@ -111,6 +112,18 @@ Rectangle {
                 visible: !leftPanelComponentBackground.isUiHidden
 
                 NpButton {
+                    id: addBoxButtom
+                    anchors {
+                        top: parent.top
+                        horizontalCenter: parent.horizontalCenter
+                    }
+                    icon.source: "icons/cube_01.svg"
+                    onClicked: {
+                        addBoxButtom.checked = !addBoxButtom.checked
+                    }
+                }
+
+                NpButton {
                     id: showInfo
                     anchors {
                         bottom: parent.bottom
@@ -136,7 +149,18 @@ Rectangle {
                 rightMargin: leftPanelMainComponent._gaps.half
             }
 
-            visible: showInfo.checked && !leftPanelComponentBackground.isUiHidden
+            visible: showInfo.checked
+                     && !leftPanelComponentBackground.isUiHidden
+
+            AddBox {
+                id: addBoxWidget
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    leftMargin: leftPanelMainComponent._gaps.half
+                    right: parent.right
+                }
+            }
 
             Services {
                 id: servicesInfoWidget

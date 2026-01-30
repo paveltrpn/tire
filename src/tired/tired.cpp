@@ -11,7 +11,6 @@
 #include <vsgQt/Window.h>
 
 #include "tired.h"
-#include "box/box.h"
 #include "box/ex_box.h"
 
 namespace tired {
@@ -49,7 +48,7 @@ auto Tired::camera() -> vsg::ref_ptr<vsg::Camera> {
 auto Tired::loadTestScene() -> void {
     addTexturePipelineNode();
 
-    auto box = vsg::ref_ptr<Box>( new Box{ vsg::dvec3{ 0.0, -1.0, 0.0 }, vsg::dvec3{ 10.0, 10.0, 10.0 } } );
+    auto box = vsg::ref_ptr<ExBox>( new ExBox{ vsg::dvec3{ 0.0, -1.0, 0.0 }, vsg::dvec3{ 10.0, 10.0, 10.0 } } );
     texturePipelineNode_->addChild( box );
 }
 
