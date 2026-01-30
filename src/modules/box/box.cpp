@@ -6,7 +6,7 @@ namespace tired {
 Box::Box( vsg::dvec3 pos, vsg::dvec3 scale ) {
     auto geometry = new vsg::Geometry{};
 
-    const auto half{ 500.0f };
+    const auto half{ 0.5f };
     // auto verticies = vsg::dvec3Array::create( { vsg::dvec3{ -size, -size, -size }, vsg::dvec3{ size, -size, -size },
     // vsg::dvec3{ size, size, -size }, vsg::dvec3{ -size, size, -size },
     // vsg::dvec3{ -size, -size, size }, vsg::dvec3{ size, -size, size },
@@ -34,6 +34,8 @@ Box::Box( vsg::dvec3 pos, vsg::dvec3 scale ) {
     // vertexDraw->assignIndices( );
     vertexDraw->vertexCount = 36;  // Number of indices
     vertexDraw->instanceCount = 1;
+
+    this->matrix = vsg::scale( scale ) * vsg::translate( pos );
 
     this->addChild( vertexDraw );
 }
