@@ -5,7 +5,7 @@
 
 namespace tired {
 
-TiredUi::TiredUi( tired::Tired *tired, vsg::Path filename, vsg::ref_ptr<vsg::Options> options, QObject *parent )
+TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
     : tired_{ tired }
     , engine_{ new QQmlEngine{ this } }
     , context_{ engine_->rootContext() }
@@ -45,7 +45,7 @@ TiredUi::TiredUi( tired::Tired *tired, vsg::Path filename, vsg::ref_ptr<vsg::Opt
     windowTraits->width = 1920;
     windowTraits->height = 1080;
 
-    tired->loadTestScene( filename, options );
+    tired->loadTestScene();
 
     auto vsgWindow = tired->initWindow( windowTraits, nullptr );
     auto vsgWidget = QWidget::createWindowContainer( vsgWindow, this );

@@ -14,7 +14,7 @@ struct Tired final : QObject {
 public:
     Tired( QObject* parent = nullptr );
 
-    auto loadTestScene( vsg::Path filename, vsg::ref_ptr<vsg::Options> options ) -> int;
+    auto loadTestScene() -> void;
     auto initWindow( vsg::ref_ptr<vsg::WindowTraits> traits, QWindow* parent ) -> vsgQt::Window*;
     auto viewerCompile( int interval, bool continuousUpdate ) -> void;
 
@@ -24,12 +24,15 @@ public:
 
     Q_INVOKABLE void setCameraToBounds();
 
+    auto addCustomPipelineNode() -> void;
+
 private:
     vsg::ref_ptr<vsgQt::Viewer> viewer_{};
     vsg::ref_ptr<vsg::Camera> camera_{};
     vsg::ref_ptr<vsg::Trackball> trackball_{};
 
     vsg::ref_ptr<vsg::Group> theRoot_{};
+    vsg::ref_ptr<vsg::MatrixTransform> costomPipelineNode_{};
 
     vsg::ref_ptr<vsg::Node> testScene_{};
 };

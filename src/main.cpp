@@ -61,7 +61,7 @@ int main( int argc, char* argv[] ) {
 
     // Main objects initialization.
     auto tired = std::make_unique<tired::Tired>();
-    auto tiredUi = std::make_unique<tired::TiredUi>( tired.get(), filename, options );
+    auto tiredUi = std::make_unique<tired::TiredUi>( tired.get() );
     // ============================
 
     tired->viewerCompile( interval, continuousUpdate );
