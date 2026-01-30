@@ -61,10 +61,10 @@ auto Tired::loadTestScene( vsg::Path filename, vsg::ref_ptr<vsg::Options> option
     mainMatrixTranform->addChild( scene );
     theRoot_->addChild( mainMatrixTranform );
 
-    auto box = vsg::ref_ptr<Box>( new Box{ vsg::dvec3{ 500.0, 0.0, 0.0 }, vsg::dvec3{ 500.0, 500.0, 500.0 } } );
+    auto box = vsg::ref_ptr<Box>( new Box{ vsg::dvec3{ 0.0, -1.5, 3.0 }, vsg::dvec3{ 500.0, 500.0, 500.0 } } );
     theRoot_->addChild( box );
 
-    auto exbox = vsg::ref_ptr<ExBox>( new ExBox{ vsg::dvec3{}, vsg::dvec3{ 500.0, 500.0, 500.0 } } );
+    auto exbox = vsg::ref_ptr<ExBox>( new ExBox{ vsg::dvec3{ 0.0, 1.5, 3.0 }, vsg::dvec3{ 500.0, 500.0, 500.0 } } );
     theRoot_->addChild( exbox );
 
     return 0;
@@ -89,23 +89,18 @@ auto Tired::initWindow( vsg::ref_ptr<vsg::WindowTraits> traits, QWindow* parent 
     vsg::ComputeBounds computeBounds;
     theRoot_->accept( computeBounds );
     // vsg::dvec3 centre = ( computeBounds.bounds.min + computeBounds.bounds.max ) * 0.8;
-    auto centre = vsg::dvec3{ 0.0, 0.0, 0.0 };
     // double radius = vsg::length( computeBounds.bounds.max - computeBounds.bounds.min ) * 0.6;
-    double radius = 5000.0 * 3.0;
-
-    std::println( "{} {} {}", centre.x, centre.y, centre.z );
-
-    double nearFarRatio = 0.001;
 
     uint32_t width = window->traits->width;
     uint32_t height = window->traits->height;
 
     {
         // set up the camera
-        auto lookAt = vsg::LookAt::create( vsg::dvec3( 0.0, -radius, 0.0 ), centre, vsg::dvec3( 0.0, 0.0, 1.0 ) );
+        auto lookAt = vsg::LookAt::create( vsg::dvec3( 0.0, -8000.0, 6000.0 ), vsg::dvec3{ 0.0, 0.0, 500.0 },
+                                           vsg::dvec3( 0.0, 0.0, 1.0 ) );
 
         vsg::ref_ptr<vsg::ProjectionMatrix> perspective = vsg::Perspective::create(
-            30.0, static_cast<double>( width ) / static_cast<double>( height ), nearFarRatio * radius, radius * 4.5 );
+            30.0, static_cast<double>( width ) / static_cast<double>( height ), 0.01, 50000.0 );
 
         camera_ = vsg::Camera::create( perspective, lookAt, vsg::ViewportState::create( VkExtent2D{ width, height } ) );
     }
