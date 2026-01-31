@@ -1,5 +1,5 @@
 
-#include <iostream>
+#include <print>
 
 #include <QFont>
 
@@ -9,19 +9,25 @@ namespace tired {
 
 Appearance::Appearance( QObject *parent )
     : QObject{ parent } {
+    //
     auto wp = QDir{ QDir::currentPath() };
     wp.cdUp();
+
     // Load color scheme.
-    QFile file( wp.path() + QDir::separator() + "src/ui/qml/colors/colors.json" );
-    file.open( QIODevice::ReadOnly | QIODevice::Text );
+    QFile file( wp.path() + QDir::separator() + "src/ui/qml/appearence/default.json" );
+
+    if ( !file.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
+        std::println( "appearence file not exist : {}", file.fileName().toStdString() );
+        std::terminate();
+    }
+
     const QByteArray data = file.readAll();
 
     QJsonParseError parseError;
     const QJsonDocument doc = QJsonDocument::fromJson( data, &parseError );
     if ( parseError.error != QJsonParseError::NoError ) {
-        std::cout << std::format( "color theme json parse failed with message: {}",
-                                  parseError.errorString().toStdString() );
-        return;
+        std::println( "appearence theme json parse failed with message: {}", parseError.errorString().toStdString() );
+        std::terminate();
     }
 
     const auto object = doc.object();
