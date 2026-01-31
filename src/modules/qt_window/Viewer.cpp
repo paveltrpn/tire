@@ -33,7 +33,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include <iostream>
 
-using namespace vsgQt;
+namespace tired {
 
 Viewer::Viewer( int msecTimerInterval ) {
     // set the default timer as 8ms.
@@ -79,3 +79,5 @@ void Viewer::setInterval( int msecTimerInterval ) {
     timer.connect( &timer, &QTimer::timeout, [&]() { render(); } );
     timer.start();
 }
+
+}  // namespace tired

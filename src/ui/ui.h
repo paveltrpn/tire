@@ -32,7 +32,7 @@ private:
     QQmlEngine *engine_;
     QQmlContext *context_;
 
-    vsgQt::Window *vsgWindow_{};
+    Window *vsgWindow_{};
     QWidget *vsgWidget_{};
     QQuickWidget *topPanel_{};
     QQuickWidget *leftPanel_{};

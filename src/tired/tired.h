@@ -15,10 +15,10 @@ public:
     Tired( QObject* parent = nullptr );
 
     auto loadTestScene() -> void;
-    auto initCamera( vsgQt::Window* window, uint32_t width, uint32_t height ) -> void;
+    auto initCamera( Window* window, uint32_t width, uint32_t height ) -> void;
     auto viewerCompile( int interval, bool continuousUpdate ) -> void;
 
-    auto viewer() -> vsg::ref_ptr<vsgQt::Viewer>;
+    auto viewer() -> vsg::ref_ptr<Viewer>;
     auto rootNode() -> vsg::ref_ptr<vsg::Node>;
     auto camera() -> vsg::ref_ptr<vsg::Camera>;
 
@@ -29,7 +29,7 @@ private:
     auto addTexturePipelineNode() -> void;
 
 private:
-    vsg::ref_ptr<vsgQt::Viewer> viewer_{};
+    vsg::ref_ptr<Viewer> viewer_{};
     vsg::ref_ptr<vsg::Camera> camera_{};
     vsg::ref_ptr<vsg::Trackball> trackball_{};
 

@@ -17,7 +17,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <vsg/ui/KeyEvent.h>
 #include "Export.h"
 
-namespace vsgQt {
+namespace tired {
 
 class VSGQT_DECLSPEC KeyboardMap : public vsg::Inherit<vsg::Object, KeyboardMap> {
 public:
@@ -31,6 +31,6 @@ protected:
     VirtualKeyToKeySymbolMap _keycodeMap;
 };
 
-}  // namespace vsgQt
+}  // namespace tired
 
-EVSG_type_name( vsgQt::KeyboardMap );
+EVSG_type_name( tired::KeyboardMap );

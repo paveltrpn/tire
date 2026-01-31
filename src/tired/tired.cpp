@@ -15,7 +15,7 @@ namespace tired {
 
 Tired::Tired( QObject* parent )
     : QObject{ parent }
-    , viewer_{ vsgQt::Viewer::create() }
+    , viewer_{ Viewer::create() }
     , theRoot_{ new vsg::Group{} } {};
 
 auto Tired::viewerCompile( int interval, bool continuousUpdate ) -> void {
@@ -29,7 +29,7 @@ auto Tired::viewerCompile( int interval, bool continuousUpdate ) -> void {
     viewer_->compile();
 }
 
-auto Tired::viewer() -> vsg::ref_ptr<vsgQt::Viewer> {
+auto Tired::viewer() -> vsg::ref_ptr<Viewer> {
     return viewer_;
 }
 
@@ -58,7 +58,7 @@ Q_INVOKABLE void Tired::addExBox( float px, float py, float pz, float rx, float 
     vsg::updateViewer( *viewer_, res );
 }
 
-auto Tired::initCamera( vsgQt::Window* window, uint32_t width, uint32_t height ) -> void {
+auto Tired::initCamera( Window* window, uint32_t width, uint32_t height ) -> void {
     // set up the camera
     auto lookAt =
         vsg::LookAt::create( vsg::dvec3( 0.0, -4.0, 1.5 ), vsg::dvec3{ 0.0, 0.0, 0.0 }, vsg::dvec3( 0.0, 0.0, 1.0 ) );

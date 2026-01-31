@@ -12,7 +12,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include "KeyboardMap.h"
 
-using namespace vsgQt;
+namespace tired {
 
 KeyboardMap::KeyboardMap()
     : _keycodeMap {
@@ -163,3 +163,5 @@ bool KeyboardMap::getKeySymbol( const QKeyEvent* e, vsg::KeySymbol& keySymbol, v
 
     return true;
 }
+
+}  // namespace tired

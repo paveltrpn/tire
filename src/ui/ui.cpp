@@ -71,7 +71,7 @@ TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
 
     vLayout->addWidget( vSplitter );
 
-    vsgWindow_ = new vsgQt::Window( tired->viewer(), windowTraits );
+    vsgWindow_ = new Window( tired->viewer(), windowTraits );
     vsgWindow_->setTitle( "title" );
     vsgWindow_->initializeWindow();
 

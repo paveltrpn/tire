@@ -32,7 +32,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include <iostream>
 
-using namespace vsgQt;
+namespace tired {
 
 Window::Window( QScreen* targetScreen )
     : QWindow( targetScreen )
@@ -84,8 +84,7 @@ Window::Window( vsg::ref_ptr<vsg::WindowTraits> in_traits, QWindow* parent )
     }
 }
 
-Window::Window( vsg::ref_ptr<vsgQt::Viewer> in_viewer, vsg::ref_ptr<vsg::WindowTraits> in_traits,
-                QScreen* targetScreen )
+Window::Window( vsg::ref_ptr<Viewer> in_viewer, vsg::ref_ptr<vsg::WindowTraits> in_traits, QScreen* targetScreen )
     : QWindow( targetScreen )
     , viewer( in_viewer )
     , keyboardMap( KeyboardMap::create() ) {
@@ -101,7 +100,7 @@ Window::Window( vsg::ref_ptr<vsgQt::Viewer> in_viewer, vsg::ref_ptr<vsg::WindowT
     }
 }
 
-Window::Window( vsg::ref_ptr<vsgQt::Viewer> in_viewer, vsg::ref_ptr<vsg::WindowTraits> in_traits, QWindow* parent )
+Window::Window( vsg::ref_ptr<Viewer> in_viewer, vsg::ref_ptr<vsg::WindowTraits> in_traits, QWindow* parent )
     : QWindow( parent )
     , viewer( in_viewer )
     , keyboardMap( KeyboardMap::create() ) {
@@ -319,3 +318,5 @@ std::pair<int32_t, int32_t> Window::convertMousePosition( QMouseEvent* e ) const
     return { convert_coord( e->x() ), convert_coord( e->y() ) };
 #endif
 }
+
+}  // namespace tired

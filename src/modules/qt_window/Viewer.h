@@ -17,7 +17,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include <QTimer>
 
-namespace vsgQt {
+namespace tired {
 
 // forward declare
 class Window;
@@ -48,6 +48,6 @@ public:
     void setInterval( int msecTimerInterval );
 };
 
-}  // namespace vsgQt
+}  // namespace tired
 
-EVSG_type_name( vsgQt::Viewer );
+EVSG_type_name( tired::Viewer );

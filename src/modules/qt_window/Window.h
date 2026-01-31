@@ -20,7 +20,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "KeyboardMap.h"
 #include "Viewer.h"
 
-namespace vsgQt {
+namespace tired {
 
 class VSGQT_DECLSPEC Window : public QWindow {
 public:
@@ -28,14 +28,14 @@ public:
     Window( QWindow* parent );
     Window( vsg::ref_ptr<vsg::WindowTraits> in_traits, QScreen* targetScreen = nullptr );
     Window( vsg::ref_ptr<vsg::WindowTraits> in_traits, QWindow* parent );
-    Window( vsg::ref_ptr<vsgQt::Viewer> in_viewer, vsg::ref_ptr<vsg::WindowTraits> in_traits,
+    Window( vsg::ref_ptr<Viewer> in_viewer, vsg::ref_ptr<vsg::WindowTraits> in_traits,
             QScreen* targetScreen = nullptr );
-    Window( vsg::ref_ptr<vsgQt::Viewer> in_viewer, vsg::ref_ptr<vsg::WindowTraits> in_traits, QWindow* parent );
+    Window( vsg::ref_ptr<Viewer> in_viewer, vsg::ref_ptr<vsg::WindowTraits> in_traits, QWindow* parent );
 
     virtual ~Window();
 
     vsg::ref_ptr<vsg::WindowTraits> traits;
-    vsg::ref_ptr<vsgQt::Viewer> viewer;
+    vsg::ref_ptr<Viewer> viewer;
 
     vsg::ref_ptr<vsg::Window> windowAdapter;
     vsg::ref_ptr<KeyboardMap> keyboardMap;
@@ -74,6 +74,6 @@ private:
     bool _initialized = false;
 };
 
-}  // namespace vsgQt
+}  // namespace tired
 
-EVSG_type_name( vsgQt::Window );
+EVSG_type_name( tired::Window );
