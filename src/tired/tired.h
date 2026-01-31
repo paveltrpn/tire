@@ -5,7 +5,7 @@
 
 #include <QObject>
 
-#include "qt_window/Window.h"
+#include "qt_window/window.h"
 
 namespace tired {
 

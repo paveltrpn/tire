@@ -19,9 +19,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "Window.h"
-
-#include <iostream>
+#include "window.h"
 
 namespace tired {
 
@@ -152,22 +150,6 @@ void Window::cleanup() {
 }
 
 bool Window::event( QEvent* e ) {
-    switch ( e->type() ) {
-        case QEvent::PlatformSurface: {
-            auto surfaceEvent = dynamic_cast<QPlatformSurfaceEvent*>( e );
-            if ( surfaceEvent->surfaceEventType() == QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed ) {
-                vsg::clock::time_point event_time = vsg::clock::now();
-                windowAdapter->bufferedEvents.push_back( vsg::CloseWindowEvent::create( windowAdapter, event_time ) );
-
-                cleanup();
-            }
-            break;
-        }
-
-        default:
-            break;
-    }
-
     return QWindow::event( e );
 }
 

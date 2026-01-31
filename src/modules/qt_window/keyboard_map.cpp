@@ -1,7 +1,7 @@
 // Portions of this code are derived from vsgQt, licensed under the MIT License.
 // See: https:/https://github.com/vsg-dev/vsgQt/LICENSE
 
-#include "KeyboardMap.h"
+#include "keyboard_map.h"
 
 namespace tired {
 

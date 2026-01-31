@@ -7,8 +7,8 @@
 
 #include <vsg/app/Window.h>
 
-#include "KeyboardMap.h"
-#include "Viewer.h"
+#include "keyboard_map.h"
+#include "viewer.h"
 
 namespace tired {
 

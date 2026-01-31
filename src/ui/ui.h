@@ -10,7 +10,7 @@
 #include <vsgXchange/all.h>
 #endif
 
-#include "qt_window/Window.h"
+#include "qt_window/window.h"
 
 #include "appearance.h"
 #include "tired/tired.h"

@@ -19,8 +19,8 @@
 
 #include <vulkan/vulkan.h>
 
-#include "Viewer.h"
-#include "Window.h"
+#include "viewer.h"
+#include "window.h"
 
 #include <iostream>
 
