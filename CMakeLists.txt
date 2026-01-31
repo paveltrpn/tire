@@ -54,6 +54,24 @@ endif()
 include_directories("src/modules")
 
 # ================================
+# Module qt_window
+# ================================
+file(GLOB MOD_QT_WINDOW_SRC "src/modules/qt_window/*.cpp" "src/modules/qt_window/*.h")
+add_library(qt_window)
+target_sources(qt_window PRIVATE ${MOD_QT_WINDOW_SRC})
+set_target_properties(qt_window PROPERTIES AUTOMOC TRUE)
+target_link_libraries(qt_window
+    vsg
+    Qt::Core
+    Qt::Gui
+    Qt6::GuiPrivate
+    Qt::Quick
+    Qt::QuickWidgets
+    Qt::QuickControls2
+    Qt::Qml
+)
+
+# ================================
 # Module box
 # ================================
 file(GLOB MOD_BOX_SRC "src/modules/box/*.cpp" "src/modules/box/*.h")
@@ -89,7 +107,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES AUTOMOC TRUE)
 
 target_link_libraries(${PROJECT_NAME}
     xcb
-    vsgQt
+    #vsgQt
     vsg
     vsgXchange
     vulkan
@@ -112,6 +130,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt::QuickWidgets
     Qt::QuickControls2
     Qt::Qml
+    qt_window
     box
 )
 
