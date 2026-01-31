@@ -27,14 +27,6 @@ else()
     message(SEND_ERROR "vsg_DIR is not set")
 endif()
 
-if (DEFINED ENV{vsgqt_DIR} AND NOT "$ENV{vsgqt_DIR}" STREQUAL "")
-    message( "vsgqt_DIR is set to $ENV{vsgqt_DIR}")
-    include_directories($ENV{vsgqt_DIR}/include)
-    link_directories($ENV{vsgqt_DIR}/lib)
-else()
-    message(SEND_ERROR "vsgqt_DIR is not set")
-endif()
-
 if (DEFINED ENV{vsgXchange_DIR} AND NOT "$ENV{vsgXchange_DIR}" STREQUAL "")
     message( "vsgXchange_DIR is set to $ENV{vsgXchange_DIR}")
     include_directories($ENV{vsgXchange_DIR}/include)
@@ -107,7 +99,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES AUTOMOC TRUE)
 
 target_link_libraries(${PROJECT_NAME}
     xcb
-    #vsgQt
     vsg
     vsgXchange
     vulkan

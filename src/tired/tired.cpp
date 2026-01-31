@@ -8,8 +8,6 @@
 #include <vsgXchange/all.h>
 #endif
 
-#include <vsgQt/Window.h>
-
 #include "tired.h"
 #include "box/ex_box.h"
 

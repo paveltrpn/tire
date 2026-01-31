@@ -11,8 +11,6 @@
 #include <QLabel>
 #include <QPushButton>
 
-#include <vsgQt/Window.h>
-
 #include "ui/ui.h"
 #include "tired/tired.h"
 

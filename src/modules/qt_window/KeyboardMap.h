@@ -15,23 +15,22 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <QKeyEvent>
 
 #include <vsg/ui/KeyEvent.h>
-#include <vsgQt/Export.h>
+#include "Export.h"
 
-namespace vsgQt
-{
+namespace vsgQt {
 
-    class VSGQT_DECLSPEC KeyboardMap : public vsg::Inherit<vsg::Object, KeyboardMap>
-    {
-    public:
-        KeyboardMap();
+class VSGQT_DECLSPEC KeyboardMap : public vsg::Inherit<vsg::Object, KeyboardMap> {
+public:
+    KeyboardMap();
 
-        bool getKeySymbol(const QKeyEvent* e, vsg::KeySymbol& keySymbol, vsg::KeySymbol& modifiedKeySymbol, vsg::KeyModifier& keyModifier);
+    bool getKeySymbol( const QKeyEvent* e, vsg::KeySymbol& keySymbol, vsg::KeySymbol& modifiedKeySymbol,
+                       vsg::KeyModifier& keyModifier );
 
-    protected:
-        using VirtualKeyToKeySymbolMap = std::map<uint32_t, vsg::KeySymbol>;
-        VirtualKeyToKeySymbolMap _keycodeMap;
-    };
+protected:
+    using VirtualKeyToKeySymbolMap = std::map<uint32_t, vsg::KeySymbol>;
+    VirtualKeyToKeySymbolMap _keycodeMap;
+};
 
-} // namespace vsgQt
+}  // namespace vsgQt
 
-EVSG_type_name(vsgQt::KeyboardMap);
+EVSG_type_name( vsgQt::KeyboardMap );

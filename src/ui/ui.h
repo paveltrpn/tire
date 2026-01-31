@@ -10,29 +10,12 @@
 #include <vsgXchange/all.h>
 #endif
 
-#include <vsgQt/Window.h>
+#include "qt_window/Window.h"
 
 #include "appearance.h"
 #include "tired/tired.h"
 
 namespace tired {
-
-// ====================================================================
-// ========== Window ==================================================
-// ====================================================================
-
-struct Window final : vsgQt::Window {
-public:
-    Window( vsg::ref_ptr<vsgQt::Viewer> in_viewer, vsg::ref_ptr<vsg::WindowTraits> in_traits )
-        : vsgQt::Window{ in_viewer, in_traits } {}
-
-    Q_INVOKABLE QPoint mousePos() const;
-
-    void mouseMoveEvent( QMouseEvent *event ) override;
-
-private:
-    QPoint mousePos_{};
-};
 
 // ====================================================================
 // ========== TiredUi =================================================
@@ -49,7 +32,7 @@ private:
     QQmlEngine *engine_;
     QQmlContext *context_;
 
-    Window *vsgWindow_{};
+    vsgQt::Window *vsgWindow_{};
     QWidget *vsgWidget_{};
     QQuickWidget *topPanel_{};
     QQuickWidget *leftPanel_{};

@@ -17,62 +17,63 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #include <vsg/app/Window.h>
 
-#include <vsgQt/KeyboardMap.h>
-#include <vsgQt/Viewer.h>
+#include "KeyboardMap.h"
+#include "Viewer.h"
 
-namespace vsgQt
-{
+namespace vsgQt {
 
-    class VSGQT_DECLSPEC Window : public QWindow
-    {
-    public:
-        Window(QScreen* targetScreen = nullptr);
-        Window(QWindow* parent);
-        Window(vsg::ref_ptr<vsg::WindowTraits> in_traits, QScreen* targetScreen = nullptr);
-        Window(vsg::ref_ptr<vsg::WindowTraits> in_traits, QWindow* parent);
-        Window(vsg::ref_ptr<vsgQt::Viewer> in_viewer, vsg::ref_ptr<vsg::WindowTraits> in_traits, QScreen* targetScreen = nullptr);
-        Window(vsg::ref_ptr<vsgQt::Viewer> in_viewer, vsg::ref_ptr<vsg::WindowTraits> in_traits, QWindow* parent);
+class VSGQT_DECLSPEC Window : public QWindow {
+public:
+    Window( QScreen* targetScreen = nullptr );
+    Window( QWindow* parent );
+    Window( vsg::ref_ptr<vsg::WindowTraits> in_traits, QScreen* targetScreen = nullptr );
+    Window( vsg::ref_ptr<vsg::WindowTraits> in_traits, QWindow* parent );
+    Window( vsg::ref_ptr<vsgQt::Viewer> in_viewer, vsg::ref_ptr<vsg::WindowTraits> in_traits,
+            QScreen* targetScreen = nullptr );
+    Window( vsg::ref_ptr<vsgQt::Viewer> in_viewer, vsg::ref_ptr<vsg::WindowTraits> in_traits, QWindow* parent );
 
-        virtual ~Window();
+    virtual ~Window();
 
-        vsg::ref_ptr<vsg::WindowTraits> traits;
-        vsg::ref_ptr<vsgQt::Viewer> viewer;
+    vsg::ref_ptr<vsg::WindowTraits> traits;
+    vsg::ref_ptr<vsgQt::Viewer> viewer;
 
-        vsg::ref_ptr<vsg::Window> windowAdapter;
-        vsg::ref_ptr<KeyboardMap> keyboardMap;
+    vsg::ref_ptr<vsg::Window> windowAdapter;
+    vsg::ref_ptr<KeyboardMap> keyboardMap;
 
-        operator vsg::ref_ptr<vsg::Window>() { return windowAdapter; }
+    operator vsg::ref_ptr<vsg::Window>() { return windowAdapter; }
 
-        /// Initialize the Vulkan integration using VulkanSceneGraph VkInstance/VkSurface support
-        virtual void initializeWindow();
+    /// Initialize the Vulkan integration using VulkanSceneGraph VkInstance/VkSurface support
+    virtual void initializeWindow();
 
-    protected:
-        void cleanup();
+protected:
+    void cleanup();
 
-        bool event(QEvent* e) override;
+    bool event( QEvent* e ) override;
 
-        void exposeEvent(QExposeEvent*) override;
-        void hideEvent(QHideEvent* ev) override;
+    void exposeEvent( QExposeEvent* ) override;
+    void hideEvent( QHideEvent* ev ) override;
 
-        void keyPressEvent(QKeyEvent*) override;
-        void keyReleaseEvent(QKeyEvent*) override;
-        void mouseMoveEvent(QMouseEvent*) override;
-        void mousePressEvent(QMouseEvent*) override;
-        void mouseReleaseEvent(QMouseEvent*) override;
-        void resizeEvent(QResizeEvent*) override;
-        void wheelEvent(QWheelEvent*) override;
+    void keyPressEvent( QKeyEvent* ) override;
+    void keyReleaseEvent( QKeyEvent* ) override;
+    void mouseMoveEvent( QMouseEvent* ) override;
+    void mousePressEvent( QMouseEvent* ) override;
+    void mouseReleaseEvent( QMouseEvent* ) override;
+    void resizeEvent( QResizeEvent* ) override;
+    void wheelEvent( QWheelEvent* ) override;
 
-        /// convert Qt's window coordinate into Vulkan/VSG ones by scaling by the devicePixelRatio()
-        template<typename T>
-        int32_t convert_coord(T c) const { return static_cast<int32_t>(std::round(static_cast<qreal>(c) * devicePixelRatio())); }
+    /// convert Qt's window coordinate into Vulkan/VSG ones by scaling by the devicePixelRatio()
+    template <typename T>
+    int32_t convert_coord( T c ) const {
+        return static_cast<int32_t>( std::round( static_cast<qreal>( c ) * devicePixelRatio() ) );
+    }
 
-        std::pair<vsg::ButtonMask, uint32_t> convertMouseButtons(QMouseEvent* e) const;
-        std::pair<int32_t, int32_t> convertMousePosition(QMouseEvent* e) const;
+    std::pair<vsg::ButtonMask, uint32_t> convertMouseButtons( QMouseEvent* e ) const;
+    std::pair<int32_t, int32_t> convertMousePosition( QMouseEvent* e ) const;
 
-    private:
-        bool _initialized = false;
-    };
+private:
+    bool _initialized = false;
+};
 
-} // namespace vsgQt
+}  // namespace vsgQt
 
-EVSG_type_name(vsgQt::Window);
+EVSG_type_name( vsgQt::Window );

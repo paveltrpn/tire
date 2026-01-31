@@ -9,24 +9,9 @@
 #include <vsgXchange/all.h>
 #endif
 
-#include <vsgQt/Window.h>
-
 #include "ui.h"
 
 namespace tired {
-
-// ====================================================================
-// ========== Window ==================================================
-// ====================================================================
-
-QPoint Window::mousePos() const {
-    return mousePos_;
-}
-
-void Window::mouseMoveEvent( QMouseEvent *event ) {
-    mousePos_ = event->pos();
-    vsgQt::Window::mouseMoveEvent( event );
-};
 
 // ====================================================================
 // ========== TiredUi =================================================
@@ -86,7 +71,7 @@ TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
 
     vLayout->addWidget( vSplitter );
 
-    vsgWindow_ = new Window( tired->viewer(), windowTraits );
+    vsgWindow_ = new vsgQt::Window( tired->viewer(), windowTraits );
     vsgWindow_->setTitle( "title" );
     vsgWindow_->initializeWindow();
 
