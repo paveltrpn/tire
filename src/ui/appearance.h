@@ -25,30 +25,15 @@ struct Appearance : QObject {
 public:
     Appearance( QObject *parent = nullptr );
 
-    Q_INVOKABLE QJsonObject colors() {
-        //
-        return colors_;
-    };
+    Q_INVOKABLE QJsonObject colors();
+    Q_INVOKABLE void setColors( QJsonObject &value );
+    Q_INVOKABLE QVariantMap fonts();
+    Q_INVOKABLE QJsonObject gaps();
+    Q_INVOKABLE QJsonObject radius();
 
-    Q_INVOKABLE void setColors( QJsonObject &value ) {
-        //
-        colors_ = value;
-    };
-
-    Q_INVOKABLE QVariantMap fonts() {
-        //
-        return fonts_;
-    }
-
-    Q_INVOKABLE QJsonObject gaps() {
-        //
-        return gaps_;
-    }
-
-    Q_INVOKABLE QJsonObject radius() {
-        //
-        return radius_;
-    }
+    auto getColor( const QString &value ) const -> QString;
+    auto getGap( const QString &value ) -> int;
+    auto getRadius( const QString &value ) -> int;
 
 signals:
     void colorsChanged();

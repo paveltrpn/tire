@@ -21,12 +21,16 @@
         "accent_focus_80": "#ccfdac82",
         "accent_focus_90": "#e6fdac82",
         "no_focus": "#8f898a",
-        "main_font_color": "white"
+        "main_font_color": "white",
+        "splitter_border_color": "#20212d",
+        "clear_color": "white"
     },
     "gaps":{
         "quarter": 4,
         "half": 8,
-        "full": 16
+        "full": 16,
+        "left_panel_width": 384,
+        "top_panel_height": 56
     },
     "radius":{
         "quarter": 4,

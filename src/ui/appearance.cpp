@@ -52,4 +52,44 @@ Appearance::Appearance( QObject *parent )
     fonts_["subtext"] = QFont{ fontName, baseFontSize, QFont::Medium };
 }
 
+QJsonObject Appearance::colors() {
+    //
+    return colors_;
+};
+
+void Appearance::setColors( QJsonObject &value ) {
+    //
+    colors_ = value;
+};
+
+QVariantMap Appearance::fonts() {
+    //
+    return fonts_;
+}
+
+QJsonObject Appearance::gaps() {
+    //
+    return gaps_;
+}
+
+QJsonObject Appearance::radius() {
+    //
+    return radius_;
+}
+
+auto Appearance::getColor( const QString &value ) const -> QString {
+    //
+    return colors_.value( value ).toString();
+}
+
+auto Appearance::getGap( const QString &value ) -> int {
+    //
+    return gaps_.value( value ).toInt();
+}
+
+auto Appearance::getRadius( const QString &value ) -> int {
+    //
+    return radius_.value( value ).toInt();
+}
+
 }  // namespace tired

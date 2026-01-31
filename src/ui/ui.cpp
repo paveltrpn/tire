@@ -26,6 +26,12 @@ TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
     , theme_{ new Appearance{ this } } {
     //
 
+    const auto topPanelHeight = theme_->getGap( "top_panel_height" );
+    const auto leftPanelWidth = theme_->getGap( "left_panel_width" );
+    const auto splitterBorderColor = theme_->getColor( "splitter_border_color" );
+    const auto splitterHandleWidth = theme_->getGap( "quarter" );
+    const auto clearColor = theme_->getColor( "clear_color" );
+
     setGeometry( 0, 0, 1920, 1080 );
 
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Appearence", theme_ );
@@ -37,7 +43,6 @@ TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
     // windowTraits->samples
     windowTraits->width = 1920;
     windowTraits->height = 1080;
-
     topPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/TopPanel.qml" ) );
     topPanel_->setResizeMode( QQuickWidget::SizeRootObjectToView );
 
@@ -49,25 +54,23 @@ TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
 
     auto *vLayout = new QHBoxLayout{};
     vLayout->setContentsMargins( 0, 0, 0, 0 );
-    vLayout->setSpacing( 0 );
 
     auto *vSplitter = new QSplitter{ this };
     vSplitter->setOrientation( Qt::Horizontal );
-    vSplitter->setStyleSheet( "QSplitter::handle { background-color:  #2a2b3b; }" );
-    vSplitter->setHandleWidth( 6 );
+    vSplitter->setStyleSheet( QString{ "QSplitter::handle { background-color:  %1; }" }.arg( splitterBorderColor ) );
+    vSplitter->setHandleWidth( splitterHandleWidth );
 
     centralWidget->setLayout( vLayout );
 
     auto *hLayout = new QVBoxLayout{};
     hLayout->setContentsMargins( 0, 0, 0, 0 );
-    hLayout->setSpacing( 6 );
 
     auto rightElementsWidget = new QWidget{ this };
 
     rightElementsWidget->setLayout( hLayout );
     vSplitter->addWidget( leftPanel_ );
     vSplitter->addWidget( rightElementsWidget );
-    vSplitter->setSizes( { 384, 1920 - 384 } );
+    vSplitter->setSizes( { leftPanelWidth, 1920 - leftPanelWidth } );
 
     vLayout->addWidget( vSplitter );
 
@@ -83,12 +86,12 @@ TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
 
     auto *hSplitter = new QSplitter{ this };
     hSplitter->setOrientation( Qt::Vertical );
-    hSplitter->setStyleSheet( "QSplitter::handle { background-color: #2a2b3b; }" );
-    hSplitter->setHandleWidth( 6 );
+    hSplitter->setStyleSheet( QString{ "QSplitter::handle { background-color:  %1; }" }.arg( splitterBorderColor ) );
+    hSplitter->setHandleWidth( splitterHandleWidth );
 
     hSplitter->addWidget( topPanel_ );
     hSplitter->addWidget( vsgWidget_ );
-    hSplitter->setSizes( { 56, 1080 - 56 } );
+    hSplitter->setSizes( { topPanelHeight, 1080 - topPanelHeight } );
 
     hLayout->addWidget( hSplitter );
 }
