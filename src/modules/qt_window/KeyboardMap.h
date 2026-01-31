@@ -15,11 +15,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <QKeyEvent>
 
 #include <vsg/ui/KeyEvent.h>
-#include "Export.h"
 
 namespace tired {
 
-class VSGQT_DECLSPEC KeyboardMap : public vsg::Inherit<vsg::Object, KeyboardMap> {
+class KeyboardMap : public vsg::Inherit<vsg::Object, KeyboardMap> {
 public:
     KeyboardMap();
 

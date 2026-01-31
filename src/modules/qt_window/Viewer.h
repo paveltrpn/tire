@@ -13,7 +13,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 </editor-fold> */
 
 #include <vsg/app/Viewer.h>
-#include "Export.h"
 
 #include <QTimer>
 
@@ -22,7 +21,7 @@ namespace tired {
 // forward declare
 class Window;
 
-class VSGQT_DECLSPEC Viewer : public vsg::Inherit<vsg::Viewer, Viewer> {
+class Viewer : public vsg::Inherit<vsg::Viewer, Viewer> {
 public:
     /// Create Viewer.
     /// If msecTimerInterval is > 0 then call setInterval(msecTimerInterval) to set up QTime to call Viewer::render() at this interval,

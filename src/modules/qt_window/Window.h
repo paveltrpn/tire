@@ -22,7 +22,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 namespace tired {
 
-class VSGQT_DECLSPEC Window : public QWindow {
+class Window : public QWindow {
 public:
     Window( QScreen* targetScreen = nullptr );
     Window( QWindow* parent );
