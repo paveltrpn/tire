@@ -18,9 +18,9 @@ private:
 struct Appearance : QObject {
     Q_OBJECT
     Q_PROPERTY( QJsonObject colors READ colors WRITE setColors MEMBER colors_ NOTIFY colorsChanged )
+    Q_PROPERTY( QJsonObject gaps READ gaps MEMBER gaps_ NOTIFY gapsChanged )
+    Q_PROPERTY( QJsonObject radius READ radius MEMBER radius_ NOTIFY radiusChanged )
     Q_PROPERTY( QVariantMap fonts READ fonts MEMBER fonts_ NOTIFY colorsChanged )
-    Q_PROPERTY( QVariantMap gaps READ gaps MEMBER gaps_ NOTIFY gapsChanged )
-    Q_PROPERTY( QVariantMap radius READ radius MEMBER radius_ NOTIFY radiusChanged )
 
 public:
     Appearance( QObject *parent = nullptr );
@@ -40,12 +40,12 @@ public:
         return fonts_;
     }
 
-    Q_INVOKABLE QVariantMap gaps() {
+    Q_INVOKABLE QJsonObject gaps() {
         //
         return gaps_;
     }
 
-    Q_INVOKABLE QVariantMap radius() {
+    Q_INVOKABLE QJsonObject radius() {
         //
         return radius_;
     }
@@ -58,9 +58,9 @@ signals:
 
 private:
     QJsonObject colors_{};
+    QJsonObject gaps_{};
+    QJsonObject radius_{};
     QVariantMap fonts_{};
-    QVariantMap gaps_{};
-    QVariantMap radius_{};
 };
 
 }  // namespace tired

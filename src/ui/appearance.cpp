@@ -22,36 +22,28 @@ Appearance::Appearance( QObject *parent )
         std::cout << std::format( "color theme json parse failed with message: {}",
                                   parseError.errorString().toStdString() );
         return;
-    } else {
-        // std::cout << doc.toJson( QJsonDocument::Indented ).toStdString();
-        colors_ = doc.object();
     }
 
-#define FONT_NAME "Monospace"
-#define BASE_FONT_SIZE 9
+    const auto object = doc.object();
+    colors_ = object["colors"].toObject();
+    gaps_ = object["gaps"].toObject();
+    radius_ = object["radius"].toObject();
+
+    const auto fontName = object["main_font"].toString();
+    const auto baseFontSize = object["base_font_size"].toInt();
 
     // Build fonts map
-    fonts_["title_big"] = QFont{ FONT_NAME, BASE_FONT_SIZE + 12, QFont::ExtraBold };
-    fonts_["title_accent"] = QFont{ FONT_NAME, BASE_FONT_SIZE + 8, QFont::ExtraBold };
-    fonts_["title"] = QFont{ FONT_NAME, BASE_FONT_SIZE + 8, QFont::Medium };
-    fonts_["subtitle_accent"] = QFont{ FONT_NAME, BASE_FONT_SIZE + 8, QFont::ExtraBold };
-    fonts_["subtitle"] = QFont{ FONT_NAME, BASE_FONT_SIZE + 8, QFont::Medium };
-    fonts_["text_body_accent"] = QFont{ FONT_NAME, BASE_FONT_SIZE + 4, QFont::ExtraBold };
-    fonts_["text_body"] = QFont{ FONT_NAME, BASE_FONT_SIZE + 4, QFont::Medium };
-    fonts_["label_accent"] = QFont{ FONT_NAME, BASE_FONT_SIZE + 2, QFont::ExtraBold };
-    fonts_["label"] = QFont{ FONT_NAME, BASE_FONT_SIZE + 2, QFont::Medium };
-    fonts_["subtext_accent"] = QFont{ FONT_NAME, BASE_FONT_SIZE, QFont::ExtraBold };
-    fonts_["subtext"] = QFont{ FONT_NAME, BASE_FONT_SIZE, QFont::Medium };
-
-    // Build gaps map
-    gaps_["quarter"] = 4;
-    gaps_["half"] = 8;
-    gaps_["full"] = 16;
-
-    // Build radius map
-    radius_["quarter"] = 4;
-    radius_["half"] = 8;
-    radius_["full"] = 16;
+    fonts_["title_big"] = QFont{ fontName, baseFontSize + 12, QFont::ExtraBold };
+    fonts_["title_accent"] = QFont{ fontName, baseFontSize + 8, QFont::ExtraBold };
+    fonts_["title"] = QFont{ fontName, baseFontSize + 8, QFont::Medium };
+    fonts_["subtitle_accent"] = QFont{ fontName, baseFontSize + 8, QFont::ExtraBold };
+    fonts_["subtitle"] = QFont{ fontName, baseFontSize + 8, QFont::Medium };
+    fonts_["text_body_accent"] = QFont{ fontName, baseFontSize + 4, QFont::ExtraBold };
+    fonts_["text_body"] = QFont{ fontName, baseFontSize + 4, QFont::Medium };
+    fonts_["label_accent"] = QFont{ fontName, baseFontSize + 2, QFont::ExtraBold };
+    fonts_["label"] = QFont{ fontName, baseFontSize + 2, QFont::Medium };
+    fonts_["subtext_accent"] = QFont{ fontName, baseFontSize, QFont::ExtraBold };
+    fonts_["subtext"] = QFont{ fontName, baseFontSize, QFont::Medium };
 }
 
 }  // namespace tired
