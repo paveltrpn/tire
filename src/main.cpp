@@ -45,8 +45,6 @@ int main( int argc, char* argv[] ) {
     auto tired = std::make_unique<tired::Tired>();
     auto tiredUi = std::make_unique<tired::TiredUi>( windowTraits, tired.get() );
     // ============================
-
-    tired->viewerCompile( interval, continuousUpdate );
     tiredUi->show();
 
     return application.exec();

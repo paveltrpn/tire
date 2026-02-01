@@ -43,12 +43,45 @@ else()
     message(SEND_ERROR "glslang_DIR is not set")
 endif()
 
-include_directories("src/modules")
+include_directories("src")
+
+# ================================
+# Module tired
+# ================================
+file(GLOB MOD_TIRED_SRC "src/tired/*.cpp" "src/tired/*.h")
+add_library(tired)
+target_sources(tired PRIVATE ${MOD_TIRED_SRC})
+set_target_properties(tired PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(tired PROPERTIES AUTOMOC TRUE)
+target_link_libraries(tired
+    vsg
+    vsgXchange
+    vulkan
+    GenericCodeGen
+    glslang
+    glslang-default-resource-limits
+    MachineIndependent
+    OSDependent
+    SPIRV-Tools-opt
+    SPIRV-Tools
+    SPIRV-Tools-diff
+    SPIRV-Tools-link
+    SPIRV-Tools-lint
+    SPIRV-Tools-reduce
+    SPIRV
+    Qt::Core
+    Qt::Gui
+    Qt6::GuiPrivate
+    Qt::Quick
+    Qt::QuickWidgets
+    Qt::QuickControls2
+    Qt::Qml
+)
 
 # ================================
 # Module qt_window
 # ================================
-file(GLOB MOD_QT_WINDOW_SRC "src/modules/qt_window/*.cpp" "src/modules/qt_window/*.h")
+file(GLOB MOD_QT_WINDOW_SRC "src/qt_window/*.cpp" "src/qt_window/*.h")
 add_library(qt_window)
 target_sources(qt_window PRIVATE ${MOD_QT_WINDOW_SRC})
 set_target_properties(qt_window PROPERTIES AUTOMOC TRUE)
@@ -66,7 +99,7 @@ target_link_libraries(qt_window
 # ================================
 # Module box
 # ================================
-file(GLOB MOD_BOX_SRC "src/modules/box/*.cpp" "src/modules/box/*.h")
+file(GLOB MOD_BOX_SRC "src/box/*.cpp" "src/box/*.h")
 add_library(box)
 target_sources(box PRIVATE ${MOD_BOX_SRC})
 set_target_properties(box PROPERTIES LINKER_LANGUAGE CXX)
@@ -93,8 +126,7 @@ endif()
 
 file(GLOB MAIN_APP "src/*.cpp" "src/*.h")
 file(GLOB UI_SRC "src/ui/*.cpp" "src/ui/*.h")
-file(GLOB TIRED_SRC "src/tired/*.cpp" "src/tired/*.h")
-add_executable(${PROJECT_NAME} ${MAIN_APP}  ${UI_SRC} ${TIRED_SRC})
+add_executable(${PROJECT_NAME} ${MAIN_APP}  ${UI_SRC})
 set_target_properties(${PROJECT_NAME} PROPERTIES AUTOMOC TRUE)
 
 target_link_libraries(${PROJECT_NAME}
@@ -121,6 +153,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt::QuickWidgets
     Qt::QuickControls2
     Qt::Qml
+    tired
     qt_window
     box
 )
