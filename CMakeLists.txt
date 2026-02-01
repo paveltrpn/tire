@@ -48,7 +48,7 @@ include_directories("src")
 # ================================
 # Module tired
 # ================================
-file(GLOB MOD_TIRED_SRC "src/tired/*.cpp" "src/tired/*.h")
+file(GLOB_RECURSE MOD_TIRED_SRC "src/tired/*.cpp" "src/tired/*.h")
 add_library(tired)
 target_sources(tired PRIVATE ${MOD_TIRED_SRC})
 set_target_properties(tired PROPERTIES LINKER_LANGUAGE CXX)
@@ -95,15 +95,6 @@ target_link_libraries(qt_window
     Qt::QuickControls2
     Qt::Qml
 )
-
-# ================================
-# Module box
-# ================================
-file(GLOB MOD_BOX_SRC "src/box/*.cpp" "src/box/*.h")
-add_library(box)
-target_sources(box PRIVATE ${MOD_BOX_SRC})
-set_target_properties(box PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(box vsg)
 
 set(QT_VERSION 6.10)
 list(APPEND CMAKE_PREFIX_PATH $ENV{LOCAL_LATEST_QT})
@@ -155,7 +146,6 @@ target_link_libraries(${PROJECT_NAME}
     Qt::Qml
     tired
     qt_window
-    box
 )
 
     
