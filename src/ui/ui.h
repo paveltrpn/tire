@@ -24,7 +24,7 @@ namespace tired {
 struct TiredUi final : QMainWindow {
     Q_OBJECT
 public:
-    TiredUi( tired::Tired *tired, QObject *parent = nullptr );
+    TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, tired::Tired *tired, QObject *parent = nullptr );
 
 private:
     tired::Tired *tired_{};

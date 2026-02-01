@@ -31,13 +31,14 @@ int main( int argc, char* argv[] ) {
     options->readOptions( arguments );
 
     auto windowTraits = vsg::WindowTraits::create();
-    windowTraits->windowTitle = "vsgQt viewer";
+    windowTraits->windowTitle = "tire editor";
     windowTraits->debugLayer = arguments.read( { "--debug", "-d" } );
     windowTraits->apiDumpLayer = arguments.read( { "--api", "-a" } );
 
     // windowTraits->samples
     windowTraits->width = 1920;
     windowTraits->height = 1080;
+    windowTraits->clearColor = vsg::vec4{ 155.0f / 255.0f, 158.0f / 255.0f, 191.0f / 255.0f, 1.0f };
     // windowTraits->fullscreen = true;
 
     bool continuousUpdate = !arguments.read( { "--event-driven", "--ed" } );
@@ -45,7 +46,7 @@ int main( int argc, char* argv[] ) {
 
     // Main objects initialization.
     auto tired = std::make_unique<tired::Tired>();
-    auto tiredUi = std::make_unique<tired::TiredUi>( tired.get() );
+    auto tiredUi = std::make_unique<tired::TiredUi>( windowTraits, tired.get() );
     // ============================
 
     tired->viewerCompile( interval, continuousUpdate );

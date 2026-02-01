@@ -17,7 +17,7 @@ namespace tired {
 // ========== TiredUi =================================================
 // ====================================================================
 
-TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
+TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, tired::Tired *tired, QObject *parent )
     : tired_{ tired }
     , engine_{ new QQmlEngine{ this } }
     , context_{ engine_->rootContext() }
@@ -32,17 +32,11 @@ TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
     const auto splitterHandleWidth = theme_->getGap( "quarter" );
     const auto clearColor = theme_->getColor( "clear_color" );
 
-    setGeometry( 0, 0, 1920, 1080 );
-
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Appearence", theme_ );
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Tired", tired_ );
 
-    auto windowTraits = vsg::WindowTraits::create();
-    windowTraits->windowTitle = "tire editor";
+    setGeometry( 0, 0, traits->width, traits->height );
 
-    // windowTraits->samples
-    windowTraits->width = 1920;
-    windowTraits->height = 1080;
     topPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/TopPanel.qml" ) );
     topPanel_->setResizeMode( QQuickWidget::SizeRootObjectToView );
 
@@ -74,11 +68,11 @@ TiredUi::TiredUi( tired::Tired *tired, QObject *parent )
 
     vLayout->addWidget( vSplitter );
 
-    vsgWindow_ = new Window( tired->viewer(), windowTraits );
+    vsgWindow_ = new Window( tired->viewer(), traits );
     vsgWindow_->setTitle( "title" );
     vsgWindow_->initializeWindow();
 
-    tired->initCamera( vsgWindow_, windowTraits->width, windowTraits->height );
+    tired->initCamera( vsgWindow_, traits->width, traits->height );
     vsgWidget_ = QWidget::createWindowContainer( vsgWindow_, this );
 
     bool continuousUpdate = false;  // arguments.read( { "--event-driven", "--ed" } );
