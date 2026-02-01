@@ -79,6 +79,24 @@ target_link_libraries(tired
 )
 
 # ================================
+# Module tired_ui
+# ================================
+file(GLOB_RECURSE MOD_TIRED_UI_SRC "src/ui/*.cpp" "src/ui/*.h")
+add_library(tired_ui)
+target_sources(tired_ui PRIVATE ${MOD_TIRED_UI_SRC})
+set_target_properties(tired_ui PROPERTIES AUTOMOC TRUE)
+target_link_libraries(tired_ui
+    vsg
+    Qt::Core
+    Qt::Gui
+    Qt6::GuiPrivate
+    Qt::Quick
+    Qt::QuickWidgets
+    Qt::QuickControls2
+    Qt::Qml
+)
+
+# ================================
 # Module qt_window
 # ================================
 file(GLOB MOD_QT_WINDOW_SRC "src/qt_window/*.cpp" "src/qt_window/*.h")
@@ -115,9 +133,10 @@ if (vsgXchange_FOUND)
     target_link_libraries(${PROJECT_NAME} vsgXchange::vsgXchange)
 endif()
 
-file(GLOB MAIN_APP "src/*.cpp" "src/*.h")
-file(GLOB UI_SRC "src/ui/*.cpp" "src/ui/*.h")
-add_executable(${PROJECT_NAME} ${MAIN_APP}  ${UI_SRC})
+add_executable(${PROJECT_NAME}
+    "src/main.cpp"
+)
+
 set_target_properties(${PROJECT_NAME} PROPERTIES AUTOMOC TRUE)
 
 target_link_libraries(${PROJECT_NAME}
@@ -145,6 +164,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt::QuickControls2
     Qt::Qml
     tired
+    tired_ui
     qt_window
 )
 
