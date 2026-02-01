@@ -41,9 +41,6 @@ int main( int argc, char* argv[] ) {
     windowTraits->clearColor = vsg::vec4{ 155.0f / 255.0f, 158.0f / 255.0f, 191.0f / 255.0f, 1.0f };
     // windowTraits->fullscreen = true;
 
-    bool continuousUpdate = !arguments.read( { "--event-driven", "--ed" } );
-    auto interval = arguments.value<int>( 8, "--interval" );
-
     // Main objects initialization.
     auto tired = std::make_unique<tired::Tired>();
     auto tiredUi = std::make_unique<tired::TiredUi>( windowTraits, tired.get() );

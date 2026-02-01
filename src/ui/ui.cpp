@@ -75,9 +75,6 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, tired::Tired *tired, Q
     tired->initCamera( vsgWindow_, traits->width, traits->height );
     vsgWidget_ = QWidget::createWindowContainer( vsgWindow_, this );
 
-    bool continuousUpdate = false;  // arguments.read( { "--event-driven", "--ed" } );
-    auto interval = 8;              // arguments.value<int>( 8, "--interval" );
-
     auto *hSplitter = new QSplitter{ this };
     hSplitter->setOrientation( Qt::Vertical );
     hSplitter->setStyleSheet( QString{ "QSplitter::handle { background-color:  %1; }" }.arg( splitterBorderColor ) );
