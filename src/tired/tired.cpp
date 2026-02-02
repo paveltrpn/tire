@@ -33,6 +33,10 @@ auto Tired::viewer() -> vsg::ref_ptr<Viewer> {
     return viewer_;
 }
 
+auto Tired::manipulator() -> vsg::ref_ptr<Manipulator> {
+    return manipulator_;
+}
+
 auto Tired::rootNode() -> vsg::ref_ptr<vsg::Node> {
     return theRoot_;
 }
@@ -68,10 +72,10 @@ auto Tired::initCamera( Window* window, uint32_t width, uint32_t height ) -> voi
 
     camera_ = vsg::Camera::create( perspective, lookAt, vsg::ViewportState::create( VkExtent2D{ width, height } ) );
 
-    trackball_ = vsg::Trackball::create( camera_, nullptr );
-    trackball_->addWindow( *window );
+    manipulator_ = vsg::ref_ptr<Manipulator>( new Manipulator{ camera_, nullptr } );
+    manipulator_->addWindow( *window );
 
-    viewer_->addEventHandler( trackball_ );
+    viewer_->addEventHandler( manipulator_ );
 
     auto commandGraph = vsg::createCommandGraphForView( *window, camera_, theRoot_ );
 

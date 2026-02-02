@@ -37,12 +37,28 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, tired::Tired *tired, Q
 
     setGeometry( 0, 0, traits->width, traits->height );
 
+    // VSG initialization.
+    vsgWindow_ = new Window( tired->viewer(), traits );
+    vsgWindow_->setTitle( "title" );
+    vsgWindow_->initializeWindow();
+
+    tired->initCamera( vsgWindow_, traits->width, traits->height );
+
+    qmlRegisterSingletonInstance( "Tire", 1, 0, "Manipulator", tired_->manipulator().get() );
+
+    bool continuousUpdate = false;  // arguments.read( { "--event-driven", "--ed" } );
+    auto interval = 8;              // arguments.value<int>( 8, "--interval" );
+
+    tired->viewerCompile( interval, continuousUpdate );
+
+    vsgWidget_ = QWidget::createWindowContainer( vsgWindow_, this );
     topPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/TopPanel.qml" ) );
     topPanel_->setResizeMode( QQuickWidget::SizeRootObjectToView );
 
     leftPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/LeftPanel.qml" ) );
     leftPanel_->setResizeMode( QQuickWidget::SizeRootObjectToView );
 
+    // Qt widgets initialization.
     auto centralWidget = new QWidget{ this };
     setCentralWidget( centralWidget );
 
@@ -68,16 +84,6 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, tired::Tired *tired, Q
 
     vLayout->addWidget( vSplitter );
 
-    vsgWindow_ = new Window( tired->viewer(), traits );
-    vsgWindow_->setTitle( "title" );
-    vsgWindow_->initializeWindow();
-
-    tired->initCamera( vsgWindow_, traits->width, traits->height );
-    vsgWidget_ = QWidget::createWindowContainer( vsgWindow_, this );
-
-    bool continuousUpdate = false;  // arguments.read( { "--event-driven", "--ed" } );
-    auto interval = 8;              // arguments.value<int>( 8, "--interval" );
-
     auto *hSplitter = new QSplitter{ this };
     hSplitter->setOrientation( Qt::Vertical );
     hSplitter->setStyleSheet( QString{ "QSplitter::handle { background-color:  %1; }" }.arg( splitterBorderColor ) );
@@ -88,8 +94,6 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, tired::Tired *tired, Q
     hSplitter->setSizes( { topPanelHeight, 1080 - topPanelHeight } );
 
     hLayout->addWidget( hSplitter );
-
-    tired->viewerCompile( interval, continuousUpdate );
 
     show();
 }

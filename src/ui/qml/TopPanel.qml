@@ -54,8 +54,8 @@ Rectangle {
                 height: 24
 
                 text: {
-                    // const pos = Window.mousePos()
-                     return `X: ${0} Y: ${0}`
+                     const pos = Manipulator.mousePos
+                     return `X: ${pos.x} Y: ${pos.y}`
                 }
 
                 horizontalAlignment: Text.AlignLeft

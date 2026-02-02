@@ -5,6 +5,7 @@
 
 #include <QObject>
 
+#include "manipulator.h"
 #include "qt_window/window.h"
 
 namespace tired {
@@ -19,6 +20,7 @@ public:
     auto viewerCompile( int interval, bool continuousUpdate ) -> void;
 
     auto viewer() -> vsg::ref_ptr<Viewer>;
+    auto manipulator() -> vsg::ref_ptr<Manipulator>;
     auto rootNode() -> vsg::ref_ptr<vsg::Node>;
     auto camera() -> vsg::ref_ptr<vsg::Camera>;
 
@@ -31,7 +33,7 @@ private:
 private:
     vsg::ref_ptr<Viewer> viewer_{};
     vsg::ref_ptr<vsg::Camera> camera_{};
-    vsg::ref_ptr<vsg::Trackball> trackball_{};
+    vsg::ref_ptr<Manipulator> manipulator_{};
 
     vsg::ref_ptr<vsg::Group> theRoot_{};
     vsg::ref_ptr<vsg::MatrixTransform> texturePipelineNode_{};
