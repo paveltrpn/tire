@@ -3,5 +3,7 @@
 
 namespace tired {
 
+auto ObstaclesSubgraph::initPipeline() -> void {
 }
 
+}  // namespace tired

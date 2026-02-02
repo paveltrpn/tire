@@ -5,8 +5,9 @@
 
 #include <QObject>
 
-#include "manipulator.h"
 #include "qt_window/window.h"
+#include "manipulator.h"
+#include "basemesh/BasemeshSubgraph.h"
 
 namespace tired {
 
@@ -15,7 +16,6 @@ struct Tired final : QObject {
 public:
     Tired( QObject* parent = nullptr );
 
-    auto loadTestScene() -> void;
     auto initCamera( Window* window, uint32_t width, uint32_t height ) -> void;
     auto viewerCompile( int interval, bool continuousUpdate ) -> void;
 
@@ -28,17 +28,12 @@ public:
                                float sz );
 
 private:
-    auto addTexturePipelineNode() -> void;
-
-private:
     vsg::ref_ptr<Viewer> viewer_{};
     vsg::ref_ptr<vsg::Camera> camera_{};
     vsg::ref_ptr<Manipulator> manipulator_{};
 
     vsg::ref_ptr<vsg::Group> theRoot_{};
-    vsg::ref_ptr<vsg::MatrixTransform> texturePipelineNode_{};
-
-    vsg::ref_ptr<vsg::Node> testScene_{};
+    vsg::ref_ptr<BasemeshSubgraph> basemeshSubgraph_{};
 };
 
 }  // namespace tired

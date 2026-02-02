@@ -5,8 +5,10 @@
 
 namespace tired {
 
-struct ObstaclesSubgraph final: Subgraph {
+struct ObstaclesSubgraph final : Subgraph {
+    auto initPipeline() -> void override;
+
 private:
 };
 
-}
+}  // namespace tired
