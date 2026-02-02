@@ -8,6 +8,8 @@
 #include "qt_window/window.h"
 #include "manipulator.h"
 #include "basemesh/BasemeshSubgraph.h"
+#include "obstacles/ObstaclesSubgraph.h"
+#include "service_objects/ServiceObjectsSubgraph.h"
 
 namespace tired {
 
@@ -24,8 +26,9 @@ public:
     auto rootNode() -> vsg::ref_ptr<vsg::Node>;
     auto camera() -> vsg::ref_ptr<vsg::Camera>;
 
-    Q_INVOKABLE void addExBox( float px, float py, float pz, float rx, float ry, float rz, float sx, float sy,
-                               float sz );
+    auto basemeshSubgraph() -> BasemeshSubgraph*;
+    auto obstaclesSubgraph() -> ObstaclesSubgraph*;
+    auto serviceObjectsSubgraph() -> ServiceObjectsSubgraph*;
 
 private:
     vsg::ref_ptr<Viewer> viewer_{};
@@ -33,7 +36,10 @@ private:
     vsg::ref_ptr<Manipulator> manipulator_{};
 
     vsg::ref_ptr<vsg::Group> theRoot_{};
-    vsg::ref_ptr<BasemeshSubgraph> basemeshSubgraph_{};
+
+    BasemeshSubgraph* basemeshSubgraph_{};
+    ObstaclesSubgraph* obstaclesSubgraph_{};
+    ServiceObjectsSubgraph* serviceObjectsSubgraph_{};
 };
 
 }  // namespace tired

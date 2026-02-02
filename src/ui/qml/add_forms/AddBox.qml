@@ -183,7 +183,7 @@ Rectangle {
             const sy = parseFloat(sclYInput.text)
             const sz = parseFloat(sclZInput.text)
 
-            Tired.addExBox(px, py, pz, rx, ry, rz, sx, sy, sz)
+            BasemeshSubraph.addExBox(px, py, pz, rx, ry, rz, sx, sy, sz)
 
             resetAll()
             leftPanelMainComponent.resetAllButtons()

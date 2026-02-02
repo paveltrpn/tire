@@ -42,15 +42,16 @@ auto Tired::camera() -> vsg::ref_ptr<vsg::Camera> {
     return camera_;
 }
 
-Q_INVOKABLE void Tired::addExBox( float px, float py, float pz, float rx, float ry, float rz, float sx, float sy,
-                                  float sz ) {
-    auto exbox = vsg::ref_ptr<ExBox>(
-        new ExBox{ vsg::dvec3{ px, py, pz }, vsg::dvec3{ rx, ry, rz }, vsg::dvec3{ sx, sy, sz } } );
-    basemeshSubgraph_->addChild( exbox );
+auto Tired::basemeshSubgraph() -> BasemeshSubgraph* {
+    return basemeshSubgraph_;
+}
 
-    viewer_->compileManager->compile( basemeshSubgraph_ );
-    vsg::CompileResult res{};
-    vsg::updateViewer( *viewer_, res );
+auto Tired::obstaclesSubgraph() -> ObstaclesSubgraph* {
+    return obstaclesSubgraph_;
+}
+
+auto Tired::serviceObjectsSubgraph() -> ServiceObjectsSubgraph* {
+    return serviceObjectsSubgraph_;
 }
 
 auto Tired::initCamera( Window* window, uint32_t width, uint32_t height ) -> void {
@@ -72,10 +73,24 @@ auto Tired::initCamera( Window* window, uint32_t width, uint32_t height ) -> voi
 
     viewer_->addRecordAndSubmitTaskAndPresentation( { commandGraph } );
 
-    basemeshSubgraph_ = vsg::ref_ptr<BasemeshSubgraph>( new BasemeshSubgraph{} );
+    basemeshSubgraph_ = new BasemeshSubgraph{};
     basemeshSubgraph_->initPipeline();
 
-    theRoot_->addChild( basemeshSubgraph_ );
+    obstaclesSubgraph_ = new ObstaclesSubgraph{};
+    obstaclesSubgraph_->initPipeline();
+
+    serviceObjectsSubgraph_ = new ServiceObjectsSubgraph{};
+    serviceObjectsSubgraph_->initPipeline();
+
+    connect( basemeshSubgraph_, &Subgraph::nodeAdded, this, [this]() {
+        viewer_->compileManager->compile( basemeshSubgraph_->stateGroup() );
+        vsg::CompileResult res{};
+        vsg::updateViewer( *viewer_, res );
+    } );
+
+    theRoot_->addChild( basemeshSubgraph_->stateGroup() );
+    theRoot_->addChild( obstaclesSubgraph_->stateGroup() );
+    theRoot_->addChild( serviceObjectsSubgraph_->stateGroup() );
 
     auto box = vsg::ref_ptr<ExBox>(
         new ExBox{ vsg::dvec3{ 0.0, 0.0, 0.0 }, vsg::dvec3{ 0.0, 0.0, 0.0 }, vsg::dvec3{ 1.0, 1.0, 1.0 } } );

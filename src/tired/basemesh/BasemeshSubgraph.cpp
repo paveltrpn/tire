@@ -1,6 +1,9 @@
 
 #include <print>
 
+#include <vsg/all.h>
+
+#include "../box/ex_box.h"
 #include "BasemeshSubgraph.h"
 
 namespace tired {
@@ -73,18 +76,26 @@ auto BasemeshSubgraph::initPipeline() -> void {
     auto bindDescriptorSet =
         vsg::BindDescriptorSet::create( VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, descriptorSet );
 
-    // NOTE: Why not this->add()?
-    vsg::StateGroup::add( bindGraphicsPipeline );
-    vsg::StateGroup::add( bindDescriptorSet );
+    stateGroup_->add( bindGraphicsPipeline );
+    stateGroup_->add( bindDescriptorSet );
 
     // set up model transformation node
     baseNode_ = vsg::MatrixTransform::create();  // VK_SHADER_STAGE_VERTEX_BIT
 
-    vsg::StateGroup::addChild( baseNode_ );
+    stateGroup_->addChild( baseNode_ );
 }
 
 auto BasemeshSubgraph::addChild( vsg::ref_ptr<vsg::Node> node ) -> void {
     baseNode_->addChild( node );
+}
+
+void BasemeshSubgraph::addExBox( float px, float py, float pz, float rx, float ry, float rz, float sx, float sy,
+                                 float sz ) {
+    auto exbox = vsg::ref_ptr<ExBox>(
+        new ExBox{ vsg::dvec3{ px, py, pz }, vsg::dvec3{ rx, ry, rz }, vsg::dvec3{ sx, sy, sz } } );
+    addChild( exbox );
+
+    emit nodeAdded();
 }
 
 }  // namespace tired
