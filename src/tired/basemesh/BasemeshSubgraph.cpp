@@ -1,5 +1,8 @@
 
 #include <print>
+#include <iostream>
+
+// #include <meta>
 
 #include <vsg/all.h>
 
@@ -8,8 +11,15 @@
 
 namespace tired {
 
+// constexpr void foo() {
+//     constexpr auto meta_class = ^^BasemeshSubgraph;
+//     std::string_view name = std::meta::identifier_of( meta_class );
+//     std::println( "name: {}", name );
+// }
+
 BasemeshSubgraph::BasemeshSubgraph( QObject *parent )
     : Subgraph{ parent } {
+    // foo();
 }
 
 auto BasemeshSubgraph::initPipeline() -> void {
