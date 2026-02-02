@@ -73,13 +73,13 @@ auto Tired::initCamera( Window* window, uint32_t width, uint32_t height ) -> voi
 
     viewer_->addRecordAndSubmitTaskAndPresentation( { commandGraph } );
 
-    basemeshSubgraph_ = new BasemeshSubgraph{};
+    basemeshSubgraph_ = new BasemeshSubgraph{ this };
     basemeshSubgraph_->initPipeline();
 
-    obstaclesSubgraph_ = new ObstaclesSubgraph{};
+    obstaclesSubgraph_ = new ObstaclesSubgraph{ this };
     obstaclesSubgraph_->initPipeline();
 
-    serviceObjectsSubgraph_ = new ServiceObjectsSubgraph{};
+    serviceObjectsSubgraph_ = new ServiceObjectsSubgraph{ this };
     serviceObjectsSubgraph_->initPipeline();
 
     connect( basemeshSubgraph_, &Subgraph::nodeAdded, this, [this]() {

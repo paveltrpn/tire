@@ -6,6 +6,8 @@
 namespace tired {
 
 struct ServiceObjectsSubgraph final : Subgraph {
+    ServiceObjectsSubgraph( QObject *parent = nullptr );
+
     auto initPipeline() -> void override;
 
 private:

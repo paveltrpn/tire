@@ -6,6 +6,8 @@
 namespace tired {
 
 struct ObstaclesSubgraph final : Subgraph {
+    ObstaclesSubgraph( QObject *parent = nullptr );
+
     auto initPipeline() -> void override;
 
 private:

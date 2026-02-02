@@ -8,6 +8,10 @@
 
 namespace tired {
 
+BasemeshSubgraph::BasemeshSubgraph( QObject *parent )
+    : Subgraph{ parent } {
+}
+
 auto BasemeshSubgraph::initPipeline() -> void {
     // load shaders
     vsg::Paths searchPaths = std::vector<vsg::Path>{ "/mnt/main/sources/vsgExamples/data" };

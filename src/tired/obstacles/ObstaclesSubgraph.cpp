@@ -3,6 +3,10 @@
 
 namespace tired {
 
+ObstaclesSubgraph::ObstaclesSubgraph( QObject *parent )
+    : Subgraph{ parent } {
+}
+
 auto ObstaclesSubgraph::initPipeline() -> void {
 }
 

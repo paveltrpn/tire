@@ -8,8 +8,8 @@ namespace tired {
 struct BasemeshSubgraph final : Subgraph {
     Q_OBJECT
 public:
-    BasemeshSubgraph()
-        : Subgraph{} {}
+    BasemeshSubgraph( QObject *parent = nullptr );
+
     auto initPipeline() -> void override;
 
     auto addChild( vsg::ref_ptr<vsg::Node> node ) -> void;

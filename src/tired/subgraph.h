@@ -11,7 +11,7 @@ struct Subgraph : QObject {
     Q_OBJECT
 
 public:
-    Subgraph();
+    Subgraph( QObject *parent = nullptr );
 
     virtual auto initPipeline() -> void = 0;
 

@@ -3,8 +3,8 @@
 
 namespace tired {
 
-Subgraph::Subgraph()
-    : QObject{}
+Subgraph::Subgraph( QObject *parent )
+    : QObject{ parent }
     , stateGroup_{ vsg::StateGroup::create() } {
 }
 
