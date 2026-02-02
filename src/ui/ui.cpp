@@ -51,6 +51,7 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, tired::Tired *tired, Q
 
     tired->viewerCompile( interval, continuousUpdate );
 
+    // Qt widgets initialization.
     vsgWidget_ = QWidget::createWindowContainer( vsgWindow_, this );
     topPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/TopPanel.qml" ) );
     topPanel_->setResizeMode( QQuickWidget::SizeRootObjectToView );
@@ -58,7 +59,6 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, tired::Tired *tired, Q
     leftPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/LeftPanel.qml" ) );
     leftPanel_->setResizeMode( QQuickWidget::SizeRootObjectToView );
 
-    // Qt widgets initialization.
     auto centralWidget = new QWidget{ this };
     setCentralWidget( centralWidget );
 

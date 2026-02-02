@@ -23,8 +23,12 @@ struct Manipulator final
 public:
     Manipulator( vsg::ref_ptr<vsg::Camera> camera, vsg::ref_ptr<vsg::EllipsoidModel> ellipsoidModel = {} );
 
+    // VSG specific.
+public:
     void apply( vsg::MoveEvent& moveEvent ) override;
 
+    // Qt specific part.
+public:
     void setMousePos( QPoint value );
     QPoint mousePos();
 
