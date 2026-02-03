@@ -14,28 +14,28 @@ QuickTemplates.Button {
     property alias backgroundRadius: backgroundItem.radius
 
     property bool isBorderEnabled: false
-    property color backgroundColor: _color.background_additional_20
+    property color backgroundColor: _color.background_overlay_40
 
     states: [
         State {
             when: control.down
             PropertyChanges {
                 target: control
-                backgroundColor: _color.accent_focus_80
+                backgroundColor: _color.additional_contrast_80
             }
         },
         State {
             when: control.hovered && !control.checked
             PropertyChanges {
                 target: control
-                backgroundColor: _color.background_additional_40
+                backgroundColor: _color.background_overlay_light_60
             }
         },
         State {
             when: control.checked
             PropertyChanges {
                 target: control
-                backgroundColor: _color.accent_focus_80
+                backgroundColor: _color.additional_contrast_80
             }
         }
     ]

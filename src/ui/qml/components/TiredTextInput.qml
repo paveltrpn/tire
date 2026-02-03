@@ -12,7 +12,7 @@ TextInput {
     readonly property var _radius: Appearence.radius
     readonly property var _color: Appearence.colors
 
-    height: 32
+    height: 24
     color: _color.main_contrast
     font: _fonts.label
     verticalAlignment: Text.AlignVCenter
@@ -23,7 +23,7 @@ TextInput {
     Rectangle {
         z: -1 // Place behind the TextInput
         anchors.fill: parent
-        color: _color.background_additional_30
+        color: _color.background_overlay_40
 
         border.color: _color.main_contrast_20
         border.width: 2

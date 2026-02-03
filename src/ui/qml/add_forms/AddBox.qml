@@ -13,12 +13,12 @@ Rectangle {
     readonly property var _radius: Appearence.radius
     readonly property var _color: Appearence.colors
 
-    height: 300
+    height: 216
 
     z: parent.z
 
     radius: _radius.half
-    color: _color.background_additional_40
+    color: _color.background_overlay_60
 
     Text {
         id: posLabel
@@ -31,7 +31,7 @@ Rectangle {
             rightMargin: _gaps.half
         }
 
-        height: 24
+        height: 20
 
         text: "Position"
         color: _color.main_contrast
@@ -48,7 +48,7 @@ Rectangle {
             right: parent.right
             rightMargin: _gaps.half
         }
-        height: 32
+        height: 24
 
         TiredTextInput {
             id: posXInput
@@ -78,7 +78,7 @@ Rectangle {
             rightMargin: _gaps.half
         }
 
-        height: 24
+        height: 20
 
         text: "Rotation"
         color: _color.main_contrast
@@ -95,7 +95,7 @@ Rectangle {
             right: parent.right
             rightMargin: _gaps.half
         }
-        height: 32
+        height: 24
 
         TiredTextInput {
             id: rotXInput
@@ -125,7 +125,7 @@ Rectangle {
             rightMargin: _gaps.half
         }
 
-        height: 24
+        height: 20
 
         text: "Scale"
         color: _color.main_contrast
@@ -142,7 +142,7 @@ Rectangle {
             right: parent.right
             rightMargin: _gaps.half
         }
-        height: 32
+        height: 20
 
         TiredTextInput {
             id: sclXInput
@@ -165,7 +165,7 @@ Rectangle {
         id: saveBoxButton
         anchors {
             bottom: parent.bottom
-            bottomMargin: _gaps.half
+            bottomMargin: _gaps.full
             horizontalCenter: parent.horizontalCenter
         }
         width: 128

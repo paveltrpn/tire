@@ -44,7 +44,7 @@ Rectangle {
 
             width: 40
 
-            color: leftPanelMainComponent._color.background_additional_40
+            color: leftPanelMainComponent._color.background_overlay_60
 
             topRightRadius: leftPanelMainComponent._radius.half
             bottomRightRadius: leftPanelMainComponent._radius.half

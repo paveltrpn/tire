@@ -20,5 +20,5 @@ Rectangle {
     z: parent.z
 
     radius: _radius.half
-    color: _color.background_additional_40
+    color: _color.background_overlay_60
 }

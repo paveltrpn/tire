@@ -33,12 +33,16 @@ Rectangle {
                 verticalCenter: parent.verticalCenter
             }
 
-            height: 32
-            width: 256
+            height: 24
+            width: 160
 
-            color: rightPanelMainComponent._color.background_additional_40
-
+            color: rightPanelMainComponent._color.background_overlay_60
             radius: rightPanelMainComponent._radius.half
+
+            border {
+                width: 2
+                color: _color.main_contrast_20
+            }
 
             Text {
                 id: sclLabel
@@ -58,8 +62,9 @@ Rectangle {
 
                 padding: 8
 
-                color: _color.main_contrast
+                color: _color.additional_contrast_60
                 font: _fonts.label
+
             }
         }
     }
