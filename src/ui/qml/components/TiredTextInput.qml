@@ -21,12 +21,18 @@ TextInput {
     clip: true
 
     Rectangle {
-        z: -1 // Place behind the TextInput
+        z: -1
         anchors.fill: parent
-        color: _color.background_overlay_40
+        color: inputArea.containsMouse ? _color.background_overlay_light_40 : _color.background_overlay_40
 
         border.color: _color.main_contrast_20
         border.width: 2
         radius: _radius.half
+
+        MouseArea {
+            id: inputArea
+            hoverEnabled: true
+            anchors.fill: parent
+        }
     }
 }
