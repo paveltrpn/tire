@@ -11,10 +11,22 @@
 #include <QLabel>
 #include <QPushButton>
 
+#include <meta>
+#include <print>
+
 #include "ui/ui.h"
 #include "tired/tired.h"
 
+struct Reflectable {};
+auto foo() -> void {
+    constexpr auto bar = ^^Reflectable;
+    constexpr std::string_view name_identifier = std::meta::identifier_of( bar );
+    std::println( "{}", name_identifier );
+}
+
 int main( int argc, char* argv[] ) {
+    foo();
+
     QApplication application( argc, argv );
 
     vsg::CommandLine arguments( &argc, argv );
