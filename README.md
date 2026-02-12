@@ -26,6 +26,7 @@ ninja -j {n}
 cmake --install . --prefix /{some}/{path}/{to}/vsg
 ```
   
+4\. Qt (at least 6)  
 
 
 
