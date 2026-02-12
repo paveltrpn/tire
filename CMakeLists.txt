@@ -41,14 +41,6 @@ else()
     message(SEND_ERROR "vsg_DIR is not set")
 endif()
 
-if (DEFINED ENV{vsgXchange_DIR} AND NOT "$ENV{vsgXchange_DIR}" STREQUAL "")
-    message( "vsgXchange_DIR is set to $ENV{vsgXchange_DIR}")
-    include_directories($ENV{vsgXchange_DIR}/include)
-    link_directories($ENV{vsgXchange_DIR}/lib)
-else()
-    message(SEND_ERROR "vsgXchange_DIR is not set")
-endif()
-
 if (DEFINED ENV{glslang_DIR} AND NOT "$ENV{glslang_DIR}" STREQUAL "")
     message( "glslang_DIR is set to $ENV{glslang_DIR}")
     include_directories($ENV{glslang_DIR}/include)
@@ -69,7 +61,6 @@ set_target_properties(tired PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(tired PROPERTIES AUTOMOC TRUE)
 target_link_libraries(tired
     vsg
-    vsgXchange
     vulkan
     GenericCodeGen
     glslang
@@ -142,11 +133,6 @@ find_package(Qt6 ${QT_VERSION} COMPONENTS
     Charts
 )
 
-if (vsgXchange_FOUND)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE vsgXchange_FOUND)
-    target_link_libraries(${PROJECT_NAME} vsgXchange::vsgXchange)
-endif()
-
 add_executable(${PROJECT_NAME}
     "src/main.cpp"
 )
@@ -156,7 +142,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES AUTOMOC TRUE)
 target_link_libraries(${PROJECT_NAME}
     xcb
     vsg
-    vsgXchange
     vulkan
     GenericCodeGen
     glslang

@@ -6,10 +6,6 @@
 #include <QQuickWidget>
 #include <QMainWindow>
 
-#ifdef vsgXchange_FOUND
-#include <vsgXchange/all.h>
-#endif
-
 #include "qt_window/window.h"
 
 #include "appearance.h"
