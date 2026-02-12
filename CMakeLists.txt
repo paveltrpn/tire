@@ -1,9 +1,22 @@
 cmake_minimum_required(VERSION 4.2)
 
-set(CMAKE_C_COMPILER $ENV{GCC_LATEST}/bin/gcc-15.1)
-set(CMAKE_CXX_COMPILER $ENV{GCC_LATEST}/bin/g++-15.1)
+set(USE_LATEST_GCC ON)
+#set(USE_SYSTEM_GCC ON)
+
+# Choose compiler toolchain.
+if(USE_SYSTEM_GCC)
+    message( "USE SYSTEM GCC")
+    set(CMAKE_C_COMPILER gcc)
+    set(CMAKE_CXX_COMPILER g++)
+elseif(USE_LATEST_GCC)
+    message( "USE LATEST GCC")
+    set(CMAKE_C_COMPILER $ENV{GCC_LATEST}/bin/gcc)
+    set(CMAKE_CXX_COMPILER $ENV{GCC_LATEST}/bin/g++)
+    add_compile_options(-freflection)
+endif()
+
 add_compile_options(-std=c++26 )
-# add_compile_options(-freflection)
+
 set(CMAKE_BUILD_TYPE Debug)
 
 project(tire_ed)
