@@ -15,12 +15,13 @@ BasemeshSubgraph::BasemeshSubgraph( QObject *parent )
 
 auto BasemeshSubgraph::initPipeline() -> void {
     // load shaders
-    vsg::Paths searchPaths = std::vector<vsg::Path>{ "/mnt/main/sources/vsgExamples/data" };
+    vsg::Paths searchPaths =
+        std::vector<vsg::Path>{ "/mnt/main/code/tire_ed/shaders/spirv", "/mnt/main/code/tire_ed/assets" };
 
     vsg::ref_ptr<vsg::ShaderStage> vertexShader = vsg::ShaderStage::read(
-        VK_SHADER_STAGE_VERTEX_BIT, "main", vsg::findFile( "shaders/vert_PushConstants.spv", searchPaths ) );
+        VK_SHADER_STAGE_VERTEX_BIT, "main", vsg::findFile( "vert_PushConstants.spv", searchPaths ) );
     vsg::ref_ptr<vsg::ShaderStage> fragmentShader = vsg::ShaderStage::read(
-        VK_SHADER_STAGE_FRAGMENT_BIT, "main", vsg::findFile( "shaders/frag_PushConstants.spv", searchPaths ) );
+        VK_SHADER_STAGE_FRAGMENT_BIT, "main", vsg::findFile( "frag_PushConstants.spv", searchPaths ) );
     if ( !vertexShader || !fragmentShader ) {
         std::println( "Could not create shaders." );
         std::terminate();

@@ -8,3 +8,6 @@ assets/shaders/spirv/*.spv
 tmp/*
 settings.ini
 models/
+/shaders/spirv
+!/shaders/.gitkeep
+assets
