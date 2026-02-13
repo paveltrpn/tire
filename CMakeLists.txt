@@ -76,7 +76,6 @@ target_link_libraries(tired
     SPIRV
     Qt::Core
     Qt::Gui
-    Qt6::GuiPrivate
     Qt::Quick
     Qt::QuickWidgets
     Qt::QuickControls2
@@ -94,7 +93,6 @@ target_link_libraries(tired_ui
     vsg
     Qt::Core
     Qt::Gui
-    Qt6::GuiPrivate
     Qt::Quick
     Qt::QuickWidgets
     Qt::QuickControls2
@@ -112,7 +110,6 @@ target_link_libraries(qt_window
     vsg
     Qt::Core
     Qt::Gui
-    Qt6::GuiPrivate
     Qt::Quick
     Qt::QuickWidgets
     Qt::QuickControls2
@@ -125,7 +122,6 @@ set(QML_IMPORT_PATH  $ENV{LOCAL_LATEST_QT}/qml client_vk/qml client_vk/qml/info 
 find_package(Qt6 ${QT_VERSION} COMPONENTS
     Core
     Gui
-    GuiPrivate
     Quick
     QuickWidgets
     QuickControls2
@@ -157,7 +153,6 @@ target_link_libraries(${PROJECT_NAME}
     SPIRV
     Qt::Core
     Qt::Gui
-    Qt6::GuiPrivate
     Qt::Quick
     Qt::QuickWidgets
     Qt::QuickControls2
