@@ -106,6 +106,12 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
     auto box = vsg::ref_ptr<ExBox>(
         new ExBox{ vsg::dvec3{ 0.0, 0.0, 0.0 }, vsg::dvec3{ 0.0, 0.0, 0.0 }, vsg::dvec3{ 1.0, 1.0, 1.0 } } );
     basemeshSubgraph_->addChild( box );
+
+    // Viewer compile.
+    bool continuousUpdate = false;  // arguments.read( { "--event-driven", "--ed" } );
+    auto interval = 8;              // arguments.value<int>( 8, "--interval" );
+
+    viewerCompile( interval, continuousUpdate );
 }
 
 }  // namespace tired

@@ -45,11 +45,6 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, tired::Tired *tired, Q
     qmlRegisterSingletonInstance( "Tire", 1, 0, "ObstaclesSubgraph", tired_->obstaclesSubgraph() );
     qmlRegisterSingletonInstance( "Tire", 1, 0, "ServiceObjectsSubgraph", tired_->serviceObjectsSubgraph() );
 
-    bool continuousUpdate = false;  // arguments.read( { "--event-driven", "--ed" } );
-    auto interval = 8;              // arguments.value<int>( 8, "--interval" );
-
-    tired->viewerCompile( interval, continuousUpdate );
-
     // Qt widgets initialization.
     vsgWidget_ = QWidget::createWindowContainer( vsgWindow_, this );
     topPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/TopPanel.qml" ) );
