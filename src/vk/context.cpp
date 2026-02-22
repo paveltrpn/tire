@@ -5,7 +5,7 @@
 #include "context.h"
 #include "log/log.h"
 
-namespace tire::vk {
+namespace tired::vk {
 
 Context::Context( VkInstance instance, VkPhysicalDevice pDevice, VkDevice device, VkSurfaceKHR surface, VkRenderPass rp,
                   uint32_t gqfi, uint32_t gqi )
@@ -18,8 +18,8 @@ Context::Context( VkInstance instance, VkPhysicalDevice pDevice, VkDevice device
     , graphicsQueueId_{ gqi } {
     uint32_t version{};
     vkEnumerateInstanceVersion( &version );
-    log::info( "vk::Context === acquired api instance version is {}.{}", VK_API_VERSION_MAJOR( version ),
-               VK_API_VERSION_MINOR( version ) );
+    log::info()( "vk::Context === acquired api instance version is {}.{}", VK_API_VERSION_MAJOR( version ),
+                 VK_API_VERSION_MINOR( version ) );
 
     queryDeviceInfo();
     querySurface();
@@ -31,7 +31,7 @@ Context::Context( VkInstance instance, VkPhysicalDevice pDevice, VkDevice device
 auto Context::queryDeviceInfo() -> void {
     // Collect physical devices and its properties
     vkGetPhysicalDeviceProperties( pDevice_, &pDeviceProperties_ );
-    log::info( "vk::Device === name: {}", pDeviceProperties_.deviceName );
+    log::info()( "vk::Device === name: {}", pDeviceProperties_.deviceName );
 
     vkGetPhysicalDeviceFeatures( pDevice_, &pDeviceFeatures_ );
 
@@ -41,18 +41,18 @@ auto Context::queryDeviceInfo() -> void {
 
     queueFamilyProperties_.resize( queueFamilyCount );
     vkGetPhysicalDeviceQueueFamilyProperties( pDevice_, &queueFamilyCount, queueFamilyProperties_.data() );
-    log::debug<DEBUG_OUTPUT_CONTEXT_CPP>( "vk::Device === device queue family count: {}", queueFamilyCount );
+    log::debug()( "vk::Device === device queue family count: {}", queueFamilyCount );
 
     // Collect physical device extensions info
     uint32_t extensionCount{};
     if ( const auto err = vkEnumerateDeviceExtensionProperties( pDevice_, nullptr, &extensionCount, nullptr );
          err != VK_SUCCESS ) {
-        log::fatal(
+        log::fatal()(
             "can't enumerate physical device extensions "
             "with code: {}\n",
             string_VkResult( err ) );
     } else {
-        log::debug<DEBUG_OUTPUT_CONTEXT_CPP>(
+        log::debug()(
             "vk::Device === physical device extensions enumerated for "
             "device: {}, "
             "count: {}",
@@ -63,19 +63,19 @@ auto Context::queryDeviceInfo() -> void {
     if ( const auto err =
              vkEnumerateDeviceExtensionProperties( pDevice_, nullptr, &extensionCount, pDeviceExtensions_.data() );
          err != VK_SUCCESS ) {
-        log::fatal(
+        log::fatal()(
             "can't acquire physical device extensions "
             "with code: {}\n",
             string_VkResult( err ) );
     } else {
-        log::debug<DEBUG_OUTPUT_CONTEXT_CPP>(
+        log::debug()(
             "vk::Device === physical device extensions acquired for "
             "device: "
             "{}",
             pDeviceProperties_.deviceName );
     }
 
-    log::info(
+    log::info()(
         "vk::Context === vulkan "
         "info:\ndev:\t{}\ndrv:\t{}\napi:\t{}",
         getDeviceNameString(), getDeviceDriverVersionString(), getApiVersionString() );
@@ -83,19 +83,19 @@ auto Context::queryDeviceInfo() -> void {
 
 auto Context::querySurface() -> void {
     if ( surface_ == VK_NULL_HANDLE ) {
-        log::error( "Context === can not get surface handle for window!" );
+        log::error()( "Context === can not get surface handle for window!" );
     }
 
     // Physical device surface capabilities.
     // NOTE: got error on amd APU.
     if ( const auto err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR( pDevice_, surface_, &surfaceCapabilities_ );
          err != VK_SUCCESS ) {
-        log::fatal(
+        log::fatal()(
             "vk::Context === failed to obtain surface capabilities with code "
             "{}!\n",
             string_VkResult( err ) );
     } else {
-        log::debug<DEBUG_OUTPUT_CONTEXT_CPP>(
+        log::debug()(
             "vk::Context === physical device surface capabilities acquire "
             "success!" );
     }
@@ -112,7 +112,7 @@ auto Context::memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags pro
         }
     }
 
-    log::fatal( "failed to find suitable memory type!" );
+    log::fatal()( "failed to find suitable memory type!" );
 
     // Silence warning
     return {};
@@ -137,4 +137,4 @@ auto Context::findSupportedFormat( const std::vector<VkFormat> &candidates, VkIm
     return {};
 }
 
-}  // namespace tire::vk
+}  // namespace tired::vk
