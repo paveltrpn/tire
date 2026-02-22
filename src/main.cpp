@@ -12,48 +12,46 @@
 #include <QPushButton>
 
 #include <meta>
-#include <print>
 
 #include "ui/ui.h"
-#include "tired/tired.h"
 
-struct Reflectable {};
-auto foo() -> void {
-    constexpr auto bar = ^^Reflectable;
-    constexpr std::string_view name_identifier = std::meta::identifier_of( bar );
-    std::println( "{}", name_identifier );
-}
+// struct Reflectable {};
+// auto foo() -> void {
+//     constexpr auto bar = ^^Reflectable;
+//     constexpr std::string_view name_identifier = std::meta::identifier_of( bar );
+//     std::println( "{}", name_identifier );
+// }
 
-template <std::meta::info... Ms>
-struct Outer {
-    struct Inner;
-    consteval {
-        define_aggregate( ^^Inner, {
-                                       Ms... } );
-    }
-};
+// template <std::meta::info... Ms>
+// struct Outer {
+//     struct Inner;
+//     consteval {
+//         define_aggregate( ^^Inner, {
+//                                        Ms... } );
+//     }
+// };
 
-template <std::meta::info... Ms>
-using Cls = Outer<Ms...>::Inner;
+// template <std::meta::info... Ms>
+// using Cls = Outer<Ms...>::Inner;
 
-template <class T, auto... Vs>
-inline constexpr auto construct_from = T{ Vs... };
+// template <class T, auto... Vs>
+// inline constexpr auto construct_from = T{ Vs... };
 
-consteval auto parse( std::string_view key, int value ) -> std::meta::info {
-    auto member = std::meta::reflect_constant( data_member_spec( ^^int, {
-                                                                            .name = key } ) );
-    auto init = std::meta::reflect_constant( value );
+// consteval auto parse( std::string_view key, int value ) -> std::meta::info {
+//     auto member = std::meta::reflect_constant( data_member_spec( ^^int, {
+//                                                                             .name = key } ) );
+//     auto init = std::meta::reflect_constant( value );
 
-    auto type = std::meta::substitute( ^^Cls, {
-                                                  member } );
-    return std::meta::substitute( ^^construct_from, {
-                                                        type, init } );
-}
+//     auto type = std::meta::substitute( ^^Cls, {
+//                                                   member } );
+//     return std::meta::substitute( ^^construct_from, {
+//                                                         type, init } );
+// }
 
 auto main( int argc, char* argv[] ) -> int {
-    foo();
-    static_assert( [:parse( "x", 1 ):].x == 1 );
-    static_assert( [:parse( "y", 2 ):].y == 2 );
+    // foo();
+    // static_assert( [:parse( "x", 1 ):].x == 1 );
+    // static_assert( [:parse( "y", 2 ):].y == 2 );
 
     QApplication application( argc, argv );
 
@@ -81,12 +79,7 @@ auto main( int argc, char* argv[] ) -> int {
     windowTraits->clearColor = vsg::vec4{ 155.0f / 255.0f, 158.0f / 255.0f, 191.0f / 255.0f, 1.0f };
     // windowTraits->fullscreen = true;
 
-    // Main objects initialization.
-    auto tired = std::make_unique<tired::Tired>();
-    auto tiredUi = std::make_unique<tired::TiredUi>( windowTraits, tired.get() );
-    // ============================
-
-    tiredUi->show();
+    auto tiredUi = std::make_unique<tired::TiredUi>( windowTraits );
 
     return application.exec();
 }

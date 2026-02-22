@@ -13,8 +13,8 @@ namespace tired {
 // ========== TiredUi =================================================
 // ====================================================================
 
-TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, tired::Tired *tired, QObject *parent )
-    : tired_{ tired }
+TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
+    : tired_{ std::make_unique<tired::Tired>() }
     , engine_{ new QQmlEngine{ this } }
     , context_{ engine_->rootContext() }
     , topPanel_{ new QQuickWidget{ engine_, this } }
@@ -29,16 +29,16 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, tired::Tired *tired, Q
     const auto clearColor = theme_->getColor( "clear_color" );
 
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Appearence", theme_ );
-    qmlRegisterSingletonInstance( "Tire", 1, 0, "Tired", tired_ );
+    qmlRegisterSingletonInstance( "Tire", 1, 0, "Tired", tired_.get() );
 
     setGeometry( 0, 0, traits->width, traits->height );
 
     // VSG initialization.
-    vsgWindow_ = new Window( tired->viewer(), traits );
+    vsgWindow_ = new Window( tired_->viewer(), traits );
     vsgWindow_->setTitle( "title" );
     vsgWindow_->initializeWindow();
 
-    tired->init( vsgWindow_, traits->width, traits->height );
+    tired_->init( vsgWindow_, traits->width, traits->height );
 
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Manipulator", tired_->manipulator().get() );
     qmlRegisterSingletonInstance( "Tire", 1, 0, "BasemeshSubraph", tired_->basemeshSubgraph() );
@@ -89,7 +89,7 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, tired::Tired *tired, Q
 
     hLayout->addWidget( hSplitter );
 
-    show();
+    this->show();
 }
 
 }  // namespace tired
