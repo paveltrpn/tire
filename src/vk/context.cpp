@@ -8,14 +8,16 @@
 namespace tired::vk {
 
 Context::Context( VkInstance instance, VkPhysicalDevice pDevice, VkDevice device, VkSurfaceKHR surface, VkRenderPass rp,
-                  uint32_t gqfi, uint32_t gqi )
+                  uint32_t graphicsFamilyQueueId, uint32_t graphicsQueueId )
     : instance_{ instance }
     , pDevice_{ pDevice }
     , device_{ device }
     , surface_{ surface }
     , renderPass_{ rp }
-    , graphicsFamilyQueueId_{ gqfi }
-    , graphicsQueueId_{ gqi } {
+    , graphicsFamilyQueueId_{ graphicsFamilyQueueId }
+    , graphicsQueueId_{ graphicsQueueId } {
+    //
+
     uint32_t version{};
     vkEnumerateInstanceVersion( &version );
     log::info()( "acquired api instance version is {}.{}", VK_API_VERSION_MAJOR( version ),
@@ -41,7 +43,7 @@ auto Context::queryDeviceInfo() -> void {
 
     queueFamilyProperties_.resize( queueFamilyCount );
     vkGetPhysicalDeviceQueueFamilyProperties( pDevice_, &queueFamilyCount, queueFamilyProperties_.data() );
-    log::debug()( "=== device queue family count: {}", queueFamilyCount );
+    log::debug()( "device queue family count: {}", queueFamilyCount );
 
     // Collect physical device extensions info
     uint32_t extensionCount{};

@@ -85,6 +85,7 @@ auto main( int argc, char* argv[] ) -> int {
     auto tired = std::make_unique<tired::Tired>();
     auto tiredUi = std::make_unique<tired::TiredUi>( windowTraits, tired.get() );
     // ============================
+
     tiredUi->show();
 
     return application.exec();

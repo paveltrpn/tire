@@ -12,7 +12,7 @@ namespace tired::vk {
 
 struct Context final {
     Context( VkInstance instance, VkPhysicalDevice pDevice, VkDevice device, VkSurfaceKHR surface, VkRenderPass rp,
-             uint32_t gqfi, uint32_t gqi );
+             uint32_t graphicsFamilyQueueId, uint32_t graphicsQueueId );
 
     ~Context() = default;
 
