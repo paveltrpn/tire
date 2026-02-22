@@ -52,6 +52,15 @@ endif()
 include_directories("src")
 
 # ================================
+# Module log
+# ================================
+file(GLOB_RECURSE MOD_LOG_SRC "src/log/*.cpp" "src/log/*.h")
+add_library(log)
+target_sources(log PRIVATE ${MOD_LOG_SRC})
+set_target_properties(log PROPERTIES AUTOMOC TRUE)
+target_link_libraries(log)
+
+# ================================
 # Module vk
 # ================================
 file(GLOB_RECURSE MOD_VK_SRC "src/vk/*.cpp" "src/vk/*.h")
@@ -60,6 +69,7 @@ target_sources(vk PRIVATE ${MOD_VK_SRC})
 set_target_properties(vk PROPERTIES AUTOMOC TRUE)
 target_link_libraries(vk
    vulkan
+   log
 )
 
 # ================================
@@ -67,9 +77,11 @@ target_link_libraries(vk
 # ================================
 file(GLOB_RECURSE MOD_IMAGE_SRC "src/image/*.cpp" "src/image/*.h")
 add_library(image)
-target_sources(image PRIVATE ${MOD_VK_SRC})
+target_sources(image PRIVATE ${MOD_IMAGE_SRC})
 set_target_properties(image PROPERTIES AUTOMOC TRUE)
-target_link_libraries(image)
+target_link_libraries(image
+    log
+)
 
 # ================================
 # Module tired
