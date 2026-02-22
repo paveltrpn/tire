@@ -18,7 +18,7 @@ Context::Context( VkInstance instance, VkPhysicalDevice pDevice, VkDevice device
     , graphicsQueueId_{ gqi } {
     uint32_t version{};
     vkEnumerateInstanceVersion( &version );
-    log::info()( "vk::Context === acquired api instance version is {}.{}", VK_API_VERSION_MAJOR( version ),
+    log::info()( "acquired api instance version is {}.{}", VK_API_VERSION_MAJOR( version ),
                  VK_API_VERSION_MINOR( version ) );
 
     queryDeviceInfo();
@@ -31,7 +31,7 @@ Context::Context( VkInstance instance, VkPhysicalDevice pDevice, VkDevice device
 auto Context::queryDeviceInfo() -> void {
     // Collect physical devices and its properties
     vkGetPhysicalDeviceProperties( pDevice_, &pDeviceProperties_ );
-    log::info()( "vk::Device === name: {}", pDeviceProperties_.deviceName );
+    log::info()( "device name: {}", pDeviceProperties_.deviceName );
 
     vkGetPhysicalDeviceFeatures( pDevice_, &pDeviceFeatures_ );
 
@@ -41,7 +41,7 @@ auto Context::queryDeviceInfo() -> void {
 
     queueFamilyProperties_.resize( queueFamilyCount );
     vkGetPhysicalDeviceQueueFamilyProperties( pDevice_, &queueFamilyCount, queueFamilyProperties_.data() );
-    log::debug()( "vk::Device === device queue family count: {}", queueFamilyCount );
+    log::debug()( "=== device queue family count: {}", queueFamilyCount );
 
     // Collect physical device extensions info
     uint32_t extensionCount{};
@@ -53,7 +53,7 @@ auto Context::queryDeviceInfo() -> void {
             string_VkResult( err ) );
     } else {
         log::debug()(
-            "vk::Device === physical device extensions enumerated for "
+            "physical device extensions enumerated for "
             "device: {}, "
             "count: {}",
             pDeviceProperties_.deviceName, extensionCount );
@@ -69,21 +69,21 @@ auto Context::queryDeviceInfo() -> void {
             string_VkResult( err ) );
     } else {
         log::debug()(
-            "vk::Device === physical device extensions acquired for "
+            "physical device extensions acquired for "
             "device: "
             "{}",
             pDeviceProperties_.deviceName );
     }
 
     log::info()(
-        "vk::Context === vulkan "
+        "vulkan "
         "info:\ndev:\t{}\ndrv:\t{}\napi:\t{}",
         getDeviceNameString(), getDeviceDriverVersionString(), getApiVersionString() );
 }
 
 auto Context::querySurface() -> void {
     if ( surface_ == VK_NULL_HANDLE ) {
-        log::error()( "Context === can not get surface handle for window!" );
+        log::error()( "can not get surface handle for window!" );
     }
 
     // Physical device surface capabilities.
@@ -91,12 +91,12 @@ auto Context::querySurface() -> void {
     if ( const auto err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR( pDevice_, surface_, &surfaceCapabilities_ );
          err != VK_SUCCESS ) {
         log::fatal()(
-            "vk::Context === failed to obtain surface capabilities with code "
+            "failed to obtain surface capabilities with code "
             "{}!\n",
             string_VkResult( err ) );
     } else {
         log::debug()(
-            "vk::Context === physical device surface capabilities acquire "
+            "physical device surface capabilities acquire "
             "success!" );
     }
 }

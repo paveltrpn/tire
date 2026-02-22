@@ -112,6 +112,9 @@ target_link_libraries(tired
     Qt::QuickWidgets
     Qt::QuickControls2
     Qt::Qml
+    vk
+    log
+    image
 )
 
 # ================================

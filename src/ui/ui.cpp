@@ -38,7 +38,7 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, tired::Tired *tired, Q
     vsgWindow_->setTitle( "title" );
     vsgWindow_->initializeWindow();
 
-    tired->initCamera( vsgWindow_, traits->width, traits->height );
+    tired->init( vsgWindow_, traits->width, traits->height );
 
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Manipulator", tired_->manipulator().get() );
     qmlRegisterSingletonInstance( "Tire", 1, 0, "BasemeshSubraph", tired_->basemeshSubgraph() );

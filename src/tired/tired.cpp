@@ -54,7 +54,7 @@ auto Tired::serviceObjectsSubgraph() -> ServiceObjectsSubgraph* {
     return serviceObjectsSubgraph_;
 }
 
-auto Tired::initCamera( Window* window, uint32_t width, uint32_t height ) -> void {
+auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
     // set up the camera
     auto lookAt =
         vsg::LookAt::create( vsg::dvec3( 0.0, -4.0, 1.5 ), vsg::dvec3{ 0.0, 0.0, 0.0 }, vsg::dvec3( 0.0, 0.0, 1.0 ) );
@@ -72,6 +72,17 @@ auto Tired::initCamera( Window* window, uint32_t width, uint32_t height ) -> voi
     auto commandGraph = vsg::createCommandGraphForView( *window, camera_, theRoot_ );
 
     viewer_->addRecordAndSubmitTaskAndPresentation( { commandGraph } );
+
+    // Borrow vulkan data from VSG.
+    {
+        const auto wa = window->windowAdapter;
+        const auto instance = wa->getInstance()->vk();
+        const auto physicalDevice = wa->getPhysicalDevice()->vk();
+        const auto device = wa->getDevice()->vk();
+        const auto surface = wa->getSurface()->vk();
+        const auto rp = wa->getRenderPass()->vk();
+        context_ = std::make_shared<vk::Context>( instance, physicalDevice, device, surface, rp, 0, 0 );
+    }
 
     basemeshSubgraph_ = new BasemeshSubgraph{ this };
     basemeshSubgraph_->initPipeline();

@@ -1,10 +1,12 @@
 
 #pragma once
 
-#include <vsg/all.h>
+#include <memory>
 
+#include <vsg/all.h>
 #include <QObject>
 
+#include "vk/context.h"
 #include "qt_window/window.h"
 #include "manipulator.h"
 #include "basemesh/BasemeshSubgraph.h"
@@ -18,7 +20,7 @@ struct Tired final : QObject {
 public:
     Tired( QObject* parent = nullptr );
 
-    auto initCamera( Window* window, uint32_t width, uint32_t height ) -> void;
+    auto init( Window* window, uint32_t width, uint32_t height ) -> void;
     auto viewerCompile( int interval, bool continuousUpdate ) -> void;
 
     auto viewer() -> vsg::ref_ptr<Viewer>;
@@ -31,6 +33,8 @@ public:
     auto serviceObjectsSubgraph() -> ServiceObjectsSubgraph*;
 
 private:
+    std::shared_ptr<vk::Context> context_{};
+
     vsg::ref_ptr<Viewer> viewer_{};
     vsg::ref_ptr<vsg::Camera> camera_{};
     vsg::ref_ptr<Manipulator> manipulator_{};
