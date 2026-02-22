@@ -50,7 +50,7 @@ consteval auto parse( std::string_view key, int value ) -> std::meta::info {
                                                         type, init } );
 }
 
-int main( int argc, char* argv[] ) {
+auto main( int argc, char* argv[] ) -> int {
     foo();
     static_assert( [:parse( "x", 1 ):].x == 1 );
     static_assert( [:parse( "y", 2 ):].y == 2 );

@@ -52,6 +52,26 @@ endif()
 include_directories("src")
 
 # ================================
+# Module vk
+# ================================
+file(GLOB_RECURSE MOD_VK_SRC "src/vk/*.cpp" "src/vk/*.h")
+add_library(vk)
+target_sources(vk PRIVATE ${MOD_VK_SRC})
+set_target_properties(vk PROPERTIES AUTOMOC TRUE)
+target_link_libraries(vk
+   vulkan
+)
+
+# ================================
+# Module image
+# ================================
+file(GLOB_RECURSE MOD_IMAGE_SRC "src/image/*.cpp" "src/image/*.h")
+add_library(image)
+target_sources(image PRIVATE ${MOD_VK_SRC})
+set_target_properties(image PROPERTIES AUTOMOC TRUE)
+target_link_libraries(image)
+
+# ================================
 # Module tired
 # ================================
 file(GLOB_RECURSE MOD_TIRED_SRC "src/tired/*.cpp" "src/tired/*.h")
@@ -91,6 +111,8 @@ target_sources(tired_ui PRIVATE ${MOD_TIRED_UI_SRC})
 set_target_properties(tired_ui PROPERTIES AUTOMOC TRUE)
 target_link_libraries(tired_ui
     vsg
+    vk
+    image
     Qt::Core
     Qt::Gui
     Qt::Quick

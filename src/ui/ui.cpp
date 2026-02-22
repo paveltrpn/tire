@@ -5,10 +5,6 @@
 #include <QSplitter>
 #include <QWidget>
 
-#ifdef vsgXchange_FOUND
-#include <vsgXchange/all.h>
-#endif
-
 #include "ui.h"
 
 namespace tired {
