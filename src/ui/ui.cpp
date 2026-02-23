@@ -31,7 +31,7 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Appearence", theme_ );
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Tired", tired_.get() );
 
-    setGeometry( 0, 0, traits->width, traits->height );
+    setGeometry( traits->x, traits->y, traits->width, traits->height );
 
     // VSG initialization.
     vsgWindow_ = new Window( tired_->viewer(), traits );

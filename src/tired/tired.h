@@ -21,7 +21,6 @@ public:
     Tired( QObject* parent = nullptr );
 
     auto init( Window* window, uint32_t width, uint32_t height ) -> void;
-    auto viewerCompile( int interval, bool continuousUpdate ) -> void;
 
     auto viewer() -> vsg::ref_ptr<Viewer>;
     auto manipulator() -> vsg::ref_ptr<Manipulator>;

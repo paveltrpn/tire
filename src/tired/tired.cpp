@@ -15,17 +15,6 @@ Tired::Tired( QObject* parent )
     , viewer_{ Viewer::create() }
     , theRoot_{ new vsg::Group{} } {};
 
-auto Tired::viewerCompile( int interval, bool continuousUpdate ) -> void {
-    if ( interval >= 0 ) {
-        viewer_->setInterval( interval );
-    }
-
-    viewer_->continuousUpdate = continuousUpdate;
-
-    viewer_->addEventHandler( vsg::CloseHandler::create( viewer_ ) );
-    viewer_->compile();
-}
-
 auto Tired::viewer() -> vsg::ref_ptr<Viewer> {
     return viewer_;
 }
@@ -81,6 +70,7 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
         const auto device = wa->getDevice()->vk();
         const auto surface = wa->getSurface()->vk();
         const auto rp = wa->getRenderPass()->vk();
+
         context_ = std::make_shared<vk::Context>( instance, physicalDevice, device, surface, rp, 0, 0 );
     }
 
@@ -108,10 +98,14 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
     basemeshSubgraph_->addChild( box );
 
     // Viewer compile.
-    bool continuousUpdate = false;  // arguments.read( { "--event-driven", "--ed" } );
-    auto interval = 8;              // arguments.value<int>( 8, "--interval" );
+    constexpr auto UPDATE_INTERVAL{ 8 };
+    viewer_->setInterval( UPDATE_INTERVAL );
 
-    viewerCompile( interval, continuousUpdate );
+    constexpr auto CONTINOUS_UPDATE{ true };
+    viewer_->continuousUpdate = CONTINOUS_UPDATE;
+
+    viewer_->addEventHandler( vsg::CloseHandler::create( viewer_ ) );
+    viewer_->compile();
 }
 
 }  // namespace tired

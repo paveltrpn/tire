@@ -1,9 +1,5 @@
 #include <vsg/all.h>
 
-#ifdef vsgXchange_FOUND
-#include <vsgXchange/all.h>
-#endif
-
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
 #include <QVBoxLayout>
@@ -72,10 +68,11 @@ auto main( int argc, char* argv[] ) -> int {
     windowTraits->windowTitle = "tire editor";
     windowTraits->debugLayer = arguments.read( { "--debug", "-d" } );
     windowTraits->apiDumpLayer = arguments.read( { "--api", "-a" } );
-
-    // windowTraits->samples
+    windowTraits->vulkanVersion = VK_MAKE_API_VERSION( 0, 1, 4, 0 );
     windowTraits->width = 1920;
     windowTraits->height = 1080;
+    windowTraits->x = 100;
+    windowTraits->y = 100;
     windowTraits->clearColor = vsg::vec4{ 155.0f / 255.0f, 158.0f / 255.0f, 191.0f / 255.0f, 1.0f };
     // windowTraits->fullscreen = true;
 
