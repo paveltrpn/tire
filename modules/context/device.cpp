@@ -1,6 +1,7 @@
 
 module;
 
+#include <optional>
 #include <set>
 
 #define VK_USE_PLATFORM_XLIB_KHR
@@ -65,8 +66,9 @@ void Context::collectPhysicalDevices() {
 
         // Collect physical device extensions info
         uint32_t extensionCount{};
-        if ( const auto err = vkEnumerateDeviceExtensionProperties( device, nullptr, &extensionCount, nullptr );
-             err != VK_SUCCESS ) {
+        if (
+          const auto err = vkEnumerateDeviceExtensionProperties( device, nullptr, &extensionCount, nullptr );
+          err != VK_SUCCESS ) {
             log::fatal()(
               "can't enumerate physical device extensions "
               "with code: {}\n",
@@ -82,9 +84,10 @@ void Context::collectPhysicalDevices() {
         std::vector<VkExtensionProperties> availableExtensions;
         availableExtensions.resize( extensionCount );
 
-        if ( const auto err =
-               vkEnumerateDeviceExtensionProperties( device, nullptr, &extensionCount, availableExtensions.data() );
-             err != VK_SUCCESS ) {
+        if (
+          const auto err =
+            vkEnumerateDeviceExtensionProperties( device, nullptr, &extensionCount, availableExtensions.data() );
+          err != VK_SUCCESS ) {
             log::fatal()(
               "can't acquire physical device extensions "
               "with code: {}",
@@ -108,10 +111,8 @@ void Context::collectPhysicalDevices() {
     }
 }
 
-void Context::makeDevice() {
-    const auto configHandle = Config::instance();
-
-    // Check which devices available on machine
+auto Context::pickDevice( const std::vector<PhysicalDevice> &physDevList ) -> std::optional<int> {
+    // Check which devices available on machine.
     int discreetGpuId{ -1 };
     int integratedGpuId{ -1 };
     int otherGpuId{ -1 };
@@ -147,15 +148,28 @@ void Context::makeDevice() {
         ++i;
     }
 
-    // First try to pick discreete GPU
+    // First try to pick discreete GPU.
     if ( discreetGpuId != -1 ) {
-        pickedPhysicalDeviceId_ = discreetGpuId;
+        return discreetGpuId;
     } else if ( integratedGpuId != -1 ) {
-        pickedPhysicalDeviceId_ = integratedGpuId;
+        return integratedGpuId;
     } else if ( cpuGpuId != -1 ) {
-        pickedPhysicalDeviceId_ = cpuGpuId;
-    } else {
-        log::fatal()( "vk::Device === no suitable vulkan devices found!" );
+        return cpuGpuId;
+    }
+
+    return std::nullopt;
+}
+
+void Context::makeDevice() {
+    const auto configHandle = Config::instance();
+
+    {
+        const auto d = pickDevice( physicalDevices_ );
+        if ( !d ) {
+            log::fatal()( "vk::Device === no suitable vulkan devices found!" );
+        } else {
+            pickedPhysicalDeviceId_ = d.value();
+        }
     }
 
     // Base class member.
@@ -185,9 +199,10 @@ void Context::makeDevice() {
     // present and we can use it to present, but now we just check "can present" property
     // on coosed one and if not we terminate.
     VkBool32 presentSupport = false;
-    if ( const auto err = vkGetPhysicalDeviceSurfaceSupportKHR(
-           physicalDevices_[pickedPhysicalDeviceId_].device, graphicsFamilyQueueId_, surface_, &presentSupport );
-         err != VK_SUCCESS ) {
+    if (
+      const auto err = vkGetPhysicalDeviceSurfaceSupportKHR(
+        physicalDevices_[pickedPhysicalDeviceId_].device, graphicsFamilyQueueId_, surface_, &presentSupport );
+      err != VK_SUCCESS ) {
         log::fatal()(
           "failed to get device surface support for "
           "presentation with code {}!\n",
@@ -270,8 +285,9 @@ void Context::makeDevice() {
     vkGetDeviceQueue( device_, presentSupportQueueId_, 0, &presentQueue_ );
 
     // Physical device surface capabilities
-    if ( const auto err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR( physDevice_, surface_, &surfaceCapabilities_ );
-         err != VK_SUCCESS ) {
+    if (
+      const auto err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR( physDevice_, surface_, &surfaceCapabilities_ );
+      err != VK_SUCCESS ) {
         log::fatal()( "failed to obtain surface capabilities with code {}!\n", string_VkResult( err ) );
     } else {
         log::debug()( "physical device surface capabilities acquire "
@@ -285,8 +301,9 @@ void Context::makeDevice() {
 
     // Physical device surface formats
     uint32_t formatCount{};
-    if ( const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR( physDevice_, surface_, &formatCount, nullptr );
-         err != VK_SUCCESS ) {
+    if (
+      const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR( physDevice_, surface_, &formatCount, nullptr );
+      err != VK_SUCCESS ) {
         log::fatal()(
           "failed to obtain physical device surface formats "
           "count with code {}!\n",
@@ -302,9 +319,10 @@ void Context::makeDevice() {
 
     surfaceFormats_.resize( formatCount );
 
-    if ( const auto err =
-           vkGetPhysicalDeviceSurfaceFormatsKHR( physDevice_, surface_, &formatCount, surfaceFormats_.data() );
-         err != VK_SUCCESS ) {
+    if (
+      const auto err =
+        vkGetPhysicalDeviceSurfaceFormatsKHR( physDevice_, surface_, &formatCount, surfaceFormats_.data() );
+      err != VK_SUCCESS ) {
         log::fatal()(
           "failed to acquire physical device surface formats "
           "count with code {}!\n",
@@ -320,9 +338,9 @@ void Context::makeDevice() {
 
     // Physical device present modes
     uint32_t presentModeCount{};
-    if ( const auto err =
-           vkGetPhysicalDeviceSurfacePresentModesKHR( physDevice_, surface_, &presentModeCount, nullptr );
-         err != VK_SUCCESS ) {
+    if (
+      const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR( physDevice_, surface_, &presentModeCount, nullptr );
+      err != VK_SUCCESS ) {
         log::fatal()(
           "failed to obtain physical device present modes "
           "count with code {}!\n",
@@ -338,9 +356,10 @@ void Context::makeDevice() {
 
     presentModes_.resize( presentModeCount );
 
-    if ( const auto err =
-           vkGetPhysicalDeviceSurfacePresentModesKHR( physDevice_, surface_, &presentModeCount, presentModes_.data() );
-         err != VK_SUCCESS ) {
+    if (
+      const auto err =
+        vkGetPhysicalDeviceSurfacePresentModesKHR( physDevice_, surface_, &presentModeCount, presentModes_.data() );
+      err != VK_SUCCESS ) {
         log::fatal()(
           "failed to acquire physical device present modes "
           "with code {}!\n",

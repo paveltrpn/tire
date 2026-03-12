@@ -51,8 +51,8 @@ export struct Label final {
     }
 
     auto setPos( float x, float y ) -> void {
-        textPosX_ = x;
-        textPosY_ = y;
+        posX_ = x;
+        posY_ = y;
     }
 
 #define VERTICIES_PER_QUAD 6
@@ -73,11 +73,11 @@ export struct Label final {
             const auto glyphY = static_cast<float>( ( string[i] / fontColumnCount_ ) - 1 );
 
             // Build character quad vertecies data.
-            const vector3_type topLeftVt = { ( offset + 0.0f ) + textPosX_, 0.0f + textPosY_, 0.0f };
-            const vector3_type topRightVt = { ( offset + glyphQuadWdt_ ) + textPosX_, 0.0f + textPosY_, 0.0f };
+            const vector3_type topLeftVt = { ( offset + 0.0f ) + posX_, 0.0f + posY_, 0.0f };
+            const vector3_type topRightVt = { ( offset + glyphQuadWdt_ ) + posX_, 0.0f + posY_, 0.0f };
             const vector3_type bottomRightVt = {
-              ( offset + glyphQuadWdt_ ) + textPosX_, -glyphQuadHgt_ + textPosY_, 0.0f };
-            const vector3_type bottomLeftVt = { ( offset + 0.0f ) + textPosX_, -glyphQuadHgt_ + textPosY_, 0.0f };
+              ( offset + glyphQuadWdt_ ) + posX_, -glyphQuadHgt_ + posY_, 0.0f };
+            const vector3_type bottomLeftVt = { ( offset + 0.0f ) + posX_, -glyphQuadHgt_ + posY_, 0.0f };
 
             // Build character quad texture coordinates data.
             letterQuadsVertecies_[( i * VERTICIES_PER_QUAD ) + 0] = topLeftVt;
@@ -163,8 +163,8 @@ private:
 #define GLYPH_GAP 0.0f
     float glyphGap_{ GLYPH_GAP };
 
-    float textPosX_{ 0.0f };
-    float textPosY_{ 0.0f };
+    float posX_{ 0.0f };
+    float posY_{ 0.0f };
 
     // Формат шрифта - изображение TGA с началом сверху слева,
     // 32 столбца на 8 строк символов, первый символ - 32 ("пробел").

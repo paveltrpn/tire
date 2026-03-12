@@ -106,8 +106,8 @@ export struct Context final {
         xlibSurfInfo.dpy = display;
         xlibSurfInfo.window = window;
 
-        if ( const auto err = vkCreateXlibSurfaceKHR( instance_, &xlibSurfInfo, nullptr, &surface_ );
-             err != VK_SUCCESS ) {
+        if (
+          const auto err = vkCreateXlibSurfaceKHR( instance_, &xlibSurfInfo, nullptr, &surface_ ); err != VK_SUCCESS ) {
             throw std::runtime_error(
               std::format( "failed to create xlib surface with code {}\n!", string_VkResult( err ) ) );
         } else {
@@ -121,8 +121,9 @@ export struct Context final {
         wlSurfInfo.display = display;
         wlSurfInfo.surface = surface;
 
-        if ( const auto err = vkCreateWaylandSurfaceKHR( instance_, &wlSurfInfo, nullptr, &surface_ );
-             err != VK_SUCCESS ) {
+        if (
+          const auto err = vkCreateWaylandSurfaceKHR( instance_, &wlSurfInfo, nullptr, &surface_ );
+          err != VK_SUCCESS ) {
             throw std::runtime_error(
               std::format( "failed to create wayland surface with code {}\n!", string_VkResult( err ) ) );
         } else {
@@ -248,6 +249,26 @@ export struct Context final {
     auto immediateCommand() const -> CommandRoutine;
 
 private:
+    struct PhysicalDevice final {
+        VkPhysicalDevice device{ VK_NULL_HANDLE };
+        VkPhysicalDeviceProperties properties{};
+        VkPhysicalDeviceFeatures features{};
+        std::vector<VkExtensionProperties> extensions{};
+        std::vector<VkQueueFamilyProperties> queueFamilyProperties{};
+    };
+
+    struct Frame final {
+        VkImage image_{};
+        VkImageView view_{};
+        VkFramebuffer framebuffer_{};
+        VkSemaphore imageAvailableSemaphore_{};
+        VkSemaphore renderFinishedSemaphore_{};
+        VkFence inFlightFence_{};
+        VkCommandBuffer cbPrimary_{ VK_NULL_HANDLE };
+        VkCommandBuffer cbSecondary_{ VK_NULL_HANDLE };
+    };
+
+private:
     // Init all context
     auto makeInstance( const std::string &platformSurfaceExtension ) -> void;
     auto collectPhysicalDevices() -> void;
@@ -280,25 +301,7 @@ private:
         clearValues_[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
     };
 
-private:
-    struct PhysicalDevice final {
-        VkPhysicalDevice device{ VK_NULL_HANDLE };
-        VkPhysicalDeviceProperties properties{};
-        VkPhysicalDeviceFeatures features{};
-        std::vector<VkExtensionProperties> extensions{};
-        std::vector<VkQueueFamilyProperties> queueFamilyProperties{};
-    };
-
-    struct Frame final {
-        VkImage image_{};
-        VkImageView view_{};
-        VkFramebuffer framebuffer_{};
-        VkSemaphore imageAvailableSemaphore_{};
-        VkSemaphore renderFinishedSemaphore_{};
-        VkFence inFlightFence_{};
-        VkCommandBuffer cbPrimary_{ VK_NULL_HANDLE };
-        VkCommandBuffer cbSecondary_{ VK_NULL_HANDLE };
-    };
+    auto pickDevice( const std::vector<PhysicalDevice> &physDevList ) -> std::optional<int>;
 
 protected:
     // Instance
