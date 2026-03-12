@@ -1,8 +1,10 @@
 
 module;
 
+#include <algorithm>
 #include <optional>
 #include <set>
+#include <ranges>
 
 #define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vk_enum_string_helper.h>
@@ -233,32 +235,43 @@ void Context::makeDevice() {
     }
 
     std::vector<const char *> desiredExtensionsList{};
-    desiredExtensionsList.emplace_back( "VK_KHR_swapchain" );
 
-    if ( configHandle->get<bool>( "enable_raytracing_extensions" ) ) {
-        log::info()( "raytracing extansions enabled" );
+    auto loadBaseExt = [&desiredExtensionsList]( bool use ) -> void {
+        if ( use ) {
+            auto ext = std::vector<const char *>{ "VK_KHR_swapchain", "VK_KHR_spirv_1_4" };
+            std::ranges::for_each(
+              ext, [&desiredExtensionsList]( auto e ) -> void { desiredExtensionsList.emplace_back( e ); } );
+        }
+    };
 
-        desiredExtensionsList.emplace_back( "VK_KHR_ray_query" );
-        desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_pipeline" );
-        desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_maintenance1" );
-        desiredExtensionsList.emplace_back( "VK_KHR_ray_tracing_position_fetch" );
-        desiredExtensionsList.emplace_back( "VK_KHR_acceleration_structure" );
-        desiredExtensionsList.emplace_back( "VK_EXT_descriptor_indexing" );
-        desiredExtensionsList.emplace_back( "VK_KHR_buffer_device_address" );
-        desiredExtensionsList.emplace_back( "VK_KHR_deferred_host_operations" );
-        desiredExtensionsList.emplace_back( "VK_KHR_spirv_1_4" );
-        desiredExtensionsList.emplace_back( "VK_KHR_shader_float_controls" );
-    } else {
-        log::info()( "raytracing extansions disabled" );
-    }
+    auto loadRTExt = [&desiredExtensionsList]( bool use ) -> void {
+        if ( use ) {
+            auto ext = std::vector<const char *>{
+              "VK_KHR_ray_query",
+              "VK_KHR_ray_tracing_pipeline",
+              "VK_KHR_ray_tracing_position_fetch",
+              "VK_KHR_ray_tracing_maintenance1",
+              "VK_KHR_acceleration_structure",
+              "VK_EXT_descriptor_indexing",
+              "VK_KHR_buffer_device_address",
+              "VK_KHR_deferred_host_operations",
+              "VK_KHR_shader_float_controls" };
+            std::ranges::for_each(
+              ext, [&desiredExtensionsList]( auto e ) -> void { desiredExtensionsList.emplace_back( e ); } );
+        }
+    };
 
-    VkDeviceCreateInfo deviceCreateInfo{};
-    deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-    deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
-    deviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>( queueCreateInfos.size() );
-    deviceCreateInfo.pEnabledFeatures = &physicalDevices_[pickedPhysicalDeviceId_].features;
-    deviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>( desiredExtensionsList.size() );
-    deviceCreateInfo.ppEnabledExtensionNames = desiredExtensionsList.data();
+    loadBaseExt( true );
+    loadRTExt( configHandle->get<bool>( "enable_raytracing_extensions" ) );
+
+    auto deviceCreateInfo = VkDeviceCreateInfo{
+      .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+      .queueCreateInfoCount = static_cast<uint32_t>( queueCreateInfos.size() ),
+      .pQueueCreateInfos = queueCreateInfos.data(),
+      .enabledExtensionCount = static_cast<uint32_t>( desiredExtensionsList.size() ),
+      .ppEnabledExtensionNames = desiredExtensionsList.data(),
+      .pEnabledFeatures = &physicalDevices_[pickedPhysicalDeviceId_].features,
+    };
 
     // NOTE: cannot use "import config" as c++ module bcause of clang 20 bug - "error: 'lifetimebound' attribute
     // cannot be applied to a parameter of a function that returns void; did you mean 'lifetime_capture_by(X)'"
