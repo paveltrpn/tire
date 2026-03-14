@@ -273,11 +273,7 @@ void Context::makeDevice() {
       .pEnabledFeatures = &physicalDevices_[pickedPhysicalDeviceId_].features,
     };
 
-    // NOTE: cannot use "import config" as c++ module bcause of clang 20 bug - "error: 'lifetimebound' attribute
-    // cannot be applied to a parameter of a function that returns void; did you mean 'lifetime_capture_by(X)'"
-    //
     // Force use validation layers
-
     if ( configHandle->get<bool>( "enable_validation_layers" ) ) {
         deviceCreateInfo.enabledLayerCount = static_cast<uint32_t>( desiredValidationLayerList_.size() );
         deviceCreateInfo.ppEnabledLayerNames = desiredValidationLayerList_.data();
