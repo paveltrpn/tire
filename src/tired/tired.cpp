@@ -19,8 +19,8 @@ auto Tired::viewer() -> vsg::ref_ptr<Viewer> {
     return viewer_;
 }
 
-auto Tired::manipulator() -> vsg::ref_ptr<Manipulator> {
-    return manipulator_;
+auto Tired::manipulator() -> Manipulator* {
+    return _manipulator;
 }
 
 auto Tired::rootNode() -> vsg::ref_ptr<vsg::Node> {
@@ -53,10 +53,10 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
 
     camera_ = vsg::Camera::create( perspective, lookAt, vsg::ViewportState::create( VkExtent2D{ width, height } ) );
 
-    manipulator_ = vsg::ref_ptr<Manipulator>( new Manipulator{ camera_, nullptr } );
-    manipulator_->addWindow( *window );
+    _manipulator = new Manipulator{ camera_, nullptr };
+    _manipulator->manipulator()->addWindow( *window );
 
-    viewer_->addEventHandler( manipulator_ );
+    viewer_->addEventHandler( _manipulator->manipulator() );
 
     auto commandGraph = vsg::createCommandGraphForView( *window, camera_, theRoot_ );
 

@@ -40,7 +40,7 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
 
     tired_->init( vsgWindow_, traits->width, traits->height );
 
-    qmlRegisterSingletonInstance( "Tire", 1, 0, "Manipulator", tired_->manipulator().get() );
+    qmlRegisterSingletonInstance( "Tire", 1, 0, "Manipulator", tired_->manipulator() );
     qmlRegisterSingletonInstance( "Tire", 1, 0, "BasemeshSubraph", tired_->basemeshSubgraph() );
     qmlRegisterSingletonInstance( "Tire", 1, 0, "ObstaclesSubgraph", tired_->obstaclesSubgraph() );
     qmlRegisterSingletonInstance( "Tire", 1, 0, "ServiceObjectsSubgraph", tired_->serviceObjectsSubgraph() );

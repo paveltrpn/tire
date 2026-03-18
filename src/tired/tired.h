@@ -23,7 +23,7 @@ public:
     auto init( Window* window, uint32_t width, uint32_t height ) -> void;
 
     auto viewer() -> vsg::ref_ptr<Viewer>;
-    auto manipulator() -> vsg::ref_ptr<Manipulator>;
+    auto manipulator() -> Manipulator*;
     auto rootNode() -> vsg::ref_ptr<vsg::Node>;
     auto camera() -> vsg::ref_ptr<vsg::Camera>;
 
@@ -36,7 +36,7 @@ private:
 
     vsg::ref_ptr<Viewer> viewer_{};
     vsg::ref_ptr<vsg::Camera> camera_{};
-    vsg::ref_ptr<Manipulator> manipulator_{};
+    Manipulator* _manipulator{};
 
     vsg::ref_ptr<vsg::Group> theRoot_{};
 

@@ -13,9 +13,7 @@
 
 namespace tired {
 
-struct Manipulator final
-    : QObject
-    , vsg::Trackball {
+struct Manipulator final : QObject {
     Q_OBJECT
 
     Q_PROPERTY( QPoint mousePos READ mousePos WRITE setMousePos NOTIFY mousePosUpdated )
@@ -23,11 +21,8 @@ struct Manipulator final
 public:
     Manipulator( vsg::ref_ptr<vsg::Camera> camera, vsg::ref_ptr<vsg::EllipsoidModel> ellipsoidModel = {} );
 
-    // VSG specific.
-public:
-    void apply( vsg::MoveEvent& moveEvent ) override;
+    auto manipulator() -> const vsg::ref_ptr<vsg::Trackball>;
 
-    // Qt specific part.
 public:
     void setMousePos( QPoint value );
     QPoint mousePos();
@@ -36,6 +31,8 @@ signals:
     void mousePosUpdated();
 
 private:
+    vsg::ref_ptr<vsg::Trackball> _manipulator{};
+
     QPoint mousePos_{};
 };
 
