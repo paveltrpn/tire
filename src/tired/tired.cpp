@@ -54,9 +54,9 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
     camera_ = vsg::Camera::create( perspective, lookAt, vsg::ViewportState::create( VkExtent2D{ width, height } ) );
 
     _manipulator = new Manipulator{ camera_, nullptr };
-    _manipulator->manipulator()->addWindow( *window );
+    _manipulator->trackball()->addWindow( *window );
 
-    viewer_->addEventHandler( _manipulator->manipulator() );
+    viewer_->addEventHandler( _manipulator->trackball() );
 
     auto commandGraph = vsg::createCommandGraphForView( *window, camera_, theRoot_ );
 

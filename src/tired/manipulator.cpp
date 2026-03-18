@@ -7,18 +7,12 @@ namespace tired {
 
 Manipulator::Manipulator( vsg::ref_ptr<vsg::Camera> camera, vsg::ref_ptr<vsg::EllipsoidModel> ellipsoidModel )
     : QObject{}
-    , _manipulator{ new vsg::Trackball{ camera, ellipsoidModel } } {
+    , _trackball{ new Trackball{ camera, ellipsoidModel } } {
 }
 
-auto Manipulator::manipulator() -> const vsg::ref_ptr<vsg::Trackball> {
-    return _manipulator;
+auto Manipulator::trackball() -> const vsg::ref_ptr<Trackball> {
+    return _trackball;
 }
-
-// void Manipulator::apply( vsg::MoveEvent& moveEvent ) {
-//     setMousePos( { moveEvent.x, moveEvent.y } );
-
-//     _manipulator->apply( moveEvent );
-// }
 
 void Manipulator::setMousePos( QPoint value ) {
     mousePos_ = value;

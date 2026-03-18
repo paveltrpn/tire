@@ -11,6 +11,8 @@
 #include <vsg/ui/ScrollWheelEvent.h>
 #include <vsg/ui/TouchEvent.h>
 
+#include "trackball.h"
+
 namespace tired {
 
 struct Manipulator final : QObject {
@@ -21,7 +23,7 @@ struct Manipulator final : QObject {
 public:
     Manipulator( vsg::ref_ptr<vsg::Camera> camera, vsg::ref_ptr<vsg::EllipsoidModel> ellipsoidModel = {} );
 
-    auto manipulator() -> const vsg::ref_ptr<vsg::Trackball>;
+    auto trackball() -> const vsg::ref_ptr<Trackball>;
 
 public:
     void setMousePos( QPoint value );
@@ -31,7 +33,7 @@ signals:
     void mousePosUpdated();
 
 private:
-    vsg::ref_ptr<vsg::Trackball> _manipulator{};
+    vsg::ref_ptr<Trackball> _trackball{};
 
     QPoint mousePos_{};
 };
