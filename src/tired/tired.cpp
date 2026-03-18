@@ -63,7 +63,7 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
     {
         _manipulator = new Manipulator{ camera_, nullptr };
         _manipulator->trackball()->addWindow( *window );
-        _inputHandler = new InputHandler{ camera_ };
+        _inputHandler = new InputHandler{ camera_, viewer_ };
     }
 
     // Setup viewer object.
@@ -72,6 +72,12 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
         viewer_->addEventHandler( _inputHandler->handler() );
         auto commandGraph = vsg::createCommandGraphForView( *window, camera_, theRoot_ );
         viewer_->addRecordAndSubmitTaskAndPresentation( { commandGraph } );
+
+        constexpr auto UPDATE_INTERVAL{ 8 };
+        viewer_->setInterval( UPDATE_INTERVAL );
+
+        constexpr auto CONTINOUS_UPDATE{ true };
+        viewer_->continuousUpdate = CONTINOUS_UPDATE;
     }
 
     // Borrow vulkan data from VSG.
@@ -114,13 +120,7 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
 
     // Viewer compile.
     {
-        constexpr auto UPDATE_INTERVAL{ 8 };
-        viewer_->setInterval( UPDATE_INTERVAL );
-
-        constexpr auto CONTINOUS_UPDATE{ true };
-        viewer_->continuousUpdate = CONTINOUS_UPDATE;
-
-        viewer_->addEventHandler( vsg::CloseHandler::create( viewer_ ) );
+        //
         viewer_->compile();
     }
 }
