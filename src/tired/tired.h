@@ -9,6 +9,7 @@
 #include "vk/context.h"
 #include "qt_window/window.h"
 #include "manipulator.h"
+#include "inputhandler.h"
 #include "basemesh/BasemeshSubgraph.h"
 #include "obstacles/ObstaclesSubgraph.h"
 #include "service_objects/ServiceObjectsSubgraph.h"
@@ -24,6 +25,7 @@ public:
 
     auto viewer() -> vsg::ref_ptr<Viewer>;
     auto manipulator() -> Manipulator*;
+    auto inputHandler() -> InputHandler*;
     auto rootNode() -> vsg::ref_ptr<vsg::Node>;
     auto camera() -> vsg::ref_ptr<vsg::Camera>;
 
@@ -36,7 +38,9 @@ private:
 
     vsg::ref_ptr<Viewer> viewer_{};
     vsg::ref_ptr<vsg::Camera> camera_{};
+
     Manipulator* _manipulator{};
+    InputHandler* _inputHandler{};
 
     vsg::ref_ptr<vsg::Group> theRoot_{};
 

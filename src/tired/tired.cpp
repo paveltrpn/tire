@@ -23,6 +23,10 @@ auto Tired::manipulator() -> Manipulator* {
     return _manipulator;
 }
 
+auto Tired::inputHandler() -> InputHandler* {
+    return _inputHandler;
+}
+
 auto Tired::rootNode() -> vsg::ref_ptr<vsg::Node> {
     return theRoot_;
 }
@@ -56,8 +60,10 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
     _manipulator = new Manipulator{ camera_, nullptr };
     _manipulator->trackball()->addWindow( *window );
 
+    _inputHandler = new InputHandler{ camera_ };
+
     viewer_->addEventHandler( _manipulator->trackball() );
-    viewer_->addEventHandler( _manipulator->inputHandler() );
+    viewer_->addEventHandler( _inputHandler->inputHandler() );
 
     auto commandGraph = vsg::createCommandGraphForView( *window, camera_, theRoot_ );
 

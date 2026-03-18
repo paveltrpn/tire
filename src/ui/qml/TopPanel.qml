@@ -53,7 +53,7 @@ Rectangle {
                 height: 24
 
                 text: {
-                     const pos = Manipulator.mousePos
+                     const pos = InputHandler.mousePos
                      return `X: ${pos.x} Y: ${pos.y}`
                 }
 

@@ -3,45 +3,64 @@
 
 namespace tired {
 
-InputHandler::InputHandler( vsg::ref_ptr<vsg::Camera> camera )
+Handler::Handler( vsg::ref_ptr<vsg::Camera> camera )
     : vsg::Visitor{}
     , _camera{ camera } {
 }
 
-void InputHandler::apply( vsg::KeyPressEvent& keyPress ) {
+void Handler::apply( vsg::KeyPressEvent& keyPress ) {
 }
 
-void InputHandler::apply( vsg::KeyReleaseEvent& keyRelease ) {
+void Handler::apply( vsg::KeyReleaseEvent& keyRelease ) {
 }
 
-void InputHandler::apply( vsg::FocusInEvent& focusIn ) {
+void Handler::apply( vsg::FocusInEvent& focusIn ) {
 }
 
-void InputHandler::apply( vsg::FocusOutEvent& focusOut ) {
+void Handler::apply( vsg::FocusOutEvent& focusOut ) {
 }
 
-void InputHandler::apply( vsg::ButtonPressEvent& buttonPress ) {
+void Handler::apply( vsg::ButtonPressEvent& buttonPress ) {
 }
 
-void InputHandler::apply( vsg::ButtonReleaseEvent& buttonRelease ) {
+void Handler::apply( vsg::ButtonReleaseEvent& buttonRelease ) {
 }
 
-void InputHandler::apply( vsg::MoveEvent& moveEvent ) {
+void Handler::apply( vsg::MoveEvent& moveEvent ) {
 }
 
-void InputHandler::apply( vsg::ScrollWheelEvent& scrollWheel ) {
+void Handler::apply( vsg::ScrollWheelEvent& scrollWheel ) {
 }
 
-void InputHandler::apply( vsg::TouchDownEvent& touchDown ) {
+void Handler::apply( vsg::TouchDownEvent& touchDown ) {
 }
 
-void InputHandler::apply( vsg::TouchUpEvent& touchUp ) {
+void Handler::apply( vsg::TouchUpEvent& touchUp ) {
 }
 
-void InputHandler::apply( vsg::TouchMoveEvent& touchMove ) {
+void Handler::apply( vsg::TouchMoveEvent& touchMove ) {
 }
 
-void InputHandler::apply( vsg::FrameEvent& frame ) {
+void Handler::apply( vsg::FrameEvent& frame ) {
 }
 
+// =======================================================================
+
+InputHandler::InputHandler( vsg::ref_ptr<vsg::Camera> camera )
+    : _inputHandler{ new Handler{ camera } } {
 }
+
+auto InputHandler::inputHandler() -> const vsg::ref_ptr<Handler> {
+    return _inputHandler;
+}
+
+void InputHandler::setMousePos( QPoint value ) {
+    mousePos_ = value;
+    emit mousePosUpdated();
+}
+
+QPoint InputHandler::mousePos() {
+    return mousePos_;
+}
+
+}  // namespace tired
