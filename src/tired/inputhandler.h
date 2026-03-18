@@ -13,8 +13,10 @@
 
 namespace tired {
 
+struct InputHandler;
+
 struct Handler final : vsg::Visitor {
-    Handler( vsg::ref_ptr<vsg::Camera> camera );
+    Handler( vsg::ref_ptr<vsg::Camera> camera, InputHandler* inputHandler );
 
     void apply( vsg::KeyPressEvent& keyPress ) override;
     void apply( vsg::KeyReleaseEvent& keyRelease ) override;
@@ -31,6 +33,7 @@ struct Handler final : vsg::Visitor {
 
 private:
     vsg::ref_ptr<vsg::Camera> _camera{};
+    InputHandler* _inputHandler{};
 };
 
 // =======================================================================
@@ -43,7 +46,7 @@ struct InputHandler final : QObject {
 public:
     InputHandler( vsg::ref_ptr<vsg::Camera> camera );
 
-    auto inputHandler() -> const vsg::ref_ptr<Handler>;
+    auto handler() -> const vsg::ref_ptr<Handler>;
 
 public:
     void setMousePos( QPoint value );
@@ -53,7 +56,7 @@ signals:
     void mousePosUpdated();
 
 private:
-    vsg::ref_ptr<Handler> _inputHandler{};
+    vsg::ref_ptr<Handler> _handler{};
 
     QPoint mousePos_{};
 };

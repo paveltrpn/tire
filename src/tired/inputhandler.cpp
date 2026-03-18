@@ -3,9 +3,10 @@
 
 namespace tired {
 
-Handler::Handler( vsg::ref_ptr<vsg::Camera> camera )
+Handler::Handler( vsg::ref_ptr<vsg::Camera> camera, InputHandler* inputHandler )
     : vsg::Visitor{}
-    , _camera{ camera } {
+    , _camera{ camera }
+    , _inputHandler{ inputHandler } {
 }
 
 void Handler::apply( vsg::KeyPressEvent& keyPress ) {
@@ -27,6 +28,7 @@ void Handler::apply( vsg::ButtonReleaseEvent& buttonRelease ) {
 }
 
 void Handler::apply( vsg::MoveEvent& moveEvent ) {
+    _inputHandler->setMousePos( { moveEvent.x, moveEvent.y } );
 }
 
 void Handler::apply( vsg::ScrollWheelEvent& scrollWheel ) {
@@ -47,11 +49,11 @@ void Handler::apply( vsg::FrameEvent& frame ) {
 // =======================================================================
 
 InputHandler::InputHandler( vsg::ref_ptr<vsg::Camera> camera )
-    : _inputHandler{ new Handler{ camera } } {
+    : _handler{ new Handler{ camera, this } } {
 }
 
-auto InputHandler::inputHandler() -> const vsg::ref_ptr<Handler> {
-    return _inputHandler;
+auto InputHandler::handler() -> const vsg::ref_ptr<Handler> {
+    return _handler;
 }
 
 void InputHandler::setMousePos( QPoint value ) {
