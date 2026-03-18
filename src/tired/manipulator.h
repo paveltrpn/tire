@@ -16,8 +16,6 @@
 
 namespace tired {
 
-// ==================================================================
-
 struct Manipulator final : QObject {
     Q_OBJECT
 
