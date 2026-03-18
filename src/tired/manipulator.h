@@ -12,8 +12,11 @@
 #include <vsg/ui/TouchEvent.h>
 
 #include "trackball.h"
+#include "inputhandler.h"
 
 namespace tired {
+
+// ==================================================================
 
 struct Manipulator final : QObject {
     Q_OBJECT
@@ -24,6 +27,7 @@ public:
     Manipulator( vsg::ref_ptr<vsg::Camera> camera, vsg::ref_ptr<vsg::EllipsoidModel> ellipsoidModel = {} );
 
     auto trackball() -> const vsg::ref_ptr<Trackball>;
+    auto inputHandler() -> const vsg::ref_ptr<InputHandler>;
 
 public:
     void setMousePos( QPoint value );
@@ -34,6 +38,7 @@ signals:
 
 private:
     vsg::ref_ptr<Trackball> _trackball{};
+    vsg::ref_ptr<InputHandler> _inputHandler{};
 
     QPoint mousePos_{};
 };

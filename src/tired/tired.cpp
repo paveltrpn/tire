@@ -57,6 +57,7 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
     _manipulator->trackball()->addWindow( *window );
 
     viewer_->addEventHandler( _manipulator->trackball() );
+    viewer_->addEventHandler( _manipulator->inputHandler() );
 
     auto commandGraph = vsg::createCommandGraphForView( *window, camera_, theRoot_ );
 
