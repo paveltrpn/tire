@@ -5,9 +5,8 @@
 
 namespace tired {
 
-Handler::Handler( vsg::ref_ptr<vsg::Camera> camera, InputHandler* inputHandler )
+Handler::Handler( InputHandler* inputHandler )
     : vsg::Visitor{}
-    , _camera{ camera }
     , _inputHandler{ inputHandler } {
 }
 
@@ -69,18 +68,29 @@ void Handler::close() {
 
 // =======================================================================
 
-InputHandler::InputHandler( vsg::ref_ptr<vsg::Camera> camera, vsg::ref_ptr<vsg::Viewer> viwer )
-    : _handler{ new Handler{ camera, this } }
-    , _viewer{ viwer } {
+InputHandler::InputHandler( vsg::ref_ptr<vsg::Camera> camera, vsg::ref_ptr<vsg::Group> scenegraph,
+                            vsg::ref_ptr<vsg::Viewer> viwer )
+    : _handler{ new Handler{ this } }
+    , _camera{ camera }
+    , _viewer{ viwer }
+    , _scenegraph{ scenegraph } {
 }
 
 auto InputHandler::handler() -> const vsg::ref_ptr<Handler> {
     return _handler;
 }
 
+auto InputHandler::camera() -> vsg::ref_ptr<vsg::Camera> {
+    return _camera;
+}
+
 auto InputHandler::viewer() -> const vsg::ref_ptr<vsg::Viewer> {
     return _viewer;
 };
+
+auto InputHandler::scenegraph() -> const vsg::ref_ptr<vsg::Group> {
+    return _scenegraph;
+}
 
 void InputHandler::setMousePos( QPoint value ) {
     mousePos_ = value;
