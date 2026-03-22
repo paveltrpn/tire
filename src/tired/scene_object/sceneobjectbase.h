@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <print>
 #include <QObject>
 
 #include <vsg/all.h>
@@ -25,6 +26,8 @@ public:
     virtual auto data() -> SceneObjectData& = 0;
 
     auto root() const -> vsg::ref_ptr<SceneObjectGraph>;
+
+    auto test() const -> void { std::println( "==== print for test ====" ); }
 
 signals:
     void dataChanged();

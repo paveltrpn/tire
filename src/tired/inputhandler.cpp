@@ -4,6 +4,8 @@
 #include <iostream>
 
 #include "inputhandler.h"
+#include "scene_object/sceneobjectgraph.h"
+#include "scene_object/sceneobjectbase.h"
 
 namespace tired {
 
@@ -94,32 +96,15 @@ void Handler::lineSegmentIntersector( vsg::PointerEvent& pointerEvent ) {
         return lhs->ratio < rhs->ratio;
     } );
 
-    for ( const auto& intersection : intersector->intersections ) {
-        if ( false ) {
-            std::println( "intersection = world({} {} {}), instanceIndex {}", intersection->worldIntersection.x,
-                          intersection->worldIntersection.y, intersection->worldIntersection.z,
-                          intersection->instanceIndex );
-        }
+    for ( auto& intersection : intersector->intersections ) {
+        for ( auto node : intersection->nodePath ) {
+            auto sog = dynamic_cast<const SceneObjectGraph*>( node );
+            if ( sog ) {
+                auto owner = sog->owner();
+                owner->test();
 
-        if ( true ) {
-            std::string name;
-            for ( auto& node : intersection->nodePath ) {
-                std::println( ", {}", node->className() );
-                if ( node->getValue( "name", name ) ) {
-                    std::println( ":name={}", name );
-                }
+                break;
             }
-            std::print( ", Arrays[ " );
-            for ( auto& array : intersection->arrays ) {
-                std::cout << array << " ";
-            }
-            std::cout << "] [";
-            for ( auto& ir : intersection->indexRatios ) {
-                std::cout << "{" << ir.index << ", " << ir.ratio << "} ";
-            }
-            std::cout << "]";
-
-            std::cout << std::endl;
         }
     }
 }
