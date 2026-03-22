@@ -6,7 +6,7 @@
 #endif
 
 #include "tired.h"
-#include "box/ex_box.h"
+#include "scene_object/box.h"
 
 namespace tired {
 
@@ -113,9 +113,7 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
         theRoot_->addChild( obstaclesSubgraph_->stateGroup() );
         theRoot_->addChild( serviceObjectsSubgraph_->stateGroup() );
 
-        auto box = vsg::ref_ptr<ExBox>(
-            new ExBox{ vsg::dvec3{ 0.0, 0.0, 0.0 }, vsg::dvec3{ 0.0, 0.0, 0.0 }, vsg::dvec3{ 1.0, 1.0, 1.0 } } );
-        basemeshSubgraph_->addChild( box );
+        // basemeshSubgraph_->addExBox( 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 );
     }
 
     // Viewer compile.

@@ -1,11 +1,11 @@
 
 #include <print>
-#include <iostream>
 
 #include <vsg/all.h>
 
-#include "../box/ex_box.h"
 #include "BasemeshSubgraph.h"
+#include "../scene_object/sceneobjectdata.h"
+#include "../scene_object/box.h"
 
 namespace tired {
 
@@ -85,8 +85,7 @@ auto BasemeshSubgraph::initPipeline() -> void {
     stateGroup_->add( bindGraphicsPipeline );
     stateGroup_->add( bindDescriptorSet );
 
-    // set up model transformation node
-    baseNode_ = vsg::MatrixTransform::create();  // VK_SHADER_STAGE_VERTEX_BIT
+    baseNode_ = vsg::Group::create();
 
     stateGroup_->addChild( baseNode_ );
 }
@@ -97,9 +96,16 @@ auto BasemeshSubgraph::addChild( vsg::ref_ptr<vsg::Node> node ) -> void {
 
 void BasemeshSubgraph::addExBox( float px, float py, float pz, float rx, float ry, float rz, float sx, float sy,
                                  float sz ) {
-    auto exbox = vsg::ref_ptr<ExBox>(
-        new ExBox{ vsg::dvec3{ px, py, pz }, vsg::dvec3{ rx, ry, rz }, vsg::dvec3{ sx, sy, sz } } );
-    addChild( exbox );
+    auto data = SceneObjectData{};
+    data.setPosition( { px, py, pz } );
+    data.setOrientation( { rx, ry, rz } );
+    data.setScale( { sx, sy, sz } );
+
+    auto exbox = std::make_shared<object::Box>( data );
+
+    addChild( exbox->root() );
+
+    _objectsList.push_back( std::move( exbox ) );
 
     emit nodeAdded();
 }

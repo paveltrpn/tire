@@ -18,7 +18,7 @@ public:
                                float sz );
 
 private:
-    vsg::ref_ptr<vsg::MatrixTransform> baseNode_{};
+    vsg::ref_ptr<vsg::Group> baseNode_{};
 };
 
 }  // namespace tired

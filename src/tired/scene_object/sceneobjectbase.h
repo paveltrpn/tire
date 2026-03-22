@@ -24,14 +24,17 @@ public:
     virtual auto data() const -> SceneObjectData const& = 0;
     virtual auto data() -> SceneObjectData& = 0;
 
+    auto root() const -> vsg::ref_ptr<SceneObjectGraph>;
+
 signals:
     void dataChanged();
     void selectedChanged();
 
+protected:
+    vsg::ref_ptr<SceneObjectGraph> _root{};
+
 private:
     bool _selected{ false };
-
-    vsg::ref_ptr<SceneObjectGraph> _root{};
 };
 
 }  // namespace tired

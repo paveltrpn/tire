@@ -11,6 +11,8 @@ struct Box final : public SceneObjectBase {
     Q_PROPERTY( tired::SceneObjectData data READ getData WRITE setData NOTIFY dataChanged FINAL )
 
 public:
+    Box( const SceneObjectData& data );
+
     auto data() const -> SceneObjectData const& override;
     auto data() -> SceneObjectData& override;
 
