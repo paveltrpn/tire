@@ -100,18 +100,6 @@ void Handler::lineSegmentIntersector( vsg::PointerEvent& pointerEvent ) {
                           intersection->worldIntersection.y, intersection->worldIntersection.z,
                           intersection->instanceIndex );
         }
-        // if ( ellipsoidModel ) {
-        //     std::cout.precision( 10 );
-        //     auto location = ellipsoidModel->convertECEFToLatLongAltitude( intersection->worldIntersection );
-        //     if ( verbose )
-        //         std::cout << " lat = " << location[0] << ", long = " << location[1] << ", height = " << location[2];
-        // }
-
-        // if ( lastIntersection ) {
-        //     if ( verbose )
-        //         std::cout << ", distance from previous intersection = "
-        //                   << vsg::length( intersection->worldIntersection - lastIntersection->worldIntersection );
-        // }
 
         if ( true ) {
             std::string name;
@@ -133,11 +121,7 @@ void Handler::lineSegmentIntersector( vsg::PointerEvent& pointerEvent ) {
 
             std::cout << std::endl;
         }
-
-        // }
     }
-
-    // lastIntersection = intersector->intersections.front();
 }
 
 // =======================================================================
