@@ -1,10 +1,11 @@
 
 #pragma once
 
+#include <vsg/all.h>
+
 namespace tired {
 
-struct SceneObjectGraph  {
-
+struct SceneObjectGraph : public vsg::Group {
 private:
 };
 

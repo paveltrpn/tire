@@ -1,7 +1,4 @@
 
-
 #include "sceneobjectgraph.h"
 
-namespace tired {
-
-}
+namespace tired {}
