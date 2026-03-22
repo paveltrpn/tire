@@ -98,7 +98,7 @@ void Handler::lineSegmentIntersector( vsg::PointerEvent& pointerEvent ) {
                []( auto& lhs, auto& rhs ) { return lhs->ratio < rhs->ratio; } );
 
     for ( auto& intersection : intersector->intersections ) {
-        if ( true ) {
+        if ( false ) {
             std::println( "intersection = world({} {} {}), instanceIndex {}", intersection->worldIntersection.x,
                           intersection->worldIntersection.y, intersection->worldIntersection.z,
                           intersection->instanceIndex );
@@ -116,12 +116,15 @@ void Handler::lineSegmentIntersector( vsg::PointerEvent& pointerEvent ) {
         //                   << vsg::length( intersection->worldIntersection - lastIntersection->worldIntersection );
         // }
 
-        // if ( verbose ) {
-        //     std::string name;
-        //     for ( auto& node : intersection->nodePath ) {
-        //         std::cout << ", " << node->className();
-        //         if ( node->getValue( "name", name ) ) std::cout << ":name=" << name;
-        //     }
+        if ( true ) {
+            std::string name;
+            for ( auto& node : intersection->nodePath ) {
+                std::println( ", {}", node->className() );
+                if ( node->getValue( "name", name ) ) {
+                    std::println( ":name={}", name );
+                }
+            }
+        }
 
         //     std::cout << ", Arrays[ ";
         //     for ( auto& array : intersection->arrays ) {
