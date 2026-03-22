@@ -3,8 +3,8 @@
 
 namespace tired {
 
-ServiceObjectsSubgraph::ServiceObjectsSubgraph( QObject *parent )
-    : Subgraph{ parent } {
+ServiceObjectsSubgraph::ServiceObjectsSubgraph( vsg::Viewer* viewer, QObject* parent )
+    : Subgraph{ viewer, parent } {
 }
 
 auto ServiceObjectsSubgraph::initPipeline() -> void {

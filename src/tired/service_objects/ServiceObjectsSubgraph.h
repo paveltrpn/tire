@@ -6,7 +6,7 @@
 namespace tired {
 
 struct ServiceObjectsSubgraph final : Subgraph {
-    ServiceObjectsSubgraph( QObject *parent = nullptr );
+    ServiceObjectsSubgraph( vsg::Viewer* viewer, QObject* parent = nullptr );
 
     auto initPipeline() -> void override;
 

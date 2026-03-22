@@ -9,8 +9,8 @@
 
 namespace tired {
 
-BasemeshSubgraph::BasemeshSubgraph( QObject *parent )
-    : Subgraph{ parent } {
+BasemeshSubgraph::BasemeshSubgraph( vsg::Viewer* viewer, QObject* parent )
+    : Subgraph{ viewer, parent } {
 }
 
 auto BasemeshSubgraph::initPipeline() -> void {
@@ -84,14 +84,6 @@ auto BasemeshSubgraph::initPipeline() -> void {
 
     stateGroup_->add( bindGraphicsPipeline );
     stateGroup_->add( bindDescriptorSet );
-
-    baseNode_ = vsg::Group::create();
-
-    stateGroup_->addChild( baseNode_ );
-}
-
-auto BasemeshSubgraph::addChild( vsg::ref_ptr<vsg::Node> node ) -> void {
-    baseNode_->addChild( node );
 }
 
 void BasemeshSubgraph::addExBox( float px, float py, float pz, float rx, float ry, float rz, float sx, float sy,
@@ -103,9 +95,7 @@ void BasemeshSubgraph::addExBox( float px, float py, float pz, float rx, float r
 
     auto exbox = std::make_shared<object::Box>( data );
 
-    addChild( exbox->root() );
-
-    _objectsList.push_back( std::move( exbox ) );
+    link( exbox );
 
     emit nodeAdded();
 }

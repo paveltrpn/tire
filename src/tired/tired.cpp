@@ -94,20 +94,14 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
 
     // Setup scenegraph.
     {
-        basemeshSubgraph_ = new BasemeshSubgraph{ this };
+        basemeshSubgraph_ = new BasemeshSubgraph{ viewer_, this };
         basemeshSubgraph_->initPipeline();
 
-        obstaclesSubgraph_ = new ObstaclesSubgraph{ this };
+        obstaclesSubgraph_ = new ObstaclesSubgraph{ viewer_, this };
         obstaclesSubgraph_->initPipeline();
 
-        serviceObjectsSubgraph_ = new ServiceObjectsSubgraph{ this };
+        serviceObjectsSubgraph_ = new ServiceObjectsSubgraph{ viewer_, this };
         serviceObjectsSubgraph_->initPipeline();
-
-        connect( basemeshSubgraph_, &Subgraph::nodeAdded, this, [this]() {
-            viewer_->compileManager->compile( basemeshSubgraph_->stateGroup() );
-            vsg::CompileResult res{};
-            vsg::updateViewer( *viewer_, res );
-        } );
 
         theRoot_->addChild( basemeshSubgraph_->stateGroup() );
         theRoot_->addChild( obstaclesSubgraph_->stateGroup() );

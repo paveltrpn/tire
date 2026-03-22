@@ -6,7 +6,7 @@
 namespace tired {
 
 struct ObstaclesSubgraph final : Subgraph {
-    ObstaclesSubgraph( QObject *parent = nullptr );
+    ObstaclesSubgraph( vsg::Viewer* viewer, QObject* parent = nullptr );
 
     auto initPipeline() -> void override;
 
