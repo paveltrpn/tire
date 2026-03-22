@@ -4,9 +4,11 @@
 namespace tired::object {
 
 auto Box::data() const -> tired::SceneObjectData const& {
+    return _data;
 }
 
 auto Box::data() -> tired::SceneObjectData& {
+    return _data;
 }
 
 tired::SceneObjectData Box::getData() {
