@@ -1,9 +1,14 @@
 
 #pragma once
 
+#include <vector>
+#include <memory.h>
+
 #include <QObject>
 
 #include <vsg/all.h>
+
+#include "scene_object/sceneobjectbase.h"
 
 namespace tired {
 
@@ -22,6 +27,7 @@ signals:
 
 protected:
     vsg::ref_ptr<vsg::StateGroup> stateGroup_{};
+    std::vector<std::shared_ptr<SceneObjectBase>> _objectsList{};
 };
 
 }  // namespace tired
