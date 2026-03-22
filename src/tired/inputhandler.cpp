@@ -1,5 +1,7 @@
 
 #include <print>
+#include <ranges>
+#include <iostream>
 
 #include "inputhandler.h"
 
@@ -75,29 +77,24 @@ void Handler::lineSegmentIntersector( vsg::PointerEvent& pointerEvent ) {
     auto intersector =
         vsg::LineSegmentIntersector::create( *_inputHandler->camera().get(), pointerEvent.x, pointerEvent.y );
 
-    auto before_intersection = vsg::clock::now();
+    // const auto beforeIntersection = vsg::clock::now();
 
+    // Do all intersection work here.
     _inputHandler->scenegraph()->accept( *intersector );
 
-    auto after_intersection = vsg::clock::now();
+    // const auto afterIntersection = vsg::clock::now();
 
-    // if ( verbose ) {
-    //     std::cout << "\nintersection_LineSegmentIntersector(" << pointerEvent.x << ", " << pointerEvent.y << ") "
-    //               << intersector->intersections.size() << ")";
-    //     std::cout << "time = "
-    //               << std::chrono::duration<double, std::chrono::milliseconds::period>( after_intersection -
-    //                                                                                    before_intersection )
-    //                      .count()
-    //               << "ms" << std::endl;
-    // }
+    if ( intersector->intersections.empty() ) {
+        return;
+    }
 
-    if ( intersector->intersections.empty() ) return;
+    // Sort the intersections front to back.
+    std::ranges::sort( intersector->intersections, []( auto& lhs, auto& rhs ) {
+        //
+        return lhs->ratio < rhs->ratio;
+    } );
 
-    // sort the intersections front to back
-    std::sort( intersector->intersections.begin(), intersector->intersections.end(),
-               []( auto& lhs, auto& rhs ) { return lhs->ratio < rhs->ratio; } );
-
-    for ( auto& intersection : intersector->intersections ) {
+    for ( const auto& intersection : intersector->intersections ) {
         if ( false ) {
             std::println( "intersection = world({} {} {}), instanceIndex {}", intersection->worldIntersection.x,
                           intersection->worldIntersection.y, intersection->worldIntersection.z,
@@ -124,19 +121,19 @@ void Handler::lineSegmentIntersector( vsg::PointerEvent& pointerEvent ) {
                     std::println( ":name={}", name );
                 }
             }
+            std::print( ", Arrays[ " );
+            for ( auto& array : intersection->arrays ) {
+                std::cout << array << " ";
+            }
+            std::cout << "] [";
+            for ( auto& ir : intersection->indexRatios ) {
+                std::cout << "{" << ir.index << ", " << ir.ratio << "} ";
+            }
+            std::cout << "]";
+
+            std::cout << std::endl;
         }
 
-        //     std::cout << ", Arrays[ ";
-        //     for ( auto& array : intersection->arrays ) {
-        //         std::cout << array << " ";
-        //     }
-        //     std::cout << "] [";
-        //     for ( auto& ir : intersection->indexRatios ) {
-        //         std::cout << "{" << ir.index << ", " << ir.ratio << "} ";
-        //     }
-        //     std::cout << "]";
-
-        //     std::cout << std::endl;
         // }
     }
 
