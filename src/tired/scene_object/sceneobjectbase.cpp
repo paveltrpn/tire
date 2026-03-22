@@ -5,7 +5,7 @@ namespace tired {
 
 SceneObjectBase::SceneObjectBase( QObject* parent )
     : QObject{ parent }
-    , _root{ new SceneObjectGraph{} } {
+    , _root{ new SceneObjectGraph{ this } } {
 }
 
 void SceneObjectBase::setSelected( bool value ) {

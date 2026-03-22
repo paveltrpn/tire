@@ -96,18 +96,15 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
     {
         basemeshSubgraph_ = new BasemeshSubgraph{ viewer_, this };
         basemeshSubgraph_->initPipeline();
+        theRoot_->addChild( basemeshSubgraph_->stateGroup() );
 
         obstaclesSubgraph_ = new ObstaclesSubgraph{ viewer_, this };
         obstaclesSubgraph_->initPipeline();
+        theRoot_->addChild( obstaclesSubgraph_->stateGroup() );
 
         serviceObjectsSubgraph_ = new ServiceObjectsSubgraph{ viewer_, this };
         serviceObjectsSubgraph_->initPipeline();
-
-        theRoot_->addChild( basemeshSubgraph_->stateGroup() );
-        theRoot_->addChild( obstaclesSubgraph_->stateGroup() );
         theRoot_->addChild( serviceObjectsSubgraph_->stateGroup() );
-
-        // basemeshSubgraph_->addExBox( 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 );
     }
 
     // Viewer compile.
@@ -115,6 +112,9 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
         //
         viewer_->compile();
     }
+
+    // Add default cube.
+    basemeshSubgraph_->addExBox( 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 );
 }
 
 }  // namespace tired
