@@ -26,6 +26,11 @@ void Handler::apply( vsg::FocusOutEvent& focusOut ) {
 }
 
 void Handler::apply( vsg::ButtonPressEvent& buttonPress ) {
+    // lastPointerEvent = &buttonPressEvent;
+
+    if ( buttonPress.button == 1 ) {
+        lineSegmentIntersector( buttonPress );
+    }
 }
 
 void Handler::apply( vsg::ButtonReleaseEvent& buttonRelease ) {
@@ -64,6 +69,75 @@ void Handler::close() {
     if ( viewer ) {
         viewer->close();
     }
+}
+
+void Handler::lineSegmentIntersector( vsg::PointerEvent& pointerEvent ) {
+    auto intersector =
+        vsg::LineSegmentIntersector::create( *_inputHandler->camera().get(), pointerEvent.x, pointerEvent.y );
+
+    auto before_intersection = vsg::clock::now();
+
+    _inputHandler->scenegraph()->accept( *intersector );
+
+    auto after_intersection = vsg::clock::now();
+
+    // if ( verbose ) {
+    //     std::cout << "\nintersection_LineSegmentIntersector(" << pointerEvent.x << ", " << pointerEvent.y << ") "
+    //               << intersector->intersections.size() << ")";
+    //     std::cout << "time = "
+    //               << std::chrono::duration<double, std::chrono::milliseconds::period>( after_intersection -
+    //                                                                                    before_intersection )
+    //                      .count()
+    //               << "ms" << std::endl;
+    // }
+
+    if ( intersector->intersections.empty() ) return;
+
+    // sort the intersections front to back
+    std::sort( intersector->intersections.begin(), intersector->intersections.end(),
+               []( auto& lhs, auto& rhs ) { return lhs->ratio < rhs->ratio; } );
+
+    for ( auto& intersection : intersector->intersections ) {
+        if ( true ) {
+            std::println( "intersection = world({} {} {}), instanceIndex {}", intersection->worldIntersection.x,
+                          intersection->worldIntersection.y, intersection->worldIntersection.z,
+                          intersection->instanceIndex );
+        }
+        // if ( ellipsoidModel ) {
+        //     std::cout.precision( 10 );
+        //     auto location = ellipsoidModel->convertECEFToLatLongAltitude( intersection->worldIntersection );
+        //     if ( verbose )
+        //         std::cout << " lat = " << location[0] << ", long = " << location[1] << ", height = " << location[2];
+        // }
+
+        // if ( lastIntersection ) {
+        //     if ( verbose )
+        //         std::cout << ", distance from previous intersection = "
+        //                   << vsg::length( intersection->worldIntersection - lastIntersection->worldIntersection );
+        // }
+
+        // if ( verbose ) {
+        //     std::string name;
+        //     for ( auto& node : intersection->nodePath ) {
+        //         std::cout << ", " << node->className();
+        //         if ( node->getValue( "name", name ) ) std::cout << ":name=" << name;
+        //     }
+
+        //     std::cout << ", Arrays[ ";
+        //     for ( auto& array : intersection->arrays ) {
+        //         std::cout << array << " ";
+        //     }
+        //     std::cout << "] [";
+        //     for ( auto& ir : intersection->indexRatios ) {
+        //         std::cout << "{" << ir.index << ", " << ir.ratio << "} ";
+        //     }
+        //     std::cout << "]";
+
+        //     std::cout << std::endl;
+        // }
+    }
+
+    // lastIntersection = intersector->intersections.front();
 }
 
 // =======================================================================

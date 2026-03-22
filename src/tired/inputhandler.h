@@ -37,6 +37,7 @@ struct Handler final : vsg::Visitor {
 
 private:
     void close();
+    void lineSegmentIntersector( vsg::PointerEvent& pointerEvent );
 
 private:
     InputHandler* _inputHandler{};
