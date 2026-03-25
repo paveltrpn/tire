@@ -123,6 +123,7 @@ auto Tired::registerTypes() -> void {
     qRegisterMetaType<tired::SceneObjectData>( "SceneObjectData" );
     qRegisterMetaType<tired::BoxObjectData>( "BoxObject" );
     qRegisterMetaType<tired::SphereObjectData>( "SphereObjectData" );
+    qRegisterMetaType<tired::MeshData>( "MeshData" );
 }
 
 }  // namespace tired

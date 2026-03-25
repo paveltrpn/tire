@@ -8,6 +8,8 @@
 
 #include <vsg/all.h>
 
+#include "extension_interfaces.h"
+
 namespace tired {
 
 enum class SceneObjectTypeEnum {
@@ -30,6 +32,7 @@ struct SceneObjectData {
     Q_PROPERTY( vsg::dvec3 position READ position WRITE setPosition FINAL )
     Q_PROPERTY( vsg::dvec3 orientation READ orientation WRITE setOrientation FINAL )
     Q_PROPERTY( vsg::dvec3 scale READ scale WRITE setScale FINAL )
+    Q_PROPERTY( vsg::dvec4 color READ color WRITE setColor FINAL )
 
 public:
     SceneObjectData() = default;
@@ -72,6 +75,11 @@ public:
         return _scale;
     }
 
+    vsg::dvec4 color() const {
+        //
+        return _color;
+    }
+
     void setType( SceneObjectTypeEnum value ) {
         //
         _type = value;
@@ -102,18 +110,25 @@ public:
         _scale = value;
     }
 
+    void setColor( vsg::dvec4 value ) {
+        //
+        _color = value;
+    }
+
     virtual QJsonObject toJson() const {
         //
         auto &&positionArr = QJsonArray{ _position.x, _position.y, _position.z };
         auto &&orientationArr = QJsonArray{ _orientation.x, _orientation.y, _orientation.z };
         auto &&scaleArr = QJsonArray{ _scale.x, _scale.y, _scale.z };
+        auto &&colorArr = QJsonArray{ _color.x, _color.y, _color.z, _color.w };
 
         return { { "type", static_cast<int>( _type ) },
                  { "name", _name },
                  { "uid", _uid.toString() },
                  { "position", positionArr },
                  { "orientation", orientationArr },
-                 { "scale", scaleArr } };
+                 { "scale", scaleArr },
+                 { "color", colorArr } };
     };
 
     virtual void fromJson( const QJsonObject &data ) {
@@ -125,11 +140,14 @@ public:
         auto &&positionArr = data.value( "position" ).toArray();
         auto &&orientationArr = data.value( "orientation" ).toArray();
         auto &&scaleArr = data.value( "scale" ).toArray();
+        auto &&colorArr = data.value( "color" ).toArray();
 
         _position = vsg::dvec3{ positionArr[0].toDouble(), positionArr[1].toDouble(), positionArr[2].toDouble() };
         _orientation =
             vsg::dvec3{ orientationArr[0].toDouble(), orientationArr[1].toDouble(), orientationArr[2].toDouble() };
         _scale = vsg::dvec3{ scaleArr[0].toDouble(), scaleArr[1].toDouble(), scaleArr[2].toDouble() };
+        _color = vsg::dvec4{ colorArr[0].toDouble(), colorArr[1].toDouble(), colorArr[2].toDouble(),
+                             colorArr[3].toDouble() };
     }
 
 private:
@@ -141,11 +159,14 @@ private:
     vsg::dvec3 _position{ 0.0, 0.0, 0.0 };
     vsg::dvec3 _orientation{ 0.0, 0.0, 0.0 };
     vsg::dvec3 _scale{ 1.0, 1.0, 1.0 };
+    vsg::dvec4 _color{ 1.0, 1.0, 1.0, 1.0 };
 };
 
 // ==========================================================================================================
 
-struct BoxObjectData final : public SceneObjectData {
+struct BoxObjectData final
+    : public SceneObjectData
+    , public IHasCollision {
     Q_GADGET
 
 public:
@@ -156,6 +177,11 @@ public:
 
     BoxObjectData &operator=( const BoxObjectData &other ) = default;
     BoxObjectData &operator=( BoxObjectData &&other ) = default;
+
+    auto getShape() -> void override{
+        //
+        // TODO: implement interface
+    };
 
     QJsonObject toJson() const override {
         auto base = SceneObjectData::toJson();
@@ -179,7 +205,9 @@ private:
 
 // ==========================================================================================================
 
-struct SphereObjectData final : public SceneObjectData {
+struct SphereObjectData final
+    : public SceneObjectData
+    , public IHasCollision {
     Q_GADGET
 
 public:
@@ -190,6 +218,11 @@ public:
 
     SphereObjectData &operator=( const SphereObjectData &other ) = default;
     SphereObjectData &operator=( SphereObjectData &&other ) = default;
+
+    auto getShape() -> void override{
+        //
+        // TODO: implement interface
+    };
 
     QJsonObject toJson() const override {
         auto base = SceneObjectData::toJson();
@@ -216,6 +249,54 @@ private:
     double _radius{};
 };
 
+// ==========================================================================================================
+
+struct MeshData final
+    : public SceneObjectData
+    , public IHasCollision
+    , public IHasMaterial {
+    Q_GADGET
+
+public:
+    MeshData() = default;
+
+    MeshData( const MeshData &other ) = default;
+    MeshData( MeshData &&other ) = default;
+
+    MeshData &operator=( const MeshData &other ) = default;
+    MeshData &operator=( MeshData &&other ) = default;
+
+    auto getMaterial() -> void override{
+        //
+        // TODO: implement interface
+
+    };
+
+    auto getShape() -> void override{
+        //
+        // TODO: implement interface
+    };
+
+    QJsonObject toJson() const override {
+        auto base = SceneObjectData::toJson();
+
+        const auto self = QJsonObject{};
+
+        base.insert( "derived", self );
+
+        return base;
+    };
+
+    void fromJson( const QJsonObject &data ) override {
+        //
+        SceneObjectData::fromJson( data );
+
+        const auto &derived = data.value( "derived" ).toObject();
+    }
+
+private:
+};
+
 }  // namespace tired
 
 Q_DECLARE_METATYPE( tired::SceneObjectTypeEnum )
@@ -223,3 +304,4 @@ Q_DECLARE_METATYPE( tired::SceneObjectTypeEnum )
 Q_DECLARE_METATYPE( tired::SceneObjectData )
 Q_DECLARE_METATYPE( tired::BoxObjectData )
 Q_DECLARE_METATYPE( tired::SphereObjectData )
+Q_DECLARE_METATYPE( tired::MeshData )
