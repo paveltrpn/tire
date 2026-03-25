@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QJsonObject>
+#include <QJsonArray>
+#include <QUuid>
 
 #include <vsg/all.h>
 
@@ -11,7 +13,12 @@ namespace tired {
 enum class SceneObjectTypeEnum {
     //
     BASE = 0,
-    BOX = 1
+    BOX,
+    SPHERE,
+    CYLINDER,
+    CONE,
+    CAPSULE,
+    MESH
 };
 
 struct SceneObjectData {
@@ -25,6 +32,16 @@ struct SceneObjectData {
     Q_PROPERTY( vsg::dvec3 scale READ scale WRITE setScale FINAL )
 
 public:
+    SceneObjectData() = default;
+
+    SceneObjectData( const SceneObjectData &other ) = default;
+    SceneObjectData( SceneObjectData &&other ) = default;
+
+    SceneObjectData &operator=( const SceneObjectData &other ) = default;
+    SceneObjectData &operator=( SceneObjectData &&other ) = default;
+
+    virtual ~SceneObjectData() = default;
+
     SceneObjectTypeEnum type() const {
         //
         return _type;
@@ -87,11 +104,32 @@ public:
 
     virtual QJsonObject toJson() const {
         //
-        return {};
+        auto &&positionArr = QJsonArray{ _position.x, _position.y, _position.z };
+        auto &&orientationArr = QJsonArray{ _orientation.x, _orientation.y, _orientation.z };
+        auto &&scaleArr = QJsonArray{ _scale.x, _scale.y, _scale.z };
+
+        return { { "type", static_cast<int>( _type ) },
+                 { "name", _name },
+                 { "uid", _uid.toString() },
+                 { "position", positionArr },
+                 { "orientation", orientationArr },
+                 { "scale", scaleArr } };
     };
 
     virtual void fromJson( const QJsonObject &data ) {
         //
+        _type = static_cast<SceneObjectTypeEnum>( data.value( "type" ).toInt() );
+        _name = data.value( "name" ).toString();
+        _uid = QUuid{ data.value( "uid" ).toString() };
+
+        auto &&positionArr = data.value( "position" ).toArray();
+        auto &&orientationArr = data.value( "orientation" ).toArray();
+        auto &&scaleArr = data.value( "scale" ).toArray();
+
+        _position = vsg::dvec3{ positionArr[0].toDouble(), positionArr[1].toDouble(), positionArr[2].toDouble() };
+        _orientation =
+            vsg::dvec3{ orientationArr[0].toDouble(), orientationArr[1].toDouble(), orientationArr[2].toDouble() };
+        _scale = vsg::dvec3{ scaleArr[0].toDouble(), scaleArr[1].toDouble(), scaleArr[2].toDouble() };
     }
 
 private:
@@ -107,20 +145,75 @@ private:
 
 // ==========================================================================================================
 
-struct BoxObject final : public SceneObjectData {
+struct BoxObjectData final : public SceneObjectData {
     Q_GADGET
 
 public:
+    BoxObjectData() = default;
+
+    BoxObjectData( const BoxObjectData &other ) = default;
+    BoxObjectData( BoxObjectData &&other ) = default;
+
+    BoxObjectData &operator=( const BoxObjectData &other ) = default;
+    BoxObjectData &operator=( BoxObjectData &&other ) = default;
+
     QJsonObject toJson() const override {
-        //
-        return {};
+        auto base = SceneObjectData::toJson();
+
+        const auto self = QJsonObject{};
+
+        base.insert( "derived", self );
+
+        return base;
     };
 
     void fromJson( const QJsonObject &data ) override {
         //
+        SceneObjectData::fromJson( data );
+
+        const auto &derived = data.value( "derived" ).toObject();
     }
 
 private:
+};
+
+// ==========================================================================================================
+
+struct SphereObjectData final : public SceneObjectData {
+    Q_GADGET
+
+public:
+    SphereObjectData() = default;
+
+    SphereObjectData( const SphereObjectData &other ) = default;
+    SphereObjectData( SphereObjectData &&other ) = default;
+
+    SphereObjectData &operator=( const SphereObjectData &other ) = default;
+    SphereObjectData &operator=( SphereObjectData &&other ) = default;
+
+    QJsonObject toJson() const override {
+        auto base = SceneObjectData::toJson();
+
+        const auto self = QJsonObject{
+            { "radius", _radius },
+        };
+
+        base.insert( "derived", self );
+
+        return base;
+    };
+
+    void fromJson( const QJsonObject &data ) override {
+        //
+        SceneObjectData::fromJson( data );
+
+        const auto &derived = data.value( "derived" ).toObject();
+
+        _radius = derived.value( "radius" ).toDouble();
+    }
+
+private:
+    double _radius{};
 };
 
 }  // namespace tired
@@ -128,4 +221,5 @@ private:
 Q_DECLARE_METATYPE( tired::SceneObjectTypeEnum )
 
 Q_DECLARE_METATYPE( tired::SceneObjectData )
-Q_DECLARE_METATYPE( tired::BoxObject )
+Q_DECLARE_METATYPE( tired::BoxObjectData )
+Q_DECLARE_METATYPE( tired::SphereObjectData )

@@ -88,7 +88,7 @@ auto BasemeshSubgraph::initPipeline() -> void {
 
 void BasemeshSubgraph::addExBox( float px, float py, float pz, float rx, float ry, float rz, float sx, float sy,
                                  float sz ) {
-    auto data = SceneObjectData{};
+    auto data = BoxObjectData{};
     data.setPosition( { px, py, pz } );
     data.setOrientation( { rx, ry, rz } );
     data.setScale( { sx, sy, sz } );

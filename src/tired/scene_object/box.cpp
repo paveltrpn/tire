@@ -5,7 +5,7 @@
 
 namespace tired::object {
 
-Box::Box( const SceneObjectData& data )
+Box::Box( const BoxObjectData& data )
     : _data{ data } {
     // VK_FORMAT_R32G32B32_SFLOAT, VK_VERTEX_INPUT_RATE_INSTANCE, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_SHARING_MODE_EXCLUSIVE
     auto vertices = vsg::vec3Array::create( { { -0.5f, -0.5f, 0.5f },
@@ -63,21 +63,16 @@ Box::Box( const SceneObjectData& data )
     _root->addChild( tr );
 }
 
-auto Box::data() const -> tired::SceneObjectData const& {
+auto Box::data() const -> tired::BoxObjectData const& {
     return _data;
 }
 
-auto Box::data() -> tired::SceneObjectData& {
+auto Box::data() -> tired::BoxObjectData& {
     return _data;
 }
 
-tired::SceneObjectData Box::getData() {
+tired::BoxObjectData Box::getData() {
     return _data;
-}
-
-void Box::setData( const tired::SceneObjectData& value ) {
-    _data = value;
-    emit dataChanged();
 }
 
 }  // namespace tired::object

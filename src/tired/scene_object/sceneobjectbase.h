@@ -19,6 +19,12 @@ struct SceneObjectBase : public QObject {
 public:
     SceneObjectBase( QObject* parent = nullptr );
 
+    SceneObjectBase( const SceneObjectBase& other ) = delete;
+    SceneObjectBase( SceneObjectBase&& other ) = delete;
+
+    SceneObjectBase& operator=( const SceneObjectBase& other ) = delete;
+    SceneObjectBase& operator=( SceneObjectBase&& other ) = delete;
+
     Q_INVOKABLE void setSelected( bool value );
     Q_INVOKABLE bool selected();
 

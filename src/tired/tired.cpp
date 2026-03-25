@@ -119,8 +119,10 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
 
 auto Tired::registerTypes() -> void {
     qRegisterMetaType<tired::SceneObjectTypeEnum>( "SceneObjectTypeEnum" );
+
     qRegisterMetaType<tired::SceneObjectData>( "SceneObjectData" );
-    qRegisterMetaType<tired::BoxObject>( "BoxObject" );
+    qRegisterMetaType<tired::BoxObjectData>( "BoxObject" );
+    qRegisterMetaType<tired::SphereObjectData>( "SphereObjectData" );
 }
 
 }  // namespace tired
