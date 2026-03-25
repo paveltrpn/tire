@@ -24,6 +24,8 @@ public:
 
 protected:
     auto link( std::shared_ptr<SceneObjectBase> object ) -> void;
+
+private:
     auto recompile() -> void;
 
 signals:
@@ -33,7 +35,9 @@ protected:
     vsg::Viewer* _viewer{};
 
     vsg::ref_ptr<vsg::StateGroup> stateGroup_{};
+
     vsg::ref_ptr<vsg::Group> baseNode_{};
+
     std::vector<std::shared_ptr<SceneObjectBase>> _objectsList{};
 };
 

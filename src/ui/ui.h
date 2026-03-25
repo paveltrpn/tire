@@ -23,6 +23,9 @@ public:
     TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent = nullptr );
 
 private:
+    auto reigsterTypes() -> void;
+
+private:
     std::unique_ptr<tired::Tired> tired_{};
 
     QQmlEngine *engine_;

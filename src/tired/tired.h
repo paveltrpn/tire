@@ -33,6 +33,8 @@ public:
     auto obstaclesSubgraph() -> ObstaclesSubgraph*;
     auto serviceObjectsSubgraph() -> ServiceObjectsSubgraph*;
 
+    auto registerTypes() -> void;
+
 private:
     std::shared_ptr<vk::Context> context_{};
 

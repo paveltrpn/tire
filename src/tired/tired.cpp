@@ -117,4 +117,10 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
     basemeshSubgraph_->addExBox( 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 );
 }
 
+auto Tired::registerTypes() -> void {
+    qRegisterMetaType<tired::SceneObjectTypeEnum>( "SceneObjectTypeEnum" );
+    qRegisterMetaType<tired::SceneObjectData>( "SceneObjectData" );
+    qRegisterMetaType<tired::BoxObject>( "BoxObject" );
+}
+
 }  // namespace tired
