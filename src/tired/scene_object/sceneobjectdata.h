@@ -20,7 +20,12 @@ enum class SceneObjectTypeEnum {
     CYLINDER,
     CONE,
     CAPSULE,
-    MESH
+    MESH,
+    IMPLICIT,
+    BEZIER_SURFACE,
+    BEZIER_SPLINE,
+    LANDSCAPE,
+    POLYTOPE
 };
 
 struct SceneObjectData {
@@ -35,7 +40,24 @@ struct SceneObjectData {
     Q_PROPERTY( vsg::dvec4 color READ color WRITE setColor FINAL )
 
 public:
-    SceneObjectData() = default;
+    SceneObjectData()
+        : _type{ SceneObjectTypeEnum::BASE }
+        , _name{ "OBJECT" }
+        , _uid{ QUuid::createUuid() }
+        , _position{ 0.0, 0.0, 0.0 }
+        , _orientation{ 0.0, 0.0, 0.0 }
+        , _scale{ 1.0, 1.0, 1.0 }
+        , _color{ 1.0, 1.0, 1.0, 1.0 } {};
+
+    SceneObjectData( SceneObjectTypeEnum type, QString name, QUuid uid, vsg::dvec3 position, vsg::dvec3 orientation,
+                     vsg::dvec3 scale, vsg::dvec4 color )
+        : _type{ type }
+        , _name{ name }
+        , _uid{ uid }
+        , _position{ position }
+        , _orientation{ orientation }
+        , _scale{ scale }
+        , _color{ color } {};
 
     SceneObjectData( const SceneObjectData &other ) = default;
     SceneObjectData( SceneObjectData &&other ) = default;
@@ -151,15 +173,15 @@ public:
     }
 
 private:
-    SceneObjectTypeEnum _type{ SceneObjectTypeEnum::BASE };
+    SceneObjectTypeEnum _type{};
 
-    QString _name{ "OBJECT" };
+    QString _name{};
     QUuid _uid{};
 
-    vsg::dvec3 _position{ 0.0, 0.0, 0.0 };
-    vsg::dvec3 _orientation{ 0.0, 0.0, 0.0 };
-    vsg::dvec3 _scale{ 1.0, 1.0, 1.0 };
-    vsg::dvec4 _color{ 1.0, 1.0, 1.0, 1.0 };
+    vsg::dvec3 _position{};
+    vsg::dvec3 _orientation{};
+    vsg::dvec3 _scale{};
+    vsg::dvec4 _color{};
 };
 
 // ==========================================================================================================
