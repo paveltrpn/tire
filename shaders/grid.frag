@@ -13,6 +13,8 @@
 // Pristine grid from The Best Darn Grid Shader (yet)
 // https://bgolus.medium.com/the-best-darn-grid-shader-yet-727f9278b9d8
 
+#version 450
+
 float pristineGrid( in vec2 uv, vec2 lineWidth)
 {
     vec2 ddx = dFdx(uv);
