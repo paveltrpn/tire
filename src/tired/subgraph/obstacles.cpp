@@ -3,8 +3,8 @@
 
 namespace tired {
 
-ObstaclesSubgraph::ObstaclesSubgraph( vsg::Viewer* viewer, QObject* parent )
-    : Subgraph{ viewer, parent } {
+ObstaclesSubgraph::ObstaclesSubgraph( vsg::Viewer* viewer )
+    : Subgraph{ viewer } {
 }
 
 auto ObstaclesSubgraph::initPipeline() -> void {

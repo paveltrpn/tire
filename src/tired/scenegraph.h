@@ -3,15 +3,35 @@
 
 #include <QObject>
 
+#include <vsg/all.h>
+
+#include "subgraph/basemesh.h"
+#include "subgraph/obstacles.h"
+
 namespace tired {
 
 struct Scenegraph final : public QObject {
     Q_OBJECT
 
 public:
-    Scenegraph();
+    Scenegraph( vsg::Viewer* viewer );
+
+    auto root() -> vsg::ref_ptr<vsg::Group>;
+
+    Q_INVOKABLE void addExBox( float px, float py, float pz, float rx, float ry, float rz, float sx, float sy,
+                               float sz );
 
 private:
+    auto linkToBasemesh( std::shared_ptr<SceneObjectBase> object ) -> void;
+    auto linkToObstacles( std::shared_ptr<SceneObjectBase> object ) -> void;
+
+private:
+    vsg::ref_ptr<vsg::Group> _root{};
+
+    vsg::ref_ptr<BasemeshSubgraph> _basemeshSubgraph{};
+    vsg::ref_ptr<ObstaclesSubgraph> _obstaclesSubgraph{};
+
+    std::vector<std::shared_ptr<SceneObjectBase>> _objectsList{};
 };
 
 }  // namespace tired

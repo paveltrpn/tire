@@ -4,13 +4,11 @@
 #include <vsg/all.h>
 
 #include "basemesh.h"
-#include "../scene_object/sceneobjectdata.h"
-#include "../scene_object/box.h"
 
 namespace tired {
 
-BasemeshSubgraph::BasemeshSubgraph( vsg::Viewer* viewer, QObject* parent )
-    : Subgraph{ viewer, parent } {
+BasemeshSubgraph::BasemeshSubgraph( vsg::Viewer* viewer )
+    : Subgraph{ viewer } {
 }
 
 auto BasemeshSubgraph::initPipeline() -> void {
@@ -84,20 +82,6 @@ auto BasemeshSubgraph::initPipeline() -> void {
 
     stateGroup_->add( bindGraphicsPipeline );
     stateGroup_->add( bindDescriptorSet );
-}
-
-void BasemeshSubgraph::addExBox( float px, float py, float pz, float rx, float ry, float rz, float sx, float sy,
-                                 float sz ) {
-    auto data = BoxObjectData{};
-    data.setPosition( { px, py, pz } );
-    data.setOrientation( { rx, ry, rz } );
-    data.setScale( { sx, sy, sz } );
-
-    auto exbox = std::make_shared<object::Box>( data );
-
-    link( exbox );
-
-    emit nodeAdded();
 }
 
 }  // namespace tired

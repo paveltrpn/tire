@@ -3,15 +3,15 @@
 
 #include <memory>
 
-#include <vsg/all.h>
 #include <QObject>
+
+#include <vsg/all.h>
 
 #include "vk/context.h"
 #include "qt_window/window.h"
 #include "manipulator.h"
 #include "inputhandler.h"
-#include "subgraph/basemesh.h"
-#include "subgraph/obstacles.h"
+#include "scenegraph.h"
 
 namespace tired {
 
@@ -27,9 +27,7 @@ public:
     auto inputHandler() -> InputHandler*;
     auto rootNode() -> vsg::ref_ptr<vsg::Node>;
     auto camera() -> vsg::ref_ptr<vsg::Camera>;
-
-    auto basemeshSubgraph() -> BasemeshSubgraph*;
-    auto obstaclesSubgraph() -> ObstaclesSubgraph*;
+    auto scenegraph() -> Scenegraph*;
 
     auto registerTypes() -> void;
 
@@ -41,11 +39,7 @@ private:
 
     Manipulator* _manipulator{};
     InputHandler* _inputHandler{};
-
-    vsg::ref_ptr<vsg::Group> theRoot_{};
-
-    BasemeshSubgraph* basemeshSubgraph_{};
-    ObstaclesSubgraph* obstaclesSubgraph_{};
+    Scenegraph* _scenegraph{};
 };
 
 }  // namespace tired

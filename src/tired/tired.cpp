@@ -6,14 +6,13 @@
 #endif
 
 #include "tired.h"
-#include "scene_object/box.h"
 
 namespace tired {
 
 Tired::Tired( QObject* parent )
     : QObject{ parent }
     , viewer_{ Viewer::create() }
-    , theRoot_{ new vsg::Group{} } {};
+    , _scenegraph{ new Scenegraph{ viewer_ } } {};
 
 auto Tired::viewer() -> vsg::ref_ptr<Viewer> {
     return viewer_;
@@ -27,20 +26,12 @@ auto Tired::inputHandler() -> InputHandler* {
     return _inputHandler;
 }
 
-auto Tired::rootNode() -> vsg::ref_ptr<vsg::Node> {
-    return theRoot_;
-}
-
 auto Tired::camera() -> vsg::ref_ptr<vsg::Camera> {
     return camera_;
 }
 
-auto Tired::basemeshSubgraph() -> BasemeshSubgraph* {
-    return basemeshSubgraph_;
-}
-
-auto Tired::obstaclesSubgraph() -> ObstaclesSubgraph* {
-    return obstaclesSubgraph_;
+auto Tired::scenegraph() -> Scenegraph* {
+    return _scenegraph;
 }
 
 auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
@@ -59,14 +50,14 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
     {
         _manipulator = new Manipulator{ camera_, nullptr };
         _manipulator->trackball()->addWindow( *window );
-        _inputHandler = new InputHandler{ camera_, theRoot_, viewer_ };
+        _inputHandler = new InputHandler{ camera_, _scenegraph->root(), viewer_ };
     }
 
     // Setup viewer object.
     {
         viewer_->addEventHandler( _manipulator->trackball() );
         viewer_->addEventHandler( _inputHandler->handler() );
-        auto commandGraph = vsg::createCommandGraphForView( *window, camera_, theRoot_ );
+        auto commandGraph = vsg::createCommandGraphForView( *window, camera_, _scenegraph->root() );
         viewer_->addRecordAndSubmitTaskAndPresentation( { commandGraph } );
 
         constexpr auto UPDATE_INTERVAL{ 8 };
@@ -90,13 +81,7 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
 
     // Setup scenegraph.
     {
-        basemeshSubgraph_ = new BasemeshSubgraph{ viewer_, this };
-        basemeshSubgraph_->initPipeline();
-        theRoot_->addChild( basemeshSubgraph_->stateGroup() );
 
-        obstaclesSubgraph_ = new ObstaclesSubgraph{ viewer_, this };
-        obstaclesSubgraph_->initPipeline();
-        theRoot_->addChild( obstaclesSubgraph_->stateGroup() );
     }
 
     // Viewer compile.
@@ -106,7 +91,7 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
     }
 
     // Add default cube.
-    basemeshSubgraph_->addExBox( 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 );
+    // basemeshSubgraph_->addExBox( 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 );
 }
 
 auto Tired::registerTypes() -> void {
