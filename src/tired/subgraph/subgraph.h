@@ -8,7 +8,7 @@
 
 #include <vsg/all.h>
 
-#include "scene_object/sceneobjectbase.h"
+#include "../scene_object/sceneobjectbase.h"
 
 namespace tired {
 

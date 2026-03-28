@@ -46,7 +46,6 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
     qmlRegisterSingletonInstance( "Tire", 1, 0, "InputHandler", tired_->inputHandler() );
     qmlRegisterSingletonInstance( "Tire", 1, 0, "BasemeshSubraph", tired_->basemeshSubgraph() );
     qmlRegisterSingletonInstance( "Tire", 1, 0, "ObstaclesSubgraph", tired_->obstaclesSubgraph() );
-    qmlRegisterSingletonInstance( "Tire", 1, 0, "ServiceObjectsSubgraph", tired_->serviceObjectsSubgraph() );
 
     // Qt widgets initialization.
     vsgWidget_ = QWidget::createWindowContainer( vsgWindow_, this );

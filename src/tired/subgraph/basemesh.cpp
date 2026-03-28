@@ -3,7 +3,7 @@
 
 #include <vsg/all.h>
 
-#include "BasemeshSubgraph.h"
+#include "basemesh.h"
 #include "../scene_object/sceneobjectdata.h"
 #include "../scene_object/box.h"
 

@@ -10,9 +10,8 @@
 #include "qt_window/window.h"
 #include "manipulator.h"
 #include "inputhandler.h"
-#include "basemesh/BasemeshSubgraph.h"
-#include "obstacles/ObstaclesSubgraph.h"
-#include "service_objects/ServiceObjectsSubgraph.h"
+#include "subgraph/basemesh.h"
+#include "subgraph/obstacles.h"
 
 namespace tired {
 
@@ -31,7 +30,6 @@ public:
 
     auto basemeshSubgraph() -> BasemeshSubgraph*;
     auto obstaclesSubgraph() -> ObstaclesSubgraph*;
-    auto serviceObjectsSubgraph() -> ServiceObjectsSubgraph*;
 
     auto registerTypes() -> void;
 
@@ -48,7 +46,6 @@ private:
 
     BasemeshSubgraph* basemeshSubgraph_{};
     ObstaclesSubgraph* obstaclesSubgraph_{};
-    ServiceObjectsSubgraph* serviceObjectsSubgraph_{};
 };
 
 }  // namespace tired

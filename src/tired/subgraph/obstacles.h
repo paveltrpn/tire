@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../subgraph.h"
+#include "subgraph.h"
 
 namespace tired {
 

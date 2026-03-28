@@ -43,10 +43,6 @@ auto Tired::obstaclesSubgraph() -> ObstaclesSubgraph* {
     return obstaclesSubgraph_;
 }
 
-auto Tired::serviceObjectsSubgraph() -> ServiceObjectsSubgraph* {
-    return serviceObjectsSubgraph_;
-}
-
 auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
     // Setup the camera.
     {
@@ -101,10 +97,6 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
         obstaclesSubgraph_ = new ObstaclesSubgraph{ viewer_, this };
         obstaclesSubgraph_->initPipeline();
         theRoot_->addChild( obstaclesSubgraph_->stateGroup() );
-
-        serviceObjectsSubgraph_ = new ServiceObjectsSubgraph{ viewer_, this };
-        serviceObjectsSubgraph_->initPipeline();
-        theRoot_->addChild( serviceObjectsSubgraph_->stateGroup() );
     }
 
     // Viewer compile.

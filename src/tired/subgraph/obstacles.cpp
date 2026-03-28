@@ -1,5 +1,5 @@
 
-#include "ObstaclesSubgraph.h"
+#include "obstacles.h"
 
 namespace tired {
 
