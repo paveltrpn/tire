@@ -9,6 +9,10 @@ Scenegraph::Scenegraph( vsg::Viewer* viewer )
     : _root{ new vsg::Group{} }
     , _basemeshSubgraph{ new BasemeshSubgraph{ viewer } }
     , _obstaclesSubgraph{ new ObstaclesSubgraph{ viewer } } {
+    //
+    _basemeshSubgraph->initPipeline();
+    _obstaclesSubgraph->initPipeline();
+
     _root->addChild( _basemeshSubgraph );
     _root->addChild( _obstaclesSubgraph );
 }

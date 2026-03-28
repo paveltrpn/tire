@@ -11,8 +11,7 @@ namespace tired {
 
 Tired::Tired( QObject* parent )
     : QObject{ parent }
-    , viewer_{ Viewer::create() }
-    , _scenegraph{ new Scenegraph{ viewer_ } } {};
+    , viewer_{ Viewer::create() } {};
 
 auto Tired::viewer() -> vsg::ref_ptr<Viewer> {
     return viewer_;
@@ -44,6 +43,12 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
             vsg::Perspective::create( 30.0, static_cast<double>( width ) / static_cast<double>( height ), 0.01, 500.0 );
 
         camera_ = vsg::Camera::create( perspective, lookAt, vsg::ViewportState::create( VkExtent2D{ width, height } ) );
+    }
+
+    // Setup scenegraph.
+    {
+        //
+        _scenegraph = new Scenegraph{ viewer_ };
     }
 
     // Setup manipulator and event handler objects.
@@ -79,11 +84,6 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
         context_ = std::make_shared<vk::Context>( instance, physicalDevice, device, surface, rp, 0, 0 );
     }
 
-    // Setup scenegraph.
-    {
-
-    }
-
     // Viewer compile.
     {
         //
@@ -91,7 +91,7 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
     }
 
     // Add default cube.
-    // basemeshSubgraph_->addExBox( 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 );
+    _scenegraph->addExBox( 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 );
 }
 
 auto Tired::registerTypes() -> void {
