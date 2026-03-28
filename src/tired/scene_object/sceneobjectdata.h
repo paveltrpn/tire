@@ -192,7 +192,13 @@ struct BoxObjectData final
     Q_GADGET
 
 public:
-    BoxObjectData() = default;
+    BoxObjectData()
+        : SceneObjectData{}
+        , _size{ 1.0 } {}
+
+    BoxObjectData( const SceneObjectData &base, double size )
+        : SceneObjectData{ base }
+        , _size{ size } {};
 
     BoxObjectData( const BoxObjectData &other ) = default;
     BoxObjectData( BoxObjectData &&other ) = default;
@@ -208,7 +214,9 @@ public:
     QJsonObject toJson() const override {
         auto base = SceneObjectData::toJson();
 
-        const auto self = QJsonObject{};
+        const auto self = QJsonObject{
+            { "size", _size },
+        };
 
         base.insert( "derived", self );
 
@@ -216,13 +224,15 @@ public:
     };
 
     void fromJson( const QJsonObject &data ) override {
-        //
         SceneObjectData::fromJson( data );
 
         const auto &derived = data.value( "derived" ).toObject();
+
+        _size = derived.value( "size" ).toDouble();
     }
 
 private:
+    double _size{};
 };
 
 // ==========================================================================================================
@@ -259,7 +269,6 @@ public:
     };
 
     void fromJson( const QJsonObject &data ) override {
-        //
         SceneObjectData::fromJson( data );
 
         const auto &derived = data.value( "derived" ).toObject();
