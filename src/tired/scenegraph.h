@@ -22,10 +22,6 @@ public:
                                float sz );
 
 private:
-    auto linkToBasemesh( std::shared_ptr<SceneObjectBase> object ) -> void;
-    auto linkToObstacles( std::shared_ptr<SceneObjectBase> object ) -> void;
-
-private:
     vsg::ref_ptr<vsg::Group> _root{};
 
     vsg::ref_ptr<BasemeshSubgraph> _basemeshSubgraph{};

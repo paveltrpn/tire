@@ -1,7 +1,6 @@
 
 #pragma once
 
-#include <vector>
 #include <memory.h>
 
 #include <QObject>
@@ -19,9 +18,12 @@ struct Subgraph : vsg::Group {
 
     auto recompile() -> void;
 
+    auto link( std::shared_ptr<SceneObjectBase> object ) -> void;
+
 protected:
     vsg::Viewer* _viewer{};
-    vsg::ref_ptr<vsg::StateGroup> stateGroup_{};
+    vsg::ref_ptr<vsg::StateGroup> _stateGroup{};
+    vsg::ref_ptr<vsg::Group> _baseNode{};
 };
 
 }  // namespace tired

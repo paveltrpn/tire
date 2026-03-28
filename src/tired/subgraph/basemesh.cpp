@@ -80,8 +80,8 @@ auto BasemeshSubgraph::initPipeline() -> void {
     auto bindDescriptorSet =
         vsg::BindDescriptorSet::create( VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, descriptorSet );
 
-    stateGroup_->add( bindGraphicsPipeline );
-    stateGroup_->add( bindDescriptorSet );
+    _stateGroup->add( bindGraphicsPipeline );
+    _stateGroup->add( bindDescriptorSet );
 }
 
 }  // namespace tired

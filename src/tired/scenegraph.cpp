@@ -21,18 +21,6 @@ auto Scenegraph::root() -> vsg::ref_ptr<vsg::Group> {
     return _root;
 }
 
-auto Scenegraph::linkToBasemesh( std::shared_ptr<SceneObjectBase> object ) -> void {
-    _basemeshSubgraph->addChild( object->root() );
-    _basemeshSubgraph->recompile();
-    _objectsList.push_back( std::move( object ) );
-}
-
-auto Scenegraph::linkToObstacles( std::shared_ptr<SceneObjectBase> object ) -> void {
-    _obstaclesSubgraph->addChild( object->root() );
-    _obstaclesSubgraph->recompile();
-    _objectsList.push_back( std::move( object ) );
-}
-
 void Scenegraph::addExBox( float px, float py, float pz, float rx, float ry, float rz, float sx, float sy, float sz ) {
     auto data = BoxObjectData{};
     data.setPosition( { px, py, pz } );
@@ -41,7 +29,8 @@ void Scenegraph::addExBox( float px, float py, float pz, float rx, float ry, flo
 
     auto exbox = std::make_shared<object::Box>( data );
 
-    linkToBasemesh( exbox );
+    _basemeshSubgraph->link( exbox );
+    _objectsList.push_back( std::move( exbox ) );
 }
 
 }  // namespace tired
