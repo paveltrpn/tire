@@ -48,14 +48,14 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
     // Setup scenegraph.
     {
         //
-        _scenegraph = new Scenegraph{ viewer_ };
+        _scenegraph = new Scenegraph{ viewer_, this };
     }
 
     // Setup manipulator and event handler objects.
     {
-        _manipulator = new Manipulator{ camera_, nullptr };
+        _manipulator = new Manipulator{ camera_, nullptr, this };
         _manipulator->trackball()->addWindow( *window );
-        _inputHandler = new InputHandler{ camera_, _scenegraph->root(), viewer_ };
+        _inputHandler = new InputHandler{ camera_, _scenegraph->root(), viewer_, this };
     }
 
     // Setup viewer object.

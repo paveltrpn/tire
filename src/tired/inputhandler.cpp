@@ -112,8 +112,9 @@ void Handler::lineSegmentIntersector( vsg::PointerEvent& pointerEvent ) {
 // =======================================================================
 
 InputHandler::InputHandler( vsg::ref_ptr<vsg::Camera> camera, vsg::ref_ptr<vsg::Group> scenegraph,
-                            vsg::ref_ptr<vsg::Viewer> viwer )
-    : _handler{ new Handler{ this } }
+                            vsg::ref_ptr<vsg::Viewer> viwer, QObject* parent )
+    : QObject{ parent }
+    , _handler{ new Handler{ this } }
     , _camera{ camera }
     , _viewer{ viwer }
     , _scenegraph{ scenegraph } {

@@ -14,7 +14,7 @@ struct Scenegraph final : public QObject {
     Q_OBJECT
 
 public:
-    Scenegraph( vsg::Viewer* viewer );
+    Scenegraph( vsg::Viewer* viewer, QObject* parent = nullptr );
 
     auto root() -> vsg::ref_ptr<vsg::Group>;
 

@@ -5,8 +5,9 @@
 
 namespace tired {
 
-Scenegraph::Scenegraph( vsg::Viewer* viewer )
-    : _root{ new vsg::Group{} }
+Scenegraph::Scenegraph( vsg::Viewer* viewer, QObject* parent )
+    : QObject{ parent }
+    , _root{ new vsg::Group{} }
     , _basemeshSubgraph{ new BasemeshSubgraph{ viewer } }
     , _obstaclesSubgraph{ new ObstaclesSubgraph{ viewer } } {
     //

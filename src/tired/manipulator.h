@@ -20,7 +20,8 @@ struct Manipulator final : QObject {
     Q_OBJECT
 
 public:
-    Manipulator( vsg::ref_ptr<vsg::Camera> camera, vsg::ref_ptr<vsg::EllipsoidModel> ellipsoidModel = {} );
+    Manipulator( vsg::ref_ptr<vsg::Camera> camera, vsg::ref_ptr<vsg::EllipsoidModel> ellipsoidModel = {},
+                 QObject* parent = nullptr );
 
     auto trackball() -> const vsg::ref_ptr<Trackball>;
 

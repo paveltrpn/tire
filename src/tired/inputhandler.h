@@ -52,7 +52,7 @@ struct InputHandler final : QObject {
 
 public:
     InputHandler( vsg::ref_ptr<vsg::Camera> camera, vsg::ref_ptr<vsg::Group> scenegraph,
-                  vsg::ref_ptr<vsg::Viewer> viwer );
+                  vsg::ref_ptr<vsg::Viewer> viwer, QObject* parent = nullptr );
 
     auto handler() -> const vsg::ref_ptr<Handler>;
     auto camera() -> vsg::ref_ptr<vsg::Camera>;

@@ -7,8 +7,9 @@
 
 namespace tired {
 
-Manipulator::Manipulator( vsg::ref_ptr<vsg::Camera> camera, vsg::ref_ptr<vsg::EllipsoidModel> ellipsoidModel )
-    : QObject{}
+Manipulator::Manipulator( vsg::ref_ptr<vsg::Camera> camera, vsg::ref_ptr<vsg::EllipsoidModel> ellipsoidModel,
+                          QObject* parent )
+    : QObject{ parent }
     , _trackball{ new Trackball{ camera, ellipsoidModel } } {
 }
 
