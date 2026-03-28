@@ -5,6 +5,7 @@
 
 #include <vsg/all.h>
 
+#include "grid.h"
 #include "subgraph/basemesh.h"
 #include "subgraph/obstacles.h"
 
@@ -24,6 +25,7 @@ public:
 private:
     vsg::ref_ptr<vsg::Group> _root{};
 
+    vsg::ref_ptr<Grid> _grid{};
     vsg::ref_ptr<BasemeshSubgraph> _basemeshSubgraph{};
     vsg::ref_ptr<ObstaclesSubgraph> _obstaclesSubgraph{};
 
