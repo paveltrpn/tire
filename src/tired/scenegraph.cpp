@@ -15,7 +15,10 @@ Scenegraph::Scenegraph( vsg::Viewer* viewer, QObject* parent )
     , _obstaclesSubgraph{ new ObstaclesSubgraph{ viewer } } {
     //
 
+    // Draw red box.
     _testbox->initPipeline();
+    _testbox->initDrawCommand();
+
     _grid->initPipeline();
     _basemeshSubgraph->initPipeline();
     _obstaclesSubgraph->initPipeline();
@@ -40,14 +43,6 @@ void Scenegraph::addExBox( float px, float py, float pz, float rx, float ry, flo
 
     _basemeshSubgraph->link( exbox );
     _objectsList.push_back( std::move( exbox ) );
-}
-
-auto Scenegraph::addTestBox() -> void {
-    _testbox->initDrawCommand();
-
-    _viewer->compileManager->compile( _testbox );
-    vsg::CompileResult res{};
-    vsg::updateViewer( *_viewer, res );
 }
 
 }  // namespace tired

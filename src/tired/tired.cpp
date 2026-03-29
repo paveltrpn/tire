@@ -92,7 +92,6 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
 
     // Add default cube.
     // _scenegraph->addExBox( 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 );
-    _scenegraph->addTestBox();
 }
 
 auto Tired::registerTypes() -> void {
