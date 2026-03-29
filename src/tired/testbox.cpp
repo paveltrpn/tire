@@ -5,7 +5,8 @@
 
 namespace tired {
 
-Testbox::Testbox() {
+Testbox::Testbox()
+    : _root{ vsg::Group::create() } {
 }
 
 auto Testbox::initPipeline() -> void {
@@ -15,8 +16,8 @@ auto Testbox::initPipeline() -> void {
 
     vsg::ref_ptr<vsg::ShaderStage> vertexShader =
         vsg::ShaderStage::read( VK_SHADER_STAGE_VERTEX_BIT, "main", vsg::findFile( "vert_testbox.spv", searchPaths ) );
-    vsg::ref_ptr<vsg::ShaderStage> fragmentShader =
-        vsg::ShaderStage::read( VK_SHADER_STAGE_FRAGMENT_BIT, "main", vsg::findFile( "frag_testbox.spv", searchPaths ) );
+    vsg::ref_ptr<vsg::ShaderStage> fragmentShader = vsg::ShaderStage::read(
+        VK_SHADER_STAGE_FRAGMENT_BIT, "main", vsg::findFile( "frag_testbox.spv", searchPaths ) );
     if ( !vertexShader || !fragmentShader ) {
         std::println( "Could not create shaders." );
         std::terminate();
@@ -35,25 +36,17 @@ auto Testbox::initPipeline() -> void {
           128 }  // projection, view, and model matrices, actual push constant calls automatically provided by the VSG's RecordTraversal
     };
 
-    vsg::VertexInputState::Bindings vertexBindingsDescriptions{
-        VkVertexInputBindingDescription{ 0, sizeof( vsg::vec3 ), VK_VERTEX_INPUT_RATE_VERTEX },  // vertex data
-        VkVertexInputBindingDescription{ 1, sizeof( vsg::vec3 ), VK_VERTEX_INPUT_RATE_VERTEX },  // colour data
-        VkVertexInputBindingDescription{ 2, sizeof( vsg::vec2 ), VK_VERTEX_INPUT_RATE_VERTEX }   // tex coord data
-    };
+    vsg::VertexInputState::Bindings vertexBindingsDescriptions{};
 
-    vsg::VertexInputState::Attributes vertexAttributeDescriptions{
-        VkVertexInputAttributeDescription{ 0, 0, VK_FORMAT_R32G32B32_SFLOAT, 0 },  // vertex data
-        VkVertexInputAttributeDescription{ 1, 1, VK_FORMAT_R32G32B32_SFLOAT, 0 },  // colour data
-        VkVertexInputAttributeDescription{ 2, 2, VK_FORMAT_R32G32_SFLOAT, 0 }      // tex coord data
-    };
+    vsg::VertexInputState::Attributes vertexAttributeDescriptions{};
 
     vsg::GraphicsPipelineStates pipelineStates{
-                                                vsg::VertexInputState::create( vertexBindingsDescriptions, vertexAttributeDescriptions ),
-                                                vsg::InputAssemblyState::create(),
-                                                vsg::RasterizationState::create(),
-                                                vsg::MultisampleState::create(),
-                                                vsg::ColorBlendState::create(),
-                                                vsg::DepthStencilState::create() };
+        vsg::VertexInputState::create( vertexBindingsDescriptions, vertexAttributeDescriptions ),
+        vsg::InputAssemblyState::create(),
+        vsg::RasterizationState::create(),
+        vsg::MultisampleState::create(),
+        vsg::ColorBlendState::create(),
+        vsg::DepthStencilState::create() };
 
     auto pipelineLayout =
         vsg::PipelineLayout::create( vsg::DescriptorSetLayouts{ descriptorSetLayout }, pushConstantRanges );
@@ -69,5 +62,17 @@ auto Testbox::initPipeline() -> void {
     this->add( bindDescriptorSet );
 }
 
-}  // namespace tired
+auto Testbox::initDrawCommand() -> void {
+    //
+    auto drawCommands = vsg::Commands::create();
+    drawCommands->addChild( vsg::Draw::create( 36, 3, 0, 0 ) );
 
+    auto tr = vsg::MatrixTransform::create();
+    tr->addChild( drawCommands );
+
+    _root->addChild( tr );
+
+    this->addChild( _root );
+}
+
+}  // namespace tired
