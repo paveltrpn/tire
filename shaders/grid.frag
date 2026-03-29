@@ -28,7 +28,7 @@ layout(set = 0, binding = 0) uniform CameraBuffer {
 void main() {
     float GS_maxRange = 100.0f;
     float GS_gridSize = 0.5f;
-    float GS_lineThickness = 0.05f;
+    float GS_lineThickness = 0.015f;
     float GS_zoomSensitivity = 0.5f;
 
     vec3 PC_colorMajor = vec3(0.5, 0.0, 0.0);
@@ -46,12 +46,12 @@ void main() {
     // 2. Calculate local coordinates relative to the grid size
     // We use absolute values for symmetry, but mod handles negative coords naturally too
     float xLocal = mod(vWorldPos.x, GS_gridSize);
-    float zLocal = mod(vWorldPos.y, GS_gridSize);
+    float yLocal = mod(vWorldPos.y, GS_gridSize);
 
     // 3. Determine distance to the nearest vertical and horizontal lines
     // The distance to the nearest line is the minimum of (xLocal, gridSize - xLocal)
     float distToXLine = min(xLocal, GS_gridSize - xLocal);
-    float distToZLine = min(zLocal, GS_gridSize - zLocal);
+    float distToYLine = min(yLocal, GS_gridSize - yLocal);
 
     // 4. Determine if we are on a line
     float alpha = 0.0;
@@ -72,14 +72,14 @@ void main() {
                 outFragColor = vec4(PC_colorMinor, 1.0);
         }
     }
-    // Check Z-axis lines (only if we weren't already on an X line)
-    else if (distToZLine < GS_lineThickness) {
-        float gridIndexZ = round(vWorldPos.y / GS_gridSize);
-        bool isMajorZ = (mod(gridIndexZ, PC_majorDivisor) == 0.0);
+    // Check Y-axis lines (only if we weren't already on an X line)
+    else if (distToYLine < GS_lineThickness) {
+        float gridIndexY = round(vWorldPos.y / GS_gridSize);
+        bool isMajorY = (mod(gridIndexY, PC_majorDivisor) == 0.0);
 
         alpha = 1.0;
 
-        if (isMajorZ) {
+        if (isMajorY) {
                 outFragColor = vec4(PC_colorMajor, 1.0);
         } else {
                 outFragColor = vec4(PC_colorMinor, 1.0);

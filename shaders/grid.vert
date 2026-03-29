@@ -1,29 +1,5 @@
 #version 450
 
-// // 1. Create a Vertex Buffer for a large plane centered at (0,0,0)
-// //    Vertices: (-1000, 0, -1000), (1000, 0, -1000), (1000, 0, 1000)...
-// //    We rely on the Fragment Shader to discard fragments outside the "Infinite" illusion.
-
-// // 2. Setup Uniforms
-// GridBuffer gridData;
-// gridData.gridSize = 10.0f;          // 10 units between lines
-// gridData.lineThickness = 0.5f;      // 0.5 units thick
-// gridData.maxRange = 2000.0f;        // Grid visible up to 2km
-// gridData.zoomSensitivity = 0.5f;    // 0 = static thickness, 1 = thickness grows with distance
-// vkUpdateDescriptorSets(...);
-
-// // 3. Setup Push Constants (Colors)
-// PushConstants push;
-// push.colorMajor = {1.0f, 1.0f, 1.0f}; // White lines every 50 units
-// push.colorMinor = {0.5f, 0.5f, 0.5f}; // Grey lines every 10 units
-// push.majorDivisor = 5;
-// vkCmdPushConstants(...);
-
-// // 4. Render
-// vkCmdBindPipeline(...);
-// vkCmdBindDescriptorSets(...);
-// vkCmdDraw(...); // Draw your large plane
-
 layout(location = 0) out vec3 vWorldPos;
 
 layout(push_constant) uniform PushConstants {
