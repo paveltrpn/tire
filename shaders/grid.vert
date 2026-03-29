@@ -24,8 +24,12 @@
 // vkCmdBindDescriptorSets(...);
 // vkCmdDraw(...); // Draw your large plane
 
-layout(location = 0) in vec3 inPosition;
 layout(location = 0) out vec3 vWorldPos;
+
+layout(push_constant) uniform PushConstants {
+    mat4 projection;
+    mat4 modelview;
+} pc;
 
 // Uniforms
 layout(set = 0, binding = 0) uniform CameraBuffer {
@@ -42,14 +46,12 @@ layout(set = 1, binding = 0) uniform GridBuffer {
     float zoomSensitivity;
 } gridSettings;
 
+vec3 positions[6] = vec3[](
+        vec3( 0.5, -0.5, 0.0 ), vec3( 0.5, 0.5, 0.0 ), vec3( -0.5, 0.5, 0.0 ),
+        vec3( -0.5, 0.5, 0.0 ), vec3( -0.5, -0.5, 0.0 ), vec3( 0.5, -0.5, 0.0 ) );
+
 void main() {
-    // 1. Transform position to World Space
-    // Assuming inPosition is already in World Space for an "Infinite" system.
-    // If your mesh is localized, you might multiply by a model matrix here.
-    vec4 worldPos = vec4(inPosition, 1.0);
-
+    vec4 worldPos = vec4( positions[gl_VertexIndex], 1.0 );
     vWorldPos = worldPos.xyz;
-
-    // 2. Transform to Clip Space
-    gl_Position = camera.proj * camera.view * worldPos;
+    gl_Position = pc.projection * pc.modelview * worldPos;
 }

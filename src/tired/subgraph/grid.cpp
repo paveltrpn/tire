@@ -5,7 +5,8 @@
 
 namespace tired {
 
-Grid::Grid(vsg::Viewer* viewer): Subgraph{ viewer } {
+Grid::Grid( vsg::Viewer* viewer )
+    : Subgraph{ viewer } {
 }
 
 auto Grid::initPipeline() -> void {
@@ -35,17 +36,9 @@ auto Grid::initPipeline() -> void {
           128 }  // projection, view, and model matrices, actual push constant calls automatically provided by the VSG's RecordTraversal
     };
 
-    vsg::VertexInputState::Bindings vertexBindingsDescriptions{
-        VkVertexInputBindingDescription{ 0, sizeof( vsg::vec3 ), VK_VERTEX_INPUT_RATE_VERTEX },  // vertex data
-        VkVertexInputBindingDescription{ 1, sizeof( vsg::vec3 ), VK_VERTEX_INPUT_RATE_VERTEX },  // colour data
-        VkVertexInputBindingDescription{ 2, sizeof( vsg::vec2 ), VK_VERTEX_INPUT_RATE_VERTEX }   // tex coord data
-    };
+    vsg::VertexInputState::Bindings vertexBindingsDescriptions{};
 
-    vsg::VertexInputState::Attributes vertexAttributeDescriptions{
-        VkVertexInputAttributeDescription{ 0, 0, VK_FORMAT_R32G32B32_SFLOAT, 0 },  // vertex data
-        VkVertexInputAttributeDescription{ 1, 1, VK_FORMAT_R32G32B32_SFLOAT, 0 },  // colour data
-        VkVertexInputAttributeDescription{ 2, 2, VK_FORMAT_R32G32_SFLOAT, 0 }      // tex coord data
-    };
+    vsg::VertexInputState::Attributes vertexAttributeDescriptions{};
 
     vsg::GraphicsPipelineStates pipelineStates{
         vsg::VertexInputState::create( vertexBindingsDescriptions, vertexAttributeDescriptions ),
@@ -61,12 +54,18 @@ auto Grid::initPipeline() -> void {
         pipelineLayout, vsg::ShaderStages{ vertexShader, fragmentShader }, pipelineStates );
     auto bindGraphicsPipeline = vsg::BindGraphicsPipeline::create( graphicsPipeline );
 
-    auto descriptorSet = vsg::DescriptorSet::create( descriptorSetLayout, vsg::Descriptors{} );
-    auto bindDescriptorSet =
-        vsg::BindDescriptorSet::create( VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, descriptorSet );
-
     _stateGroup->add( bindGraphicsPipeline );
-    _stateGroup->add( bindDescriptorSet );
+}
+
+auto Grid::initDrawCommand() -> void {
+    // Add draw command.
+    auto drawCommands = vsg::Commands::create();
+    drawCommands->addChild( vsg::Draw::create( 6, 1, 0, 0 ) );
+
+    auto tr = vsg::MatrixTransform::create();
+    tr->addChild( drawCommands );
+
+    _baseNode->addChild( tr );
 }
 
 }  // namespace tired

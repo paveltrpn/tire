@@ -10,7 +10,7 @@ namespace tired {
 struct Testbox final : Subgraph {
     Testbox( vsg::Viewer* viewer );
 
-    auto initPipeline() -> void;
+    auto initPipeline() -> void override;
     auto initDrawCommand() -> void;
 };
 

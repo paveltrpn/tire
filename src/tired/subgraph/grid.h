@@ -8,11 +8,10 @@
 namespace tired {
 
 struct Grid final : Subgraph {
-    Grid(vsg::Viewer* viewer);
+    Grid( vsg::Viewer* viewer );
 
-    auto initPipeline() -> void;
-
-private:
+    auto initPipeline() -> void override;
+    auto initDrawCommand() -> void;
 };
 
 }  // namespace tired
