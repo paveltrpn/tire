@@ -26,16 +26,16 @@ layout(set = 0, binding = 0) uniform CameraBuffer {
 // } pushConst;
 
 void main() {
-    float GS_maxRange = 2000.0f;
-    float GS_gridSize = 1.0f;
-    float GS_lineThickness = 0.1f;
+    float GS_maxRange = 100.0f;
+    float GS_gridSize = 0.5f;
+    float GS_lineThickness = 0.05f;
     float GS_zoomSensitivity = 0.5f;
 
-    vec3 PC_colorMajor = vec3(1.0, 0.0, 0.0);
-    vec3 PC_colorMinor = vec3(0.0, 1.0, 0.0);
-    float PC_majorDivisor = 100.0f;
+    vec3 PC_colorMajor = vec3(0.5, 0.0, 0.0);
+    vec3 PC_colorMinor = vec3(0.0, 0.5, 0.0);
+    float PC_majorDivisor = 5.0f;
 
-    vec3 CB_cameraPos = vec3(0.0, 0.0 , 1.0);
+    vec3 CB_cameraPos = vec3(0.0, 1.0, 1.0);
 
     // 1. Early Z-culling based on distance
     float distToCamera = length(vWorldPos - CB_cameraPos);
@@ -46,7 +46,7 @@ void main() {
     // 2. Calculate local coordinates relative to the grid size
     // We use absolute values for symmetry, but mod handles negative coords naturally too
     float xLocal = mod(vWorldPos.x, GS_gridSize);
-    float zLocal = mod(vWorldPos.z, GS_gridSize);
+    float zLocal = mod(vWorldPos.y, GS_gridSize);
 
     // 3. Determine distance to the nearest vertical and horizontal lines
     // The distance to the nearest line is the minimum of (xLocal, gridSize - xLocal)
@@ -74,7 +74,7 @@ void main() {
     }
     // Check Z-axis lines (only if we weren't already on an X line)
     else if (distToZLine < GS_lineThickness) {
-        float gridIndexZ = round(vWorldPos.z / GS_gridSize);
+        float gridIndexZ = round(vWorldPos.y / GS_gridSize);
         bool isMajorZ = (mod(gridIndexZ, PC_majorDivisor) == 0.0);
 
         alpha = 1.0;
