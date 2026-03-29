@@ -33,7 +33,7 @@ void main() {
 
     // vec3 PC_colorMajor = vec3(0.5, 0.0, 0.0);
     // vec3 PC_colorMinor = vec3(0.0, 0.5, 0.0);
-    float PC_majorDivisor = 5.0f;
+    // float PC_majorDivisor = 5.0f;
 
     vec3 CB_cameraPos = vec3(0.0, 1.0, 1.0);
 
@@ -61,7 +61,7 @@ void main() {
         // Check if this is a Major Line (e.g., every 5th line)
         // We check the integer quotient to see if it's a multiple
         float gridIndexX = round(vWorldPos.x / GS_gridSize);
-        bool isMajorX = (mod(gridIndexX, PC_majorDivisor) == 0.0);
+        bool isMajorX = (mod(gridIndexX, pushConst.majorDivisor) == 0.0);
 
         alpha = 1.0;
 
@@ -75,7 +75,7 @@ void main() {
     // Check Y-axis lines (only if we weren't already on an X line)
     else if (distToYLine < GS_lineThickness) {
         float gridIndexY = round(vWorldPos.y / GS_gridSize);
-        bool isMajorY = (mod(gridIndexY, PC_majorDivisor) == 0.0);
+        bool isMajorY = (mod(gridIndexY, pushConst.majorDivisor) == 0.0);
 
         alpha = 1.0;
 

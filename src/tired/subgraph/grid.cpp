@@ -59,7 +59,7 @@ auto Grid::initPipeline() -> void {
 auto Grid::initDrawCommand() -> void {
     const auto commands = vsg::Commands::create();
 
-    const auto colorMajor = vsg::vec3{ 0.1f, 0.2f, 0.2f };
+    const auto colorMajor = vsg::vec3{ 0.1f, 0.2f, 0.9f };
     const auto colorMinor = vsg::vec3{ 0.2f, 0.2f, 0.5f };
     const auto majorDivisor = 5.0f;
 
