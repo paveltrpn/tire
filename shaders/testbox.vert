@@ -39,7 +39,7 @@ vec3 normals[36] = vec3[](
         vec3( 1.0, -0.0, -0.0 ), vec3( -0.0, -0.0, -1.0 ), vec3( -0.0, -0.0, -1.0 ),
         vec3( -0.0, -0.0, -1.0 ) );
 
-vec3 color = vec3( 1.0, 0.0, 0.0 );
+vec3 color = vec3( 0.4, 0.2, 0.7 );
 
 vec3 ambientLight   = vec3( 0.3, 0.3, 0.3 );
 vec3 lightcolor     = vec3( 1.0, 1.0, 1.0 );

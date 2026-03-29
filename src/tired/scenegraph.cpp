@@ -26,7 +26,7 @@ Scenegraph::Scenegraph( vsg::Viewer* viewer, QObject* parent )
     _obstaclesSubgraph->initPipeline();
 
     // Enable test box.
-    //_root->addChild( _testbox );
+    _root->addChild( _testbox );
 
     _root->addChild( _grid );
     _root->addChild( _basemeshSubgraph );

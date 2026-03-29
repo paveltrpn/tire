@@ -47,8 +47,8 @@ layout(set = 1, binding = 0) uniform GridBuffer {
 } gridSettings;
 
 vec3 positions[6] = vec3[](
-        vec3( 0.5, -0.5, 0.0 ), vec3( 0.5, 0.5, 0.0 ), vec3( -0.5, 0.5, 0.0 ),
-        vec3( -0.5, 0.5, 0.0 ), vec3( -0.5, -0.5, 0.0 ), vec3( 0.5, -0.5, 0.0 ) );
+        vec3( 10.0, -10.0, 0.0 ), vec3( 10.0, 10.0, 0.0 ), vec3( -10.0, 10.0, 0.0 ),
+        vec3( -10.0, 10.0, 0.0 ), vec3( -10.0, -10.0, 0.0 ), vec3( 10.0, -10.0, 0.0 ) );
 
 void main() {
     vec4 worldPos = vec4( positions[gl_VertexIndex], 1.0 );
