@@ -31,10 +31,9 @@ auto Grid::initPipeline() -> void {
 
     auto descriptorSetLayout = vsg::DescriptorSetLayout::create( descriptorBindings );
 
-    vsg::PushConstantRanges pushConstantRanges{
-        { VK_SHADER_STAGE_VERTEX_BIT, 0,
-          128 }  // projection, view, and model matrices, actual push constant calls automatically provided by the VSG's RecordTraversal
-    };
+    // projection, view, and model matrices, actual push constant calls automatically provided by the VSG's RecordTraversal
+    vsg::PushConstantRanges pushConstantRanges{ { VK_SHADER_STAGE_VERTEX_BIT, 0, 128 },
+                                                { VK_SHADER_STAGE_FRAGMENT_BIT, 128, 32 } };
 
     vsg::VertexInputState::Bindings vertexBindingsDescriptions{};
 
@@ -58,14 +57,25 @@ auto Grid::initPipeline() -> void {
 }
 
 auto Grid::initDrawCommand() -> void {
-    // Add draw command.
-    auto drawCommands = vsg::Commands::create();
-    drawCommands->addChild( vsg::Draw::create( 6, 1, 0, 0 ) );
+    const auto commands = vsg::Commands::create();
 
-    auto tr = vsg::MatrixTransform::create();
-    tr->addChild( drawCommands );
+    const auto colorMajor = vsg::vec3{ 0.1f, 0.2f, 0.2f };
+    const auto colorMinor = vsg::vec3{ 0.2f, 0.2f, 0.5f };
+    const auto majorDivisor = 5.0f;
 
-    _baseNode->addChild( tr );
+    auto conf = vsg::floatArray::create(
+        { colorMajor.r, colorMajor.g, colorMajor.b, 1.0, colorMinor.r, colorMinor.g, colorMinor.b, majorDivisor } );
+    _confPushConst = vsg::PushConstants::create( VK_SHADER_STAGE_FRAGMENT_BIT, 128, conf );
+
+    commands->addChild( _confPushConst );
+
+    const auto drawCmd = vsg::Draw::create( 6, 1, 0, 0 );
+    commands->addChild( drawCmd );
+
+    const auto tr = vsg::MatrixTransform::create();
+    tr->addChild( commands );
+
+    _stateGroup->addChild( tr );
 }
 
 }  // namespace tired

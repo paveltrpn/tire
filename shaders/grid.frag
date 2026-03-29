@@ -19,11 +19,11 @@ layout(set = 0, binding = 0) uniform CameraBuffer {
 // } gridSettings;
 
 // Configuration
-// layout(push_constant) uniform PushConstants {
-//     vec3 colorMajor; // Color for lines at multiples of (gridSize * 5) e.g., 100m
-//     vec3 colorMinor; // Color for standard lines e.g., 10m
-//     float majorDivisor; // How often a major line appears (e.g., 5)
-// } pushConst;
+layout(push_constant) uniform PushConstants {
+    vec3 colorMajor; // Color for lines at multiples of (gridSize * 5) e.g., 100m
+    vec3 colorMinor; // Color for standard lines e.g., 10m
+    float majorDivisor; // How often a major line appears (e.g., 5)
+} pushConst;
 
 void main() {
     float GS_maxRange = 100.0f;
@@ -31,8 +31,8 @@ void main() {
     float GS_lineThickness = 0.015f;
     float GS_zoomSensitivity = 0.5f;
 
-    vec3 PC_colorMajor = vec3(0.5, 0.0, 0.0);
-    vec3 PC_colorMinor = vec3(0.0, 0.5, 0.0);
+    // vec3 PC_colorMajor = vec3(0.5, 0.0, 0.0);
+    // vec3 PC_colorMinor = vec3(0.0, 0.5, 0.0);
     float PC_majorDivisor = 5.0f;
 
     vec3 CB_cameraPos = vec3(0.0, 1.0, 1.0);
@@ -67,9 +67,9 @@ void main() {
 
         // Mix colors if it's a major line
         if (isMajorX) {
-                outFragColor = vec4(PC_colorMajor, 1.0);
+                outFragColor = vec4(pushConst.colorMajor, 1.0);
         } else {
-                outFragColor = vec4(PC_colorMinor, 1.0);
+                outFragColor = vec4(pushConst.colorMinor, 1.0);
         }
     }
     // Check Y-axis lines (only if we weren't already on an X line)
@@ -80,9 +80,9 @@ void main() {
         alpha = 1.0;
 
         if (isMajorY) {
-                outFragColor = vec4(PC_colorMajor, 1.0);
+                outFragColor = vec4(pushConst.colorMajor, 1.0);
         } else {
-                outFragColor = vec4(PC_colorMinor, 1.0);
+                outFragColor = vec4(pushConst.colorMinor, 1.0);
         }
     }
 

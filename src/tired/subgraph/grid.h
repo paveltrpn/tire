@@ -12,6 +12,9 @@ struct Grid final : Subgraph {
 
     auto initPipeline() -> void override;
     auto initDrawCommand() -> void;
+
+private:
+    vsg::ref_ptr<vsg::PushConstants> _confPushConst{};
 };
 
 }  // namespace tired

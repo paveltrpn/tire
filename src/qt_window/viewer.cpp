@@ -20,9 +20,6 @@
 #include <vulkan/vulkan.h>
 
 #include "viewer.h"
-#include "window.h"
-
-#include <iostream>
 
 namespace tired {
 
