@@ -1,5 +1,6 @@
 
 #version 450
+
 layout( location = 0 ) out vec3 fragColor;
 layout( location = 1 ) out vec3 vLighting;
 layout( push_constant ) uniform transformations_t {
@@ -20,6 +21,7 @@ vec3 positions[36] = vec3[](
         vec3( 0.5, -0.5, -0.5 ), vec3( 0.5, -0.5, 0.5 ), vec3( -0.5, -0.5, 0.5 ),
         vec3( 0.5, 0.5, -0.5 ), vec3( 0.5, 0.5, 0.5 ), vec3( 0.5, -0.5, 0.5 ),
         vec3( -0.5, 0.5, -0.5 ), vec3( 0.5, 0.5, -0.5 ), vec3( 0.5, -0.5, -0.5 ) );
+
 vec3 normals[36] = vec3[](
         vec3( -0.0, 1.0, -0.0 ), vec3( -0.0, 1.0, -0.0 ), vec3( -0.0, 1.0, -0.0 ),
         vec3( -0.0, -0.0, 1.0 ), vec3( -0.0, -0.0, 1.0 ), vec3( -0.0, -0.0, 1.0 ),
@@ -35,7 +37,7 @@ vec3 normals[36] = vec3[](
         vec3( -0.0, -1.0, -0.0 ), vec3( 1.0, -0.0, -0.0 ), vec3( 1.0, -0.0, -0.0 ),
         vec3( 1.0, -0.0, -0.0 ), vec3( -0.0, -0.0, -1.0 ), vec3( -0.0, -0.0, -1.0 ),
         vec3( -0.0, -0.0, -1.0 ) );
-// Red cube
+
 vec3 color = vec3( 1.0, 0.0, 0.0 );
 
 vec3 ambientLight   = vec3( 0.3, 0.3, 0.3 );
