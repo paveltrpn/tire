@@ -9,8 +9,8 @@ Scenegraph::Scenegraph( vsg::Viewer* viewer, QObject* parent )
     : QObject{ parent }
     , _root{ new vsg::Group{} }
     , _viewer{ viewer }
-    , _testbox{ new Testbox{} }
-    , _grid{ new Grid{} }
+    , _testbox{ new Testbox{ viewer } }
+    , _grid{ new Grid{ viewer } }
     , _basemeshSubgraph{ new BasemeshSubgraph{ viewer } }
     , _obstaclesSubgraph{ new ObstaclesSubgraph{ viewer } } {
     //
@@ -45,9 +45,9 @@ void Scenegraph::addExBox( float px, float py, float pz, float rx, float ry, flo
 auto Scenegraph::addTestBox() -> void {
     _testbox->initDrawCommand();
 
-    // _viewer->compileManager->compile( _testbox );
-    // vsg::CompileResult res{};
-    // vsg::updateViewer( *_viewer, res );
+    _viewer->compileManager->compile( _testbox );
+    vsg::CompileResult res{};
+    vsg::updateViewer( *_viewer, res );
 }
 
 }  // namespace tired

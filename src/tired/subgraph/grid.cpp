@@ -5,7 +5,7 @@
 
 namespace tired {
 
-Grid::Grid() {
+Grid::Grid(vsg::Viewer* viewer): Subgraph{ viewer } {
 }
 
 auto Grid::initPipeline() -> void {
@@ -65,8 +65,8 @@ auto Grid::initPipeline() -> void {
     auto bindDescriptorSet =
         vsg::BindDescriptorSet::create( VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, descriptorSet );
 
-    this->add( bindGraphicsPipeline );
-    this->add( bindDescriptorSet );
+    _stateGroup->add( bindGraphicsPipeline );
+    _stateGroup->add( bindDescriptorSet );
 }
 
 }  // namespace tired

@@ -3,16 +3,15 @@
 
 #include <vsg/all.h>
 
+#include "subgraph.h"
+
 namespace tired {
 
-struct Testbox final : vsg::StateGroup {
-    Testbox();
+struct Testbox final : Subgraph {
+    Testbox( vsg::Viewer* viewer );
 
     auto initPipeline() -> void;
     auto initDrawCommand() -> void;
-
-private:
-    vsg::ref_ptr<vsg::Group> _root{};
 };
 
 }  // namespace tired

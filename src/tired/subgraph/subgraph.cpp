@@ -7,8 +7,8 @@ Subgraph::Subgraph( vsg::Viewer* viewer )
     : _viewer{ viewer }
     , _stateGroup{ vsg::StateGroup::create() }
     , _baseNode{ vsg::Group::create() } {
-    _stateGroup->addChild( _baseNode );
     //
+    _stateGroup->addChild( _baseNode );
     this->addChild( _stateGroup );
 }
 
