@@ -25,9 +25,18 @@ auto Grid::initPipeline() -> void {
 
     // set up graphics pipeline
     vsg::DescriptorSetLayoutBindings descriptorBindings{
-        { 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr } };
+        { /*binding*/ 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, /*count*/ 1, VK_SHADER_STAGE_VERTEX_BIT, nullptr },
+        { /*binding*/ 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, /*count*/ 1, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr } };
 
     auto descriptorSetLayout = vsg::DescriptorSetLayout::create( descriptorBindings );
+
+    auto planeBufUniformValue =
+        vsg::vec4Array::create( { vsg::vec4( 10.0, -10.0, 0.0, 1.0 ), vsg::vec4( 10.0, 10.0, 0.0, 1.0 ),
+                                  vsg::vec4( -10.0, 10.0, 0.0, 1.0 ), vsg::vec4( -10.0, 10.0, 0.0, 1.0 ),
+                                  vsg::vec4( -10.0, -10.0, 0.0, 1.0 ), vsg::vec4( 10.0, -10.0, 0.0, 1.0 ) } );
+
+    auto planeBufUniformDescriptor =
+        vsg::DescriptorBuffer::create( planeBufUniformValue, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
 
     const auto gridSize{ 0.5f };
     const auto lineThickness{ 0.015f };
@@ -56,11 +65,11 @@ auto Grid::initPipeline() -> void {
         pipelineLayout, vsg::ShaderStages{ vertexShader, fragmentShader }, pipelineStates );
     auto bindGraphicsPipeline = vsg::BindGraphicsPipeline::create( graphicsPipeline );
 
-    auto descriptorSet =
-        vsg::DescriptorSet::create( descriptorSetLayout, vsg::Descriptors{ gridBufUniformDescriptor } );
+    auto descriptorSet = vsg::DescriptorSet::create(
+        descriptorSetLayout, vsg::Descriptors{ planeBufUniformDescriptor, gridBufUniformDescriptor } );
 
-    auto bindDescriptorSet =
-        vsg::BindDescriptorSet::create( VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, descriptorSet );
+    auto bindDescriptorSet = vsg::BindDescriptorSet::create( VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout,
+                                                             /*in_firstSet*/ 0, descriptorSet );
 
     _stateGroup->add( bindGraphicsPipeline );
     _stateGroup->add( bindDescriptorSet );
