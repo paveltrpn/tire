@@ -29,6 +29,11 @@ auto Grid::initPipeline() -> void {
 
     auto descriptorSetLayout = vsg::DescriptorSetLayout::create( descriptorBindings );
 
+    auto gridBufUniformValue = vsg::floatArray::create( { 0.5f, 0.115f, 100.0f, 0.5f } );
+
+    auto gridBufUniformDescriptor =
+        vsg::DescriptorBuffer::create( gridBufUniformValue, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
+
     // projection, view, and model matrices, actual push constant calls automatically provided by the VSG's RecordTraversal
     vsg::PushConstantRanges pushConstantRanges{ { VK_SHADER_STAGE_VERTEX_BIT, 0, 128 },
                                                 { VK_SHADER_STAGE_FRAGMENT_BIT, 128, 32 } };
@@ -51,12 +56,14 @@ auto Grid::initPipeline() -> void {
         pipelineLayout, vsg::ShaderStages{ vertexShader, fragmentShader }, pipelineStates );
     auto bindGraphicsPipeline = vsg::BindGraphicsPipeline::create( graphicsPipeline );
 
-    // auto descriptorSet = vsg::DescriptorSet::create( vsg::Buffer::create(), 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
-    // auto bindDescriptorSet =
-    //     vsg::BindDescriptorSet::create( VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, descriptorSet );
+    auto descriptorSet =
+        vsg::DescriptorSet::create( descriptorSetLayout, vsg::Descriptors{ gridBufUniformDescriptor } );
+
+    auto bindDescriptorSet =
+        vsg::BindDescriptorSet::create( VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, descriptorSet );
 
     _stateGroup->add( bindGraphicsPipeline );
-    // _stateGroup->add( bindDescriptorSet );
+    _stateGroup->add( bindDescriptorSet );
 }
 
 auto Grid::initDrawCommand() -> void {

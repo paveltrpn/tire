@@ -3,15 +3,7 @@
 layout(location = 0) in vec3 vWorldPos;
 layout(location = 0) out vec4 outFragColor;
 
-// Uniforms
-layout(set = 0, binding = 0) uniform CameraBuffer {
-    mat4 view;
-    mat4 proj;
-    vec3 cameraPos;
-    float _padding;
-} camera;
-
-layout(set = 1, binding = 0) uniform GridBuffer {
+layout(set = 0, binding = 0) uniform GridBuffer {
     float gridSize;
     float lineThickness;
     float maxRange;
@@ -20,15 +12,13 @@ layout(set = 1, binding = 0) uniform GridBuffer {
 
 // Configuration
 layout(push_constant) uniform PushConstants {
-    vec3 colorMajor; // Color for lines at multiples of (gridSize * 5) e.g., 100m
-    vec3 colorMinor; // Color for standard lines e.g., 10m
-    float majorDivisor; // How often a major line appears (e.g., 5)
+
 } pushConst;
 
 void main() {
     float GS_maxRange = 100.0f;
     float GS_gridSize = 0.5f;
-    float GS_lineThickness = 0.015f;
+    // float GS_lineThickness = 0.015f;
     float GS_zoomSensitivity = 0.5f;
 
     // vec3 PC_colorMajor = vec3(0.5, 0.0, 0.0);
@@ -57,7 +47,7 @@ void main() {
     float alpha = 0.0;
 
     // Check X-axis lines
-    if (distToXLine < GS_lineThickness) {
+    if (distToXLine < gridSettings.lineThickness) {
         // Check if this is a Major Line (e.g., every 5th line)
         // We check the integer quotient to see if it's a multiple
         float gridIndexX = round(vWorldPos.x / GS_gridSize);
@@ -73,7 +63,7 @@ void main() {
         }
     }
     // Check Y-axis lines (only if we weren't already on an X line)
-    else if (distToYLine < GS_lineThickness) {
+    else if (distToYLine < gridSettings.lineThickness) {
         float gridIndexY = round(vWorldPos.y / GS_gridSize);
         bool isMajorY = (mod(gridIndexY, pushConst.majorDivisor) == 0.0);
 
@@ -99,7 +89,7 @@ void main() {
     float zoomScale = mix(1.0, distToCamera * 0.01, GS_zoomSensitivity);
 
     // If the adjusted line is now too thin, fade it out gently
-    float adjustedThickness = GS_lineThickness * zoomScale;
+    float adjustedThickness = gridSettings.lineThickness * zoomScale;
     if (adjustedThickness < 0.1) {
         fade *= (adjustedThickness / 0.1);
     }
