@@ -29,14 +29,20 @@ auto Grid::initPipeline() -> void {
 
     auto descriptorSetLayout = vsg::DescriptorSetLayout::create( descriptorBindings );
 
-    auto gridBufUniformValue = vsg::floatArray::create( { 0.5f, 0.115f, 100.0f, 0.5f } );
+    const auto gridSize{ 0.5f };
+    const auto lineThickness{ 0.015f };
+    const auto maxRange{ 100.0f };
+    const auto zoomSensitivity{ 0.05f };
+    const auto colorMajor = vsg::vec3{ 0.7f, 0.2f, 0.2f };
+    const auto colorMinor = vsg::vec3{ 0.2f, 0.2f, 0.5f };
+    const auto majorDivisor = 5.0f;
+
+    auto gridBufUniformValue =
+        vsg::floatArray::create( { gridSize, lineThickness, maxRange, zoomSensitivity, colorMajor.r, colorMajor.g,
+                                   colorMajor.b, 1.0, colorMinor.r, colorMinor.g, colorMinor.b, majorDivisor } );
 
     auto gridBufUniformDescriptor =
         vsg::DescriptorBuffer::create( gridBufUniformValue, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
-
-    // projection, view, and model matrices, actual push constant calls automatically provided by the VSG's RecordTraversal
-    vsg::PushConstantRanges pushConstantRanges{ { VK_SHADER_STAGE_VERTEX_BIT, 0, 128 },
-                                                { VK_SHADER_STAGE_FRAGMENT_BIT, 128, 32 } };
 
     vsg::VertexInputState::Bindings vertexBindingsDescriptions{};
 
@@ -49,6 +55,8 @@ auto Grid::initPipeline() -> void {
         vsg::MultisampleState::create(),
         vsg::ColorBlendState::create(),
         vsg::DepthStencilState::create() };
+
+    vsg::PushConstantRanges pushConstantRanges{};
 
     auto pipelineLayout =
         vsg::PipelineLayout::create( vsg::DescriptorSetLayouts{ descriptorSetLayout }, pushConstantRanges );
@@ -68,16 +76,6 @@ auto Grid::initPipeline() -> void {
 
 auto Grid::initDrawCommand() -> void {
     const auto commands = vsg::Commands::create();
-
-    const auto colorMajor = vsg::vec3{ 0.1f, 0.2f, 0.9f };
-    const auto colorMinor = vsg::vec3{ 0.2f, 0.2f, 0.5f };
-    const auto majorDivisor = 5.0f;
-
-    auto conf = vsg::floatArray::create(
-        { colorMajor.r, colorMajor.g, colorMajor.b, 1.0, colorMinor.r, colorMinor.g, colorMinor.b, majorDivisor } );
-    _confPushConst = vsg::PushConstants::create( VK_SHADER_STAGE_FRAGMENT_BIT, 128, conf );
-
-    commands->addChild( _confPushConst );
 
     const auto drawCmd = vsg::Draw::create( 6, 1, 0, 0 );
     commands->addChild( drawCmd );
