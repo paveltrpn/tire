@@ -22,8 +22,10 @@ struct Subgraph : vsg::Group {
 
 protected:
     vsg::Viewer* _viewer{};
+
+    // StateGroup is the root of the scene/command graph to hold the GraphicsPipeline, and
+    // binding of Descriptors to decorate the whole graph.
     vsg::ref_ptr<vsg::StateGroup> _stateGroup{};
-    vsg::ref_ptr<vsg::Group> _baseNode{};
 };
 
 }  // namespace tired

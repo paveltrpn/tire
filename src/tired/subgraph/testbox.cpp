@@ -65,7 +65,7 @@ auto Testbox::initDrawCommand() -> void {
     auto tr = vsg::MatrixTransform::create();
     tr->addChild( drawCommands );
 
-    _baseNode->addChild( tr );
+    _stateGroup->addChild( tr );
 }
 
 }  // namespace tired

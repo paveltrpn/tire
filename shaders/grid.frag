@@ -11,12 +11,12 @@ layout(set = 0, binding = 0) uniform CameraBuffer {
     float _padding;
 } camera;
 
-// layout(set = 1, binding = 0) uniform GridBuffer {
-//     float gridSize;
-//     float lineThickness;
-//     float maxRange;
-//     float zoomSensitivity;
-// } gridSettings;
+layout(set = 1, binding = 0) uniform GridBuffer {
+    float gridSize;
+    float lineThickness;
+    float maxRange;
+    float zoomSensitivity;
+} gridSettings;
 
 // Configuration
 layout(push_constant) uniform PushConstants {

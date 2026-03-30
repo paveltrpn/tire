@@ -5,15 +5,13 @@ namespace tired {
 
 Subgraph::Subgraph( vsg::Viewer* viewer )
     : _viewer{ viewer }
-    , _stateGroup{ vsg::StateGroup::create() }
-    , _baseNode{ vsg::Group::create() } {
+    , _stateGroup{ vsg::StateGroup::create() } {
     //
-    _stateGroup->addChild( _baseNode );
     this->addChild( _stateGroup );
 }
 
 auto Subgraph::link( std::shared_ptr<SceneObjectBase> object ) -> void {
-    _baseNode->addChild( object->root() );
+    _stateGroup->addChild( object->root() );
     recompile();
 }
 
