@@ -73,7 +73,7 @@ auto main( int argc, char* argv[] ) -> int {
     windowTraits->height = 1080;
     windowTraits->x = 100;
     windowTraits->y = 100;
-    windowTraits->clearColor = vsg::vec4{ 155.0f / 255.0f, 158.0f / 255.0f, 191.0f / 255.0f, 1.0f };
+    windowTraits->clearColor = vsg::vec4{ 55.0f / 255.0f, 55.0f / 255.0f, 55.0f / 255.0f, 1.0f };
     // windowTraits->fullscreen = true;
 
     auto tiredUi = std::make_unique<tired::TiredUi>( windowTraits );

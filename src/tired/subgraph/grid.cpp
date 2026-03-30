@@ -25,8 +25,8 @@ auto Grid::initPipeline() -> void {
 
     // set up graphics pipeline
     vsg::DescriptorSetLayoutBindings descriptorBindings{
-        { /*binding*/ 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, /*count*/ 1, VK_SHADER_STAGE_VERTEX_BIT, nullptr },
-        { /*binding*/ 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, /*count*/ 1, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr } };
+        { /* binding */ 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, /* count */ 1, VK_SHADER_STAGE_VERTEX_BIT, nullptr },
+        { /* binding */ 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, /* count */ 1, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr } };
 
     auto descriptorSetLayout = vsg::DescriptorSetLayout::create( descriptorBindings );
 
@@ -69,7 +69,7 @@ auto Grid::initPipeline() -> void {
         descriptorSetLayout, vsg::Descriptors{ planeBufUniformDescriptor, gridBufUniformDescriptor } );
 
     auto bindDescriptorSet = vsg::BindDescriptorSet::create( VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout,
-                                                             /*in_firstSet*/ 0, descriptorSet );
+                                                             /* in_firstSet */ 0, descriptorSet );
 
     _stateGroup->add( bindGraphicsPipeline );
     _stateGroup->add( bindDescriptorSet );

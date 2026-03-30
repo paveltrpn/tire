@@ -12,13 +12,13 @@ layout(set = 0, binding = 0) uniform PositionsBuffer {
     vec4 v[6];
 } positions;
 
-vec3 vertecies[6] = vec3[](
-        vec3( 10.0, -10.0, 0.0 ), vec3( 10.0, 10.0, 0.0 ), vec3( -10.0, 10.0, 0.0 ),
-        vec3( -10.0, 10.0, 0.0 ), vec3( -10.0, -10.0, 0.0 ), vec3( 10.0, -10.0, 0.0 ) );
+vec4 vertecies[6] = vec4[](
+        vec4( 10.0, -10.0, 0.0, 1.0 ), vec4( 10.0,   10.0, 0.0, 1.0 ), vec4( -10.0, 10.0, 0.0, 1.0 ),
+        vec4( -10.0, 10.0, 0.0, 1.0 ), vec4( -10.0, -10.0, 0.0, 1.0 ), vec4( 10.0, -10.0, 0.0, 1.0 ) );
 
 void main() {
     // vec4 worldPos = positions.v[gl_VertexIndex];
-    vec4 worldPos = vec4(vertecies[gl_VertexIndex], 1.0);
+    vec4 worldPos = vertecies[gl_VertexIndex];
     vWorldPos = worldPos.xyz;
     gl_Position = pc.projection * pc.modelview * worldPos;
 }
