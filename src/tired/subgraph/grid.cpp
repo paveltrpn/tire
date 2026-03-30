@@ -44,17 +44,9 @@ auto Grid::initPipeline() -> void {
     auto gridBufUniformDescriptor =
         vsg::DescriptorBuffer::create( gridBufUniformValue, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
 
-    vsg::VertexInputState::Bindings vertexBindingsDescriptions{};
-
-    vsg::VertexInputState::Attributes vertexAttributeDescriptions{};
-
-    vsg::GraphicsPipelineStates pipelineStates{
-        vsg::VertexInputState::create( vertexBindingsDescriptions, vertexAttributeDescriptions ),
-        vsg::InputAssemblyState::create(),
-        vsg::RasterizationState::create(),
-        vsg::MultisampleState::create(),
-        vsg::ColorBlendState::create(),
-        vsg::DepthStencilState::create() };
+    vsg::GraphicsPipelineStates pipelineStates{ vsg::VertexInputState::create(),   vsg::InputAssemblyState::create(),
+                                                vsg::RasterizationState::create(), vsg::MultisampleState::create(),
+                                                vsg::ColorBlendState::create(),    vsg::DepthStencilState::create() };
 
     vsg::PushConstantRanges pushConstantRanges{};
 
@@ -80,10 +72,7 @@ auto Grid::initDrawCommand() -> void {
     const auto drawCmd = vsg::Draw::create( 6, 1, 0, 0 );
     commands->addChild( drawCmd );
 
-    const auto tr = vsg::MatrixTransform::create();
-    tr->addChild( commands );
-
-    _stateGroup->addChild( tr );
+    _stateGroup->addChild( commands );
 }
 
 }  // namespace tired
