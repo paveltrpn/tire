@@ -38,20 +38,12 @@ auto Grid::initPipeline() -> void {
     auto planeBufUniformDescriptor =
         vsg::DescriptorBuffer::create( planeBufUniformValue, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
 
-    const auto gridSize{ 0.5f };
-    const auto lineThickness{ 0.015f };
-    const auto maxRange{ 100.0f };
-    const auto zoomSensitivity{ 0.05f };
-    const auto colorMajor = vsg::vec3{ 0.7f, 0.2f, 0.2f };
-    const auto colorMinor = vsg::vec3{ 0.2f, 0.2f, 0.5f };
-    const auto majorDivisor = 5.0f;
-
-    auto gridBufUniformValue =
-        vsg::floatArray::create( { gridSize, lineThickness, maxRange, zoomSensitivity, colorMajor.r, colorMajor.g,
-                                   colorMajor.b, 1.0, colorMinor.r, colorMinor.g, colorMinor.b, majorDivisor } );
+    _gridBufUniformValue =
+        vsg::floatArray::create( { _gridSize, _lineThickness, _maxRange, _zoomSensitivity, _colorMajor.r, _colorMajor.g,
+                                   _colorMajor.b, 1.0, _colorMinor.r, _colorMinor.g, _colorMinor.b, _majorDivisor } );
 
     auto gridBufUniformDescriptor =
-        vsg::DescriptorBuffer::create( gridBufUniformValue, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
+        vsg::DescriptorBuffer::create( _gridBufUniformValue, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
 
     vsg::GraphicsPipelineStates pipelineStates{ vsg::VertexInputState::create(),   vsg::InputAssemblyState::create(),
                                                 vsg::RasterizationState::create(), vsg::MultisampleState::create(),
