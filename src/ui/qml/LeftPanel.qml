@@ -136,6 +136,8 @@ Rectangle {
                     }
                     icon.source: "icons/info.svg"
                     onClicked: {
+                        Tired.grid.setGridSize(1.5)
+
                         if (showInfo.checked) {
                             showInfo.checked = false
                         } else {

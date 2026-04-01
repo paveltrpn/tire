@@ -35,6 +35,10 @@ auto Scenegraph::root() -> vsg::ref_ptr<vsg::Group> {
     return _root;
 }
 
+auto Scenegraph::grid() const -> Grid* {
+    return _grid;
+}
+
 void Scenegraph::addExBox( float px, float py, float pz, float rx, float ry, float rz, float sx, float sy, float sz ) {
     auto data = BoxObjectData{};
     data.setPosition( { px, py, pz } );

@@ -22,6 +22,8 @@ struct Tired final : QObject {
     Q_PROPERTY( QObject* inputHandler READ inputHandler NOTIFY inputHandlerChanged FINAL )
     Q_PROPERTY( QObject* scenegraph READ scenegraph NOTIFY scenegraphChanged FINAL )
 
+    Q_PROPERTY( QObject* grid READ grid NOTIFY gridChanged FINAL )
+
 public:
     Tired( QObject* parent = nullptr );
 
@@ -34,6 +36,7 @@ public:
     auto manipulator() const -> QObject*;
     auto inputHandler() const -> QObject*;
     auto scenegraph() const -> QObject*;
+    auto grid() const -> QObject*;
 
     auto registerTypes() -> void;
 
@@ -41,6 +44,7 @@ signals:
     void manipulatorChanged();
     void inputHandlerChanged();
     void scenegraphChanged();
+    void gridChanged();
 
 private:
     std::shared_ptr<vk::Context> context_{};

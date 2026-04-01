@@ -17,6 +17,14 @@ public:
 
     auto grid() const -> vsg::ref_ptr<GridSubgraph>;
 
+    Q_INVOKABLE void setGridSize( float value );
+    Q_INVOKABLE void setLineThickness( float value );
+    Q_INVOKABLE void setMaxRange( float value );
+    Q_INVOKABLE void setZoomSensitivity( float value );
+    Q_INVOKABLE void setColorMajor( float r, float g, float b );
+    Q_INVOKABLE void setColorMinor( float r, float g, float b );
+    Q_INVOKABLE void setMajorDivisor( float value );
+
 private:
     vsg::ref_ptr<GridSubgraph> _grid{};
 };
@@ -29,8 +37,15 @@ struct GridSubgraph final : Subgraph {
     auto initPipeline() -> void override;
     auto initDrawCommand() -> void;
 
+    auto recompile() -> void override;
+
+    friend Grid;
+
 private:
-    float _gridSize{ 0.5f };
+    auto updateGridBufUniformValue() -> void;
+
+private:
+    float _gridSize{ 0.8f };
     float _lineThickness{ 0.015f };
     float _maxRange{ 100.0f };
     float _zoomSensitivity{ 0.05f };
@@ -39,6 +54,7 @@ private:
     float _majorDivisor{ 5.0f };
 
     vsg::ref_ptr<vsg::floatArray> _gridBufUniformValue{};
+    vsg::ref_ptr<vsg::vec4Array> _planeBufUniformValue{};
 };
 
 }  // namespace tired

@@ -23,6 +23,8 @@ public:
     Q_INVOKABLE void addExBox( float px, float py, float pz, float rx, float ry, float rz, float sx, float sy,
                                float sz );
 
+    auto grid() const -> Grid*;
+
 private:
     vsg::ref_ptr<vsg::Group> _root{};
     vsg::Viewer* _viewer;

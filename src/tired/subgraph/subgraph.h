@@ -16,7 +16,7 @@ struct Subgraph : vsg::Group {
 
     virtual auto initPipeline() -> void = 0;
 
-    auto recompile() -> void;
+    virtual auto recompile() -> void;
 
     auto link( std::shared_ptr<SceneObjectBase> object ) -> void;
 

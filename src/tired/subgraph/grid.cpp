@@ -17,6 +17,45 @@ auto Grid::grid() const -> vsg::ref_ptr<GridSubgraph> {
     return _grid;
 }
 
+void Grid::setGridSize( float value ) {
+    _grid->_gridSize = value;
+    _grid->updateGridBufUniformValue();
+}
+
+void Grid::setLineThickness( float value ) {
+    _grid->_lineThickness = value;
+    _grid->updateGridBufUniformValue();
+}
+
+void Grid::setMaxRange( float value ) {
+    _grid->_maxRange = value;
+    _grid->updateGridBufUniformValue();
+}
+
+void Grid::setZoomSensitivity( float value ) {
+    _grid->_zoomSensitivity = value;
+    _grid->updateGridBufUniformValue();
+}
+
+void Grid::setColorMajor( float r, float g, float b ) {
+    _grid->_colorMajor.r = r;
+    _grid->_colorMajor.g = g;
+    _grid->_colorMajor.b = b;
+    _grid->updateGridBufUniformValue();
+}
+
+void Grid::setColorMinor( float r, float g, float b ) {
+    _grid->_colorMinor.r = r;
+    _grid->_colorMinor.g = g;
+    _grid->_colorMinor.b = b;
+    _grid->updateGridBufUniformValue();
+}
+
+void Grid::setMajorDivisor( float value ) {
+    _grid->_majorDivisor = value;
+    _grid->updateGridBufUniformValue();
+}
+
 // ===============================================================================
 
 GridSubgraph::GridSubgraph( vsg::Viewer* viewer )
@@ -44,17 +83,21 @@ auto GridSubgraph::initPipeline() -> void {
 
     auto descriptorSetLayout = vsg::DescriptorSetLayout::create( descriptorBindings );
 
-    auto planeBufUniformValue =
+    _planeBufUniformValue =
         vsg::vec4Array::create( { vsg::vec4( 10.0, -10.0, 0.0, 1.0 ), vsg::vec4( 10.0, 10.0, 0.0, 1.0 ),
                                   vsg::vec4( -10.0, 10.0, 0.0, 1.0 ), vsg::vec4( -10.0, 10.0, 0.0, 1.0 ),
                                   vsg::vec4( -10.0, -10.0, 0.0, 1.0 ), vsg::vec4( 10.0, -10.0, 0.0, 1.0 ) } );
 
+    _planeBufUniformValue->properties.dataVariance = vsg::DYNAMIC_DATA;
+
     auto planeBufUniformDescriptor =
-        vsg::DescriptorBuffer::create( planeBufUniformValue, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
+        vsg::DescriptorBuffer::create( _planeBufUniformValue, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
 
     _gridBufUniformValue =
         vsg::floatArray::create( { _gridSize, _lineThickness, _maxRange, _zoomSensitivity, _colorMajor.r, _colorMajor.g,
                                    _colorMajor.b, 1.0, _colorMinor.r, _colorMinor.g, _colorMinor.b, _majorDivisor } );
+
+    _gridBufUniformValue->properties.dataVariance = vsg::DYNAMIC_DATA;
 
     auto gridBufUniformDescriptor =
         vsg::DescriptorBuffer::create( _gridBufUniformValue, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
@@ -82,12 +125,33 @@ auto GridSubgraph::initPipeline() -> void {
 }
 
 auto GridSubgraph::initDrawCommand() -> void {
-    const auto commands = vsg::Commands::create();
+    auto commands = vsg::Commands::create();
 
     const auto drawCmd = vsg::Draw::create( 6, 1, 0, 0 );
     commands->addChild( drawCmd );
 
     _stateGroup->addChild( commands );
+}
+
+auto GridSubgraph::recompile() -> void {
+    Subgraph::recompile();
+}
+
+auto GridSubgraph::updateGridBufUniformValue() -> void {
+    ( *_gridBufUniformValue )[0] = _gridSize;
+    ( *_gridBufUniformValue )[1] = _lineThickness;
+    ( *_gridBufUniformValue )[2] = _maxRange;
+    ( *_gridBufUniformValue )[3] = _zoomSensitivity;
+    ( *_gridBufUniformValue )[4] = _colorMajor.r;
+    ( *_gridBufUniformValue )[5] = _colorMajor.g;
+    ( *_gridBufUniformValue )[6] = _colorMajor.b;
+    ( *_gridBufUniformValue )[7] = 1.0;
+    ( *_gridBufUniformValue )[8] = _colorMinor.r;
+    ( *_gridBufUniformValue )[9] = _colorMinor.g;
+    ( *_gridBufUniformValue )[10] = _colorMinor.b;
+    ( *_gridBufUniformValue )[11] = _majorDivisor;
+
+    _gridBufUniformValue->dirty();
 }
 
 }  // namespace tired
