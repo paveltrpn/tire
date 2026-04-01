@@ -56,6 +56,16 @@ void Grid::setMajorDivisor( float value ) {
     _grid->updateGridBufUniformValue();
 }
 
+void Grid::setGridScale( float value ) {
+    _grid->_gridScale = value;
+    _grid->updatePlaneBufUniformValue();
+}
+
+void Grid::setGridZOffset( float value ) {
+    _grid->_gridZOffset = value;
+    _grid->updatePlaneBufUniformValue();
+}
+
 // ===============================================================================
 
 GridSubgraph::GridSubgraph( vsg::Viewer* viewer )
@@ -147,6 +157,15 @@ auto GridSubgraph::updateGridBufUniformValue() -> void {
     ( *_gridBufUniformValue )[9] = _colorMinor.g;
     ( *_gridBufUniformValue )[10] = _colorMinor.b;
     ( *_gridBufUniformValue )[11] = _majorDivisor;
+
+    _gridBufUniformValue->dirty();
+}
+
+auto GridSubgraph::updatePlaneBufUniformValue() -> void {
+    ( *_gridBufUniformValue )[0] = _gridScale;
+    ( *_gridBufUniformValue )[1] = _gridZOffset;
+    ( *_gridBufUniformValue )[2] = 1.0f;
+    ( *_gridBufUniformValue )[3] = 1.0f;
 
     _gridBufUniformValue->dirty();
 }

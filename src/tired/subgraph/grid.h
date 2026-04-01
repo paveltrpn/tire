@@ -25,6 +25,9 @@ public:
     Q_INVOKABLE void setColorMinor( float r, float g, float b );
     Q_INVOKABLE void setMajorDivisor( float value );
 
+    Q_INVOKABLE void setGridScale( float value );
+    Q_INVOKABLE void setGridZOffset( float value );
+
 private:
     vsg::ref_ptr<GridSubgraph> _grid{};
 };
@@ -43,6 +46,7 @@ struct GridSubgraph final : Subgraph {
 
 private:
     auto updateGridBufUniformValue() -> void;
+    auto updatePlaneBufUniformValue() -> void;
 
 private:
     float _gridSize{ 0.8f };
