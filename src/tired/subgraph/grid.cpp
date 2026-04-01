@@ -79,19 +79,16 @@ auto GridSubgraph::initPipeline() -> void {
     // set up graphics pipeline
     vsg::DescriptorSetLayoutBindings descriptorBindings{
         { /* binding */ 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, /* count */ 1, VK_SHADER_STAGE_VERTEX_BIT, nullptr },
-        { /* binding */ 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, /* count */ 1, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr } };
+        { /* binding */ 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, /* count */ 1, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr } };
 
     auto descriptorSetLayout = vsg::DescriptorSetLayout::create( descriptorBindings );
 
-    _planeBufUniformValue =
-        vsg::vec4Array::create( { vsg::vec4( 10.0, -10.0, 0.0, 1.0 ), vsg::vec4( 10.0, 10.0, 0.0, 1.0 ),
-                                  vsg::vec4( -10.0, 10.0, 0.0, 1.0 ), vsg::vec4( -10.0, 10.0, 0.0, 1.0 ),
-                                  vsg::vec4( -10.0, -10.0, 0.0, 1.0 ), vsg::vec4( 10.0, -10.0, 0.0, 1.0 ) } );
+    _planeBufUniformValue = vsg::floatArray::create( { _gridScale, _gridZOffset, 1.0f, 1.0f } );
 
     _planeBufUniformValue->properties.dataVariance = vsg::DYNAMIC_DATA;
 
-    auto planeBufUniformDescriptor =
-        vsg::DescriptorBuffer::create( _planeBufUniformValue, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
+    auto planeBufUniformDescriptor = vsg::DescriptorBuffer::create( _planeBufUniformValue, /* dstBinding */ 0, 0,
+                                                                    VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
 
     _gridBufUniformValue =
         vsg::floatArray::create( { _gridSize, _lineThickness, _maxRange, _zoomSensitivity, _colorMajor.r, _colorMajor.g,
@@ -100,7 +97,7 @@ auto GridSubgraph::initPipeline() -> void {
     _gridBufUniformValue->properties.dataVariance = vsg::DYNAMIC_DATA;
 
     auto gridBufUniformDescriptor =
-        vsg::DescriptorBuffer::create( _gridBufUniformValue, 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
+        vsg::DescriptorBuffer::create( _gridBufUniformValue, /* dstBinding */ 1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
 
     vsg::GraphicsPipelineStates pipelineStates{ vsg::VertexInputState::create(),   vsg::InputAssemblyState::create(),
                                                 vsg::RasterizationState::create(), vsg::MultisampleState::create(),

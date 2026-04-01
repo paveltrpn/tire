@@ -53,8 +53,11 @@ private:
     vsg::vec3 _colorMinor{ 0.2f, 0.2f, 0.5f };
     float _majorDivisor{ 5.0f };
 
+    float _gridScale{ 10.0 };
+    float _gridZOffset{ 0.0 };
+
     vsg::ref_ptr<vsg::floatArray> _gridBufUniformValue{};
-    vsg::ref_ptr<vsg::vec4Array> _planeBufUniformValue{};
+    vsg::ref_ptr<vsg::floatArray> _planeBufUniformValue{};
 };
 
 }  // namespace tired

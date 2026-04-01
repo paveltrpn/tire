@@ -3,7 +3,7 @@
 layout(location = 0) in vec3 vWorldPos;
 layout(location = 0) out vec4 outFragColor;
 
-layout(set = 0, binding = 0) uniform GridBuffer {
+layout(set = 0, binding = 1) uniform GridBuffer {
     float gridSize;
     float lineThickness;
     float maxRange;
