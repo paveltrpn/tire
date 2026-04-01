@@ -7,8 +7,24 @@
 
 namespace tired {
 
-struct Grid final : Subgraph {
-    Grid( vsg::Viewer* viewer );
+struct GridSubgraph;
+
+struct Grid final : public QObject {
+    Q_OBJECT
+
+public:
+    Grid( vsg::Viewer* viewer, QObject* parent = nullptr );
+
+    auto grid() const -> vsg::ref_ptr<GridSubgraph>;
+
+private:
+    vsg::ref_ptr<GridSubgraph> _grid{};
+};
+
+// ===============================================================================
+
+struct GridSubgraph final : Subgraph {
+    GridSubgraph( vsg::Viewer* viewer );
 
     auto initPipeline() -> void override;
     auto initDrawCommand() -> void;

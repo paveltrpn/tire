@@ -53,7 +53,7 @@ Rectangle {
                 height: 24
 
                 text: {
-                     const pos = InputHandler.mousePos
+                     const pos = Tired.inputHandler.mousePos
                      return `X: ${pos.x} Y: ${pos.y}`
                 }
 

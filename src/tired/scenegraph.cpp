@@ -10,7 +10,7 @@ Scenegraph::Scenegraph( vsg::Viewer* viewer, QObject* parent )
     , _root{ new vsg::Group{} }
     , _viewer{ viewer }
     , _testbox{ new Testbox{ viewer } }
-    , _grid{ new Grid{ viewer } }
+    , _grid{ new Grid{ viewer, this } }
     , _basemeshSubgraph{ new BasemeshSubgraph{ viewer } }
     , _obstaclesSubgraph{ new ObstaclesSubgraph{ viewer } } {
     //
@@ -19,16 +19,14 @@ Scenegraph::Scenegraph( vsg::Viewer* viewer, QObject* parent )
     _testbox->initPipeline();
     _testbox->initDrawCommand();
 
-    _grid->initPipeline();
-    _grid->initDrawCommand();
-
     _basemeshSubgraph->initPipeline();
     _obstaclesSubgraph->initPipeline();
 
     // Enable test box.
     _root->addChild( _testbox );
 
-    _root->addChild( _grid );
+    _root->addChild( _grid->grid() );
+
     _root->addChild( _basemeshSubgraph );
     _root->addChild( _obstaclesSubgraph );
 }

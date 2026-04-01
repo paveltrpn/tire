@@ -17,19 +17,30 @@ namespace tired {
 
 struct Tired final : QObject {
     Q_OBJECT
+
+    Q_PROPERTY( QObject* manipulator READ manipulator NOTIFY manipulatorChanged FINAL )
+    Q_PROPERTY( QObject* inputHandler READ inputHandler NOTIFY inputHandlerChanged FINAL )
+    Q_PROPERTY( QObject* scenegraph READ scenegraph NOTIFY scenegraphChanged FINAL )
+
 public:
     Tired( QObject* parent = nullptr );
 
     auto init( Window* window, uint32_t width, uint32_t height ) -> void;
 
     auto viewer() -> vsg::ref_ptr<Viewer>;
-    auto manipulator() -> Manipulator*;
-    auto inputHandler() -> InputHandler*;
     auto rootNode() -> vsg::ref_ptr<vsg::Node>;
     auto camera() -> vsg::ref_ptr<vsg::Camera>;
-    auto scenegraph() -> Scenegraph*;
+
+    auto manipulator() const -> QObject*;
+    auto inputHandler() const -> QObject*;
+    auto scenegraph() const -> QObject*;
 
     auto registerTypes() -> void;
+
+signals:
+    void manipulatorChanged();
+    void inputHandlerChanged();
+    void scenegraphChanged();
 
 private:
     std::shared_ptr<vk::Context> context_{};

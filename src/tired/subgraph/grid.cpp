@@ -5,11 +5,25 @@
 
 namespace tired {
 
-Grid::Grid( vsg::Viewer* viewer )
+Grid::Grid( vsg::Viewer* viewer, QObject* parent )
+    : QObject{ parent }
+    , _grid{ new GridSubgraph{ viewer } } {
+    //
+    _grid->initPipeline();
+    _grid->initDrawCommand();
+}
+
+auto Grid::grid() const -> vsg::ref_ptr<GridSubgraph> {
+    return _grid;
+}
+
+// ===============================================================================
+
+GridSubgraph::GridSubgraph( vsg::Viewer* viewer )
     : Subgraph{ viewer } {
 }
 
-auto Grid::initPipeline() -> void {
+auto GridSubgraph::initPipeline() -> void {
     // load shaders
     vsg::Paths searchPaths =
         std::vector<vsg::Path>{ "/mnt/main/code/tire_ed/shaders/spirv", "/mnt/main/code/tire_ed/assets" };
@@ -67,7 +81,7 @@ auto Grid::initPipeline() -> void {
     _stateGroup->add( bindDescriptorSet );
 }
 
-auto Grid::initDrawCommand() -> void {
+auto GridSubgraph::initDrawCommand() -> void {
     const auto commands = vsg::Commands::create();
 
     const auto drawCmd = vsg::Draw::create( 6, 1, 0, 0 );

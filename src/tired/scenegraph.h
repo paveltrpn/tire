@@ -28,7 +28,7 @@ private:
     vsg::Viewer* _viewer;
 
     vsg::ref_ptr<Testbox> _testbox{};
-    vsg::ref_ptr<Grid> _grid{};
+    Grid* _grid{};
     vsg::ref_ptr<BasemeshSubgraph> _basemeshSubgraph{};
     vsg::ref_ptr<ObstaclesSubgraph> _obstaclesSubgraph{};
 
