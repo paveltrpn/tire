@@ -87,6 +87,8 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
     hLayout->addWidget( hSplitter );
 
     this->show();
+
+    qDebug() << engine_->importPathList();
 }
 
 }  // namespace tired

@@ -17,12 +17,11 @@ endif()
 
 add_compile_options(-std=c++26 )
 
-set(CMAKE_BUILD_TYPE Debug)
-
 project(tire_ed)
 
 include_directories("src")
 
+set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 set(CMAKE_CXX_STANDARD 26)
 
@@ -50,6 +49,23 @@ else()
 endif()
 
 include_directories("src")
+
+set(QT_VERSION 6.10)
+list(APPEND CMAKE_PREFIX_PATH $ENV{LOCAL_LATEST_QT})
+# set(QML_IMPORT_PATH  $ENV{LOCAL_LATEST_QT}/lib/cmake CACHE STRING "Extra QML Import Paths for Qt Creator" FORCE)
+set(QML_IMPORT_PATH /mnt/main/sources_build/qt6_10/qml CACHE STRING "Extra QML Import Paths for Qt Creator" FORCE)
+set(QT_ADDITIONAL_PACKAGES_PREFIX_PATH /mnt/main/sources_build/qt6_10/qml CACHE STRING "Extra QML Import Paths for Qt Creator" FORCE)
+set(QT_ADDITIONAL_HOST_PACKAGES_PREFIX_PATH /mnt/main/sources_build/qt6_10/qml CACHE STRING "Extra QML Import Paths for Qt Creator" FORCE)
+set(QT_QML_GENERATE_QMLLS_INI ON)
+find_package(Qt6 ${QT_VERSION} COMPONENTS
+    Core
+    Gui
+    Qml
+    Quick
+    QuickWidgets
+    QuickControls2
+    QuickLayouts
+)
 
 # ================================
 # Module log
@@ -109,9 +125,10 @@ target_link_libraries(tired
     Qt::Core
     Qt::Gui
     Qt::Quick
+    Qt::Qml
     Qt::QuickWidgets
     Qt::QuickControls2
-    Qt::Qml
+    Qt::QuickLayouts
     vk
     log
     image
@@ -131,9 +148,10 @@ target_link_libraries(tired_ui
     Qt::Core
     Qt::Gui
     Qt::Quick
+    Qt::Qml
     Qt::QuickWidgets
     Qt::QuickControls2
-    Qt::Qml
+    Qt::QuickLayouts
 )
 
 # ================================
@@ -148,22 +166,10 @@ target_link_libraries(qt_window
     Qt::Core
     Qt::Gui
     Qt::Quick
+    Qt::Qml
     Qt::QuickWidgets
     Qt::QuickControls2
-    Qt::Qml
-)
-
-set(QT_VERSION 6.10)
-list(APPEND CMAKE_PREFIX_PATH $ENV{LOCAL_LATEST_QT})
-set(QML_IMPORT_PATH  $ENV{LOCAL_LATEST_QT}/qml client_vk/qml client_vk/qml/info CACHE STRING "Extra QML Import Paths for Qt Creator" FORCE)
-find_package(Qt6 ${QT_VERSION} COMPONENTS
-    Core
-    Gui
-    Quick
-    QuickWidgets
-    QuickControls2
-    Qml
-    Charts
+    Qt::QuickLayouts
 )
 
 add_executable(${PROJECT_NAME}
@@ -171,7 +177,6 @@ add_executable(${PROJECT_NAME}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES AUTOMOC TRUE)
-
 target_link_libraries(${PROJECT_NAME}
     xcb
     vsg
@@ -191,9 +196,10 @@ target_link_libraries(${PROJECT_NAME}
     Qt::Core
     Qt::Gui
     Qt::Quick
+    Qt::Qml
     Qt::QuickWidgets
     Qt::QuickControls2
-    Qt::Qml
+    Qt::QuickLayouts
     tired
     tired_ui
     qt_window

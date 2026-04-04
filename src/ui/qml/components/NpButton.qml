@@ -1,6 +1,10 @@
-import QtQuick 2.15
-import QtQuick.Templates 2.15 as QuickTemplates
-import QtQuick.Controls.impl 2.15
+// qmllint disable unqualified
+// qmllint disable Quick.property-changes-parsed
+
+import QtQuick
+import QtQuick.Templates as QuickTemplates
+import QtQuick.Controls.impl
+
 import Tire 1.0
 
 QuickTemplates.Button {
@@ -60,7 +64,7 @@ QuickTemplates.Button {
         anchors.fill: parent
         color: control.backgroundColor
         opacity: control.enabled ? 1.0 : 0.3
-        radius: _radius.half;
+        radius: _radius.half
     }
 
     contentItem: IconLabel {
