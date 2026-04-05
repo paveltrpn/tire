@@ -9,9 +9,16 @@
 namespace tired {
 
 // Application-wide image provide.
-struct ImageProvider : QQuickImageProvider {
+struct TiredImageProvider : QQuickImageProvider {
+public:
+    TiredImageProvider();
+
+    QImage requestImage( const QString &id, QSize *size, const QSize &requestedSize ) override;
+
 private:
 };
+
+// =============================================================================
 
 // Colors and other theme related provider. Instance of
 // this object available in qml.

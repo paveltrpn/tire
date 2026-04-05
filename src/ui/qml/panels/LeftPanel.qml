@@ -57,7 +57,7 @@ Rectangle {
                     horizontalCenter: parent.horizontalCenter
                 }
 
-                icon.source: "icons/exit_up.svg"
+                icon.source: "image://TiredImageProvider/exit_up.svg"
                 onClicked: {
                     hidePanelButtom.checked = !hidePanelButtom.checked
                 }
@@ -70,7 +70,7 @@ Rectangle {
                     bottomMargin: leftPanelMainComponent._gaps.half
                     horizontalCenter: parent.horizontalCenter
                 }
-                icon.source: "icons/power.svg"
+                icon.source: "image://TiredImageProvider/power.svg"
                 onClicked: {
                     Qt.quit()
                 }
@@ -115,7 +115,7 @@ Rectangle {
                         top: parent.top
                         horizontalCenter: parent.horizontalCenter
                     }
-                    icon.source: "icons/cube_01.svg"
+                    icon.source: "image://TiredImageProvider/cube_01.svg"
                     onClicked: {
                         if (addBoxButtom.checked) {
                             addBoxButtom.checked = false
@@ -132,7 +132,7 @@ Rectangle {
                         bottom: parent.bottom
                         horizontalCenter: parent.horizontalCenter
                     }
-                    icon.source: "icons/info.svg"
+                    icon.source: "image://TiredImageProvider/info.svg"
                     onClicked: {
                         Tired.grid.setGridSize(1.5)
 
