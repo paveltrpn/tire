@@ -6,6 +6,8 @@ import QtQuick.Layouts
 
 import Tire 1.0
 
+import "../components"
+
 Rectangle {
     id: rightPanelMainComponent
 
@@ -17,58 +19,64 @@ Rectangle {
     color: _color.background
 
     Item {
-        id: rightPanelComponentBackground
+        id: mainTopPanel
 
-        width: rightPanelMainComponent.width
-        height: rightPanelMainComponent.height
+        anchors {
+            fill: parent
+        }
 
-        Rectangle {
-            id: mainPanel
+        RowLayout {
+            id: topPanelButtonsLayout
 
-            Behavior on height {
-                NumberAnimation {
-                    duration: 200
-                }
-            }
+            spacing: _gaps.quarter
 
             anchors {
-                right: parent.right
-                rightMargin: _gaps.half
-                verticalCenter: parent.verticalCenter
+                fill: parent
             }
 
-            height: 24
-            width: 160
+            NpButton {
+                id: gizmoMoveModeBtn
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                icon.source: "image://TiredImageProvider/gear.svg"
+                onClicked: {}
+            }
 
-            color: rightPanelMainComponent._color.background_overlay_60
-            radius: rightPanelMainComponent._radius.half
+            NpButton {
+                id: gizmoRotateModeBtn
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                icon.source: "image://TiredImageProvider/gear.svg"
+                onClicked: {}
+            }
 
-            border {
-                width: 2
-                color: _color.main_contrast_20
+            NpButton {
+                id: gizmoScaleModeBtn
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                icon.source: "image://TiredImageProvider/gear.svg"
+                onClicked: {}
+            }
+
+            Item {
+                id: buttonsSpacer
+                Layout.fillWidth: true
             }
 
             Text {
                 id: sclLabel
-                anchors {
-                    fill: parent
-                }
 
-                height: 24
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
 
                 text: {
-                     const pos = Tired.inputHandler.mousePos
-                     return `X: ${pos.x} Y: ${pos.y}`
+                    const pos = Tired.inputHandler.mousePos;
+                    return `X: ${pos.x} Y: ${pos.y}`;
                 }
 
-                horizontalAlignment: Text.AlignLeft
+                horizontalAlignment: Text.AlignRight
                 verticalAlignment: Text.AlignVCenter
 
                 padding: 8
 
                 color: _color.additional_contrast_60
                 font: _fonts.label
-
             }
         }
     }
