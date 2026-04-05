@@ -1,11 +1,6 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.3
-import Qt5Compat.GraphicalEffects
-import Qt.labs.lottieqt 1.0
-
+import QtQuick
+import QtQuick.Controls
 import Tire 1.0
-import "../components"
 
 Rectangle {
     id: servicesInfoComponent

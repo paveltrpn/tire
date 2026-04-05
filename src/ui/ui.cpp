@@ -1,5 +1,4 @@
 #include <vsg/all.h>
-#include <vsg/app/Viewer.h>
 
 #include <QHBoxLayout>
 #include <QSplitter>
@@ -44,10 +43,10 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
 
     // Qt widgets initialization.
     vsgWidget_ = QWidget::createWindowContainer( vsgWindow_, this );
-    topPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/TopPanel.qml" ) );
+    topPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/panels/TopPanel.qml" ) );
     topPanel_->setResizeMode( QQuickWidget::SizeRootObjectToView );
 
-    leftPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/LeftPanel.qml" ) );
+    leftPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/panels/LeftPanel.qml" ) );
     leftPanel_->setResizeMode( QQuickWidget::SizeRootObjectToView );
 
     auto centralWidget = new QWidget{ this };

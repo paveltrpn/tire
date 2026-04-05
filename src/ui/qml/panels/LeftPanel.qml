@@ -1,13 +1,11 @@
-
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 
 import Tire 1.0
 
-import "components"
-import "info"
-import "add_forms"
+import "../components"
+import "../info"
+import "../add_forms"
 
 Rectangle {
     id: leftPanelMainComponent

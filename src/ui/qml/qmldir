@@ -1,0 +1,7 @@
+module tire
+
+LeftPanel       1.0 panels/LeftPanel.qml
+TopPanel        1.0 panels/TopPanel.qml
+NpButton        1.0 components/NpButton.qml
+DragAbleItem    1.0 components/DragAbleItem.qml
+TiredTextInput  1.0 components/TiredTextInput.qml
