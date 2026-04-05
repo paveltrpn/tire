@@ -1,3 +1,6 @@
+// qmllint disable unqualified
+// qmllint disable Quick.property-changes-parsed
+
 import QtQuick
 import QtQuick.Layouts
 
