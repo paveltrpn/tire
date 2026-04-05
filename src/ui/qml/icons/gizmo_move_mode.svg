@@ -1,0 +1,26 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Move Gizmo: White Strokes on Transparent Background -->
+  
+  <!-- The Central Object -->
+  <circle cx="12" cy="12" r="2" stroke="white" stroke-width="2" fill="white" />
+
+  <!-- Motion Lines (Axes) -->
+  <!-- Vertical Axis -->
+  <line x1="12" y1="4" x2="12" y2="20" stroke="white" stroke-width="1.5" stroke-linecap="round" />
+  
+  <!-- Horizontal Axis -->
+  <line x1="4" y1="12" x2="20" y2="12" stroke="white" stroke-width="1.5" stroke-linecap="round" />
+
+  <!-- Arrowheads -->
+  <!-- Top Arrowhead -->
+  <path d="M12 4L9 7L15 7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- Bottom Arrowhead -->
+  <path d="M12 20L9 17L15 17" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- Left Arrowhead -->
+  <path d="M4 12L7 9L7 15" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- Right Arrowhead -->
+  <path d="M20 12L17 9L17 15" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

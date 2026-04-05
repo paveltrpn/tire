@@ -43,10 +43,15 @@ Rectangle {
         ColumnLayout {
             id: mainButtonsLayout
 
-            spacing: _gaps.quarter
+            spacing: _gaps.half
 
             anchors {
                 fill: parent
+            }
+
+            Item {
+                id: spacerTop
+                Layout.preferredHeight: _gaps.half
             }
 
             NpButton {
@@ -98,6 +103,11 @@ Rectangle {
                 onClicked: {
                     Qt.quit();
                 }
+            }
+
+            Item {
+                id: spacerBottom
+                Layout.preferredHeight: _gaps.half
             }
         }
     }

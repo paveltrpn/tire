@@ -28,31 +28,76 @@ Rectangle {
         RowLayout {
             id: topPanelButtonsLayout
 
-            spacing: _gaps.quarter
+            spacing: _gaps.half
 
             anchors {
                 fill: parent
             }
 
+            Item {
+                id: spacerLeft
+                Layout.preferredWidth: _gaps.half
+            }
+
             NpButton {
                 id: gizmoMoveModeBtn
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                icon.source: "image://TiredImageProvider/gear.svg"
+                icon.source: "image://TiredImageProvider/gizmo_move_mode.svg"
                 onClicked: {}
             }
 
             NpButton {
                 id: gizmoRotateModeBtn
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                icon.source: "image://TiredImageProvider/gear.svg"
+                icon.source: "image://TiredImageProvider/gizmo_rotate_mode.svg"
                 onClicked: {}
             }
 
             NpButton {
                 id: gizmoScaleModeBtn
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                icon.source: "image://TiredImageProvider/gear.svg"
+                icon.source: "image://TiredImageProvider/gizmo_scale_mode.svg"
                 onClicked: {}
+            }
+
+            Item {
+                id: spacer2
+                Layout.preferredWidth: _gaps.full
+            }
+
+            Item {
+                id: gizmoCoordinateSystemModeBtnsWrapper
+
+                Layout.fillHeight: true
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+
+                Layout.preferredWidth: gizmoLocalModeBtn.width + gizmoGlobalModeBtn.width + _gaps.half
+                // implicitWidth: gizmoLocalModeBtn.width + gizmoGlobalModeBtn.width
+
+                NpButton {
+                    id: gizmoLocalModeBtn
+
+                    anchors {
+                        verticalCenter: parent.verticalCenter
+                        left: parent.left
+                    }
+
+                    icon.source: "image://TiredImageProvider/gizmo_global_mode.svg"
+                    onClicked: {}
+                }
+
+                NpButton {
+                    id: gizmoGlobalModeBtn
+
+                    anchors {
+                        verticalCenter: parent.verticalCenter
+                        right: parent.right
+                    }
+
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                    icon.source: "image://TiredImageProvider/gizmo_local_mode.svg"
+                    onClicked: {}
+                }
             }
 
             Item {
@@ -77,6 +122,11 @@ Rectangle {
 
                 color: _color.additional_contrast_60
                 font: _fonts.label
+            }
+
+            Item {
+                id: spacerRight
+                Layout.preferredWidth: _gaps.half
             }
         }
     }

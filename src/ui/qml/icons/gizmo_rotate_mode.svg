@@ -1,0 +1,24 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rotation Gizmo: White Strokes on Transparent Background -->
+  
+  <!-- The Pivot Center (Pivot Point) -->
+  <circle cx="12" cy="12" r="1.5" stroke="white" stroke-width="1.5" fill="white" />
+
+  <!-- The Rotation Arc -->
+  <!-- Path: Starts at 3 o'clock, curves counter-clockwise to 12 o'clock -->
+  <path d="M16.5 8.5A5 5 0 1 0 8.5 16.5" stroke="white" stroke-width="1.8" stroke-linecap="round" />
+
+  <!-- The Rotational Arrowhead -->
+  <!-- Positioned at the end of the arc (approx 135 degrees) -->
+  <path 
+    d="M9.5 15.5L7.5 13L8.5 14.5" 
+    stroke="white" 
+    stroke-width="1.8" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+  />
+
+  <!-- Optional Visual Anchor (The 'Arm' connecting center to arc) -->
+  <!-- This helps the user understand the arc is rotating around the center dot -->
+  <line x1="12" y1="12" x2="15.5" y2="8.5" stroke="white" stroke-width="1" stroke-dasharray="1 1" opacity="0.5" />
+</svg>

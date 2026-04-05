@@ -1,0 +1,29 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Local Coordinate System - Rotated Axes attached to an Object -->
+  
+  <!-- Group: Rotate everything 25 degrees to represent the object's local orientation -->
+  <g transform="rotate(25, 20, 20)">
+    
+    <!-- 1. The Local Object (Dashed Bounding Box) -->
+    <!-- This is the reference point. The axes rotate WITH this box. -->
+    <rect x="14" y="14" width="12" height="12" stroke="white" stroke-width="1.5" stroke-dasharray="3 3" />
+    
+    <!-- 2. The Pivot Point (Center of the object) -->
+    <circle cx="20" cy="20" r="2" fill="white" />
+
+    <!-- 3. Local X Axis (Extending from the object to the right) -->
+    <line x1="20" y1="20" x2="34" y2="20" stroke="white" stroke-width="2" stroke-linecap="round" />
+    <path d="M31 17L34 20L31 23" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    
+    <!-- 4. Local Y Axis (Extending from the object upwards) -->
+    <line x1="20" y1="20" x2="20" y2="6" stroke="white" stroke-width="2" stroke-linecap="round" />
+    <path d="M17 9L20 6L23 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    
+    <!-- 5. Local Z Axis (Diagonal for depth) -->
+    <line x1="20" y1="20" x2="30" y2="10" stroke="white" stroke-width="2" stroke-linecap="round" />
+    <path d="M27.5 11.5L30 10L28.5 7.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+  </g>
+  
+  <!-- Optional: Small "L" or Label for Local context (if strictly needed, but usually implicit) -->
+</svg>
