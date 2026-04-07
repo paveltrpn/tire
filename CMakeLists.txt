@@ -169,10 +169,12 @@ target_link_libraries(qt_window
     Qt::QuickLayouts
 )
 
+# ================================
+# MAIN
+# ================================
 add_executable(${PROJECT_NAME}
     "src/main.cpp"
 )
-
 set_target_properties(${PROJECT_NAME} PROPERTIES AUTOMOC TRUE)
 target_link_libraries(${PROJECT_NAME}
     xcb
