@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 4.2)
 
 set(USE_LATEST_GCC ON)
-#set(USE_SYSTEM_GCC ON)
+# set(USE_SYSTEM_GCC ON)
 
 # Choose compiler toolchain.
 if(USE_SYSTEM_GCC)
@@ -12,10 +12,7 @@ elseif(USE_LATEST_GCC)
     message( "USE LATEST GCC")
     set(CMAKE_C_COMPILER $ENV{GCC_LATEST}/bin/gcc)
     set(CMAKE_CXX_COMPILER $ENV{GCC_LATEST}/bin/g++)
-    add_compile_options(-freflection)
 endif()
-
-add_compile_options(-std=c++26 )
 
 project(tire_ed)
 
@@ -23,7 +20,6 @@ include_directories("src")
 
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
-set(CMAKE_CXX_STANDARD 26)
 
 if (DEFINED ENV{VULKAN_SDK} AND NOT "$ENV{VULKAN_SDK}" STREQUAL "")
     message( "VULKAN_SDK is set to $ENV{VULKAN_SDK}")
@@ -65,12 +61,23 @@ find_package(Qt6 ${QT_VERSION} COMPONENTS
 )
 
 # ================================
+# Module lib/fast_obj
+# ================================
+add_subdirectory(lib/fast_obj)
+
+# ================================
+# Module lib/libtga
+# ================================
+add_subdirectory(lib/libtga)
+
+# ================================
 # Module log
 # ================================
 file(GLOB_RECURSE MOD_LOG_SRC "src/log/*.cpp" "src/log/*.h")
 add_library(log)
 target_sources(log PRIVATE ${MOD_LOG_SRC})
 set_target_properties(log PROPERTIES AUTOMOC TRUE)
+target_compile_options(log PRIVATE -freflection -std=c++26)
 target_link_libraries(log)
 
 # ================================
@@ -80,6 +87,7 @@ file(GLOB_RECURSE MOD_VK_SRC "src/vk/*.cpp" "src/vk/*.h")
 add_library(vk)
 target_sources(vk PRIVATE ${MOD_VK_SRC})
 set_target_properties(vk PROPERTIES AUTOMOC TRUE)
+target_compile_options(vk PRIVATE -freflection -std=c++26)
 target_link_libraries(vk
    vulkan
    log
@@ -92,8 +100,10 @@ file(GLOB_RECURSE MOD_IMAGE_SRC "src/image/*.cpp" "src/image/*.h")
 add_library(image)
 target_sources(image PRIVATE ${MOD_IMAGE_SRC})
 set_target_properties(image PROPERTIES AUTOMOC TRUE)
+target_compile_options(image PRIVATE -freflection -std=c++26)
 target_link_libraries(image
     log
+    libtga
 )
 
 # ================================
@@ -104,6 +114,7 @@ add_library(tired)
 target_sources(tired PRIVATE ${MOD_TIRED_SRC})
 set_target_properties(tired PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(tired PROPERTIES AUTOMOC TRUE)
+target_compile_options(tired PRIVATE -freflection -std=c++26)
 target_link_libraries(tired
     vsg
     vulkan
@@ -129,6 +140,7 @@ target_link_libraries(tired
     vk
     log
     image
+    fast_obj
 )
 
 # ================================
@@ -138,6 +150,7 @@ file(GLOB_RECURSE MOD_TIRED_UI_SRC "src/ui/*.cpp" "src/ui/*.h")
 add_library(tired_ui)
 target_sources(tired_ui PRIVATE ${MOD_TIRED_UI_SRC})
 set_target_properties(tired_ui PROPERTIES AUTOMOC TRUE)
+target_compile_options(tired_ui PRIVATE -freflection -std=c++26)
 target_link_libraries(tired_ui
     vsg
     vk
@@ -158,6 +171,7 @@ file(GLOB MOD_QT_WINDOW_SRC "src/qt_window/*.cpp" "src/qt_window/*.h")
 add_library(qt_window)
 target_sources(qt_window PRIVATE ${MOD_QT_WINDOW_SRC})
 set_target_properties(qt_window PROPERTIES AUTOMOC TRUE)
+target_compile_options(qt_window PRIVATE -freflection -std=c++26)
 target_link_libraries(qt_window
     vsg
     Qt::Core
@@ -176,6 +190,7 @@ add_executable(${PROJECT_NAME}
     "src/main.cpp"
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES AUTOMOC TRUE)
+target_compile_options(${PROJECT_NAME} PRIVATE -freflection -std=c++26)
 target_link_libraries(${PROJECT_NAME}
     xcb
     vsg
