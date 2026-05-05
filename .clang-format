@@ -14,3 +14,17 @@ StatementMacros: [Q_OBJECT, Q_UNUSED, QT_REQUIRE_VERSION]
 Standard: c++11
 AlignOperands: 'true'
 AccessModifierOffset: -4
+BraceWrapping:
+  AfterClass:      false
+  AfterControlStatement: false
+  AfterEnum:       false
+  AfterFunction:   false
+  AfterObjCDeclaration: false
+  AfterStruct:     false
+  AfterUnion:      false
+  BeforeCatch:     false
+  BeforeElse:      false
+  IndentBraces:    false
+
+
+

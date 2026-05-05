@@ -71,12 +71,23 @@ add_subdirectory(lib/fast_obj)
 add_subdirectory(lib/libtga)
 
 # ================================
+# Module algebra
+# ================================
+file(GLOB_RECURSE MOD_ALGEBRA_SRC "src/algebra/*.cpp" "src/algebra/*.h")
+add_library(algebra ${MOD_ALGEBRA_SRC})
+set_target_properties(algebra PROPERTIES AUTOMOC TRUE)
+target_compile_options(algebra PRIVATE -freflection -std=c++26)
+
+# ================================
 # Module log
 # ================================
 file(GLOB_RECURSE MOD_LOG_SRC "src/log/*.cpp" "src/log/*.h")
 add_library(log ${MOD_LOG_SRC})
 set_target_properties(log PROPERTIES AUTOMOC TRUE)
 target_compile_options(log PRIVATE -freflection -std=c++26)
+target_link_libraries(log
+   algebra
+)
 
 # ================================
 # Module vk
