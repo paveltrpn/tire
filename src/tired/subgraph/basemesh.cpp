@@ -29,11 +29,25 @@ auto BasemeshSubgraph::initPipeline() -> void {
     // read texture image
     auto rawData = std::make_unique<Tga>( "/mnt/main/code/tire_ed/assets/textures/Onyx006_color.tga" );
     auto rawDataSize = rawData->width() * rawData->height() * rawData->components();
+
     auto textureData = vsg::ubvec4Array2D::create( rawData->width(), rawData->height() );
     textureData->properties.format = VK_FORMAT_R8G8B8A8_SRGB;
     textureData->properties.dataVariance = vsg::DYNAMIC_DATA;
     std::memcpy( textureData->dataPointer(), rawData->data(), rawDataSize );
     textureData->dirty();
+
+    auto textureImage = vsg::ref_ptr<vsg::Image>{ new vsg::Image{ textureData } };
+    // textureImage->imageType = VK_IMAGE_TYPE_2D;
+    // textureImage->format = VK_FORMAT_R8G8B8A8_SRGB;
+    // textureImage->extent = { width, height, 1 };
+    // textureImage->mipLevels = 1;
+    // textureImage->arrayLayers = 1;
+    // textureImage->samples = VK_SAMPLE_COUNT_1_BIT;
+    // textureImage->tiling = VK_IMAGE_TILING_OPTIMAL;
+    // textureImage->usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+    // textureImage->sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+    auto textureImageView = vsg::ImageView::create( textureImage );
 
     // set up graphics pipeline
     vsg::DescriptorSetLayoutBindings descriptorBindings{
@@ -79,7 +93,7 @@ auto BasemeshSubgraph::initPipeline() -> void {
     sampler->magFilter = VK_FILTER_LINEAR;
     sampler->minFilter = VK_FILTER_LINEAR;
     sampler->mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-    auto imageInfo = vsg::ImageInfo::create( sampler, textureData );
+    auto imageInfo = vsg::ImageInfo::create( sampler, textureImageView );
     auto texture = vsg::DescriptorImage::create( imageInfo, 0, 0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER );
 
     auto descriptorSet = vsg::DescriptorSet::create( descriptorSetLayout, vsg::Descriptors{ texture } );
