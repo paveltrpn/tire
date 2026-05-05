@@ -1,9 +1,8 @@
 
-#include <print>
-
 #include <vsg/all.h>
 
 #include "image/tga.h"
+#include "log/log.h"
 #include "basemesh.h"
 
 namespace tired {
@@ -21,13 +20,13 @@ auto BasemeshSubgraph::initPipeline() -> void {
         VK_SHADER_STAGE_VERTEX_BIT, "main", vsg::findFile( "vert_PushConstants.spv", searchPaths ) );
     vsg::ref_ptr<vsg::ShaderStage> fragmentShader = vsg::ShaderStage::read(
         VK_SHADER_STAGE_FRAGMENT_BIT, "main", vsg::findFile( "frag_PushConstants.spv", searchPaths ) );
+
     if ( !vertexShader || !fragmentShader ) {
-        std::println( "Could not create shaders." );
-        std::terminate();
+        log::fatal()( "Could not create shaders." );
     }
 
     // read texture image
-    auto rawData = std::make_unique<Tga>( "/mnt/main/code/tire_ed/assets/textures/Onyx006_color.tga" );
+    const auto rawData = std::make_unique<Tga>( "/mnt/main/code/tire_ed/assets/textures/Onyx006_color.tga" );
     auto rawDataSize = rawData->width() * rawData->height() * rawData->components();
 
     auto textureData = vsg::ubvec4Array2D::create( rawData->width(), rawData->height() );
@@ -93,7 +92,9 @@ auto BasemeshSubgraph::initPipeline() -> void {
     sampler->magFilter = VK_FILTER_LINEAR;
     sampler->minFilter = VK_FILTER_LINEAR;
     sampler->mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+
     auto imageInfo = vsg::ImageInfo::create( sampler, textureImageView );
+
     auto texture = vsg::DescriptorImage::create( imageInfo, 0, 0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER );
 
     auto descriptorSet = vsg::DescriptorSet::create( descriptorSetLayout, vsg::Descriptors{ texture } );
