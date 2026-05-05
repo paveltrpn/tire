@@ -1,5 +1,3 @@
-module;
-
 #include <utility>
 #include <iostream>
 #include <string>
@@ -7,19 +5,17 @@ module;
 #include <fstream>
 #include <sstream>
 
-export module image:image;
+#include "log/log.h"
 
-import :color;
+namespace tired {
 
-namespace tire {
-
-export enum class IMAGE_DEPTH {
+enum class IMAGE_DEPTH {
     //
     RGB = 24,
     RGBA = 32,
 };
 
-export struct Image {
+struct Image {
     [[nodiscard]]
     auto bpp() const -> int {
         //
@@ -108,7 +104,7 @@ export struct Image {
 protected:
     Image() = default;
 
-    Image( int32_t width, int32_t height, const Colori &dc )
+    Image( int32_t width, int32_t height/*, const Colori &dc */)
         : height_{ height }
         , width_{ width } {
         // NOTE: RGB
@@ -124,9 +120,9 @@ protected:
         // Fill with provided default color.
         for ( int j = 0; j < width_ * height_; j++ ) {
             size_t base = j * components;
-            data_[base + 0] = dc.r();
-            data_[base + 1] = dc.g();
-            data_[base + 2] = dc.b();
+            data_[base + 0] = 0;//dc.r();
+            data_[base + 1] = 0;//dc.g();
+            data_[base + 2] = 0;//dc.b();
         }
     };
 
