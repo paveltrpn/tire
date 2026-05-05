@@ -9,10 +9,9 @@
 
 namespace tired {
 
-Image::Image( int32_t width, int32_t height /*, const Colori &dc */ )
+Image::Image( int32_t width, int32_t height, const Colori& dc )
     : _height{ height }
     , _width{ width } {
-    // NOTE: RGB
     _bpp = static_cast<decltype( _bpp )>( IMAGE_DEPTH::RGBA );
 
     const auto components = _bpp / 8;

@@ -2,6 +2,8 @@
 #include <string>
 #include <cstdint>
 
+#include "color.h"
+
 namespace tired {
 
 enum class IMAGE_DEPTH {
@@ -34,7 +36,7 @@ struct Image {
 protected:
     Image() = default;
 
-    Image( int32_t width, int32_t height /*, const Colori &dc */ );
+    Image( int32_t width, int32_t height, const Colori &dc );
     explicit Image( const Image &other );
     explicit Image( Image &&other ) noexcept;
 
