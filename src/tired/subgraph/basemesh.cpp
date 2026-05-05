@@ -3,6 +3,7 @@
 
 #include <vsg/all.h>
 
+#include "image/tga.h"
 #include "basemesh.h"
 
 namespace tired {
@@ -26,12 +27,25 @@ auto BasemeshSubgraph::initPipeline() -> void {
     }
 
     // read texture image
+    auto rawData = std::make_unique<Tga>( "/mnt/main/code/tire_ed/assets/textures/Onyx006_color.tga" );
+    auto rawDataSize = rawData->width() * rawData->height() * rawData->components();
+    auto vsgData = vsg::ubyteArray::create( rawDataSize );
+    std::memcpy( vsgData->dataPointer(), rawData->data(), rawDataSize );
+    auto imageData = vsg::ubyteArray2D::create( rawData->width(), rawData->height(), vsgData->data() );
+    auto textureImage = vsg::Image::create( imageData );
+    textureImage->format = VK_FORMAT_R8G8B8A8_SRGB;
+    auto textureData = vsg::ref_ptr<vsg::Data>( dynamic_cast<vsg::Data*>( textureImage.get() ) );
+
+    // read texture image
     vsg::Path textureFile( "textures/lz.vsgb" );
-    auto textureData = vsg::read_cast<vsg::Data>( vsg::findFile( textureFile, searchPaths ) );
-    if ( !textureData ) {
+    auto textureData1 = vsg::read_cast<vsg::Data>( vsg::findFile( textureFile, searchPaths ) );
+    if ( !textureData1 ) {
         std::println( "Could not read texture file : {} ", textureFile );
         std::terminate();
     }
+
+    qDebug() << "=============== " << textureData1->properties.format;
+    // qDebug() << "=============== " << textureData1->properties.;
 
     // set up graphics pipeline
     vsg::DescriptorSetLayoutBindings descriptorBindings{

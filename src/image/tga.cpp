@@ -8,6 +8,7 @@
 #include "log/log.h"
 
 namespace tired {
+
 Tga::Tga( std::string_view fname ) {
     uint8_t color[4] = { 0, 0, 0, 255 };
     uint8_t blockInfo{}, isPacked{};
@@ -23,7 +24,7 @@ Tga::Tga( std::string_view fname ) {
 
     // Read header.
     std::array<std::byte, TGA_HEADER_SIZE> header{};
-    _fileStream.read( reinterpret_cast<char *>( &header ), TGA_HEADER_SIZE );
+    _fileStream.read( reinterpret_cast<char*>( &header ), TGA_HEADER_SIZE );
     _header.identsize = static_cast<uint8_t>( header[0] );
     _header.colorMapType = static_cast<uint8_t>( header[1] );
     _header.imageType = static_cast<uint8_t>( header[2] );
@@ -35,7 +36,7 @@ Tga::Tga( std::string_view fname ) {
     _header.width = static_cast<uint8_t>( header[12] ) + static_cast<uint16_t>( header[13] ) * 256;
     _header.height = static_cast<uint8_t>( header[14] ) + static_cast<uint16_t>( header[15] ) * 256;
     _header.bits = static_cast<uint8_t>( header[16] );
-    _header.descriptor = static_cast<uint8_t>( header[7] );
+    _header.descriptor = static_cast<uint8_t>( header[17] );
 
     if ( ( _header.bits != 24 ) && ( _header.bits != 32 ) ) {
         throw std::runtime_error(
@@ -114,4 +115,5 @@ Tga::Tga( std::string_view fname ) {
 
     _fileStream.close();
 }
+
 }  // namespace tired
