@@ -10,88 +10,88 @@
 namespace tired {
 
 Image::Image( int32_t width, int32_t height /*, const Colori &dc */ )
-    : height_{ height }
-    , width_{ width } {
+    : _height{ height }
+    , _width{ width } {
     // NOTE: RGB
-    bpp_ = static_cast<decltype( bpp_ )>( IMAGE_DEPTH::RGBA );
+    _bpp = static_cast<decltype( _bpp )>( IMAGE_DEPTH::RGBA );
 
-    const auto components = bpp_ / 8;
+    const auto components = _bpp / 8;
 
-    data_ = new uint8_t[width_ * height_ * components];
+    _data = new uint8_t[_width * _height * components];
 
     // Zeroed canvas color.
     // std::fill( data_, data_ + width_ * height_ * components, 0 );
 
     // Fill with provided default color.
-    for ( int j = 0; j < width_ * height_; j++ ) {
+    for ( int j = 0; j < _width * _height; j++ ) {
         size_t base = j * components;
-        data_[base + 0] = 0;  //dc.r();
-        data_[base + 1] = 0;  //dc.g();
-        data_[base + 2] = 0;  //dc.b();
+        _data[base + 0] = 0;  //dc.r();
+        _data[base + 1] = 0;  //dc.g();
+        _data[base + 2] = 0;  //dc.b();
     }
 };
 
 Image::Image( const Image& other )
-    : bpp_{ other.bpp_ }
-    , components_{ bpp_ / 8 }
-    , width_{ other.width_ }
-    , height_{ other.height_ }
-    , data_{ new uint8_t[width_ * height_ * components_] } {
+    : _bpp{ other._bpp }
+    , _components{ _bpp / 8 }
+    , _width{ other._width }
+    , _height{ other._height }
+    , _data{ new uint8_t[_width * _height * _components] } {
     //
-    std::copy( other.data_, other.data_ + width_ * height_ * components_, data_ );
+    std::copy( other._data, other._data + _width * _height * _components, _data );
 }
 
 Image::Image( Image&& other ) noexcept {
-    bpp_ = std::exchange( other.bpp_, 0 );
-    components_ = std::exchange( other.components_, 0 );
-    width_ = std::exchange( other.width_, 0 );
-    height_ = std::exchange( other.height_, 0 );
-    data_ = std::exchange( other.data_, nullptr );
+    _bpp = std::exchange( other._bpp, 0 );
+    _components = std::exchange( other._components, 0 );
+    _width = std::exchange( other._width, 0 );
+    _height = std::exchange( other._height, 0 );
+    _data = std::exchange( other._data, nullptr );
 }
 
 Image::~Image() {
     //
-    delete[] data_;
+    delete[] _data;
 };
 
 auto Image::bpp() const -> int {
     //
-    return bpp_;
+    return _bpp;
 };
 
 auto Image::components() const -> int {
     //
-    return components_;
+    return _components;
 };
 
 auto Image::width() const -> int {
     //
-    return width_;
+    return _width;
 };
 
 auto Image::height() const -> int {
     //
-    return height_;
+    return _height;
 };
 
 auto Image::data() const -> uint8_t* {
     //
-    return data_;
+    return _data;
 };
 
 auto Image::asPPM() const -> std::string {
     auto stream = std::stringstream{};
-    const auto components = bpp_ / 8;
+    const auto components = _bpp / 8;
 
     // Write header.
-    stream << "P3\n" << width_ << ' ' << height_ << "\n255\n";
+    stream << "P3\n" << _width << ' ' << _height << "\n255\n";
 
     // Write body.
-    for ( int j = 0; j < width_ * height_; j++ ) {
+    for ( int j = 0; j < _width * _height; j++ ) {
         size_t base = j * components;
-        const auto ir = static_cast<int>( data_[base + 0] );
-        const auto ig = static_cast<int>( data_[base + 1] );
-        const auto ib = static_cast<int>( data_[base + 2] );
+        const auto ir = static_cast<int>( _data[base + 0] );
+        const auto ig = static_cast<int>( _data[base + 1] );
+        const auto ib = static_cast<int>( _data[base + 2] );
 
         stream << ir << ' ' << ig << ' ' << ib << '\n';
     }

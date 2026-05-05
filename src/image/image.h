@@ -51,19 +51,19 @@ protected:
 private:
     auto swap( Image &other ) noexcept -> void {
         using std::swap;
-        swap( bpp_, other.bpp_ );
-        swap( components_, other.components_ );
-        swap( width_, other.width_ );
-        swap( height_, other.height_ );
-        swap( data_, other.data_ );
+        swap( _bpp, other._bpp );
+        swap( _components, other._components );
+        swap( _width, other._width );
+        swap( _height, other._height );
+        swap( _data, other._data );
     }
 
 protected:
-    int bpp_{};
-    int components_{};
-    int width_{};
-    int height_{};
-    uint8_t *data_{};
+    int _bpp{};
+    int _components{};
+    int _width{};
+    int _height{};
+    uint8_t *_data{};
 };
 
 }  // namespace tired
