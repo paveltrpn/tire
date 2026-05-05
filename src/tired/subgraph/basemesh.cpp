@@ -4,6 +4,7 @@
 #include <vsg/all.h>
 
 #include "image/tga.h"
+#include "log/log.h"
 #include "basemesh.h"
 
 namespace tired {
@@ -27,16 +28,6 @@ auto BasemeshSubgraph::initPipeline() -> void {
     }
 
     // read texture image
-    auto rawData = std::make_unique<Tga>( "/mnt/main/code/tire_ed/assets/textures/Onyx006_color.tga" );
-    auto rawDataSize = rawData->width() * rawData->height() * rawData->components();
-    auto vsgData = vsg::ubyteArray::create( rawDataSize );
-    std::memcpy( vsgData->dataPointer(), rawData->data(), rawDataSize );
-    auto imageData = vsg::ubyteArray2D::create( rawData->width(), rawData->height(), vsgData->data() );
-    auto textureImage = vsg::Image::create( imageData );
-    textureImage->format = VK_FORMAT_R8G8B8A8_SRGB;
-    auto textureData = vsg::ref_ptr<vsg::Data>( dynamic_cast<vsg::Data*>( textureImage.get() ) );
-
-    // read texture image
     vsg::Path textureFile( "textures/lz.vsgb" );
     auto textureData1 = vsg::read_cast<vsg::Data>( vsg::findFile( textureFile, searchPaths ) );
     if ( !textureData1 ) {
@@ -44,8 +35,31 @@ auto BasemeshSubgraph::initPipeline() -> void {
         std::terminate();
     }
 
-    qDebug() << "=============== " << textureData1->properties.format;
-    // qDebug() << "=============== " << textureData1->properties.;
+    // read texture image
+    auto rawData = std::make_unique<Tga>( "/mnt/main/code/tire_ed/assets/textures/Onyx006_color.tga" );
+    auto rawDataSize = rawData->width() * rawData->height() * rawData->components();
+
+    auto vsgData = vsg::ubyteArray::create( rawDataSize );
+    std::memcpy( vsgData->dataPointer(), rawData->data(), rawDataSize );
+
+    auto imageData = vsg::ubyteArray2D::create( rawData->width(), rawData->height(), vsgData->data() );
+    imageData->properties.format = VK_FORMAT_R8G8B8A8_SRGB;
+    imageData->properties.stride = 0;
+    imageData->properties.mipLevels = 0;
+    imageData->properties.blockWidth = 1;
+    imageData->properties.blockHeight = 1;
+    imageData->properties.blockDepth = 1;
+    imageData->properties.origin = vsg::Origin::TOP_LEFT;
+    imageData->properties.imageViewType = -1;
+    imageData->properties.dataVariance = vsg::DataVariance::STATIC_DATA;
+    imageData->properties.allocatorType = vsg::AllocatorType::ALLOCATOR_TYPE_VSG_ALLOCATOR;
+
+    auto textureImage = vsg::Image::create( imageData );
+    auto d = dynamic_cast<vsg::Data*>( textureImage.get() );
+    if ( !d ) {
+        log::error()( " ===== bad cast" );
+    }
+    auto textureData = vsg::ref_ptr<vsg::Data>( d );
 
     // set up graphics pipeline
     vsg::DescriptorSetLayoutBindings descriptorBindings{
@@ -87,8 +101,13 @@ auto BasemeshSubgraph::initPipeline() -> void {
     auto bindGraphicsPipeline = vsg::BindGraphicsPipeline::create( graphicsPipeline );
 
     // create texture image and associated DescriptorSets and binding
-    auto texture = vsg::DescriptorImage::create( vsg::Sampler::create(), textureData, 0, 0,
-                                                 VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER );
+    auto sampler = vsg::Sampler::create();
+    sampler->magFilter = VK_FILTER_LINEAR;
+    sampler->minFilter = VK_FILTER_LINEAR;
+    sampler->mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+
+    auto texture =
+        vsg::DescriptorImage::create( sampler, textureData1, 0, 0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER );
 
     auto descriptorSet = vsg::DescriptorSet::create( descriptorSetLayout, vsg::Descriptors{ texture } );
     auto bindDescriptorSet =
