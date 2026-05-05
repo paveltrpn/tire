@@ -1,12 +1,10 @@
 
 #pragma once
 
-#include <sstream>
 #include <iostream>
 #include <format>
 #include <source_location>
 #include <exception>
-#include <cstring>
 
 namespace tired::log {
 
@@ -41,31 +39,9 @@ namespace tired::log {
  * inverse off      27
  **/
 
-auto elideRight( const char *str, int after ) -> std::string {
-    const auto length = std::strlen( str );
-    auto elided = std::stringstream{};
+auto elideRight( const char *str, int after ) -> std::string ;
+auto elideLeft( const char *str, int after ) -> std::string;
 
-    if ( length > after ) {
-        elided << std::format( "{}...", std::string_view( str ).substr( 0, length - after ) );
-    } else {
-        elided << str;
-    }
-
-    return elided.str();
-}
-
-auto elideLeft( const char *str, int after ) -> std::string {
-    const auto length = std::strlen( str );
-    auto elided = std::stringstream{};
-
-    if ( length > after ) {
-        elided << std::format( "...{}", std::string_view( str ).substr( length - after, length ) );
-    } else {
-        elided << str;
-    }
-
-    return elided.str();
-}
 
 #define ELIDE_AFTER 18
 #define LOG_FILE std::cout
@@ -165,8 +141,10 @@ auto elideLeft( const char *str, int after ) -> std::string {
         }
     }
 
-    auto fatal( const std::source_location &location = std::source_location::current() ) {
-        return [&, location]<typename... Ts>( std::format_string<Ts...> msg = "", Ts &&...args ) -> void {
+     template <bool enable = ENABLE_ERROR_OUTPUT>
+    auto fatal( const std::source_location &location = std::source_location::current() )
+    {
+        return [&, location]<typename... Ts>( std::format_string<Ts...> msg = "", Ts &&...args ) -> void{
             constexpr char preamble[] = "\033[3;31m[fatal] \033[0m";
             const auto message = std::vformat( msg.get(), std::make_format_args( args... ) );
 

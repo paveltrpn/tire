@@ -74,11 +74,9 @@ add_subdirectory(lib/libtga)
 # Module log
 # ================================
 file(GLOB_RECURSE MOD_LOG_SRC "src/log/*.cpp" "src/log/*.h")
-add_library(log)
-target_sources(log PRIVATE ${MOD_LOG_SRC})
+add_library(log ${MOD_LOG_SRC})
 set_target_properties(log PROPERTIES AUTOMOC TRUE)
 target_compile_options(log PRIVATE -freflection -std=c++26)
-target_link_libraries(log)
 
 # ================================
 # Module vk

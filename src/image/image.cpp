@@ -4,8 +4,8 @@
 #include <fstream>
 #include <sstream>
 
-#include "log/log.h"
 #include "image.h"
+#include "log/log.h"
 
 namespace tired {
 
