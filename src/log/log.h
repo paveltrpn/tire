@@ -141,7 +141,7 @@ auto elideLeft( const char *str, int after ) -> std::string;
         }
     }
 
-     template <bool enable = ENABLE_ERROR_OUTPUT>
+    template <bool enable = true>
     auto fatal( const std::source_location &location = std::source_location::current() )
     {
         return [&, location]<typename... Ts>( std::format_string<Ts...> msg = "", Ts &&...args ) -> void{

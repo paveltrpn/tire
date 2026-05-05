@@ -82,8 +82,7 @@ target_compile_options(log PRIVATE -freflection -std=c++26)
 # Module vk
 # ================================
 file(GLOB_RECURSE MOD_VK_SRC "src/vk/*.cpp" "src/vk/*.h")
-add_library(vk)
-target_sources(vk PRIVATE ${MOD_VK_SRC})
+add_library(vk ${MOD_VK_SRC})
 set_target_properties(vk PROPERTIES AUTOMOC TRUE)
 target_compile_options(vk PRIVATE -freflection -std=c++26)
 target_link_libraries(vk
@@ -95,8 +94,7 @@ target_link_libraries(vk
 # Module image
 # ================================
 file(GLOB_RECURSE MOD_IMAGE_SRC "src/image/*.cpp" "src/image/*.h")
-add_library(image)
-target_sources(image PRIVATE ${MOD_IMAGE_SRC})
+add_library(image ${MOD_IMAGE_SRC})
 set_target_properties(image PROPERTIES AUTOMOC TRUE)
 target_compile_options(image PRIVATE -freflection -std=c++26)
 target_link_libraries(image
@@ -108,8 +106,7 @@ target_link_libraries(image
 # Module tired
 # ================================
 file(GLOB_RECURSE MOD_TIRED_SRC "src/tired/*.cpp" "src/tired/*.h")
-add_library(tired)
-target_sources(tired PRIVATE ${MOD_TIRED_SRC})
+add_library(tired ${MOD_TIRED_SRC})
 set_target_properties(tired PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(tired PROPERTIES AUTOMOC TRUE)
 target_compile_options(tired PRIVATE -freflection -std=c++26)
@@ -145,8 +142,7 @@ target_link_libraries(tired
 # Module tired_ui
 # ================================
 file(GLOB_RECURSE MOD_TIRED_UI_SRC "src/ui/*.cpp" "src/ui/*.h")
-add_library(tired_ui)
-target_sources(tired_ui PRIVATE ${MOD_TIRED_UI_SRC})
+add_library(tired_ui ${MOD_TIRED_UI_SRC})
 set_target_properties(tired_ui PROPERTIES AUTOMOC TRUE)
 target_compile_options(tired_ui PRIVATE -freflection -std=c++26)
 target_link_libraries(tired_ui
@@ -166,8 +162,7 @@ target_link_libraries(tired_ui
 # Module qt_window
 # ================================
 file(GLOB MOD_QT_WINDOW_SRC "src/qt_window/*.cpp" "src/qt_window/*.h")
-add_library(qt_window)
-target_sources(qt_window PRIVATE ${MOD_QT_WINDOW_SRC})
+add_library(qt_window ${MOD_QT_WINDOW_SRC})
 set_target_properties(qt_window PROPERTIES AUTOMOC TRUE)
 target_compile_options(qt_window PRIVATE -freflection -std=c++26)
 target_link_libraries(qt_window
