@@ -40,7 +40,7 @@ signals:
     void selectedChanged();
 
 protected:
-    vsg::ref_ptr<SceneObjectGraph> _root{};
+    vsg::ref_ptr<SceneObjectGraph> _thisObjectRoot{};
 
 private:
     bool _selected{ false };

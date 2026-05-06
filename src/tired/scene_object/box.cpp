@@ -60,7 +60,7 @@ Box::Box( const BoxObjectData& data )
     tr->matrix = vsg::translate( _data.position() ) * ( rtX * rtY * rtZ ) * vsg::scale( _data.scale() );
     tr->addChild( drawCommands );
 
-    _root->addChild( tr );
+    _thisObjectRoot->addChild( tr );
 }
 
 auto Box::data() const -> tired::BoxObjectData const& {
