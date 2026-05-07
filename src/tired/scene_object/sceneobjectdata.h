@@ -13,7 +13,6 @@
 namespace tired {
 
 enum class SceneObjectTypeEnum {
-    //
     BASE = 0,
     BOX,
     SPHERE,
