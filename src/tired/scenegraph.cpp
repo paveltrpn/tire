@@ -11,24 +11,24 @@ Scenegraph::Scenegraph( vsg::Viewer* viewer, QObject* parent )
     , _viewer{ viewer }
     , _testbox{ new Testbox{ viewer } }
     , _grid{ new Grid{ viewer, this } }
-    , _basemeshSubgraph{ new SceneObjectSubgraph{ viewer } }
-    , _obstaclesSubgraph{ new ObstaclesSubgraph{ viewer } } {
+    , _sceneObjectSubgraph{ new SceneObjectSubgraph{ viewer } }
+    , _markerSubgraph{ new MarkerSubgraph{ viewer } } {
     //
 
     // Draw red box.
     _testbox->initPipeline();
     _testbox->initDrawCommand();
 
-    _basemeshSubgraph->initPipeline();
-    _obstaclesSubgraph->initPipeline();
+    _sceneObjectSubgraph->initPipeline();
+    _markerSubgraph->initPipeline();
 
     // Enable test box.
     _root->addChild( _testbox );
 
     _root->addChild( _grid->grid() );
 
-    _root->addChild( _basemeshSubgraph );
-    _root->addChild( _obstaclesSubgraph );
+    _root->addChild( _sceneObjectSubgraph );
+    _root->addChild( _markerSubgraph );
 }
 
 auto Scenegraph::root() -> vsg::ref_ptr<vsg::Group> {
@@ -47,7 +47,7 @@ void Scenegraph::addExBox( float px, float py, float pz, float rx, float ry, flo
 
     auto exbox = std::make_shared<object::Box>( data );
 
-    _basemeshSubgraph->link( exbox );
+    _sceneObjectSubgraph->link( exbox );
     _objectsList.push_back( std::move( exbox ) );
 }
 
