@@ -8,7 +8,6 @@ Tire Editor is a lightweight 3D scene editor built with:
 
 - **Vulkan** via VulkanSceneGraph (VSG) for modern GPU rendering
 - **Qt 6.10** for the user interface
-- **C++26** with experimental reflection support (`-freflection`)
 
 The editor provides a split-pane UI with a 3D viewport, object manipulation controls, and dynamic primitive generation (boxes, spheres, cylinders) with configurable properties.
 
