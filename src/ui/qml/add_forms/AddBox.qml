@@ -183,7 +183,7 @@ Rectangle {
             const sy = parseFloat(sclYInput.text)
             const sz = parseFloat(sclZInput.text)
 
-            Scenegraph.addExBox(px, py, pz, rx, ry, rz, sx, sy, sz)
+            Tired.scenegraph.addExBox(px, py, pz, rx, ry, rz, sx, sy, sz)
 
             resetAll()
             leftPanelMainComponent.resetAllButtons()
