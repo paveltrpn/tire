@@ -281,6 +281,54 @@ private:
 
 // ==========================================================================================================
 
+struct CylinderObjectData final
+    : public SceneObjectData
+    , public IHasCollision {
+    Q_GADGET
+
+public:
+    CylinderObjectData() = default;
+
+    CylinderObjectData( const CylinderObjectData &other ) = default;
+    CylinderObjectData( CylinderObjectData &&other ) = default;
+
+    CylinderObjectData &operator=( const CylinderObjectData &other ) = default;
+    CylinderObjectData &operator=( CylinderObjectData &&other ) = default;
+
+    auto getShape() -> void override{
+        //
+        // TODO: implement interface
+    };
+
+    QJsonObject toJson() const override {
+        auto base = SceneObjectData::toJson();
+
+        const auto self = QJsonObject{
+            { "radius", _radius },
+            { "height", _height },
+        };
+
+        base.insert( "derived", self );
+
+        return base;
+    };
+
+    void fromJson( const QJsonObject &data ) override {
+        SceneObjectData::fromJson( data );
+
+        const auto &derived = data.value( "derived" ).toObject();
+
+        _radius = derived.value( "radius" ).toDouble();
+        _height = derived.value( "height" ).toDouble();
+    }
+
+private:
+    double _radius{};
+    double _height{};
+};
+
+// ==========================================================================================================
+
 struct MeshData final
     : public SceneObjectData
     , public IHasCollision
