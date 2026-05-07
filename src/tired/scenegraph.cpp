@@ -11,7 +11,7 @@ Scenegraph::Scenegraph( vsg::Viewer* viewer, QObject* parent )
     , _viewer{ viewer }
     , _testbox{ new Testbox{ viewer } }
     , _grid{ new Grid{ viewer, this } }
-    , _basemeshSubgraph{ new BasemeshSubgraph{ viewer } }
+    , _basemeshSubgraph{ new SceneObjectSubgraph{ viewer } }
     , _obstaclesSubgraph{ new ObstaclesSubgraph{ viewer } } {
     //
 

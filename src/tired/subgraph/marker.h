@@ -1,16 +1,17 @@
-
 #pragma once
+
+#include <vsg/all.h>
 
 #include "subgraph.h"
 
 namespace tired {
 
-struct BasemeshSubgraph final : Subgraph {
-    BasemeshSubgraph( vsg::Viewer* viewer );
+struct MarkerSubgraph final : Subgraph {
+    MarkerSubgraph( vsg::Viewer* viewer );
 
     auto initPipeline() -> void override;
 
 private:
 };
 
-}  // namespace tired
+}

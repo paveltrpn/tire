@@ -3,15 +3,15 @@
 
 #include "image/tga.h"
 #include "log/log.h"
-#include "basemesh.h"
+#include "sceneobject.h"
 
 namespace tired {
 
-BasemeshSubgraph::BasemeshSubgraph( vsg::Viewer* viewer )
+SceneObjectSubgraph::SceneObjectSubgraph( vsg::Viewer* viewer )
     : Subgraph{ viewer } {
 }
 
-auto BasemeshSubgraph::initPipeline() -> void {
+auto SceneObjectSubgraph::initPipeline() -> void {
     // load shaders
     vsg::Paths searchPaths =
         std::vector<vsg::Path>{ "/mnt/main/code/tire_ed/shaders/spirv", "/mnt/main/code/tire_ed/assets" };

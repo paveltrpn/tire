@@ -7,7 +7,7 @@
 
 #include "subgraph/grid.h"
 #include "subgraph/testbox.h"
-#include "subgraph/basemesh.h"
+#include "subgraph/sceneobject.h"
 #include "subgraph/obstacles.h"
 
 namespace tired {
@@ -31,7 +31,7 @@ private:
 
     vsg::ref_ptr<Testbox> _testbox{};
     Grid* _grid{};
-    vsg::ref_ptr<BasemeshSubgraph> _basemeshSubgraph{};
+    vsg::ref_ptr<SceneObjectSubgraph> _basemeshSubgraph{};
     vsg::ref_ptr<ObstaclesSubgraph> _obstaclesSubgraph{};
 
     std::vector<std::shared_ptr<SceneObjectBase>> _objectsList{};
