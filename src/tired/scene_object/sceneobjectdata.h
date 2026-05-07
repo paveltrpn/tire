@@ -8,7 +8,8 @@
 
 #include <vsg/all.h>
 
-#include "extension_interfaces.h"
+#include "ihasmaterial.h"
+#include "ihascollision.h"
 
 namespace tired {
 
