@@ -47,10 +47,10 @@ signals:
     void gridChanged();
 
 private:
-    std::shared_ptr<vk::Context> context_{};
+    std::shared_ptr<vk::Context> _context{};
 
-    vsg::ref_ptr<Viewer> viewer_{};
-    vsg::ref_ptr<vsg::Camera> camera_{};
+    vsg::ref_ptr<Viewer> _viewer{};
+    vsg::ref_ptr<vsg::Camera> _camera{};
 
     Manipulator* _manipulator{};
     InputHandler* _inputHandler{};
