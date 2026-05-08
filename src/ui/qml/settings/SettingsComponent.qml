@@ -30,6 +30,8 @@ Rectangle {
             anchors.top: parent.top
             height: parent.height
 
+            topLeftRadius: _radius.half
+
             font: _fonts.text_body_accent
         }
 
@@ -38,6 +40,8 @@ Rectangle {
 
             anchors.top: parent.top
             height: parent.height
+
+            topRightRadius: _radius.half
 
             font: _fonts.text_body_accent
         }

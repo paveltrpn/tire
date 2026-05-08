@@ -13,6 +13,9 @@ TabButton {
 
     property color backgroundColor: _color.background_overlay_40
 
+    property alias topLeftRadius: backgroundItem.topLeftRadius
+    property alias topRightRadius: backgroundItem.topRightRadius
+
     states: [
         State {
             when: control.down
@@ -51,12 +54,10 @@ TabButton {
 
     // Custom Background & Indicator
     background: Rectangle {
+        id: backgroundItem
         implicitWidth: 100
         implicitHeight: 40
 
         color: control.backgroundColor
-
-        topLeftRadius: _radius.half
-        topRightRadius: _radius.half
     }
 }

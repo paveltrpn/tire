@@ -12,8 +12,5 @@ Rectangle {
     readonly property var _radius: Appearence.radius
     readonly property var _color: Appearence.colors
 
-    bottomLeftRadius:  _radius.half
-    bottomRightRadius:  _radius.half
-
     color: "blue"//_color.background_overlay_60
 }
