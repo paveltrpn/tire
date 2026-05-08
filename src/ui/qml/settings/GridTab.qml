@@ -5,6 +5,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import Tire 1.0
+import "../components"
 
 Rectangle {
     id: gridComponent
@@ -40,7 +41,7 @@ Rectangle {
         Loader {
             sourceComponent: gridParameter
             Layout.preferredWidth: parent.width
-            Layout.preferredHeight: 16
+            Layout.preferredHeight: 24
 
             onLoaded: item.parameterlabel = "gridSize"
         }
@@ -48,7 +49,7 @@ Rectangle {
         Loader {
             sourceComponent: gridParameter
             Layout.preferredWidth: parent.width
-            Layout.preferredHeight: 16
+            Layout.preferredHeight: 24
 
             onLoaded: item.parameterlabel = "lineThickness"
         }
@@ -56,7 +57,7 @@ Rectangle {
         Loader {
             sourceComponent: gridParameter
             Layout.preferredWidth: parent.width
-            Layout.preferredHeight: 16
+            Layout.preferredHeight: 24
 
             onLoaded: item.parameterlabel = "maxRange"
         }
@@ -64,7 +65,7 @@ Rectangle {
         Loader {
             sourceComponent: gridParameter
             Layout.preferredWidth: parent.width
-            Layout.preferredHeight: 16
+            Layout.preferredHeight: 24
 
             onLoaded: item.parameterlabel = "zoomSensitivity"
         }
@@ -72,7 +73,7 @@ Rectangle {
         Loader {
             sourceComponent: gridParameter
             Layout.preferredWidth: parent.width
-            Layout.preferredHeight: 16
+            Layout.preferredHeight: 24
 
             onLoaded: item.parameterlabel = "majorDivisor"
         }
@@ -80,7 +81,7 @@ Rectangle {
         Loader {
             sourceComponent: gridParameter
             Layout.preferredWidth: parent.width
-            Layout.preferredHeight: 16
+            Layout.preferredHeight: 24
 
             onLoaded: item.parameterlabel = "gridScale"
         }
@@ -88,7 +89,7 @@ Rectangle {
         Loader {
             sourceComponent: gridParameter
             Layout.preferredWidth: parent.width
-            Layout.preferredHeight: 16
+            Layout.preferredHeight: 24
 
             onLoaded: item.parameterlabel = "gridZOffset"
         }
@@ -104,7 +105,7 @@ Rectangle {
             property string parameterlabel
 
             Text {
-                id: posLabel
+                id: paramLabel
                 anchors {
                     top: parent.top
                     bottom: parent.bottom
@@ -114,8 +115,25 @@ Rectangle {
 
                 text: gridParameterWrapper.parameterlabel
 
+                verticalAlignment: Text.AlignVCenter
+
                 color: _color.main_contrast
                 font: _fonts.label
+            }
+
+            TiredTextInput {
+                id: paramValue
+
+                anchors {
+                    top: parent.top
+                    bottom: parent.bottom
+                    right: parent.right
+                    rightMargin: 8
+                }
+
+                width: 64
+
+                text: "0.0"
             }
         }
     }

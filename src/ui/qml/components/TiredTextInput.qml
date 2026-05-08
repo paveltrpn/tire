@@ -16,7 +16,8 @@ TextInput {
     color: _color.main_contrast
     font: _fonts.label
     verticalAlignment: Text.AlignVCenter
-    padding: _gaps.half
+
+    leftPadding: _gaps.full
 
     clip: true
 
@@ -27,7 +28,7 @@ TextInput {
 
         border.color: _color.main_contrast_20
         border.width: 2
-        radius: _radius.half
+        radius: _radius.quarter
 
         MouseArea {
             id: inputArea

@@ -49,21 +49,25 @@ Rectangle {
             right: parent.right
             rightMargin: _gaps.half
         }
+
         height: 24
 
         TiredTextInput {
             id: posXInput
             Layout.preferredWidth: posInputRow.width / 3.3
+            Layout.preferredHeight: parent.height
             text: "0.0"
         }
         TiredTextInput {
             id: posYInput
             Layout.preferredWidth: posInputRow.width / 3.3
+            Layout.preferredHeight: parent.height
             text: "0.0"
         }
         TiredTextInput {
             id: posZInput
             Layout.preferredWidth: posInputRow.width / 3.3
+            Layout.preferredHeight: parent.height
             text: "0.0"
         }
     }
@@ -101,16 +105,19 @@ Rectangle {
         TiredTextInput {
             id: rotXInput
             Layout.preferredWidth: posInputRow.width / 3.3
+            Layout.preferredHeight: parent.height
             text: "0.0"
         }
         TiredTextInput {
             id: rotYInput
             Layout.preferredWidth: posInputRow.width / 3.3
+            Layout.preferredHeight: parent.height
             text: "0.0"
         }
         TiredTextInput {
             id: rotZInput
             Layout.preferredWidth: posInputRow.width / 3.3
+            Layout.preferredHeight: parent.height
             text: "0.0"
         }
     }
@@ -143,21 +150,24 @@ Rectangle {
             right: parent.right
             rightMargin: _gaps.half
         }
-        height: 20
+        height: 24
 
         TiredTextInput {
             id: sclXInput
             Layout.preferredWidth: posInputRow.width / 3.3
+            Layout.preferredHeight: parent.height
             text: "1.0"
         }
         TiredTextInput {
             id: sclYInput
             Layout.preferredWidth: posInputRow.width / 3.3
+            Layout.preferredHeight: parent.height
             text: "1.0"
         }
         TiredTextInput {
             id: sclZInput
             Layout.preferredWidth: posInputRow.width / 3.3
+            Layout.preferredHeight: parent.height
             text: "1.0"
         }
     }
