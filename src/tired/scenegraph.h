@@ -29,8 +29,8 @@ private:
     vsg::ref_ptr<vsg::Group> _root{};
     vsg::Viewer* _viewer;
 
-    vsg::ref_ptr<Testbox> _testbox{};
     Grid* _grid{};
+    vsg::ref_ptr<Testbox> _testbox{};
     vsg::ref_ptr<SceneObjectSubgraph> _sceneObjectSubgraph{};
     vsg::ref_ptr<MarkerSubgraph> _markerSubgraph{};
 

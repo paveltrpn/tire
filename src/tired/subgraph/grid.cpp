@@ -17,6 +17,34 @@ auto Grid::grid() const -> vsg::ref_ptr<GridSubgraph> {
     return _grid;
 }
 
+float Grid::gridSize() {
+    return _grid->_gridSize;
+};
+
+float Grid::lineThickness() {
+    return _grid->_lineThickness;
+};
+
+float Grid::maxRange() {
+    return _grid->_maxRange;
+};
+
+float Grid::zoomSensitivity() {
+    return _grid->_zoomSensitivity;
+};
+
+float Grid::majorDivisor() {
+    return _grid->_majorDivisor;
+};
+
+float Grid::gridScale() {
+    return _grid->_gridScale;
+};
+
+float Grid::gridZOffset() {
+    return _grid->_gridZOffset;
+};
+
 void Grid::setGridSize( float value ) {
     _grid->_gridSize = value;
     _grid->updateGridBufUniformValue();
