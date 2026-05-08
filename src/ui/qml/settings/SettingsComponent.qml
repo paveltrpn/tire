@@ -29,6 +29,8 @@ Rectangle {
 
             anchors.top: parent.top
             height: parent.height
+
+            font: _fonts.text_body_accent
         }
 
         NpTabButton {
@@ -36,6 +38,8 @@ Rectangle {
 
             anchors.top: parent.top
             height: parent.height
+
+            font: _fonts.text_body_accent
         }
     }
 
