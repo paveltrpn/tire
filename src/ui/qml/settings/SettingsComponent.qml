@@ -21,21 +21,21 @@ Rectangle {
     TabBar {
         id: settingsTabBar
 
-        height: 48
+        height: 32
         width: parent.width
 
         NpTabButton {
             text: qsTr("Grid")
 
             anchors.top: parent.top
-            height: 48
+            height: parent.height
         }
 
         NpTabButton {
             text: qsTr("Test box")
 
             anchors.top: parent.top
-            height: 48
+            height: parent.height
         }
     }
 
@@ -49,18 +49,22 @@ Rectangle {
 
         currentIndex: settingsTabBar.currentIndex
 
-        TestBox {
-            id: testBoxTab
-
+        Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
+            GridTab {
+                id: gridTab
+                anchors.fill: parent
+            }
         }
 
-        Grid {
-            id: gridTab
-
+        Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
+            TestBoxTab {
+                id: testBoxTab
+                anchors.fill: parent
+            }
         }
     }
 }
