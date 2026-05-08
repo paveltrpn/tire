@@ -22,7 +22,7 @@ Rectangle {
     TabBar {
         id: settingsTabBar
 
-        height: 32
+        height: 24
         width: parent.width
 
         NpTabButton {
