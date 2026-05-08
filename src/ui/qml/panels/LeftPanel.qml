@@ -9,6 +9,7 @@ import Tire 1.0
 import "../components"
 import "../info"
 import "../add_forms"
+import "../settings"
 
 Rectangle {
     id: leftPanelMainComponent
@@ -59,9 +60,8 @@ Rectangle {
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
                 icon.source: "image://TiredImageProvider/cube_01.svg"
                 onClicked: {
+                    addBoxBtn.checked = !addBoxBtn.checked;
                     if (addBoxBtn.checked) {
-                        addBoxBtn.checked = false;
-                    } else {
                         leftPanelMainComponent.resetAllButtons();
                         addBoxBtn.checked = !addBoxBtn.checked;
                     }
@@ -77,7 +77,13 @@ Rectangle {
                 id: settingsBtn
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
                 icon.source: "image://TiredImageProvider/gear.svg"
-                onClicked: {}
+                onClicked: {
+                    settingsBtn.checked = !settingsBtn.checked;
+                    if (settingsBtn.checked) {
+                        leftPanelMainComponent.resetAllButtons();
+                        settingsBtn.checked = !settingsBtn.checked;
+                    }
+                }
             }
 
             NpButton {
@@ -87,9 +93,8 @@ Rectangle {
                 onClicked: {
                     Tired.grid.gridSize = 1.5;
 
+                    showInfoBtn.checked = !showInfoBtn.checked;
                     if (showInfoBtn.checked) {
-                        showInfoBtn.checked = false;
-                    } else {
                         leftPanelMainComponent.resetAllButtons();
                         showInfoBtn.checked = !showInfoBtn.checked;
                     }
@@ -110,6 +115,19 @@ Rectangle {
                 Layout.preferredHeight: _gaps.half
             }
         }
+    }
+
+    SettingsComponent {
+        id: settingsWidget
+        anchors {
+            top: mainLeftPanel.top
+            left: mainLeftPanel.right
+            leftMargin: leftPanelMainComponent._gaps.half
+            right: parent.right
+            rightMargin: leftPanelMainComponent._gaps.half
+        }
+
+        visible: settingsBtn.checked
     }
 
     Services {
@@ -141,5 +159,6 @@ Rectangle {
     function resetAllButtons() {
         addBoxBtn.checked = false;
         showInfoBtn.checked = false;
+        settingsBtn.checked = false;
     }
 }
