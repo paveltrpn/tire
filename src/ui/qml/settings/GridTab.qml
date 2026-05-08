@@ -43,7 +43,10 @@ Rectangle {
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 24
 
-            onLoaded: item.parameterlabel = "gridSize"
+            onLoaded: {
+                item.parameterlabel = "gridSize";
+                item.parameterValue = Tired.grid.gridSize;
+            }
         }
 
         Loader {
@@ -51,7 +54,10 @@ Rectangle {
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 24
 
-            onLoaded: item.parameterlabel = "lineThickness"
+            onLoaded: {
+                item.parameterlabel = "lineThickness";
+                item.parameterValue = Tired.grid.lineThickness;
+            }
         }
 
         Loader {
@@ -59,7 +65,10 @@ Rectangle {
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 24
 
-            onLoaded: item.parameterlabel = "maxRange"
+            onLoaded: {
+                item.parameterlabel = "maxRange";
+                item.parameterValue = Tired.grid.maxRange;
+            }
         }
 
         Loader {
@@ -67,7 +76,10 @@ Rectangle {
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 24
 
-            onLoaded: item.parameterlabel = "zoomSensitivity"
+            onLoaded: {
+                item.parameterlabel = "zoomSensitivity";
+                item.parameterValue = Tired.grid.zoomSensitivity;
+            }
         }
 
         Loader {
@@ -75,7 +87,10 @@ Rectangle {
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 24
 
-            onLoaded: item.parameterlabel = "majorDivisor"
+            onLoaded: {
+                item.parameterlabel = "majorDivisor";
+                item.parameterValue = Tired.grid.majorDivisor;
+            }
         }
 
         Loader {
@@ -83,7 +98,10 @@ Rectangle {
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 24
 
-            onLoaded: item.parameterlabel = "gridScale"
+            onLoaded: {
+                item.parameterlabel = "gridScale";
+                item.parameterValue = Tired.grid.gridScale;
+            }
         }
 
         Loader {
@@ -91,18 +109,24 @@ Rectangle {
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 24
 
-            onLoaded: item.parameterlabel = "gridZOffset"
+            onLoaded: {
+                item.parameterlabel = "gridZOffset";
+                item.parameterValue = Tired.grid.gridZOffset;
+            }
         }
     }
 
     Component {
         id: gridParameter
+
         Rectangle {
             id: gridParameterWrapper
+
             anchors.fill: parent
             color: _color.background_overlay_60
 
             property string parameterlabel
+            property real parameterValue
 
             Text {
                 id: paramLabel
@@ -131,9 +155,9 @@ Rectangle {
                     rightMargin: 8
                 }
 
-                width: 64
+                width: 92
 
-                text: "0.0"
+                text: gridParameterWrapper.parameterValue.toFixed(3)
             }
         }
     }
