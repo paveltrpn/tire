@@ -18,7 +18,7 @@ void main() {
 
     // 1. Early Z-culling based on distance
     float distToCamera = length(vWorldPos - CB_cameraPos);
-    if (distToCamera >gridSettings.maxRange) {
+    if (distToCamera > gridSettings.maxRange) {
         discard;
     }
 

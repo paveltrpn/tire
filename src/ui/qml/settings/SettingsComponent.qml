@@ -33,7 +33,7 @@ Rectangle {
 
             topLeftRadius: _radius.half
 
-            font: _fonts.text_body_accent
+            font: _fonts.label_accent
         }
 
         NpTabButton {
@@ -44,7 +44,7 @@ Rectangle {
 
             topRightRadius: _radius.half
 
-            font: _fonts.text_body_accent
+            font: _fonts.label_accent
         }
     }
 
