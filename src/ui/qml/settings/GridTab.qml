@@ -39,6 +39,7 @@ Rectangle {
         }
 
         Loader {
+            id: gridSizeField
             sourceComponent: gridParameter
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 24
@@ -47,9 +48,17 @@ Rectangle {
                 item.parameterlabel = "gridSize";
                 item.parameterValue = Tired.grid.gridSize;
             }
+
+            Connections {
+                target: gridSizeField.item
+                function onParamValueChanged(value) {
+                    Tired.grid.gridSize = value;
+                }
+            }
         }
 
         Loader {
+            id: lineThicknessField
             sourceComponent: gridParameter
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 24
@@ -58,9 +67,17 @@ Rectangle {
                 item.parameterlabel = "lineThickness";
                 item.parameterValue = Tired.grid.lineThickness;
             }
+
+            Connections {
+                target: lineThicknessField.item
+                function onParamValueChanged(value) {
+                    Tired.grid.lineThickness = value;
+                }
+            }
         }
 
         Loader {
+            id: maxRangeField
             sourceComponent: gridParameter
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 24
@@ -69,9 +86,17 @@ Rectangle {
                 item.parameterlabel = "maxRange";
                 item.parameterValue = Tired.grid.maxRange;
             }
+
+            Connections {
+                target: maxRangeField.item
+                function onParamValueChanged(value) {
+                    Tired.grid.maxRange = value;
+                }
+            }
         }
 
         Loader {
+            id: zoomSensitivityField
             sourceComponent: gridParameter
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 24
@@ -80,9 +105,17 @@ Rectangle {
                 item.parameterlabel = "zoomSensitivity";
                 item.parameterValue = Tired.grid.zoomSensitivity;
             }
+
+            Connections {
+                target: zoomSensitivityField.item
+                function onParamValueChanged(value) {
+                    Tired.grid.zoomSensitivity = value;
+                }
+            }
         }
 
         Loader {
+            id: majorDivisorField
             sourceComponent: gridParameter
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 24
@@ -91,9 +124,17 @@ Rectangle {
                 item.parameterlabel = "majorDivisor";
                 item.parameterValue = Tired.grid.majorDivisor;
             }
+
+            Connections {
+                target: majorDivisorField.item
+                function onParamValueChanged(value) {
+                    Tired.grid.majorDivisor = value;
+                }
+            }
         }
 
         Loader {
+            id: gridScaleField
             sourceComponent: gridParameter
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 24
@@ -102,9 +143,17 @@ Rectangle {
                 item.parameterlabel = "gridScale";
                 item.parameterValue = Tired.grid.gridScale;
             }
+
+            Connections {
+                target: gridScaleField.item
+                function onParamValueChanged(value) {
+                    Tired.grid.gridScale = value;
+                }
+            }
         }
 
         Loader {
+            id: gridZOffsetField
             sourceComponent: gridParameter
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 24
@@ -112,6 +161,13 @@ Rectangle {
             onLoaded: {
                 item.parameterlabel = "gridZOffset";
                 item.parameterValue = Tired.grid.gridZOffset;
+            }
+
+            Connections {
+                target: gridZOffsetField.item
+                function onParamValueChanged(value) {
+                    Tired.grid.gridZOffset = value;
+                }
             }
         }
     }
@@ -127,6 +183,8 @@ Rectangle {
 
             property string parameterlabel
             property real parameterValue
+
+            signal paramValueChanged(value: real)
 
             Text {
                 id: paramLabel
@@ -158,6 +216,10 @@ Rectangle {
                 width: 92
 
                 text: gridParameterWrapper.parameterValue.toFixed(3)
+
+                onTextChanged: {
+                    gridParameterWrapper.paramValueChanged(parseFloat(text));
+                }
             }
         }
     }
