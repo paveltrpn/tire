@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 import Tire 1.0
 
 Rectangle {
@@ -12,8 +13,38 @@ Rectangle {
 
     height: 512
 
-    z: parent.z
-
     radius: _radius.half
     color: _color.background_overlay_60
+
+    TabBar {
+        id: settingsTabBar
+        width: parent.width
+
+        TabButton {
+            text: qsTr("Grid")
+        }
+
+        TabButton {
+            text: qsTr("Test box")
+        }
+    }
+
+    StackLayout {
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+            top: settingsTabBar.bottom
+        }
+
+        currentIndex: settingsTabBar.currentIndex
+
+        TestBox {
+            id: testBoxTab
+        }
+
+        Grid {
+            id: gridTab
+        }
+    }
 }
