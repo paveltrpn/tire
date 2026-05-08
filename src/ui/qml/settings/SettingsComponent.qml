@@ -3,6 +3,8 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Tire 1.0
 
+import "../components"
+
 Rectangle {
     id: settingsComponent
 
@@ -22,14 +24,14 @@ Rectangle {
         height: 48
         width: parent.width
 
-        TabButton {
+        NpTabButton {
             text: qsTr("Grid")
 
             anchors.top: parent.top
             height: 48
         }
 
-        TabButton {
+        NpTabButton {
             text: qsTr("Test box")
 
             anchors.top: parent.top
