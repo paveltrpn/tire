@@ -18,14 +18,22 @@ Rectangle {
 
     TabBar {
         id: settingsTabBar
+
+        height: 48
         width: parent.width
 
         TabButton {
             text: qsTr("Grid")
+
+            anchors.top: parent.top
+            height: 48
         }
 
         TabButton {
             text: qsTr("Test box")
+
+            anchors.top: parent.top
+            height: 48
         }
     }
 
@@ -41,10 +49,16 @@ Rectangle {
 
         TestBox {
             id: testBoxTab
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
         }
 
         Grid {
             id: gridTab
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
         }
     }
 }
