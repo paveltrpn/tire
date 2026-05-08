@@ -85,7 +85,7 @@ Rectangle {
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
                 icon.source: "image://TiredImageProvider/info.svg"
                 onClicked: {
-                    Tired.grid.setGridSize(1.5);
+                    Tired.grid.gridSize = 1.5;
 
                     if (showInfoBtn.checked) {
                         showInfoBtn.checked = false;
