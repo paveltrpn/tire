@@ -62,8 +62,8 @@ Rectangle {
                 onClicked: {
                     addBoxBtn.checked = !addBoxBtn.checked;
                     if (addBoxBtn.checked) {
-                        leftPanelMainComponent.resetAllButtons();
-                        addBoxBtn.checked = !addBoxBtn.checked;
+                        showInfoBtn.checked = false;
+                        settingsBtn.checked = false;
                     }
                 }
             }
@@ -79,9 +79,10 @@ Rectangle {
                 icon.source: "image://TiredImageProvider/gear.svg"
                 onClicked: {
                     settingsBtn.checked = !settingsBtn.checked;
+
                     if (settingsBtn.checked) {
-                        leftPanelMainComponent.resetAllButtons();
-                        settingsBtn.checked = !settingsBtn.checked;
+                        addBoxBtn.checked = false;
+                        showInfoBtn.checked = false;
                     }
                 }
             }
@@ -94,9 +95,10 @@ Rectangle {
                     Tired.grid.gridSize = 1.5;
 
                     showInfoBtn.checked = !showInfoBtn.checked;
+
                     if (showInfoBtn.checked) {
-                        leftPanelMainComponent.resetAllButtons();
-                        showInfoBtn.checked = !showInfoBtn.checked;
+                        addBoxBtn.checked = false;
+                        settingsBtn.checked = false;
                     }
                 }
             }
@@ -154,11 +156,5 @@ Rectangle {
         }
 
         visible: addBoxBtn.checked
-    }
-
-    function resetAllButtons() {
-        addBoxBtn.checked = false;
-        showInfoBtn.checked = false;
-        settingsBtn.checked = false;
     }
 }
