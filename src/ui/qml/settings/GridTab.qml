@@ -1,3 +1,5 @@
+// qmllint disable unqualified
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -17,10 +19,12 @@ Rectangle {
 
     color: _color.background_overlay_60
 
+    height: gridSettingsLayout.implicitHeight + _gaps.full
+
     ColumnLayout {
         id: gridSettingsLayout
 
-        spacing: 2
+        spacing: _gaps.half
 
         anchors {
             left: parent.left
@@ -30,30 +34,89 @@ Rectangle {
         Item {
             id: spacer1
             Layout.preferredWidth: parent.width
+            Layout.preferredHeight: _gaps.half
         }
 
-        Rectangle {
+        Loader {
+            sourceComponent: gridParameter
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 16
-            color: "red"
+
+            onLoaded: item.parameterlabel = "gridSize"
         }
 
-        Rectangle {
+        Loader {
+            sourceComponent: gridParameter
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 16
-            color: "red"
+
+            onLoaded: item.parameterlabel = "lineThickness"
         }
 
-        Rectangle {
+        Loader {
+            sourceComponent: gridParameter
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 16
-            color: "red"
+
+            onLoaded: item.parameterlabel = "maxRange"
         }
 
-        Rectangle {
+        Loader {
+            sourceComponent: gridParameter
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 16
-            color: "red"
+
+            onLoaded: item.parameterlabel = "zoomSensitivity"
+        }
+
+        Loader {
+            sourceComponent: gridParameter
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: 16
+
+            onLoaded: item.parameterlabel = "majorDivisor"
+        }
+
+        Loader {
+            sourceComponent: gridParameter
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: 16
+
+            onLoaded: item.parameterlabel = "gridScale"
+        }
+
+        Loader {
+            sourceComponent: gridParameter
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: 16
+
+            onLoaded: item.parameterlabel = "gridZOffset"
+        }
+    }
+
+    Component {
+        id: gridParameter
+        Rectangle {
+            id: gridParameterWrapper
+            anchors.fill: parent
+            color: _color.background_overlay_60
+
+            property string parameterlabel
+
+            Text {
+                id: posLabel
+                anchors {
+                    top: parent.top
+                    bottom: parent.bottom
+                    left: parent.left
+                    leftMargin: 8
+                }
+
+                text: gridParameterWrapper.parameterlabel
+
+                color: _color.main_contrast
+                font: _fonts.label
+            }
         }
     }
 }

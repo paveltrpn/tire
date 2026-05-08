@@ -13,9 +13,10 @@ Rectangle {
     readonly property var _radius: Appearence.radius
     readonly property var _color: Appearence.colors
 
-    height: 512
+    height: settingsTabBar.height + settingsTabLayout.height
 
     radius: _radius.half
+
     color: _color.background_overlay_60
 
     TabBar {
@@ -48,31 +49,25 @@ Rectangle {
     }
 
     StackLayout {
+        id: settingsTabLayout
+
         anchors {
+            top: settingsTabBar.bottom
             left: parent.left
             right: parent.right
-            bottom: parent.bottom
-            top: settingsTabBar.bottom
         }
 
+        height: currentIndex !== -1 ? children[settingsTabBar.currentIndex].height : 0
         currentIndex: settingsTabBar.currentIndex
 
-        Item {
+        GridTab {
+            id: gridTab
             Layout.fillWidth: true
-            Layout.fillHeight: true
-            GridTab {
-                id: gridTab
-                anchors.fill: parent
-            }
         }
 
-        Item {
+        TestBoxTab {
+            id: testBoxTab
             Layout.fillWidth: true
-            Layout.fillHeight: true
-            TestBoxTab {
-                id: testBoxTab
-                anchors.fill: parent
-            }
         }
     }
 }
