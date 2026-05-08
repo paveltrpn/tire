@@ -12,5 +12,48 @@ Rectangle {
     readonly property var _radius: Appearence.radius
     readonly property var _color: Appearence.colors
 
-    color: "blue"//_color.background_overlay_60
+    bottomLeftRadius: _radius.half
+    bottomRightRadius: _radius.half
+
+    color: _color.background_overlay_60
+
+    ColumnLayout {
+        id: gridSettingsLayout
+
+        spacing: 2
+
+        anchors {
+            left: parent.left
+            right: parent.right
+        }
+
+        Item {
+            id: spacer1
+            Layout.preferredWidth: parent.width
+        }
+
+        Rectangle {
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: 16
+            color: "red"
+        }
+
+        Rectangle {
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: 16
+            color: "red"
+        }
+
+        Rectangle {
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: 16
+            color: "red"
+        }
+
+        Rectangle {
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: 16
+            color: "red"
+        }
+    }
 }

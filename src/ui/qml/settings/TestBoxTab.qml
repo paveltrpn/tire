@@ -15,5 +15,5 @@ Rectangle {
     bottomLeftRadius:  _radius.half
     bottomRightRadius:  _radius.half
 
-    color: "red"//_color.background_overlay_60
+    color: _color.background_overlay_60
 }
