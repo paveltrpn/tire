@@ -5,11 +5,33 @@
 
 namespace tired {
 
-Testbox::Testbox( vsg::Viewer* viewer )
+Testbox::Testbox( vsg::Viewer* viewer, QObject* parent )
+    : QObject{ parent }
+    , _testbox{ new TestboxSubgraph{ viewer } } {
+    //
+    _testbox->initPipeline();
+    _testbox->initDrawCommand();
+}
+
+auto Testbox::testbox() const -> vsg::ref_ptr<TestboxSubgraph> {
+    return _testbox;
+}
+
+void Testbox::setSize( float value ) {
+    _testbox->_size = value;
+}
+
+float Testbox::gridSize() {
+    return _testbox->_size;
+}
+
+// ===============================================================================
+
+TestboxSubgraph::TestboxSubgraph( vsg::Viewer* viewer )
     : Subgraph{ viewer } {
 }
 
-auto Testbox::initPipeline() -> void {
+auto TestboxSubgraph::initPipeline() -> void {
     // load shaders
     vsg::Paths searchPaths =
         std::vector<vsg::Path>{ "/mnt/main/code/tire_ed/shaders/spirv", "/mnt/main/code/tire_ed/assets" };
@@ -57,7 +79,7 @@ auto Testbox::initPipeline() -> void {
     _stateGroup->add( bindGraphicsPipeline );
 }
 
-auto Testbox::initDrawCommand() -> void {
+auto TestboxSubgraph::initDrawCommand() -> void {
     // Add draw command.
     auto drawCommands = vsg::Commands::create();
     drawCommands->addChild( vsg::Draw::create( 36, 1, 0, 0 ) );

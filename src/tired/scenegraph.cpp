@@ -9,23 +9,17 @@ Scenegraph::Scenegraph( vsg::Viewer* viewer, QObject* parent )
     : QObject{ parent }
     , _root{ new vsg::Group{} }
     , _viewer{ viewer }
-    , _testbox{ new Testbox{ viewer } }
+    , _testbox{ new Testbox{ viewer, this } }
     , _grid{ new Grid{ viewer, this } }
     , _sceneObjectSubgraph{ new SceneObjectSubgraph{ viewer } }
     , _markerSubgraph{ new MarkerSubgraph{ viewer } } {
     //
 
-    // Draw red box.
-    _testbox->initPipeline();
-    _testbox->initDrawCommand();
+    _root->addChild( _testbox->testbox() );
+    _root->addChild( _grid->grid() );
 
     _sceneObjectSubgraph->initPipeline();
     _markerSubgraph->initPipeline();
-
-    // Enable test box.
-    _root->addChild( _testbox );
-
-    _root->addChild( _grid->grid() );
 
     _root->addChild( _sceneObjectSubgraph );
     _root->addChild( _markerSubgraph );

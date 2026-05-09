@@ -30,7 +30,8 @@ private:
     vsg::Viewer* _viewer;
 
     Grid* _grid{};
-    vsg::ref_ptr<Testbox> _testbox{};
+    Testbox* _testbox{};
+
     vsg::ref_ptr<SceneObjectSubgraph> _sceneObjectSubgraph{};
     vsg::ref_ptr<MarkerSubgraph> _markerSubgraph{};
 
