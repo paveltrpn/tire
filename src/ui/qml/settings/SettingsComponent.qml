@@ -13,11 +13,19 @@ Rectangle {
     readonly property var _radius: Appearence.radius
     readonly property var _color: Appearence.colors
 
-    height: settingsTabBar.height + settingsTabLayout.height
+    height: settingsTabBar.height + settingsTabLayout.implicitHeight
 
     radius: _radius.half
 
     color: _color.background_overlay_60
+
+    Behavior on height {
+        NumberAnimation {
+            duration: 200
+        }
+    }
+
+    clip: true
 
     TabBar {
         id: settingsTabBar
@@ -57,7 +65,7 @@ Rectangle {
             right: parent.right
         }
 
-        height: currentIndex !== -1 ? children[settingsTabBar.currentIndex].height : 0
+        implicitHeight: children[settingsTabBar.currentIndex].implicitHeight
         currentIndex: settingsTabBar.currentIndex
 
         GridTab {

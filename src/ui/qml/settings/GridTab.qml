@@ -20,7 +20,7 @@ Rectangle {
 
     color: _color.background_overlay_60
 
-    height: gridSettingsLayout.implicitHeight + _gaps.full
+    implicitHeight: gridSettingsLayout.implicitHeight + _gaps.full
 
     ColumnLayout {
         id: gridSettingsLayout

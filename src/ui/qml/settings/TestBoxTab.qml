@@ -18,7 +18,7 @@ Rectangle {
 
     color: _color.background_overlay_60
 
-    height: testBoxSettingsLayout.implicitHeight + _gaps.full
+    implicitHeight: testBoxSettingsLayout.implicitHeight + _gaps.full
 
     ColumnLayout {
         id: testBoxSettingsLayout
