@@ -34,7 +34,7 @@ TestboxSubgraph::TestboxSubgraph( vsg::Viewer* viewer )
 auto TestboxSubgraph::initPipeline() -> void {
     // load shaders
     vsg::Paths searchPaths =
-        std::vector<vsg::Path>{ "/mnt/main/code/tire_ed/shaders/spirv", "/mnt/main/code/tire_ed/assets" };
+        std::vector<vsg::Path>{ std::format("{}{}",PREFIX_PATH_ONE ,"/shaders/spirv"), std::format("{}{}",PREFIX_PATH_ONE ,"/assets") };
 
     vsg::ref_ptr<vsg::ShaderStage> vertexShader =
         vsg::ShaderStage::read( VK_SHADER_STAGE_VERTEX_BIT, "main", vsg::findFile( "vert_testbox.spv", searchPaths ) );
