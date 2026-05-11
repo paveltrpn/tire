@@ -6,8 +6,8 @@
 #elif defined( __APPLE__ )
 #define VK_USE_PLATFORM_MACOS_MVK
 #else
-// #define VK_USE_PLATFORM_XCB_KHR
-#define VK_USE_PLATFORM_WAYLAND_KHR
+#define VK_USE_PLATFORM_XCB_KHR
+// #define VK_USE_PLATFORM_WAYLAND_KHR
 // #define VK_USE_PLATFORM_XLIB_KHR
 #endif
 
@@ -127,8 +127,8 @@ void Window::initializeWindow() {
 #elif defined( VK_USE_PLATFORM_XCB_KHR )
     traits->nativeWindow = static_cast<xcb_window_t>( winId() );
 #elif defined( VK_USE_PLATFORM_WAYLAND_KHR )
-    //traits->nativeWindow =  reinterpret_cast<wl_surface*>( winId() );
-    //traits->nativeDisplay = wl_display;
+        //traits->nativeWindow =  reinterpret_cast<wl_surface*>( winId() );
+        //traits->nativeDisplay = wl_display;
 #elif defined( VK_USE_PLATFORM_MACOS_MVK )
     traits->nativeWindow = winId();
 #endif
