@@ -19,7 +19,7 @@ Rectangle {
 
     color: _color.background
 
-    Rectangle {
+    Item {
         id: menuBarWrapper
 
         anchors {
@@ -27,10 +27,134 @@ Rectangle {
             right: parent.right
             top: parent.top
         }
+        height: 32
 
-        height: 24
+        Popup {
+            id: fileMenu
 
-        color: "red"
+            width: 56
+            height: 48 + 48 + 48
+
+            padding: 0
+
+            popupType: Popup.Window
+
+            contentItem: Rectangle {
+                color: "gray"
+                Column {
+                    Rectangle {
+                        width: 56
+                        height: 24
+                        color: "red"
+                    }
+                    Rectangle {
+                        width: 56
+                        height: 24
+                        color: "blue"
+                    }
+                    Rectangle {
+                        width: 56
+                        height: 24
+                        color: "red"
+                    }
+                    Rectangle {
+                        width: 56
+                        height: 24
+                        color: "blue"
+                    }
+                    Rectangle {
+                        width: 56
+                        height: 24
+                        color: "red"
+                    }
+                    Rectangle {
+                        width: 56
+                        height: 24
+                        color: "blue"
+                    }
+                }
+            }
+        }
+
+        Popup {
+            id: aboutMenu
+
+            width: 56
+            height: 48 + 48 + 48
+
+            padding: 0
+
+            popupType: Popup.Window
+
+            contentItem: Rectangle {
+                color: "gray"
+                Column {
+                    Rectangle {
+                        width: 56
+                        height: 24
+                        color: "red"
+                    }
+                    Rectangle {
+                        width: 56
+                        height: 24
+                        color: "blue"
+                    }
+                    Rectangle {
+                        width: 56
+                        height: 24
+                        color: "red"
+                    }
+                    Rectangle {
+                        width: 56
+                        height: 24
+                        color: "blue"
+                    }
+                    Rectangle {
+                        width: 56
+                        height: 24
+                        color: "red"
+                    }
+                    Rectangle {
+                        width: 56
+                        height: 24
+                        color: "blue"
+                    }
+                }
+            }
+        }
+
+        RowLayout {
+            id: menuBarButtonsLayout
+
+            spacing: 0
+
+            anchors {
+                fill: parent
+            }
+
+            NpMenuBarButton {
+                id: fileMenuButton
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                text: "File"
+                onClicked: {
+                    fileMenu.open();
+                }
+            }
+
+            NpMenuBarButton {
+                id: aboutMenuButton
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                text: "About"
+                onClicked: {
+                    aboutMenu.open();
+                }
+            }
+
+            Item {
+                id: spacer1
+                Layout.fillWidth: true
+            }
+        }
     }
 
     Item {
@@ -40,8 +164,10 @@ Rectangle {
             left: parent.left
             right: parent.right
             top: menuBarWrapper.bottom
-            height: 24
+            topMargin: _gaps.half
         }
+
+        height: 32
 
         RowLayout {
             id: topPanelButtonsLayout
