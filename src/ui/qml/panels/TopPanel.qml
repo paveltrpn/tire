@@ -29,100 +29,6 @@ Rectangle {
         }
         height: 32
 
-        Popup {
-            id: fileMenu
-
-            width: 56
-            height: 48 + 48 + 48
-
-            padding: 0
-
-            popupType: Popup.Window
-
-            contentItem: Rectangle {
-                color: "gray"
-                Column {
-                    Rectangle {
-                        width: 56
-                        height: 24
-                        color: "red"
-                    }
-                    Rectangle {
-                        width: 56
-                        height: 24
-                        color: "blue"
-                    }
-                    Rectangle {
-                        width: 56
-                        height: 24
-                        color: "red"
-                    }
-                    Rectangle {
-                        width: 56
-                        height: 24
-                        color: "blue"
-                    }
-                    Rectangle {
-                        width: 56
-                        height: 24
-                        color: "red"
-                    }
-                    Rectangle {
-                        width: 56
-                        height: 24
-                        color: "blue"
-                    }
-                }
-            }
-        }
-
-        Popup {
-            id: aboutMenu
-
-            width: 56
-            height: 48 + 48 + 48
-
-            padding: 0
-
-            popupType: Popup.Window
-
-            contentItem: Rectangle {
-                color: "gray"
-                Column {
-                    Rectangle {
-                        width: 56
-                        height: 24
-                        color: "red"
-                    }
-                    Rectangle {
-                        width: 56
-                        height: 24
-                        color: "blue"
-                    }
-                    Rectangle {
-                        width: 56
-                        height: 24
-                        color: "red"
-                    }
-                    Rectangle {
-                        width: 56
-                        height: 24
-                        color: "blue"
-                    }
-                    Rectangle {
-                        width: 56
-                        height: 24
-                        color: "red"
-                    }
-                    Rectangle {
-                        width: 56
-                        height: 24
-                        color: "blue"
-                    }
-                }
-            }
-        }
-
         RowLayout {
             id: menuBarButtonsLayout
 
@@ -139,6 +45,55 @@ Rectangle {
                 onClicked: {
                     fileMenu.open();
                 }
+
+                Popup {
+                    id: fileMenu
+
+                    y: parent.height
+
+                    width: 56
+                    height: 48 + 48 + 48
+
+                    padding: 0
+
+                    popupType: Popup.Window
+
+                    contentItem: Rectangle {
+                        color: "gray"
+                        Column {
+                            Rectangle {
+                                width: 56
+                                height: 24
+                                color: "red"
+                            }
+                            Rectangle {
+                                width: 56
+                                height: 24
+                                color: "blue"
+                            }
+                            Rectangle {
+                                width: 56
+                                height: 24
+                                color: "red"
+                            }
+                            Rectangle {
+                                width: 56
+                                height: 24
+                                color: "blue"
+                            }
+                            Rectangle {
+                                width: 56
+                                height: 24
+                                color: "red"
+                            }
+                            Rectangle {
+                                width: 56
+                                height: 24
+                                color: "blue"
+                            }
+                        }
+                    }
+                }
             }
 
             NpMenuBarButton {
@@ -147,6 +102,55 @@ Rectangle {
                 text: "About"
                 onClicked: {
                     aboutMenu.open();
+                }
+
+                Popup {
+                    id: aboutMenu
+
+                    y: parent.height
+
+                    width: 56
+                    height: 48 + 48 + 48
+
+                    padding: 0
+
+                    popupType: Popup.Window
+
+                    contentItem: Rectangle {
+                        color: "gray"
+                        Column {
+                            Rectangle {
+                                width: 56
+                                height: 24
+                                color: "red"
+                            }
+                            Rectangle {
+                                width: 56
+                                height: 24
+                                color: "blue"
+                            }
+                            Rectangle {
+                                width: 56
+                                height: 24
+                                color: "red"
+                            }
+                            Rectangle {
+                                width: 56
+                                height: 24
+                                color: "blue"
+                            }
+                            Rectangle {
+                                width: 56
+                                height: 24
+                                color: "red"
+                            }
+                            Rectangle {
+                                width: 56
+                                height: 24
+                                color: "blue"
+                            }
+                        }
+                    }
                 }
             }
 

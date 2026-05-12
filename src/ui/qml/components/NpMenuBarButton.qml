@@ -51,7 +51,7 @@ QuickTemplates.Button {
     // implicitContentHeight + topPadding + bottomPadding)
 
     width: 64
-    height: 24
+    height: 32
 
     background: Rectangle {
         id: backgroundItem
