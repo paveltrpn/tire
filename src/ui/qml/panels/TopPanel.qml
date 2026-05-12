@@ -3,6 +3,7 @@
 
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
 
 import Tire 1.0
 
@@ -18,11 +19,28 @@ Rectangle {
 
     color: _color.background
 
+    Rectangle {
+        id: menuBarWrapper
+
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: parent.top
+        }
+
+        height: 24
+
+        color: "red"
+    }
+
     Item {
         id: mainTopPanel
 
         anchors {
-            fill: parent
+            left: parent.left
+            right: parent.right
+            top: menuBarWrapper.bottom
+            height: 24
         }
 
         RowLayout {
