@@ -8,6 +8,7 @@ import QtQuick.Controls
 import Tire 1.0
 
 import "../components"
+import "../components/filedialog"
 
 Rectangle {
     id: rightPanelMainComponent
@@ -18,6 +19,10 @@ Rectangle {
     readonly property var _color: Appearence.colors
 
     color: _color.background
+
+    NpFileDialog {
+        id: fileDialog
+    }
 
     Item {
         id: menuBarWrapper
@@ -56,7 +61,7 @@ Rectangle {
 
                     padding: 0
 
-                    popupType: Popup.Window
+                    popupType: Popup.Native
 
                     contentItem: Rectangle {
                         color: "gray"
@@ -244,7 +249,11 @@ Rectangle {
 
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                     icon.source: "image://TiredImageProvider/gizmo_local_mode.svg"
-                    onClicked: {}
+                    onClicked: {
+                        fileDialog.show()
+                    }
+
+
                 }
             }
 
