@@ -51,12 +51,6 @@ Window {
             MouseArea {
                 id: headerArea
                 anchors.fill: parent
-
-                property point lastMousePos: Qt.point(0, 0)
-
-                property bool dragActive
-                propagateComposedEvents: true
-
                 onPressed: {
                     fileDialogRoot.startSystemMove();
                 }

@@ -33,6 +33,7 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
 
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Appearence", theme_ );
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Tired", tired_.get() );
+    qmlRegisterSingletonInstance( "Tire", 1, 0, "MainWindow", this );
 
     setGeometry( traits->x, traits->y, traits->width, traits->height );
 
@@ -93,6 +94,10 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
 void TiredUi::onGlobalMouseMove( const QPointF &pos ) {
     tired_->setGlobalMousePosX( pos.x() );
     tired_->setGlobalMousePosY( pos.y() );
+}
+
+void TiredUi::moveWindow() {
+    this->windowHandle()->startSystemMove();
 }
 
 }  // namespace tired

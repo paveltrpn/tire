@@ -20,6 +20,14 @@ Rectangle {
 
     color: _color.background
 
+    MouseArea {
+        id: headerArea
+        anchors.fill: parent
+        onPressed: {
+            MainWindow.moveWindow();
+        }
+    }
+
     NpFileDialog {
         id: fileDialog
     }

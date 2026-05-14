@@ -24,6 +24,8 @@ public:
 
     void onGlobalMouseMove( const QPointF &pos );
 
+    Q_INVOKABLE void moveWindow();
+
 private:
     auto reigsterTypes() -> void;
 
