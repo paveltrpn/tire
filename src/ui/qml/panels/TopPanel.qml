@@ -250,10 +250,8 @@ Rectangle {
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                     icon.source: "image://TiredImageProvider/gizmo_local_mode.svg"
                     onClicked: {
-                        fileDialog.show()
+                        fileDialog.show();
                     }
-
-
                 }
             }
 

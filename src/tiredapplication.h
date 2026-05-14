@@ -1,0 +1,33 @@
+#pragma once
+
+#include <vsg/all.h>
+
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QMainWindow>
+#include <QVBoxLayout>
+#include <QGraphicsOpacityEffect>
+#include <QLabel>
+#include <QPushButton>
+
+class TiredApplication final : QApplication {
+    Q_OBJECT
+
+public:
+    TiredApplication( int &argc, char **argv )
+        : QApplication( argc, argv ) {}
+
+    ~TiredApplication() override = default;
+
+    bool notify( QObject *receiver, QEvent *event ) override;
+
+    int exec() {
+        installEventFilter( this );
+        return QApplication::exec();
+    }
+
+protected:
+    bool eventFilter( QObject *watched, QEvent *event ) override {
+        //
+        return QApplication::eventFilter( watched, event );
+    }
+};

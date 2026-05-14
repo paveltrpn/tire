@@ -192,6 +192,8 @@ target_link_libraries(qt_window
 # ================================
 add_executable(${PROJECT_NAME}
     "src/main.cpp"
+    "src/tiredapplication.cpp"
+    "src/tiredapplication.h"
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES AUTOMOC TRUE)
 target_compile_options(${PROJECT_NAME} PRIVATE -freflection -std=c++26)

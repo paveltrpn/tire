@@ -9,6 +9,7 @@
 
 #include <meta>
 
+#include "tiredapplication.h"
 #include "ui/ui.h"
 
 // struct Reflectable {};
@@ -49,7 +50,7 @@ auto main( int argc, char* argv[] ) -> int {
     // static_assert( [:parse( "x", 1 ):].x == 1 );
     // static_assert( [:parse( "y", 2 ):].y == 2 );
 
-    QApplication application( argc, argv );
+    TiredApplication application( argc, argv );
 
     vsg::CommandLine arguments( &argc, argv );
 
