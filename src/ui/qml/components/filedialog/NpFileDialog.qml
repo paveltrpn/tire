@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Window
+import QtQuick.Layouts
 
 import Tire 1.0
 
@@ -20,18 +21,17 @@ Window {
     width: 640
     height: 480
 
-    x: parent.x + 100
-    y: parent.y + 100
+    x: 300
+    y: 300
 
     flags: Qt.Window | Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint
 
     color: _color.background
 
-    // Custom Title Bar
     Rectangle {
         id: titleBar
         height: 32
-        color: "blue"
+        color: _color.background_overlay_40
 
         anchors {
             top: parent.top
@@ -49,21 +49,31 @@ Window {
             propagateComposedEvents: true
 
             onPressed: {
-                fileDialogRoot.startSystemMove()
+                fileDialogRoot.startSystemMove();
             }
         }
 
-        Row {
-            anchors.right: parent.right
-            anchors.rightMargin: 5
-            spacing: 5
-            height: parent.height
+        RowLayout {
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: parent.bottom
+            }
+
+            spacing: _gaps.half
 
             NpButton {
                 text: "X"
-                width: 32
-                height: 32
+
+                Layout.preferredWidth: 24
+                Layout.preferredHeight: 24
+                Layout.alignment:  Qt.AlignVCenter | Qt.AlignLeft
+
                 onClicked: fileDialogRoot.close()
+            }
+
+            Item {
+                id: spacer1
             }
         }
     }

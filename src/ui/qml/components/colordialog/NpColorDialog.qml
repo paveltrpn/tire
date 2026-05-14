@@ -27,10 +27,11 @@ Window {
 
     color: _color.background
 
-    // Custom Title Bar
     Rectangle {
         id: titleBar
+
         height: 32
+
         color: "red"
 
         anchors {
