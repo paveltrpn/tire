@@ -68,15 +68,14 @@ TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
     auto centralWidget = new QWidget{ this };
     setCentralWidget( centralWidget );
 
-    auto *vLayout = new QVBoxLayout{};
-    vLayout->setContentsMargins( 0, 0, 0, 0 );
+    auto *vTopLayout = new QVBoxLayout{};
+    vTopLayout->setContentsMargins( 0, 0, 0, 0 );
+    centralWidget->setLayout( vTopLayout );
 
-    auto *vSplitter = new QSplitter{ this };
-    vSplitter->setOrientation( Qt::Vertical );
-    vSplitter->setStyleSheet( QString{ "QSplitter::handle { background-color:  %1; }" }.arg( splitterBorderColor ) );
-    vSplitter->setHandleWidth( splitterHandleWidth );
-
-    centralWidget->setLayout( vLayout );
+    auto *vTopSplitter = new QSplitter{ this };
+    vTopSplitter->setOrientation( Qt::Vertical );
+    vTopSplitter->setStyleSheet( QString{ "QSplitter::handle { background-color:  %1; }" }.arg( splitterBorderColor ) );
+    vTopSplitter->setHandleWidth( splitterHandleWidth );
 
     auto *hLayout = new QHBoxLayout{};
     hLayout->setContentsMargins( 0, 0, 0, 0 );
@@ -84,11 +83,11 @@ TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
     auto rightElementsWidget = new QWidget{ this };
 
     rightElementsWidget->setLayout( hLayout );
-    vSplitter->addWidget( topPanel_ );
-    vSplitter->addWidget( rightElementsWidget );
-    vSplitter->setSizes( { topPanelHeight, 1080 - topPanelHeight } );
+    vTopSplitter->addWidget( topPanel_ );
+    vTopSplitter->addWidget( rightElementsWidget );
+    vTopSplitter->setSizes( { topPanelHeight, 1080 - topPanelHeight } );
 
-    vLayout->addWidget( vSplitter );
+    vTopLayout->addWidget( vTopSplitter );
 
     auto *hSplitter = new QSplitter{ this };
     hSplitter->setOrientation( Qt::Horizontal );
