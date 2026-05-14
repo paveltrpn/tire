@@ -9,12 +9,13 @@
 #include <QLabel>
 #include <QPushButton>
 
+#include "ui/ui.h"
+
 class TiredApplication final : public QApplication {
     Q_OBJECT
 
 public:
-    TiredApplication( int &argc, char **argv )
-        : QApplication( argc, argv ) {}
+    TiredApplication( int &argc, char **argv );
 
     ~TiredApplication() override = default;
 
@@ -33,4 +34,7 @@ protected:
         //
         return QApplication::eventFilter( watched, event );
     }
+
+private:
+    tired::TiredUi *_tiredUI{};
 };

@@ -1,4 +1,4 @@
-#include <vsg/all.h>
+
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
@@ -10,7 +10,6 @@
 #include <meta>
 
 #include "tiredapplication.h"
-#include "ui/ui.h"
 
 // struct Reflectable {};
 // auto foo() -> void {
@@ -51,33 +50,6 @@ auto main( int argc, char* argv[] ) -> int {
     // static_assert( [:parse( "y", 2 ):].y == 2 );
 
     TiredApplication application( argc, argv );
-
-    vsg::CommandLine arguments( &argc, argv );
-
-    // Set up vsg::Options to pass in filepaths, ReaderWriters and other IO
-    // related options to use when reading and writing files.
-    auto options = vsg::Options::create();
-    options->fileCache = vsg::getEnv( "VSG_FILE_CACHE" );
-    options->paths = vsg::getEnvPaths( "VSG_FILE_PATH" );
-#ifdef vsgXchange_FOUND
-    options->add( vsgXchange::all::create() );
-#endif
-
-    options->readOptions( arguments );
-
-    auto windowTraits = vsg::WindowTraits::create();
-    windowTraits->windowTitle = "tire editor";
-    windowTraits->debugLayer = arguments.read( { "--debug", "-d" } );
-    windowTraits->apiDumpLayer = arguments.read( { "--api", "-a" } );
-    windowTraits->vulkanVersion = VK_MAKE_API_VERSION( 0, 1, 4, 0 );
-    windowTraits->width = 1920;
-    windowTraits->height = 1080;
-    windowTraits->x = 100;
-    windowTraits->y = 100;
-    // windowTraits->clearColor = vsg::vec4{ 55.0f / 255.0f, 55.0f / 255.0f, 55.0f / 255.0f, 1.0f };
-    // windowTraits->fullscreen = true;
-
-    new tired::TiredUi{ windowTraits, &application };
 
     return application.exec();
 }
