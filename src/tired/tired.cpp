@@ -109,4 +109,22 @@ auto Tired::registerTypes() -> void {
     qRegisterMetaType<tired::MeshData>( "MeshData" );
 }
 
+auto Tired::setGlobalMousePosX( float value ) -> void {
+    _globalMousePosX = value;
+    emit globalMousePosChanged( _globalMousePosX, _globalMousePosY );
+}
+
+auto Tired::setGlobalMousePosY( float value ) -> void {
+    _globalMousePosY = value;
+    emit globalMousePosChanged( _globalMousePosX, _globalMousePosY );
+}
+
+auto Tired::globalMousePosX() -> float {
+    return _globalMousePosX;
+}
+
+auto Tired::globalMousePosY() -> float {
+    return _globalMousePosY;
+}
+
 }  // namespace tired

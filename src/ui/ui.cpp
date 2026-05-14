@@ -91,7 +91,8 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
 }
 
 void TiredUi::onGlobalMouseMove( const QPointF &pos ) {
-    qDebug() << pos;
+    tired_->setGlobalMousePosX( pos.x() );
+    tired_->setGlobalMousePosY( pos.y() );
 }
 
 }  // namespace tired

@@ -24,6 +24,9 @@ struct Tired final : QObject {
 
     Q_PROPERTY( QObject* grid READ grid NOTIFY gridChanged FINAL )
 
+    Q_PROPERTY( float globalMousePosX READ globalMousePosX WRITE setGlobalMousePosX NOTIFY globalMousePosChanged FINAL )
+    Q_PROPERTY( float globalMousePosY READ globalMousePosY WRITE setGlobalMousePosY NOTIFY globalMousePosChanged FINAL )
+
 public:
     Tired( QObject* parent = nullptr );
 
@@ -40,11 +43,19 @@ public:
 
     auto registerTypes() -> void;
 
+    auto setGlobalMousePosX( float value ) -> void;
+    auto setGlobalMousePosY( float value ) -> void;
+
+    auto globalMousePosX() -> float;
+    auto globalMousePosY() -> float;
+
 signals:
     void manipulatorChanged();
     void inputHandlerChanged();
     void scenegraphChanged();
     void gridChanged();
+
+    void globalMousePosChanged( float x, float y );
 
 private:
     std::shared_ptr<vk::Context> _context{};
@@ -55,6 +66,9 @@ private:
     Manipulator* _manipulator{};
     InputHandler* _inputHandler{};
     Scenegraph* _scenegraph{};
+
+    float _globalMousePosX{};
+    float _globalMousePosY{};
 };
 
 }  // namespace tired

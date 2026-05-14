@@ -20,8 +20,8 @@ Window {
     width: 640
     height: 480
 
-    x: 400
-    y: 400
+    x: parent.x + 100
+    y: parent.y + 100
 
     flags: Qt.Window | Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint
 
@@ -40,6 +40,7 @@ Window {
         }
 
         MouseArea {
+            id: headerArea
             anchors.fill: parent
 
             property point lastMousePos: Qt.point(0, 0)
@@ -48,23 +49,7 @@ Window {
             propagateComposedEvents: true
 
             onPressed: {
-                dragActive = true;
-                lastMousePos = Tired.inputHandler.mousePos;
-            }
-
-            onReleased: {
-                dragActive = false;
-            }
-
-            onPositionChanged: {
-                if (dragActive) {
-                    const nowPos = Tired.inputHandler.mousePos
-
-                    const dx = nowPos.x - lastMousePos.x;
-                    const dy = nowPos.y - lastMousePos.y;
-                    fileDialogRoot.x = nowPos.x;
-                    fileDialogRoot.y = nowPos.y;
-                }
+                fileDialogRoot.startSystemMove()
             }
         }
 
