@@ -42,6 +42,10 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
     // Remove native decoration.
     setWindowFlags( Qt::FramelessWindowHint );
 
+    // Set transparent main window to use qml defined application
+    // specific decoration.
+    setAttribute( Qt::WA_TranslucentBackground );
+
     // VSG initialization.
     vsgWindow_ = new Window( tired_->viewer(), traits );
     vsgWindow_->setTitle( "title" );
@@ -56,6 +60,10 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
 
     leftPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/panels/LeftPanel.qml" ) );
     leftPanel_->setResizeMode( QQuickWidget::SizeRootObjectToView );
+
+    //
+    topPanel_->setClearColor( Qt::transparent );
+    leftPanel_->setClearColor( Qt::transparent );
 
     auto centralWidget = new QWidget{ this };
     setCentralWidget( centralWidget );

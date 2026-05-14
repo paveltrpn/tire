@@ -20,6 +20,9 @@ Rectangle {
 
     color: _color.background
 
+    topLeftRadius:  _radius.half
+    topRightRadius: _radius.half
+
     MouseArea {
         id: headerArea
         anchors.fill: parent
@@ -49,6 +52,7 @@ Rectangle {
 
             anchors {
                 left: parent.left
+                leftMargin: _gaps.full
                 top: parent.top
                 bottom: parent.bottom
                 right: mainWindowDecorationWrapper.left
@@ -181,6 +185,7 @@ Rectangle {
 
             anchors {
                 right: parent.right
+                rightMargin: _gaps.full
                 top: parent.top
                 bottom: parent.bottom
             }
@@ -192,7 +197,6 @@ Rectangle {
 
                 anchors {
                     right: foldWindowButton.left
-                    rightMargin: _gaps.half
                     top: parent.top
                 }
 
@@ -210,7 +214,6 @@ Rectangle {
 
                 anchors {
                     right: closeAppButton.left
-                    rightMargin: _gaps.half
                     top: parent.top
                 }
 
@@ -228,7 +231,6 @@ Rectangle {
 
                 anchors {
                     right: parent.right
-                    rightMargin: _gaps.half
                     top: parent.top
                 }
 

@@ -35,6 +35,8 @@ TiredApplication::TiredApplication( int &argc, char **argv )
     _tiredUI = new tired::TiredUi{ windowTraits, this };
 
     connect( this, &TiredApplication::gobalMousePostionChanged, _tiredUI, &tired::TiredUi::onGlobalMouseMove );
+
+    setAttribute( Qt::AA_UseStyleSheetPropagationInWidgetStyles );
 }
 
 bool TiredApplication::notify( QObject *receiver, QEvent *event ) {
