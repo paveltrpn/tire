@@ -48,7 +48,10 @@ Rectangle {
             spacing: 0
 
             anchors {
-                fill: parent
+                left: parent.left
+                top: parent.top
+                bottom: parent.bottom
+                right: mainWindowDecorationWrapper.left
             }
 
             NpMenuBarButton {
@@ -169,8 +172,73 @@ Rectangle {
             }
 
             Item {
-                id: spacer1
                 Layout.fillWidth: true
+            }
+        }
+
+        Item {
+            id: mainWindowDecorationWrapper
+
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: parent.bottom
+            }
+
+            width: 128
+
+            NpButton {
+                id: maximizeWindowButton
+
+                anchors {
+                    right: foldWindowButton.left
+                    rightMargin: _gaps.half
+                    top: parent.top
+                }
+
+                width: 24
+                height: 24
+
+                icon.source: "image://TiredImageProvider/power.svg"
+                onClicked: {
+                    Qt.quit();
+                }
+            }
+
+            NpButton {
+                id: foldWindowButton
+
+                anchors {
+                    right: closeAppButton.left
+                    rightMargin: _gaps.half
+                    top: parent.top
+                }
+
+                width: 24
+                height: 24
+
+                icon.source: "image://TiredImageProvider/power.svg"
+                onClicked: {
+                    Qt.quit();
+                }
+            }
+
+            NpButton {
+                id: closeAppButton
+
+                anchors {
+                    right: parent.right
+                    rightMargin: _gaps.half
+                    top: parent.top
+                }
+
+                width: 24
+                height: 24
+
+                icon.source: "image://TiredImageProvider/power.svg"
+                onClicked: {
+                    Qt.quit();
+                }
             }
         }
     }

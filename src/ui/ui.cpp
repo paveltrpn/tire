@@ -33,9 +33,14 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
 
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Appearence", theme_ );
     qmlRegisterSingletonInstance( "Tire", 1, 0, "Tired", tired_.get() );
+
+    // Use this object for main window position and size (in particular).
     qmlRegisterSingletonInstance( "Tire", 1, 0, "MainWindow", this );
 
     setGeometry( traits->x, traits->y, traits->width, traits->height );
+
+    // Remove native decoration.
+    setWindowFlags( Qt::FramelessWindowHint );
 
     // VSG initialization.
     vsgWindow_ = new Window( tired_->viewer(), traits );

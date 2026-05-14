@@ -101,15 +101,6 @@ Rectangle {
                 }
             }
 
-            NpButton {
-                id: closeBtn
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-                icon.source: "image://TiredImageProvider/power.svg"
-                onClicked: {
-                    Qt.quit();
-                }
-            }
-
             Item {
                 id: spacerBottom
                 Layout.preferredHeight: _gaps.half
