@@ -9,7 +9,7 @@
 #include <QLabel>
 #include <QPushButton>
 
-class TiredApplication final : QApplication {
+class TiredApplication final : public QApplication {
     Q_OBJECT
 
 public:
