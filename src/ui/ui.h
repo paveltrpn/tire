@@ -37,8 +37,10 @@ private:
 
     Window *_vsgWindow{};
     QWidget *_vsgWidget{};
+
     QQuickWidget *_topPanel{};
     QQuickWidget *_leftPanel{};
+    QQuickWidget *_bottomPanel{};
 
     Appearance *_theme;
 };

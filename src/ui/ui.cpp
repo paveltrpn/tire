@@ -18,6 +18,7 @@ TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
     , _context{ _engine->rootContext() }
     , _topPanel{ new QQuickWidget{ _engine, this } }
     , _leftPanel{ new QQuickWidget{ _engine, this } }
+    , _bottomPanel{ new QQuickWidget{ _engine, this } }
     , _theme{ new Appearance{ this } } {
     //
 
@@ -55,15 +56,20 @@ TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
 
     // Qt widgets initialization.
     _vsgWidget = QWidget::createWindowContainer( _vsgWindow, this );
+
     _topPanel->setSource( QUrl::fromLocalFile( "../src/ui/qml/panels/TopPanel.qml" ) );
     _topPanel->setResizeMode( QQuickWidget::SizeRootObjectToView );
 
     _leftPanel->setSource( QUrl::fromLocalFile( "../src/ui/qml/panels/LeftPanel.qml" ) );
     _leftPanel->setResizeMode( QQuickWidget::SizeRootObjectToView );
 
-    //
+    _bottomPanel->setSource( QUrl::fromLocalFile( "../src/ui/qml/panels/BottomPanel.qml" ) );
+    _bottomPanel->setResizeMode( QQuickWidget::SizeRootObjectToView );
+
+    // Set qml QQuickWidgets conteiners trnsparent background color.
     _topPanel->setClearColor( Qt::transparent );
     _leftPanel->setClearColor( Qt::transparent );
+    _bottomPanel->setClearColor( Qt::transparent );
 
     auto centralWidget = new QWidget{ this };
     setCentralWidget( centralWidget );
@@ -72,19 +78,23 @@ TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
     vTopLayout->setContentsMargins( 0, 0, 0, 0 );
     centralWidget->setLayout( vTopLayout );
 
+    // auto *vBottomLayout = new QVBoxLayout{};
+    // vBottomLayout->setContentsMargins( 0, 0, 0, 0 );
+    // centralWidget->setLayout( vBottomLayout );
+
     auto *vTopSplitter = new QSplitter{ this };
     vTopSplitter->setOrientation( Qt::Vertical );
-    vTopSplitter->setStyleSheet( QString{ "QSplitter::handle { background-color:  %1; }" }.arg( splitterBorderColor ) );
+    vTopSplitter->setStyleSheet( QString{ "QSplitter::handle { background-color:  %1; }" }.arg( "red" ) );
     vTopSplitter->setHandleWidth( splitterHandleWidth );
 
     auto *hLayout = new QHBoxLayout{};
     hLayout->setContentsMargins( 0, 0, 0, 0 );
 
-    auto rightElementsWidget = new QWidget{ this };
+    auto leftElementsWidget = new QWidget{ this };
+    leftElementsWidget->setLayout( hLayout );
 
-    rightElementsWidget->setLayout( hLayout );
     vTopSplitter->addWidget( _topPanel );
-    vTopSplitter->addWidget( rightElementsWidget );
+    vTopSplitter->addWidget( leftElementsWidget );
     vTopSplitter->setSizes( { topPanelHeight, 1080 - topPanelHeight } );
 
     vTopLayout->addWidget( vTopSplitter );
