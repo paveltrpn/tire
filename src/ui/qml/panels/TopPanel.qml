@@ -45,6 +45,7 @@ Rectangle {
 
             NpMenuBarButton {
                 id: fileMenuButton
+
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                 text: "File"
                 onClicked: {

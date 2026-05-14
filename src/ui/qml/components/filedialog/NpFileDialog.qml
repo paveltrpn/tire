@@ -26,54 +26,64 @@ Window {
 
     flags: Qt.Window | Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint
 
-    color: _color.background
+    color: "transparent"
 
     Rectangle {
-        id: titleBar
-        height: 32
-        color: _color.background_overlay_40
+        id: background
+        anchors.fill: parent
+        color: _color.background
+        radius: _radius.half
 
-        anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
-        }
+        Rectangle {
+            id: titleBar
+            height: 32
+            color: _color.background_overlay_40
 
-        MouseArea {
-            id: headerArea
-            anchors.fill: parent
-
-            property point lastMousePos: Qt.point(0, 0)
-
-            property bool dragActive
-            propagateComposedEvents: true
-
-            onPressed: {
-                fileDialogRoot.startSystemMove();
-            }
-        }
-
-        RowLayout {
             anchors {
-                right: parent.right
                 top: parent.top
-                bottom: parent.bottom
+                left: parent.left
+                right: parent.right
             }
 
-            spacing: _gaps.half
+            topLeftRadius: parent.radius
+            topRightRadius: parent.radius
 
-            NpButton {
-                text: "X"
+            MouseArea {
+                id: headerArea
+                anchors.fill: parent
 
-                Layout.preferredWidth: 24
-                Layout.preferredHeight: 24
-                Layout.alignment:  Qt.AlignVCenter | Qt.AlignLeft
+                property point lastMousePos: Qt.point(0, 0)
 
-                onClicked: fileDialogRoot.close()
+                property bool dragActive
+                propagateComposedEvents: true
+
+                onPressed: {
+                    fileDialogRoot.startSystemMove();
+                }
             }
 
-            Item {
-                id: spacer1
+            RowLayout {
+                anchors {
+                    right: parent.right
+                    top: parent.top
+                    bottom: parent.bottom
+                }
+
+                spacing: _gaps.half
+
+                NpButton {
+                    text: "X"
+
+                    Layout.preferredWidth: 24
+                    Layout.preferredHeight: 24
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+
+                    onClicked: fileDialogRoot.close()
+                }
+
+                Item {
+                    id: spacer1
+                }
             }
         }
     }

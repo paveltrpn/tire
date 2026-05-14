@@ -64,7 +64,7 @@ QuickTemplates.Button {
         anchors.fill: parent
         color: control.backgroundColor
         opacity: control.enabled ? 1.0 : 0.3
-        radius: _radius.half
+        radius: _radius.quarter
     }
 
     contentItem: IconLabel {
