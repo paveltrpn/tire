@@ -13,26 +13,26 @@ namespace tired {
 // ====================================================================
 
 TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
-    : tired_{ std::make_unique<tired::Tired>() }
-    , engine_{ new QQmlEngine{ this } }
-    , context_{ engine_->rootContext() }
-    , topPanel_{ new QQuickWidget{ engine_, this } }
-    , leftPanel_{ new QQuickWidget{ engine_, this } }
-    , theme_{ new Appearance{ this } } {
+    : _tired{ std::make_unique<tired::Tired>() }
+    , _engine{ new QQmlEngine{ this } }
+    , _context{ _engine->rootContext() }
+    , _topPanel{ new QQuickWidget{ _engine, this } }
+    , _leftPanel{ new QQuickWidget{ _engine, this } }
+    , _theme{ new Appearance{ this } } {
     //
 
-    tired_->registerTypes();
+    _tired->registerTypes();
 
-    engine_->addImageProvider( "TiredImageProvider", new TiredImageProvider{} );
+    _engine->addImageProvider( "TiredImageProvider", new TiredImageProvider{} );
 
-    const auto topPanelHeight = theme_->getGap( "top_panel_height" );
-    const auto leftPanelWidth = theme_->getGap( "left_panel_width" );
-    const auto splitterBorderColor = theme_->getColor( "splitter_border_color" );
-    const auto splitterHandleWidth = theme_->getGap( "quarter" );
-    const auto clearColor = theme_->getColor( "clear_color" );
+    const auto topPanelHeight = _theme->getGap( "top_panel_height" );
+    const auto leftPanelWidth = _theme->getGap( "left_panel_width" );
+    const auto splitterBorderColor = _theme->getColor( "splitter_border_color" );
+    const auto splitterHandleWidth = _theme->getGap( "quarter" );
+    const auto clearColor = _theme->getColor( "clear_color" );
 
-    qmlRegisterSingletonInstance( "Tire", 1, 0, "Appearence", theme_ );
-    qmlRegisterSingletonInstance( "Tire", 1, 0, "Tired", tired_.get() );
+    qmlRegisterSingletonInstance( "Tire", 1, 0, "Appearence", _theme );
+    qmlRegisterSingletonInstance( "Tire", 1, 0, "Tired", _tired.get() );
 
     // Use this object for main window position and size (in particular).
     qmlRegisterSingletonInstance( "Tire", 1, 0, "MainWindow", this );
@@ -47,23 +47,23 @@ TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
     setAttribute( Qt::WA_TranslucentBackground );
 
     // VSG initialization.
-    vsgWindow_ = new Window( tired_->viewer(), traits );
-    vsgWindow_->setTitle( "title" );
-    vsgWindow_->initializeWindow();
+    _vsgWindow = new Window( _tired->viewer(), traits );
+    _vsgWindow->setTitle( "title" );
+    _vsgWindow->initializeWindow();
 
-    tired_->init( vsgWindow_, traits->width, traits->height );
+    _tired->init( _vsgWindow, traits->width, traits->height );
 
     // Qt widgets initialization.
-    vsgWidget_ = QWidget::createWindowContainer( vsgWindow_, this );
-    topPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/panels/TopPanel.qml" ) );
-    topPanel_->setResizeMode( QQuickWidget::SizeRootObjectToView );
+    _vsgWidget = QWidget::createWindowContainer( _vsgWindow, this );
+    _topPanel->setSource( QUrl::fromLocalFile( "../src/ui/qml/panels/TopPanel.qml" ) );
+    _topPanel->setResizeMode( QQuickWidget::SizeRootObjectToView );
 
-    leftPanel_->setSource( QUrl::fromLocalFile( "../src/ui/qml/panels/LeftPanel.qml" ) );
-    leftPanel_->setResizeMode( QQuickWidget::SizeRootObjectToView );
+    _leftPanel->setSource( QUrl::fromLocalFile( "../src/ui/qml/panels/LeftPanel.qml" ) );
+    _leftPanel->setResizeMode( QQuickWidget::SizeRootObjectToView );
 
     //
-    topPanel_->setClearColor( Qt::transparent );
-    leftPanel_->setClearColor( Qt::transparent );
+    _topPanel->setClearColor( Qt::transparent );
+    _leftPanel->setClearColor( Qt::transparent );
 
     auto centralWidget = new QWidget{ this };
     setCentralWidget( centralWidget );
@@ -83,7 +83,7 @@ TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
     auto rightElementsWidget = new QWidget{ this };
 
     rightElementsWidget->setLayout( hLayout );
-    vTopSplitter->addWidget( topPanel_ );
+    vTopSplitter->addWidget( _topPanel );
     vTopSplitter->addWidget( rightElementsWidget );
     vTopSplitter->setSizes( { topPanelHeight, 1080 - topPanelHeight } );
 
@@ -94,8 +94,8 @@ TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
     hSplitter->setStyleSheet( QString{ "QSplitter::handle { background-color:  %1; }" }.arg( splitterBorderColor ) );
     hSplitter->setHandleWidth( splitterHandleWidth );
 
-    hSplitter->addWidget( leftPanel_ );
-    hSplitter->addWidget( vsgWidget_ );
+    hSplitter->addWidget( _leftPanel );
+    hSplitter->addWidget( _vsgWidget );
     hSplitter->setSizes( { leftPanelWidth, 1920 - leftPanelWidth } );
 
     hLayout->addWidget( hSplitter );
@@ -104,8 +104,8 @@ TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
 }
 
 void TiredUI::onGlobalMouseMove( const QPointF &pos ) {
-    tired_->setGlobalMousePosX( pos.x() );
-    tired_->setGlobalMousePosY( pos.y() );
+    _tired->setGlobalMousePosX( pos.x() );
+    _tired->setGlobalMousePosY( pos.y() );
 }
 
 void TiredUI::moveWindow() {

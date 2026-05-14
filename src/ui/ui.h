@@ -30,17 +30,17 @@ private:
     auto reigsterTypes() -> void;
 
 private:
-    std::unique_ptr<tired::Tired> tired_{};
+    std::unique_ptr<tired::Tired> _tired{};
 
-    QQmlEngine *engine_;
-    QQmlContext *context_;
+    QQmlEngine *_engine;
+    QQmlContext *_context;
 
-    Window *vsgWindow_{};
-    QWidget *vsgWidget_{};
-    QQuickWidget *topPanel_{};
-    QQuickWidget *leftPanel_{};
+    Window *_vsgWindow{};
+    QWidget *_vsgWidget{};
+    QQuickWidget *_topPanel{};
+    QQuickWidget *_leftPanel{};
 
-    Appearance *theme_;
+    Appearance *_theme;
 };
 
 }  // namespace tired
