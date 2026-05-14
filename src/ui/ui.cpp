@@ -28,7 +28,7 @@ TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
 
     const auto topPanelHeight = _theme->getGap( "top_panel_height" );
     const auto leftPanelWidth = _theme->getGap( "left_panel_width" );
-    const auto splitterBorderColor = _theme->getColor( "splitter_border_color" );
+    const auto splitterBorderColor = _theme->getColor( "background" );
     const auto splitterHandleWidth = _theme->getGap( "quarter" );
     const auto clearColor = _theme->getColor( "clear_color" );
 

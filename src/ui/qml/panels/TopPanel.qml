@@ -63,6 +63,8 @@ Rectangle {
 
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                 text: "File"
+                font: _fonts.label_accent
+
                 onClicked: {
                     fileMenu.open();
                 }
@@ -118,15 +120,18 @@ Rectangle {
             }
 
             NpMenuBarButton {
-                id: aboutMenuButton
+                id: helpMenuButton
+
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                text: "About"
+                text: "Help"
+                font: _fonts.label_accent
+
                 onClicked: {
-                    aboutMenu.open();
+                    helpMenu.open();
                 }
 
                 Popup {
-                    id: aboutMenu
+                    id: helpMenu
 
                     y: parent.height
 
