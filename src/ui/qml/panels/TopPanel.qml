@@ -11,7 +11,7 @@ import "../components"
 import "../components/filedialog"
 
 Rectangle {
-    id: rightPanelMainComponent
+    id: topPanelMainComponent
 
     readonly property var _fonts: Appearence.fonts
     readonly property var _gaps: Appearence.gaps

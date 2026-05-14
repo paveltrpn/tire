@@ -74,30 +74,28 @@ TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
     auto centralWidget = new QWidget{ this };
     setCentralWidget( centralWidget );
 
-    auto *vTopLayout = new QVBoxLayout{};
-    vTopLayout->setContentsMargins( 0, 0, 0, 0 );
-    centralWidget->setLayout( vTopLayout );
+    auto *mainColumnLayout = new QVBoxLayout{};
+    mainColumnLayout->setContentsMargins( 0, 0, 0, 0 );
+    centralWidget->setLayout( mainColumnLayout );
 
-    // auto *vBottomLayout = new QVBoxLayout{};
-    // vBottomLayout->setContentsMargins( 0, 0, 0, 0 );
-    // centralWidget->setLayout( vBottomLayout );
-
-    auto *vTopSplitter = new QSplitter{ this };
-    vTopSplitter->setOrientation( Qt::Vertical );
-    vTopSplitter->setStyleSheet( QString{ "QSplitter::handle { background-color:  %1; }" }.arg( "red" ) );
-    vTopSplitter->setHandleWidth( splitterHandleWidth );
+    auto *mainColumnSplitter = new QSplitter{ this };
+    mainColumnSplitter->setOrientation( Qt::Vertical );
+    mainColumnSplitter->setStyleSheet(
+        QString{ "QSplitter::handle { background-color:  %1; }" }.arg( splitterBorderColor ) );
+    mainColumnSplitter->setHandleWidth( splitterHandleWidth );
 
     auto *hLayout = new QHBoxLayout{};
     hLayout->setContentsMargins( 0, 0, 0, 0 );
 
-    auto leftElementsWidget = new QWidget{ this };
-    leftElementsWidget->setLayout( hLayout );
+    auto middleElementsWidget = new QWidget{ this };
+    middleElementsWidget->setLayout( hLayout );
 
-    vTopSplitter->addWidget( _topPanel );
-    vTopSplitter->addWidget( leftElementsWidget );
-    vTopSplitter->setSizes( { topPanelHeight, 1080 - topPanelHeight } );
+    mainColumnSplitter->addWidget( _topPanel );
+    mainColumnSplitter->addWidget( middleElementsWidget );
+    mainColumnSplitter->addWidget( _bottomPanel );
+    mainColumnSplitter->setSizes( { topPanelHeight, 1080 - topPanelHeight * 2, topPanelHeight } );
 
-    vTopLayout->addWidget( vTopSplitter );
+    mainColumnLayout->addWidget( mainColumnSplitter );
 
     auto *hSplitter = new QSplitter{ this };
     hSplitter->setOrientation( Qt::Horizontal );
