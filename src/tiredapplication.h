@@ -36,5 +36,5 @@ protected:
     }
 
 private:
-    tired::TiredUi *_tiredUI{};
+    tired::TiredUI *_tiredUI{};
 };

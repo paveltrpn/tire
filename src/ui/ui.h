@@ -17,10 +17,10 @@ namespace tired {
 // ========== TiredUi =================================================
 // ====================================================================
 
-struct TiredUi final : QMainWindow {
+struct TiredUI final : QMainWindow {
     Q_OBJECT
 public:
-    TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent = nullptr );
+    TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent = nullptr );
 
     void onGlobalMouseMove( const QPointF &pos );
 

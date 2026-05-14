@@ -32,9 +32,9 @@ TiredApplication::TiredApplication( int &argc, char **argv )
     // windowTraits->clearColor = vsg::vec4{ 55.0f / 255.0f, 55.0f / 255.0f, 55.0f / 255.0f, 1.0f };
     // windowTraits->fullscreen = true;
 
-    _tiredUI = new tired::TiredUi{ windowTraits, this };
+    _tiredUI = new tired::TiredUI{ windowTraits, this };
 
-    connect( this, &TiredApplication::gobalMousePostionChanged, _tiredUI, &tired::TiredUi::onGlobalMouseMove );
+    connect( this, &TiredApplication::gobalMousePostionChanged, _tiredUI, &tired::TiredUI::onGlobalMouseMove );
 
     setAttribute( Qt::AA_UseStyleSheetPropagationInWidgetStyles );
 }

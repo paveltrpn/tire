@@ -12,7 +12,7 @@ namespace tired {
 // ========== TiredUi =================================================
 // ====================================================================
 
-TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
+TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
     : tired_{ std::make_unique<tired::Tired>() }
     , engine_{ new QQmlEngine{ this } }
     , context_{ engine_->rootContext() }
@@ -104,12 +104,12 @@ TiredUi::TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
     this->show();
 }
 
-void TiredUi::onGlobalMouseMove( const QPointF &pos ) {
+void TiredUI::onGlobalMouseMove( const QPointF &pos ) {
     tired_->setGlobalMousePosX( pos.x() );
     tired_->setGlobalMousePosY( pos.y() );
 }
 
-void TiredUi::moveWindow() {
+void TiredUI::moveWindow() {
     this->windowHandle()->startSystemMove();
 }
 
