@@ -22,6 +22,8 @@ struct TiredUi final : QMainWindow {
 public:
     TiredUi( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent = nullptr );
 
+    void onGlobalMouseMove( const QPointF &pos );
+
 private:
     auto reigsterTypes() -> void;
 

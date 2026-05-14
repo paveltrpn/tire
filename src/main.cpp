@@ -79,5 +79,7 @@ auto main( int argc, char* argv[] ) -> int {
 
     auto tiredUi = std::make_unique<tired::TiredUi>( windowTraits );
 
+    // connect()
+
     return application.exec();
 }

@@ -25,6 +25,9 @@ public:
         return QApplication::exec();
     }
 
+signals:
+    void gobalMousePostionChanged( const QPointF &pos );
+
 protected:
     bool eventFilter( QObject *watched, QEvent *event ) override {
         //
