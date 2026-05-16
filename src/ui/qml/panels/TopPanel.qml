@@ -202,13 +202,14 @@ Rectangle {
 
                 anchors {
                     right: foldWindowButton.left
+                    rightMargin: 4
                     top: parent.top
                 }
 
                 width: 24
                 height: 24
 
-                icon.source: "image://TiredImageProvider/power.svg"
+                icon.source: "image://TiredImageProvider/arrow-up-right-from-square.svg"
                 onClicked: {
                     Qt.quit();
                 }
@@ -219,13 +220,14 @@ Rectangle {
 
                 anchors {
                     right: closeAppButton.left
+                    rightMargin: 4
                     top: parent.top
                 }
 
                 width: 24
                 height: 24
 
-                icon.source: "image://TiredImageProvider/power.svg"
+                icon.source: "image://TiredImageProvider/square-minus.svg"
                 onClicked: {
                     Qt.quit();
                 }
@@ -242,7 +244,7 @@ Rectangle {
                 width: 24
                 height: 24
 
-                icon.source: "image://TiredImageProvider/power.svg"
+                icon.source: "image://TiredImageProvider/xmark-large.svg"
                 onClicked: {
                     Qt.quit();
                 }
