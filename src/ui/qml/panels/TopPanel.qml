@@ -46,6 +46,13 @@ Rectangle {
 
         height: 24
 
+        property bool isMenuActive: fileMenu.visible || helpMenu.visible
+
+        function finishThis(menuItem) {
+            menuBarWrapper.isMenuActive = false;
+            menuItem.close();
+        }
+
         RowLayout {
             id: menuBarButtonsLayout
 
@@ -70,7 +77,20 @@ Rectangle {
                 font: _fonts.label_accent
 
                 onClicked: {
-                    fileMenu.open();
+                    menuBarWrapper.isMenuActive = !menuBarWrapper.isMenuActive;
+
+                    if (menuBarButtonsLayout) {
+                        fileMenu.open();
+                    } else {
+                        //menuBarWrapper.finishThis(fileMenu);
+                    }
+                }
+
+                onHoveredChanged: {
+                    if (hovered && menuBarWrapper.isMenuActive) {
+                        fileMenu.open();
+                        helpMenu.close();
+                    }
                 }
 
                 backgroundColor: "transparent"
@@ -86,6 +106,8 @@ Rectangle {
                     padding: 0
 
                     popupType: Popup.Native
+                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
 
                     contentItem: Rectangle {
                         width: parent.width
@@ -99,6 +121,8 @@ Rectangle {
                                 icon.source: "image://TiredImageProvider/folder.svg"
                                 font: _fonts.label_accent
                                 onClicked: {
+                                    // menuBarWrapper.finishThis(fileMenu);
+                                    fileMenu.close()
                                     fileDialog.show();
                                 }
                             }
@@ -109,6 +133,8 @@ Rectangle {
                                 icon.source: "image://TiredImageProvider/door-open.svg"
                                 font: _fonts.label_accent
                                 onClicked: {
+                                    // menuBarWrapper.finishThis(fileMenu);
+                                    fileMenu.close();
                                     MainWindow.quitApplication();
                                 }
                             }
@@ -128,7 +154,20 @@ Rectangle {
                 font: _fonts.label_accent
 
                 onClicked: {
-                    helpMenu.open();
+                    menuBarWrapper.isMenuActive = !menuBarWrapper.isMenuActive;
+
+                    if (menuBarButtonsLayout) {
+                        helpMenu.open();
+                    } else {
+                        // menuBarWrapper.finishThis(helpMenu);
+                    }
+                }
+
+                onHoveredChanged: {
+                    if (hovered && menuBarWrapper.isMenuActive) {
+                        fileMenu.close();
+                        helpMenu.open();
+                    }
                 }
 
                 backgroundColor: "transparent"
@@ -156,6 +195,10 @@ Rectangle {
                                 text: "About..."
                                 icon.source: "image://TiredImageProvider/circle-exclamation.svg"
                                 font: _fonts.label_accent
+                                onClicked: {
+                                    // menuBarWrapper.finishThis(helpMenu);
+                                    helpMenu.close()
+                                }
                             }
                         }
                     }
