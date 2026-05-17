@@ -20,7 +20,7 @@ Rectangle {
 
     color: _color.background
 
-    topLeftRadius:  _radius.half
+    topLeftRadius: _radius.half
     topRightRadius: _radius.half
 
     MouseArea {
@@ -43,6 +43,7 @@ Rectangle {
             right: parent.right
             top: parent.top
         }
+
         height: 32
 
         RowLayout {
@@ -69,50 +70,44 @@ Rectangle {
                     fileMenu.open();
                 }
 
+                backgroundColor: "transparent"
+
                 Popup {
                     id: fileMenu
 
                     y: parent.height
 
-                    width: 56
-                    height: 48 + 48 + 48
+                    width: 256
+                    height: fileMenuColumn.implicitHeight
 
                     padding: 0
 
                     popupType: Popup.Native
 
                     contentItem: Rectangle {
-                        color: "gray"
+                        width: parent.width
+                        color: _color.background
                         Column {
-                            Rectangle {
-                                width: 56
-                                height: 24
-                                color: "red"
+                            id: fileMenuColumn
+                            NpContextMenuButton {
+                                width: 192
+                                height: 32
+                                text: "Open"
+                                icon.source: "image://TiredImageProvider/folder.svg"
+                                font: _fonts.label_accent
+                                onClicked: {
+                                    fileDialog.show();
+                                }
                             }
-                            Rectangle {
-                                width: 56
-                                height: 24
-                                color: "blue"
-                            }
-                            Rectangle {
-                                width: 56
-                                height: 24
-                                color: "red"
-                            }
-                            Rectangle {
-                                width: 56
-                                height: 24
-                                color: "blue"
-                            }
-                            Rectangle {
-                                width: 56
-                                height: 24
-                                color: "red"
-                            }
-                            Rectangle {
-                                width: 56
-                                height: 24
-                                color: "blue"
+                            NpContextMenuButton {
+                                width: 192
+                                height: 32
+                                text: "Exit"
+                                icon.source: "image://TiredImageProvider/door-open.svg"
+                                font: _fonts.label_accent
+                                onClicked: {
+                                    MainWindow.quitApplication();
+                                }
                             }
                         }
                     }
@@ -130,50 +125,31 @@ Rectangle {
                     helpMenu.open();
                 }
 
+                backgroundColor: "transparent"
+
                 Popup {
                     id: helpMenu
 
                     y: parent.height
 
-                    width: 56
-                    height: 48 + 48 + 48
+                    width: 256
+                    height: helpMenuColumn.implicitHeight
 
                     padding: 0
 
                     popupType: Popup.Window
 
                     contentItem: Rectangle {
-                        color: "gray"
+                        width: parent.width
+                        color: _color.background
                         Column {
-                            Rectangle {
-                                width: 56
-                                height: 24
-                                color: "red"
-                            }
-                            Rectangle {
-                                width: 56
-                                height: 24
-                                color: "blue"
-                            }
-                            Rectangle {
-                                width: 56
-                                height: 24
-                                color: "red"
-                            }
-                            Rectangle {
-                                width: 56
-                                height: 24
-                                color: "blue"
-                            }
-                            Rectangle {
-                                width: 56
-                                height: 24
-                                color: "red"
-                            }
-                            Rectangle {
-                                width: 56
-                                height: 24
-                                color: "blue"
+                            id: helpMenuColumn
+                            NpContextMenuButton {
+                                width: 192
+                                height: 32
+                                text: "About..."
+                                icon.source: "image://TiredImageProvider/circle-exclamation.svg"
+                                font: _fonts.label_accent
                             }
                         }
                     }
@@ -210,8 +186,7 @@ Rectangle {
                 height: 24
 
                 icon.source: "image://TiredImageProvider/arrow-up-right-from-square.svg"
-                onClicked: {
-                }
+                onClicked: {}
             }
 
             NpButton {
@@ -227,8 +202,7 @@ Rectangle {
                 height: 24
 
                 icon.source: "image://TiredImageProvider/square-minus.svg"
-                onClicked: {
-                }
+                onClicked: {}
             }
 
             NpButton {
@@ -333,9 +307,7 @@ Rectangle {
 
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                     icon.source: "image://TiredImageProvider/cube_01.svg"
-                    onClicked: {
-                        fileDialog.show();
-                    }
+                    onClicked: {}
                 }
             }
 
