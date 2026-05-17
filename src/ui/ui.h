@@ -25,6 +25,9 @@ public:
     void onGlobalMouseMove( const QPointF &pos );
 
     Q_INVOKABLE void moveWindow();
+    Q_INVOKABLE void quitApplication();
+
+    void closeEvent( QCloseEvent *event ) override;
 
 private:
     auto reigsterTypes() -> void;

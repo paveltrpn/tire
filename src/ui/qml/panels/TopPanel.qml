@@ -211,7 +211,6 @@ Rectangle {
 
                 icon.source: "image://TiredImageProvider/arrow-up-right-from-square.svg"
                 onClicked: {
-                    Qt.quit();
                 }
             }
 
@@ -229,7 +228,6 @@ Rectangle {
 
                 icon.source: "image://TiredImageProvider/square-minus.svg"
                 onClicked: {
-                    Qt.quit();
                 }
             }
 
@@ -246,7 +244,7 @@ Rectangle {
 
                 icon.source: "image://TiredImageProvider/xmark-large.svg"
                 onClicked: {
-                    Qt.quit();
+                    MainWindow.quitApplication();
                 }
             }
         }

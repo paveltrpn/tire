@@ -3,8 +3,10 @@
 #include <QHBoxLayout>
 #include <QSplitter>
 #include <QWidget>
+#include <QApplication>
 
 #include "ui.h"
+#include "log/log.h"
 
 namespace tired {
 
@@ -109,6 +111,19 @@ TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
     hLayout->addWidget( hSplitter );
 
     this->show();
+}
+
+void TiredUI::quitApplication() {
+    QApplication::quit();
+}
+
+void TiredUI::closeEvent( QCloseEvent *event ) {
+    log::info()( "close event handled!" );
+    // if (maybeSave()) {
+    //     event->accept();
+    // } else {
+    //     event->ignore();
+    // }
 }
 
 void TiredUI::onGlobalMouseMove( const QPointF &pos ) {
