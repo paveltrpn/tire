@@ -118,6 +118,12 @@ Rectangle {
                     popupType: Popup.Native
                     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
+                    Component.onCompleted: {
+                           forceActiveFocus() // Forces focus and layout resolution
+                           // Optional: you can open it in the next event loop tick
+                           //Qt.callLater(fileMenu.open)
+                       }
+
                     onVisibleChanged: {
                         if (!visible && menuBarWrapper.activeMenu === fileMenu) {
                             menuBarWrapper.closeActiveMenu();

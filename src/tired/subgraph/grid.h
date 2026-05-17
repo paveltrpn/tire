@@ -63,7 +63,7 @@ private:
 
 // ===============================================================================
 
-struct GridSubgraph final : Subgraph {
+struct GridSubgraph final : public Subgraph {
     GridSubgraph( vsg::Viewer* viewer );
 
     auto initPipeline() -> void override;
