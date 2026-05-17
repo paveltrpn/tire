@@ -46,11 +46,24 @@ Rectangle {
 
         height: 24
 
-        property bool isMenuActive: fileMenu.visible || helpMenu.visible
+        property bool isMenuActive: false
+        property var activeMenu: null
 
-        function finishThis(menuItem) {
+        function openMenu(menu) {
+            if (menuBarWrapper.activeMenu && menuBarWrapper.activeMenu !== menu) {
+                menuBarWrapper.activeMenu.close();
+            }
+            menu.open();
+            menuBarWrapper.isMenuActive = true;
+            menuBarWrapper.activeMenu = menu;
+        }
+
+        function closeActiveMenu() {
+            if (menuBarWrapper.activeMenu) {
+                menuBarWrapper.activeMenu.close();
+                menuBarWrapper.activeMenu = null;
+            }
             menuBarWrapper.isMenuActive = false;
-            menuItem.close();
         }
 
         RowLayout {
@@ -77,19 +90,16 @@ Rectangle {
                 font: _fonts.label_accent
 
                 onClicked: {
-                    menuBarWrapper.isMenuActive = !menuBarWrapper.isMenuActive;
-
-                    if (menuBarButtonsLayout) {
-                        fileMenu.open();
+                    if (menuBarWrapper.activeMenu === fileMenu) {
+                        menuBarWrapper.closeActiveMenu();
                     } else {
-                        //menuBarWrapper.finishThis(fileMenu);
+                        menuBarWrapper.openMenu(fileMenu);
                     }
                 }
 
                 onHoveredChanged: {
-                    if (hovered && menuBarWrapper.isMenuActive) {
-                        fileMenu.open();
-                        helpMenu.close();
+                    if (hovered && menuBarWrapper.isMenuActive && menuBarWrapper.activeMenu !== fileMenu) {
+                        menuBarWrapper.openMenu(fileMenu);
                     }
                 }
 
@@ -108,6 +118,11 @@ Rectangle {
                     popupType: Popup.Native
                     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
+                    onVisibleChanged: {
+                        if (!visible && menuBarWrapper.activeMenu === fileMenu) {
+                            menuBarWrapper.closeActiveMenu();
+                        }
+                    }
 
                     contentItem: Rectangle {
                         width: parent.width
@@ -121,8 +136,7 @@ Rectangle {
                                 icon.source: "image://TiredImageProvider/folder.svg"
                                 font: _fonts.label_accent
                                 onClicked: {
-                                    // menuBarWrapper.finishThis(fileMenu);
-                                    fileMenu.close()
+                                    fileMenu.close();
                                     fileDialog.show();
                                 }
                             }
@@ -133,7 +147,6 @@ Rectangle {
                                 icon.source: "image://TiredImageProvider/door-open.svg"
                                 font: _fonts.label_accent
                                 onClicked: {
-                                    // menuBarWrapper.finishThis(fileMenu);
                                     fileMenu.close();
                                     MainWindow.quitApplication();
                                 }
@@ -154,19 +167,16 @@ Rectangle {
                 font: _fonts.label_accent
 
                 onClicked: {
-                    menuBarWrapper.isMenuActive = !menuBarWrapper.isMenuActive;
-
-                    if (menuBarButtonsLayout) {
-                        helpMenu.open();
+                    if (menuBarWrapper.activeMenu === helpMenu) {
+                        menuBarWrapper.closeActiveMenu();
                     } else {
-                        // menuBarWrapper.finishThis(helpMenu);
+                        menuBarWrapper.openMenu(helpMenu);
                     }
                 }
 
                 onHoveredChanged: {
-                    if (hovered && menuBarWrapper.isMenuActive) {
-                        fileMenu.close();
-                        helpMenu.open();
+                    if (hovered && menuBarWrapper.isMenuActive && menuBarWrapper.activeMenu !== helpMenu) {
+                        menuBarWrapper.openMenu(helpMenu);
                     }
                 }
 
@@ -196,8 +206,7 @@ Rectangle {
                                 icon.source: "image://TiredImageProvider/circle-exclamation.svg"
                                 font: _fonts.label_accent
                                 onClicked: {
-                                    // menuBarWrapper.finishThis(helpMenu);
-                                    helpMenu.close()
+                                    helpMenu.close();
                                 }
                             }
                         }
