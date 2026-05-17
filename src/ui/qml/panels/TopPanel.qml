@@ -281,21 +281,21 @@ Rectangle {
             NpButton {
                 id: gizmoMoveModeBtn
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                icon.source: "image://TiredImageProvider/gizmo_move_mode.svg"
+                icon.source: "image://TiredImageProvider/arrow-all-330.svg"
                 onClicked: {}
             }
 
             NpButton {
                 id: gizmoRotateModeBtn
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                icon.source: "image://TiredImageProvider/gizmo_rotate_mode.svg"
+                icon.source: "image://TiredImageProvider/refresh-ccw-alt-4.svg"
                 onClicked: {}
             }
 
             NpButton {
                 id: gizmoScaleModeBtn
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                icon.source: "image://TiredImageProvider/gizmo_scale_mode.svg"
+                icon.source: "image://TiredImageProvider/arrow-corner-278.svg"
                 onClicked: {}
             }
 
@@ -321,7 +321,7 @@ Rectangle {
                         left: parent.left
                     }
 
-                    icon.source: "image://TiredImageProvider/gizmo_global_mode.svg"
+                    icon.source: "image://TiredImageProvider/cube-alt.svg"
                     onClicked: {}
                 }
 
@@ -334,7 +334,7 @@ Rectangle {
                     }
 
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                    icon.source: "image://TiredImageProvider/gizmo_local_mode.svg"
+                    icon.source: "image://TiredImageProvider/cube_01.svg"
                     onClicked: {
                         fileDialog.show();
                     }
