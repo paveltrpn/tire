@@ -9,6 +9,8 @@
 #include "subgraph/testbox.h"
 #include "subgraph/sceneobject.h"
 #include "subgraph/marker.h"
+#include "subgraph/bounding.h"
+#include "subgraph/gizmo.h"
 
 namespace tired {
 
@@ -31,6 +33,9 @@ private:
 
     Grid* _grid{};
     Testbox* _testbox{};
+
+    Bounding* _bounding{};
+    Gizmo* _gizmo{};
 
     vsg::ref_ptr<SceneObjectSubgraph> _sceneObjectSubgraph{};
     vsg::ref_ptr<MarkerSubgraph> _markerSubgraph{};
