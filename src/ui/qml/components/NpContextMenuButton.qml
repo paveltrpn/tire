@@ -73,5 +73,6 @@ QuickTemplates.Button {
         font: control.font
         color: control.textColor
         opacity: control.enabled ? 1.0 : 0.3
+        alignment: Qt.AlignLeft
     }
 }

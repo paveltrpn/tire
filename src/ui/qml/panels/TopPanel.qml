@@ -44,7 +44,7 @@ Rectangle {
             top: parent.top
         }
 
-        height: 32
+        height: 24
 
         RowLayout {
             id: menuBarButtonsLayout
@@ -63,6 +63,9 @@ Rectangle {
                 id: fileMenuButton
 
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+
+                height: 24
+
                 text: "File"
                 font: _fonts.label_accent
 
@@ -91,7 +94,7 @@ Rectangle {
                             id: fileMenuColumn
                             NpContextMenuButton {
                                 width: 192
-                                height: 32
+                                height: 24
                                 text: "Open"
                                 icon.source: "image://TiredImageProvider/folder.svg"
                                 font: _fonts.label_accent
@@ -101,7 +104,7 @@ Rectangle {
                             }
                             NpContextMenuButton {
                                 width: 192
-                                height: 32
+                                height: 24
                                 text: "Exit"
                                 icon.source: "image://TiredImageProvider/door-open.svg"
                                 font: _fonts.label_accent
@@ -118,6 +121,9 @@ Rectangle {
                 id: helpMenuButton
 
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+
+                height: 24
+
                 text: "Help"
                 font: _fonts.label_accent
 
@@ -146,7 +152,7 @@ Rectangle {
                             id: helpMenuColumn
                             NpContextMenuButton {
                                 width: 192
-                                height: 32
+                                height: 24
                                 text: "About..."
                                 icon.source: "image://TiredImageProvider/circle-exclamation.svg"
                                 font: _fonts.label_accent
