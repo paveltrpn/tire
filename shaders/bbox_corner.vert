@@ -12,18 +12,6 @@ out gl_PerVertex {
     vec4 gl_Position;
 };
 
-// 8 corner positions (normalized -0.5 to +0.5)
-vec3 corners[8] = vec3[](
-    vec3(-0.5, -0.5, -0.5),  // 0: back-bottom-left
-    vec3( 0.5, -0.5, -0.5),  // 1: back-bottom-right
-    vec3( 0.5,  0.5, -0.5),  // 2: back-top-right
-    vec3(-0.5,  0.5, -0.5),  // 3: back-top-left
-    vec3(-0.5, -0.5,  0.5),  // 4: front-bottom-left
-    vec3( 0.5, -0.5,  0.5),  // 5: front-bottom-right
-    vec3( 0.5,  0.5,  0.5),  // 6: front-top-right
-    vec3(-0.5,  0.5,  0.5)   // 7: front-top-left
-);
-
 vec3 colors[8] = vec3[](
     vec3(1.0, 0.0, 0.0),     // 0: red
     vec3(0.0, 1.0, 0.0),     // 1: green
@@ -37,8 +25,15 @@ vec3 colors[8] = vec3[](
 
 const float LINE_LENGTH = 0.25;
 
-// 24 line segments: 8 corners * 3 lines each (along box edges)
-// Each line extends from corner toward adjacent corner along edge
+mat4 getScaleMatrix(vec3 sc) {
+    return mat4(
+        sc.x, 0.0,  0.0,  0.0,  // Column 1
+        0.0,  sc.y, 0.0,  0.0,  // Column 2
+        0.0,  0.0,  sc.z, 0.0,  // Column 3
+        0.0,  0.0,  0.0,  1.0   // Column 4
+    );
+}
+
 vec3 lineVerts[48] = vec3[](
     // Corner 0 (-0.5,-0.5,-0.5) back-bottom-left - red
     vec3(-0.5, -0.5, -0.5), vec3(-0.5 + LINE_LENGTH, -0.5, -0.5),  // +X edge toward corner 1
@@ -75,6 +70,11 @@ vec3 lineVerts[48] = vec3[](
 );
 
 void main() {
-    gl_Position = pc.projection * pc.modelview * vec4(lineVerts[gl_VertexIndex], 1.0);
+    vec3 scaleFactors = vec3(2.0, 2.0, 2.0);
+    mat4 scaleMatrix = getScaleMatrix(scaleFactors);
+
+    vec4 vertex = vec4(lineVerts[gl_VertexIndex], 1.0) * scaleMatrix;
+    gl_Position = pc.projection * pc.modelview * vertex;
+
     fragColor = colors[gl_VertexIndex / 6];
 }
