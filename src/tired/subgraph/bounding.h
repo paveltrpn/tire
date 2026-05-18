@@ -14,7 +14,10 @@ struct Bounding final : public QObject {
     Q_OBJECT
 
 public:
-    Bounding( const QObject* parent = nullptr );
+    Bounding( vsg::Viewer* viewer, QObject* parent = nullptr );
+
+private:
+    vsg::ref_ptr<BoundingSubgraph> _bounding{};
 };
 
 // ===============================================================================
@@ -23,6 +26,9 @@ struct BoundingSubgraph final : public Subgraph {
     BoundingSubgraph( vsg::Viewer* viewer );
 
     auto initPipeline() -> void override;
+    auto initDrawCommand() -> void;
+
+    friend Bounding;
 
 private:
 };
