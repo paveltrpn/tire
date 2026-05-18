@@ -9,14 +9,16 @@ Scenegraph::Scenegraph( vsg::Viewer* viewer, QObject* parent )
     : QObject{ parent }
     , _root{ new vsg::Group{} }
     , _viewer{ viewer }
-    , _testbox{ new Testbox{ viewer, this } }
     , _grid{ new Grid{ viewer, this } }
+    , _testbox{ new Testbox{ viewer, this } }
+    , _bounding{ new Bounding{ viewer, this } }
     , _sceneObjectSubgraph{ new SceneObjectSubgraph{ viewer } }
     , _markerSubgraph{ new MarkerSubgraph{ viewer } } {
     //
 
-    _root->addChild( _testbox->testbox() );
     _root->addChild( _grid->grid() );
+    _root->addChild( _testbox->testbox() );
+    _root->addChild( _bounding->bounding() );
 
     _sceneObjectSubgraph->initPipeline();
     _markerSubgraph->initPipeline();

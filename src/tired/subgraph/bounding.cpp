@@ -11,6 +11,10 @@ Bounding::Bounding( vsg::Viewer* viewer, QObject* parent )
     _bounding->initDrawCommand();
 }
 
+auto Bounding::bounding() const -> vsg::ref_ptr<BoundingSubgraph> {
+    return _bounding;
+}
+
 // ===============================================================================
 
 BoundingSubgraph::BoundingSubgraph( vsg::Viewer* viewer )
