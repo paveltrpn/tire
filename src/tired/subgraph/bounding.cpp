@@ -53,9 +53,12 @@ auto BoundingSubgraph::initPipeline() -> void {
 
     vsg::VertexInputState::Attributes vertexAttributeDescriptions{};
 
+    auto inputAssemblyState = vsg::InputAssemblyState::create();
+    inputAssemblyState->topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+
     vsg::GraphicsPipelineStates pipelineStates{
         vsg::VertexInputState::create( vertexBindingsDescriptions, vertexAttributeDescriptions ),
-        vsg::InputAssemblyState::create(),
+        inputAssemblyState,
         vsg::RasterizationState::create(),
         vsg::MultisampleState::create(),
         vsg::ColorBlendState::create(),

@@ -16,9 +16,9 @@ Scenegraph::Scenegraph( vsg::Viewer* viewer, QObject* parent )
     , _markerSubgraph{ new MarkerSubgraph{ viewer } } {
     //
 
-    _root->addChild( _grid->grid() );
-    _root->addChild( _testbox->testbox() );
+    // _root->addChild( _testbox->testbox() );
     _root->addChild( _bounding->bounding() );
+    _root->addChild( _grid->grid() );
 
     _sceneObjectSubgraph->initPipeline();
     _markerSubgraph->initPipeline();
