@@ -56,10 +56,13 @@ auto BoundingSubgraph::initPipeline() -> void {
     auto inputAssemblyState = vsg::InputAssemblyState::create();
     inputAssemblyState->topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
 
+    auto rasterizationState = vsg::RasterizationState::create();
+    rasterizationState->lineWidth = 4.0f;
+
     vsg::GraphicsPipelineStates pipelineStates{
         vsg::VertexInputState::create( vertexBindingsDescriptions, vertexAttributeDescriptions ),
         inputAssemblyState,
-        vsg::RasterizationState::create(),
+        rasterizationState,
         vsg::MultisampleState::create(),
         vsg::ColorBlendState::create(),
         vsg::DepthStencilState::create() };
@@ -76,7 +79,7 @@ auto BoundingSubgraph::initPipeline() -> void {
 auto BoundingSubgraph::initDrawCommand() -> void {
     // Add draw command.
     auto drawCommands = vsg::Commands::create();
-    drawCommands->addChild( vsg::Draw::create( 36, 1, 0, 0 ) );
+    drawCommands->addChild( vsg::Draw::create( 48, 1, 0, 0 ) );
 
     auto tr = vsg::MatrixTransform::create();
     tr->addChild( drawCommands );

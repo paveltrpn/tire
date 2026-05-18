@@ -35,7 +35,7 @@ vec3 colors[8] = vec3[](
     vec3(0.5, 0.5, 0.5)      // 7: gray
 );
 
-const float LINE_LENGTH = 0.15;
+const float LINE_LENGTH = 0.25;
 
 // 24 line segments: 8 corners * 3 lines each (along box edges)
 // Each line extends from corner toward adjacent corner along edge
