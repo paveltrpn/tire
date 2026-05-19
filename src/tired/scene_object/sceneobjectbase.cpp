@@ -5,7 +5,7 @@ namespace tired {
 
 SceneObjectBase::SceneObjectBase( QObject* parent )
     : QObject{ parent }
-    , _thisObjectRoot{ new SceneObjectGraph{ this } } {
+    , _thisObject{ new SceneObjectGraph{ this } } {
 }
 
 void SceneObjectBase::setSelected( bool value ) {
@@ -18,7 +18,7 @@ bool SceneObjectBase::selected() {
 }
 
 auto SceneObjectBase::root() const -> vsg::ref_ptr<SceneObjectGraph> {
-    return _thisObjectRoot;
+    return _thisObject;
 }
 
 }  // namespace tired
