@@ -82,7 +82,7 @@ void Handler::lineSegmentIntersector( vsg::PointerEvent& pointerEvent ) {
     // const auto beforeIntersection = vsg::clock::now();
 
     // Do all intersection work here.
-    _inputHandler->scenegraph()->accept( *intersector );
+    _inputHandler->scenegraph()->root()->accept( *intersector );
 
     // const auto afterIntersection = vsg::clock::now();
 
@@ -100,8 +100,10 @@ void Handler::lineSegmentIntersector( vsg::PointerEvent& pointerEvent ) {
         for ( auto node : intersection->nodePath ) {
             auto sog = dynamic_cast<const SceneObjectGraph*>( node );
             if ( sog ) {
+                const auto sogMat = sog->fmatrix();
                 auto owner = sog->owner();
-                owner->test();
+
+                _inputHandler->scenegraph()->bounding()->setTransformMat( sogMat );
 
                 break;
             }
@@ -111,8 +113,8 @@ void Handler::lineSegmentIntersector( vsg::PointerEvent& pointerEvent ) {
 
 // =======================================================================
 
-InputHandler::InputHandler( vsg::ref_ptr<vsg::Camera> camera, vsg::ref_ptr<vsg::Group> scenegraph,
-                            vsg::ref_ptr<vsg::Viewer> viwer, QObject* parent )
+InputHandler::InputHandler( vsg::ref_ptr<vsg::Camera> camera, vsg::ref_ptr<vsg::Viewer> viwer, Scenegraph* scenegraph,
+                            QObject* parent )
     : QObject{ parent }
     , _handler{ new Handler{ this } }
     , _camera{ camera }
@@ -132,7 +134,7 @@ auto InputHandler::viewer() -> const vsg::ref_ptr<vsg::Viewer> {
     return _viewer;
 };
 
-auto InputHandler::scenegraph() -> const vsg::ref_ptr<vsg::Group> {
+auto InputHandler::scenegraph() -> const Scenegraph* {
     return _scenegraph;
 }
 

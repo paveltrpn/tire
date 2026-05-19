@@ -11,6 +11,8 @@
 #include <vsg/ui/ScrollWheelEvent.h>
 #include <vsg/ui/TouchEvent.h>
 
+#include "scenegraph.h"
+
 namespace tired {
 
 struct InputHandler;
@@ -51,13 +53,13 @@ struct InputHandler final : QObject {
     Q_PROPERTY( QPoint mousePos READ mousePos WRITE setMousePos NOTIFY mousePosUpdated )
 
 public:
-    InputHandler( vsg::ref_ptr<vsg::Camera> camera, vsg::ref_ptr<vsg::Group> scenegraph,
-                  vsg::ref_ptr<vsg::Viewer> viwer, QObject* parent = nullptr );
+    InputHandler( vsg::ref_ptr<vsg::Camera> camera, vsg::ref_ptr<vsg::Viewer> viwer, Scenegraph* scenegraph,
+                  QObject* parent = nullptr );
 
     auto handler() -> const vsg::ref_ptr<Handler>;
     auto camera() -> vsg::ref_ptr<vsg::Camera>;
     auto viewer() -> const vsg::ref_ptr<vsg::Viewer>;
-    auto scenegraph() -> const vsg::ref_ptr<vsg::Group>;
+    auto scenegraph() -> const Scenegraph*;
 
 public:
     void setMousePos( QPoint value );
@@ -72,7 +74,8 @@ private:
     // TODO: We not owning this, use raw pointer!
     vsg::ref_ptr<vsg::Camera> _camera{};
     vsg::ref_ptr<vsg::Viewer> _viewer{};
-    vsg::ref_ptr<vsg::Group> _scenegraph{};
+
+    Scenegraph* _scenegraph{};
 
     QPoint mousePos_{};
 };

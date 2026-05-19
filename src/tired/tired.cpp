@@ -59,7 +59,7 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
     {
         _manipulator = new Manipulator{ _camera, nullptr, this };
         _manipulator->trackball()->addWindow( *window );
-        _inputHandler = new InputHandler{ _camera, _scenegraph->root(), _viewer, this };
+        _inputHandler = new InputHandler{ _camera, _viewer, _scenegraph, this };
     }
 
     // Setup viewer object.

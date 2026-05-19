@@ -13,8 +13,8 @@ public:
 
     auto owner() const -> SceneObjectBase *;
 
-    auto dmatrix() -> vsg::dmat4;
-    auto fmatrix() -> vsg::mat4;
+    auto dmatrix() const -> vsg::dmat4;
+    auto fmatrix() const -> vsg::mat4;
 
 private:
     SceneObjectBase *_owner{};

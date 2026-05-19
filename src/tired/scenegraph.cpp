@@ -27,12 +27,16 @@ Scenegraph::Scenegraph( vsg::Viewer* viewer, QObject* parent )
     _root->addChild( _markerSubgraph );
 }
 
-auto Scenegraph::root() -> vsg::ref_ptr<vsg::Group> {
+auto Scenegraph::root() const -> vsg::ref_ptr<vsg::Group> {
     return _root;
 }
 
 auto Scenegraph::grid() const -> Grid* {
     return _grid;
+}
+
+auto Scenegraph::bounding() const -> Bounding* {
+    return _bounding;
 }
 
 void Scenegraph::addExBox( float px, float py, float pz, float rx, float ry, float rz, float sx, float sy, float sz ) {

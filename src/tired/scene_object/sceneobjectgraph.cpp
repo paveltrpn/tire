@@ -12,11 +12,11 @@ auto SceneObjectGraph::owner() const -> SceneObjectBase* {
     return _owner;
 }
 
-auto SceneObjectGraph::dmatrix() -> vsg::dmat4 {
+auto SceneObjectGraph::dmatrix() const -> vsg::dmat4 {
     return this->matrix;
 }
 
-auto SceneObjectGraph::fmatrix() -> vsg::mat4 {
+auto SceneObjectGraph::fmatrix() const -> vsg::mat4 {
     return static_cast<vsg::mat4>( this->matrix );
 }
 
