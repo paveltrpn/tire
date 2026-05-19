@@ -38,11 +38,16 @@ auto BoundingSubgraph::initPipeline() -> void {
 
     // set up graphics pipeline
     vsg::DescriptorSetLayoutBindings descriptorBindings{
-        { 0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT,
-          nullptr }  // { binding, descriptorType, descriptorCount, stageFlags, pImmutableSamplers}
-    };
+        { /* binding */ 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, /* count */ 1, VK_SHADER_STAGE_VERTEX_BIT, nullptr } };
 
     auto descriptorSetLayout = vsg::DescriptorSetLayout::create( descriptorBindings );
+
+    auto mtrxTEST = vsg::scale( 2.0, 2.0, 2.0 );
+    _transformMatUniform = vsg::mat4Value::create( mtrxTEST );
+    _transformMatUniform->properties.dataVariance = vsg::DYNAMIC_DATA;
+
+    auto transformMatBufUniformDescriptor =
+        vsg::DescriptorBuffer::create( _transformMatUniform, /* dstBinding */ 1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
 
     vsg::PushConstantRanges pushConstantRanges{
         { VK_SHADER_STAGE_VERTEX_BIT, 0,
@@ -72,6 +77,12 @@ auto BoundingSubgraph::initPipeline() -> void {
     auto graphicsPipeline = vsg::GraphicsPipeline::create(
         pipelineLayout, vsg::ShaderStages{ vertexShader, fragmentShader }, pipelineStates );
     auto bindGraphicsPipeline = vsg::BindGraphicsPipeline::create( graphicsPipeline );
+
+    auto descriptorSet =
+        vsg::DescriptorSet::create( descriptorSetLayout, vsg::Descriptors{ transformMatBufUniformDescriptor } );
+
+    auto bindDescriptorSet = vsg::BindDescriptorSet::create( VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout,
+                                                             /* in_firstSet */ 0, descriptorSet );
 
     _stateGroup->add( bindGraphicsPipeline );
 };

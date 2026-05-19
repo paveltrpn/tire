@@ -6,6 +6,8 @@ layout(push_constant) uniform PushConstants {
     mat4 modelview;
 } pc;
 
+layout(location = 0) in mat4 boxTrnasformToObject;
+
 layout(location = 0) out vec3 fragColor;
 
 out gl_PerVertex {
@@ -70,10 +72,10 @@ vec3 lineVerts[48] = vec3[](
 );
 
 void main() {
-    vec3 scaleFactors = vec3(2.0, 2.0, 2.0);
-    mat4 scaleMatrix = getScaleMatrix(scaleFactors);
+    // vec3 scaleFactors = vec3(2.0, 2.0, 2.0);
+    // mat4 scaleMatrix = getScaleMatrix(scaleFactors);
 
-    vec4 vertex = vec4(lineVerts[gl_VertexIndex], 1.0) * scaleMatrix;
+    vec4 vertex = vec4(lineVerts[gl_VertexIndex], 1.0) * boxTrnasformToObject;
     gl_Position = pc.projection * pc.modelview * vertex;
 
     fragColor = colors[gl_VertexIndex / 6];

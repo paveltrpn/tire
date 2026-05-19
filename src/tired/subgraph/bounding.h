@@ -33,6 +33,7 @@ struct BoundingSubgraph final : public Subgraph {
     friend Bounding;
 
 private:
+    vsg::ref_ptr<vsg::mat4Value> _transformMatUniform{};
 };
 
 }  // namespace tired
