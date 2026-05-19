@@ -38,7 +38,7 @@ private:
     auto updateTransformMatUniform() -> void;
 
 private:
-    vsg::mat4 _transformMat{ vsg::scale( 3.0, 3.0, 3.0 ) };
+    vsg::mat4 _transformMat{};
     vsg::ref_ptr<vsg::mat4Value> _transformMatUniform{};
 };
 

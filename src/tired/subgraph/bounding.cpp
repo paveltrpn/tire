@@ -46,8 +46,7 @@ auto BoundingSubgraph::initPipeline() -> void {
         { /* binding */ 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, /* count */ 1, VK_SHADER_STAGE_VERTEX_BIT, nullptr } };
     auto descriptorSetLayout = vsg::DescriptorSetLayout::create( descriptorBindings );
 
-    auto mtrxTEST = vsg::mat4{};  //vsg::scale<float>( 3.0, 3.0, 3.0 );
-    _transformMatUniform = vsg::mat4Value::create( mtrxTEST );
+    _transformMatUniform = vsg::mat4Value::create( _transformMat );
     _transformMatUniform->properties.dataVariance = vsg::DYNAMIC_DATA;
 
     auto transformMatBufUniformDescriptor =
@@ -82,6 +81,7 @@ auto BoundingSubgraph::initPipeline() -> void {
                                                              /* in_firstSet */ 0, descriptorSet );
 
     _stateGroup->add( bindGraphicsPipeline );
+    _stateGroup->add( bindDescriptorSet );
 };
 
 auto BoundingSubgraph::initDrawCommand() -> void {
