@@ -85,14 +85,12 @@ auto BoundingSubgraph::initPipeline() -> void {
 };
 
 auto BoundingSubgraph::initDrawCommand() -> void {
-    // Add draw command.
     auto drawCommands = vsg::Commands::create();
-    drawCommands->addChild( vsg::Draw::create( 48, 1, 0, 0 ) );
 
-    auto tr = vsg::MatrixTransform::create();
-    tr->addChild( drawCommands );
+    const auto drawCmd = vsg::Draw::create( 48, 1, 0, 0 );
+    drawCommands->addChild( drawCmd );
 
-    _stateGroup->addChild( tr );
+    _stateGroup->addChild( drawCommands );
 }
 
 auto BoundingSubgraph::updateTransformMatUniform() -> void {
