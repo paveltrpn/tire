@@ -16,7 +16,7 @@ auto Bounding::bounding() const -> vsg::ref_ptr<BoundingSubgraph> {
 }
 
 void Bounding::setTransformMat( vsg::mat4 value ) {
-    _bounding->_transformMat = value;
+    _bounding->_transformMat = value * _bounding->_initialScale;
     _bounding->updateTransformMatUniform();
 }
 
@@ -46,7 +46,7 @@ auto BoundingSubgraph::initPipeline() -> void {
         { /* binding */ 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, /* count */ 1, VK_SHADER_STAGE_VERTEX_BIT, nullptr } };
     auto descriptorSetLayout = vsg::DescriptorSetLayout::create( descriptorBindings );
 
-    _transformMatUniform = vsg::mat4Value::create( _transformMat );
+    _transformMatUniform = vsg::mat4Value::create( _transformMat * _initialScale );
     _transformMatUniform->properties.dataVariance = vsg::DYNAMIC_DATA;
 
     auto transformMatBufUniformDescriptor =

@@ -39,6 +39,7 @@ private:
 
 private:
     vsg::mat4 _transformMat{};
+    vsg::mat4 _initialScale{ vsg::scale<float>( 1.1f, 1.1f, 1.1f ) };
     vsg::ref_ptr<vsg::mat4Value> _transformMatUniform{};
 };
 
