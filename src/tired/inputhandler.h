@@ -59,6 +59,7 @@ public:
     auto handler() -> const vsg::ref_ptr<Handler>;
     auto camera() -> vsg::ref_ptr<vsg::Camera>;
     auto viewer() -> const vsg::ref_ptr<vsg::Viewer>;
+
     auto scenegraph() -> const Scenegraph*;
 
 public:

@@ -79,15 +79,17 @@ void Handler::lineSegmentIntersector( vsg::PointerEvent& pointerEvent ) {
     auto intersector =
         vsg::LineSegmentIntersector::create( *_inputHandler->camera().get(), pointerEvent.x, pointerEvent.y );
 
+    auto scenegraph = _inputHandler->scenegraph();
+
     // const auto beforeIntersection = vsg::clock::now();
 
     // Do all intersection work here.
-    _inputHandler->scenegraph()->root()->accept( *intersector );
+    scenegraph->root()->accept( *intersector );
 
     // const auto afterIntersection = vsg::clock::now();
 
     if ( intersector->intersections.empty() ) {
-        _inputHandler->scenegraph()->bounding()->setTransformMat( vsg::mat4{} );
+        scenegraph->bounding()->setTransformMat( vsg::mat4{} );
         return;
     }
 
@@ -105,7 +107,7 @@ void Handler::lineSegmentIntersector( vsg::PointerEvent& pointerEvent ) {
 
                 auto owner = sog->owner();
 
-                _inputHandler->scenegraph()->bounding()->setTransformMat( sogMat );
+                scenegraph->bounding()->setTransformMat( sogMat );
 
                 return;
             }
