@@ -18,6 +18,8 @@ public:
 
     auto bounding() const -> vsg::ref_ptr<BoundingSubgraph>;
 
+    void setTransformMat( vsg::mat4 value );
+
 private:
     vsg::ref_ptr<BoundingSubgraph> _bounding{};
 };
@@ -33,6 +35,10 @@ struct BoundingSubgraph final : public Subgraph {
     friend Bounding;
 
 private:
+    auto updateTransformMatUniform() -> void;
+
+private:
+    vsg::mat4 _transformMat{};
     vsg::ref_ptr<vsg::mat4Value> _transformMatUniform{};
 };
 

@@ -15,6 +15,11 @@ auto Bounding::bounding() const -> vsg::ref_ptr<BoundingSubgraph> {
     return _bounding;
 }
 
+void Bounding::setTransformMat( vsg::mat4 value ) {
+    _bounding->_transformMat = value;
+    _bounding->updateTransformMatUniform();
+}
+
 // ===============================================================================
 
 BoundingSubgraph::BoundingSubgraph( vsg::Viewer* viewer )
@@ -96,6 +101,12 @@ auto BoundingSubgraph::initDrawCommand() -> void {
     tr->addChild( drawCommands );
 
     _stateGroup->addChild( tr );
+}
+
+auto BoundingSubgraph::updateTransformMatUniform() -> void {
+    _transformMatUniform->set( _transformMat );
+
+    _transformMatUniform->dirty();
 }
 
 }  // namespace tired
