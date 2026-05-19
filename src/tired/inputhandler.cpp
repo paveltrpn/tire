@@ -87,6 +87,7 @@ void Handler::lineSegmentIntersector( vsg::PointerEvent& pointerEvent ) {
     // const auto afterIntersection = vsg::clock::now();
 
     if ( intersector->intersections.empty() ) {
+        _inputHandler->scenegraph()->bounding()->setTransformMat( vsg::mat4{} );
         return;
     }
 
