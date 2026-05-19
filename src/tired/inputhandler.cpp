@@ -101,11 +101,12 @@ void Handler::lineSegmentIntersector( vsg::PointerEvent& pointerEvent ) {
             auto sog = dynamic_cast<const SceneObjectGraph*>( node );
             if ( sog ) {
                 const auto sogMat = sog->fmatrix();
+
                 auto owner = sog->owner();
 
                 _inputHandler->scenegraph()->bounding()->setTransformMat( sogMat );
 
-                break;
+                return;
             }
         }
     }
