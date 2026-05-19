@@ -6,7 +6,6 @@ layout(push_constant) uniform PushConstants {
     mat4 modelview;
 } pc;
 
-
 layout(set = 0, binding = 0) uniform BoxTransformMatrix {
     mat4 matrix;
 } boxTrnasformToObject;

@@ -17,7 +17,7 @@ Scenegraph::Scenegraph( vsg::Viewer* viewer, QObject* parent )
     //
 
     _root->addChild( _grid->grid() );
-    _root->addChild( _testbox->testbox() );
+    // _root->addChild( _testbox->testbox() );
     _root->addChild( _bounding->bounding() );
 
     _sceneObjectSubgraph->initPipeline();

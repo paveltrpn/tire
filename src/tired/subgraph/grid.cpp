@@ -115,10 +115,9 @@ auto GridSubgraph::initPipeline() -> void {
     }
 
     // set up graphics pipeline
-    vsg::DescriptorSetLayoutBindings descriptorBindings{
+    auto descriptorBindings = vsg::DescriptorSetLayoutBindings{
         { /* binding */ 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, /* count */ 1, VK_SHADER_STAGE_VERTEX_BIT, nullptr },
         { /* binding */ 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, /* count */ 1, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr } };
-
     auto descriptorSetLayout = vsg::DescriptorSetLayout::create( descriptorBindings );
 
     _planeBufUniformValue = vsg::floatArray::create( { _gridScale, _gridZOffset, 1.0f, 1.0f } );
@@ -135,12 +134,12 @@ auto GridSubgraph::initPipeline() -> void {
     auto gridBufUniformDescriptor =
         vsg::DescriptorBuffer::create( _gridBufUniformValue, /* dstBinding */ 1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
 
-    vsg::GraphicsPipelineStates pipelineStates{ vsg::VertexInputState::create(),   vsg::InputAssemblyState::create(),
-                                                vsg::RasterizationState::create(), vsg::MultisampleState::create(),
-                                                vsg::ColorBlendState::create(),    vsg::DepthStencilState::create() };
+    auto pipelineStates = vsg::GraphicsPipelineStates{
+        vsg::VertexInputState::create(), vsg::InputAssemblyState::create(), vsg::RasterizationState::create(),
+        vsg::MultisampleState::create(), vsg::ColorBlendState::create(),    vsg::DepthStencilState::create() };
 
     // projection, view, and model matrices, actual push constant calls automatically provided by the VSG's RecordTraversal
-    vsg::PushConstantRanges pushConstantRanges{ { VK_SHADER_STAGE_VERTEX_BIT, 0, 128 } };
+    auto pushConstantRanges = vsg::PushConstantRanges{ { VK_SHADER_STAGE_VERTEX_BIT, 0, 128 } };
 
     auto pipelineLayout =
         vsg::PipelineLayout::create( vsg::DescriptorSetLayouts{ descriptorSetLayout }, pushConstantRanges );
