@@ -47,7 +47,7 @@ auto BoundingSubgraph::initPipeline() -> void {
 
     auto descriptorSetLayout = vsg::DescriptorSetLayout::create( descriptorBindings );
 
-    auto mtrxTEST = vsg::scale( 2.0, 2.0, 2.0 );
+    auto mtrxTEST = vsg::scale( 3.0, 3.0, 3.0 );
     _transformMatUniform = vsg::mat4Value::create( mtrxTEST );
     _transformMatUniform->properties.dataVariance = vsg::DYNAMIC_DATA;
 
