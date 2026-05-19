@@ -6,7 +6,10 @@ layout(push_constant) uniform PushConstants {
     mat4 modelview;
 } pc;
 
-layout(location = 0) in mat4 boxTrnasformToObject;
+
+layout(set = 0, binding = 0) uniform BoxTransformMatrix {
+    mat4 matrix;
+} boxTrnasformToObject;
 
 layout(location = 0) out vec3 fragColor;
 
@@ -75,7 +78,7 @@ void main() {
     // vec3 scaleFactors = vec3(2.0, 2.0, 2.0);
     // mat4 scaleMatrix = getScaleMatrix(scaleFactors);
 
-    vec4 vertex = vec4(lineVerts[gl_VertexIndex], 1.0) * boxTrnasformToObject;
+    vec4 vertex = vec4(lineVerts[gl_VertexIndex], 1.0) * boxTrnasformToObject.matrix;
     gl_Position = pc.projection * pc.modelview * vertex;
 
     fragColor = colors[gl_VertexIndex / 6];

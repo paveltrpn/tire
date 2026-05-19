@@ -102,8 +102,8 @@ GridSubgraph::GridSubgraph( vsg::Viewer* viewer )
 
 auto GridSubgraph::initPipeline() -> void {
     // load shaders
-    vsg::Paths searchPaths =
-        std::vector<vsg::Path>{ std::format("{}{}",PREFIX_PATH_ONE ,"/shaders/spirv"), std::format("{}{}",PREFIX_PATH_ONE ,"/assets") };
+    vsg::Paths searchPaths = std::vector<vsg::Path>{ std::format( "{}{}", PREFIX_PATH_ONE, "/shaders/spirv" ),
+                                                     std::format( "{}{}", PREFIX_PATH_ONE, "/assets" ) };
 
     vsg::ref_ptr<vsg::ShaderStage> vertexShader =
         vsg::ShaderStage::read( VK_SHADER_STAGE_VERTEX_BIT, "main", vsg::findFile( "vert_grid.spv", searchPaths ) );
@@ -122,7 +122,6 @@ auto GridSubgraph::initPipeline() -> void {
     auto descriptorSetLayout = vsg::DescriptorSetLayout::create( descriptorBindings );
 
     _planeBufUniformValue = vsg::floatArray::create( { _gridScale, _gridZOffset, 1.0f, 1.0f } );
-
     _planeBufUniformValue->properties.dataVariance = vsg::DYNAMIC_DATA;
 
     auto planeBufUniformDescriptor = vsg::DescriptorBuffer::create( _planeBufUniformValue, /* dstBinding */ 0, 0,
@@ -131,7 +130,6 @@ auto GridSubgraph::initPipeline() -> void {
     _gridBufUniformValue =
         vsg::floatArray::create( { _gridSize, _lineThickness, _maxRange, _zoomSensitivity, _colorMajor.r, _colorMajor.g,
                                    _colorMajor.b, 1.0, _colorMinor.r, _colorMinor.g, _colorMinor.b, _majorDivisor } );
-
     _gridBufUniformValue->properties.dataVariance = vsg::DYNAMIC_DATA;
 
     auto gridBufUniformDescriptor =
@@ -141,7 +139,8 @@ auto GridSubgraph::initPipeline() -> void {
                                                 vsg::RasterizationState::create(), vsg::MultisampleState::create(),
                                                 vsg::ColorBlendState::create(),    vsg::DepthStencilState::create() };
 
-    vsg::PushConstantRanges pushConstantRanges{};
+    // projection, view, and model matrices, actual push constant calls automatically provided by the VSG's RecordTraversal
+    vsg::PushConstantRanges pushConstantRanges{ { VK_SHADER_STAGE_VERTEX_BIT, 0, 128 } };
 
     auto pipelineLayout =
         vsg::PipelineLayout::create( vsg::DescriptorSetLayouts{ descriptorSetLayout }, pushConstantRanges );

@@ -52,16 +52,10 @@ auto BoundingSubgraph::initPipeline() -> void {
     _transformMatUniform->properties.dataVariance = vsg::DYNAMIC_DATA;
 
     auto transformMatBufUniformDescriptor =
-        vsg::DescriptorBuffer::create( _transformMatUniform, /* dstBinding */ 1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
+        vsg::DescriptorBuffer::create( _transformMatUniform, /* dstBinding */ 0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
 
-    vsg::PushConstantRanges pushConstantRanges{
-        { VK_SHADER_STAGE_VERTEX_BIT, 0,
-          128 }  // projection, view, and model matrices, actual push constant calls automatically provided by the VSG's RecordTraversal
-    };
-
-    vsg::VertexInputState::Bindings vertexBindingsDescriptions{};
-
-    vsg::VertexInputState::Attributes vertexAttributeDescriptions{};
+    // projection, view, and model matrices, actual push constant calls automatically provided by the VSG's RecordTraversal
+    vsg::PushConstantRanges pushConstantRanges{ { VK_SHADER_STAGE_VERTEX_BIT, 0, 128 } };
 
     auto inputAssemblyState = vsg::InputAssemblyState::create();
     inputAssemblyState->topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
@@ -69,13 +63,12 @@ auto BoundingSubgraph::initPipeline() -> void {
     auto rasterizationState = vsg::RasterizationState::create();
     rasterizationState->lineWidth = 4.0f;
 
-    vsg::GraphicsPipelineStates pipelineStates{
-        vsg::VertexInputState::create( vertexBindingsDescriptions, vertexAttributeDescriptions ),
-        inputAssemblyState,
-        rasterizationState,
-        vsg::MultisampleState::create(),
-        vsg::ColorBlendState::create(),
-        vsg::DepthStencilState::create() };
+    vsg::GraphicsPipelineStates pipelineStates{ vsg::VertexInputState::create(),
+                                                inputAssemblyState,
+                                                rasterizationState,
+                                                vsg::MultisampleState::create(),
+                                                vsg::ColorBlendState::create(),
+                                                vsg::DepthStencilState::create() };
 
     auto pipelineLayout =
         vsg::PipelineLayout::create( vsg::DescriptorSetLayouts{ descriptorSetLayout }, pushConstantRanges );

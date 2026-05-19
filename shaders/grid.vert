@@ -1,7 +1,4 @@
-
 #version 450
-
-layout(location = 0) out vec3 vWorldPos;
 
 layout(push_constant) uniform PushConstants {
     mat4 projection;
@@ -14,6 +11,8 @@ layout(set = 0, binding = 0) uniform PlaneParamsBuffer {
     float _p1;
     float _p2;
 } planeParams;
+
+layout(location = 0) out vec3 vWorldPos;
 
 vec4 vertecies[6] = vec4[](
         vec4( 1.0, -1.0, 0.0, 1.0 ), vec4(  1.0,  1.0, 0.0, 1.0 ), vec4(-1.0,  1.0, 0.0, 1.0 ),
