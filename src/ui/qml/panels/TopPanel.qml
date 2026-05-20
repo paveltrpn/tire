@@ -149,6 +149,17 @@ Rectangle {
                             NpContextMenuButton {
                                 width: 192
                                 height: 24
+                                text: "Save"
+                                icon.source: "image://TiredImageProvider/save.svg"
+                                font: _fonts.label_accent
+                                onClicked: {
+                                    fileMenu.close();
+                                    fileDialog.show();
+                                }
+                            }
+                            NpContextMenuButton {
+                                width: 192
+                                height: 24
                                 text: "Exit"
                                 icon.source: "image://TiredImageProvider/door-open.svg"
                                 font: _fonts.label_accent
@@ -317,7 +328,7 @@ Rectangle {
             NpButton {
                 id: gizmoMoveModeBtn
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                icon.source: "image://TiredImageProvider/arrow-all-330.svg"
+                icon.source: "image://TiredImageProvider/arrow_all_direction_01.svg"
                 onClicked: {}
             }
 
