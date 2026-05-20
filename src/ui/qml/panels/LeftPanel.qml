@@ -7,7 +7,7 @@ import QtQuick.Layouts
 import Tire 1.0
 
 import "../components"
-import "../info"
+import "../sceneinfo"
 import "../add_forms"
 import "../settings"
 
@@ -121,8 +121,8 @@ Rectangle {
         visible: settingsBtn.checked
     }
 
-    Services {
-        id: servicesInfoWidget
+    SceneInfoComponent {
+        id: sceneInfoWidget
         anchors {
             top: mainLeftPanel.top
             left: mainLeftPanel.right
