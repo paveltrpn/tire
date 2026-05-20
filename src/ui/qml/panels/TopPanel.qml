@@ -328,14 +328,14 @@ Rectangle {
             NpButton {
                 id: gizmoMoveModeBtn
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                icon.source: "image://TiredImageProvider/arrow_all_direction_01.svg"
+                icon.source: "image://TiredImageProvider/arrow-all-330.svg"
                 onClicked: {}
             }
 
             NpButton {
                 id: gizmoRotateModeBtn
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                icon.source: "image://TiredImageProvider/refresh-ccw-alt-4.svg"
+                icon.source: "image://TiredImageProvider/arrow-spin.svg"
                 onClicked: {}
             }
 

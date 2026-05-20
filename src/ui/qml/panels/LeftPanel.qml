@@ -58,7 +58,7 @@ Rectangle {
             NpButton {
                 id: addBoxBtn
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-                icon.source: "image://TiredImageProvider/cube_01.svg"
+                icon.source: "image://TiredImageProvider/square-medical.svg"
                 onClicked: {
                     addBoxBtn.checked = !addBoxBtn.checked;
                     if (addBoxBtn.checked) {
