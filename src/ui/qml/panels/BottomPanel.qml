@@ -22,4 +22,12 @@ Rectangle {
 
     bottomLeftRadius: _radius.half
     bottomRightRadius: _radius.half
+
+    Rectangle {
+        id: bottomPanelMainComponentWrapper
+        anchors.fill: parent
+        color: _color.background_overlay_60
+        bottomLeftRadius: _radius.half
+        bottomRightRadius: _radius.half
+    }
 }

@@ -35,384 +35,392 @@ Rectangle {
         id: fileDialog
     }
 
-    Item {
-        id: menuBarWrapper
+    Rectangle {
+        id: topPanelMainComponentWrapper
+        anchors.fill: parent
+        color: _color.background_overlay_60
+        topLeftRadius: _radius.half
+        topRightRadius: _radius.half
 
-        anchors {
-            left: parent.left
-            right: parent.right
-            top: parent.top
-        }
-
-        height: 24
-
-        property bool isMenuActive: false
-        property var activeMenu: null
-
-        function openMenu(menu) {
-            if (menuBarWrapper.activeMenu && menuBarWrapper.activeMenu !== menu) {
-                menuBarWrapper.activeMenu.close();
-            }
-            menu.open();
-            menuBarWrapper.isMenuActive = true;
-            menuBarWrapper.activeMenu = menu;
-        }
-
-        function closeActiveMenu() {
-            if (menuBarWrapper.activeMenu) {
-                menuBarWrapper.activeMenu.close();
-                menuBarWrapper.activeMenu = null;
-            }
-            menuBarWrapper.isMenuActive = false;
-        }
-
-        RowLayout {
-            id: menuBarButtonsLayout
-
-            spacing: 0
+        Item {
+            id: menuBarWrapper
 
             anchors {
                 left: parent.left
-                leftMargin: _gaps.full
+                right: parent.right
                 top: parent.top
-                bottom: parent.bottom
-                right: mainWindowDecorationWrapper.left
             }
 
-            NpMenuBarButton {
-                id: fileMenuButton
+            height: 24
 
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+            property bool isMenuActive: false
+            property var activeMenu: null
 
-                height: 24
+            function openMenu(menu) {
+                if (menuBarWrapper.activeMenu && menuBarWrapper.activeMenu !== menu) {
+                    menuBarWrapper.activeMenu.close();
+                }
+                menu.open();
+                menuBarWrapper.isMenuActive = true;
+                menuBarWrapper.activeMenu = menu;
+            }
 
-                text: "File"
-                font: _fonts.label_accent
+            function closeActiveMenu() {
+                if (menuBarWrapper.activeMenu) {
+                    menuBarWrapper.activeMenu.close();
+                    menuBarWrapper.activeMenu = null;
+                }
+                menuBarWrapper.isMenuActive = false;
+            }
 
-                onClicked: {
-                    if (menuBarWrapper.activeMenu === fileMenu) {
-                        menuBarWrapper.closeActiveMenu();
-                    } else {
-                        menuBarWrapper.openMenu(fileMenu);
-                    }
+            RowLayout {
+                id: menuBarButtonsLayout
+
+                spacing: 0
+
+                anchors {
+                    left: parent.left
+                    leftMargin: _gaps.full
+                    top: parent.top
+                    bottom: parent.bottom
+                    right: mainWindowDecorationWrapper.left
                 }
 
-                onHoveredChanged: {
-                    if (hovered && menuBarWrapper.isMenuActive && menuBarWrapper.activeMenu !== fileMenu) {
-                        menuBarWrapper.openMenu(fileMenu);
-                    }
-                }
+                NpMenuBarButton {
+                    id: fileMenuButton
 
-                backgroundColor: "transparent"
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
 
-                Popup {
-                    id: fileMenu
+                    height: 24
 
-                    y: parent.height
+                    text: "File"
+                    font: _fonts.label_accent
 
-                    width: 256
-                    height: fileMenuColumn.implicitHeight
-
-                    padding: 0
-
-                    popupType: Popup.Native
-                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-
-                    Component.onCompleted: {
-                        forceActiveFocus(); // Forces focus and layout resolution
-                        // Optional: you can open it in the next event loop tick
-                        //Qt.callLater(fileMenu.open)
-                    }
-
-                    onVisibleChanged: {
-                        if (!visible && menuBarWrapper.activeMenu === fileMenu) {
+                    onClicked: {
+                        if (menuBarWrapper.activeMenu === fileMenu) {
                             menuBarWrapper.closeActiveMenu();
+                        } else {
+                            menuBarWrapper.openMenu(fileMenu);
                         }
                     }
 
-                    contentItem: Rectangle {
-                        width: parent.width
-                        color: _color.background
-                        Column {
-                            id: fileMenuColumn
-                            NpContextMenuButton {
-                                width: 192
-                                height: 24
-                                text: "Open"
-                                icon.source: "image://TiredImageProvider/folder.svg"
-                                font: _fonts.label_accent
-                                onClicked: {
-                                    fileMenu.close();
-                                    fileDialog.show();
-                                }
+                    onHoveredChanged: {
+                        if (hovered && menuBarWrapper.isMenuActive && menuBarWrapper.activeMenu !== fileMenu) {
+                            menuBarWrapper.openMenu(fileMenu);
+                        }
+                    }
+
+                    backgroundColor: "transparent"
+
+                    Popup {
+                        id: fileMenu
+
+                        y: parent.height
+
+                        width: 256
+                        height: fileMenuColumn.implicitHeight
+
+                        padding: 0
+
+                        popupType: Popup.Native
+                        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+                        Component.onCompleted: {
+                            forceActiveFocus(); // Forces focus and layout resolution
+                            // Optional: you can open it in the next event loop tick
+                            //Qt.callLater(fileMenu.open)
+                        }
+
+                        onVisibleChanged: {
+                            if (!visible && menuBarWrapper.activeMenu === fileMenu) {
+                                menuBarWrapper.closeActiveMenu();
                             }
-                            NpContextMenuButton {
-                                width: 192
-                                height: 24
-                                text: "Save"
-                                icon.source: "image://TiredImageProvider/save.svg"
-                                font: _fonts.label_accent
-                                onClicked: {
-                                    fileMenu.close();
-                                    fileDialog.show();
+                        }
+
+                        contentItem: Rectangle {
+                            width: parent.width
+                            color: _color.background
+                            Column {
+                                id: fileMenuColumn
+                                NpContextMenuButton {
+                                    width: 192
+                                    height: 24
+                                    text: "Open"
+                                    icon.source: "image://TiredImageProvider/folder.svg"
+                                    font: _fonts.label_accent
+                                    onClicked: {
+                                        fileMenu.close();
+                                        fileDialog.show();
+                                    }
                                 }
-                            }
-                            NpContextMenuButton {
-                                width: 192
-                                height: 24
-                                text: "Exit"
-                                icon.source: "image://TiredImageProvider/door-open.svg"
-                                font: _fonts.label_accent
-                                onClicked: {
-                                    fileMenu.close();
-                                    MainWindow.quitApplication();
+                                NpContextMenuButton {
+                                    width: 192
+                                    height: 24
+                                    text: "Save"
+                                    icon.source: "image://TiredImageProvider/save.svg"
+                                    font: _fonts.label_accent
+                                    onClicked: {
+                                        fileMenu.close();
+                                        fileDialog.show();
+                                    }
+                                }
+                                NpContextMenuButton {
+                                    width: 192
+                                    height: 24
+                                    text: "Exit"
+                                    icon.source: "image://TiredImageProvider/door-open.svg"
+                                    font: _fonts.label_accent
+                                    onClicked: {
+                                        fileMenu.close();
+                                        MainWindow.quitApplication();
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            NpMenuBarButton {
-                id: helpMenuButton
+                NpMenuBarButton {
+                    id: helpMenuButton
 
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
 
-                height: 24
+                    height: 24
 
-                text: "Help"
-                font: _fonts.label_accent
+                    text: "Help"
+                    font: _fonts.label_accent
 
-                onClicked: {
-                    if (menuBarWrapper.activeMenu === helpMenu) {
-                        menuBarWrapper.closeActiveMenu();
-                    } else {
-                        menuBarWrapper.openMenu(helpMenu);
+                    onClicked: {
+                        if (menuBarWrapper.activeMenu === helpMenu) {
+                            menuBarWrapper.closeActiveMenu();
+                        } else {
+                            menuBarWrapper.openMenu(helpMenu);
+                        }
                     }
-                }
 
-                onHoveredChanged: {
-                    if (hovered && menuBarWrapper.isMenuActive && menuBarWrapper.activeMenu !== helpMenu) {
-                        menuBarWrapper.openMenu(helpMenu);
+                    onHoveredChanged: {
+                        if (hovered && menuBarWrapper.isMenuActive && menuBarWrapper.activeMenu !== helpMenu) {
+                            menuBarWrapper.openMenu(helpMenu);
+                        }
                     }
-                }
 
-                backgroundColor: "transparent"
+                    backgroundColor: "transparent"
 
-                Popup {
-                    id: helpMenu
+                    Popup {
+                        id: helpMenu
 
-                    y: parent.height
+                        y: parent.height
 
-                    width: 256
-                    height: helpMenuColumn.implicitHeight
+                        width: 256
+                        height: helpMenuColumn.implicitHeight
 
-                    padding: 0
+                        padding: 0
 
-                    popupType: Popup.Window
+                        popupType: Popup.Window
 
-                    contentItem: Rectangle {
-                        width: parent.width
-                        color: _color.background
-                        Column {
-                            id: helpMenuColumn
-                            NpContextMenuButton {
-                                width: 192
-                                height: 24
-                                text: "About..."
-                                icon.source: "image://TiredImageProvider/circle-exclamation.svg"
-                                font: _fonts.label_accent
-                                onClicked: {
-                                    helpMenu.close();
+                        contentItem: Rectangle {
+                            width: parent.width
+                            color: _color.background
+                            Column {
+                                id: helpMenuColumn
+                                NpContextMenuButton {
+                                    width: 192
+                                    height: 24
+                                    text: "About..."
+                                    icon.source: "image://TiredImageProvider/circle-exclamation.svg"
+                                    font: _fonts.label_accent
+                                    onClicked: {
+                                        helpMenu.close();
+                                    }
                                 }
                             }
                         }
                     }
+                }
+
+                Item {
+                    Layout.fillWidth: true
                 }
             }
 
             Item {
-                Layout.fillWidth: true
+                id: mainWindowDecorationWrapper
+
+                anchors {
+                    right: parent.right
+                    rightMargin: _gaps.full
+                    top: parent.top
+                    bottom: parent.bottom
+                }
+
+                width: 128
+
+                NpButton {
+                    id: maximizeWindowButton
+
+                    anchors {
+                        right: foldWindowButton.left
+                        rightMargin: 4
+                        top: parent.top
+                    }
+
+                    width: 24
+                    height: 24
+
+                    icon.source: "image://TiredImageProvider/arrow-up-right-from-square.svg"
+                    onClicked: {}
+                }
+
+                NpButton {
+                    id: foldWindowButton
+
+                    anchors {
+                        right: closeAppButton.left
+                        rightMargin: 4
+                        top: parent.top
+                    }
+
+                    width: 24
+                    height: 24
+
+                    icon.source: "image://TiredImageProvider/square-minus.svg"
+                    onClicked: {}
+                }
+
+                NpButton {
+                    id: closeAppButton
+
+                    anchors {
+                        right: parent.right
+                        top: parent.top
+                    }
+
+                    width: 24
+                    height: 24
+
+                    icon.source: "image://TiredImageProvider/xmark-large.svg"
+                    onClicked: {
+                        MainWindow.quitApplication();
+                    }
+                }
             }
         }
 
         Item {
-            id: mainWindowDecorationWrapper
+            id: mainTopPanel
 
             anchors {
+                left: parent.left
                 right: parent.right
-                rightMargin: _gaps.full
-                top: parent.top
-                bottom: parent.bottom
+                top: menuBarWrapper.bottom
+                topMargin: _gaps.half
             }
 
-            width: 128
+            height: 32
 
-            NpButton {
-                id: maximizeWindowButton
+            RowLayout {
+                id: topPanelButtonsLayout
+
+                spacing: _gaps.half
 
                 anchors {
-                    right: foldWindowButton.left
-                    rightMargin: 4
-                    top: parent.top
+                    fill: parent
                 }
 
-                width: 24
-                height: 24
-
-                icon.source: "image://TiredImageProvider/arrow-up-right-from-square.svg"
-                onClicked: {}
-            }
-
-            NpButton {
-                id: foldWindowButton
-
-                anchors {
-                    right: closeAppButton.left
-                    rightMargin: 4
-                    top: parent.top
-                }
-
-                width: 24
-                height: 24
-
-                icon.source: "image://TiredImageProvider/square-minus.svg"
-                onClicked: {}
-            }
-
-            NpButton {
-                id: closeAppButton
-
-                anchors {
-                    right: parent.right
-                    top: parent.top
-                }
-
-                width: 24
-                height: 24
-
-                icon.source: "image://TiredImageProvider/xmark-large.svg"
-                onClicked: {
-                    MainWindow.quitApplication();
-                }
-            }
-        }
-    }
-
-    Item {
-        id: mainTopPanel
-
-        anchors {
-            left: parent.left
-            right: parent.right
-            top: menuBarWrapper.bottom
-            topMargin: _gaps.half
-        }
-
-        height: 32
-
-        RowLayout {
-            id: topPanelButtonsLayout
-
-            spacing: _gaps.half
-
-            anchors {
-                fill: parent
-            }
-
-            Item {
-                id: spacerLeft
-                Layout.preferredWidth: _gaps.half
-            }
-
-            NpButton {
-                id: gizmoMoveModeBtn
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                icon.source: "image://TiredImageProvider/arrow-all-330.svg"
-                onClicked: {}
-            }
-
-            NpButton {
-                id: gizmoRotateModeBtn
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                icon.source: "image://TiredImageProvider/arrow-spin.svg"
-                onClicked: {}
-            }
-
-            NpButton {
-                id: gizmoScaleModeBtn
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                icon.source: "image://TiredImageProvider/arrow-corner-278.svg"
-                onClicked: {}
-            }
-
-            Item {
-                id: spacer2
-                Layout.preferredWidth: _gaps.full
-            }
-
-            Item {
-                id: gizmoCoordinateSystemModeBtnsWrapper
-
-                Layout.fillHeight: true
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-
-                Layout.preferredWidth: gizmoLocalModeBtn.width + gizmoGlobalModeBtn.width + _gaps.half
-                // implicitWidth: gizmoLocalModeBtn.width + gizmoGlobalModeBtn.width
-
-                NpButton {
-                    id: gizmoLocalModeBtn
-
-                    anchors {
-                        verticalCenter: parent.verticalCenter
-                        left: parent.left
-                    }
-
-                    icon.source: "image://TiredImageProvider/cube-alt.svg"
-                    onClicked: {}
+                Item {
+                    id: spacerLeft
+                    Layout.preferredWidth: _gaps.half
                 }
 
                 NpButton {
-                    id: gizmoGlobalModeBtn
-
-                    anchors {
-                        verticalCenter: parent.verticalCenter
-                        right: parent.right
-                    }
-
+                    id: gizmoMoveModeBtn
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                    icon.source: "image://TiredImageProvider/cube_01.svg"
+                    icon.source: "image://TiredImageProvider/arrow-all-330.svg"
                     onClicked: {}
                 }
-            }
 
-            Item {
-                id: buttonsSpacer
-                Layout.fillWidth: true
-            }
-
-            Text {
-                id: sclLabel
-
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-
-                text: {
-                    const pos = Tired.inputHandler.mousePos;
-                    return `X: ${pos.x} Y: ${pos.y}`;
+                NpButton {
+                    id: gizmoRotateModeBtn
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                    icon.source: "image://TiredImageProvider/arrow-spin.svg"
+                    onClicked: {}
                 }
 
-                horizontalAlignment: Text.AlignRight
-                verticalAlignment: Text.AlignVCenter
+                NpButton {
+                    id: gizmoScaleModeBtn
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                    icon.source: "image://TiredImageProvider/arrow-corner-278.svg"
+                    onClicked: {}
+                }
 
-                padding: 8
+                Item {
+                    id: spacer2
+                    Layout.preferredWidth: _gaps.full
+                }
 
-                color: _color.additional_contrast_60
-                font: _fonts.label
-            }
+                Item {
+                    id: gizmoCoordinateSystemModeBtnsWrapper
 
-            Item {
-                id: spacerRight
-                Layout.preferredWidth: _gaps.half
+                    Layout.fillHeight: true
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+
+                    Layout.preferredWidth: gizmoLocalModeBtn.width + gizmoGlobalModeBtn.width + _gaps.half
+                    // implicitWidth: gizmoLocalModeBtn.width + gizmoGlobalModeBtn.width
+
+                    NpButton {
+                        id: gizmoLocalModeBtn
+
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                            left: parent.left
+                        }
+
+                        icon.source: "image://TiredImageProvider/cube-alt.svg"
+                        onClicked: {}
+                    }
+
+                    NpButton {
+                        id: gizmoGlobalModeBtn
+
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                            right: parent.right
+                        }
+
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                        icon.source: "image://TiredImageProvider/cube_01.svg"
+                        onClicked: {}
+                    }
+                }
+
+                Item {
+                    id: buttonsSpacer
+                    Layout.fillWidth: true
+                }
+
+                Text {
+                    id: sclLabel
+
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+
+                    text: {
+                        const pos = Tired.inputHandler.mousePos;
+                        return `X: ${pos.x} Y: ${pos.y}`;
+                    }
+
+                    horizontalAlignment: Text.AlignRight
+                    verticalAlignment: Text.AlignVCenter
+
+                    padding: 8
+
+                    color: _color.additional_contrast_60
+                    font: _fonts.label
+                }
+
+                Item {
+                    id: spacerRight
+                    Layout.preferredWidth: _gaps.half
+                }
             }
         }
     }
