@@ -134,8 +134,16 @@ auto GridSubgraph::initPipeline() -> void {
     auto gridBufUniformDescriptor =
         vsg::DescriptorBuffer::create( _gridBufUniformValue, /* dstBinding */ 1, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER );
 
+    auto rasterizerInfo = vsg::RasterizationState::create();
+    rasterizerInfo->depthClampEnable = VK_FALSE;
+    rasterizerInfo->rasterizerDiscardEnable = VK_FALSE;
+    rasterizerInfo->cullMode = VK_CULL_MODE_NONE;
+    rasterizerInfo->frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+    rasterizerInfo->depthBiasEnable = VK_FALSE;
+    rasterizerInfo->lineWidth = 1.0f;
+
     auto pipelineStates = vsg::GraphicsPipelineStates{
-        vsg::VertexInputState::create(), vsg::InputAssemblyState::create(), vsg::RasterizationState::create(),
+        vsg::VertexInputState::create(), vsg::InputAssemblyState::create(), rasterizerInfo,
         vsg::MultisampleState::create(), vsg::ColorBlendState::create(),    vsg::DepthStencilState::create() };
 
     // projection, view, and model matrices, actual push constant calls automatically provided by the VSG's RecordTraversal
