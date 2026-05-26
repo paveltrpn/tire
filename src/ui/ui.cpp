@@ -135,4 +135,9 @@ void TiredUI::moveWindow() {
     this->windowHandle()->startSystemMove();
 }
 
+void TiredUI::resizeWindow( int edge ) {
+    const auto e = static_cast<Qt::Edge>( edge );
+    this->windowHandle()->startSystemResize( e );
+}
+
 }  // namespace tired

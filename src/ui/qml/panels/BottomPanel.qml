@@ -23,6 +23,20 @@ Rectangle {
     bottomLeftRadius: _radius.half
     bottomRightRadius: _radius.half
 
+    MouseArea {
+        id: bottomEdgeMoveArea
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        height: 4
+        cursorShape: Qt.SizeVerCursor
+        onPressed: {
+            MainWindow.resizeWindow(Qt.BottomEdge);
+        }
+    }
+
     Rectangle {
         id: bottomPanelMainComponentWrapper
         anchors.fill: parent

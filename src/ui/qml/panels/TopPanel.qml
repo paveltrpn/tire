@@ -24,8 +24,27 @@ Rectangle {
     topRightRadius: _radius.half
 
     MouseArea {
-        id: headerArea
-        anchors.fill: parent
+        id: topEdgeMoveArea
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: parent.top
+        }
+        height: 4
+        cursorShape: Qt.SizeVerCursor
+        onPressed: {
+            MainWindow.resizeWindow(Qt.TopEdge);
+        }
+    }
+
+    MouseArea {
+        id: windowMoveArea
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: topEdgeMoveArea.bottom
+            bottom: parent.bottom
+        }
         onPressed: {
             MainWindow.moveWindow();
         }
