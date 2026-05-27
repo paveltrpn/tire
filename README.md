@@ -1,15 +1,11 @@
-# Tire Editor
+# tire (tiny-render) editor
 
-A Vulkan-based 3D scene editor with Qt-based UI, featuring real-time scenegraph manipulation and procedural primitive generation.
+A small scene editor with Qt-based UI and vulkan scenegraph.  
 
-## About
-
-Tire Editor is a lightweight 3D scene editor built with:
+Editor built with:
 
 - **Vulkan** via VulkanSceneGraph (VSG) for modern GPU rendering
 - **Qt 6.10** for the user interface
-
-The editor provides a split-pane UI with a 3D viewport, object manipulation controls, and dynamic primitive generation (boxes, spheres, cylinders) with configurable properties.
 
 ## Dependencies Installation
 

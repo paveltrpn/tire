@@ -20,9 +20,6 @@ Rectangle {
 
     color: _color.background
 
-    bottomLeftRadius: _radius.half
-    bottomRightRadius: _radius.half
-
     MouseArea {
         id: rightEdgeMoveArea
         anchors {
