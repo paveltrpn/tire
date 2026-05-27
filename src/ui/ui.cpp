@@ -21,6 +21,7 @@ TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
     , _topPanel{ new QQuickWidget{ _engine, this } }
     , _leftPanel{ new QQuickWidget{ _engine, this } }
     , _bottomPanel{ new QQuickWidget{ _engine, this } }
+    , _rightPanel{ new QQuickWidget{ _engine, this } }
     , _theme{ new Appearance{ this } } {
     //
 
@@ -30,6 +31,7 @@ TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
 
     const auto topPanelHeight = _theme->getGap( "top_panel_height" );
     const auto leftPanelWidth = _theme->getGap( "left_panel_width" );
+    const auto rightPanelWidth = 56;
     const auto splitterBorderColor = _theme->getColor( "background" );
     const auto splitterHandleWidth = _theme->getGap( "quarter" );
     const auto clearColor = _theme->getColor( "clear_color" );
@@ -68,10 +70,14 @@ TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
     _bottomPanel->setSource( QUrl::fromLocalFile( "../src/ui/qml/panels/BottomPanel.qml" ) );
     _bottomPanel->setResizeMode( QQuickWidget::SizeRootObjectToView );
 
+    _rightPanel->setSource( QUrl::fromLocalFile( "../src/ui/qml/panels/RightPanel.qml" ) );
+    _rightPanel->setResizeMode( QQuickWidget::SizeRootObjectToView );
+
     // Set qml QQuickWidgets conteiners trnsparent background color.
     _topPanel->setClearColor( Qt::transparent );
     _leftPanel->setClearColor( Qt::transparent );
     _bottomPanel->setClearColor( Qt::transparent );
+    _rightPanel->setClearColor( Qt::transparent );
 
     auto centralWidget = new QWidget{ this };
     setCentralWidget( centralWidget );
@@ -106,7 +112,8 @@ TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
 
     hSplitter->addWidget( _leftPanel );
     hSplitter->addWidget( _vsgWidget );
-    hSplitter->setSizes( { leftPanelWidth, 1920 - leftPanelWidth } );
+    hSplitter->addWidget( _rightPanel );
+    hSplitter->setSizes( { leftPanelWidth, 1920 - leftPanelWidth - rightPanelWidth, rightPanelWidth } );
 
     hLayout->addWidget( hSplitter );
 

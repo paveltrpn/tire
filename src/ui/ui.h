@@ -45,6 +45,7 @@ private:
     QQuickWidget *_topPanel{};
     QQuickWidget *_leftPanel{};
     QQuickWidget *_bottomPanel{};
+    QQuickWidget *_rightPanel{};
 
     Appearance *_theme;
 };
