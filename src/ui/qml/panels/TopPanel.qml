@@ -110,7 +110,7 @@ Rectangle {
 
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
 
-                    height: 24
+                    Layout.preferredHeight: 24
 
                     text: "File"
                     font: _fonts.label_accent
@@ -161,8 +161,9 @@ Rectangle {
                             color: _color.background
                             Column {
                                 id: fileMenuColumn
+                                width: parent.width
                                 NpContextMenuButton {
-                                    width: 192
+                                    width: parent.width
                                     height: 24
                                     text: "Open"
                                     icon.source: "image://TiredImageProvider/folder.svg"
@@ -173,7 +174,7 @@ Rectangle {
                                     }
                                 }
                                 NpContextMenuButton {
-                                    width: 192
+                                    width: parent.width
                                     height: 24
                                     text: "Save"
                                     icon.source: "image://TiredImageProvider/save.svg"
@@ -184,7 +185,7 @@ Rectangle {
                                     }
                                 }
                                 NpContextMenuButton {
-                                    width: 192
+                                    width: parent.width
                                     height: 24
                                     text: "Exit"
                                     icon.source: "image://TiredImageProvider/door-open.svg"
@@ -204,7 +205,7 @@ Rectangle {
 
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
 
-                    height: 24
+                    Layout.preferredHeight: 24
 
                     text: "Help"
                     font: _fonts.label_accent
@@ -242,8 +243,9 @@ Rectangle {
                             color: _color.background
                             Column {
                                 id: helpMenuColumn
+                                width: parent.width
                                 NpContextMenuButton {
-                                    width: 192
+                                    width: parent.width
                                     height: 24
                                     text: "About..."
                                     icon.source: "image://TiredImageProvider/circle-exclamation.svg"
