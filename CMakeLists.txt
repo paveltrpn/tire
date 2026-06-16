@@ -188,16 +188,17 @@ target_link_libraries(qt_window
 )
 
 # ================================
-# MAIN
+# tire editor executable
 # ================================
-add_executable(${PROJECT_NAME}
-    "src/main.cpp"
-    "src/tiredapplication.cpp"
-    "src/tiredapplication.h"
+set(TIRE_EDITOR_EXE ed)
+add_executable(${TIRE_EDITOR_EXE}}
+    "src/ed/main.cpp"
+    "src/ed/tiredapplication.cpp"
+    "src/ed/tiredapplication.h"
 )
-set_target_properties(${PROJECT_NAME} PROPERTIES AUTOMOC TRUE)
-target_compile_options(${PROJECT_NAME} PRIVATE -freflection -std=c++26)
-target_link_libraries(${PROJECT_NAME}
+set_target_properties(${TIRE_EDITOR_EXE} PROPERTIES AUTOMOC TRUE)
+target_compile_options(${TIRE_EDITOR_EXE} PRIVATE -freflection -std=c++26)
+target_link_libraries(${TIRE_EDITOR_EXE}
     xcb
     vsg
     vulkan
@@ -223,6 +224,32 @@ target_link_libraries(${PROJECT_NAME}
     tired
     tired_ui
     qt_window
+)
+
+# ================================
+# tire executable
+# ================================
+set(TIRE_EXE r)
+add_executable(${TIRE_EXE}}
+    "src/r/main.cpp"
+)
+set_target_properties(${TIRE_EXE} PROPERTIES AUTOMOC TRUE)
+target_compile_options(${TIRE_EXE} PRIVATE -freflection -std=c++26)
+target_link_libraries(${TIRE_EXE}
+    xcb
+    vulkan
+    GenericCodeGen
+    glslang
+    glslang-default-resource-limits
+    MachineIndependent
+    OSDependent
+    SPIRV-Tools-opt
+    SPIRV-Tools
+    SPIRV-Tools-diff
+    SPIRV-Tools-link
+    SPIRV-Tools-lint
+    SPIRV-Tools-reduce
+    SPIRV
 )
 
     
