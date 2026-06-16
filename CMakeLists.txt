@@ -191,7 +191,7 @@ target_link_libraries(qt_window
 # tire editor executable
 # ================================
 set(TIRE_EDITOR_EXE ed)
-add_executable(${TIRE_EDITOR_EXE}}
+add_executable(${TIRE_EDITOR_EXE}
     "src/ed/main.cpp"
     "src/ed/tiredapplication.cpp"
     "src/ed/tiredapplication.h"
@@ -230,7 +230,7 @@ target_link_libraries(${TIRE_EDITOR_EXE}
 # tire executable
 # ================================
 set(TIRE_EXE r)
-add_executable(${TIRE_EXE}}
+add_executable(${TIRE_EXE}
     "src/r/main.cpp"
 )
 set_target_properties(${TIRE_EXE} PROPERTIES AUTOMOC TRUE)
