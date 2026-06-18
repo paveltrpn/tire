@@ -61,6 +61,97 @@ find_package(Qt6 ${QT_VERSION} COMPONENTS
 )
 
 # ================================
+# Module config
+# ================================
+file(GLOB MOD_CONFIG_SRC "src/config/*.cpp")
+add_library(config)
+target_sources(config
+    PUBLIC FILE_SET CXX_MODULES FILES
+    ${MOD_CONFIG_SRC}
+)
+target_link_libraries(config log)
+
+# ================================
+# Module vma_usage
+# ================================
+file(
+    GLOB_RECURSE
+    MOD_VMA_USAGE_SRC
+    "src/vma_usage/*.cpp" "src/vma_usage/*.h"
+)
+add_library(vma_usage)
+target_sources(
+    vma_usage
+    PRIVATE
+    ${MOD_VMA_USAGE_SRC}
+)
+
+# ================================
+# Module context
+# ================================
+file(GLOB_RECURSE MOD_CONTEXT_SRC "src/context/*.cpp" )
+add_library(context)
+target_sources(context
+    PUBLIC FILE_SET CXX_MODULES FILES
+    ${MOD_CONTEXT_SRC})
+target_link_libraries(context vulkan config image vma_usage)
+
+# ================================
+# Module r_ui
+# ================================
+file(GLOB MOD_UI_SRC "src/r_ui/*.cpp")
+add_library(ui )
+target_sources(ui
+    PUBLIC FILE_SET CXX_MODULES FILES
+    ${MOD_UI_SRC}
+)
+target_link_libraries(r_ui log algebra image event)
+
+# ================================
+# Module render
+# ================================
+file(GLOB_RECURSE MOD_RENDER_SRC "src/render/*.cpp")
+add_library(render)
+target_sources(render
+    PUBLIC FILE_SET CXX_MODULES FILES
+    ${MOD_RENDER_SRC}
+)
+target_link_libraries(render vulkan context ui scene config geometry algebra vma_usage event)
+
+# ================================
+# Module scene
+# ================================
+file(GLOB MOD_SCENE_SRC "src/scene/*.cpp")
+add_library(scene)
+target_sources(scene
+    PUBLIC FILE_SET CXX_MODULES FILES
+    ${MOD_SCENE_SRC}
+)
+target_link_libraries(scene config image algebra geometry generator event)
+
+# ================================
+# Module generator
+# ================================
+file(GLOB MOD_GENERATOR_SRC "src/generator/*.cpp")
+add_library(generator)
+target_sources(generator
+    PUBLIC FILE_SET CXX_MODULES FILES
+    ${MOD_GENERATOR_SRC}
+)
+target_link_libraries(generator)
+
+# ================================
+# Module event
+# ================================
+file(GLOB MOD_EVENT_SRC "src/event/*.cpp")
+add_library(event)
+target_sources(event
+    PUBLIC FILE_SET CXX_MODULES FILES
+    ${MOD_EVENT_SRC}
+)
+target_link_libraries(event)
+
+# ================================
 # Module lib/fast_obj
 # ================================
 add_subdirectory(lib/fast_obj)
