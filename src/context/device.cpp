@@ -10,10 +10,9 @@ module;
 #include <vulkan/vk_enum_string_helper.h>
 
 #include "log/log.h"
+#include "config/config.h"
 
 export module context : device;
-
-import config;
 
 import : context;
 

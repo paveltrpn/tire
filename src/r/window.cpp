@@ -1,7 +1,4 @@
 
-import context;
-import config;
-import render;
 
 #include <memory>
 
@@ -25,7 +22,12 @@ import render;
 
 #include "window.h"
 
+#include "config/config.h"
 #include "log/log.h"
+
+import context;
+import render;
+
 
 BareWindow::BareWindow() {
     if ( glfwInit() != GLFW_TRUE ) {

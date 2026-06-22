@@ -9,12 +9,12 @@ module;
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
+#include "config/config.h"
 #include "log/log.h"
 
 export module render:render;
 
 import context;
-import config;
 
 import :timer;
 import :test_box;

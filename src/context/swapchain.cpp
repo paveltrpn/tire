@@ -8,10 +8,9 @@ module;
 #include <vulkan/vk_enum_string_helper.h>
 
 #include "log/log.h"
+#include "config/config.h"
 
 export module context : swapchain;
-
-import config;
 
 import : context;
 import : depth_image;

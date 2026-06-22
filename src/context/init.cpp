@@ -14,10 +14,11 @@ module;
 
 #include "log/log.h"
 #include "image/image.h"
+#include "config/config.h"
 
 export module context : init;
 
-import config;
+
 
 import : context;
 

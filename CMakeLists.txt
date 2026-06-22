@@ -88,12 +88,8 @@ find_package(Qt6 ${QT_VERSION} COMPONENTS
 # ================================
 # Module config
 # ================================
-file(GLOB MOD_CONFIG_SRC "src/config/*.cpp")
-add_library(config)
-target_sources(config
-    PUBLIC FILE_SET CXX_MODULES FILES
-    ${MOD_CONFIG_SRC}
-)
+file(GLOB MOD_CONFIG_SRC "src/config/*.cpp" "src/config/*.h")
+add_library(config ${MOD_CONFIG_SRC})
 target_link_libraries(config log)
 target_compile_features(config PUBLIC cxx_std_26)
 target_compile_options(config PRIVATE -freflection)
