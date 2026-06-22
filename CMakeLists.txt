@@ -99,11 +99,11 @@ target_link_libraries(context vulkan config image vma_usage)
 # ================================
 # Module r_ui
 # ================================
-file(GLOB MOD_UI_SRC "src/r_ui/*.cpp")
-add_library(ui )
-target_sources(ui
+file(GLOB MOD_R_UI_SRC "src/r_ui/*.cpp")
+add_library(r_ui )
+target_sources(r_ui
     PUBLIC FILE_SET CXX_MODULES FILES
-    ${MOD_UI_SRC}
+    ${MOD_R_UI_SRC}
 )
 target_link_libraries(r_ui log algebra image event)
 
