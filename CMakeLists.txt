@@ -328,7 +328,7 @@ add_executable(${TIRE_EDITOR_EXE}
     "src/ed/tiredapplication.h"
 )
 set_target_properties(${TIRE_EDITOR_EXE} PROPERTIES AUTOMOC TRUE)
-target_compile_options(${TIRE_EDITOR_EXE} PRIVATE -freflection -std=c++26)
+target_compile_options(${TIRE_EDITOR_EXE} PRIVATE -freflection)
 target_link_libraries(${TIRE_EDITOR_EXE}
     xcb
     vsg
@@ -362,14 +362,19 @@ target_compile_features(${TIRE_EDITOR_EXE} PUBLIC cxx_std_26)
 # tire executable
 # ================================
 set(TIRE_EXE r)
-add_executable(${TIRE_EXE}
-    "src/r/main.cpp"
-)
+add_executable(${TIRE_EXE})
+file(GLOB_RECURSE EXE_BAREVK_SRC "src/r/*.cpp" "src/r/*.h")
+target_sources(${TIRE_EXE} PRIVATE ${EXE_BAREVK_SRC})
 set_target_properties(${TIRE_EXE} PROPERTIES AUTOMOC TRUE)
-target_compile_options(${TIRE_EXE} PRIVATE -freflection -std=c++26)
+target_compile_options(${TIRE_EXE} PRIVATE -freflection)
 target_link_libraries(${TIRE_EXE}
-    xcb
-    vulkan
+    context
+    log
+    algebra
+    config
+    render
+    glfw3
+    Vulkan::Vulkan
     GenericCodeGen
     glslang
     glslang-default-resource-limits
