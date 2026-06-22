@@ -10,7 +10,7 @@
 #include "keyboard_map.h"
 #include "viewer.h"
 
-namespace tired {
+namespace tire {
 
 class Window : public QWindow {
 public:
@@ -66,4 +66,4 @@ private:
 
 }  // namespace tired
 
-EVSG_type_name( tired::Window );
+EVSG_type_name( tire::Window );

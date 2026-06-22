@@ -7,9 +7,9 @@ module;
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-export module context:commands;
+#include "log/log.h"
 
-import log;
+export module context:commands;
 
 import :context;
 import :command_routine;

@@ -13,11 +13,11 @@ module;
 #include "vma/vk_mem_alloc.h"
 
 #include "log/log.h"
+#include "image/image.h"
 
 export module context : init;
 
 import config;
-import image;
 
 import : context;
 

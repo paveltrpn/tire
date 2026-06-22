@@ -27,7 +27,7 @@
 
 #include "window.h"
 
-namespace tired {
+namespace tire {
 
 Window::Window( QScreen* targetScreen )
     : QWindow( targetScreen )

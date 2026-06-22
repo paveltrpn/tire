@@ -7,10 +7,11 @@ module;
 #include "algebra/vector3.h"
 #include "algebra/vector4.h"
 
+#include "log/log.h"
+
 export module scene : flycam;
 
 import geometry;
-import log;
 
 namespace tire {
 

@@ -3,7 +3,7 @@
 
 #include "keyboard_map.h"
 
-namespace tired {
+namespace tire {
 
 KeyboardMap::KeyboardMap()
     : _keycodeMap {

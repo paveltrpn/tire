@@ -2,9 +2,10 @@ module;
 
 #include <array>
 
-export module geometry:oobb;
+#include "algebra/vector3.h"
+#include "algebra/vector4.h"
 
-import algebra;
+export module geometry:oobb;
 
 import :bs;
 import :aabb;

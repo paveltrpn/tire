@@ -21,7 +21,7 @@
 
 #include "viewer.h"
 
-namespace tired {
+namespace tire {
 
 Viewer::Viewer( int msecTimerInterval ) {
     // set the default timer as 8ms.

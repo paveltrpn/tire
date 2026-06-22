@@ -1,8 +1,9 @@
 module;
 
-export module geometry:bs;
+#include "algebra/vector3.h"
+#include "algebra/vector4.h"
 
-import algebra;
+export module geometry:bs;
 
 using namespace tire::algebra;
 

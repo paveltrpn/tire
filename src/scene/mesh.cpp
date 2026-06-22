@@ -3,6 +3,8 @@ module;
 
 #include <vector>
 #include <string>
+
+#include "algebra/vector2.h"
 #include "algebra/vector3.h"
 #include "algebra/vector4.h"
 

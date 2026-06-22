@@ -7,7 +7,7 @@
 
 #include <QTimer>
 
-namespace tired {
+namespace tire {
 
 // forward declare
 class Window;

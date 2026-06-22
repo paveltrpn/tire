@@ -154,6 +154,18 @@ target_compile_features(render PUBLIC cxx_std_26)
 target_compile_options(render PRIVATE -freflection)
 
 # ================================
+# Module geometry
+# ================================
+file(GLOB MOD_GEOMETRY_SRC "src/geometry/*.cpp")
+add_library(geometry)
+target_sources(geometry
+    PUBLIC FILE_SET CXX_MODULES FILES
+    ${MOD_GEOMETRY_SRC})
+target_link_libraries(geometry algebra)
+target_compile_features(geometry PUBLIC cxx_std_26)
+target_compile_options(geometry PRIVATE -freflection)
+
+# ================================
 # Module scene
 # ================================
 file(GLOB MOD_SCENE_SRC "src/scene/*.cpp")

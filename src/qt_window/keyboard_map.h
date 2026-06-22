@@ -7,7 +7,7 @@
 
 #include <vsg/ui/KeyEvent.h>
 
-namespace tired {
+namespace tire {
 
 class KeyboardMap : public vsg::Inherit<vsg::Object, KeyboardMap> {
 public:
