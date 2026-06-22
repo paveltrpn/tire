@@ -6,6 +6,7 @@ module;
 
 #include "algebra/vector3.h"
 #include "algebra/vector4.h"
+#include "algebra/matrix4.h"
 
 #include "log/log.h"
 

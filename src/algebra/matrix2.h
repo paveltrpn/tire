@@ -6,7 +6,7 @@
 #include <array>
 
 
-#inlcude "concepts.h"
+#include "concepts.h"
 
 namespace tire::algebra {
 

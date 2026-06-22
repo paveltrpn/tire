@@ -9,9 +9,10 @@ module;
 
 #include "vma/vk_mem_alloc.h"
 
+#include "algebra/vector3.h"
+
 export module render:test_box;
 
-import algebra;
 import context;
 
 import :test_box_shader;

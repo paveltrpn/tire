@@ -10,11 +10,12 @@ module;
 
 #include "nlohmann/json.hpp"
 
+#include "log/log.h"
+#include "image/image.h"
+
 export module scene:scene;
 
 import config;
-import log;
-import image;
 import generator;
 import :obj;
 import :mesh;

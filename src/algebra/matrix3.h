@@ -197,8 +197,8 @@ private:
     std::array<value_type, 9> data_;
 };
 
-export using matrix3l = matrix3<long long>;
-export using matrix3f = matrix3<float>;
-export using matrix3d = matrix3<double>;
+using matrix3l = matrix3<long long>;
+using matrix3f = matrix3<float>;
+using matrix3d = matrix3<double>;
 
 }  // namespace tire::algebra
