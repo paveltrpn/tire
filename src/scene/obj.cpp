@@ -9,12 +9,14 @@ module;
 #include <filesystem>
 #include <memory>
 
+#include "log/log.h"
+
+#include "algebra/vector3.h"
+#include "algebra/vector4.h"
+
 export module scene:obj;
 
 import :mesh;
-
-import log;
-import algebra;
 
 using namespace tire::algebra;
 

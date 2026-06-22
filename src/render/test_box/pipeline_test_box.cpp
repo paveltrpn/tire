@@ -8,10 +8,11 @@ module;
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
+#include "log/log.h"
+
 export module render:pipeline_test_box;
 
 import context;
-import log;
 
 namespace tire {
 

@@ -7,11 +7,16 @@ module;
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
+#include "log/log.h"
+
+#include "algebra/vector2.h"
+#include "algebra/vector3.h"
+#include "algebra/vector4.h"
+#include "algebra/matrix3.h"
+
 export module render:pipeline_scene;
 
 import context;
-import algebra;
-import log;
 
 namespace tire {
 

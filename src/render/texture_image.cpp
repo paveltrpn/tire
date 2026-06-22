@@ -7,10 +7,10 @@ module;
 
 #include "vma/vk_mem_alloc.h"
 
-export module render:texture_image;
+#include "log/log.h"
+#include "image/image.h"
 
-import image;
-import log;
+export module render:texture_image;
 
 import context;
 

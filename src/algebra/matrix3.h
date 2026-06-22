@@ -6,8 +6,6 @@
 #include <cmath>
 #include <array>
 
-export module algebra:matrix3;
-
 #include "concepts.h"
 #include "vector3.h"
 

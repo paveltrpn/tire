@@ -8,7 +8,7 @@ namespace tire::object {
 struct Cylinder final : public SceneObjectBase {
     Q_OBJECT
 
-    Q_PROPERTY( tired::CylinderObjectData data READ getData NOTIFY dataChanged FINAL )
+    Q_PROPERTY( tire::CylinderObjectData data READ getData NOTIFY dataChanged FINAL )
 
 public:
     Cylinder( const CylinderObjectData& data );
@@ -16,7 +16,7 @@ public:
     auto data() const -> CylinderObjectData const& override;
     auto data() -> CylinderObjectData& override;
 
-    tired::CylinderObjectData getData();
+    tire::CylinderObjectData getData();
 
 private:
     CylinderObjectData _data{};
