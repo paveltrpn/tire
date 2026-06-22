@@ -11,7 +11,7 @@
 #include <vsg/ui/ScrollWheelEvent.h>
 #include <vsg/ui/TouchEvent.h>
 
-namespace tired {
+namespace tire {
 
 struct Trackball final : public vsg::Trackball {
     Trackball( vsg::ref_ptr<vsg::Camera> camera, vsg::ref_ptr<vsg::EllipsoidModel> ellipsoidModel = {} );
@@ -21,4 +21,4 @@ struct Trackball final : public vsg::Trackball {
 private:
 };
 
-}  // namespace tired
+}  // namespace tire

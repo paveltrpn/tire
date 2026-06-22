@@ -8,7 +8,7 @@
 #include "ui.h"
 #include "log/log.h"
 
-namespace tired {
+namespace tire {
 
 // ====================================================================
 // ========== TiredUi =================================================
@@ -147,4 +147,4 @@ void TiredUI::resizeWindow( int edge ) {
     this->windowHandle()->startSystemResize( e );
 }
 
-}  // namespace tired
+}  // namespace tire

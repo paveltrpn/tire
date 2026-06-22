@@ -3,7 +3,7 @@
 
 #include "cylinder.h"
 
-namespace tired::object {
+namespace tire::object {
 
 namespace {
 
@@ -38,4 +38,4 @@ tired::CylinderObjectData Cylinder::getData() {
     return _data;
 }
 
-}  // namespace tired::object
+}  // namespace tire::object

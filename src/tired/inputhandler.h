@@ -13,7 +13,7 @@
 
 #include "scenegraph.h"
 
-namespace tired {
+namespace tire {
 
 struct InputHandler;
 
@@ -81,4 +81,4 @@ private:
     QPoint mousePos_{};
 };
 
-}  // namespace tired
+}  // namespace tire

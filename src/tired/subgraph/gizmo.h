@@ -5,7 +5,7 @@
 
 #include "subgraph.h"
 
-namespace tired {
+namespace tire {
 
 struct GizmoSubgraph;
 
@@ -26,4 +26,4 @@ struct GizmoSubgraph final : public Subgraph {
 private:
 };
 
-}  // namespace tired
+}  // namespace tire

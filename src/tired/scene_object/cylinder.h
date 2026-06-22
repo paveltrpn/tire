@@ -3,7 +3,7 @@
 
 #include "sceneobjectbase.h"
 
-namespace tired::object {
+namespace tire::object {
 
 struct Cylinder final : public SceneObjectBase {
     Q_OBJECT
@@ -22,4 +22,4 @@ private:
     CylinderObjectData _data{};
 };
 
-}  // namespace tired::object
+}  // namespace tire::object

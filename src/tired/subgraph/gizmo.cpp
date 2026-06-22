@@ -1,7 +1,7 @@
 
 #include "gizmo.h"
 
-namespace tired {
+namespace tire {
 
 Gizmo::Gizmo( const QObject* parent ) {
     //
@@ -18,4 +18,4 @@ auto GizmoSubgraph::initPipeline() -> void{
     //
 };
 
-}  // namespace tired
+}  // namespace tire

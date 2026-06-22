@@ -12,7 +12,7 @@
 #include "subgraph/bounding.h"
 #include "subgraph/gizmo.h"
 
-namespace tired {
+namespace tire {
 
 struct Scenegraph final : public QObject {
     Q_OBJECT
@@ -43,4 +43,4 @@ private:
     std::vector<std::shared_ptr<SceneObjectBase>> _objectsList{};
 };
 
-}  // namespace tired
+}  // namespace tire

@@ -7,7 +7,7 @@
 
 #include "tired.h"
 
-namespace tired {
+namespace tire {
 
 Tired::Tired( QObject* parent )
     : QObject{ parent }
@@ -127,4 +127,4 @@ auto Tired::globalMousePosY() -> float {
     return _globalMousePosY;
 }
 
-}  // namespace tired
+}  // namespace tire

@@ -3,7 +3,7 @@
 
 #include "box.h"
 
-namespace tired::object {
+namespace tire::object {
 
 namespace {
 
@@ -73,16 +73,16 @@ Box::Box( const BoxObjectData& data )
     _thisObject->addChild( drawCommands );
 }
 
-auto Box::data() const -> tired::BoxObjectData const& {
+auto Box::data() const -> tire::BoxObjectData const& {
     return _data;
 }
 
-auto Box::data() -> tired::BoxObjectData& {
+auto Box::data() -> tire::BoxObjectData& {
     return _data;
 }
 
-tired::BoxObjectData Box::getData() {
+tire::BoxObjectData Box::getData() {
     return _data;
 }
 
-}  // namespace tired::object
+}  // namespace tire::object

@@ -4,7 +4,7 @@
 
 #include "subgraph.h"
 
-namespace tired {
+namespace tire {
 
 struct MarkerSubgraph final : Subgraph {
     MarkerSubgraph( vsg::Viewer* viewer );
@@ -14,4 +14,4 @@ struct MarkerSubgraph final : Subgraph {
 private:
 };
 
-}
+}  // namespace tire

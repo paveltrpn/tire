@@ -5,7 +5,7 @@
 #include "context.h"
 #include "log/log.h"
 
-namespace tired::vk {
+namespace tire::vk {
 
 Context::Context( VkInstance instance, VkPhysicalDevice pDevice, VkDevice device, VkSurfaceKHR surface, VkRenderPass rp,
                   uint32_t graphicsFamilyQueueId, uint32_t graphicsQueueId )
@@ -139,4 +139,4 @@ auto Context::findSupportedFormat( const std::vector<VkFormat> &candidates, VkIm
     return {};
 }
 
-}  // namespace tired::vk
+}  // namespace tire::vk

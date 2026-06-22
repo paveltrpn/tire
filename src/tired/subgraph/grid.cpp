@@ -3,7 +3,7 @@
 
 #include "grid.h"
 
-namespace tired {
+namespace tire {
 
 Grid::Grid( vsg::Viewer* viewer, QObject* parent )
     : QObject{ parent }
@@ -204,4 +204,4 @@ auto GridSubgraph::updatePlaneBufUniformValue() -> void {
     _gridBufUniformValue->dirty();
 }
 
-}  // namespace tired
+}  // namespace tire

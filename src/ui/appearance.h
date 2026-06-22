@@ -6,7 +6,7 @@
 #include <QDir>
 #include <QQuickImageProvider>
 
-namespace tired {
+namespace tire {
 
 // Application-wide image provide.
 struct TiredImageProvider : QQuickImageProvider {
@@ -55,4 +55,4 @@ private:
     QVariantMap fonts_{};
 };
 
-}  // namespace tired
+}  // namespace tire

@@ -11,7 +11,7 @@
 #include "appearance.h"
 #include "tired/tired.h"
 
-namespace tired {
+namespace tire {
 
 // ====================================================================
 // ========== TiredUi =================================================
@@ -50,4 +50,4 @@ private:
     Appearance *_theme;
 };
 
-}  // namespace tired
+}  // namespace tire

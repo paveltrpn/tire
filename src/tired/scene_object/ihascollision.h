@@ -1,10 +1,10 @@
 
 #pragma once
 
-namespace tired {
+namespace tire {
 
 struct IHasCollision {
     virtual auto getShape() -> void = 0;
 };
 
-}  // namespace tired
+}  // namespace tire

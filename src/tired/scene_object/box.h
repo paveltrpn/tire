@@ -3,12 +3,12 @@
 
 #include "sceneobjectbase.h"
 
-namespace tired::object {
+namespace tire::object {
 
 struct Box final : public SceneObjectBase {
     Q_OBJECT
 
-    Q_PROPERTY( tired::BoxObjectData data READ getData NOTIFY dataChanged FINAL )
+    Q_PROPERTY( tire::BoxObjectData data READ getData NOTIFY dataChanged FINAL )
 
 public:
     Box( const BoxObjectData& data );
@@ -16,10 +16,10 @@ public:
     auto data() const -> BoxObjectData const& override;
     auto data() -> BoxObjectData& override;
 
-    tired::BoxObjectData getData();
+    tire::BoxObjectData getData();
 
 private:
     BoxObjectData _data{};
 };
 
-}  // namespace tired::object
+}  // namespace tire::object

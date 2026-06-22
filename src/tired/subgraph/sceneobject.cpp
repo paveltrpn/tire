@@ -5,7 +5,7 @@
 #include "log/log.h"
 #include "sceneobject.h"
 
-namespace tired {
+namespace tire {
 
 SceneObjectSubgraph::SceneObjectSubgraph( vsg::Viewer* viewer )
     : Subgraph{ viewer } {
@@ -13,8 +13,8 @@ SceneObjectSubgraph::SceneObjectSubgraph( vsg::Viewer* viewer )
 
 auto SceneObjectSubgraph::initPipeline() -> void {
     // load shaders
-    vsg::Paths searchPaths =
-        std::vector<vsg::Path>{ std::format("{}{}",PREFIX_PATH_ONE ,"/shaders/spirv"), std::format("{}{}",PREFIX_PATH_ONE ,"/assets") };
+    vsg::Paths searchPaths = std::vector<vsg::Path>{ std::format( "{}{}", PREFIX_PATH_ONE, "/shaders/spirv" ),
+                                                     std::format( "{}{}", PREFIX_PATH_ONE, "/assets" ) };
 
     vsg::ref_ptr<vsg::ShaderStage> vertexShader = vsg::ShaderStage::read(
         VK_SHADER_STAGE_VERTEX_BIT, "main", vsg::findFile( "vert_PushConstants.spv", searchPaths ) );
@@ -26,7 +26,8 @@ auto SceneObjectSubgraph::initPipeline() -> void {
     }
 
     // read texture image
-    const auto rawData = std::make_unique<Tga>( std::format("{}{}",PREFIX_PATH_ONE ,"/assets/textures/Onyx006_color.tga" ));
+    const auto rawData =
+        std::make_unique<Tga>( std::format( "{}{}", PREFIX_PATH_ONE, "/assets/textures/Onyx006_color.tga" ) );
     auto rawDataSize = rawData->width() * rawData->height() * rawData->components();
 
     auto textureData = vsg::ubvec4Array2D::create( rawData->width(), rawData->height() );
@@ -105,4 +106,4 @@ auto SceneObjectSubgraph::initPipeline() -> void {
     _stateGroup->add( bindDescriptorSet );
 }
 
-}  // namespace tired
+}  // namespace tire

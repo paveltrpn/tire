@@ -1,7 +1,7 @@
 
 #include "marker.h"
 
-namespace tired {
+namespace tire {
 
 MarkerSubgraph::MarkerSubgraph( vsg::Viewer* viewer )
     : Subgraph{ viewer } {
@@ -10,4 +10,4 @@ MarkerSubgraph::MarkerSubgraph( vsg::Viewer* viewer )
 auto MarkerSubgraph::initPipeline() -> void {
 }
 
-}  // namespace tired
+}  // namespace tire

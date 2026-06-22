@@ -1,10 +1,10 @@
 
 #pragma once
 
-namespace tired {
+namespace tire {
 
 struct IHasMaterial {
     virtual auto getMaterial() -> void = 0;
 };
 
-}  // namespace tired
+}  // namespace tire

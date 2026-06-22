@@ -1,6 +1,4 @@
 
 #include "sceneobjectdata.h"
 
-namespace tired {
-
-}
+namespace tire {}

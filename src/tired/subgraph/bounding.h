@@ -6,7 +6,7 @@
 
 #include "subgraph.h"
 
-namespace tired {
+namespace tire {
 
 struct BoundingSubgraph;
 
@@ -43,4 +43,4 @@ private:
     vsg::ref_ptr<vsg::mat4Value> _transformMatUniform{};
 };
 
-}  // namespace tired
+}  // namespace tire

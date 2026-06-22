@@ -12,7 +12,7 @@
 // #define PREFIX_PATH_ONE "/home/pavel/code/tire_ed"
 #define PREFIX_PATH_ONE "/mnt/main/code/tire_ed"
 
-namespace tired {
+namespace tire {
 
 struct Subgraph : vsg::Group {
     Subgraph( vsg::Viewer* viewer );
@@ -31,4 +31,4 @@ protected:
     vsg::ref_ptr<vsg::StateGroup> _stateGroup{};
 };
 
-}  // namespace tired
+}  // namespace tire

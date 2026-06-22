@@ -14,7 +14,7 @@
 #include "trackball.h"
 #include "inputhandler.h"
 
-namespace tired {
+namespace tire {
 
 struct Manipulator final : QObject {
     Q_OBJECT
@@ -31,4 +31,4 @@ private:
     QPoint mousePos_{};
 };
 
-}  // namespace tired
+}  // namespace tire

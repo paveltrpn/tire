@@ -9,7 +9,7 @@
 #include "sceneobjectgraph.h"
 #include "sceneobjectdata.h"
 
-namespace tired {
+namespace tire {
 
 struct SceneObjectBase : public QObject {
     Q_OBJECT
@@ -46,4 +46,4 @@ private:
     bool _selected{ false };
 };
 
-}  // namespace tired
+}  // namespace tire

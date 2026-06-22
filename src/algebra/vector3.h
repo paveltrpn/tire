@@ -4,12 +4,13 @@
 #include <cstddef>
 #include <cmath>
 #include <array>
-#include <concepts>
+
+#include "concepts.h"
 
 namespace tire::algebra {
 
 template <typename T>
-requires std::floating_point<T> struct vector3 final {
+requires Algebraic<T> struct vector3 final {
     using value_type = T;
     using self = vector3<value_type>;
 

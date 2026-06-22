@@ -3,7 +3,7 @@
 
 #include "subgraph.h"
 
-namespace tired {
+namespace tire {
 
 struct SceneObjectSubgraph final : Subgraph {
     SceneObjectSubgraph( vsg::Viewer* viewer );
@@ -13,4 +13,4 @@ struct SceneObjectSubgraph final : Subgraph {
 private:
 };
 
-}  // namespace tired
+}  // namespace tire

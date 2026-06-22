@@ -1,7 +1,7 @@
 
 #include "bounding.h"
 
-namespace tired {
+namespace tire {
 
 Bounding::Bounding( vsg::Viewer* viewer, QObject* parent )
     : QObject{ parent }
@@ -99,4 +99,4 @@ auto BoundingSubgraph::updateTransformMatUniform() -> void {
     _transformMatUniform->dirty();
 }
 
-}  // namespace tired
+}  // namespace tire

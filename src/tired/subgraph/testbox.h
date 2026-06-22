@@ -5,7 +5,7 @@
 
 #include "subgraph.h"
 
-namespace tired {
+namespace tire {
 
 struct TestboxSubgraph;
 
@@ -44,4 +44,4 @@ private:
     float _size{ 1.0f };
 };
 
-}  // namespace tired
+}  // namespace tire

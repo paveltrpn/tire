@@ -11,7 +11,7 @@
 #include "ihasmaterial.h"
 #include "ihascollision.h"
 
-namespace tired {
+namespace tire {
 
 enum class SceneObjectTypeEnum {
     BASE = 0,
@@ -376,11 +376,11 @@ public:
 private:
 };
 
-}  // namespace tired
+}  // namespace tire
 
-Q_DECLARE_METATYPE( tired::SceneObjectTypeEnum )
+Q_DECLARE_METATYPE( tire::SceneObjectTypeEnum )
 
-Q_DECLARE_METATYPE( tired::SceneObjectData )
-Q_DECLARE_METATYPE( tired::BoxObjectData )
-Q_DECLARE_METATYPE( tired::SphereObjectData )
-Q_DECLARE_METATYPE( tired::MeshData )
+Q_DECLARE_METATYPE( tire::SceneObjectData )
+Q_DECLARE_METATYPE( tire::BoxObjectData )
+Q_DECLARE_METATYPE( tire::SphereObjectData )
+Q_DECLARE_METATYPE( tire::MeshData )

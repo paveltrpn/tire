@@ -8,7 +8,7 @@
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 
-namespace tired::vk {
+namespace tire::vk {
 
 struct Context final {
     Context( VkInstance instance, VkPhysicalDevice pDevice, VkDevice device, VkSurfaceKHR surface, VkRenderPass rp,
@@ -112,4 +112,4 @@ private:
     // uint32_t framesCount_{ CONFIG_FRAMES_COUNT };
 };
 
-}  // namespace tired::vk
+}  // namespace tire::vk

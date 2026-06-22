@@ -7,7 +7,7 @@
 #include "scene_object/sceneobjectgraph.h"
 #include "scene_object/sceneobjectbase.h"
 
-namespace tired {
+namespace tire {
 
 Handler::Handler( InputHandler* inputHandler )
     : vsg::Visitor{}
@@ -151,4 +151,4 @@ QPoint InputHandler::mousePos() {
     return mousePos_;
 }
 
-}  // namespace tired
+}  // namespace tire

@@ -1,7 +1,7 @@
 
 #include "sceneobjectbase.h"
 
-namespace tired {
+namespace tire {
 
 SceneObjectBase::SceneObjectBase( QObject* parent )
     : QObject{ parent }
@@ -21,4 +21,4 @@ auto SceneObjectBase::root() const -> vsg::ref_ptr<SceneObjectGraph> {
     return _thisObject;
 }
 
-}  // namespace tired
+}  // namespace tire

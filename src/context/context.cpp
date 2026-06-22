@@ -29,11 +29,11 @@ module;
 #endif
 
 #include "log/log.h"
+#include "image/image.h"
 
 export module context : context;
 
 import config;
-import image;
 
 import : command_routine;
 

@@ -5,7 +5,7 @@
 
 #include "subgraph.h"
 
-namespace tired {
+namespace tire {
 
 struct GridSubgraph;
 
@@ -94,4 +94,4 @@ private:
     vsg::ref_ptr<vsg::floatArray> _planeBufUniformValue{};
 };
 
-}  // namespace tired
+}  // namespace tire

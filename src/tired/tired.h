@@ -13,7 +13,7 @@
 #include "inputhandler.h"
 #include "scenegraph.h"
 
-namespace tired {
+namespace tire {
 
 struct Tired final : QObject {
     Q_OBJECT
@@ -71,4 +71,4 @@ private:
     float _globalMousePosY{};
 };
 
-}  // namespace tired
+}  // namespace tire

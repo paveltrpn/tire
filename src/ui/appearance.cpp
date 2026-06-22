@@ -5,7 +5,7 @@
 
 #include "appearance.h"
 
-namespace tired {
+namespace tire {
 
 TiredImageProvider::TiredImageProvider()
     : QQuickImageProvider( QQuickImageProvider::Image ) {
@@ -110,4 +110,4 @@ auto Appearance::getRadius( const QString &value ) -> int {
     return radius_.value( value ).toInt();
 }
 
-}  // namespace tired
+}  // namespace tire

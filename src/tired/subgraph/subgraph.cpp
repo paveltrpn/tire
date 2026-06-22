@@ -1,7 +1,7 @@
 
 #include "subgraph.h"
 
-namespace tired {
+namespace tire {
 
 Subgraph::Subgraph( vsg::Viewer* viewer )
     : _viewer{ viewer }
@@ -21,4 +21,4 @@ auto Subgraph::recompile() -> void {
     vsg::updateViewer( *_viewer, res );
 }
 
-}  // namespace tired
+}  // namespace tire

@@ -3,7 +3,7 @@
 
 #include <vsg/all.h>
 
-namespace tired {
+namespace tire {
 
 struct SceneObjectBase;
 
@@ -20,4 +20,4 @@ private:
     SceneObjectBase *_owner{};
 };
 
-}  // namespace tired
+}  // namespace tire

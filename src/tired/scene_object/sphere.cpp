@@ -3,7 +3,7 @@
 
 #include "sphere.h"
 
-namespace tired::object {
+namespace tire::object {
 
 namespace {
 
@@ -38,4 +38,4 @@ tired::SphereObjectData Sphere::getData() {
     return _data;
 }
 
-}  // namespace tired::object
+}  // namespace tire::object

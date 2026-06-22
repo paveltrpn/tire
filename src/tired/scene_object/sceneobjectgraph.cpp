@@ -2,7 +2,7 @@
 #include "sceneobjectgraph.h"
 #include "sceneobjectbase.h"
 
-namespace tired {
+namespace tire {
 
 SceneObjectGraph::SceneObjectGraph( SceneObjectBase* owner )
     : _owner{ owner } {
@@ -20,4 +20,4 @@ auto SceneObjectGraph::fmatrix() const -> vsg::mat4 {
     return static_cast<vsg::mat4>( this->matrix );
 }
 
-}  // namespace tired
+}  // namespace tire

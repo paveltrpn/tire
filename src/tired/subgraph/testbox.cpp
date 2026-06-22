@@ -3,7 +3,7 @@
 
 #include "testbox.h"
 
-namespace tired {
+namespace tire {
 
 Testbox::Testbox( vsg::Viewer* viewer, QObject* parent )
     : QObject{ parent }
@@ -33,8 +33,8 @@ TestboxSubgraph::TestboxSubgraph( vsg::Viewer* viewer )
 
 auto TestboxSubgraph::initPipeline() -> void {
     // load shaders
-    vsg::Paths searchPaths =
-        std::vector<vsg::Path>{ std::format("{}{}",PREFIX_PATH_ONE ,"/shaders/spirv"), std::format("{}{}",PREFIX_PATH_ONE ,"/assets") };
+    vsg::Paths searchPaths = std::vector<vsg::Path>{ std::format( "{}{}", PREFIX_PATH_ONE, "/shaders/spirv" ),
+                                                     std::format( "{}{}", PREFIX_PATH_ONE, "/assets" ) };
 
     vsg::ref_ptr<vsg::ShaderStage> vertexShader =
         vsg::ShaderStage::read( VK_SHADER_STAGE_VERTEX_BIT, "main", vsg::findFile( "vert_testbox.spv", searchPaths ) );
@@ -90,4 +90,4 @@ auto TestboxSubgraph::initDrawCommand() -> void {
     _stateGroup->addChild( tr );
 }
 
-}  // namespace tired
+}  // namespace tire

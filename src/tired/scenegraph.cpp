@@ -3,7 +3,7 @@
 #include "scene_object/sceneobjectdata.h"
 #include "scene_object/box.h"
 
-namespace tired {
+namespace tire {
 
 Scenegraph::Scenegraph( vsg::Viewer* viewer, QObject* parent )
     : QObject{ parent }
@@ -51,4 +51,4 @@ void Scenegraph::addExBox( float px, float py, float pz, float rx, float ry, flo
     _objectsList.push_back( std::move( exbox ) );
 }
 
-}  // namespace tired
+}  // namespace tire
