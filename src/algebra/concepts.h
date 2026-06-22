@@ -1,13 +1,10 @@
 
-module;
+#pragma once
 
 #include <type_traits>
 
-export module algebra:concepts;
-
 namespace tire::algebra {
 
-export {
     template <typename T>
     concept Algebraic =
         std::is_same_v<T, float> || std::is_same_v<T, double> ||
@@ -90,4 +87,3 @@ export {
                             std::is_same_v<T, matrix2<unsigned int>>;
 }
 
-}  // namespace tire::algebra

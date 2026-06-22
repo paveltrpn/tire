@@ -1,5 +1,5 @@
 
-module;
+#pragma once
 
 #include <cstddef>
 #include <initializer_list>
@@ -8,12 +8,12 @@ module;
 
 export module algebra:matrix3;
 
-import :concepts;
-import :vector3;
+#include "concepts.h"
+#include "vector3.h"
 
 namespace tire::algebra {
 
-export template <typename T>
+ template <typename T>
     requires Algebraic<T>
 struct matrix3 final {
     using value_type = T;

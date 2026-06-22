@@ -1,17 +1,15 @@
 
-module;
+#pragma once
 
 #include <cstddef>
 #include <cmath>
 #include <array>
 
-export module algebra:vector2;
-
-import :concepts;
+#include "concepts.h"
 
 namespace tire::algebra {
 
-export template <typename T>
+template <typename T>
     requires Algebraic<T>
 struct vector2 final {
     using value_type = T;
@@ -117,8 +115,8 @@ private:
     std::array<value_type, 2> data_{};
 };
 
-export using vector2l = vector2<long long>;
-export using vector2f = vector2<float>;
-export using vector2d = vector2<double>;
+using vector2l = vector2<long long>;
+using vector2f = vector2<float>;
+using vector2d = vector2<double>;
 
 }  // namespace tire::algebra

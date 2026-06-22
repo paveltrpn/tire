@@ -6,7 +6,7 @@
 #include <array>
 #include <concepts>
 
-namespace tired::algebra {
+namespace tire::algebra {
 
 template <typename T>
 requires std::floating_point<T> struct vector3 final {
@@ -197,7 +197,7 @@ private:
 using vector3f = vector3<float>;
 using vector3d = vector3<double>;
 
-}  // namespace tired::algebra
+}  // namespace tire::algebra
 
 // NOTE: namespace std!!!
 namespace std {

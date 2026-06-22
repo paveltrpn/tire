@@ -1,22 +1,18 @@
 
-module;
-
 #include <cstddef>
 #include <initializer_list>
 #include <cmath>
 #include <type_traits>
 #include <array>
 
-export module algebra:matrix4;
-
-import :common;
-import :concepts;
-import :vector3;
-import :vector4;
+#include "common.h"
+#include "concepts.h"
+#include "vector3.h"
+#include "vector4.h"
 
 namespace tire::algebra {
 
-export template <Algebraic T>
+template <Algebraic T>
 struct matrix4 final {
     using value_type = T;
     using self = matrix4<value_type>;
@@ -752,7 +748,6 @@ private:
     std::array<T, 16> data_{};
 };
 
-export {
     template <typename T>
     auto transpose( matrix4<T>& arg ) -> decltype( auto ) {
         matrix4<T> rt{ arg };
@@ -827,5 +822,3 @@ export {
     using matrix4f = matrix4<float>;
     using matrix4d = matrix4<double>;
 }
-
-}  // namespace tire::algebra

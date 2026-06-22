@@ -1,14 +1,12 @@
 
-module;
+#pragma once
 
 #include <cmath>
 #include <array>
 #include <numbers>
 
-export module algebra:quaternion;
-
-import :common;
-import :concepts;
+#include "common.h"
+#include "concepts.h"
 
 namespace tire::algebra {
 

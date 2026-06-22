@@ -70,6 +70,8 @@ target_sources(config
     ${MOD_CONFIG_SRC}
 )
 target_link_libraries(config log)
+target_compile_features(config PUBLIC cxx_std_26)
+target_compile_options(config PRIVATE -freflection)
 
 # ================================
 # Module vma_usage
@@ -85,6 +87,8 @@ target_sources(
     PRIVATE
     ${MOD_VMA_USAGE_SRC}
 )
+target_compile_features(vma_usage PUBLIC cxx_std_26)
+target_compile_options(vma_usage PRIVATE -freflection)
 
 # ================================
 # Module context
@@ -95,6 +99,8 @@ target_sources(context
     PUBLIC FILE_SET CXX_MODULES FILES
     ${MOD_CONTEXT_SRC})
 target_link_libraries(context vulkan config image vma_usage)
+target_compile_features(context PUBLIC cxx_std_26)
+target_compile_options(context PRIVATE -freflection)
 
 # ================================
 # Module r_ui
@@ -106,6 +112,8 @@ target_sources(r_ui
     ${MOD_R_UI_SRC}
 )
 target_link_libraries(r_ui log algebra image event)
+target_compile_features(r_ui PUBLIC cxx_std_26)
+target_compile_options(r_ui PRIVATE -freflection )
 
 # ================================
 # Module render
@@ -117,6 +125,8 @@ target_sources(render
     ${MOD_RENDER_SRC}
 )
 target_link_libraries(render vulkan context ui scene config geometry algebra vma_usage event)
+target_compile_features(render PUBLIC cxx_std_26)
+target_compile_options(render PRIVATE -freflection)
 
 # ================================
 # Module scene
@@ -128,6 +138,8 @@ target_sources(scene
     ${MOD_SCENE_SRC}
 )
 target_link_libraries(scene config image algebra geometry generator event)
+target_compile_features(scene PUBLIC cxx_std_26)
+target_compile_options(scene PRIVATE -freflection)
 
 # ================================
 # Module generator
@@ -139,6 +151,8 @@ target_sources(generator
     ${MOD_GENERATOR_SRC}
 )
 target_link_libraries(generator)
+target_compile_features(generator PUBLIC cxx_std_26)
+target_compile_options(generator PRIVATE -freflection)
 
 # ================================
 # Module event
@@ -150,6 +164,8 @@ target_sources(event
     ${MOD_EVENT_SRC}
 )
 target_link_libraries(event)
+target_compile_features(event PUBLIC cxx_std_26)
+target_compile_options(event PRIVATE -freflection)
 
 # ================================
 # Module lib/fast_obj
@@ -316,6 +332,7 @@ target_link_libraries(${TIRE_EDITOR_EXE}
     tired_ui
     qt_window
 )
+target_compile_features(${TIRE_EDITOR_EXE} PUBLIC cxx_std_26)
 
 # ================================
 # tire executable
@@ -342,5 +359,6 @@ target_link_libraries(${TIRE_EXE}
     SPIRV-Tools-reduce
     SPIRV
 )
+target_compile_features(${TIRE_EXE} PUBLIC cxx_std_26)
 
     

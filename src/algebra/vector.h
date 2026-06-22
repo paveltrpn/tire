@@ -1,17 +1,15 @@
 
-module;
+#pragma once
 
 #include <cstddef>
 #include <cmath>
 #include <array>
 
-export module algebra:vector;
-
-import :concepts;
+#include "concepts.h"
 
 namespace tire::algebra {
 
-export template <typename T, size_t size>
+template <typename T, size_t size>
     requires Algebraic<T>
 struct vector_base {
     using self = vector_base<T, size>;

@@ -8,7 +8,7 @@
 
 #include "vector3.h"
 
-namespace tired::algebra {
+namespace tire::algebra {
 
 template <typename T>
 requires std::floating_point<T> struct vector4 final {
@@ -248,7 +248,7 @@ private:
 using vector4f = vector4<float>;
 using vector4d = vector4<double>;
 
-}  // namespace tired::algebra
+}  // namespace tire::algebra
 
 // NOTE: namespace std!!!
 namespace std {

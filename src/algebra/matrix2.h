@@ -1,17 +1,16 @@
 
-module;
+#pragma once
 
 #include <cstddef>
 #include <initializer_list>
 #include <array>
 
-export module algebra:matrix2;
 
-import :concepts;
+#inlcude "concepts.h"
 
 namespace tire::algebra {
 
-export template <typename T>
+ template <typename T>
     requires Algebraic<T>
 struct matrix2 final {
     using value_type = T;
@@ -115,8 +114,8 @@ private:
     std::array<value_type, 4> data_;
 };
 
-export using matrix2l = matrix2<long long>;
-export using matrix2f = matrix2<float>;
-export using matrix2d = matrix2<double>;
+using matrix2l = matrix2<long long>;
+using matrix2f = matrix2<float>;
+using matrix2d = matrix2<double>;
 
 }  // namespace tire::algebra
