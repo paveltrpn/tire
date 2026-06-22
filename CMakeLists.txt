@@ -164,7 +164,7 @@ add_subdirectory(lib/libtga)
 # ================================
 # Module algebra
 # ================================
-file(GLOB_RECURSE MOD_ALGEBRA_SRC "src/algebra/*.cpp" "src/algebra/*.h")
+file(GLOB_RECURSE MOD_ALGEBRA_SRC "src/algebra/*.h")
 add_library(algebra ${MOD_ALGEBRA_SRC})
 set_target_properties(algebra PROPERTIES AUTOMOC TRUE)
 target_compile_options(algebra PRIVATE -freflection -std=c++26)
