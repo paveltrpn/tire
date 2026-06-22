@@ -17,7 +17,6 @@ import context;
 import config;
 
 import :timer;
-import :scenevk;
 import :test_box;
 import :ui;
 
@@ -37,7 +36,6 @@ export struct RenderVK final {
             const auto basePath = configHandle->getBasePath();
 
             ui_ = std::make_shared<UiVK>( context_ );
-            scene_ = std::make_shared<SceneVK>( basePath.string() + "/assets/m01.json", context_ );
 
             testBox_ = std::make_shared<TestBox>( context_ );
             testBox_->setPosition( 8.4f, 4.3f, -15.0f );
@@ -74,11 +72,6 @@ export struct RenderVK final {
         timer_.update();
         const auto duration = timer_.frameDuration<float>();
 
-        // Update scene objects
-        scene_->traverse( duration );
-
-        scene_->camera().update();
-
 #define LABEL_POS_X -45.f
 #define LABEL_POS_Y 45.0f
 
@@ -90,13 +83,11 @@ export struct RenderVK final {
 
         {
             auto cb = context_->copyBufferCommand();
-            scene_->upload( cb.buf() );
             ui_->upload( cb.buf() );
         }
 
         {
             auto cb = context_->renderCommand( currentFrame_ );
-            scene_->draw( cb.buf() );
             testBox_->draw( cb.buf(), timer_.floatFrameDuration() );
             ui_->draw( cb.buf() );
         }
@@ -112,8 +103,6 @@ export struct RenderVK final {
         // We should wait for the logical device to finish operations
         // before exiting mainLoop and destroying the window.
         vkDeviceWaitIdle( context_->device() );
-
-        scene_->clean();
     };
 
 public:
@@ -146,9 +135,6 @@ private:
 
     // Test box.
     std::shared_ptr<TestBox> testBox_{};
-
-    // The Scene
-    std::shared_ptr<SceneVK> scene_{};
 
     Timer timer_{};
 

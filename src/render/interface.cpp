@@ -2,9 +2,7 @@ module;
 
 export module render;
 export import :render;
-export import :scenevk;
 export import :test_box;
-export import :pipeline_scene;
 export import :pipeline_test_box;
 export import :test_box_shader;
 export import :texture_image;

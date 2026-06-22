@@ -149,7 +149,7 @@ target_sources(render
     PUBLIC FILE_SET CXX_MODULES FILES
     ${MOD_RENDER_SRC}
 )
-target_link_libraries(render vulkan context r_ui scene config geometry algebra vma_usage event)
+target_link_libraries(render vulkan context r_ui config geometry algebra vma_usage event)
 target_compile_features(render PUBLIC cxx_std_26)
 target_compile_options(render PRIVATE -freflection)
 
@@ -164,19 +164,6 @@ target_sources(geometry
 target_link_libraries(geometry algebra)
 target_compile_features(geometry PUBLIC cxx_std_26)
 target_compile_options(geometry PRIVATE -freflection)
-
-# ================================
-# Module scene
-# ================================
-file(GLOB MOD_SCENE_SRC "src/scene/*.cpp")
-add_library(scene)
-target_sources(scene
-    PUBLIC FILE_SET CXX_MODULES FILES
-    ${MOD_SCENE_SRC}
-)
-target_link_libraries(scene config image algebra geometry generator event)
-target_compile_features(scene PUBLIC cxx_std_26)
-target_compile_options(scene PRIVATE -freflection)
 
 # ================================
 # Module generator

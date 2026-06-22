@@ -16,11 +16,9 @@ auto RenderVK::keyPressEvent( unsigned int key ) -> void {
     // log::info( "{}", key );
     switch ( key ) {
         case 81: {  // == 'q'
-            scene_->nextCamera();
             break;
         }
         case 87: {  // == 'w'
-            scene_->camera().setMoveBit( FlycamMoveBits::FORWARD );
             break;
         }
         case 26: {  // == 'e'
@@ -54,15 +52,12 @@ auto RenderVK::keyPressEvent( unsigned int key ) -> void {
             break;
         }
         case 65: {  // == 'a'
-            scene_->camera().setMoveBit( FlycamMoveBits::LEFT );
             break;
         }
         case 83: {  // == 's'
-            scene_->camera().setMoveBit( FlycamMoveBits::BACKWARD );
             break;
         }
         case 68: {  // == 'd'
-            scene_->camera().setMoveBit( FlycamMoveBits::RIGHT );
             break;
         }
         case 41: {  // == 'f'
@@ -107,19 +102,15 @@ auto RenderVK::keyPressEvent( unsigned int key ) -> void {
 auto RenderVK::keyReleaseEvent( unsigned int key ) -> void {
     switch ( key ) {
         case 87: {  // == 'w'
-            scene_->camera().unsetMoveBit( FlycamMoveBits::FORWARD );
             break;
         }
         case 65: {  // == 'a'
-            scene_->camera().unsetMoveBit( FlycamMoveBits::LEFT );
             break;
         }
         case 83: {  // == 's'
-            scene_->camera().unsetMoveBit( FlycamMoveBits::BACKWARD );
             break;
         }
         case 68: {  // == 'd'
-            scene_->camera().unsetMoveBit( FlycamMoveBits::RIGHT );
             break;
         }
         default: {
@@ -145,7 +136,7 @@ auto RenderVK::mouseOffsetEvent( double x, double y, double holdX, double holdY 
     const auto yOffset = holdY - y;
 
 #define MOUSE_SENSIVITY 0.008
-    scene_->camera().rotate( xOffset * MOUSE_SENSIVITY, yOffset * MOUSE_SENSIVITY );
+    // scene_->camera().rotate( xOffset * MOUSE_SENSIVITY, yOffset * MOUSE_SENSIVITY );
 }
 
 }  // namespace tire
