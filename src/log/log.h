@@ -6,7 +6,7 @@
 #include <source_location>
 #include <exception>
 
-namespace tired::log {
+namespace tire::log {
 
 /*
  * Example - "\033[1;32m[info] \033[0m"

@@ -28,22 +28,23 @@ module;
 #include <wayland-client.h>
 #endif
 
-export module context:context;
+#include "log/log.h"
 
-import log;
+export module context : context;
+
 import config;
 import image;
 
-import :command_routine;
+import : command_routine;
 
 namespace tire {
 
 struct DepthImage;
 
-auto vkDestroyDebugUtilsMessenger(
-  VkInstance instance, VkDebugUtilsMessengerEXT messanger, const VkAllocationCallbacks *pAllocator ) -> void {
+auto vkDestroyDebugUtilsMessenger( VkInstance instance, VkDebugUtilsMessengerEXT messanger,
+                                   const VkAllocationCallbacks *pAllocator ) -> void {
     auto func =
-      (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr( instance, "vkDestroyDebugUtilsMessengerEXT" );
+        (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr( instance, "vkDestroyDebugUtilsMessengerEXT" );
     if ( func != nullptr ) {
         return func( instance, messanger, pAllocator );
     }
@@ -106,10 +107,10 @@ export struct Context final {
         xlibSurfInfo.dpy = display;
         xlibSurfInfo.window = window;
 
-        if (
-          const auto err = vkCreateXlibSurfaceKHR( instance_, &xlibSurfInfo, nullptr, &surface_ ); err != VK_SUCCESS ) {
+        if ( const auto err = vkCreateXlibSurfaceKHR( instance_, &xlibSurfInfo, nullptr, &surface_ );
+             err != VK_SUCCESS ) {
             throw std::runtime_error(
-              std::format( "failed to create xlib surface with code {}\n!", string_VkResult( err ) ) );
+                std::format( "failed to create xlib surface with code {}\n!", string_VkResult( err ) ) );
         } else {
             log::info()( "xlib surface created!" );
         }
@@ -121,11 +122,10 @@ export struct Context final {
         wlSurfInfo.display = display;
         wlSurfInfo.surface = surface;
 
-        if (
-          const auto err = vkCreateWaylandSurfaceKHR( instance_, &wlSurfInfo, nullptr, &surface_ );
-          err != VK_SUCCESS ) {
+        if ( const auto err = vkCreateWaylandSurfaceKHR( instance_, &wlSurfInfo, nullptr, &surface_ );
+             err != VK_SUCCESS ) {
             throw std::runtime_error(
-              std::format( "failed to create wayland surface with code {}\n!", string_VkResult( err ) ) );
+                std::format( "failed to create wayland surface with code {}\n!", string_VkResult( err ) ) );
         } else {
             log::info()( "wayland surface created!" );
         }
@@ -152,42 +152,25 @@ export struct Context final {
         return swapchain_;
     };
 
-    [[nodiscard]]
-    auto surfaceFormat() const -> const VkSurfaceFormatKHR & {
-        return surfaceFormat_;
-    };
+    [[nodiscard]] auto surfaceFormat() const -> const VkSurfaceFormatKHR & { return surfaceFormat_; };
 
-    [[nodiscard]]
-    auto graphicsQueue() const -> const VkQueue & {
-        return graphicsQueue_;
-    }
+    [[nodiscard]] auto graphicsQueue() const -> const VkQueue & { return graphicsQueue_; }
 
     [[nodiscard]] auto graphicsFamily() const -> uint32_t {
         //
         return graphicsFamilyQueueId_;
     };
 
-    [[nodiscard]]
-    auto physicalDevice() const -> VkPhysicalDevice {
-        return physDevice_;
-    }
+    [[nodiscard]] auto physicalDevice() const -> VkPhysicalDevice { return physDevice_; }
 
-    [[nodiscard]]
-    auto currentExtent() const -> const VkExtent2D & {
-        return currentExtent_;
-    };
+    [[nodiscard]] auto currentExtent() const -> const VkExtent2D & { return currentExtent_; };
 
-    [[nodiscard]]
-    auto viewportSize() -> std::tuple<uint32_t, uint32_t> const {
-        return { width_, height_ };
-    }
+    [[nodiscard]] auto viewportSize() -> std::tuple<uint32_t, uint32_t> const { return { width_, height_ }; }
 
-    [[nodiscard]]
-    auto memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags properties ) const -> uint32_t;
+    [[nodiscard]] auto memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags properties ) const -> uint32_t;
 
-    [[nodiscard]]
-    auto findSupportedFormat(
-      const std::vector<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features ) const -> VkFormat;
+    [[nodiscard]] auto findSupportedFormat( const std::vector<VkFormat> &candidates, VkImageTiling tiling,
+                                            VkFormatFeatureFlags features ) const -> VkFormat;
 
     [[nodiscard]] auto renderPass() const -> VkRenderPass {
         //
@@ -200,9 +183,8 @@ export struct Context final {
     }
 
     [[nodiscard]] auto getFrameSyncSet( size_t id ) -> std::tuple<VkSemaphore, VkSemaphore, VkFence, VkCommandBuffer> {
-        return {
-          frames_[id].imageAvailableSemaphore_, frames_[id].renderFinishedSemaphore_, frames_[id].inFlightFence_,
-          frames_[id].cbPrimary_ };
+        return { frames_[id].imageAvailableSemaphore_, frames_[id].renderFinishedSemaphore_, frames_[id].inFlightFence_,
+                 frames_[id].cbPrimary_ };
     }
 
     [[nodiscard]] auto framebuffer( size_t id ) const -> VkFramebuffer {
@@ -218,8 +200,7 @@ export struct Context final {
     auto renderCommandBegin( uint32_t frameId ) -> void;
     auto renderCommandEnd( uint32_t frameId ) -> void;
 
-    [[nodiscard]]
-    auto getDrawCommandBuffer( size_t id ) const -> VkCommandBuffer {
+    [[nodiscard]] auto getDrawCommandBuffer( size_t id ) const -> VkCommandBuffer {
         //
         return frames_[id].cbPrimary_;
     }
@@ -239,14 +220,11 @@ export struct Context final {
         return descriptorPool_;
     };
 
-    [[nodiscard]]
-    auto renderCommand( uint32_t frameId ) -> CommandRoutine;
+    [[nodiscard]] auto renderCommand( uint32_t frameId ) -> CommandRoutine;
 
-    [[nodiscard]]
-    auto copyBufferCommand() const -> CommandRoutine;
+    [[nodiscard]] auto copyBufferCommand() const -> CommandRoutine;
 
-    [[nodiscard]]
-    auto immediateCommand() const -> CommandRoutine;
+    [[nodiscard]] auto immediateCommand() const -> CommandRoutine;
 
 private:
     struct PhysicalDevice final {

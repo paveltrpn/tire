@@ -7,7 +7,7 @@
 #include "image.h"
 #include "log/log.h"
 
-namespace tired {
+namespace tire {
 
 Image::Image( int32_t width, int32_t height, const Colori& dc )
     : _height{ height }
@@ -119,4 +119,4 @@ auto Image::writeToFile( const std::string& path ) const -> void {
     file.close();
 }
 
-}  // namespace tired
+}  // namespace tire

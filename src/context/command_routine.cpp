@@ -7,9 +7,9 @@ module;
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-export module context:command_routine;
+#include "log/log.h"
 
-import log;
+export module context : command_routine;
 
 namespace tire {
 
@@ -46,7 +46,7 @@ export struct CommandRoutine {
             return {};
         }
 
-        auto return_void() -> void {
+        auto return_void() -> void{
             //
         };
 
@@ -69,10 +69,7 @@ export struct CommandRoutine {
         post();
     }
 
-    [[nodiscard]]
-    auto buf() const -> VkCommandBuffer {
-        return h_.promise().value_;
-    }
+    [[nodiscard]] auto buf() const -> VkCommandBuffer { return h_.promise().value_; }
 
 private:
     void post() {

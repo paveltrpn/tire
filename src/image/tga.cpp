@@ -7,7 +7,7 @@
 #include "tga.h"
 #include "log/log.h"
 
-namespace tired {
+namespace tire {
 
 Tga::Tga( std::string_view fname ) {
     uint8_t color[4] = { 0, 0, 0, 255 };
@@ -24,7 +24,7 @@ Tga::Tga( std::string_view fname ) {
 
     // Read header.
     std::array<std::byte, TGA_HEADER_SIZE> header{};
-    _fileStream.read( reinterpret_cast<char*>( &header ), TGA_HEADER_SIZE );
+    _fileStream.read( reinterpret_cast<char *>( &header ), TGA_HEADER_SIZE );
     _header.identsize = static_cast<uint8_t>( header[0] );
     _header.colorMapType = static_cast<uint8_t>( header[1] );
     _header.imageType = static_cast<uint8_t>( header[2] );
@@ -116,4 +116,4 @@ Tga::Tga( std::string_view fname ) {
     _fileStream.close();
 }
 
-}  // namespace tired
+}  // namespace tire

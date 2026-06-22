@@ -4,11 +4,13 @@ module;
 #include <array>
 #include <memory>
 
-export module ui:label;
+#include "log/log.h"
+#include "image/image.h"
+#include "algebra/vector2.h"
+#include "algebra/vector3.h"
+#include "algebra/vector4.h"
 
-import log;
-import algebra;
-import image;
+export module ui : label;
 
 namespace tire {
 
@@ -75,8 +77,7 @@ export struct Label final {
             // Build character quad vertecies data.
             const vector3_type topLeftVt = { ( offset + 0.0f ) + posX_, 0.0f + posY_, 0.0f };
             const vector3_type topRightVt = { ( offset + glyphQuadWdt_ ) + posX_, 0.0f + posY_, 0.0f };
-            const vector3_type bottomRightVt = {
-              ( offset + glyphQuadWdt_ ) + posX_, -glyphQuadHgt_ + posY_, 0.0f };
+            const vector3_type bottomRightVt = { ( offset + glyphQuadWdt_ ) + posX_, -glyphQuadHgt_ + posY_, 0.0f };
             const vector3_type bottomLeftVt = { ( offset + 0.0f ) + posX_, -glyphQuadHgt_ + posY_, 0.0f };
 
             // Build character quad texture coordinates data.
@@ -111,8 +112,7 @@ export struct Label final {
         }
     }
 
-    [[nodiscard]]
-    auto lettersCount() const -> size_t {
+    [[nodiscard]] auto lettersCount() const -> size_t {
         //
         return lettersCount_;
     }
@@ -132,20 +132,11 @@ export struct Label final {
         return lettersCount_ * VERTICIES_PER_QUAD * sizeof( vector4_type );
     }
 
-    [[nodiscard]]
-    auto verteciesData() const -> const vector3<value_type> * {
-        return letterQuadsVertecies_.data();
-    }
+    [[nodiscard]] auto verteciesData() const -> const vector3<value_type> * { return letterQuadsVertecies_.data(); }
 
-    [[nodiscard]]
-    auto texcrdsData() const -> const vector2<value_type> * {
-        return letterQuadsTexcrds_.data();
-    }
+    [[nodiscard]] auto texcrdsData() const -> const vector2<value_type> * { return letterQuadsTexcrds_.data(); }
 
-    [[nodiscard]]
-    auto clrsData() const -> const vector4<value_type> * {
-        return letterQuadsColors_.data();
-    }
+    [[nodiscard]] auto clrsData() const -> const vector4<value_type> * { return letterQuadsColors_.data(); }
 
 private:
 // Size of "Letters buffer" - this is the number of all characters

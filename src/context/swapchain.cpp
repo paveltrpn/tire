@@ -7,13 +7,14 @@ module;
 #define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vk_enum_string_helper.h>
 
-export module context:swapchain;
+#include "log/log.h"
+
+export module context : swapchain;
 
 import config;
-import log;
 
-import :context;
-import :depth_image;
+import : context;
+import : depth_image;
 
 namespace tire {
 
@@ -21,9 +22,9 @@ auto Context::makeSwapchain() -> void {
     const auto configHandle = Config::instance();
 
     log::info()(
-      "surface capabilities minImageCount: {}, "
-      "maxImageCount: {}",
-      surfaceCapabilities_.minImageCount, surfaceCapabilities_.maxImageCount );
+        "surface capabilities minImageCount: {}, "
+        "maxImageCount: {}",
+        surfaceCapabilities_.minImageCount, surfaceCapabilities_.maxImageCount );
 
     // NOTE: Warning from validation layers:
     // A Swapchain is being created with minImageCount set to 2, which means double buffering
@@ -42,31 +43,31 @@ auto Context::makeSwapchain() -> void {
     //}
 
     log::debug()(
-      "vulkan swapchain surface capabilities image count "
-      "set to "
-      "{}",
-      framesCount_ );
+        "vulkan swapchain surface capabilities image count "
+        "set to "
+        "{}",
+        framesCount_ );
 
     // Use instead of extent acuired from surface data.
     const auto [viewportWidth, viewportHeight] = viewportSize();
 
     VkSwapchainCreateInfoKHR createInfo{
-      //
-      .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
-      .surface = surface_,
-      // The implementation will either create the swapchain with at least
-      // that many images, or it will fail to create the swapchain.
-      .minImageCount = framesCount_,
-      .imageFormat = surfaceFormat_.format,
-      .imageColorSpace = surfaceFormat_.colorSpace,
-      .imageExtent = { viewportWidth, viewportHeight },  //currentExtent_,
-      .imageArrayLayers = 1,
-      .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-      .preTransform = surfaceCapabilities_.currentTransform,
-      .compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
-      .presentMode = presentMode_,
-      .clipped = VK_TRUE,
-      .oldSwapchain = VK_NULL_HANDLE,
+        //
+        .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
+        .surface = surface_,
+        // The implementation will either create the swapchain with at least
+        // that many images, or it will fail to create the swapchain.
+        .minImageCount = framesCount_,
+        .imageFormat = surfaceFormat_.format,
+        .imageColorSpace = surfaceFormat_.colorSpace,
+        .imageExtent = { viewportWidth, viewportHeight },  //currentExtent_,
+        .imageArrayLayers = 1,
+        .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+        .preTransform = surfaceCapabilities_.currentTransform,
+        .compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
+        .presentMode = presentMode_,
+        .clipped = VK_TRUE,
+        .oldSwapchain = VK_NULL_HANDLE,
     };
 
     // Choose image sharing mode for swapchain images. That useful if graphics queue
@@ -128,24 +129,23 @@ auto Context::makeFrames() -> void {
 
         // Frame image view
         const auto subResRange = VkImageSubresourceRange{
-          //
-          .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-          .baseMipLevel = 0,
-          .levelCount = 1,
-          .baseArrayLayer = 0,
-          .layerCount = 1,
+            //
+            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+            .baseMipLevel = 0,
+            .levelCount = 1,
+            .baseArrayLayer = 0,
+            .layerCount = 1,
         };
 
         const VkImageViewCreateInfo createInfo{
-          //
-          .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-          .image = swapChainImages[i],
-          .viewType = VK_IMAGE_VIEW_TYPE_2D,
-          .format = surfaceFormat_.format,
-          .components =
-            { VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY,
-              VK_COMPONENT_SWIZZLE_IDENTITY },
-          .subresourceRange = subResRange,
+            //
+            .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+            .image = swapChainImages[i],
+            .viewType = VK_IMAGE_VIEW_TYPE_2D,
+            .format = surfaceFormat_.format,
+            .components = { VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY,
+                            VK_COMPONENT_SWIZZLE_IDENTITY },
+            .subresourceRange = subResRange,
         };
 
         if ( const auto err = vkCreateImageView( device_, &createInfo, nullptr, &frames_[i].view_ );
@@ -159,13 +159,13 @@ auto Context::makeFrames() -> void {
         std::array<VkImageView, 2> attachments = { frames_[i].view_, depthImage_->view() };
         const auto [viewportWidth, viewportHeight] = viewportSize();
         const VkFramebufferCreateInfo framebufferInfo{
-          .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-          .renderPass = renderPass(),
-          .attachmentCount = static_cast<uint32_t>( attachments.size() ),
-          .pAttachments = attachments.data(),
-          .width = viewportWidth,
-          .height = viewportHeight,
-          .layers = 1,
+            .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+            .renderPass = renderPass(),
+            .attachmentCount = static_cast<uint32_t>( attachments.size() ),
+            .pAttachments = attachments.data(),
+            .width = viewportWidth,
+            .height = viewportHeight,
+            .layers = 1,
         };
 
         if ( const auto err = vkCreateFramebuffer( device_, &framebufferInfo, nullptr, &frames_[i].framebuffer_ );
@@ -177,27 +177,28 @@ auto Context::makeFrames() -> void {
 
         // Frame synchronization primitieves
         VkSemaphoreCreateInfo semaphoreInfo{
-          //
-          .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
-          .pNext = nullptr,
-          .flags = 0,
+            //
+            .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0,
         };
 
         VkFenceCreateInfo fenceInfo{
-          .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, .pNext = nullptr, .flags = VK_FENCE_CREATE_SIGNALED_BIT };
+            .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, .pNext = nullptr, .flags = VK_FENCE_CREATE_SIGNALED_BIT };
 
-        if (
-          vkCreateSemaphore( device_, &semaphoreInfo, nullptr, &frames_[i].imageAvailableSemaphore_ ) != VK_SUCCESS ||
-          vkCreateSemaphore( device_, &semaphoreInfo, nullptr, &frames_[i].renderFinishedSemaphore_ ) != VK_SUCCESS ||
-          vkCreateFence( device_, &fenceInfo, nullptr, &frames_[i].inFlightFence_ ) != VK_SUCCESS ) {
+        if ( vkCreateSemaphore( device_, &semaphoreInfo, nullptr, &frames_[i].imageAvailableSemaphore_ ) !=
+                 VK_SUCCESS ||
+             vkCreateSemaphore( device_, &semaphoreInfo, nullptr, &frames_[i].renderFinishedSemaphore_ ) !=
+                 VK_SUCCESS ||
+             vkCreateFence( device_, &fenceInfo, nullptr, &frames_[i].inFlightFence_ ) != VK_SUCCESS ) {
             log::fatal()( "failed to create semaphores!" );
         }
 
         const VkCommandBufferAllocateInfo allocInfo{
-          .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-          .commandPool = commandPool(),
-          .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-          .commandBufferCount = 1,
+            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+            .commandPool = commandPool(),
+            .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+            .commandBufferCount = 1,
         };
 
         const auto err = vkAllocateCommandBuffers( device(), &allocInfo, &frames_[i].cbPrimary_ );

@@ -9,84 +9,84 @@
 #include "algebra/vector3.h"
 #include "algebra/vector4.h"
 
-namespace tired {
+namespace tire {
 
 const std::map<std::string, std::string> htmlColors{
-                                                     { "white", "#FFFFFF" },
-                                                     { "powderblue", "#B0E0E6" },
-                                                     { "lightblue", "#ADD8E6" },
-                                                     { "lightskyblue", "#87CEFA" },
-                                                     { "skyblue", "#87CEEB" },
-                                                     { "deepskyblue", "#00BFFF" },
-                                                     { "lightsteelblue", "#B0C4DE" },
-                                                     { "dodgerblue", "#1E90FF" },
-                                                     { "cornflowerblue", "#6495ED" },
-                                                     { "steelblue", "#4682B4" },
-                                                     { "royalblue", "#4169E1" },
-                                                     { "blue", "#0000FF" },
-                                                     { "mediumblue", "#0000CD" },
-                                                     { "darkblue", "#00008B" },
-                                                     { "navy", "#000080" },
-                                                     { "midnightblue", "#191970" },
-                                                     { "mediumslateblue", "#7B68EE" },
-                                                     { "slateblue", "#6A5ACD" },
-                                                     { "darkslateblue", "#483D8B" },
-                                                     { "lawngreen", "#7CFC00" },
-                                                     { "chartreuse", "#7FFF00" },
-                                                     { "limegreen", "#32CD32" },
-                                                     { "lime", "#00FF00" },
-                                                     { "forestgreen", "#228B22" },
-                                                     { "green", "#008000" },
-                                                     { "darkgreen", "#006400" },
-                                                     { "greenyellow", "#ADFF2F" },
-                                                     { "yellowgreen", "#9ACD32" },
-                                                     { "springgreen", "#00FF7F" },
-                                                     { "mediumspringgreen", "#00FA9A" },
-                                                     { "lightgreen", "#90EE90" },
-                                                     { "palegreen", "#98FB98" },
-                                                     { "darkseagreen", "#8FBC8F" },
-                                                     { "mediumseagreen", "#3CB371" },
-                                                     { "seagreen", "#2E8B57" },
-                                                     { "olive", "#808000" },
-                                                     { "darkolivegreen", "#556B2F" },
-                                                     { "olivedrab", "#6B8E23" },
-                                                     { "lightsalmon", "#FFA07A" },
-                                                     { "salmon", "#FA8072" },
-                                                     { "darksalmon", "#E9967A" },
-                                                     { "lightcoral", "#F08080" },
-                                                     { "indianred", "#CD5C5C" },
-                                                     { "crimson", "#DC143C" },
-                                                     { "firebrick", "#B22222" },
-                                                     { "red", "#FF0000" },
-                                                     { "darkred", "#8B0000" },
-                                                     { "gainsboro", "#DCDCDC" },
-                                                     { "lightgray", "#D3D3D3" },
-                                                     { "silver", "#C0C0C0" },
-                                                     { "darkgray", "#A9A9A9" },
-                                                     { "gray", "#808080" },
-                                                     { "dimgray", "#696969" },
-                                                     { "lightslategray", "#778899" },
-                                                     { "slategray", "#708090" },
-                                                     { "darkslategray", "#2F4F4F" },
-                                                     { "black", "#000000" },
-                                                     { "Gainsboro", "#DCDCDC" },
-                                                     { "LightGrey", "#D3D3D3" },
-                                                     { "LightGray", "#D3D3D3" },
-                                                     { "Silver", "#C0C0C0" },
-                                                     { "DarkGray", "#A9A9A9" },
-                                                     { "DarkGrey", "#A9A9A9" },
-                                                     { "Gray", "#808080" },
-                                                     { "Grey", "#808080" },
-                                                     { "DimGray", "#696969" },
-                                                     { "DimGrey", "#696969" },
-                                                     { "LightSlateGray", "#778899" },
-                                                     { "LightSlateGrey", "#778899" },
-                                                     { "SlateGray", "#708090" },
-                                                     { "SlateGrey", "#708090" },
-                                                     { "DarkSlateGray", "#2F4F4F" },
-                                                     { "DarkSlateGrey", "#2F4F4F" },
-                                                     { "Black", "#00000" },
-                                                     };
+    { "white", "#FFFFFF" },
+    { "powderblue", "#B0E0E6" },
+    { "lightblue", "#ADD8E6" },
+    { "lightskyblue", "#87CEFA" },
+    { "skyblue", "#87CEEB" },
+    { "deepskyblue", "#00BFFF" },
+    { "lightsteelblue", "#B0C4DE" },
+    { "dodgerblue", "#1E90FF" },
+    { "cornflowerblue", "#6495ED" },
+    { "steelblue", "#4682B4" },
+    { "royalblue", "#4169E1" },
+    { "blue", "#0000FF" },
+    { "mediumblue", "#0000CD" },
+    { "darkblue", "#00008B" },
+    { "navy", "#000080" },
+    { "midnightblue", "#191970" },
+    { "mediumslateblue", "#7B68EE" },
+    { "slateblue", "#6A5ACD" },
+    { "darkslateblue", "#483D8B" },
+    { "lawngreen", "#7CFC00" },
+    { "chartreuse", "#7FFF00" },
+    { "limegreen", "#32CD32" },
+    { "lime", "#00FF00" },
+    { "forestgreen", "#228B22" },
+    { "green", "#008000" },
+    { "darkgreen", "#006400" },
+    { "greenyellow", "#ADFF2F" },
+    { "yellowgreen", "#9ACD32" },
+    { "springgreen", "#00FF7F" },
+    { "mediumspringgreen", "#00FA9A" },
+    { "lightgreen", "#90EE90" },
+    { "palegreen", "#98FB98" },
+    { "darkseagreen", "#8FBC8F" },
+    { "mediumseagreen", "#3CB371" },
+    { "seagreen", "#2E8B57" },
+    { "olive", "#808000" },
+    { "darkolivegreen", "#556B2F" },
+    { "olivedrab", "#6B8E23" },
+    { "lightsalmon", "#FFA07A" },
+    { "salmon", "#FA8072" },
+    { "darksalmon", "#E9967A" },
+    { "lightcoral", "#F08080" },
+    { "indianred", "#CD5C5C" },
+    { "crimson", "#DC143C" },
+    { "firebrick", "#B22222" },
+    { "red", "#FF0000" },
+    { "darkred", "#8B0000" },
+    { "gainsboro", "#DCDCDC" },
+    { "lightgray", "#D3D3D3" },
+    { "silver", "#C0C0C0" },
+    { "darkgray", "#A9A9A9" },
+    { "gray", "#808080" },
+    { "dimgray", "#696969" },
+    { "lightslategray", "#778899" },
+    { "slategray", "#708090" },
+    { "darkslategray", "#2F4F4F" },
+    { "black", "#000000" },
+    { "Gainsboro", "#DCDCDC" },
+    { "LightGrey", "#D3D3D3" },
+    { "LightGray", "#D3D3D3" },
+    { "Silver", "#C0C0C0" },
+    { "DarkGray", "#A9A9A9" },
+    { "DarkGrey", "#A9A9A9" },
+    { "Gray", "#808080" },
+    { "Grey", "#808080" },
+    { "DimGray", "#696969" },
+    { "DimGrey", "#696969" },
+    { "LightSlateGray", "#778899" },
+    { "LightSlateGrey", "#778899" },
+    { "SlateGray", "#708090" },
+    { "SlateGrey", "#708090" },
+    { "DarkSlateGray", "#2F4F4F" },
+    { "DarkSlateGrey", "#2F4F4F" },
+    { "Black", "#00000" },
+};
 
 template <typename T>
 struct Rgba {
@@ -97,8 +97,8 @@ struct Rgba {
 };
 
 template <typename T>
-concept ColorValue =
-    (std::unsigned_integral<T> && std::is_same_v<T, uint8_t>) || ( std::floating_point<T> && std::is_same_v<T, float> );
+concept ColorValue = (std::unsigned_integral<T> && std::is_same_v<T, uint8_t>) ||
+                     ( std::floating_point<T> && std::is_same_v<T, float> );
 
 template <ColorValue T>
 struct Color {
@@ -182,15 +182,9 @@ struct Colorf final : Color<float> {
         }
     };
 
-    [[nodiscard]]
-    auto asVector3f() const -> algebra::vector3f {
-        return { r(), g(), b() };
-    };
+    [[nodiscard]] auto asVector3f() const -> algebra::vector3f { return { r(), g(), b() }; };
 
-    [[nodiscard]]
-    auto asVector4f() const -> algebra::vector4f {
-        return { r(), g(), b(), a() };
-    }
+    [[nodiscard]] auto asVector4f() const -> algebra::vector4f { return { r(), g(), b(), a() }; }
 };
 
 struct Colori final : Color<uint8_t> {

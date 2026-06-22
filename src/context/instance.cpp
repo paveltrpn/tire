@@ -7,12 +7,13 @@ module;
 #define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vk_enum_string_helper.h>
 
-export module context:instance;
+#include "log/log.h"
+
+export module context : instance;
 
 import config;
-import log;
 
-import :context;
+import : context;
 
 static constexpr bool DEBUG_OUTPUT_INSTANCE_CPP{ true };
 
@@ -25,9 +26,10 @@ namespace tire {
 
 namespace {
 
-static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
-  VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes,
-  const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData, void *pUserData ) {
+static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback( VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                                     VkDebugUtilsMessageTypeFlagsEXT messageTypes,
+                                                     const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
+                                                     void *pUserData ) {
     const std::string message{ pCallbackData->pMessage };
 
     if ( messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT ) {
@@ -45,9 +47,9 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     return VK_FALSE;
 }
 
-static VkResult vkCreateDebugUtilsMessenger(
-  VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo, const VkAllocationCallbacks *pAllocator,
-  VkDebugUtilsMessengerEXT *pDebugMessenger ) {
+static VkResult vkCreateDebugUtilsMessenger( VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo,
+                                             const VkAllocationCallbacks *pAllocator,
+                                             VkDebugUtilsMessengerEXT *pDebugMessenger ) {
     auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr( instance, "vkCreateDebugUtilsMessengerEXT" );
     if ( func != nullptr ) {
         return func( instance, pCreateInfo, pAllocator, pDebugMessenger );
@@ -64,13 +66,12 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
     const auto applicationName = configPtr->getString( "application_name" );
     const auto engineName = configPtr->getString( "engine_name" );
 
-    const VkApplicationInfo appInfo{
-      .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-      .pApplicationName = applicationName.data(),
-      .applicationVersion = VK_MAKE_VERSION( 1, 0, 0 ),
-      .pEngineName = engineName.data(),
-      .engineVersion = VK_MAKE_VERSION( 1, 0, 0 ),
-      .apiVersion = VK_API_VERSION_1_3 };
+    const VkApplicationInfo appInfo{ .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+                                     .pApplicationName = applicationName.data(),
+                                     .applicationVersion = VK_MAKE_VERSION( 1, 0, 0 ),
+                                     .pEngineName = engineName.data(),
+                                     .engineVersion = VK_MAKE_VERSION( 1, 0, 0 ),
+                                     .apiVersion = VK_API_VERSION_1_3 };
 
     // Enumerate instance layers
     uint32_t layersCount;
@@ -138,44 +139,39 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
       VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT*/ };
 
     VkValidationFeaturesEXT validationFeatures = {
-      .sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT,
-      .pNext = nullptr,
-      .enabledValidationFeatureCount = (uint32_t)validationFeatureEnableList.size(),
-      .pEnabledValidationFeatures = validationFeatureEnableList.data(),
-      .disabledValidationFeatureCount = 0,
-      .pDisabledValidationFeatures = nullptr };
+        .sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT,
+        .pNext = nullptr,
+        .enabledValidationFeatureCount = (uint32_t)validationFeatureEnableList.size(),
+        .pEnabledValidationFeatures = validationFeatureEnableList.data(),
+        .disabledValidationFeatureCount = 0,
+        .pDisabledValidationFeatures = nullptr };
 
-    auto debugUtilsMessageTypeFlagBits =
-      (VkDebugUtilsMessageTypeFlagBitsEXT)( VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-                                            VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT );
+    auto debugUtilsMessageTypeFlagBits = ( VkDebugUtilsMessageTypeFlagBitsEXT )(
+        VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT );
 
-    auto debugUtilsMessageSeverityFlagBits =
-      (VkDebugUtilsMessageSeverityFlagBitsEXT)( VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
-                                                VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-                                                VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT );
+    auto debugUtilsMessageSeverityFlagBits = ( VkDebugUtilsMessageSeverityFlagBitsEXT )(
+        VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+        VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT );
 
     if ( configPtr->get<bool>( "verbose_vulkan_output" ) ) {
-        debugUtilsMessageTypeFlagBits =
-          (VkDebugUtilsMessageTypeFlagBitsEXT)( VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-                                                VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-                                                VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT );
+        debugUtilsMessageTypeFlagBits = ( VkDebugUtilsMessageTypeFlagBitsEXT )(
+            VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+            VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT );
 
-        debugUtilsMessageSeverityFlagBits =
-          (VkDebugUtilsMessageSeverityFlagBitsEXT)( VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
-                                                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
-                                                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-                                                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT );
+        debugUtilsMessageSeverityFlagBits = ( VkDebugUtilsMessageSeverityFlagBitsEXT )(
+            VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
+            VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT );
     }
 
     // Debug utils messanger creation info
     VkDebugUtilsMessengerCreateInfoEXT debugUtilsMessengerCreateInfo = {
-      .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
-      .pNext = &validationFeatures,
-      .flags = 0,
-      .messageSeverity = (VkDebugUtilsMessageSeverityFlagsEXT)debugUtilsMessageSeverityFlagBits,
-      .messageType = (VkDebugUtilsMessageTypeFlagsEXT)debugUtilsMessageTypeFlagBits,
-      .pfnUserCallback = &debugCallback,
-      .pUserData = nullptr };
+        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
+        .pNext = &validationFeatures,
+        .flags = 0,
+        .messageSeverity = (VkDebugUtilsMessageSeverityFlagsEXT)debugUtilsMessageSeverityFlagBits,
+        .messageType = (VkDebugUtilsMessageTypeFlagsEXT)debugUtilsMessageTypeFlagBits,
+        .pfnUserCallback = &debugCallback,
+        .pUserData = nullptr };
 
     // Vulkan instance extensions list
     std::vector<const char *> desiredInstanceExtensionsList{};
@@ -205,9 +201,9 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
     uint32_t extCount{};
     if ( const auto err = vkEnumerateInstanceExtensionProperties( nullptr, &extCount, nullptr ); err != VK_SUCCESS ) {
         log::fatal()(
-          "can't enumerate instance extension "
-          "properties with code: {}\n",
-          string_VkResult( err ) );
+            "can't enumerate instance extension "
+            "properties with code: {}\n",
+            string_VkResult( err ) );
     } else {
         log::debug()( "extension properties value: {}", extCount );
     }
@@ -218,9 +214,9 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
     if ( const auto err = vkEnumerateInstanceExtensionProperties( nullptr, &extCount, extensionProperties_.data() );
          err != VK_SUCCESS ) {
         log::fatal()(
-          "can't acquire instance extension properties "
-          "with code: {}\n",
-          string_VkResult( err ) );
+            "can't acquire instance extension properties "
+            "with code: {}\n",
+            string_VkResult( err ) );
     } else {
         log::info()( "extension properties aquired" );
     }
@@ -235,7 +231,7 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
     // Create debug utils messanger
     if ( configPtr->get<bool>( "enable_validation_layers" ) ) {
         if ( const auto err =
-               vkCreateDebugUtilsMessenger( instance_, &debugUtilsMessengerCreateInfo, nullptr, &debugMessenger_ );
+                 vkCreateDebugUtilsMessenger( instance_, &debugUtilsMessengerCreateInfo, nullptr, &debugMessenger_ );
              err != VK_SUCCESS ) {
             log::fatal()( "failed to set up debug messenger with code {}!\n", string_VkResult( err ) );
         } else {

@@ -1,9 +1,7 @@
 
 module;
 
-export module scene:material;
-
-import algebra;
+export module scene : material;
 
 namespace tire {
 

@@ -4,11 +4,14 @@ module;
 #include <string>
 #include <cstdint>
 
-export module scene:flycam;
+#include "algebra/vector3.h"
+#include "algebra/vector4.h"
 
-import algebra;
+export module scene : flycam;
+
 import geometry;
 import log;
+
 namespace tire {
 
 using namespace algebra;
@@ -158,30 +161,15 @@ export struct Flycam final {
         return offset * er * ar * projection;
     }
 
-    [[nodiscard]]
-    auto eye() const -> vector3<value_type> {
-        return eye_;
-    };
+    [[nodiscard]] auto eye() const -> vector3<value_type> { return eye_; };
 
-    [[nodiscard]]
-    auto azimuth() const -> value_type {
-        return azimuth_;
-    };
+    [[nodiscard]] auto azimuth() const -> value_type { return azimuth_; };
 
-    [[nodiscard]]
-    auto elevation() const -> value_type {
-        return elevation_;
-    };
+    [[nodiscard]] auto elevation() const -> value_type { return elevation_; };
 
-    [[nodiscard]]
-    auto roll() const -> value_type {
-        return roll_;
-    };
+    [[nodiscard]] auto roll() const -> value_type { return roll_; };
 
-    [[nodiscard]]
-    auto name() const -> std::string {
-        return name_;
-    };
+    [[nodiscard]] auto name() const -> std::string { return name_; };
 
     auto update() -> void {
         if ( ( moveMask_ >> FlycamMoveBits::FORWARD ) & (uint32_t)1 ) {

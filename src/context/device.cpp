@@ -9,12 +9,13 @@ module;
 #define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vk_enum_string_helper.h>
 
-export module context:device;
+#include "log/log.h"
+
+export module context : device;
 
 import config;
-import log;
 
-import :context;
+import : context;
 
 namespace tire {
 
@@ -68,48 +69,44 @@ void Context::collectPhysicalDevices() {
 
         // Collect physical device extensions info
         uint32_t extensionCount{};
-        if (
-          const auto err = vkEnumerateDeviceExtensionProperties( device, nullptr, &extensionCount, nullptr );
-          err != VK_SUCCESS ) {
+        if ( const auto err = vkEnumerateDeviceExtensionProperties( device, nullptr, &extensionCount, nullptr );
+             err != VK_SUCCESS ) {
             log::fatal()(
-              "can't enumerate physical device extensions "
-              "with code: {}\n",
-              string_VkResult( err ) );
+                "can't enumerate physical device extensions "
+                "with code: {}\n",
+                string_VkResult( err ) );
         } else {
             log::debug()(
-              "physical device extensions enumerated for "
-              "device: {}, "
-              "count: {}",
-              devProps.deviceName, extensionCount );
+                "physical device extensions enumerated for "
+                "device: {}, "
+                "count: {}",
+                devProps.deviceName, extensionCount );
         }
 
         std::vector<VkExtensionProperties> availableExtensions;
         availableExtensions.resize( extensionCount );
 
-        if (
-          const auto err =
-            vkEnumerateDeviceExtensionProperties( device, nullptr, &extensionCount, availableExtensions.data() );
-          err != VK_SUCCESS ) {
+        if ( const auto err =
+                 vkEnumerateDeviceExtensionProperties( device, nullptr, &extensionCount, availableExtensions.data() );
+             err != VK_SUCCESS ) {
             log::fatal()(
-              "can't acquire physical device extensions "
-              "with code: {}",
-              string_VkResult( err ) );
+                "can't acquire physical device extensions "
+                "with code: {}",
+                string_VkResult( err ) );
         } else {
             log::debug()(
-              "physical device extensions acquired for "
-              "device: "
-              "{}",
-              devProps.deviceName );
+                "physical device extensions acquired for "
+                "device: "
+                "{}",
+                devProps.deviceName );
         }
 
         // Store physical device in list
-        physicalDevices_.emplace_back(
-          PhysicalDevice{
-            .device = device,
-            .properties = devProps,
-            .features = devFeatures,
-            .extensions = availableExtensions,
-            .queueFamilyProperties = qfp } );
+        physicalDevices_.emplace_back( PhysicalDevice{ .device = device,
+                                                       .properties = devProps,
+                                                       .features = devFeatures,
+                                                       .extensions = availableExtensions,
+                                                       .queueFamilyProperties = qfp } );
     }
 }
 
@@ -192,8 +189,9 @@ void Context::makeDevice() {
     }
 
     if ( graphicsFamilyQueueId_ == UINT32_MAX ) {
-        log::fatal()( "failed to get device with queue family that "
-                      "VK_QUEUE_GRAPHICS_BIT" );
+        log::fatal()(
+            "failed to get device with queue family that "
+            "VK_QUEUE_GRAPHICS_BIT" );
     }
 
     // Check if picked queue family (with VK_QUEUE_GRAPHICS_BIT) support present.
@@ -201,21 +199,21 @@ void Context::makeDevice() {
     // present and we can use it to present, but now we just check "can present" property
     // on coosed one and if not we terminate.
     VkBool32 presentSupport = false;
-    if (
-      const auto err = vkGetPhysicalDeviceSurfaceSupportKHR(
-        physicalDevices_[pickedPhysicalDeviceId_].device, graphicsFamilyQueueId_, surface_, &presentSupport );
-      err != VK_SUCCESS ) {
+    if ( const auto err = vkGetPhysicalDeviceSurfaceSupportKHR( physicalDevices_[pickedPhysicalDeviceId_].device,
+                                                                graphicsFamilyQueueId_, surface_, &presentSupport );
+         err != VK_SUCCESS ) {
         log::fatal()(
-          "failed to get device surface support for "
-          "presentation with code {}!\n",
-          string_VkResult( err ) );
+            "failed to get device surface support for "
+            "presentation with code {}!\n",
+            string_VkResult( err ) );
     }
 
     if ( presentSupport ) {
         presentSupportQueueId_ = graphicsFamilyQueueId_;
     } else {
-        log::fatal()( "queue with VK_QUEUE_GRAPHICS_BIT not support present! Maybe check "
-                      "another queue family?" );
+        log::fatal()(
+            "queue with VK_QUEUE_GRAPHICS_BIT not support present! Maybe check "
+            "another queue family?" );
     }
 
     log::debug()( "graphics family: {}", graphicsFamilyQueueId_ );
@@ -226,11 +224,10 @@ void Context::makeDevice() {
 
     const float queuePriority{ 1.0f };
     for ( const uint32_t queueFamily : uniqueQueueFamilies ) {
-        VkDeviceQueueCreateInfo queueCreateInfo{
-          .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-          .queueFamilyIndex = queueFamily,
-          .queueCount = 1,
-          .pQueuePriorities = &queuePriority };
+        VkDeviceQueueCreateInfo queueCreateInfo{ .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+                                                 .queueFamilyIndex = queueFamily,
+                                                 .queueCount = 1,
+                                                 .pQueuePriorities = &queuePriority };
         queueCreateInfos.push_back( queueCreateInfo );
     }
 
@@ -240,24 +237,23 @@ void Context::makeDevice() {
         if ( use ) {
             auto ext = std::vector<const char *>{ "VK_KHR_swapchain", "VK_KHR_spirv_1_4" };
             std::ranges::for_each(
-              ext, [&desiredExtensionsList]( auto e ) -> void { desiredExtensionsList.emplace_back( e ); } );
+                ext, [&desiredExtensionsList]( auto e ) -> void { desiredExtensionsList.emplace_back( e ); } );
         }
     };
 
     auto loadRTExt = [&desiredExtensionsList]( bool use ) -> void {
         if ( use ) {
-            auto ext = std::vector<const char *>{
-              "VK_KHR_ray_query",
-              "VK_KHR_ray_tracing_pipeline",
-              "VK_KHR_ray_tracing_position_fetch",
-              "VK_KHR_ray_tracing_maintenance1",
-              "VK_KHR_acceleration_structure",
-              "VK_EXT_descriptor_indexing",
-              "VK_KHR_buffer_device_address",
-              "VK_KHR_deferred_host_operations",
-              "VK_KHR_shader_float_controls" };
+            auto ext = std::vector<const char *>{ "VK_KHR_ray_query",
+                                                  "VK_KHR_ray_tracing_pipeline",
+                                                  "VK_KHR_ray_tracing_position_fetch",
+                                                  "VK_KHR_ray_tracing_maintenance1",
+                                                  "VK_KHR_acceleration_structure",
+                                                  "VK_EXT_descriptor_indexing",
+                                                  "VK_KHR_buffer_device_address",
+                                                  "VK_KHR_deferred_host_operations",
+                                                  "VK_KHR_shader_float_controls" };
             std::ranges::for_each(
-              ext, [&desiredExtensionsList]( auto e ) -> void { desiredExtensionsList.emplace_back( e ); } );
+                ext, [&desiredExtensionsList]( auto e ) -> void { desiredExtensionsList.emplace_back( e ); } );
         }
     };
 
@@ -265,12 +261,12 @@ void Context::makeDevice() {
     loadRTExt( configHandle->get<bool>( "enable_raytracing_extensions" ) );
 
     auto deviceCreateInfo = VkDeviceCreateInfo{
-      .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-      .queueCreateInfoCount = static_cast<uint32_t>( queueCreateInfos.size() ),
-      .pQueueCreateInfos = queueCreateInfos.data(),
-      .enabledExtensionCount = static_cast<uint32_t>( desiredExtensionsList.size() ),
-      .ppEnabledExtensionNames = desiredExtensionsList.data(),
-      .pEnabledFeatures = &physicalDevices_[pickedPhysicalDeviceId_].features,
+        .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+        .queueCreateInfoCount = static_cast<uint32_t>( queueCreateInfos.size() ),
+        .pQueueCreateInfos = queueCreateInfos.data(),
+        .enabledExtensionCount = static_cast<uint32_t>( desiredExtensionsList.size() ),
+        .ppEnabledExtensionNames = desiredExtensionsList.data(),
+        .pEnabledFeatures = &physicalDevices_[pickedPhysicalDeviceId_].features,
     };
 
     // Force use validation layers
@@ -294,13 +290,13 @@ void Context::makeDevice() {
     vkGetDeviceQueue( device_, presentSupportQueueId_, 0, &presentQueue_ );
 
     // Physical device surface capabilities
-    if (
-      const auto err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR( physDevice_, surface_, &surfaceCapabilities_ );
-      err != VK_SUCCESS ) {
+    if ( const auto err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR( physDevice_, surface_, &surfaceCapabilities_ );
+         err != VK_SUCCESS ) {
         log::fatal()( "failed to obtain surface capabilities with code {}!\n", string_VkResult( err ) );
     } else {
-        log::debug()( "physical device surface capabilities acquire "
-                      "success!" );
+        log::debug()(
+            "physical device surface capabilities acquire "
+            "success!" );
     }
 
     // Application window size (extent) givet at startup.
@@ -310,35 +306,34 @@ void Context::makeDevice() {
 
     // Physical device surface formats
     uint32_t formatCount{};
-    if (
-      const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR( physDevice_, surface_, &formatCount, nullptr );
-      err != VK_SUCCESS ) {
+    if ( const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR( physDevice_, surface_, &formatCount, nullptr );
+         err != VK_SUCCESS ) {
         log::fatal()(
-          "failed to obtain physical device surface formats "
-          "count with code {}!\n",
-          string_VkResult( err ) );
+            "failed to obtain physical device surface formats "
+            "count with code {}!\n",
+            string_VkResult( err ) );
     } else {
         log::debug()(
-          "physical device surface formats count obtain "
-          "success, "
-          "count: "
-          "{}",
-          formatCount );
+            "physical device surface formats count obtain "
+            "success, "
+            "count: "
+            "{}",
+            formatCount );
     }
 
     surfaceFormats_.resize( formatCount );
 
-    if (
-      const auto err =
-        vkGetPhysicalDeviceSurfaceFormatsKHR( physDevice_, surface_, &formatCount, surfaceFormats_.data() );
-      err != VK_SUCCESS ) {
+    if ( const auto err =
+             vkGetPhysicalDeviceSurfaceFormatsKHR( physDevice_, surface_, &formatCount, surfaceFormats_.data() );
+         err != VK_SUCCESS ) {
         log::fatal()(
-          "failed to acquire physical device surface formats "
-          "count with code {}!\n",
-          string_VkResult( err ) );
+            "failed to acquire physical device surface formats "
+            "count with code {}!\n",
+            string_VkResult( err ) );
     } else {
-        log::debug()( "physical device surface formats acquire "
-                      "success!" );
+        log::debug()(
+            "physical device surface formats acquire "
+            "success!" );
     }
 
     for ( const auto &item : surfaceFormats_ ) {
@@ -347,32 +342,31 @@ void Context::makeDevice() {
 
     // Physical device present modes
     uint32_t presentModeCount{};
-    if (
-      const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR( physDevice_, surface_, &presentModeCount, nullptr );
-      err != VK_SUCCESS ) {
+    if ( const auto err =
+             vkGetPhysicalDeviceSurfacePresentModesKHR( physDevice_, surface_, &presentModeCount, nullptr );
+         err != VK_SUCCESS ) {
         log::fatal()(
-          "failed to obtain physical device present modes "
-          "count with code {}!\n",
-          string_VkResult( err ) );
+            "failed to obtain physical device present modes "
+            "count with code {}!\n",
+            string_VkResult( err ) );
     } else {
         log::debug()(
-          "physical device present modes count obtain "
-          "success, "
-          "count: "
-          "{}",
-          presentModeCount );
+            "physical device present modes count obtain "
+            "success, "
+            "count: "
+            "{}",
+            presentModeCount );
     }
 
     presentModes_.resize( presentModeCount );
 
-    if (
-      const auto err =
-        vkGetPhysicalDeviceSurfacePresentModesKHR( physDevice_, surface_, &presentModeCount, presentModes_.data() );
-      err != VK_SUCCESS ) {
+    if ( const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR( physDevice_, surface_, &presentModeCount,
+                                                                     presentModes_.data() );
+         err != VK_SUCCESS ) {
         log::fatal()(
-          "failed to acquire physical device present modes "
-          "with code {}!\n",
-          string_VkResult( err ) );
+            "failed to acquire physical device present modes "
+            "with code {}!\n",
+            string_VkResult( err ) );
     } else {
         log::debug()( "physical device present modes acquire success!" );
     }

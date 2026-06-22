@@ -13,10 +13,11 @@ module;
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-export module context:program;
+#include "log/log.h"
 
-import :context;
-import log;
+export module context : program;
+
+import : context;
 
 namespace tire {
 
@@ -59,32 +60,32 @@ export {
 
     template <ShaderStageType Stage>
     concept ShaderStage =
-      ( Stage == ShaderStageType::VERTEX ) || ( Stage == ShaderStageType::FRAGMENT ) ||
-      ( Stage == ShaderStageType::TESSELATION_EVAL ) || ( Stage == ShaderStageType::TESSELATION_CTRL ) ||
-      ( Stage == ShaderStageType::GEOMETRY ) || ( Stage == ShaderStageType::COMPUTE ) ||
-      ( Stage == ShaderStageType::RAYGEN ) || ( Stage == ShaderStageType::ANYHIT ) ||
-      ( Stage == ShaderStageType::CLOSESTHIT ) || ( Stage == ShaderStageType::MISS ) ||
-      ( Stage == ShaderStageType::INTERSECTION ) || ( Stage == ShaderStageType::CALLABLE ) ||
-      ( Stage == ShaderStageType::TASK ) || ( Stage == ShaderStageType::MESH ) ||
-      ( Stage == ShaderStageType::SUBPASSSHADING ) || ( Stage == ShaderStageType::CLUSTERCULLING );
+        ( Stage == ShaderStageType::VERTEX ) || ( Stage == ShaderStageType::FRAGMENT ) ||
+        ( Stage == ShaderStageType::TESSELATION_EVAL ) || ( Stage == ShaderStageType::TESSELATION_CTRL ) ||
+        ( Stage == ShaderStageType::GEOMETRY ) || ( Stage == ShaderStageType::COMPUTE ) ||
+        ( Stage == ShaderStageType::RAYGEN ) || ( Stage == ShaderStageType::ANYHIT ) ||
+        ( Stage == ShaderStageType::CLOSESTHIT ) || ( Stage == ShaderStageType::MISS ) ||
+        ( Stage == ShaderStageType::INTERSECTION ) || ( Stage == ShaderStageType::CALLABLE ) ||
+        ( Stage == ShaderStageType::TASK ) || ( Stage == ShaderStageType::MESH ) ||
+        ( Stage == ShaderStageType::SUBPASSSHADING ) || ( Stage == ShaderStageType::CLUSTERCULLING );
 
     const std::unordered_map<ShaderStageType, std::string> StagesSuffixMap = {
-      { ShaderStageType::VERTEX, vertex_stage_suffix },
-      { ShaderStageType::FRAGMENT, fragment_stage_suffix },
-      { ShaderStageType::TESSELATION_EVAL, tesseval_stage_suffix },
-      { ShaderStageType::TESSELATION_CTRL, tessctrl_stage_suffix },
-      { ShaderStageType::GEOMETRY, geometry_stage_suffix },
-      { ShaderStageType::COMPUTE, compute_stage_suffix },
-      { ShaderStageType::RAYGEN, raygen_stage_suffix },
-      { ShaderStageType::ANYHIT, anyhit_stage_suffix },
-      { ShaderStageType::CLOSESTHIT, closeshit_stage_suffix },
-      { ShaderStageType::MISS, miss_stage_suffix },
-      { ShaderStageType::INTERSECTION, intersection_stage_suffix },
-      { ShaderStageType::CALLABLE, callable_stage_suffix },
-      { ShaderStageType::TASK, task_stage_suffix },
-      { ShaderStageType::MESH, mesh_stage_suffix },
-      { ShaderStageType::SUBPASSSHADING, subpassshading_stage_suffix },
-      { ShaderStageType::CLUSTERCULLING, clusterculling_stage_suffix },
+        { ShaderStageType::VERTEX, vertex_stage_suffix },
+        { ShaderStageType::FRAGMENT, fragment_stage_suffix },
+        { ShaderStageType::TESSELATION_EVAL, tesseval_stage_suffix },
+        { ShaderStageType::TESSELATION_CTRL, tessctrl_stage_suffix },
+        { ShaderStageType::GEOMETRY, geometry_stage_suffix },
+        { ShaderStageType::COMPUTE, compute_stage_suffix },
+        { ShaderStageType::RAYGEN, raygen_stage_suffix },
+        { ShaderStageType::ANYHIT, anyhit_stage_suffix },
+        { ShaderStageType::CLOSESTHIT, closeshit_stage_suffix },
+        { ShaderStageType::MISS, miss_stage_suffix },
+        { ShaderStageType::INTERSECTION, intersection_stage_suffix },
+        { ShaderStageType::CALLABLE, callable_stage_suffix },
+        { ShaderStageType::TASK, task_stage_suffix },
+        { ShaderStageType::MESH, mesh_stage_suffix },
+        { ShaderStageType::SUBPASSSHADING, subpassshading_stage_suffix },
+        { ShaderStageType::CLUSTERCULLING, clusterculling_stage_suffix },
     };
 }
 
@@ -118,9 +119,8 @@ export struct Program final {
         const auto device = context_->device();
         if ( device == VK_NULL_HANDLE ) {
             throw std::runtime_error(
-              std::format(
-                "can't use shaders before valid logical device is "
-                "acquired!" ) );
+                std::format( "can't use shaders before valid logical device is "
+                             "acquired!" ) );
         }
 
         std::ifstream file( path, std::ios::ate | std::ios::binary );
@@ -137,21 +137,20 @@ export struct Program final {
         // suffix - i.e. something from set "VERTEX", "FRAGMENT" etc.
         if ( !isValidName( name ) ) {
             throw std::runtime_error(
-              std::format(
-                "vk::ShaderStorage == shader file name \"{}\" not "
-                "satisfies naming "
-                "convention",
-                name ) );
+                std::format( "vk::ShaderStorage == shader file name \"{}\" not "
+                             "satisfies naming "
+                             "convention",
+                             name ) );
         }
 
         // Check if shader module with name exist in modules map
         if ( modules_.contains( name ) ) {
             log::warning()(
-              "vk::ShaderStorage == shader module with name \"{}\" exist, no "
-              "need "
-              "to "
-              "replace it",
-              name );
+                "vk::ShaderStorage == shader module with name \"{}\" exist, no "
+                "need "
+                "to "
+                "replace it",
+                name );
             return;
         }
 
@@ -175,11 +174,11 @@ export struct Program final {
         const auto suffix = split( name, "_" ).back();
         if ( checkStageExist( suffix ) ) {
             log::warning()(
-              "shader module for stage \"{}\" exist, no "
-              "need "
-              "to "
-              "replace it",
-              suffix );
+                "shader module for stage \"{}\" exist, no "
+                "need "
+                "to "
+                "replace it",
+                suffix );
         }
 
         // Read SPIRV file from disk
@@ -191,8 +190,8 @@ export struct Program final {
 
         // Cast file data readed as char to vulkan acceptable uint8_t
         std::vector<uint8_t> uint8Buf( fileSize );
-        std::ranges::transform(
-          charBuf.begin(), charBuf.end(), uint8Buf.begin(), []( char v ) { return static_cast<uint8_t>( v ); } );
+        std::ranges::transform( charBuf.begin(), charBuf.end(), uint8Buf.begin(),
+                                []( char v ) { return static_cast<uint8_t>( v ); } );
 
         push( uint8Buf, name );
     }
@@ -203,9 +202,8 @@ export struct Program final {
     void fill( const std::vector<std::filesystem::path> &files ) {
         if ( files.size() < 2 ) {
             throw std::runtime_error(
-              std::format(
-                "vk::ShaderStorage == pipeline shader storage must "
-                "contains at least vertex and fragment shader stages!" ) );
+                std::format( "vk::ShaderStorage == pipeline shader storage must "
+                             "contains at least vertex and fragment shader stages!" ) );
         }
 
         for ( const auto &item : files ) {
@@ -216,9 +214,8 @@ export struct Program final {
     void fill( const std::vector<std::pair<std::span<uint8_t>, std::string>> &sources ) {
         if ( sources.size() < 2 ) {
             throw std::runtime_error(
-              std::format(
-                "vk::ShaderStorage == pipeline shader storage must "
-                "contains at least vertex and fragment shader stages!" ) );
+                std::format( "vk::ShaderStorage == pipeline shader storage must "
+                             "contains at least vertex and fragment shader stages!" ) );
         }
 
         for ( const auto &item : sources ) {
@@ -240,8 +237,7 @@ export struct Program final {
 
     // Return shader vulkan module
     template <ShaderStageType Stage>
-        requires ShaderStage<Stage>
-    [[nodiscard]] auto get() const -> VkShaderModule {
+    requires ShaderStage<Stage> [[nodiscard]] auto get() const -> VkShaderModule {
         // We sure that "std::map<>::at() return proper value because
         // of concept keep invariant
         const std::string suffix = StagesSuffixMap.at( Stage );
@@ -288,7 +284,7 @@ private:
         if ( const auto err = vkCreateShaderModule( context_->device(), &createInfo, nullptr, &module );
              err != VK_SUCCESS ) {
             throw std::runtime_error(
-              std::format( "failed to create shader module {} with code {}!", name, string_VkResult( err ) ) );
+                std::format( "failed to create shader module {} with code {}!", name, string_VkResult( err ) ) );
         } else {
             log::debug()( "shader module {} created!", name );
         }
@@ -300,9 +296,9 @@ private:
         // Find shader stage module name in modules_ which have certain suffix
         const auto end = modules_.cend();
         const auto it =
-          std::find_if( modules_.cbegin(), end, [id = stageSuffix]( std::pair<std::string, VkShaderModule> item ) {
-              return std::get<0>( item ).ends_with( id );
-          } );
+            std::find_if( modules_.cbegin(), end, [id = stageSuffix]( std::pair<std::string, VkShaderModule> item ) {
+                return std::get<0>( item ).ends_with( id );
+            } );
 
         return it != end;
     }
@@ -311,9 +307,10 @@ private:
         // Finds out that given shader file name contains somthing from
         // shader stage suffix set ("VERTEX", "FRAGMENT" etc.)
         const auto end = StagesSuffixMap.cend();
-        const auto it = std::find_if(
-          StagesSuffixMap.cbegin(), end,
-          [id = name]( std::pair<ShaderStageType, std::string> item ) { return id.ends_with( std::get<1>( item ) ); } );
+        const auto it =
+            std::find_if( StagesSuffixMap.cbegin(), end, [id = name]( std::pair<ShaderStageType, std::string> item ) {
+                return id.ends_with( std::get<1>( item ) );
+            } );
 
         return it != end;
     }

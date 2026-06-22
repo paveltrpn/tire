@@ -204,39 +204,39 @@ namespace std {
 
 // Structured binding for vector3f
 template <>
-struct tuple_size<tired::algebra::vector3f> : std::integral_constant<size_t, 3> {};
+struct tuple_size<tire::algebra::vector3f> : std::integral_constant<size_t, 3> {};
 
 template <>
-struct tuple_element<0, tired::algebra::vector3f> {
+struct tuple_element<0, tire::algebra::vector3f> {
     using type = float;
 };
 
 template <>
-struct tuple_element<1, tired::algebra::vector3f> {
+struct tuple_element<1, tire::algebra::vector3f> {
     using type = float;
 };
 
 template <>
-struct tuple_element<2, tired::algebra::vector3f> {
+struct tuple_element<2, tire::algebra::vector3f> {
     using type = float;
 };
 
 // Structured binding for vector3d
 template <>
-struct tuple_size<tired::algebra::vector3d> : std::integral_constant<size_t, 3> {};
+struct tuple_size<tire::algebra::vector3d> : std::integral_constant<size_t, 3> {};
 
 template <>
-struct tuple_element<0, tired::algebra::vector3d> {
+struct tuple_element<0, tire::algebra::vector3d> {
     using type = double;
 };
 
 template <>
-struct tuple_element<1, tired::algebra::vector3d> {
+struct tuple_element<1, tire::algebra::vector3d> {
     using type = double;
 };
 
 template <>
-struct tuple_element<2, tired::algebra::vector3d> {
+struct tuple_element<2, tire::algebra::vector3d> {
     using type = double;
 };
 

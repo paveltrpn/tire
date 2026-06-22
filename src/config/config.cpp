@@ -8,18 +8,17 @@ module;
 #include <filesystem>
 
 #include "nlohmann/json.hpp"
+#include "log/log.h"
 
-export module config:config;
-
-import log;
+export module config : config;
 
 namespace tire {
 
 export template <typename T>
 concept ConfigParamType =
-  std::is_same_v<bool, std::remove_cv_t<T>> || std::is_same_v<int, std::remove_cv_t<T>> ||
-  std::is_same_v<float, std::remove_cv_t<T>> || std::is_same_v<std::string, std::remove_cv_t<T>> ||
-  std::is_same_v<nlohmann::json, std::remove_cv_t<T>>;
+    std::is_same_v<bool, std::remove_cv_t<T>> || std::is_same_v<int, std::remove_cv_t<T>> ||
+    std::is_same_v<float, std::remove_cv_t<T>> || std::is_same_v<std::string, std::remove_cv_t<T>> ||
+    std::is_same_v<nlohmann::json, std::remove_cv_t<T>>;
 
 export struct Config final {
 private:
@@ -39,11 +38,11 @@ public:
                     config_ = nlohmann::json::parse( file );
                 } catch ( const nlohmann::json::parse_error &e ) {
                     log::error()(
-                      "config json parse error\n"
-                      "message:\t{}\n"
-                      "exception id:\t{}\n"
-                      "byte position of error:\t{}",
-                      e.what(), e.id, e.byte );
+                        "config json parse error\n"
+                        "message:\t{}\n"
+                        "exception id:\t{}\n"
+                        "byte position of error:\t{}",
+                        e.what(), e.id, e.byte );
                 }
             } else {
                 throw std::runtime_error( std::format( "file not found: {}\n", path.string() ) );
@@ -97,9 +96,9 @@ public:
             }
         } catch ( nlohmann::json::exception &e ) {
             log::warning()(
-              "json exception handled... config param error \"{}\", what: "
-              "{}, default value used",
-              param, e.what() );
+                "json exception handled... config param error \"{}\", what: "
+                "{}, default value used",
+                param, e.what() );
             return dflt;
         }
     }

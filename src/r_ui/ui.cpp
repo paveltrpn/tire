@@ -5,19 +5,19 @@ module;
 #include <variant>
 #include <forward_list>
 
-export module ui:ui;
+#include "log/log.h"
 
-import log;
+export module ui : ui;
 
-import :billboard;
-import :label;
+import : billboard;
+import : label;
 
 namespace tire {
 
 using UiComponent = std::variant<tire::Label, tire::Billboard>;
 
 export struct Ui {
-    Ui() {
+    Ui(){
         // Preallocate.
         // componentsList_.resize( 32 );
     };

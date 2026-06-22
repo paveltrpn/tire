@@ -4,7 +4,7 @@
 
 #include "color.h"
 
-namespace tired {
+namespace tire {
 
 enum class IMAGE_DEPTH {
     //
@@ -68,4 +68,4 @@ protected:
     uint8_t *_data{};
 };
 
-}  // namespace tired
+}  // namespace tire

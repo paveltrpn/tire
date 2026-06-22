@@ -4,14 +4,16 @@ module;
 #include <vector>
 #include <memory>
 
-export module scene:body;
+#include "algebra/vector3.h"
+#include "algebra/vector4.h"
 
-import algebra;
+export module scene : body;
+
 import geometry;
 import image;
 
-import :mesh;
-import :material;
+import : mesh;
+import : material;
 
 namespace tire {
 
@@ -37,8 +39,7 @@ struct Body final {
 
     ~Body() = default;
 
-    [[nodiscard]]
-    auto verteciesCount() const -> size_t {
+    [[nodiscard]] auto verteciesCount() const -> size_t {
         //
         return mesh_->verteciesCount();
     }
@@ -63,25 +64,13 @@ struct Body final {
         return verteciesCount() * 4 * sizeof( value_type );
     }
 
-    [[nodiscard]]
-    auto verteciesData() const -> const vector3<value_type> * {
-        return buffer_.vertices_.data();
-    }
+    [[nodiscard]] auto verteciesData() const -> const vector3<value_type> * { return buffer_.vertices_.data(); }
 
-    [[nodiscard]]
-    auto normalsData() const -> const vector3<value_type> * {
-        return buffer_.normals_.data();
-    }
+    [[nodiscard]] auto normalsData() const -> const vector3<value_type> * { return buffer_.normals_.data(); }
 
-    [[nodiscard]]
-    auto texcrdsData() const -> const algebra::vector2<float> * {
-        return mesh_->texcrds_.data();
-    }
+    [[nodiscard]] auto texcrdsData() const -> const algebra::vector2<float> * { return mesh_->texcrds_.data(); }
 
-    [[nodiscard]]
-    auto bounding() const -> AABoundingBox {
-        return mesh_->bounding_;
-    };
+    [[nodiscard]] auto bounding() const -> AABoundingBox { return mesh_->bounding_; };
 
     auto setAlbedoColor( const std::string &name ) -> Body & {
         //
@@ -89,10 +78,7 @@ struct Body final {
         return *this;
     }
 
-    [[nodiscard]]
-    auto albedoColor() const -> Colorf {
-        return albedoColor_;
-    };
+    [[nodiscard]] auto albedoColor() const -> Colorf { return albedoColor_; };
 
     auto setPosition( const vector3<value_type> &value ) -> Body & {
         //
@@ -130,35 +116,17 @@ struct Body final {
         return *this;
     }
 
-    [[nodiscard]]
-    auto position() const -> vector3<value_type> {
-        return position_;
-    }
+    [[nodiscard]] auto position() const -> vector3<value_type> { return position_; }
 
-    [[nodiscard]]
-    auto orientation() const -> vector3<value_type> {
-        return orientation_;
-    }
+    [[nodiscard]] auto orientation() const -> vector3<value_type> { return orientation_; }
 
-    [[nodiscard]]
-    auto scale() const -> vector3<value_type> {
-        return scale_;
-    }
+    [[nodiscard]] auto scale() const -> vector3<value_type> { return scale_; }
 
-    [[nodiscard]]
-    auto velocity() const -> vector3<value_type> {
-        return velocity_;
-    }
+    [[nodiscard]] auto velocity() const -> vector3<value_type> { return velocity_; }
 
-    [[nodiscard]]
-    auto torque() const -> vector3<value_type> {
-        return torque_;
-    }
+    [[nodiscard]] auto torque() const -> vector3<value_type> { return torque_; }
 
-    [[nodiscard]]
-    auto materialName() const -> std::string {
-        return materialName_;
-    };
+    [[nodiscard]] auto materialName() const -> std::string { return materialName_; };
 
     // Calculate transformation matrix, apply this
     // matrix to default geometry data and copy this data

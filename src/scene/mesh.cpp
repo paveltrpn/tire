@@ -3,10 +3,11 @@ module;
 
 #include <vector>
 #include <string>
+#include "algebra/vector3.h"
+#include "algebra/vector4.h"
 
-export module scene:mesh;
+export module scene : mesh;
 
-import algebra;
 import geometry;
 
 namespace tire {

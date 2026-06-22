@@ -4,7 +4,7 @@
 
 #include "image.h"
 
-namespace tired {
+namespace tire {
 
 #define TGA_HEADER_SIZE 18
 
@@ -62,4 +62,4 @@ private:
     STGAHeader _header{};
 };
 
-}  // namespace tired
+}  // namespace tire

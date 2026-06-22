@@ -4,7 +4,7 @@
 
 #include "log.h"
 
-namespace tired::log {
+namespace tire::log {
 
 auto elideRight( const char *str, int after ) -> std::string {
     const auto length = std::strlen( str );
@@ -32,4 +32,4 @@ auto elideLeft( const char *str, int after ) -> std::string {
     return elided.str();
 }
 
-}  // namespace tired::log
+}  // namespace tire::log

@@ -1,7 +1,7 @@
 
 #include "color.h"
 
-namespace tired {
+namespace tire {
 //
 
 }

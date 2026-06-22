@@ -3,11 +3,13 @@ module;
 
 #include <array>
 
-export module ui:billboard;
+#include "log/log.h"
+#include "image/image.h"
+#include "algebra/vector2.h"
+#include "algebra/vector3.h"
+#include "algebra/vector4.h"
 
-import log;
-import algebra;
-import image;
+export module ui : billboard;
 
 namespace tire {
 
@@ -78,8 +80,7 @@ export struct Billboard final {
 #define VERTICIES_PER_QUAD 6
 #define JUST_SINGLE_QUAD 1
 
-    [[nodiscard]]
-    auto lettersCount() const -> size_t {
+    [[nodiscard]] auto lettersCount() const -> size_t {
         //
         return JUST_SINGLE_QUAD;
     }
@@ -99,20 +100,11 @@ export struct Billboard final {
         return JUST_SINGLE_QUAD * VERTICIES_PER_QUAD * sizeof( vector4_type );
     }
 
-    [[nodiscard]]
-    auto verteciesData() const -> const vector3<value_type> * {
-        return quadVerticies_.data();
-    }
+    [[nodiscard]] auto verteciesData() const -> const vector3<value_type> * { return quadVerticies_.data(); }
 
-    [[nodiscard]]
-    auto texcrdsData() const -> const vector2<value_type> * {
-        return quadTexcrds_.data();
-    }
+    [[nodiscard]] auto texcrdsData() const -> const vector2<value_type> * { return quadTexcrds_.data(); }
 
-    [[nodiscard]]
-    auto clrsData() const -> const vector4<value_type> * {
-        return quadsColors_.data();
-    }
+    [[nodiscard]] auto clrsData() const -> const vector4<value_type> * { return quadsColors_.data(); }
 
 private:
     std::array<vector3_type, JUST_SINGLE_QUAD * VERTICIES_PER_QUAD> quadVerticies_{};

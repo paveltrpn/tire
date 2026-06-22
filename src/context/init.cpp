@@ -12,13 +12,14 @@ module;
 #define VMA_DYNAMIC_VULKAN_FUNCTIONS 1
 #include "vma/vk_mem_alloc.h"
 
-export module context:init;
+#include "log/log.h"
+
+export module context : init;
 
 import config;
-import log;
 import image;
 
-import :context;
+import : context;
 
 namespace tire {
 
@@ -27,8 +28,8 @@ auto Context::memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags pro
     vkGetPhysicalDeviceMemoryProperties( physDevice_, &memProperties );
 
     for ( uint32_t i = 0; i < memProperties.memoryTypeCount; i++ ) {
-        if (
-          ( typeFilter & ( 1 << i ) ) && ( memProperties.memoryTypes[i].propertyFlags & properties ) == properties ) {
+        if ( ( typeFilter & ( 1 << i ) ) &&
+             ( memProperties.memoryTypes[i].propertyFlags & properties ) == properties ) {
             return i;
         }
     }
@@ -39,8 +40,8 @@ auto Context::memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags pro
     return {};
 }
 
-auto Context::findSupportedFormat(
-  const std::vector<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features ) const -> VkFormat {
+auto Context::findSupportedFormat( const std::vector<VkFormat> &candidates, VkImageTiling tiling,
+                                   VkFormatFeatureFlags features ) const -> VkFormat {
     for ( VkFormat format : candidates ) {
         VkFormatProperties props;
         vkGetPhysicalDeviceFormatProperties( physDevice_, format, &props );
@@ -84,9 +85,9 @@ auto Context::initRenderPass() -> void {
     colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
     //Similar to swapchain creation depth format acquire!
-    const auto depthFormat = findSupportedFormat(
-      { VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT }, VK_IMAGE_TILING_OPTIMAL,
-      VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT );
+    const auto depthFormat =
+        findSupportedFormat( { VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
+                             VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT );
     // const auto depthFormat = VK_FORMAT_D32_SFLOAT;
 
     VkAttachmentDescription depthAttachment{};
@@ -119,7 +120,7 @@ auto Context::initRenderPass() -> void {
     dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
     dependency.srcAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
     dependency.dstStageMask =
-      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+        VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
     dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
     std::array<VkAttachmentDescription, 2> attachments = { colorAttachment, depthAttachment };
@@ -165,20 +166,20 @@ auto Context::createAllocator() -> void {
 
 auto Context::createDescriptorPool() -> void {
     std::vector<VkDescriptorPoolSize> sizes = {
-      //
-      { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 10 },
-      { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 10 },
-      { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 10 },
-      { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 10 },
+        //
+        { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 10 },
+        { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 10 },
+        { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 10 },
+        { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 10 },
     };
 
     const auto poolInfo = VkDescriptorPoolCreateInfo{
-      //
-      .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-      .flags = 0,
-      .maxSets = 10,
-      .poolSizeCount = static_cast<uint32_t>( sizes.size() ),
-      .pPoolSizes = sizes.data(),
+        //
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+        .flags = 0,
+        .maxSets = 10,
+        .poolSizeCount = static_cast<uint32_t>( sizes.size() ),
+        .pPoolSizes = sizes.data(),
     };
 
     {
@@ -191,19 +192,19 @@ auto Context::createDescriptorPool() -> void {
 
 auto Context::initCopyCommandBuffer() -> void {
     VkFenceCreateInfo fenceInfo{
-      //
-      .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
+        //
+        .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+        .pNext = nullptr,
+        .flags = 0,
     };
 
     vkCreateFence( device_, &fenceInfo, nullptr, &copyCommandFence_ );
 
     const VkCommandBufferAllocateInfo allocInfo{
-      .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-      .commandPool = commandPool_,
-      .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-      .commandBufferCount = 1,
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+        .commandPool = commandPool_,
+        .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+        .commandBufferCount = 1,
     };
 
     vkAllocateCommandBuffers( device_, &allocInfo, &copyCommandBuffer_ );
