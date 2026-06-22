@@ -13,6 +13,7 @@ module;
 #include "algebra/vector3.h"
 #include "algebra/vector4.h"
 #include "algebra/matrix3.h"
+#include "algebra/matrix4.h"
 
 export module render:pipeline_scene;
 

@@ -23,4 +23,4 @@ protected:
 
 }  // namespace tired
 
-EVSG_type_name( tired::KeyboardMap );
+EVSG_type_name( tire::KeyboardMap );

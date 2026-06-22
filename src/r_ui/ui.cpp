@@ -7,7 +7,7 @@ module;
 
 #include "log/log.h"
 
-export module ui : ui;
+export module r_ui : r_ui;
 
 import : billboard;
 import : label;

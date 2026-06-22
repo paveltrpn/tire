@@ -13,13 +13,15 @@ module;
 
 #include "vma/vk_mem_alloc.h"
 
+#include "log/log.h"
+#include "image/image.h"
+#include "algebra/vector3.h"
+
 export module render:ui;
 
-import algebra;
-import ui;
+import r_ui;
 import context;
 import config;
-import image;
 
 import :pipeline_ui;
 import :vertex_buffer;

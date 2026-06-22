@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdexcept>
 #include <cstdint>
 #include <array>
@@ -11,7 +13,7 @@
 
 namespace tire {
 
-const std::map<std::string, std::string> htmlColors{
+static const std::map<std::string, std::string> htmlColors{
     { "white", "#FFFFFF" },
     { "powderblue", "#B0E0E6" },
     { "lightblue", "#ADD8E6" },

@@ -15,7 +15,7 @@ namespace tire {
 // ====================================================================
 
 TiredUI::TiredUI( vsg::ref_ptr<vsg::WindowTraits> traits, QObject *parent )
-    : _tired{ std::make_unique<tired::Tired>() }
+    : _tired{ std::make_unique<tire::Tired>() }
     , _engine{ new QQmlEngine{ this } }
     , _context{ _engine->rootContext() }
     , _topPanel{ new QQuickWidget{ _engine, this } }

@@ -34,7 +34,7 @@ private:
     auto reigsterTypes() -> void;
 
 private:
-    std::unique_ptr<tired::Tired> _tired{};
+    std::unique_ptr<tire::Tired> _tired{};
 
     QQmlEngine *_engine;
     QQmlContext *_context;

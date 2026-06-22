@@ -40,4 +40,4 @@ public:
 
 }  // namespace tired
 
-EVSG_type_name( tired::Viewer );
+EVSG_type_name( tire::Viewer );

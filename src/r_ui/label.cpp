@@ -10,7 +10,7 @@ module;
 #include "algebra/vector3.h"
 #include "algebra/vector4.h"
 
-export module ui : label;
+export module r_ui : label;
 
 namespace tire {
 

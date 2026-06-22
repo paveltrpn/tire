@@ -149,7 +149,7 @@ target_sources(render
     PUBLIC FILE_SET CXX_MODULES FILES
     ${MOD_RENDER_SRC}
 )
-target_link_libraries(render vulkan context ui scene config geometry algebra vma_usage event)
+target_link_libraries(render vulkan context r_ui scene config geometry algebra vma_usage event)
 target_compile_features(render PUBLIC cxx_std_26)
 target_compile_options(render PRIVATE -freflection)
 

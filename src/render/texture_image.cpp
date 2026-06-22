@@ -1,6 +1,8 @@
 
 module;
 
+#include <cstring>
+
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
@@ -9,6 +11,7 @@ module;
 
 #include "log/log.h"
 #include "image/image.h"
+#include "image/tga.h"
 
 export module render:texture_image;
 

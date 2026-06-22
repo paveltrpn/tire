@@ -101,12 +101,12 @@ auto Tired::init( Window* window, uint32_t width, uint32_t height ) -> void {
 }
 
 auto Tired::registerTypes() -> void {
-    qRegisterMetaType<tired::SceneObjectTypeEnum>( "SceneObjectTypeEnum" );
+    qRegisterMetaType<tire::SceneObjectTypeEnum>( "SceneObjectTypeEnum" );
 
-    qRegisterMetaType<tired::SceneObjectData>( "SceneObjectData" );
-    qRegisterMetaType<tired::BoxObjectData>( "BoxObject" );
-    qRegisterMetaType<tired::SphereObjectData>( "SphereObjectData" );
-    qRegisterMetaType<tired::MeshData>( "MeshData" );
+    qRegisterMetaType<tire::SceneObjectData>( "SceneObjectData" );
+    qRegisterMetaType<tire::BoxObjectData>( "BoxObject" );
+    qRegisterMetaType<tire::SphereObjectData>( "SphereObjectData" );
+    qRegisterMetaType<tire::MeshData>( "MeshData" );
 }
 
 auto Tired::setGlobalMousePosX( float value ) -> void {

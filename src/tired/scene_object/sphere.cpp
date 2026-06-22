@@ -26,15 +26,15 @@ Sphere::Sphere( const SphereObjectData& data )
     : _data{ data } {
 }
 
-auto Sphere::data() const -> tired::SphereObjectData const& {
+auto Sphere::data() const -> tire::SphereObjectData const& {
     return _data;
 }
 
-auto Sphere::data() -> tired::SphereObjectData& {
+auto Sphere::data() -> tire::SphereObjectData& {
     return _data;
 }
 
-tired::SphereObjectData Sphere::getData() {
+tire::SphereObjectData Sphere::getData() {
     return _data;
 }
 

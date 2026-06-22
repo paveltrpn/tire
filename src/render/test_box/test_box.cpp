@@ -10,6 +10,7 @@ module;
 #include "vma/vk_mem_alloc.h"
 
 #include "algebra/vector3.h"
+#include "algebra/matrix4.h"
 
 export module render:test_box;
 

@@ -26,15 +26,15 @@ Cylinder::Cylinder( const CylinderObjectData& data )
     : _data{ data } {
 }
 
-auto Cylinder::data() const -> tired::CylinderObjectData const& {
+auto Cylinder::data() const -> tire::CylinderObjectData const& {
     return _data;
 }
 
-auto Cylinder::data() -> tired::CylinderObjectData& {
+auto Cylinder::data() -> tire::CylinderObjectData& {
     return _data;
 }
 
-tired::CylinderObjectData Cylinder::getData() {
+tire::CylinderObjectData Cylinder::getData() {
     return _data;
 }
 
