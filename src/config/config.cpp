@@ -3,29 +3,31 @@
 
 namespace tire {
 
- auto Config::getBasePath() const -> const std::filesystem::path & {
+auto Config::getBasePath() const -> const std::filesystem::path& {
     //
     return basePath_;
 };
 
- auto Config::getString( std::string_view param ) const -> std::string {
+auto Config::getString( std::string_view param ) const -> std::string {
     //
     return config_[param];
 }
 
- auto Config::getBool( std::string_view param ) const -> bool {
+auto Config::getBool( std::string_view param ) const -> bool {
     //
     return config_[param];
 }
 
- auto Config::getNumber( std::string_view param ) const -> double {
+auto Config::getNumber( std::string_view param ) const -> double {
     //
     return config_[param];
 }
 
- auto Config::getJson( std::string_view param ) const -> nlohmann::json {
+auto Config::getJson( std::string_view param ) const -> nlohmann::json {
     //
     return config_[param];
 }
 
-}
+std::unique_ptr<Config> Config::instance_ = nullptr;
+
+}  // namespace tire

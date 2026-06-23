@@ -3,6 +3,7 @@
 
 #include <format>
 #include <memory>
+#include <vector>
 
 #define SURFACE_X11
 // #define SURFACE_WAYLAND
@@ -38,8 +39,8 @@ namespace tire {
 
 struct DepthImage;
 
-auto vkDestroyDebugUtilsMessenger( VkInstance instance, VkDebugUtilsMessengerEXT messanger,
-                                   const VkAllocationCallbacks *pAllocator ) -> void {
+static auto vkDestroyDebugUtilsMessenger( VkInstance instance, VkDebugUtilsMessengerEXT messanger,
+                                          const VkAllocationCallbacks *pAllocator ) -> void {
     auto func =
         (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr( instance, "vkDestroyDebugUtilsMessengerEXT" );
     if ( func != nullptr ) {
@@ -61,12 +62,12 @@ struct Context final {
     auto operator=( Context &&other ) -> Context & = delete;
 
     // Destroy all Vulkan context here.
-    ~Context() ;
+    ~Context();
 
 #ifdef SURFACE_X11
-    auto makeXlibSurface( Display *display, Window window ) -> void ;
+    auto makeXlibSurface( Display *display, Window window ) -> void;
 #elifdef SURFACE_WAYLAND
-    auto makeWaylandSurface( wl_display *display, wl_surface *surface ) -> void ;
+    auto makeWaylandSurface( wl_display *display, wl_surface *surface ) -> void;
 #endif
 
     [[nodiscard]] auto instance() const -> VkInstance {
@@ -100,7 +101,8 @@ struct Context final {
 
     [[nodiscard]] auto physicalDevice() const -> VkPhysicalDevice {
         //
-        return physDevice_; }
+        return physDevice_;
+    }
 
     [[nodiscard]] auto currentExtent() const -> const VkExtent2D & { return currentExtent_; };
 

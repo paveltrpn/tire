@@ -98,6 +98,4 @@ private:
     static std::unique_ptr<Config> instance_;
 };
 
-std::unique_ptr<Config> Config::instance_ = nullptr;
-
 }  // namespace tire
