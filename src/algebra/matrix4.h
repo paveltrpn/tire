@@ -1,3 +1,4 @@
+#pragma once
 
 #include <cstddef>
 #include <initializer_list>
@@ -33,33 +34,24 @@ struct matrix4 final {
         }
     }
 
-    [[nodiscard]]
-    auto operator[]( size_t index ) -> reference {
+    [[nodiscard]] auto operator[]( size_t index ) -> reference {
         //
         return data_[index];
     }
 
-    [[nodiscard]]
-    auto operator[]( size_t index ) const -> const_reference {
+    [[nodiscard]] auto operator[]( size_t index ) const -> const_reference {
         //
         return data_[index];
     }
 
-    [[nodiscard]]
-    auto size() const -> size_t {
+    [[nodiscard]] auto size() const -> size_t {
         //
         return data_.size();
     }
 
-    [[nodiscard]]
-    auto data() -> pointer {
-        return data_.data();
-    }
+    [[nodiscard]] auto data() -> pointer { return data_.data(); }
 
-    [[nodiscard]]
-    auto data() const -> const_pointer {
-        return data_.data();
-    }
+    [[nodiscard]] auto data() const -> const_pointer { return data_.data(); }
 
     auto zero() -> void {
         data_[0] = T{ 0 };
@@ -99,8 +91,7 @@ struct matrix4 final {
         data_[15] = T{ 1 };
     }
 
-    [[nodiscard]]
-    auto transpose() const -> self {
+    [[nodiscard]] auto transpose() const -> self {
         auto rt = *this;
         for ( int i = 0; i < 4; ++i ) {
             for ( int j = i + 1; j < 4; ++j ) {
@@ -196,19 +187,13 @@ struct matrix4 final {
         return *this;
     }
 
-    [[nodiscard]]
-    auto mult_vector3( const vector3<value_type>& v ) const
-        -> vector3<value_type> {
+    [[nodiscard]] auto mult_vector3( const vector3<value_type>& v ) const -> vector3<value_type> {
         value_type w{};
 
-        auto rx = v.x() * ( *this )[0] + v.y() * ( *this )[1] +
-                  v.z() * ( *this )[2] + ( *this )[3];
-        auto ry = v.x() * ( *this )[4] + v.y() * ( *this )[5] +
-                  v.z() * ( *this )[6] + ( *this )[7];
-        auto rz = v.x() * ( *this )[8] + v.y() * ( *this )[9] +
-                  v.z() * ( *this )[10] + ( *this )[11];
-        w = v.x() * ( *this )[12] + v.y() * ( *this )[13] +
-            v.z() * ( *this )[14] + ( *this )[15];
+        auto rx = v.x() * ( *this )[0] + v.y() * ( *this )[1] + v.z() * ( *this )[2] + ( *this )[3];
+        auto ry = v.x() * ( *this )[4] + v.y() * ( *this )[5] + v.z() * ( *this )[6] + ( *this )[7];
+        auto rz = v.x() * ( *this )[8] + v.y() * ( *this )[9] + v.z() * ( *this )[10] + ( *this )[11];
+        w = v.x() * ( *this )[12] + v.y() * ( *this )[13] + v.z() * ( *this )[14] + ( *this )[15];
 
         // Normalize if w is different than 1 (convert from homogeneous to Cartesian
         // coordinates).
@@ -221,26 +206,19 @@ struct matrix4 final {
         return { value_type( rx ), value_type( ry ), value_type( rz ) };
     }
 
-    [[nodiscard]]
-    auto mult_vector4( const vector4<value_type>& v ) const
-        -> vector4<value_type> {
+    [[nodiscard]] auto mult_vector4( const vector4<value_type>& v ) const -> vector4<value_type> {
         vector4<value_type> rt;
 
-        rt[0] = v[0] * ( *this )[0] + v[1] * ( *this )[1] +
-                v[2] * ( *this )[2] + ( *this )[3];
-        rt[1] = v[0] * ( *this )[4] + v[1] * ( *this )[5] +
-                v[2] * ( *this )[6] + ( *this )[7];
-        rt[2] = v[0] * ( *this )[8] + v[1] * ( *this )[9] +
-                v[2] * ( *this )[10] + ( *this )[11];
-        rt[3] = v[0] * ( *this )[12] + v[1] * ( *this )[13] +
-                v[2] * ( *this )[14] + ( *this )[15];
+        rt[0] = v[0] * ( *this )[0] + v[1] * ( *this )[1] + v[2] * ( *this )[2] + ( *this )[3];
+        rt[1] = v[0] * ( *this )[4] + v[1] * ( *this )[5] + v[2] * ( *this )[6] + ( *this )[7];
+        rt[2] = v[0] * ( *this )[8] + v[1] * ( *this )[9] + v[2] * ( *this )[10] + ( *this )[11];
+        rt[3] = v[0] * ( *this )[12] + v[1] * ( *this )[13] + v[2] * ( *this )[14] + ( *this )[15];
 
         return rt;
     }
 
     // NOTE: LLM ganerated.
-    [[nodiscard]]
-    auto determinant() -> value_type {
+    [[nodiscard]] auto determinant() -> value_type {
         return data_[0] * ( data_[5] * data_[10] - data_[6] * data_[9] ) -
                data_[1] * ( data_[4] * data_[10] - data_[6] * data_[8] ) +
                data_[2] * ( data_[4] * data_[9] - data_[5] * data_[8] );
@@ -275,8 +253,7 @@ struct matrix4 final {
         data_[15] = 1.0;
     }
 
-    auto perspective( value_type fov, value_type aspect, value_type near,
-                      value_type far ) -> void {
+    auto perspective( value_type fov, value_type aspect, value_type near, value_type far ) -> void {
         const auto radFov = degToRad( fov );
 
         // NOTE: GNU related function sincos()
@@ -285,8 +262,7 @@ struct matrix4 final {
         if constexpr ( std::is_same_v<value_type, double> ) {
             sincos( static_cast<value_type>( 0.5 ) * radFov, &sinFov, &cosFov );
         } else if constexpr ( std::is_same_v<value_type, float> ) {
-            sincosf( static_cast<value_type>( 0.5 ) * radFov, &sinFov,
-                     &cosFov );
+            sincosf( static_cast<value_type>( 0.5 ) * radFov, &sinFov, &cosFov );
         }
 
         // value_type tanFov =
@@ -319,8 +295,7 @@ struct matrix4 final {
         }
     }
 
-    auto vperspective( value_type fov, value_type aspect, value_type near,
-                       value_type far ) -> void {
+    auto vperspective( value_type fov, value_type aspect, value_type near, value_type far ) -> void {
         const auto radFov = degToRad( fov );
 
         // NOTE: GNU related function sincos()
@@ -330,8 +305,7 @@ struct matrix4 final {
         if constexpr ( std::is_same_v<value_type, double> ) {
             sincos( static_cast<value_type>( 0.5 ) * radFov, &sinFov, &cosFov );
         } else if constexpr ( std::is_same_v<value_type, float> ) {
-            sincosf( static_cast<value_type>( 0.5 ) * radFov, &sinFov,
-                     &cosFov );
+            sincosf( static_cast<value_type>( 0.5 ) * radFov, &sinFov, &cosFov );
         }
 
         // value_type tanFov = std::tan( value_type{ 0.5 } * radFov );
@@ -384,8 +358,7 @@ struct matrix4 final {
             */
     }
 
-    auto vperspective2( value_type fov, value_type aspect, value_type near,
-                        value_type far ) -> void {
+    auto vperspective2( value_type fov, value_type aspect, value_type near, value_type far ) -> void {
         const auto radFov = degToRad( fov );
 
         // NOTE: GNU related function sincos()
@@ -395,8 +368,7 @@ struct matrix4 final {
         if constexpr ( std::is_same_v<value_type, double> ) {
             sincos( static_cast<value_type>( 0.5 ) * radFov, &sinFov, &cosFov );
         } else if constexpr ( std::is_same_v<value_type, float> ) {
-            sincosf( static_cast<value_type>( 0.5 ) * radFov, &sinFov,
-                     &cosFov );
+            sincosf( static_cast<value_type>( 0.5 ) * radFov, &sinFov, &cosFov );
         }
 
         // value_type tanFov = std::tan( value_type{ 0.5 } * radFov );
@@ -425,15 +397,12 @@ struct matrix4 final {
         data_[15] = value_type{ 0 };
     }
 
-    auto lookAt( const vector3<value_type>& eye,
-                 const vector3<value_type>& target,
-                 const vector3<value_type>& up ) -> void {
+    auto lookAt( const vector3<value_type>& eye, const vector3<value_type>& target, const vector3<value_type>& up )
+        -> void {
         vector3<value_type> eyeDir;
 
-        constexpr value_type floatEps =
-            std::numeric_limits<value_type>::epsilon();
-        if ( std::fabs( eye[0] - target[0] ) < floatEps &&
-             std::fabs( eye[1] - target[1] ) < floatEps &&
+        constexpr value_type floatEps = std::numeric_limits<value_type>::epsilon();
+        if ( std::fabs( eye[0] - target[0] ) < floatEps && std::fabs( eye[1] - target[1] ) < floatEps &&
              std::fabs( eye[2] - target[2] ) < floatEps ) {
             return;
         }
@@ -496,9 +465,8 @@ struct matrix4 final {
         data_[15] = 1.0;
     }
 
-    auto orthographic( value_type left, value_type right, value_type bottom,
-                       value_type top, value_type near, value_type far )
-        -> void {
+    auto orthographic( value_type left, value_type right, value_type bottom, value_type top, value_type near,
+                       value_type far ) -> void {
         data_[0] = 2.0 / ( right - left );
         data_[1] = 0.0;
         data_[2] = 0.0;
@@ -648,94 +616,58 @@ struct matrix4 final {
         self inv;
         value_type det;
 
-        inv[0] =
-            data_[5] * data_[10] * data_[15] -
-            data_[5] * data_[11] * data_[14] - data_[9] * data_[6] * data_[15] +
-            data_[9] * data_[7] * data_[14] + data_[13] * data_[6] * data_[11] -
-            data_[13] * data_[7] * data_[10];
+        inv[0] = data_[5] * data_[10] * data_[15] - data_[5] * data_[11] * data_[14] - data_[9] * data_[6] * data_[15] +
+                 data_[9] * data_[7] * data_[14] + data_[13] * data_[6] * data_[11] - data_[13] * data_[7] * data_[10];
 
-        inv[4] =
-            -data_[4] * data_[10] * data_[15] +
-            data_[4] * data_[11] * data_[14] + data_[8] * data_[6] * data_[15] -
-            data_[8] * data_[7] * data_[14] - data_[12] * data_[6] * data_[11] +
-            data_[12] * data_[7] * data_[10];
+        inv[4] = -data_[4] * data_[10] * data_[15] + data_[4] * data_[11] * data_[14] +
+                 data_[8] * data_[6] * data_[15] - data_[8] * data_[7] * data_[14] - data_[12] * data_[6] * data_[11] +
+                 data_[12] * data_[7] * data_[10];
 
-        inv[8] =
-            data_[4] * data_[9] * data_[15] - data_[4] * data_[11] * data_[13] -
-            data_[8] * data_[5] * data_[15] + data_[8] * data_[7] * data_[13] +
-            data_[12] * data_[5] * data_[11] - data_[12] * data_[7] * data_[9];
+        inv[8] = data_[4] * data_[9] * data_[15] - data_[4] * data_[11] * data_[13] - data_[8] * data_[5] * data_[15] +
+                 data_[8] * data_[7] * data_[13] + data_[12] * data_[5] * data_[11] - data_[12] * data_[7] * data_[9];
 
-        inv[12] =
-            -data_[4] * data_[9] * data_[14] +
-            data_[4] * data_[10] * data_[13] + data_[8] * data_[5] * data_[14] -
-            data_[8] * data_[6] * data_[13] - data_[12] * data_[5] * data_[10] +
-            data_[12] * data_[6] * data_[9];
+        inv[12] = -data_[4] * data_[9] * data_[14] + data_[4] * data_[10] * data_[13] +
+                  data_[8] * data_[5] * data_[14] - data_[8] * data_[6] * data_[13] - data_[12] * data_[5] * data_[10] +
+                  data_[12] * data_[6] * data_[9];
 
-        inv[1] =
-            -data_[1] * data_[10] * data_[15] +
-            data_[1] * data_[11] * data_[14] + data_[9] * data_[2] * data_[15] -
-            data_[9] * data_[3] * data_[14] - data_[13] * data_[2] * data_[11] +
-            data_[13] * data_[3] * data_[10];
+        inv[1] = -data_[1] * data_[10] * data_[15] + data_[1] * data_[11] * data_[14] +
+                 data_[9] * data_[2] * data_[15] - data_[9] * data_[3] * data_[14] - data_[13] * data_[2] * data_[11] +
+                 data_[13] * data_[3] * data_[10];
 
-        inv[5] =
-            data_[0] * data_[10] * data_[15] -
-            data_[0] * data_[11] * data_[14] - data_[8] * data_[2] * data_[15] +
-            data_[8] * data_[3] * data_[14] + data_[12] * data_[2] * data_[11] -
-            data_[12] * data_[3] * data_[10];
+        inv[5] = data_[0] * data_[10] * data_[15] - data_[0] * data_[11] * data_[14] - data_[8] * data_[2] * data_[15] +
+                 data_[8] * data_[3] * data_[14] + data_[12] * data_[2] * data_[11] - data_[12] * data_[3] * data_[10];
 
-        inv[9] =
-            -data_[0] * data_[9] * data_[15] +
-            data_[0] * data_[11] * data_[13] + data_[8] * data_[1] * data_[15] -
-            data_[8] * data_[3] * data_[13] - data_[12] * data_[1] * data_[11] +
-            data_[12] * data_[3] * data_[9];
+        inv[9] = -data_[0] * data_[9] * data_[15] + data_[0] * data_[11] * data_[13] + data_[8] * data_[1] * data_[15] -
+                 data_[8] * data_[3] * data_[13] - data_[12] * data_[1] * data_[11] + data_[12] * data_[3] * data_[9];
 
-        inv[13] =
-            data_[0] * data_[9] * data_[14] - data_[0] * data_[10] * data_[13] -
-            data_[8] * data_[1] * data_[14] + data_[8] * data_[2] * data_[13] +
-            data_[12] * data_[1] * data_[10] - data_[12] * data_[2] * data_[9];
+        inv[13] = data_[0] * data_[9] * data_[14] - data_[0] * data_[10] * data_[13] - data_[8] * data_[1] * data_[14] +
+                  data_[8] * data_[2] * data_[13] + data_[12] * data_[1] * data_[10] - data_[12] * data_[2] * data_[9];
 
-        inv[2] =
-            data_[1] * data_[6] * data_[15] - data_[1] * data_[7] * data_[14] -
-            data_[5] * data_[2] * data_[15] + data_[5] * data_[3] * data_[14] +
-            data_[13] * data_[2] * data_[7] - data_[13] * data_[3] * data_[6];
+        inv[2] = data_[1] * data_[6] * data_[15] - data_[1] * data_[7] * data_[14] - data_[5] * data_[2] * data_[15] +
+                 data_[5] * data_[3] * data_[14] + data_[13] * data_[2] * data_[7] - data_[13] * data_[3] * data_[6];
 
-        inv[6] =
-            -data_[0] * data_[6] * data_[15] + data_[0] * data_[7] * data_[14] +
-            data_[4] * data_[2] * data_[15] - data_[4] * data_[3] * data_[14] -
-            data_[12] * data_[2] * data_[7] + data_[12] * data_[3] * data_[6];
+        inv[6] = -data_[0] * data_[6] * data_[15] + data_[0] * data_[7] * data_[14] + data_[4] * data_[2] * data_[15] -
+                 data_[4] * data_[3] * data_[14] - data_[12] * data_[2] * data_[7] + data_[12] * data_[3] * data_[6];
 
-        inv[10] =
-            data_[0] * data_[5] * data_[15] - data_[0] * data_[7] * data_[13] -
-            data_[4] * data_[1] * data_[15] + data_[4] * data_[3] * data_[13] +
-            data_[12] * data_[1] * data_[7] - data_[12] * data_[3] * data_[5];
+        inv[10] = data_[0] * data_[5] * data_[15] - data_[0] * data_[7] * data_[13] - data_[4] * data_[1] * data_[15] +
+                  data_[4] * data_[3] * data_[13] + data_[12] * data_[1] * data_[7] - data_[12] * data_[3] * data_[5];
 
-        inv[14] =
-            -data_[0] * data_[5] * data_[14] + data_[0] * data_[6] * data_[13] +
-            data_[4] * data_[1] * data_[14] - data_[4] * data_[2] * data_[13] -
-            data_[12] * data_[1] * data_[6] + data_[12] * data_[2] * data_[5];
+        inv[14] = -data_[0] * data_[5] * data_[14] + data_[0] * data_[6] * data_[13] + data_[4] * data_[1] * data_[14] -
+                  data_[4] * data_[2] * data_[13] - data_[12] * data_[1] * data_[6] + data_[12] * data_[2] * data_[5];
 
-        inv[3] =
-            -data_[1] * data_[6] * data_[11] + data_[1] * data_[7] * data_[10] +
-            data_[5] * data_[2] * data_[11] - data_[5] * data_[3] * data_[10] -
-            data_[9] * data_[2] * data_[7] + data_[9] * data_[3] * data_[6];
+        inv[3] = -data_[1] * data_[6] * data_[11] + data_[1] * data_[7] * data_[10] + data_[5] * data_[2] * data_[11] -
+                 data_[5] * data_[3] * data_[10] - data_[9] * data_[2] * data_[7] + data_[9] * data_[3] * data_[6];
 
-        inv[7] =
-            data_[0] * data_[6] * data_[11] - data_[0] * data_[7] * data_[10] -
-            data_[4] * data_[2] * data_[11] + data_[4] * data_[3] * data_[10] +
-            data_[8] * data_[2] * data_[7] - data_[8] * data_[3] * data_[6];
+        inv[7] = data_[0] * data_[6] * data_[11] - data_[0] * data_[7] * data_[10] - data_[4] * data_[2] * data_[11] +
+                 data_[4] * data_[3] * data_[10] + data_[8] * data_[2] * data_[7] - data_[8] * data_[3] * data_[6];
 
-        inv[11] =
-            -data_[0] * data_[5] * data_[11] + data_[0] * data_[7] * data_[9] +
-            data_[4] * data_[1] * data_[11] - data_[4] * data_[3] * data_[9] -
-            data_[8] * data_[1] * data_[7] + data_[8] * data_[3] * data_[5];
+        inv[11] = -data_[0] * data_[5] * data_[11] + data_[0] * data_[7] * data_[9] + data_[4] * data_[1] * data_[11] -
+                  data_[4] * data_[3] * data_[9] - data_[8] * data_[1] * data_[7] + data_[8] * data_[3] * data_[5];
 
-        inv[15] =
-            data_[0] * data_[5] * data_[10] - data_[0] * data_[6] * data_[9] -
-            data_[4] * data_[1] * data_[10] + data_[4] * data_[2] * data_[9] +
-            data_[8] * data_[1] * data_[6] - data_[8] * data_[2] * data_[5];
+        inv[15] = data_[0] * data_[5] * data_[10] - data_[0] * data_[6] * data_[9] - data_[4] * data_[1] * data_[10] +
+                  data_[4] * data_[2] * data_[9] + data_[8] * data_[1] * data_[6] - data_[8] * data_[2] * data_[5];
 
-        det = data_[0] * inv[0] + data_[1] * inv[4] + data_[2] * inv[8] +
-              data_[3] * inv[12];
+        det = data_[0] * inv[0] + data_[1] * inv[4] + data_[2] * inv[8] + data_[3] * inv[12];
 
         if ( det == 0 ) return {};
         det = 1.0 / det;
@@ -748,77 +680,77 @@ private:
     std::array<T, 16> data_{};
 };
 
-    template <typename T>
-    auto transpose( matrix4<T>& arg ) -> decltype( auto ) {
-        matrix4<T> rt{ arg };
-        rt.transpose();
-        return rt;
-    }
-
-    template <typename T>
-    matrix4<T> translate( T dx, T dy, T dz ) {
-        matrix4<T> rt{};
-        rt.translate( dx, dy, dz );
-        return rt;
-    }
-
-    template <typename T>
-    matrix4<T> translate( vector3<T>& offset ) {
-        matrix4<T> rt{};
-        rt.translate( offset );
-        return rt;
-    }
-
-    template <typename T>
-    matrix4<T> rotate( T dy, T dp, T dr ) {
-        matrix4<T> rt;
-        rt.euler( dy, dp, dr );
-        return rt;
-    }
-
-    template <typename T>
-    matrix4<T> rotate( vector3<T> ax, T phi ) {
-        matrix4<T> rt;
-        rt.axis_angle( ax, phi );
-        return rt;
-    }
-
-    template <typename T>
-    matrix4<T> scale( T dx, T dy, T dz ) {
-        matrix4<T> rt;
-        rt.scale( { dx, dy, dz } );
-        return rt;
-    }
-
-    template <typename T>
-    matrix4<T> perspective( float fov, float aspect, float ncp, float fcp ) {
-        matrix4<T> rt;
-        rt.perspective( fov, aspect, ncp, fcp );
-        return rt;
-    }
-
-    template <typename T>
-    matrix4<T> vperspective( float fov, float aspect, float ncp, float fcp ) {
-        matrix4<T> rt;
-        rt.vperspective( fov, aspect, ncp, fcp );
-        return rt;
-    }
-
-    template <typename T>
-    matrix4<T> vperspective2( float fov, float aspect, float ncp, float fcp ) {
-        matrix4<T> rt;
-        rt.vperspective2( fov, aspect, ncp, fcp );
-        return rt;
-    }
-
-    template <typename T>
-    matrix4<T> orthographic( T left, T right, T bottom, T top, T near, T far ) {
-        matrix4<T> rt;
-        rt.orthographic( left, right, bottom, top, near, far );
-        return rt;
-    }
-
-    using matrix4l = matrix4<long long>;
-    using matrix4f = matrix4<float>;
-    using matrix4d = matrix4<double>;
+template <typename T>
+auto transpose( matrix4<T>& arg ) -> decltype( auto ) {
+    matrix4<T> rt{ arg };
+    rt.transpose();
+    return rt;
 }
+
+template <typename T>
+matrix4<T> translate( T dx, T dy, T dz ) {
+    matrix4<T> rt{};
+    rt.translate( dx, dy, dz );
+    return rt;
+}
+
+template <typename T>
+matrix4<T> translate( vector3<T>& offset ) {
+    matrix4<T> rt{};
+    rt.translate( offset );
+    return rt;
+}
+
+template <typename T>
+matrix4<T> rotate( T dy, T dp, T dr ) {
+    matrix4<T> rt;
+    rt.euler( dy, dp, dr );
+    return rt;
+}
+
+template <typename T>
+matrix4<T> rotate( vector3<T> ax, T phi ) {
+    matrix4<T> rt;
+    rt.axis_angle( ax, phi );
+    return rt;
+}
+
+template <typename T>
+matrix4<T> scale( T dx, T dy, T dz ) {
+    matrix4<T> rt;
+    rt.scale( { dx, dy, dz } );
+    return rt;
+}
+
+template <typename T>
+matrix4<T> perspective( float fov, float aspect, float ncp, float fcp ) {
+    matrix4<T> rt;
+    rt.perspective( fov, aspect, ncp, fcp );
+    return rt;
+}
+
+template <typename T>
+matrix4<T> vperspective( float fov, float aspect, float ncp, float fcp ) {
+    matrix4<T> rt;
+    rt.vperspective( fov, aspect, ncp, fcp );
+    return rt;
+}
+
+template <typename T>
+matrix4<T> vperspective2( float fov, float aspect, float ncp, float fcp ) {
+    matrix4<T> rt;
+    rt.vperspective2( fov, aspect, ncp, fcp );
+    return rt;
+}
+
+template <typename T>
+matrix4<T> orthographic( T left, T right, T bottom, T top, T near, T far ) {
+    matrix4<T> rt;
+    rt.orthographic( left, right, bottom, top, near, far );
+    return rt;
+}
+
+using matrix4l = matrix4<long long>;
+using matrix4f = matrix4<float>;
+using matrix4d = matrix4<double>;
+}  // namespace tire::algebra

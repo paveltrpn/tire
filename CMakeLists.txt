@@ -136,12 +136,8 @@ target_compile_options(r_ui PRIVATE -freflection )
 # ================================
 # Module render
 # ================================
-file(GLOB_RECURSE MOD_RENDER_SRC "src/render/*.cpp")
-add_library(render)
-target_sources(render
-    PUBLIC FILE_SET CXX_MODULES FILES
-    ${MOD_RENDER_SRC}
-)
+file(GLOB_RECURSE MOD_RENDER_SRC "src/render/*.cpp" "src/render/*.h")
+add_library(render ${MOD_RENDER_SRC})
 target_link_libraries(render vulkan context r_ui config geometry algebra vma_usage event)
 target_compile_features(render PUBLIC cxx_std_26)
 target_compile_options(render PRIVATE -freflection)

@@ -1,9 +1,5 @@
 
-module;
-
-export module render:input;
-
-import :render;
+#include "rendervk.h"
 
 namespace tire {
 

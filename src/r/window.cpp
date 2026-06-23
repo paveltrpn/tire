@@ -22,10 +22,9 @@
 #include "window.h"
 
 #include "context/context.h"
+#include "render/rendervk.h"
 #include "config/config.h"
 #include "log/log.h"
-
-import render;
 
 BareWindow::BareWindow() {
     if ( glfwInit() != GLFW_TRUE ) {

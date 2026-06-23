@@ -1,5 +1,4 @@
-
-module;
+#pragma once
 
 #include <coroutine>
 #include <filesystem>
@@ -13,19 +12,17 @@ module;
 #include "config/config.h"
 #include "log/log.h"
 
-export module render:render;
+#include "timer.h"
+#include "test_box/test_box.h"
+#include "ui/ui.h"
 
-import :timer;
-import :test_box;
-import :ui;
+#include "log/log.h"
 
 // using namespace std::chrono_literals;
 
 namespace tire {
 
-struct SceneVK;
-
-export struct RenderVK final {
+struct RenderVK final {
     RenderVK() = default;
 
     explicit RenderVK( Context *context )

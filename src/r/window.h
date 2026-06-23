@@ -5,10 +5,8 @@
 
 #include <GLFW/glfw3.h>
 
-namespace tire {
-struct RenderVK;
-struct Context;
-}  // namespace tire
+#include "context/context.h"
+#include "render/rendervk.h"
 
 struct BareWindow final {
     BareWindow();

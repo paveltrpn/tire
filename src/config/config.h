@@ -10,7 +10,6 @@
 #include "nlohmann/json.hpp"
 #include "log/log.h"
 
-
 namespace tire {
 
 template <typename T>
@@ -59,11 +58,11 @@ public:
 
     ~Config() = default;
 
-    [[nodiscard]] auto getBasePath() const -> const std::filesystem::path & ;
-    [[nodiscard]] auto getString( std::string_view param ) const -> std::string ;
-    [[nodiscard]] auto getBool( std::string_view param ) const -> bool ;
-    [[nodiscard]] auto getNumber( std::string_view param ) const -> double ;
-    [[nodiscard]] auto getJson( std::string_view param ) const -> nlohmann::json ;
+    [[nodiscard]] auto getBasePath() const -> const std::filesystem::path &;
+    [[nodiscard]] auto getString( std::string_view param ) const -> std::string;
+    [[nodiscard]] auto getBool( std::string_view param ) const -> bool;
+    [[nodiscard]] auto getNumber( std::string_view param ) const -> double;
+    [[nodiscard]] auto getJson( std::string_view param ) const -> nlohmann::json;
 
     template <ConfigParamType T>
     [[nodiscard]] auto get( std::string_view param, T dflt = {} ) const -> T {
