@@ -38,7 +38,7 @@ namespace tire {
     // equal to vulkan shader stages types.
     void Program::add( const std::filesystem::path &path ) {
         const auto device = context_->device();
-        if ( device == VK_NULL_HANDLE ) {private:
+        if ( device == VK_NULL_HANDLE ) {
 
             throw std::runtime_error(
                 std::format( "can't use shaders before valid logical device is "
@@ -82,7 +82,7 @@ namespace tire {
             std::string::size_type start{ 0 };
             std::string::size_type end;
 
-            while ( ( end = string.find( sep, start ) ) != d::string::npos ) {
+            while ( ( end = string.find( sep, start ) ) != std::string::npos ) {
                 if ( start != end ) list.push_back( string.substr( start, end - start ) );
                 start = end + 1;
             }
@@ -169,7 +169,7 @@ namespace tire {
         modules_.erase( name );
     }
 
-    void list() {
+    void Program::list() {
         for ( const auto &key : modules_ ) {
             log::debug()( "available shader module: \"{}\"", std::get<0>( key ) );
         }

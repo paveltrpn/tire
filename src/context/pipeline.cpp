@@ -21,7 +21,7 @@ namespace tire {
      auto Pipeline::pipeline() const -> VkPipeline {
         //
         return pipeline_;
-    };
+    }
 
      auto Pipeline::layout() const -> VkPipelineLayout {
         //
@@ -32,8 +32,6 @@ namespace tire {
         //
         return renderPass_;
     }
-
-    virtual auto buildPipeline( const Program &program ) -> void = 0;
 
 
 

@@ -1,5 +1,4 @@
 
-
 #include <memory>
 
 #define SURFACE_X11
@@ -22,12 +21,11 @@
 
 #include "window.h"
 
+#include "context/context.h"
 #include "config/config.h"
 #include "log/log.h"
 
-import context;
 import render;
-
 
 BareWindow::BareWindow() {
     if ( glfwInit() != GLFW_TRUE ) {

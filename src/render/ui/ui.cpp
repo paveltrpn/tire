@@ -14,6 +14,7 @@ module;
 #include "vma/vk_mem_alloc.h"
 
 #include "context/context.h"
+#include "context/program.h"
 #include "config/config.h"
 #include "log/log.h"
 #include "image/image.h"
