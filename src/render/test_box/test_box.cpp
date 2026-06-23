@@ -12,9 +12,10 @@ module;
 #include "algebra/vector3.h"
 #include "algebra/matrix4.h"
 
-export module render:test_box;
+#include "context/context.h"
+#include "context/pipeline.h"
 
-import context;
+export module render:test_box;
 
 import :test_box_shader;
 import :pipeline_test_box;

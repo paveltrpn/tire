@@ -114,11 +114,8 @@ target_compile_options(vma_usage PRIVATE -freflection)
 # ================================
 # Module context
 # ================================
-file(GLOB_RECURSE MOD_CONTEXT_SRC "src/context/*.cpp" )
-add_library(context)
-target_sources(context
-    PUBLIC FILE_SET CXX_MODULES FILES
-    ${MOD_CONTEXT_SRC})
+file(GLOB_RECURSE MOD_CONTEXT_SRC "src/context/*.cpp" "src/context/*.h")
+add_library(context ${MOD_CONTEXT_SRC})
 target_link_libraries(context vulkan config image vma_usage)
 target_compile_features(context PUBLIC cxx_std_26)
 target_compile_options(context PRIVATE -freflection)

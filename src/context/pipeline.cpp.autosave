@@ -21,7 +21,7 @@ namespace tire {
      auto Pipeline::pipeline() const -> VkPipeline {
         //
         return pipeline_;
-    };
+    }
 
      auto Pipeline::layout() const -> VkPipelineLayout {
         //

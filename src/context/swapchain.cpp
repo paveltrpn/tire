@@ -1,19 +1,13 @@
-
-module;
-
 #include <format>
 #include <memory>
 
 #define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vk_enum_string_helper.h>
 
+#include "context.h"
+#include "depth_image.h"
 #include "log/log.h"
 #include "config/config.h"
-
-export module context : swapchain;
-
-import : context;
-import : depth_image;
 
 namespace tire {
 

@@ -12,13 +12,10 @@ module;
 
 #include "vma/vk_mem_alloc.h"
 
+#include "context/context.h"
 #include "log/log.h"
 
-
 export module render:vertex_buffer;
-
-
-import context;
 
 namespace tire {
 

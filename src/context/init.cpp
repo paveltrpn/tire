@@ -1,6 +1,4 @@
 
-module;
-
 #include <stdexcept>
 #include <format>
 
@@ -12,15 +10,10 @@ module;
 #define VMA_DYNAMIC_VULKAN_FUNCTIONS 1
 #include "vma/vk_mem_alloc.h"
 
+#include "context.h"
 #include "log/log.h"
 #include "image/image.h"
 #include "config/config.h"
-
-export module context : init;
-
-
-
-import : context;
 
 namespace tire {
 

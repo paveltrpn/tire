@@ -1,5 +1,5 @@
 
-module;
+#pragma once
 
 #include <format>
 #include <memory>
@@ -32,9 +32,7 @@ module;
 #include "log/log.h"
 #include "image/image.h"
 
-export module context : context;
-
-import : command_routine;
+#include "command_routine.h"
 
 namespace tire {
 
@@ -49,7 +47,7 @@ auto vkDestroyDebugUtilsMessenger( VkInstance instance, VkDebugUtilsMessengerEXT
     }
 }
 
-export struct Context final {
+struct Context final {
 #ifdef SURFACE_X11
     Context( uint32_t width, uint32_t height, Display *display, Window window )
         : width_{ width }
@@ -134,22 +132,22 @@ export struct Context final {
     [[nodiscard]] auto instance() const -> VkInstance {
         //
         return instance_;
-    };
+    }
 
     [[nodiscard]] auto surface() const -> VkSurfaceKHR {
         //
         return surface_;
-    };
+    }
 
     [[nodiscard]] auto device() const -> VkDevice {
         //
         return device_;
-    };
+    }
 
     [[nodiscard]] auto swapchain() const -> VkSwapchainKHR {
         //
         return swapchain_;
-    };
+    }
 
     [[nodiscard]] auto surfaceFormat() const -> const VkSurfaceFormatKHR & { return surfaceFormat_; };
 
@@ -158,9 +156,11 @@ export struct Context final {
     [[nodiscard]] auto graphicsFamily() const -> uint32_t {
         //
         return graphicsFamilyQueueId_;
-    };
+    }
 
-    [[nodiscard]] auto physicalDevice() const -> VkPhysicalDevice { return physDevice_; }
+    [[nodiscard]] auto physicalDevice() const -> VkPhysicalDevice {
+        //
+        return physDevice_; }
 
     [[nodiscard]] auto currentExtent() const -> const VkExtent2D & { return currentExtent_; };
 

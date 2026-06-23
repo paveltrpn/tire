@@ -8,6 +8,9 @@ module;
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
+#include "context/context.h"
+#include "context/pipeline.h"
+
 #include "log/log.h"
 
 #include "algebra/vector2.h"
@@ -17,7 +20,7 @@ module;
 
 export module render:pipeline_ui;
 
-import context;
+
 
 namespace tire {
 

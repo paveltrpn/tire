@@ -13,6 +13,7 @@ module;
 
 #include "vma/vk_mem_alloc.h"
 
+#include "context/context.h"
 #include "config/config.h"
 #include "log/log.h"
 #include "image/image.h"
@@ -21,7 +22,6 @@ module;
 export module render:ui;
 
 import r_ui;
-import context;
 
 import :pipeline_ui;
 import :vertex_buffer;

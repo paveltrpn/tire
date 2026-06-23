@@ -1,27 +1,11 @@
 
-module;
-
-#include <vulkan/vulkan.h>
-#include <vulkan/vulkan_core.h>
-#include <vulkan/vk_enum_string_helper.h>
-
-#include "vma/vk_mem_alloc.h"
-
+#include "depth_image.h"
 #include "log/log.h"
-
-export module context : depth_image;
-
-import : context;
-import : commands;
 
 namespace tire {
 
-struct DepthImage final {
-    DepthImage() = delete;
-    DepthImage( const DepthImage &other ) = delete;
-    DepthImage( DepthImage &&other ) = delete;
 
-    DepthImage( const Context *context, uint32_t width, uint32_t height )
+    DepthImage::DepthImage( const Context *context, uint32_t width, uint32_t height )
         : context_{ context }
         , width_{ width }
         , height_{ height }
@@ -35,27 +19,24 @@ struct DepthImage final {
         transitionImageLayout();
     }
 
-    auto operator=( const DepthImage &other ) -> DepthImage & = delete;
-    auto operator=( DepthImage &&other ) -> DepthImage & = delete;
 
-    [[nodiscard]] auto view() const -> VkImageView {
+    auto DepthImage::view() const -> VkImageView {
         //
         return depthImageView_;
     }
 
-    auto clean() -> void {
+    auto  DepthImage::clean() -> void {
         //
         vmaDestroyImage( context_->allocator(), depthImage_, depthImageAllocation_ );
         vkDestroyImageView( context_->device(), depthImageView_, nullptr );
     }
 
-    ~DepthImage() {
+     DepthImage::~DepthImage() {
         //
         clean();
     };
 
-private:
-    auto initDeviceImage() -> void {
+    auto  DepthImage::initDeviceImage() -> void {
         const auto imageExtent = VkExtent3D{
             //
             .width = width_,
@@ -94,7 +75,7 @@ private:
         }
     }
 
-    auto initImageView() -> void {
+    auto  DepthImage::initImageView() -> void {
         const auto subResRange = VkImageSubresourceRange{
             //
             .aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT,
@@ -121,7 +102,7 @@ private:
         }
     }
 
-    auto transitionImageLayout() -> void {
+    auto  DepthImage::transitionImageLayout() -> void {
         //
         auto c = context_->immediateCommand();
 
@@ -214,7 +195,7 @@ private:
         vkCmdPipelineBarrier( c.buf(), sourceStage, destinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier );
     }
 
-    [[nodiscard]] auto findSupportedFormat( const std::vector<VkFormat> &candidates, VkImageTiling tiling,
+    auto  DepthImage::findSupportedFormat( const std::vector<VkFormat> &candidates, VkImageTiling tiling,
                                             VkFormatFeatureFlags features ) const -> VkFormat {
         for ( VkFormat format : candidates ) {
             VkFormatProperties props;
@@ -232,17 +213,5 @@ private:
         // Silence warning
         return {};
     }
-
-private:
-    const Context *context_{};
-
-    uint32_t width_{};
-    uint32_t height_{};
-    VkFormat depthFormat_{};
-
-    VkImage depthImage_{};
-    VmaAllocation depthImageAllocation_{};
-    VkImageView depthImageView_{};
-};
 
 }  // namespace tire

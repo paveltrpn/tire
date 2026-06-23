@@ -9,13 +9,12 @@ module;
 
 #include "vma/vk_mem_alloc.h"
 
+#include "context/context.h"
 #include "log/log.h"
 #include "image/image.h"
 #include "image/tga.h"
 
 export module render:texture_image;
-
-import context;
 
 namespace tire {
 
