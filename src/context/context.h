@@ -39,15 +39,6 @@ namespace tire {
 
 struct DepthImage;
 
-static auto vkDestroyDebugUtilsMessenger( VkInstance instance, VkDebugUtilsMessengerEXT messanger,
-                                          const VkAllocationCallbacks *pAllocator ) -> void {
-    auto func =
-        (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr( instance, "vkDestroyDebugUtilsMessengerEXT" );
-    if ( func != nullptr ) {
-        return func( instance, messanger, pAllocator );
-    }
-}
-
 struct Context final {
 #ifdef SURFACE_X11
     Context( uint32_t width, uint32_t height, Display *display, Window window );
