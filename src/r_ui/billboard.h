@@ -43,7 +43,7 @@ struct Billboard final {
 
     [[nodiscard]] auto verteciesData() const -> const vector3<value_type> *;
 
-    [[nodiscard]] auto texcrdsData() const -> const vector2<value_type> * ;
+    [[nodiscard]] auto texcrdsData() const -> const vector2<value_type> *;
 
     [[nodiscard]] auto clrsData() const -> const vector4<value_type> * ;
 

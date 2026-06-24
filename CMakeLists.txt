@@ -14,6 +14,10 @@ elseif(USE_LATEST_GCC)
     set(CMAKE_CXX_COMPILER $ENV{GCC_LATEST}/bin/g++)
 endif()
 
+# SHUT UP qt creator!!!! DELETE THIS!!!
+set(CMAKE_C_COMPILER_WORKS 1)
+set(CMAKE_CXX_COMPILER_WORKS 1)
+
 project(tire_ed)
 
 include_directories("src")
