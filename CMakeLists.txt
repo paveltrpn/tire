@@ -143,19 +143,6 @@ target_compile_features(render PUBLIC cxx_std_26)
 target_compile_options(render PRIVATE -freflection)
 
 # ================================
-# Module generator
-# ================================
-file(GLOB MOD_GENERATOR_SRC "src/generator/*.cpp")
-add_library(generator)
-target_sources(generator
-    PUBLIC FILE_SET CXX_MODULES FILES
-    ${MOD_GENERATOR_SRC}
-)
-target_link_libraries(generator)
-target_compile_features(generator PUBLIC cxx_std_26)
-target_compile_options(generator PRIVATE -freflection)
-
-# ================================
 # Module lib/fast_obj
 # ================================
 add_subdirectory(lib/fast_obj)
