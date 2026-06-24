@@ -21,31 +21,29 @@ struct Billboard final {
     using vector3_type = vector3<value_type>;
     using vector4_type = vector4<value_type>;
 
-    auto setColor( const Colorf &value ) -> void ;
+    auto setColor( const Colorf &value ) -> void;
 
-    auto setPos( float px, float py ) -> void ;
+    auto setPos( float px, float py ) -> void;
 
-    auto setSize( float width, float height ) -> void ;
+    auto setSize( float width, float height ) -> void;
 
-    auto setZ( float z ) -> void ;
+    auto setZ( float z ) -> void;
 
     auto draw() -> void;
 
+    [[nodiscard]] auto lettersCount() const -> size_t;
 
-
-    [[nodiscard]] auto lettersCount() const -> size_t ;
-
-    [[nodiscard]] auto bufferVerticesSize() const -> size_t ;
+    [[nodiscard]] auto bufferVerticesSize() const -> size_t;
 
     [[nodiscard]] auto bufferTexcrdsSize() const -> size_t;
 
-    [[nodiscard]] auto bufferVertclrsSize() const -> size_t ;
+    [[nodiscard]] auto bufferVertclrsSize() const -> size_t;
 
     [[nodiscard]] auto verteciesData() const -> const vector3<value_type> *;
 
     [[nodiscard]] auto texcrdsData() const -> const vector2<value_type> *;
 
-    [[nodiscard]] auto clrsData() const -> const vector4<value_type> * ;
+    [[nodiscard]] auto clrsData() const -> const vector4<value_type> *;
 
 private:
     std::array<vector3_type, JUST_SINGLE_QUAD * VERTICIES_PER_QUAD> quadVerticies_{};

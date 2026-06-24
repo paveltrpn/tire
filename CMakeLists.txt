@@ -127,7 +127,7 @@ target_compile_options(context PRIVATE -freflection)
 # ================================
 # Module r_ui
 # ================================
-file(GLOB MOD_R_UI_SRC "src/r_ui/*.cpp")
+file(GLOB MOD_R_UI_SRC "src/r_ui/*.cpp" "src/r_ui/*.h")
 add_library(r_ui ${MOD_R_UI_SRC})
 target_link_libraries(r_ui log algebra image)
 target_compile_features(r_ui PUBLIC cxx_std_26)

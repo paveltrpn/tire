@@ -51,17 +51,19 @@ struct RenderVK final {
 
     ~RenderVK() = default;
 
-    [[nodiscard]]
-    auto run() -> bool {
+    [[nodiscard]] auto run() -> bool {
         //
         return run_;
     }
 
-    auto displayRenderInfo() -> void {
+    auto displayRenderInfo() -> void{
         //
     };
 
-    auto preLoop() -> void { log::notice()( "render loop starts here..." ); };
+    auto preLoop() -> void {
+        //
+        log::notice()( "render loop starts here..." );
+    }
 
     auto frame() -> void {
         // Update global timer

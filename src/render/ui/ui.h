@@ -50,9 +50,9 @@ struct QuadDrawBuffer final {
 struct UiComponentVisitor final {
     UiComponentVisitor( VkCommandBuffer cb, QuadDrawBuffer &labelBuffer, QuadDrawBuffer &billboardBuffer );
 
-    auto operator()( const tire::Label &item ) -> void ;
+    auto operator()( const tire::Label &item ) -> void;
 
-    auto operator()( const tire::Billboard &item ) -> void ;
+    auto operator()( const tire::Billboard &item ) -> void;
 
     template <typename T>
     auto dispath( const T &item, QuadDrawBuffer &buffer ) -> void {
@@ -70,28 +70,28 @@ struct UiComponentVisitor final {
         buffer.cBuf_.memcpy( cDataPtr, item.bufferVertclrsSize(), cOffset );
 
         VkBufferCopy copyVrt{
-          //
-          .srcOffset = vOffset,
-          .dstOffset = vOffset,
-          .size = item.bufferVerticesSize(),
+            //
+            .srcOffset = vOffset,
+            .dstOffset = vOffset,
+            .size = item.bufferVerticesSize(),
         };
 
         vkCmdCopyBuffer( cb_, buffer.vBuf_.stagingBuffer(), buffer.vBuf_.deviceBuffer(), 1, &copyVrt );
 
         VkBufferCopy copyTxc{
-          //
-          .srcOffset = tOffset,
-          .dstOffset = tOffset,
-          .size = item.bufferTexcrdsSize(),
+            //
+            .srcOffset = tOffset,
+            .dstOffset = tOffset,
+            .size = item.bufferTexcrdsSize(),
         };
 
         vkCmdCopyBuffer( cb_, buffer.tBuf_.stagingBuffer(), buffer.tBuf_.deviceBuffer(), 1, &copyTxc );
 
         VkBufferCopy copyClrs{
-          //
-          .srcOffset = cOffset,
-          .dstOffset = cOffset,
-          .size = item.bufferVertclrsSize(),
+            //
+            .srcOffset = cOffset,
+            .dstOffset = cOffset,
+            .size = item.bufferVertclrsSize(),
         };
 
         vkCmdCopyBuffer( cb_, buffer.cBuf_.stagingBuffer(), buffer.cBuf_.deviceBuffer(), 1, &copyClrs );
@@ -108,15 +108,15 @@ struct UiComponentVisitor final {
 struct UiVK final : tire::Ui {
     UiVK( const Context *context );
 
-    auto upload( const VkCommandBuffer cb ) -> void ;
+    auto upload( const VkCommandBuffer cb ) -> void;
 
-    auto draw( const VkCommandBuffer cb ) -> void ;
+    auto draw( const VkCommandBuffer cb ) -> void;
 
-    auto flush() -> void override ;
+    auto flush() -> void override;
 
 private:
-    void initDescriptorSets() ;
-    auto initTextureSmpler() -> void ;
+    void initDescriptorSets();
+    auto initTextureSmpler() -> void;
 
 private:
     const Context *context_;
