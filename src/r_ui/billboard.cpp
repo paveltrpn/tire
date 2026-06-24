@@ -1,6 +1,4 @@
 
-module;
-
 #include <array>
 
 #include "log/log.h"
@@ -9,41 +7,36 @@ module;
 #include "algebra/vector3.h"
 #include "algebra/vector4.h"
 
-export module r_ui : billboard;
+#include "billboard.h"
 
 namespace tire {
 
 using namespace algebra;
 
-export struct Billboard final {
-    using value_type = float;
-    using vector2_type = vector2<value_type>;
-    using vector3_type = vector3<value_type>;
-    using vector4_type = vector4<value_type>;
 
-    auto setColor( const Colorf &value ) -> void {
+    auto Billboard::setColor( const Colorf &value ) -> void {
         //
         color_ = value;
     }
 
-    auto setPos( float px, float py ) -> void {
+    auto Billboard::setPos( float px, float py ) -> void {
         //
         posX_ = px;
         posY_ = py;
     }
 
-    auto setSize( float width, float height ) -> void {
+    auto Billboard::setSize( float width, float height ) -> void {
         //
         width_ = width;
         height_ = height;
     }
 
-    auto setZ( float z ) -> void {
+    auto Billboard::setZ( float z ) -> void {
         //
         z_ = z;
     }
 
-    auto draw() -> void {
+    auto Billboard::draw() -> void {
         const vector3_type topLeftVt = { posX_, posY_, z_ };
         const vector3_type topRightVt = { posX_ + width_, posY_, z_ };
         const vector3_type bottomRightVt = { posX_ + width_, posY_ - height_, z_ };
@@ -77,48 +70,34 @@ export struct Billboard final {
         quadsColors_[5] = color;
     }
 
-#define VERTICIES_PER_QUAD 6
-#define JUST_SINGLE_QUAD 1
-
-    [[nodiscard]] auto lettersCount() const -> size_t {
+     auto Billboard::lettersCount() const -> size_t {
         //
         return JUST_SINGLE_QUAD;
     }
 
-    [[nodiscard]] auto bufferVerticesSize() const -> size_t {
+     auto Billboard::bufferVerticesSize() const -> size_t {
         //
         return JUST_SINGLE_QUAD * VERTICIES_PER_QUAD * sizeof( vector3_type );
     }
 
-    [[nodiscard]] auto bufferTexcrdsSize() const -> size_t {
+    auto Billboard::bufferTexcrdsSize() const -> size_t {
         //
         return JUST_SINGLE_QUAD * VERTICIES_PER_QUAD * sizeof( vector2_type );
     }
 
-    [[nodiscard]] auto bufferVertclrsSize() const -> size_t {
+     auto Billboard::bufferVertclrsSize() const -> size_t {
         //
         return JUST_SINGLE_QUAD * VERTICIES_PER_QUAD * sizeof( vector4_type );
     }
 
-    [[nodiscard]] auto verteciesData() const -> const vector3<value_type> * { return quadVerticies_.data(); }
+     auto Billboard::verteciesData() const -> const vector3<value_type> * {
+         //
+         return quadVerticies_.data(); }
 
-    [[nodiscard]] auto texcrdsData() const -> const vector2<value_type> * { return quadTexcrds_.data(); }
+     auto Billboard::texcrdsData() const -> const vector2<value_type> * { return quadTexcrds_.data(); }
 
-    [[nodiscard]] auto clrsData() const -> const vector4<value_type> * { return quadsColors_.data(); }
+     auto Billboard::clrsData() const -> const vector4<value_type> * { return quadsColors_.data(); }
 
-private:
-    std::array<vector3_type, JUST_SINGLE_QUAD * VERTICIES_PER_QUAD> quadVerticies_{};
-    std::array<vector2_type, JUST_SINGLE_QUAD * VERTICIES_PER_QUAD> quadTexcrds_{};
-    std::array<vector4_type, JUST_SINGLE_QUAD * VERTICIES_PER_QUAD> quadsColors_{};
 
-    Colorf color_{};
-
-    float posX_{ 0.0f };
-    float posY_{ 0.0f };
-    float z_{ 0.0f };
-
-    float width_{ 1.0f };
-    float height_{ 1.0f };
-};
 
 }  // namespace tire

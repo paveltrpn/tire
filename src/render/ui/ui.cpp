@@ -18,7 +18,9 @@
 #include "image/image.h"
 #include "algebra/vector3.h"
 
-import r_ui;
+#include "r_ui/ui.h"
+#include "r_ui/billboard.h"
+#include "r_ui/label.h"
 
 #include "ui.h"
 #include "pipeline_ui.h"
