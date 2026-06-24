@@ -129,7 +129,7 @@ target_sources(r_ui
     PUBLIC FILE_SET CXX_MODULES FILES
     ${MOD_R_UI_SRC}
 )
-target_link_libraries(r_ui log algebra image event)
+target_link_libraries(r_ui log algebra image)
 target_compile_features(r_ui PUBLIC cxx_std_26)
 target_compile_options(r_ui PRIVATE -freflection )
 
@@ -138,21 +138,9 @@ target_compile_options(r_ui PRIVATE -freflection )
 # ================================
 file(GLOB_RECURSE MOD_RENDER_SRC "src/render/*.cpp" "src/render/*.h")
 add_library(render ${MOD_RENDER_SRC})
-target_link_libraries(render vulkan context r_ui config geometry algebra vma_usage event)
+target_link_libraries(render vulkan context r_ui config algebra vma_usage)
 target_compile_features(render PUBLIC cxx_std_26)
 target_compile_options(render PRIVATE -freflection)
-
-# ================================
-# Module geometry
-# ================================
-file(GLOB MOD_GEOMETRY_SRC "src/geometry/*.cpp")
-add_library(geometry)
-target_sources(geometry
-    PUBLIC FILE_SET CXX_MODULES FILES
-    ${MOD_GEOMETRY_SRC})
-target_link_libraries(geometry algebra)
-target_compile_features(geometry PUBLIC cxx_std_26)
-target_compile_options(geometry PRIVATE -freflection)
 
 # ================================
 # Module generator
@@ -166,19 +154,6 @@ target_sources(generator
 target_link_libraries(generator)
 target_compile_features(generator PUBLIC cxx_std_26)
 target_compile_options(generator PRIVATE -freflection)
-
-# ================================
-# Module event
-# ================================
-file(GLOB MOD_EVENT_SRC "src/event/*.cpp")
-add_library(event)
-target_sources(event
-    PUBLIC FILE_SET CXX_MODULES FILES
-    ${MOD_EVENT_SRC}
-)
-target_link_libraries(event)
-target_compile_features(event PUBLIC cxx_std_26)
-target_compile_options(event PRIVATE -freflection)
 
 # ================================
 # Module lib/fast_obj
