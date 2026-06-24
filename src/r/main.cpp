@@ -4,12 +4,13 @@
 #include "window.h"
 
 auto main( int argc, char **argv ) -> int {
+    tire::log::error()( "start r..." );
     try {
-        new tire::Config{ "apps/config.json" };
+        new tire::Config{ "config.json" };
         auto foo = BareWindow{};
         foo.loop();
     } catch ( const std::exception &e ) {
-        // tire::log::error()( "caught exception: {}", e.what() );
+        tire::log::error()( "caught exception: {}", e.what() );
         return 1;
     }
     return 0;

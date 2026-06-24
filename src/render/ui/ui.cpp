@@ -68,7 +68,7 @@ UiVK::UiVK( const Context *context )
     const auto fontFile = configHandle->get<std::string>( "ui_font" );
 
     try {
-        testImage_ = std::make_shared<TextureImage>( context_, basePath + "/assets/img_fonts/" + fontFile );
+        testImage_ = std::make_shared<TextureImage>( context_, basePath + "/img_fonts/" + fontFile );
     } catch ( std::exception &e ) {
         log::fatal()( "font image {}", e.what() );
     }
@@ -78,8 +78,8 @@ UiVK::UiVK( const Context *context )
     auto program = Program{ context_ };
     program.fill( {
         //
-        basePath + "/assets/shaders/spirv/vk_ui_VERTEX.spv",
-        basePath + "/assets/shaders/spirv/vk_ui_FRAGMENT.spv",
+        basePath + "/shaders/spirv/vk_ui_VERTEX.spv",
+        basePath + "/shaders/spirv/vk_ui_FRAGMENT.spv",
     } );
 
     pipeline_->buildPipeline( program );
