@@ -11,7 +11,7 @@
 
 namespace tire {
 
-#define VERTICIES_PER_QUAD 6
+
 
 using namespace algebra;
 
@@ -37,7 +37,6 @@ using namespace algebra;
 
     auto setPos( float x, float y ) -> void ;
 
-#define VERTICIES_PER_QUAD 6
     auto draw( const std::string &string ) -> void ;
 
     [[nodiscard]] auto lettersCount() const -> size_t ;
@@ -57,6 +56,7 @@ using namespace algebra;
 private:
 // Size of "Letters buffer" - this is the number of all characters
 // from all draw() calls that can one instance of this class operates
+#define VERTICIES_PER_QUAD 6
 #define MAX_LETTERS_COUNT 64
     std::array<vector3_type, MAX_LETTERS_COUNT * VERTICIES_PER_QUAD> letterQuadsVertecies_{};
     std::array<vector2_type, MAX_LETTERS_COUNT * VERTICIES_PER_QUAD> letterQuadsTexcrds_{};

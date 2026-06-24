@@ -13,7 +13,6 @@ namespace tire {
 
 using namespace algebra;
 
-
     auto Billboard::setColor( const Colorf &value ) -> void {
         //
         color_ = value;

@@ -53,7 +53,7 @@ auto Context::findSupportedFormat( const std::vector<VkFormat> &candidates, VkIm
     return {};
 }
 
-void Context::makeCommandPool() {
+void Context::makeCommandPool(){
     VkCommandPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
