@@ -273,11 +273,9 @@ target_link_libraries(qt_window
 # tire editor executable
 # ================================
 set(TIRE_EDITOR_EXE ed)
-add_executable(${TIRE_EDITOR_EXE}
-    "src/ed/main.cpp"
-    "src/ed/tiredapplication.cpp"
-    "src/ed/tiredapplication.h"
-)
+add_executable(${TIRE_EDITOR_EXE})
+file(GLOB_RECURSE EXE_ED_SRC "apps/ed/*.cpp" "apps/ed/*.h")
+target_sources(${TIRE_EDITOR_EXE} PRIVATE ${EXE_ED_SRC})
 set_target_properties(${TIRE_EDITOR_EXE} PROPERTIES AUTOMOC TRUE)
 target_compile_options(${TIRE_EDITOR_EXE} PRIVATE -freflection)
 target_link_libraries(${TIRE_EDITOR_EXE}
@@ -314,8 +312,8 @@ target_compile_features(${TIRE_EDITOR_EXE} PUBLIC cxx_std_26)
 # ================================
 set(TIRE_EXE r)
 add_executable(${TIRE_EXE})
-file(GLOB_RECURSE EXE_BAREVK_SRC "src/r/*.cpp" "src/r/*.h")
-target_sources(${TIRE_EXE} PRIVATE ${EXE_BAREVK_SRC})
+file(GLOB_RECURSE EXE_R_SRC "apps/r/*.cpp" "apps/r/*.h")
+target_sources(${TIRE_EXE} PRIVATE ${EXE_R_SRC})
 set_target_properties(${TIRE_EXE} PROPERTIES AUTOMOC TRUE)
 target_compile_options(${TIRE_EXE} PRIVATE -freflection)
 target_link_libraries(${TIRE_EXE}
