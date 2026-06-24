@@ -32,6 +32,13 @@ else()
     message(SEND_ERROR "VULKAN_SDK is not set")
 endif()
 
+if (DEFINED ENV{VMA_DIR} AND NOT "$ENV{VMA_DIR}" STREQUAL "")
+    message( "VMA_DIR is set to $ENV{VMA_DIR}")
+    include_directories($ENV{VMA_DIR}/include)
+else()
+    message(SEND_ERROR "VMA_DIR is not set")
+endif()
+
 if (DEFINED ENV{vsg_DIR} AND NOT "$ENV{vsg_DIR}" STREQUAL "")
     message( "vsg_DIR is set to $ENV{vsg_DIR}")
     include_directories($ENV{vsg_DIR}/include)
@@ -48,7 +55,6 @@ else()
     message(SEND_ERROR "glslang_DIR is not set")
 endif()
 
-# Search nlohmann json.
 if (DEFINED ENV{NLOHMANN_JSON_DIR} AND NOT "$ENV{NLOHMANN_JSON_DIR}" STREQUAL "")
     message( "NLOHMANN_JSON_DIR is set to $ENV{NLOHMANN_JSON_DIR}")
     include_directories($ENV{NLOHMANN_JSON_DIR}/include)
@@ -56,21 +62,12 @@ else()
     message(SEND_ERROR "NLOHMANN_JSON_DIR is not set")
 endif()
 
-# Search glfw.
 if (DEFINED ENV{LOCAL_GLFW} AND NOT "$ENV{LOCAL_GLFW}" STREQUAL "")
     message( "LOCAL_GLFW is set to $ENV{LOCAL_GLFW}")
     include_directories($ENV{LOCAL_GLFW}/include)
     link_directories($ENV{LOCAL_GLFW}/lib)
 else()
     message(SEND_ERROR "LOCAL_GLFW is not set")
-endif()
-
-# Search vulkan memory allocator.
-if (DEFINED ENV{VMA_DIR} AND NOT "$ENV{VMA_DIR}" STREQUAL "")
-    message( "VMA_DIR is set to $ENV{VMA_DIR}")
-    include_directories($ENV{VMA_DIR}/include)
-else()
-    message(SEND_ERROR "VMA_DIR is not set")
 endif()
 
 include_directories("src")
