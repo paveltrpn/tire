@@ -232,13 +232,13 @@ target_link_libraries(tired
 )
 
 # ================================
-# Module tired_ui
+# Module ed_ui
 # ================================
-file(GLOB_RECURSE MOD_TIRED_UI_SRC "src/ui/*.cpp" "src/ui/*.h")
-add_library(tired_ui ${MOD_TIRED_UI_SRC})
-set_target_properties(tired_ui PROPERTIES AUTOMOC TRUE)
-target_compile_options(tired_ui PRIVATE -freflection -std=c++26)
-target_link_libraries(tired_ui
+file(GLOB_RECURSE MOD_TIRED_ED_UI_SRC "src/ed_ui/*.cpp" "src/ed_ui/*.h")
+add_library(ed_ui ${MOD_TIRED_ED_UI_SRC})
+set_target_properties(ed_ui PROPERTIES AUTOMOC TRUE)
+target_compile_options(ed_ui PRIVATE -freflection -std=c++26)
+target_link_libraries(ed_ui
     vsg
     vk
     image
@@ -302,7 +302,7 @@ target_link_libraries(${TIRE_EDITOR_EXE}
     Qt::QuickControls2
     Qt::QuickLayouts
     tired
-    tired_ui
+    ed_ui
     qt_window
 )
 target_compile_features(${TIRE_EDITOR_EXE} PUBLIC cxx_std_26)
