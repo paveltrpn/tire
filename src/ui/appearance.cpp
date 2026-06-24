@@ -12,8 +12,7 @@ TiredImageProvider::TiredImageProvider()
 }
 
 QImage TiredImageProvider::requestImage( const QString &id, QSize *size, const QSize &requestedSize ) {
-#define IMG_LOCATION "/mnt/main/code/tire_ed/src/ui/qml/icons/"
-    QImage requestedImg{ QString{ "/mnt/main/code/tire_ed/src/ui/qml/icons/%1" }.arg( id ) };
+    QImage requestedImg{ QString{ "/mnt/main/code/tire/src/ui/qml/icons/%1" }.arg( id ) };
 
     if ( requestedImg.isNull() ) {
         std::println( "image \"{}\" not found!", id.toStdString() );
