@@ -5,7 +5,6 @@
 
 #include <GLFW/glfw3.h>
 
-#include "context/context.h"
 #include "render/rendervk.h"
 
 struct BareWindow final {
@@ -32,5 +31,4 @@ private:
 
     // Render related
     std::unique_ptr<tire::RenderVK> render_;
-    std::unique_ptr<tire::Context> context_;
 };

@@ -20,17 +20,16 @@
 namespace tire {
 
 struct TestBox final {
-    TestBox( const Context *context );
+    TestBox();
 
-    auto draw( const VkCommandBuffer cb, float duration ) -> void ;
+    auto draw( const VkCommandBuffer cb, float duration ) -> void;
 
     auto setPosition( float x, float y, float z ) -> void;
-    auto setPosition( algebra::vector3f p ) -> void ;
+    auto setPosition( algebra::vector3f p ) -> void;
 
-    auto clean() -> void ;
+    auto clean() -> void;
 
 private:
-    const Context *context_;
     std::unique_ptr<Pipeline> pipeline_{};
 
     algebra::vector3f position_{ 0.0, 0.0, 0.0 };

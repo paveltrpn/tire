@@ -21,8 +21,7 @@ namespace tire {
 
 using namespace algebra;
 
-PipelineUi::PipelineUi( const Context *context )
-    : Pipeline( context ) {
+PipelineUi::PipelineUi() {
 }
 
 #define SHADER_ENTRY_POINT "main"
@@ -266,7 +265,8 @@ auto PipelineUi::buildPipeline( const Program &program ) -> void {
         .pBindings = &textureBind,
     };
 
-    vkCreateDescriptorSetLayout( context_->device(), &textureDescSetCreateInfo, nullptr, &textureDescSetLayout_ );
+    vkCreateDescriptorSetLayout( Context::instance().device(), &textureDescSetCreateInfo, nullptr,
+                                 &textureDescSetLayout_ );
 
     std::array<VkDescriptorSetLayout, 1> descSetLayouts{ textureDescSetLayout_ };
 
@@ -297,13 +297,14 @@ auto PipelineUi::buildPipeline( const Program &program ) -> void {
         .pPushConstantRanges = constants.data(),
     };
 
-    if ( const auto err = vkCreatePipelineLayout( context_->device(), &pipelineLayoutInfo, nullptr, &layout_ );
+    if ( const auto err =
+             vkCreatePipelineLayout( Context::instance().device(), &pipelineLayoutInfo, nullptr, &layout_ );
          err != VK_SUCCESS ) {
         log::fatal()( "failed to create pipeline layout with code {}!", string_VkResult( err ) );
     }
 
     // Init render pass.
-    renderPass_ = context_->renderPass();
+    renderPass_ = Context::instance().renderPass();
 
     // Create pipeline
     const auto pipelineInfo = VkGraphicsPipelineCreateInfo{
@@ -326,8 +327,8 @@ auto PipelineUi::buildPipeline( const Program &program ) -> void {
         .basePipelineIndex = -1,
     };
 
-    if ( const auto err =
-             vkCreateGraphicsPipelines( context_->device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline_ );
+    if ( const auto err = vkCreateGraphicsPipelines( Context::instance().device(), VK_NULL_HANDLE, 1, &pipelineInfo,
+                                                     nullptr, &pipeline_ );
          err != VK_SUCCESS ) {
         log::fatal()( "failed to create graphics pipeline with code {}!", string_VkResult( err ) );
     }

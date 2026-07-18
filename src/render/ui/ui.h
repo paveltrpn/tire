@@ -36,9 +36,7 @@ using namespace algebra;
 #define OUTPUT_QUADS_COUNT 128
 
 struct QuadDrawBuffer final {
-    QuadDrawBuffer( const Context *context, size_t quadsCount );
-
-    const Context *context_;
+    QuadDrawBuffer( size_t quadsCount );
 
     VertexBuffer vBuf_;
     VertexBuffer tBuf_;
@@ -106,7 +104,7 @@ struct UiComponentVisitor final {
 };
 
 struct UiVK final : tire::Ui {
-    UiVK( const Context *context );
+    UiVK();
 
     auto upload( const VkCommandBuffer cb ) -> void;
 
@@ -119,11 +117,10 @@ private:
     auto initTextureSmpler() -> void;
 
 private:
-    const Context *context_;
     std::shared_ptr<PipelineUi> pipeline_{};
 
-    QuadDrawBuffer labelBuffer_{ context_, OUTPUT_QUADS_COUNT };
-    QuadDrawBuffer billboardBuffer_{ context_, OUTPUT_QUADS_COUNT };
+    QuadDrawBuffer labelBuffer_{ OUTPUT_QUADS_COUNT };
+    QuadDrawBuffer billboardBuffer_{ OUTPUT_QUADS_COUNT };
 
     std::shared_ptr<tire::TextureImage> testImage_;
     VkSampler fontSampler_{};

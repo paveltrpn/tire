@@ -17,8 +17,6 @@
 namespace tire {
 
 VertexBuffer::VertexBuffer( VertexBuffer &&other ) noexcept {
-    //
-    context_ = std::exchange( other.context_, nullptr );
     size_ = std::exchange( other.size_, 0 );
 
     deviceBuffer_ = std::exchange( other.deviceBuffer_, VK_NULL_HANDLE );
@@ -28,17 +26,13 @@ VertexBuffer::VertexBuffer( VertexBuffer &&other ) noexcept {
     stagingAllocation_ = std::exchange( other.stagingAllocation_, VK_NULL_HANDLE );
 }
 
-VertexBuffer::VertexBuffer( const Context *context, size_t size )
-    : context_{ context }
-    , size_{ size } {
-    //
+VertexBuffer::VertexBuffer( size_t size )
+    : size_{ size } {
     initStagingBuffer( size );
     initDeviceBuffer( size );
 }
 
 auto VertexBuffer::operator=( VertexBuffer &&other ) noexcept -> VertexBuffer & {
-    //
-    context_ = std::exchange( other.context_, nullptr );
     size_ = std::exchange( other.size_, 0 );
 
     deviceBuffer_ = std::exchange( other.deviceBuffer_, VK_NULL_HANDLE );
@@ -71,13 +65,13 @@ auto VertexBuffer::memcpy( const void *data, size_t size, size_t offset ) const 
     }
 
     void *mappedPtr{};
-    vmaMapMemory( context_->allocator(), stagingAllocation_, &mappedPtr );
+    vmaMapMemory( Context::instance().allocator(), stagingAllocation_, &mappedPtr );
 
     char *offsettedPtr = static_cast<char *>( mappedPtr ) + offset;
 
     std::memcpy( offsettedPtr, data, size );
 
-    vmaUnmapMemory( context_->allocator(), stagingAllocation_ );
+    vmaUnmapMemory( Context::instance().allocator(), stagingAllocation_ );
 }
 
 auto VertexBuffer::size() const -> size_t {
@@ -86,11 +80,8 @@ auto VertexBuffer::size() const -> size_t {
 }
 
 auto VertexBuffer::clean() -> void {
-    //
-    if ( context_ != nullptr ) {
-        vmaDestroyBuffer( context_->allocator(), deviceBuffer_, deviceAllocation_ );
-        vmaDestroyBuffer( context_->allocator(), stagingBuffer_, stagingAllocation_ );
-    }
+    vmaDestroyBuffer( Context::instance().allocator(), deviceBuffer_, deviceAllocation_ );
+    vmaDestroyBuffer( Context::instance().allocator(), stagingBuffer_, stagingAllocation_ );
 }
 
 auto VertexBuffer::initStagingBuffer( size_t size ) -> void {
@@ -108,8 +99,8 @@ auto VertexBuffer::initStagingBuffer( size_t size ) -> void {
         .usage = VMA_MEMORY_USAGE_CPU_ONLY,
     };
 
-    vmaCreateBuffer( context_->allocator(), &stagingBufferInfo, &vmaallocInfo, &stagingBuffer_, &stagingAllocation_,
-                     nullptr );
+    vmaCreateBuffer( Context::instance().allocator(), &stagingBufferInfo, &vmaallocInfo, &stagingBuffer_,
+                     &stagingAllocation_, nullptr );
 }
 
 auto VertexBuffer::initDeviceBuffer( size_t size ) -> void {
@@ -127,8 +118,8 @@ auto VertexBuffer::initDeviceBuffer( size_t size ) -> void {
 
     };
 
-    vmaCreateBuffer( context_->allocator(), &bufCreateInfo, &allocCreateInfo, &deviceBuffer_, &deviceAllocation_,
-                     nullptr );
+    vmaCreateBuffer( Context::instance().allocator(), &bufCreateInfo, &allocCreateInfo, &deviceBuffer_,
+                     &deviceAllocation_, nullptr );
 }
 
 }  // namespace tire

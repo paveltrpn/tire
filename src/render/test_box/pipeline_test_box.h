@@ -10,7 +10,7 @@
 namespace tire {
 
 struct PiplineTestBox final : Pipeline {
-    PiplineTestBox( const Context *context );
+    PiplineTestBox();
 
     auto buildPipeline( const Program &program ) -> void override;
 

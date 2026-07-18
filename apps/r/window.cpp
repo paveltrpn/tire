@@ -21,12 +21,15 @@
 
 #include "window.h"
 
+#include "config/config.h"
 #include "context/context.h"
 #include "render/rendervk.h"
 #include "config/config.h"
 #include "log/log.h"
 
 BareWindow::BareWindow() {
+    new tire::Config{ "config.json" };
+
     if ( glfwInit() != GLFW_TRUE ) {
         tire::log::fatal()( "glfw init faild!" );
     }
@@ -73,7 +76,7 @@ BareWindow::BareWindow() {
             const auto display = glfwGetX11Display();
             const auto window = glfwGetX11Window( window_ );
 
-            context_ = std::make_unique<tire::Context>( width, height, display, window );
+            tire::Context::init( width, height, display, window );
 
             glfwSetWindowPos( window_, posx, posy );
 #endif
@@ -86,7 +89,7 @@ BareWindow::BareWindow() {
             const auto display = glfwGetWaylandDisplay();
             const auto surface = glfwGetWaylandWindow( window_ );
 
-            context_ = std::make_unique<tire::Context>( width, height, display, surface );
+            tire::Context::init( width, height, display, surface );
 #endif
             break;
         }
@@ -96,7 +99,7 @@ BareWindow::BareWindow() {
         }
     }
 
-    render_ = std::make_unique<tire::RenderVK>( context_.get() );
+    render_ = std::make_unique<tire::RenderVK>();
 
     glfwSetWindowUserPointer( window_, render_.get() );
 

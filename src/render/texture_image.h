@@ -6,11 +6,6 @@
 
 #include "vma/vk_mem_alloc.h"
 
-#include "context/context.h"
-#include "log/log.h"
-#include "image/image.h"
-#include "image/tga.h"
-
 namespace tire {
 
 struct TextureImage final {
@@ -18,34 +13,30 @@ struct TextureImage final {
     TextureImage( const TextureImage &other ) = delete;
     TextureImage( TextureImage &&other ) = delete;
 
-    TextureImage( const Context *context, const std::string &fname );
+    TextureImage( const std::string &fname );
 
     auto operator=( const TextureImage &other ) -> TextureImage & = delete;
     auto operator=( TextureImage &&other ) -> TextureImage & = delete;
 
-    [[nodiscard]]
-    auto view() const -> VkImageView ;
+    [[nodiscard]] auto view() const -> VkImageView;
 
-    ~TextureImage() ;
+    ~TextureImage();
 
-    auto clean() -> void ;
-
-private:
-    auto initStagingBuffer( VkDeviceSize size ) -> void ;
-
-    auto uploadToStaging( const void *data, VkDeviceSize size ) -> void ;
-    auto initDeviceImage( VkDeviceSize size ) -> void ;
-    auto uploadCmd() -> void ;
-
-    auto initImageView() -> void ;
-    auto generateMipmaps( VkImage image, uint32_t texWidth, uint32_t texHeight ) -> void ;
-
-    [[nodiscard]]
-    auto mipLevels() const -> uint32_t;
+    auto clean() -> void;
 
 private:
-    const Context *context_{};
+    auto initStagingBuffer( VkDeviceSize size ) -> void;
 
+    auto uploadToStaging( const void *data, VkDeviceSize size ) -> void;
+    auto initDeviceImage( VkDeviceSize size ) -> void;
+    auto uploadCmd() -> void;
+
+    auto initImageView() -> void;
+    auto generateMipmaps( VkImage image, uint32_t texWidth, uint32_t texHeight ) -> void;
+
+    [[nodiscard]] auto mipLevels() const -> uint32_t;
+
+private:
     uint32_t mipLevels_{ 8 };
     VkFormat imageFormat_{};
     VkExtent3D imageExtent_{};

@@ -18,7 +18,7 @@ void Context::collectPhysicalDevices() {
     uint32_t devCount{};
 
     // Enumerate physical devices
-    if ( const auto err = vkEnumeratePhysicalDevices( instance_, &devCount, nullptr ); err != VK_SUCCESS ) {
+    if ( const auto err = vkEnumeratePhysicalDevices( vkInstance_, &devCount, nullptr ); err != VK_SUCCESS ) {
         log::fatal()( "can't enumerate physical devices with code: {}", string_VkResult( err ) );
     } else {
         log::debug()( "physical devices enumerate success, count: {}", devCount );
@@ -33,7 +33,7 @@ void Context::collectPhysicalDevices() {
 
     // Get physical devices
     {
-        const auto err = vkEnumeratePhysicalDevices( instance_, &devCount, physicalDevices.data() );
+        const auto err = vkEnumeratePhysicalDevices( vkInstance_, &devCount, physicalDevices.data() );
         if ( err != VK_SUCCESS ) {
             log::fatal()( "can't acquire physical devices with code: {}", string_VkResult( err ) );
         } else {

@@ -9,8 +9,7 @@
 
 namespace tire {
 
-PiplineTestBox::PiplineTestBox( const Context *context )
-    : Pipeline( context ) {
+PiplineTestBox::PiplineTestBox() {
 }
 
 auto PiplineTestBox::buildPipeline( const Program &program ) -> void {
@@ -166,7 +165,8 @@ auto PiplineTestBox::buildPipeline( const Program &program ) -> void {
                                                          .pushConstantRangeCount = constants.size(),
                                                          .pPushConstantRanges = constants.data() };
 
-    if ( const auto err = vkCreatePipelineLayout( context_->device(), &pipelineLayoutInfo, nullptr, &layout_ );
+    if ( const auto err =
+             vkCreatePipelineLayout( Context::instance().device(), &pipelineLayoutInfo, nullptr, &layout_ );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create pipeline layout with code {}!", string_VkResult( err ) ) );
@@ -195,7 +195,7 @@ auto PiplineTestBox::buildPipeline( const Program &program ) -> void {
     VkPipelineCacheCreateInfo pipelineCacheInfo;
     memset( &pipelineCacheInfo, 0, sizeof( pipelineCacheInfo ) );
     pipelineCacheInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
-    vkCreatePipelineCache( context_->device(), &pipelineCacheInfo, nullptr, &pipelineCache_ );
+    vkCreatePipelineCache( Context::instance().device(), &pipelineCacheInfo, nullptr, &pipelineCache_ );
 
     // Create pipeline
     const VkGraphicsPipelineCreateInfo pipelineInfo{ .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
@@ -210,13 +210,13 @@ auto PiplineTestBox::buildPipeline( const Program &program ) -> void {
                                                      .pColorBlendState = &colorBlending,
                                                      .pDynamicState = &dynamicState,
                                                      .layout = layout_,
-                                                     .renderPass = context_->renderPass(),
+                                                     .renderPass = Context::instance().renderPass(),
                                                      .subpass = 0,
                                                      .basePipelineHandle = VK_NULL_HANDLE,
                                                      .basePipelineIndex = -1 };
 
-    if ( const auto err =
-             vkCreateGraphicsPipelines( context_->device(), pipelineCache_, 1, &pipelineInfo, nullptr, &pipeline_ );
+    if ( const auto err = vkCreateGraphicsPipelines( Context::instance().device(), pipelineCache_, 1, &pipelineInfo,
+                                                     nullptr, &pipeline_ );
          err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create graphics pipeline with code {}!", string_VkResult( err ) ) );

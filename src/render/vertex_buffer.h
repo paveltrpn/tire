@@ -22,36 +22,32 @@ struct VertexBuffer final {
     VertexBuffer() = delete;
     VertexBuffer( const VertexBuffer &other ) = delete;
 
-    VertexBuffer( VertexBuffer &&other ) noexcept ;
+    VertexBuffer( VertexBuffer &&other ) noexcept;
 
-    VertexBuffer( const Context *context, size_t size );
+    VertexBuffer( size_t size );
 
     auto operator=( const VertexBuffer &other ) -> VertexBuffer & = delete;
 
-    auto operator=( VertexBuffer &&other ) noexcept -> VertexBuffer & ;
+    auto operator=( VertexBuffer &&other ) noexcept -> VertexBuffer &;
 
-    ~VertexBuffer() ;
+    ~VertexBuffer();
 
-    [[nodiscard]]
-    auto deviceBuffer() const -> VkBuffer ;
+    [[nodiscard]] auto deviceBuffer() const -> VkBuffer;
 
-    [[nodiscard]]
-    auto stagingBuffer() const -> VkBuffer ;
+    [[nodiscard]] auto stagingBuffer() const -> VkBuffer;
 
     auto memcpy( const void *data, size_t size, size_t offset = 0 ) const -> void;
 
-    [[nodiscard]]
-    auto size() const -> size_t;
+    [[nodiscard]] auto size() const -> size_t;
 
-    auto clean() -> void ;
-
-private:
-    auto initStagingBuffer( size_t size ) -> void ;
-
-    auto initDeviceBuffer( size_t size ) -> void ;
+    auto clean() -> void;
 
 private:
-    const Context *context_{};
+    auto initStagingBuffer( size_t size ) -> void;
+
+    auto initDeviceBuffer( size_t size ) -> void;
+
+private:
     size_t size_{};
 
     VkBuffer deviceBuffer_{ VK_NULL_HANDLE };

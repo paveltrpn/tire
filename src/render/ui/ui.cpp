@@ -32,11 +32,10 @@ using namespace algebra;
 #define VERTICIES_PER_QUAD 6
 #define OUTPUT_QUADS_COUNT 128
 
-QuadDrawBuffer::QuadDrawBuffer( const Context *context, size_t quadsCount )
-    : context_{ context }
-    , vBuf_{ VertexBuffer{ context_, quadsCount * VERTICIES_PER_QUAD * 3 * sizeof( float ) } }
-    , tBuf_{ VertexBuffer{ context_, quadsCount * VERTICIES_PER_QUAD * 2 * sizeof( float ) } }
-    , cBuf_{ VertexBuffer{ context_, quadsCount * VERTICIES_PER_QUAD * 4 * sizeof( float ) } } {
+QuadDrawBuffer::QuadDrawBuffer( size_t quadsCount )
+    : vBuf_{ VertexBuffer{ quadsCount * VERTICIES_PER_QUAD * 3 * sizeof( float ) } }
+    , tBuf_{ VertexBuffer{ quadsCount * VERTICIES_PER_QUAD * 2 * sizeof( float ) } }
+    , cBuf_{ VertexBuffer{ quadsCount * VERTICIES_PER_QUAD * 4 * sizeof( float ) } } {
 }
 
 // =====================================================================
@@ -60,22 +59,21 @@ auto UiComponentVisitor::operator()( const tire::Billboard &item ) -> void {
 
 // =====================================================================
 
-UiVK::UiVK( const Context *context )
-    : context_{ context } {
+UiVK::UiVK() {
     //
     const auto configHandle = Config::instance();
     const auto basePath = configHandle->getBasePath().string();
     const auto fontFile = configHandle->get<std::string>( "ui_font" );
 
     try {
-        testImage_ = std::make_shared<TextureImage>( context_, basePath + "/img_fonts/" + fontFile );
+        testImage_ = std::make_shared<TextureImage>( basePath + "/img_fonts/" + fontFile );
     } catch ( std::exception &e ) {
         log::fatal()( "font image {}", e.what() );
     }
 
-    pipeline_ = std::make_shared<PipelineUi>( context_ );
+    pipeline_ = std::make_shared<PipelineUi>();
 
-    auto program = Program{ context_ };
+    auto program = Program{};
     program.fill( {
         //
         basePath + "/shaders/spirv/vk_ui_VERTEX.spv",
@@ -163,13 +161,13 @@ void UiVK::initDescriptorSets() {
         //
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
         .pNext = nullptr,
-        .descriptorPool = context_->descriptorPool(),
+        .descriptorPool = Context::instance().descriptorPool(),
         .descriptorSetCount = 1,
         .pSetLayouts = &texDescSetLayout,
     };
 
     {
-        const auto err = vkAllocateDescriptorSets( context_->device(), &texallocInfo, &fontDescSet_ );
+        const auto err = vkAllocateDescriptorSets( Context::instance().device(), &texallocInfo, &fontDescSet_ );
         if ( err != VK_SUCCESS ) {
             log::fatal()( "error while allocating descriptorSets {}", string_VkResult( err ) );
         }
@@ -194,7 +192,7 @@ void UiVK::initDescriptorSets() {
         .pBufferInfo = nullptr,
     };
 
-    vkUpdateDescriptorSets( context_->device(), 1, &textureWrite, 0, nullptr );
+    vkUpdateDescriptorSets( Context::instance().device(), 1, &textureWrite, 0, nullptr );
 }
 
 auto UiVK::initTextureSmpler() -> void {
@@ -213,7 +211,7 @@ auto UiVK::initTextureSmpler() -> void {
         .maxLod = VK_LOD_CLAMP_NONE,
     };
 
-    vkCreateSampler( context_->device(), &info, nullptr, &fontSampler_ );
+    vkCreateSampler( Context::instance().device(), &info, nullptr, &fontSampler_ );
 }
 
 }  // namespace tire

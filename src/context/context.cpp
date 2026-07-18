@@ -57,13 +57,13 @@ Context::~Context() {
     }
 
     vkDestroyCommandPool( device_, commandPool_, nullptr );
-    vkDestroySurfaceKHR( instance_, surface_, nullptr );
-    vkDestroyDebugUtilsMessenger( instance_, debugMessenger_, nullptr );
+    vkDestroySurfaceKHR( vkInstance_, surface_, nullptr );
+    vkDestroyDebugUtilsMessenger( vkInstance_, debugMessenger_, nullptr );
     vmaDestroyAllocator( allocator_ );
 
     vkDestroySwapchainKHR( device_, swapchain_, nullptr );
     vkDestroyDevice( device_, nullptr );
-    vkDestroyInstance( instance_, nullptr );
+    vkDestroyInstance( vkInstance_, nullptr );
 }
 
 #ifdef SURFACE_X11
@@ -73,7 +73,7 @@ auto Context::makeXlibSurface( Display *display, Window window ) -> void {
     xlibSurfInfo.dpy = display;
     xlibSurfInfo.window = window;
 
-    if ( const auto err = vkCreateXlibSurfaceKHR( instance_, &xlibSurfInfo, nullptr, &surface_ ); err != VK_SUCCESS ) {
+    if ( const auto err = vkCreateXlibSurfaceKHR( vkInstance_, &xlibSurfInfo, nullptr, &surface_ ); err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create xlib surface with code {}\n!", string_VkResult( err ) ) );
     } else {
@@ -299,7 +299,7 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
     }
 
     // Create vulkan instance
-    if ( const auto err = vkCreateInstance( &instanceCreateInfo, nullptr, &instance_ ); err != VK_SUCCESS ) {
+    if ( const auto err = vkCreateInstance( &instanceCreateInfo, nullptr, &vkInstance_ ); err != VK_SUCCESS ) {
         log::fatal()( "can't create vk instance with code: {}\n", string_VkResult( err ) );
     } else {
         log::info()( "vulkan instance created!" );
@@ -308,7 +308,7 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
     // Create debug utils messanger
     if ( configPtr->get<bool>( "enable_validation_layers" ) ) {
         if ( const auto err =
-                 vkCreateDebugUtilsMessenger( instance_, &debugUtilsMessengerCreateInfo, nullptr, &debugMessenger_ );
+                 vkCreateDebugUtilsMessenger( vkInstance_, &debugUtilsMessengerCreateInfo, nullptr, &debugMessenger_ );
              err != VK_SUCCESS ) {
             log::fatal()( "failed to set up debug messenger with code {}!\n", string_VkResult( err ) );
         } else {

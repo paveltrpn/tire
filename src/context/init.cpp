@@ -145,7 +145,7 @@ auto Context::createAllocator() -> void {
     allocatorCreateInfo.vulkanApiVersion = VK_API_VERSION_1_3;
     allocatorCreateInfo.physicalDevice = physDevice_;
     allocatorCreateInfo.device = device_;
-    allocatorCreateInfo.instance = instance_;
+    allocatorCreateInfo.instance = vkInstance_;
     allocatorCreateInfo.pVulkanFunctions = &vulkanFunctions;
 
     {

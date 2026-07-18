@@ -1,12 +1,10 @@
 
-#include "config/config.h"
 #include "log/log.h"
 #include "window.h"
 
 auto main( int argc, char **argv ) -> int {
     tire::log::error()( "start r..." );
     try {
-        new tire::Config{ "config.json" };
         auto foo = BareWindow{};
         foo.loop();
     } catch ( const std::exception &e ) {

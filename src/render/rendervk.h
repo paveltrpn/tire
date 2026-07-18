@@ -23,17 +23,14 @@
 namespace tire {
 
 struct RenderVK final {
-    RenderVK() = default;
-
-    explicit RenderVK( Context *context )
-        : context_{ context } {
+    explicit RenderVK() {
         try {
             const auto configHandle = Config::instance();
             const auto basePath = configHandle->getBasePath();
 
-            ui_ = std::make_shared<UiVK>( context_ );
+            ui_ = std::make_shared<UiVK>();
 
-            testBox_ = std::make_shared<TestBox>( context_ );
+            testBox_ = std::make_shared<TestBox>();
             testBox_->setPosition( 8.4f, 4.3f, -15.0f );
 
             // RUN!!!
@@ -80,19 +77,19 @@ struct RenderVK final {
         ui_->billboard( LABEL_POS_X - 1.0f, LABEL_POS_Y + 1.0f, 19.0f, 8.0f, 0.0f );
 
         {
-            auto cb = context_->copyBufferCommand();
+            auto cb = Context::instance().copyBufferCommand();
             ui_->upload( cb.buf() );
         }
 
         {
-            auto cb = context_->renderCommand( currentFrame_ );
+            auto cb = Context::instance().renderCommand( currentFrame_ );
             testBox_->draw( cb.buf(), timer_.floatFrameDuration() );
             ui_->draw( cb.buf() );
         }
 
         ui_->flush();
 
-        currentFrame_ = ( currentFrame_ + 1 ) % context_->framesCount();
+        currentFrame_ = ( currentFrame_ + 1 ) % Context::instance().framesCount();
     };
 
     auto postLoop() -> void {
@@ -100,7 +97,7 @@ struct RenderVK final {
 
         // We should wait for the logical device to finish operations
         // before exiting mainLoop and destroying the window.
-        vkDeviceWaitIdle( context_->device() );
+        vkDeviceWaitIdle( Context::instance().device() );
     };
 
 public:
@@ -123,7 +120,6 @@ public:
     auto mouseOffsetEvent( double x, double y, double holdX, double holdY ) -> void;
 
 private:
-    Context *context_{};
     bool run_{};
 
     uint32_t currentFrame_{ 0 };

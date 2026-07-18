@@ -9,30 +9,28 @@
 
 namespace tire {
 
-    Pipeline::Pipeline( const Context *context )
-        : context_{ context } {}
+Pipeline::Pipeline() {
+}
 
-    Pipeline::~Pipeline() {
-        vkDestroyRenderPass( context_->device(), renderPass_, nullptr );
-        vkDestroyPipelineLayout( context_->device(), layout_, nullptr );
-        vkDestroyPipeline( context_->device(), pipeline_, nullptr );
-    }
+Pipeline::~Pipeline() {
+    vkDestroyRenderPass( Context::instance().device(), renderPass_, nullptr );
+    vkDestroyPipelineLayout( Context::instance().device(), layout_, nullptr );
+    vkDestroyPipeline( Context::instance().device(), pipeline_, nullptr );
+}
 
-     auto Pipeline::pipeline() const -> VkPipeline {
-        //
-        return pipeline_;
-    }
+auto Pipeline::pipeline() const -> VkPipeline {
+    //
+    return pipeline_;
+}
 
-     auto Pipeline::layout() const -> VkPipelineLayout {
-        //
-        return layout_;
-    };
+auto Pipeline::layout() const -> VkPipelineLayout {
+    //
+    return layout_;
+};
 
-     auto Pipeline::renderpass() const -> VkRenderPass {
-        //
-        return renderPass_;
-    }
-
-
+auto Pipeline::renderpass() const -> VkRenderPass {
+    //
+    return renderPass_;
+}
 
 }  // namespace tire

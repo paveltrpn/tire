@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <atomic>
+#include <mutex>
 #include <format>
 #include <memory>
 #include <vector>
@@ -40,20 +42,41 @@ namespace tire {
 struct DepthImage;
 
 struct Context final {
-#ifdef SURFACE_X11
-    Context( uint32_t width, uint32_t height, Display *display, Window window );
-#elifdef SURFACE_WAYLAND
-    Context( uint32_t width, uint32_t height, wl_display *display, wl_surface *surface );
-#endif
-
     Context( const Context &other ) = delete;
     Context( Context &&other ) = delete;
 
     auto operator=( const Context &other ) -> Context & = delete;
     auto operator=( Context &&other ) -> Context & = delete;
 
-    // Destroy all Vulkan context here.
-    ~Context();
+    static void init( uint32_t width, uint32_t height, Display *display, Window window ) {
+        // std::call_once guarantees the lambda is executed exactly once,
+        // even if multiple threads call init() concurrently.
+        std::call_once( init_flag_, [&]() {
+            // We deliberately use 'new' and do not delete.
+            // This is intentional. It solves the Static Destruction Order Fiasco.
+            // If your Singleton is destroyed during program shutdown, and another static
+            // object's destructor tries to use it, your program crashes. By leaking
+            // the pointer, the Singleton survives past the end of the program, and the OS automatically
+            // reclaims the memory when the process exits anyway.
+            _instance.store( new Context( width, height, display, window ) );
+        } );
+
+        // Optional: Warn or throw if init is called again with different arguments
+        // if ( _instance.load()a_ != a ||
+        //      _instance.load()b_ != b ) {
+        //     std::cerr << "Warning: Singleton already initialized. Ignoring new arguments.\n";
+        // }
+    }
+
+    [[nodiscard]] static Context &instance() {
+        // memory_order_acquire ensures we see the fully constructed object
+        Context *ptr = _instance.load();
+
+        if ( !ptr ) {
+            throw std::logic_error( "Singleton must be initialized via init() before calling getInstance()." );
+        }
+        return *ptr;
+    }
 
 #ifdef SURFACE_X11
     auto makeXlibSurface( Display *display, Window window ) -> void;
@@ -61,9 +84,9 @@ struct Context final {
     auto makeWaylandSurface( wl_display *display, wl_surface *surface ) -> void;
 #endif
 
-    [[nodiscard]] auto instance() const -> VkInstance {
+    [[nodiscard]] auto vkInstance() const -> VkInstance {
         //
-        return instance_;
+        return vkInstance_;
     }
 
     [[nodiscard]] auto surface() const -> VkSurfaceKHR {
@@ -159,6 +182,19 @@ struct Context final {
     [[nodiscard]] auto immediateCommand() const -> CommandRoutine;
 
 private:
+#ifdef SURFACE_X11
+    Context( uint32_t width, uint32_t height, Display *display, Window window );
+#elifdef SURFACE_WAYLAND
+    Context( uint32_t width, uint32_t height, wl_display *display, wl_surface *surface );
+#endif
+
+    // Destroy all Vulkan context here.
+    ~Context();
+
+    inline static std::atomic<Context *> _instance{ nullptr };
+    inline static std::once_flag init_flag_;
+
+private:
     struct PhysicalDevice final {
         VkPhysicalDevice device{ VK_NULL_HANDLE };
         VkPhysicalDeviceProperties properties{};
@@ -215,7 +251,7 @@ private:
 
 protected:
     // Instance
-    VkInstance instance_{ VK_NULL_HANDLE };
+    VkInstance vkInstance_{ VK_NULL_HANDLE };
     VkDebugUtilsMessengerEXT debugMessenger_{ VK_NULL_HANDLE };
     std::vector<const char *> desiredValidationLayerList_{};
     std::vector<VkExtensionProperties> extensionProperties_{};

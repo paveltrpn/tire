@@ -16,11 +16,10 @@
 
 namespace tire {
 
-TestBox::TestBox( const Context *context )
-    : context_{ context } {
+TestBox::TestBox() {
     //
-    pipeline_ = std::make_unique<PiplineTestBox>( context_ );
-    auto testBoxProgram = Program{ context_ };
+    pipeline_ = std::make_unique<PiplineTestBox>();
+    auto testBoxProgram = Program{};
     testBoxProgram.fill(
         { { vk_simple_box_VERTEX, vertex_stage_suffix }, { vk_simple_box_FRAGMENT, fragment_stage_suffix } } );
     pipeline_->buildPipeline( testBoxProgram );
@@ -31,7 +30,7 @@ auto TestBox::draw( const VkCommandBuffer cb, float duration ) -> void {
     auto offset = algebra::translate( position_ );
     offset.transpose_self();
 
-    const auto [width, height] = context_->currentExtent();
+    const auto [width, height] = Context::instance().currentExtent();
     // NOTE: Choose right projection matrix!!!
     const auto proj =
         algebra::perspective<float>( 40.0f, static_cast<float>( width ) / static_cast<float>( height ), 0.1f, 100.0f );

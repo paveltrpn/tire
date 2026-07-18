@@ -3,14 +3,16 @@
 
 #include "texture_image.h"
 
+#include "context/context.h"
 #include "log/log.h"
+#include "image/image.h"
 #include "image/tga.h"
+#include "log/log.h"
 
 namespace tire {
 
-TextureImage::TextureImage( const Context *context, const std::string &fname )
-    : context_{ context }
-    , imageFormat_{ VK_FORMAT_R8G8B8A8_SRGB } {
+TextureImage::TextureImage( const std::string &fname )
+    : imageFormat_{ VK_FORMAT_R8G8B8A8_SRGB } {
     //
     tire::Tga textureData{ fname };
 
@@ -43,9 +45,9 @@ TextureImage::~TextureImage() {
 
 auto TextureImage::clean() -> void {
     //
-    vmaDestroyImage( context_->allocator(), deviceImage_, deviceAllocation_ );
-    vmaDestroyBuffer( context_->allocator(), stagingBuffer_, stagingAllocation_ );
-    vkDestroyImageView( context_->device(), imageView_, nullptr );
+    vmaDestroyImage( Context::instance().allocator(), deviceImage_, deviceAllocation_ );
+    vmaDestroyBuffer( Context::instance().allocator(), stagingBuffer_, stagingAllocation_ );
+    vkDestroyImageView( Context::instance().device(), imageView_, nullptr );
 }
 
 auto TextureImage::initStagingBuffer( VkDeviceSize size ) -> void {
@@ -63,8 +65,8 @@ auto TextureImage::initStagingBuffer( VkDeviceSize size ) -> void {
     };
 
     {
-        const auto err = vmaCreateBuffer( context_->allocator(), &stagingBufferInfo, &vmaallocInfo, &stagingBuffer_,
-                                          &stagingAllocation_, nullptr );
+        const auto err = vmaCreateBuffer( Context::instance().allocator(), &stagingBufferInfo, &vmaallocInfo,
+                                          &stagingBuffer_, &stagingAllocation_, nullptr );
         if ( err != VK_SUCCESS ) {
             log::fatal()( "error while creating staging buffer {}", string_VkResult( err ) );
         }
@@ -73,9 +75,9 @@ auto TextureImage::initStagingBuffer( VkDeviceSize size ) -> void {
 
 auto TextureImage::uploadToStaging( const void *data, VkDeviceSize size ) -> void {
     void *mappedPtr{};
-    vmaMapMemory( context_->allocator(), stagingAllocation_, &mappedPtr );
+    vmaMapMemory( Context::instance().allocator(), stagingAllocation_, &mappedPtr );
     memcpy( mappedPtr, data, size );
-    vmaUnmapMemory( context_->allocator(), stagingAllocation_ );
+    vmaUnmapMemory( Context::instance().allocator(), stagingAllocation_ );
 }
 
 auto TextureImage::initDeviceImage( VkDeviceSize size ) -> void {
@@ -102,8 +104,8 @@ auto TextureImage::initDeviceImage( VkDeviceSize size ) -> void {
     };
 
     {
-        const auto err = vmaCreateImage( context_->allocator(), &imgCreateInfo, &allocCreateInfo, &deviceImage_,
-                                         &deviceAllocation_, nullptr );
+        const auto err = vmaCreateImage( Context::instance().allocator(), &imgCreateInfo, &allocCreateInfo,
+                                         &deviceImage_, &deviceAllocation_, nullptr );
         if ( err != VK_SUCCESS ) {
             log::fatal()( "error while creating device image {}", string_VkResult( err ) );
         }
@@ -111,7 +113,7 @@ auto TextureImage::initDeviceImage( VkDeviceSize size ) -> void {
 }
 
 auto TextureImage::uploadCmd() -> void {
-    auto c = context_->immediateCommand();
+    auto c = Context::instance().immediateCommand();
 
     const auto range = VkImageSubresourceRange{
         //
@@ -188,7 +190,7 @@ auto TextureImage::initImageView() -> void {
     };
 
     {
-        const auto err = vkCreateImageView( context_->device(), &imageinfo, nullptr, &imageView_ );
+        const auto err = vkCreateImageView( Context::instance().device(), &imageinfo, nullptr, &imageView_ );
         if ( err != VK_SUCCESS ) {
             log::fatal()( "error while create image view {}", string_VkResult( err ) );
         }
@@ -196,7 +198,7 @@ auto TextureImage::initImageView() -> void {
 }
 
 auto TextureImage::generateMipmaps( VkImage image, uint32_t texWidth, uint32_t texHeight ) -> void {
-    auto c = context_->immediateCommand();
+    auto c = Context::instance().immediateCommand();
 
     const auto subResource = VkImageSubresourceRange{
         //

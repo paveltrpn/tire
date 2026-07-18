@@ -10,12 +10,11 @@
 namespace tire {
 
 struct PipelineUi final : Pipeline {
-    PipelineUi( const Context *context );
+    PipelineUi();
 
-    auto buildPipeline( const Program &program ) -> void override ;
+    auto buildPipeline( const Program &program ) -> void override;
 
-    [[nodiscard]]
-    auto pipelineSescSetsLayout() const -> std::array<VkDescriptorSetLayout, 1> ;
+    [[nodiscard]] auto pipelineSescSetsLayout() const -> std::array<VkDescriptorSetLayout, 1>;
 
 private:
     VkDescriptorSetLayout textureDescSetLayout_{};
