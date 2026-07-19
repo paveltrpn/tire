@@ -28,6 +28,7 @@
 #include "log/log.h"
 
 BareWindow::BareWindow() {
+    // Initialize Config sinleton.
     tire::Config::init( "config.json" );
 
     if ( glfwInit() != GLFW_TRUE ) {
@@ -75,6 +76,7 @@ BareWindow::BareWindow() {
             const auto display = glfwGetX11Display();
             const auto window = glfwGetX11Window( window_ );
 
+            // Initialize Context sinleton.
             tire::Context::init( width, height, display, window );
 
             glfwSetWindowPos( window_, posx, posy );
@@ -88,6 +90,7 @@ BareWindow::BareWindow() {
             const auto display = glfwGetWaylandDisplay();
             const auto surface = glfwGetWaylandWindow( window_ );
 
+            // Initialize Context sinleton.
             tire::Context::init( width, height, display, surface );
 #endif
             break;
@@ -98,6 +101,7 @@ BareWindow::BareWindow() {
         }
     }
 
+    // Initialize render object.
     render_ = std::make_unique<tire::RenderVK>();
 
     glfwSetWindowUserPointer( window_, render_.get() );
