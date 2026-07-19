@@ -4,14 +4,14 @@
 namespace tire {
 
 void Config::init( const std::filesystem::path &fname ) {
+    if ( _initSuccess ) {
+        log::error()( "Warning: Singleton already initialized. Ignoring new arguments." );
+    }
+
     std::call_once( _initFlag, [&]() {
         _instance.store( new Config( fname ) );
         _initSuccess = true;
     } );
-
-    if ( _initSuccess ) {
-        log::error()( "Warning: Singleton already initialized. Ignoring new arguments." );
-    }
 }
 
 Config &Config::instance() {

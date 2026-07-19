@@ -3,7 +3,7 @@
 #include "window.h"
 
 auto main( int argc, char **argv ) -> int {
-    tire::log::error()( "start r..." );
+    tire::log::info()( "start r..." );
     try {
         auto foo = BareWindow{};
         foo.loop();

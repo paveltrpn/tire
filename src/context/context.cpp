@@ -24,6 +24,10 @@ static auto vkDestroyDebugUtilsMessenger( VkInstance instance, VkDebugUtilsMesse
 }
 
 void Context::init( uint32_t width, uint32_t height, Display *display, Window window ) {
+    if ( _initSuccess ) {
+        log::error()( "Warning: Singleton already initialized. Ignoring new arguments." );
+    }
+
     std::call_once( _initFlag, [&]() {
         // We deliberately use 'new' and do not delete.
         // This is intentional. It solves the Static Destruction Order Fiasco.
@@ -34,10 +38,6 @@ void Context::init( uint32_t width, uint32_t height, Display *display, Window wi
         _instance.store( new Context( width, height, display, window ) );
         _initSuccess = true;
     } );
-
-    if ( _initSuccess ) {
-        log::error()( "Warning: Singleton already initialized. Ignoring new arguments." );
-    }
 }
 
 Context &Context::instance() {
