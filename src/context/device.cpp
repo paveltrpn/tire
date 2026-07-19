@@ -11,7 +11,6 @@
 #include "log/log.h"
 #include "config/config.h"
 
-
 namespace tire {
 
 void Context::collectPhysicalDevices() {
@@ -155,8 +154,6 @@ auto Context::pickDevice( const std::vector<PhysicalDevice> &physDevList ) -> st
 }
 
 void Context::makeDevice() {
-    const auto configHandle = Config::instance();
-
     {
         const auto d = pickDevice( physicalDevices_ );
         if ( !d ) {
@@ -253,7 +250,7 @@ void Context::makeDevice() {
     };
 
     loadBaseExt( true );
-    loadRTExt( configHandle->get<bool>( "enable_raytracing_extensions" ) );
+    loadRTExt( Config::instance().get<bool>( "enable_raytracing_extensions" ) );
 
     auto deviceCreateInfo = VkDeviceCreateInfo{
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
@@ -265,7 +262,7 @@ void Context::makeDevice() {
     };
 
     // Force use validation layers
-    if ( configHandle->get<bool>( "enable_validation_layers" ) ) {
+    if ( Config::instance().get<bool>( "enable_validation_layers" ) ) {
         deviceCreateInfo.enabledLayerCount = static_cast<uint32_t>( desiredValidationLayerList_.size() );
         deviceCreateInfo.ppEnabledLayerNames = desiredValidationLayerList_.data();
     } else {

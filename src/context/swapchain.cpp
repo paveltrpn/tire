@@ -12,8 +12,6 @@
 namespace tire {
 
 auto Context::makeSwapchain() -> void {
-    const auto configHandle = Config::instance();
-
     log::info()(
         "surface capabilities minImageCount: {}, "
         "maxImageCount: {}",
@@ -26,7 +24,7 @@ auto Context::makeSwapchain() -> void {
     // rendering is slower than vsync. Consider setting minImageCount to 3 to use
     // triple buffering to maximize performance in such cases.
     // Skip all logic above, just use value from config
-    framesCount_ = configHandle->get<int>( "frame_count" );
+    framesCount_ = Config::instance().get<int>( "frame_count" );
 
     //if ( ( framesCount_ < surfaceCapabilities_.minImageCount ) ||
     //    ( framesCount_ > surfaceCapabilities_.maxImageCount ) ) {

@@ -28,6 +28,4 @@ auto Config::getJson( std::string_view param ) const -> nlohmann::json {
     return config_[param];
 }
 
-std::unique_ptr<Config> Config::instance_ = nullptr;
-
 }  // namespace tire

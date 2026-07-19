@@ -139,10 +139,8 @@ static VkResult vkCreateDebugUtilsMessenger( VkInstance instance, const VkDebugU
 }  // namespace
 
 void Context::makeInstance( const std::string &platformSurfaceExtension ) {
-    const auto configPtr = Config::instance();
-
-    const auto applicationName = configPtr->getString( "application_name" );
-    const auto engineName = configPtr->getString( "engine_name" );
+    const auto applicationName = Config::instance().getString( "application_name" );
+    const auto engineName = Config::instance().getString( "engine_name" );
 
     const VkApplicationInfo appInfo{ .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
                                      .pApplicationName = applicationName.data(),
@@ -179,10 +177,10 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
         */
 
     // Vulkan vlidation layers list to enable
-    if ( configPtr->get<bool>( "enable_validation_layers" ) ) {
+    if ( Config::instance().get<bool>( "enable_validation_layers" ) ) {
         desiredValidationLayerList_.push_back( "VK_LAYER_KHRONOS_validation" );
 
-        if ( configPtr->get<bool>( "enable_additional_validation_layers" ) ) {
+        if ( Config::instance().get<bool>( "enable_additional_validation_layers" ) ) {
             desiredValidationLayerList_.emplace_back( "VK_LAYER_KHRONOS_profiles" );
             desiredValidationLayerList_.emplace_back( "VK_LAYER_KHRONOS_shader_object" );
             desiredValidationLayerList_.emplace_back( "VK_LAYER_KHRONOS_synchronization2" );
@@ -199,7 +197,7 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
 
         // NOTE: "VK_LAYER_RENDERDOC_Capture" must be available in system to use renderdoc
 
-        if ( configPtr->get<bool>( "enable_api_dump_validation_layers" ) ) {
+        if ( Config::instance().get<bool>( "enable_api_dump_validation_layers" ) ) {
             desiredValidationLayerList_.emplace_back( "VK_LAYER_LUNARG_api_dump" );
         }
     }
@@ -231,7 +229,7 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
         VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
         VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT );
 
-    if ( configPtr->get<bool>( "verbose_vulkan_output" ) ) {
+    if ( Config::instance().get<bool>( "verbose_vulkan_output" ) ) {
         debugUtilsMessageTypeFlagBits = ( VkDebugUtilsMessageTypeFlagBitsEXT )(
             VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
             VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT );
@@ -257,7 +255,7 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
     desiredInstanceExtensionsList.emplace_back( platformSurfaceExtension.c_str() );
     // desiredInstanceExtensionsList.emplace_back( "VK_KHR_xlib_surface" );
     // desiredInstanceExtensionsList.emplace_back( "VK_KHR_wayland_surface" );
-    if ( configPtr->get<bool>( "enable_validation_layers" ) ) {
+    if ( Config::instance().get<bool>( "enable_validation_layers" ) ) {
         desiredInstanceExtensionsList.emplace_back( VK_EXT_DEBUG_UTILS_EXTENSION_NAME );
     }
 
@@ -266,7 +264,7 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
     instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     instanceCreateInfo.pApplicationInfo = &appInfo;
 
-    if ( configPtr->get<bool>( "enable_validation_layers" ) ) {
+    if ( Config::instance().get<bool>( "enable_validation_layers" ) ) {
         instanceCreateInfo.enabledLayerCount = static_cast<uint32_t>( desiredValidationLayerList_.size() );
         instanceCreateInfo.ppEnabledLayerNames = desiredValidationLayerList_.data();
         instanceCreateInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT *)&debugUtilsMessengerCreateInfo;
@@ -307,7 +305,7 @@ void Context::makeInstance( const std::string &platformSurfaceExtension ) {
     }
 
     // Create debug utils messanger
-    if ( configPtr->get<bool>( "enable_validation_layers" ) ) {
+    if ( Config::instance().get<bool>( "enable_validation_layers" ) ) {
         if ( const auto err =
                  vkCreateDebugUtilsMessenger( vkInstance_, &debugUtilsMessengerCreateInfo, nullptr, &debugMessenger_ );
              err != VK_SUCCESS ) {

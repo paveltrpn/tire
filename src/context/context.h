@@ -238,8 +238,7 @@ private:
 
         // Note that the order of clearValues should be identical to the order of your
         // attachments
-        const auto configHandle = tire::Config::instance();
-        const auto colorString = configHandle->get<std::string>( "background_color" );
+        const auto colorString = tire::Config::instance().get<std::string>( "background_color" );
         const auto backgroundColor = Colorf( colorString );
         clearValues_[0].color = { { backgroundColor.r(), backgroundColor.g(), backgroundColor.b(), 1.0f } };
         clearValues_[1].depthStencil = { .depth = 1.0f, .stencil = 0 };

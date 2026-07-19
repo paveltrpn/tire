@@ -25,8 +25,7 @@ namespace tire {
 struct RenderVK final {
     explicit RenderVK() {
         try {
-            const auto configHandle = Config::instance();
-            const auto basePath = configHandle->getBasePath();
+            const auto basePath = Config::instance().getBasePath();
 
             ui_ = std::make_shared<UiVK>();
 

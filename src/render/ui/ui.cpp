@@ -61,9 +61,8 @@ auto UiComponentVisitor::operator()( const tire::Billboard &item ) -> void {
 
 UiVK::UiVK() {
     //
-    const auto configHandle = Config::instance();
-    const auto basePath = configHandle->getBasePath().string();
-    const auto fontFile = configHandle->get<std::string>( "ui_font" );
+    const auto basePath = Config::instance().getBasePath().string();
+    const auto fontFile = Config::instance().get<std::string>( "ui_font" );
 
     try {
         testImage_ = std::make_shared<TextureImage>( basePath + "/img_fonts/" + fontFile );

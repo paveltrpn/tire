@@ -28,7 +28,7 @@
 #include "log/log.h"
 
 BareWindow::BareWindow() {
-    new tire::Config{ "config.json" };
+    tire::Config::init( "config.json" );
 
     if ( glfwInit() != GLFW_TRUE ) {
         tire::log::fatal()( "glfw init faild!" );
@@ -42,11 +42,10 @@ BareWindow::BareWindow() {
     glfwWindowHint( GLFW_CLIENT_API, GLFW_NO_API );
     glfwWindowHint( GLFW_RESIZABLE, GLFW_FALSE );
 
-    const auto configHandle = tire::Config::instance();
-    const auto width = configHandle->get<int>( "window_width" );
-    const auto height = configHandle->get<int>( "window_height" );
-    const auto posx = configHandle->get<int>( "window_pos_x" );
-    const auto posy = configHandle->get<int>( "window_pos_y" );
+    const auto width = tire::Config::instance().get<int>( "window_width" );
+    const auto height = tire::Config::instance().get<int>( "window_height" );
+    const auto posx = tire::Config::instance().get<int>( "window_pos_x" );
+    const auto posy = tire::Config::instance().get<int>( "window_pos_y" );
 
     window_ = glfwCreateWindow( width, height, "glfw", nullptr, nullptr );
 
