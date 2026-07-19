@@ -77,9 +77,15 @@ struct Context final {
         return swapchain_;
     }
 
-    [[nodiscard]] auto surfaceFormat() const -> const VkSurfaceFormatKHR & { return surfaceFormat_; };
+    [[nodiscard]] auto surfaceFormat() const -> const VkSurfaceFormatKHR & {
+        //
+        return surfaceFormat_;
+    };
 
-    [[nodiscard]] auto graphicsQueue() const -> const VkQueue & { return graphicsQueue_; }
+    [[nodiscard]] auto graphicsQueue() const -> const VkQueue & {
+        //
+        return graphicsQueue_;
+    }
 
     [[nodiscard]] auto graphicsFamily() const -> uint32_t {
         //
@@ -91,12 +97,17 @@ struct Context final {
         return physDevice_;
     }
 
-    [[nodiscard]] auto currentExtent() const -> const VkExtent2D & { return currentExtent_; };
+    [[nodiscard]] auto currentExtent() const -> const VkExtent2D & {
+        //
+        return currentExtent_;
+    };
 
-    [[nodiscard]] auto viewportSize() -> std::tuple<uint32_t, uint32_t> const { return { width_, height_ }; }
+    [[nodiscard]] auto viewportSize() -> std::tuple<uint32_t, uint32_t> const {
+        //
+        return { width_, height_ };
+    }
 
     [[nodiscard]] auto memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags properties ) const -> uint32_t;
-
     [[nodiscard]] auto findSupportedFormat( const std::vector<VkFormat> &candidates, VkImageTiling tiling,
                                             VkFormatFeatureFlags features ) const -> VkFormat;
 
@@ -149,9 +160,7 @@ struct Context final {
     };
 
     [[nodiscard]] auto renderCommand( uint32_t frameId ) -> CommandRoutine;
-
     [[nodiscard]] auto copyBufferCommand() const -> CommandRoutine;
-
     [[nodiscard]] auto immediateCommand() const -> CommandRoutine;
 
 private:
