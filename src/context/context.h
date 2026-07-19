@@ -51,7 +51,7 @@ struct Context final {
     static void init( uint32_t width, uint32_t height, Display *display, Window window ) {
         // std::call_once guarantees the lambda is executed exactly once,
         // even if multiple threads call init() concurrently.
-        std::call_once( init_flag_, [&]() {
+        std::call_once( _initFlag, [&]() {
             // We deliberately use 'new' and do not delete.
             // This is intentional. It solves the Static Destruction Order Fiasco.
             // If your Singleton is destroyed during program shutdown, and another static
@@ -192,7 +192,7 @@ private:
     ~Context();
 
     inline static std::atomic<Context *> _instance{ nullptr };
-    inline static std::once_flag init_flag_;
+    inline static std::once_flag _initFlag;
 
 private:
     struct PhysicalDevice final {
