@@ -3,7 +3,6 @@
 
 #include <atomic>
 #include <mutex>
-#include <format>
 #include <memory>
 #include <vector>
 
@@ -32,8 +31,7 @@
 #endif
 
 #include "config/config.h"
-#include "log/log.h"
-#include "image/image.h"
+#include "image/color.h"
 
 #include "command_routine.h"
 
