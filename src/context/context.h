@@ -48,32 +48,8 @@ struct Context final {
     auto operator=( const Context &other ) -> Context & = delete;
     auto operator=( Context &&other ) -> Context & = delete;
 
-    static void init( uint32_t width, uint32_t height, Display *display, Window window ) {
-        std::call_once( _initFlag, [&]() {
-            // We deliberately use 'new' and do not delete.
-            // This is intentional. It solves the Static Destruction Order Fiasco.
-            // If your Singleton is destroyed during program shutdown, and another static
-            // object's destructor tries to use it, your program crashes. By leaking
-            // the pointer, the Singleton survives past the end of the program, and the OS automatically
-            // reclaims the memory when the process exits anyway.
-            _instance.store( new Context( width, height, display, window ) );
-            _initSuccess = true;
-        } );
-
-        if ( _initSuccess ) {
-            log::error()( "Warning: Singleton already initialized. Ignoring new arguments." );
-        }
-    }
-
-    [[nodiscard]] static Context &instance() {
-        // memory_order_acquire ensures we see the fully constructed object
-        Context *ptr = _instance.load();
-
-        if ( !ptr ) {
-            throw std::logic_error( "Singleton must be initialized via init() before calling getInstance()." );
-        }
-        return *ptr;
-    }
+    static void init( uint32_t width, uint32_t height, Display *display, Window window );
+    [[nodiscard]] static Context &instance();
 
 #ifdef SURFACE_X11
     auto makeXlibSurface( Display *display, Window window ) -> void;

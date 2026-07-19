@@ -27,25 +27,8 @@ public:
     auto operator=( const Config &rhs ) -> Config & = delete;
     auto operator=( Config &&rhs ) -> Config & = delete;
 
-    static void init( const std::filesystem::path &fname ) {
-        std::call_once( _initFlag, [&]() {
-            _instance.store( new Config( fname ) );
-            _initSuccess = true;
-        } );
-
-        if ( _initSuccess ) {
-            log::error()( "Warning: Singleton already initialized. Ignoring new arguments." );
-        }
-    }
-
-    [[nodiscard]] static Config &instance() {
-        Config *ptr = _instance.load();
-
-        if ( !ptr ) {
-            throw std::logic_error( "Singleton must be initialized via init() before calling getInstance()." );
-        }
-        return *ptr;
-    }
+    static void init( const std::filesystem::path &fname );
+    [[nodiscard]] static Config &instance();
 
     [[nodiscard]] auto getBasePath() const -> const std::filesystem::path &;
     [[nodiscard]] auto getString( std::string_view param ) const -> std::string;
@@ -72,27 +55,7 @@ public:
     }
 
 private:
-    explicit Config( const std::filesystem::path &fname )
-        : basePath_{ std::filesystem::canonical( "/proc/self/exe" ).parent_path().parent_path() } {
-        const auto path = std::filesystem::path{ basePath_ / fname };
-
-        std::ifstream file{ path };
-        if ( file ) {
-            try {
-                config_ = nlohmann::json::parse( file );
-            } catch ( const nlohmann::json::parse_error &e ) {
-                log::error()(
-                    "config json parse error\n"
-                    "message:\t{}\n"
-                    "exception id:\t{}\n"
-                    "byte position of error:\t{}",
-                    e.what(), e.id, e.byte );
-            }
-        } else {
-            throw std::runtime_error( std::format( "file not found: {}\n", path.string() ) );
-        }
-    }
-
+    explicit Config( const std::filesystem::path &fname );
     ~Config() = default;
 
     inline static std::atomic<Config *> _instance{ nullptr };

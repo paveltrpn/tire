@@ -23,6 +23,33 @@ static auto vkDestroyDebugUtilsMessenger( VkInstance instance, VkDebugUtilsMesse
     }
 }
 
+void Context::init( uint32_t width, uint32_t height, Display *display, Window window ) {
+    std::call_once( _initFlag, [&]() {
+        // We deliberately use 'new' and do not delete.
+        // This is intentional. It solves the Static Destruction Order Fiasco.
+        // If your Singleton is destroyed during program shutdown, and another static
+        // object's destructor tries to use it, your program crashes. By leaking
+        // the pointer, the Singleton survives past the end of the program, and the OS automatically
+        // reclaims the memory when the process exits anyway.
+        _instance.store( new Context( width, height, display, window ) );
+        _initSuccess = true;
+    } );
+
+    if ( _initSuccess ) {
+        log::error()( "Warning: Singleton already initialized. Ignoring new arguments." );
+    }
+}
+
+Context &Context::instance() {
+    // memory_order_acquire ensures we see the fully constructed object
+    Context *ptr = _instance.load();
+
+    if ( !ptr ) {
+        throw std::logic_error( "Singleton must be initialized via init() before calling getInstance()." );
+    }
+    return *ptr;
+}
+
 #ifdef SURFACE_X11
 Context::Context( uint32_t width, uint32_t height, Display *display, Window window )
     : width_{ width }
