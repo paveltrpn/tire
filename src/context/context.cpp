@@ -73,7 +73,8 @@ auto Context::makeXlibSurface( Display *display, Window window ) -> void {
     xlibSurfInfo.dpy = display;
     xlibSurfInfo.window = window;
 
-    if ( const auto err = vkCreateXlibSurfaceKHR( vkInstance_, &xlibSurfInfo, nullptr, &surface_ ); err != VK_SUCCESS ) {
+    if ( const auto err = vkCreateXlibSurfaceKHR( vkInstance_, &xlibSurfInfo, nullptr, &surface_ );
+         err != VK_SUCCESS ) {
         throw std::runtime_error(
             std::format( "failed to create xlib surface with code {}\n!", string_VkResult( err ) ) );
     } else {

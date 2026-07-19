@@ -49,8 +49,6 @@ struct Context final {
     auto operator=( Context &&other ) -> Context & = delete;
 
     static void init( uint32_t width, uint32_t height, Display *display, Window window ) {
-        // std::call_once guarantees the lambda is executed exactly once,
-        // even if multiple threads call init() concurrently.
         std::call_once( _initFlag, [&]() {
             // We deliberately use 'new' and do not delete.
             // This is intentional. It solves the Static Destruction Order Fiasco.
@@ -59,13 +57,12 @@ struct Context final {
             // the pointer, the Singleton survives past the end of the program, and the OS automatically
             // reclaims the memory when the process exits anyway.
             _instance.store( new Context( width, height, display, window ) );
+            _initSuccess = true;
         } );
 
-        // Optional: Warn or throw if init is called again with different arguments
-        // if ( _instance.load()a_ != a ||
-        //      _instance.load()b_ != b ) {
-        //     std::cerr << "Warning: Singleton already initialized. Ignoring new arguments.\n";
-        // }
+        if ( _initSuccess ) {
+            log::error()( "Warning: Singleton already initialized. Ignoring new arguments." );
+        }
     }
 
     [[nodiscard]] static Context &instance() {
@@ -193,6 +190,7 @@ private:
 
     inline static std::atomic<Context *> _instance{ nullptr };
     inline static std::once_flag _initFlag;
+    inline static bool _initSuccess{ false };
 
 private:
     struct PhysicalDevice final {
