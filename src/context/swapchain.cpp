@@ -15,7 +15,7 @@ auto Context::makeSwapchain() -> void {
     log::info()(
         "surface capabilities minImageCount: {}, "
         "maxImageCount: {}",
-        surfaceCapabilities_.minImageCount, surfaceCapabilities_.maxImageCount );
+        surfaceCapabilities().minImageCount, surfaceCapabilities().maxImageCount );
 
     // NOTE: Warning from validation layers:
     // A Swapchain is being created with minImageCount set to 2, which means double buffering
@@ -45,26 +45,26 @@ auto Context::makeSwapchain() -> void {
     VkSwapchainCreateInfoKHR createInfo{
         //
         .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
-        .surface = surface_,
+        .surface = surface(),
         // The implementation will either create the swapchain with at least
         // that many images, or it will fail to create the swapchain.
         .minImageCount = framesCount_,
-        .imageFormat = surfaceFormat_.format,
-        .imageColorSpace = surfaceFormat_.colorSpace,
+        .imageFormat = surfaceFormat().format,
+        .imageColorSpace = surfaceFormat().colorSpace,
         .imageExtent = { viewportWidth, viewportHeight },  //currentExtent_,
         .imageArrayLayers = 1,
         .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-        .preTransform = surfaceCapabilities_.currentTransform,
+        .preTransform = surfaceCapabilities().currentTransform,
         .compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
-        .presentMode = presentMode_,
+        .presentMode = presentMode(),
         .clipped = VK_TRUE,
         .oldSwapchain = VK_NULL_HANDLE,
     };
 
     // Choose image sharing mode for swapchain images. That useful if graphics queue
     // dont support present and we intendet to use differt queue to preset.
-    std::array<uint32_t, 2> queueFamilyIndices = { graphicsFamilyQueueId_, presentSupportQueueId_ };
-    if ( graphicsFamilyQueueId_ != presentSupportQueueId_ ) {
+    std::array<uint32_t, 2> queueFamilyIndices = { graphicsFamilyQueueId(), presentSupportQueueId() };
+    if ( graphicsFamilyQueueId() != presentSupportQueueId() ) {
         createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
         createInfo.queueFamilyIndexCount = 2;
         createInfo.pQueueFamilyIndices = queueFamilyIndices.data();
@@ -75,7 +75,7 @@ auto Context::makeSwapchain() -> void {
     }
 
     {
-        const auto err = vkCreateSwapchainKHR( device_, &createInfo, nullptr, &swapchain_ );
+        const auto err = vkCreateSwapchainKHR( device(), &createInfo, nullptr, &swapchain_ );
         if ( err != VK_SUCCESS ) {
             log::fatal()( "failed to create swapchain code {}\n!", string_VkResult( err ) );
         } else {
@@ -87,7 +87,7 @@ auto Context::makeSwapchain() -> void {
     // equal to previously defined in VkSwapchainCreateInfoKHR.minImageCount (== framesCount_).
     // But we still try to get image count that way.
     {
-        const auto err = vkGetSwapchainImagesKHR( device_, swapchain_, &swapchainImageCount_, nullptr );
+        const auto err = vkGetSwapchainImagesKHR( device(), swapchain_, &swapchainImageCount_, nullptr );
         if ( err != VK_SUCCESS ) {
             log::fatal()( "failed to get swapchain images count with code {}\n!", string_VkResult( err ) );
         } else {
@@ -106,7 +106,7 @@ auto Context::makeFrames() -> void {
     // Acquire all swapchain images at one call
     std::vector<VkImage> swapChainImages;
     swapChainImages.resize( framesCount_ );
-    if ( const auto err = vkGetSwapchainImagesKHR( device_, swapchain_, &framesCount_, swapChainImages.data() );
+    if ( const auto err = vkGetSwapchainImagesKHR( device(), swapchain_, &framesCount_, swapChainImages.data() );
          err != VK_SUCCESS ) {
         log::fatal()( "failed to get swapchain images with code {}\n!", string_VkResult( err ) );
     } else {
@@ -133,13 +133,13 @@ auto Context::makeFrames() -> void {
             .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
             .image = swapChainImages[i],
             .viewType = VK_IMAGE_VIEW_TYPE_2D,
-            .format = surfaceFormat_.format,
+            .format = surfaceFormat().format,
             .components = { VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY,
                             VK_COMPONENT_SWIZZLE_IDENTITY },
             .subresourceRange = subResRange,
         };
 
-        if ( const auto err = vkCreateImageView( device_, &createInfo, nullptr, &frames_[i].view_ );
+        if ( const auto err = vkCreateImageView( device(), &createInfo, nullptr, &frames_[i].view_ );
              err != VK_SUCCESS ) {
             log::fatal()( "failed to create swapchain image views with code {}\n!", string_VkResult( err ) );
         } else {
@@ -159,7 +159,7 @@ auto Context::makeFrames() -> void {
             .layers = 1,
         };
 
-        if ( const auto err = vkCreateFramebuffer( device_, &framebufferInfo, nullptr, &frames_[i].framebuffer_ );
+        if ( const auto err = vkCreateFramebuffer( device(), &framebufferInfo, nullptr, &frames_[i].framebuffer_ );
              err != VK_SUCCESS ) {
             log::fatal()( "failed to create framebuffer at {} with code {}!", i, string_VkResult( err ) );
         } else {
@@ -177,11 +177,11 @@ auto Context::makeFrames() -> void {
         VkFenceCreateInfo fenceInfo{
             .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, .pNext = nullptr, .flags = VK_FENCE_CREATE_SIGNALED_BIT };
 
-        if ( vkCreateSemaphore( device_, &semaphoreInfo, nullptr, &frames_[i].imageAvailableSemaphore_ ) !=
+        if ( vkCreateSemaphore( device(), &semaphoreInfo, nullptr, &frames_[i].imageAvailableSemaphore_ ) !=
                  VK_SUCCESS ||
-             vkCreateSemaphore( device_, &semaphoreInfo, nullptr, &frames_[i].renderFinishedSemaphore_ ) !=
+             vkCreateSemaphore( device(), &semaphoreInfo, nullptr, &frames_[i].renderFinishedSemaphore_ ) !=
                  VK_SUCCESS ||
-             vkCreateFence( device_, &fenceInfo, nullptr, &frames_[i].inFlightFence_ ) != VK_SUCCESS ) {
+             vkCreateFence( device(), &fenceInfo, nullptr, &frames_[i].inFlightFence_ ) != VK_SUCCESS ) {
             log::fatal()( "failed to create semaphores!" );
         }
 

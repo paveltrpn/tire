@@ -77,14 +77,24 @@ struct Context final {
         return vkSurface_->surfaceFormat();
     };
 
-    [[nodiscard]] auto graphicsQueue() const -> const VkQueue & {
+    [[nodiscard]] auto graphicsQueue() const -> VkQueue {
         //
-        return graphicsQueue_;
+        return vkDevice_->graphicsQueue();
     }
 
-    [[nodiscard]] auto graphicsFamily() const -> uint32_t {
+    [[nodiscard]] auto presentQueue() const -> VkQueue {
         //
-        return graphicsFamilyQueueId_;
+        return vkDevice_->presentQueue();
+    }
+
+    [[nodiscard]] auto graphicsFamilyQueueId() const -> uint32_t {
+        //
+        return vkDevice_->graphicsFamilyQueueId();
+    }
+
+    [[nodiscard]] auto presentSupportQueueId() const -> uint32_t {
+        //
+        return vkDevice_->presentSupportQueueId();
     }
 
     [[nodiscard]] auto physicalDevice() const -> VkPhysicalDevice {
@@ -94,12 +104,22 @@ struct Context final {
 
     [[nodiscard]] auto currentExtent() const -> const VkExtent2D & {
         //
-        return currentExtent_;
+        return vkSurface_->currentExtent();
     };
 
     [[nodiscard]] auto viewportSize() -> std::tuple<uint32_t, uint32_t> const {
         //
         return { width_, height_ };
+    }
+
+    [[nodiscard]] auto presentMode() const -> VkPresentModeKHR {
+        //
+        return vkSurface_->presentMode();
+    }
+
+    auto surfaceCapabilities() const -> const VkSurfaceCapabilitiesKHR & {
+        //
+        return vkSurface_->surfaceCapabilities();
     }
 
     [[nodiscard]] auto memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags properties ) const -> uint32_t;
@@ -124,11 +144,6 @@ struct Context final {
     [[nodiscard]] auto framebuffer( size_t id ) const -> VkFramebuffer {
         //
         return frames_[id].framebuffer_;
-    };
-
-    [[nodiscard]] auto presentQueue() const -> VkQueue {
-        //
-        return vkDevice_->presentQueue();
     };
 
     auto renderCommandBegin( uint32_t frameId ) -> void;
@@ -173,14 +188,6 @@ private:
     inline static bool _initSuccess{ false };
 
 private:
-    struct PhysicalDevice final {
-        VkPhysicalDevice device{ VK_NULL_HANDLE };
-        VkPhysicalDeviceProperties properties{};
-        VkPhysicalDeviceFeatures features{};
-        std::vector<VkExtensionProperties> extensions{};
-        std::vector<VkQueueFamilyProperties> queueFamilyProperties{};
-    };
-
     struct Frame final {
         VkImage image_{};
         VkImageView view_{};
@@ -219,8 +226,6 @@ private:
         clearValues_[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
     };
 
-    auto pickDevice( const std::vector<PhysicalDevice> &physDevList ) -> std::optional<int>;
-
 protected:
     std::unique_ptr<VKInstance> vkInstance_{};
     std::unique_ptr<VKSurface> vkSurface_{};
@@ -233,12 +238,8 @@ protected:
     std::vector<Frame> frames_{};
     std::shared_ptr<DepthImage> depthImage_;
 
-    VkQueue graphicsQueue_{ VK_NULL_HANDLE };
-    uint32_t graphicsFamilyQueueId_{ UINT32_MAX };
-
     VkRenderPass renderPass_{ VK_NULL_HANDLE };
 
-    VkExtent2D currentExtent_{};
     uint32_t width_{};
     uint32_t height_{};
 

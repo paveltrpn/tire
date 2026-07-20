@@ -13,25 +13,25 @@ namespace tire {
 
 auto Context::immediateCommand() const -> CommandRoutine {
     const auto allocInfo = VkCommandBufferAllocateInfo{
-      //
-      .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-      .commandPool = commandPool_,
-      .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-      .commandBufferCount = 1,
+        //
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+        .commandPool = commandPool_,
+        .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+        .commandBufferCount = 1,
     };
 
     VkCommandBuffer cb{};
-    vkAllocateCommandBuffers( device_, &allocInfo, &cb );
+    vkAllocateCommandBuffers( device(), &allocInfo, &cb );
 
     VkCommandBufferUsageFlags usageFlags = {
-      VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+        VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
     };
 
     const VkCommandBufferBeginInfo beginInfo{
-      //
-      .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-      .flags = usageFlags,
-      .pInheritanceInfo = nullptr,
+        //
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+        .flags = usageFlags,
+        .pInheritanceInfo = nullptr,
     };
 
     vkBeginCommandBuffer( cb, &beginInfo );
@@ -48,47 +48,46 @@ auto Context::immediateCommand() const -> CommandRoutine {
     std::array<VkSemaphore, 0> waitsems{};
     std::array<VkSemaphore, 0> sgnlsems{};
     std::array<VkCommandBuffer, 1> commands{
-      //
-      cb,
+        //
+        cb,
     };
 
-    const VkSubmitInfo submitInfo{
-      .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-      .waitSemaphoreCount = waitsems.size(),
-      .pWaitSemaphores = waitsems.data(),
-      .pWaitDstStageMask = waitStages.data(),
-      .commandBufferCount = static_cast<uint32_t>( commands.size() ),
-      .pCommandBuffers = commands.data(),
-      .signalSemaphoreCount = sgnlsems.size(),
-      .pSignalSemaphores = sgnlsems.data() };
+    const VkSubmitInfo submitInfo{ .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+                                   .waitSemaphoreCount = waitsems.size(),
+                                   .pWaitSemaphores = waitsems.data(),
+                                   .pWaitDstStageMask = waitStages.data(),
+                                   .commandBufferCount = static_cast<uint32_t>( commands.size() ),
+                                   .pCommandBuffers = commands.data(),
+                                   .signalSemaphoreCount = sgnlsems.size(),
+                                   .pSignalSemaphores = sgnlsems.data() };
 
     {
-        const auto err = vkQueueSubmit( graphicsQueue_, 1, &submitInfo, VK_NULL_HANDLE );
+        const auto err = vkQueueSubmit( graphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE );
         if ( err != VK_SUCCESS ) {
             log::fatal()( "error while command coroutine {}", string_VkResult( err ) );
         }
     }
 
-    vkQueueWaitIdle( graphicsQueue_ );
+    vkQueueWaitIdle( graphicsQueue() );
 
-    vkFreeCommandBuffers( device_, commandPool_, 1, &cb );
+    vkFreeCommandBuffers( device(), commandPool_, 1, &cb );
 }
 
 auto Context::copyBufferCommand() const -> CommandRoutine {
     // Record command to transfer data from CPU to GPU side.
     VkCommandBufferUsageFlags usageFlags = {
-      VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+        VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
     };
 
     const VkCommandBufferBeginInfo beginInfo{
-      //
-      .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-      .flags = usageFlags,
-      .pInheritanceInfo = nullptr,
+        //
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+        .flags = usageFlags,
+        .pInheritanceInfo = nullptr,
     };
 
     std::array<VkFence, 1> fences = {
-      copyCommandFence_,
+        copyCommandFence_,
     };
 
     vkResetCommandBuffer( copyCommandBuffer_, 0 );
@@ -104,32 +103,32 @@ auto Context::copyBufferCommand() const -> CommandRoutine {
     vkEndCommandBuffer( copyCommandBuffer_ );
 
     std::array<VkPipelineStageFlags, 1> waitStages{
-      //
-      VK_PIPELINE_STAGE_TRANSFER_BIT,
+        //
+        VK_PIPELINE_STAGE_TRANSFER_BIT,
     };
 
     std::array<VkSemaphore, 0> waitsems{};
     std::array<VkSemaphore, 0> sgnlsems{};
     std::array<VkCommandBuffer, 1> commands{
-      //
-      copyCommandBuffer_,
+        //
+        copyCommandBuffer_,
     };
 
     const VkSubmitInfo submitInfo{
-      .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-      .waitSemaphoreCount = waitsems.size(),
-      .pWaitSemaphores = waitsems.data(),
-      .pWaitDstStageMask = waitStages.data(),
-      .commandBufferCount = static_cast<uint32_t>( commands.size() ),
-      .pCommandBuffers = commands.data(),
-      .signalSemaphoreCount = sgnlsems.size(),
-      .pSignalSemaphores = sgnlsems.data(),
+        .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+        .waitSemaphoreCount = waitsems.size(),
+        .pWaitSemaphores = waitsems.data(),
+        .pWaitDstStageMask = waitStages.data(),
+        .commandBufferCount = static_cast<uint32_t>( commands.size() ),
+        .pCommandBuffers = commands.data(),
+        .signalSemaphoreCount = sgnlsems.size(),
+        .pSignalSemaphores = sgnlsems.data(),
     };
 
-    vkQueueSubmit( graphicsQueue_, 1, &submitInfo, copyCommandFence_ );
+    vkQueueSubmit( graphicsQueue(), 1, &submitInfo, copyCommandFence_ );
 
-    vkWaitForFences( device_, fences.size(), fences.data(), VK_TRUE, UINT64_MAX );
-    vkResetFences( device_, fences.size(), fences.data() );
+    vkWaitForFences( device(), fences.size(), fences.data(), VK_TRUE, UINT64_MAX );
+    vkResetFences( device(), fences.size(), fences.data() );
 }
 
 auto Context::renderCommand( uint32_t frameId ) -> CommandRoutine {
@@ -154,7 +153,7 @@ auto Context::renderCommand( uint32_t frameId ) -> CommandRoutine {
     vkAcquireNextImageKHR( device(), swapchain(), UINT64_MAX, iaSem, VK_NULL_HANDLE, &imageIndex );
 
     const VkCommandBufferBeginInfo beginInfo{
-      .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, .flags = 0, .pInheritanceInfo = nullptr };
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, .flags = 0, .pInheritanceInfo = nullptr };
 
     vkBeginCommandBuffer( cb, &beginInfo );
 
@@ -163,13 +162,13 @@ auto Context::renderCommand( uint32_t frameId ) -> CommandRoutine {
     const auto [viewportWidth, viewportHeight] = viewportSize();
 
     const VkRenderPassBeginInfo renderPassInfo{
-      .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-      .pNext = nullptr,
-      .renderPass = renderPass(),
-      .framebuffer = currentFramebuffer,
-      .renderArea = { .offset = { .x = 0, .y = 0 }, .extent = { viewportWidth, viewportHeight } },
-      .clearValueCount = static_cast<uint32_t>( clearValues_.size() ),
-      .pClearValues = clearValues_.data() };
+        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+        .pNext = nullptr,
+        .renderPass = renderPass(),
+        .framebuffer = currentFramebuffer,
+        .renderArea = { .offset = { .x = 0, .y = 0 }, .extent = { viewportWidth, viewportHeight } },
+        .clearValueCount = static_cast<uint32_t>( clearValues_.size() ),
+        .pClearValues = clearValues_.data() };
 
     vkCmdBeginRenderPass( cb, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE );
 
@@ -180,12 +179,12 @@ auto Context::renderCommand( uint32_t frameId ) -> CommandRoutine {
     // NOTE: Define negative viewport size to use same projection matrix as
     // for OpenGL pipeline.
     const VkViewport viewport{
-      .x = 0.0f,
-      .y = static_cast<float>( height ),
-      .width = static_cast<float>( width ),
-      .height = -static_cast<float>( height ),
-      .minDepth = 0.0f,
-      .maxDepth = 1.0f,
+        .x = 0.0f,
+        .y = static_cast<float>( height ),
+        .width = static_cast<float>( width ),
+        .height = -static_cast<float>( height ),
+        .minDepth = 0.0f,
+        .maxDepth = 1.0f,
     };
     // const VkViewport viewport{ .x = 0.0f,
     //    .y = 0.0f,
@@ -214,14 +213,14 @@ auto Context::renderCommand( uint32_t frameId ) -> CommandRoutine {
     std::array<VkCommandBuffer, 1> commands{ cb };
 
     const VkSubmitInfo submitInfo{
-      .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-      .waitSemaphoreCount = static_cast<uint32_t>( waitsems.size() ),
-      .pWaitSemaphores = waitsems.data(),
-      .pWaitDstStageMask = waitStages.data(),
-      .commandBufferCount = static_cast<uint32_t>( commands.size() ),
-      .pCommandBuffers = commands.data(),
-      .signalSemaphoreCount = static_cast<uint32_t>( sgnlsems.size() ),
-      .pSignalSemaphores = sgnlsems.data(),
+        .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+        .waitSemaphoreCount = static_cast<uint32_t>( waitsems.size() ),
+        .pWaitSemaphores = waitsems.data(),
+        .pWaitDstStageMask = waitStages.data(),
+        .commandBufferCount = static_cast<uint32_t>( commands.size() ),
+        .pCommandBuffers = commands.data(),
+        .signalSemaphoreCount = static_cast<uint32_t>( sgnlsems.size() ),
+        .pSignalSemaphores = sgnlsems.data(),
     };
 
     // NOTE: PRESET!
@@ -233,21 +232,21 @@ auto Context::renderCommand( uint32_t frameId ) -> CommandRoutine {
     std::array<uint32_t, 1> imageIds = { frameId };
 
     const VkPresentInfoKHR presentInfo{
-      .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-      .pNext = nullptr,
-      .waitSemaphoreCount = static_cast<uint32_t>( signalSemaphores.size() ),
-      .pWaitSemaphores = signalSemaphores.data(),
-      .swapchainCount = static_cast<uint32_t>( swapChains.size() ),
-      .pSwapchains = swapChains.data(),
-      .pImageIndices = imageIds.data(),
-      .pResults = nullptr,
+        .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+        .pNext = nullptr,
+        .waitSemaphoreCount = static_cast<uint32_t>( signalSemaphores.size() ),
+        .pWaitSemaphores = signalSemaphores.data(),
+        .swapchainCount = static_cast<uint32_t>( swapChains.size() ),
+        .pSwapchains = swapChains.data(),
+        .pImageIndices = imageIds.data(),
+        .pResults = nullptr,
     };
 
     // May return VK_SUBOPTIMAL_KHR or even VK_ERROR_OUT_OF_DATE_KHR
     // if current surface properties are no longer matched
     // exactly or swap chain has become incompatible
     // with the surface and can no longer be used for rendering
-    if ( const auto res = vkQueuePresentKHR( presentQueue_, &presentInfo ); res != VK_SUCCESS ) {
+    if ( const auto res = vkQueuePresentKHR( presentQueue(), &presentInfo ); res != VK_SUCCESS ) {
         log::warning()( "queue present result {}, is it normal?", string_VkResult( res ) );
     }
 }

@@ -47,8 +47,8 @@ Context::Context( uint32_t width, uint32_t height, Display *display, Window wind
     , height_{ height } {
     //
     vkInstance_ = std::make_unique<VKInstance>( "VK_KHR_xlib_surface" );
-    vkSurface_ = std::make_unique<VKSurfaceXLib>( vkInstance_.get(), width, height, display, window );
-    vkDevice_ = std::make_unique<VKDevice>( vkInstance_.get(), vkSurface_.get() );
+    vkDevice_ = std::make_unique<VKDevice>( vkInstance_.get() );
+    vkSurface_ = std::make_unique<VKSurfaceXLib>( vkInstance_.get(), vkDevice_.get(), width, height, display, window );
 
     initRest();
 }
@@ -77,7 +77,6 @@ Context::~Context() {
     }
 
     vkDestroyCommandPool( device(), commandPool_, nullptr );
-    vkDestroySurfaceKHR( vkInstance_->get(), surface_, nullptr );
 
     vmaDestroyAllocator( allocator_ );
 

@@ -15,9 +15,8 @@
 
 namespace tire {
 
-VKDevice::VKDevice( const VKInstance *instance, const VKSurface *surface )
-    : instance_{ instance }
-    , surface_{ surface } {
+VKDevice::VKDevice( const VKInstance *instance )
+    : instance_{ instance } {
     collectPhysicalDevices();
     makeDevice();
 }
@@ -195,28 +194,8 @@ auto VKDevice::makeDevice() -> void {
             "VK_QUEUE_GRAPHICS_BIT" );
     }
 
-    // Check if picked queue family (with VK_QUEUE_GRAPHICS_BIT) support present.
-    // May exist other queue family that not support VK_QUEUE_GRAPHICS_BIT but support
-    // present and we can use it to present, but now we just check "can present" property
-    // on coosed one and if not we terminate.
-    VkBool32 presentSupport = false;
-    if ( const auto err =
-             vkGetPhysicalDeviceSurfaceSupportKHR( physicalDevices_[pickedPhysicalDeviceId_].device,
-                                                   graphicsFamilyQueueId_, surface_->get(), &presentSupport );
-         err != VK_SUCCESS ) {
-        log::fatal()(
-            "failed to get device surface support for "
-            "presentation with code {}!\n",
-            string_VkResult( err ) );
-    }
-
-    if ( presentSupport ) {
-        presentSupportQueueId_ = graphicsFamilyQueueId_;
-    } else {
-        log::fatal()(
-            "queue with VK_QUEUE_GRAPHICS_BIT not support present! Maybe check "
-            "another queue family?" );
-    }
+    // NOTE: just an assumption!
+    presentSupportQueueId_ = graphicsFamilyQueueId_;
 
     log::debug()( "graphics family: {}", graphicsFamilyQueueId_ );
     log::debug()( "present family: {}", presentSupportQueueId_ );
@@ -290,108 +269,30 @@ auto VKDevice::makeDevice() -> void {
     // Graphic and present queue id
     vkGetDeviceQueue( device_, graphicsFamilyQueueId_, 0, &graphicsQueue_ );
     vkGetDeviceQueue( device_, presentSupportQueueId_, 0, &presentQueue_ );
+}
 
-    // Physical device surface capabilities
-    if ( const auto err =
-             vkGetPhysicalDeviceSurfaceCapabilitiesKHR( physicalDevice_, surface_->get(), &surfaceCapabilities_ );
-         err != VK_SUCCESS ) {
-        log::fatal()( "failed to obtain surface capabilities with code {}!\n", string_VkResult( err ) );
-    } else {
-        log::debug()(
-            "physical device surface capabilities acquire "
-            "success!" );
-    }
+auto VKDevice::get() const -> VkDevice {
+    return device_;
+}
 
-    // Application window size (extent) givet at startup.
-    // NOTE: What i have to do with this when application window
-    // have ben resized??
-    currentExtent_ = surfaceCapabilities_.currentExtent;
+auto VKDevice::presentQueue() const -> VkQueue {
+    return presentQueue_;
+}
 
-    // Physical device surface formats
-    uint32_t formatCount{};
-    if ( const auto err =
-             vkGetPhysicalDeviceSurfaceFormatsKHR( physicalDevice_, surface_->get(), &formatCount, nullptr );
-         err != VK_SUCCESS ) {
-        log::fatal()(
-            "failed to obtain physical device surface formats "
-            "count with code {}!\n",
-            string_VkResult( err ) );
-    } else {
-        log::debug()(
-            "physical device surface formats count obtain "
-            "success, "
-            "count: "
-            "{}",
-            formatCount );
-    }
+auto VKDevice::graphicsQueue() const -> VkQueue {
+    return graphicsQueue_;
+}
 
-    surfaceFormats_.resize( formatCount );
+auto VKDevice::physicalDevice() const -> VkPhysicalDevice {
+    return physicalDevice_;
+}
 
-    if ( const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR( physicalDevice_, surface_->get(), &formatCount,
-                                                                surfaceFormats_.data() );
-         err != VK_SUCCESS ) {
-        log::fatal()(
-            "failed to acquire physical device surface formats "
-            "count with code {}!\n",
-            string_VkResult( err ) );
-    } else {
-        log::debug()(
-            "physical device surface formats acquire "
-            "success!" );
-    }
+auto VKDevice::graphicsFamilyQueueId() const -> uint32_t {
+    return graphicsFamilyQueueId_;
+}
 
-    for ( const auto &item : surfaceFormats_ ) {
-        log::notice()( "format: {}", string_VkFormat( item.format ) );
-    }
-
-    // Physical device present modes
-    uint32_t presentModeCount{};
-    if ( const auto err =
-             vkGetPhysicalDeviceSurfacePresentModesKHR( physicalDevice_, surface_->get(), &presentModeCount, nullptr );
-         err != VK_SUCCESS ) {
-        log::fatal()(
-            "failed to obtain physical device present modes "
-            "count with code {}!\n",
-            string_VkResult( err ) );
-    } else {
-        log::debug()(
-            "physical device present modes count obtain "
-            "success, "
-            "count: "
-            "{}",
-            presentModeCount );
-    }
-
-    presentModes_.resize( presentModeCount );
-
-    if ( const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR( physicalDevice_, surface_->get(),
-                                                                     &presentModeCount, presentModes_.data() );
-         err != VK_SUCCESS ) {
-        log::fatal()(
-            "failed to acquire physical device present modes "
-            "with code {}!\n",
-            string_VkResult( err ) );
-    } else {
-        log::debug()( "physical device present modes acquire success!" );
-    }
-
-    for ( const auto &item : presentModes_ ) {
-        log::notice()( "mode: {}", string_VkPresentModeKHR( item ) );
-    }
-
-#define CHOSEN_SURFACE_FORMAT 0
-    // This format will be used across application, in
-    // swapchain in particular.
-    surfaceFormat_ = surfaceFormats_[CHOSEN_SURFACE_FORMAT];
-
-    log::debug()( "format is {}", string_VkFormat( surfaceFormat_.format ) );
-
-#define CHOSEN_PRESENT_MODE VK_PRESENT_MODE_FIFO_KHR
-    // This present mode will be used across application, in
-    // swapchain in particular.
-    presentMode_ = CHOSEN_PRESENT_MODE;  // presentModes_[0];
-
-    log::debug()( "present mode is {}", string_VkPresentModeKHR( presentMode_ ) );
+auto VKDevice::presentSupportQueueId() const -> uint32_t {
+    return presentSupportQueueId_;
 }
 
 }  // namespace tire

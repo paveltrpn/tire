@@ -9,10 +9,9 @@
 namespace tire {
 
 struct VKInstance;
-struct VKSurface;
 
 struct VKDevice final {
-    VKDevice( const VKInstance *instance, const VKSurface *surface );
+    VKDevice( const VKInstance *instance );
 
     VKDevice( const VKDevice &other ) = delete;
     VKDevice( VKDevice &&other ) = delete;
@@ -24,7 +23,10 @@ struct VKDevice final {
 
     [[nodiscard]] auto get() const -> VkDevice;
     [[nodiscard]] auto presentQueue() const -> VkQueue;
+    [[nodiscard]] auto graphicsQueue() const -> VkQueue;
     [[nodiscard]] auto physicalDevice() const -> VkPhysicalDevice;
+    [[nodiscard]] auto graphicsFamilyQueueId() const -> uint32_t;
+    [[nodiscard]] auto presentSupportQueueId() const -> uint32_t;
 
 private:
     struct PhysicalDevice final {
@@ -42,16 +44,11 @@ private:
 
 private:
     const VKInstance *instance_{};
-    const VKSurface *surface_{};
 
     std::vector<PhysicalDevice> physicalDevices_{};
     int pickedPhysicalDeviceId_{ -1 };
     uint32_t presentSupportQueueId_{ UINT32_MAX };
     VkQueue presentQueue_{ VK_NULL_HANDLE };
-    VkSurfaceCapabilitiesKHR surfaceCapabilities_{};
-    std::vector<VkSurfaceFormatKHR> surfaceFormats_{};
-    std::vector<VkPresentModeKHR> presentModes_{};
-    VkPresentModeKHR presentMode_{};
     VkPhysicalDevice physicalDevice_{};
     // The logical device itself.
     VkDevice device_{ VK_NULL_HANDLE };

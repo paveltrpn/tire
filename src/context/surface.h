@@ -12,9 +12,10 @@
 namespace tire {
 
 struct VKInstance;
+struct VKDevice;
 
 struct VKSurface {
-    VKSurface( const VKInstance *instance );
+    VKSurface( const VKInstance *instance, const VKDevice *device );
 
     VKSurface( const VKSurface &other ) = delete;
     VKSurface( VKSurface &&other ) = delete;
@@ -22,20 +23,33 @@ struct VKSurface {
     auto operator=( const VKSurface &other ) -> VKSurface & = delete;
     auto operator=( VKSurface &&other ) -> VKSurface & = delete;
 
-    ~VKSurface() = default;
+    virtual ~VKSurface();
 
     [[nodiscard]] auto get() const -> VkSurfaceKHR;
     [[nodiscard]] auto surfaceFormat() const -> const VkSurfaceFormatKHR &;
+    [[nodiscard]] auto currentExtent() const -> const VkExtent2D &;
+    [[nodiscard]] auto surfaceCapabilities() const -> const VkSurfaceCapabilitiesKHR &;
+    [[nodiscard]] auto presentMode() const -> VkPresentModeKHR;
+
+protected:
+    auto physicalDeviceSurfaceCapabilities() -> void;
 
 protected:
     const VKInstance *instance_{};
+    const VKDevice *device_{};
 
     VkSurfaceKHR surface_{ VK_NULL_HANDLE };
     VkSurfaceFormatKHR surfaceFormat_{};
+    VkSurfaceCapabilitiesKHR surfaceCapabilities_{};
+    std::vector<VkSurfaceFormatKHR> surfaceFormats_{};
+    std::vector<VkPresentModeKHR> presentModes_{};
+    VkPresentModeKHR presentMode_{};
+    VkExtent2D currentExtent_{};
 };
 
 struct VKSurfaceXLib final : public VKSurface {
-    VKSurfaceXLib( const VKInstance *instance, uint32_t width, uint32_t height, Display *display, Window window );
+    VKSurfaceXLib( const VKInstance *instance, const VKDevice *device, uint32_t width, uint32_t height,
+                   Display *display, Window window );
 };
 
 /*

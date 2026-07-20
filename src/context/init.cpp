@@ -19,7 +19,7 @@ namespace tire {
 
 auto Context::memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags properties ) const -> uint32_t {
     VkPhysicalDeviceMemoryProperties memProperties{};
-    vkGetPhysicalDeviceMemoryProperties( physDevice_, &memProperties );
+    vkGetPhysicalDeviceMemoryProperties( vkDevice_->physicalDevice(), &memProperties );
 
     for ( uint32_t i = 0; i < memProperties.memoryTypeCount; i++ ) {
         if ( ( typeFilter & ( 1 << i ) ) &&
@@ -38,7 +38,7 @@ auto Context::findSupportedFormat( const std::vector<VkFormat> &candidates, VkIm
                                    VkFormatFeatureFlags features ) const -> VkFormat {
     for ( VkFormat format : candidates ) {
         VkFormatProperties props;
-        vkGetPhysicalDeviceFormatProperties( physDevice_, format, &props );
+        vkGetPhysicalDeviceFormatProperties( vkDevice_->physicalDevice(), format, &props );
 
         if ( tiling == VK_IMAGE_TILING_LINEAR && ( props.linearTilingFeatures & features ) == features ) {
             return format;
@@ -57,9 +57,9 @@ void Context::makeCommandPool() {
     VkCommandPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-    poolInfo.queueFamilyIndex = graphicsFamilyQueueId_;
+    poolInfo.queueFamilyIndex = graphicsFamilyQueueId();
 
-    if ( const auto err = vkCreateCommandPool( device_, &poolInfo, nullptr, &commandPool_ ); err != VK_SUCCESS ) {
+    if ( const auto err = vkCreateCommandPool( device(), &poolInfo, nullptr, &commandPool_ ); err != VK_SUCCESS ) {
         log::fatal()( "failed to create command pool woth code {}!", string_VkResult( err ) );
     } else {
         log::debug()( "command pool created!" );
@@ -143,8 +143,8 @@ auto Context::createAllocator() -> void {
     VmaAllocatorCreateInfo allocatorCreateInfo{};
     allocatorCreateInfo.flags = VMA_ALLOCATOR_CREATE_EXT_MEMORY_BUDGET_BIT;
     allocatorCreateInfo.vulkanApiVersion = VK_API_VERSION_1_3;
-    allocatorCreateInfo.physicalDevice = physDevice_;
-    allocatorCreateInfo.device = device_;
+    allocatorCreateInfo.physicalDevice = vkDevice_->physicalDevice();
+    allocatorCreateInfo.device = device();
     allocatorCreateInfo.instance = vkInstance();
     allocatorCreateInfo.pVulkanFunctions = &vulkanFunctions;
 
@@ -177,7 +177,7 @@ auto Context::createDescriptorPool() -> void {
     };
 
     {
-        const auto err = vkCreateDescriptorPool( device_, &poolInfo, nullptr, &descriptorPool_ );
+        const auto err = vkCreateDescriptorPool( device(), &poolInfo, nullptr, &descriptorPool_ );
         if ( err != VK_SUCCESS ) {
             log::fatal()( "failed to create descriptor pool {}!", string_VkResult( err ) );
         }
@@ -192,7 +192,7 @@ auto Context::initCopyCommandBuffer() -> void {
         .flags = 0,
     };
 
-    vkCreateFence( device_, &fenceInfo, nullptr, &copyCommandFence_ );
+    vkCreateFence( device(), &fenceInfo, nullptr, &copyCommandFence_ );
 
     const VkCommandBufferAllocateInfo allocInfo{
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -201,7 +201,7 @@ auto Context::initCopyCommandBuffer() -> void {
         .commandBufferCount = 1,
     };
 
-    vkAllocateCommandBuffers( device_, &allocInfo, &copyCommandBuffer_ );
+    vkAllocateCommandBuffers( device(), &allocInfo, &copyCommandBuffer_ );
 }
 
 }  // namespace tire
