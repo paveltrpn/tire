@@ -55,25 +55,24 @@ BareWindow::BareWindow() {
         tire::log::fatal()( "glfw window create faild!" );
     }
 
-
 #ifdef SURFACE_X11
-            tire::log::info()( "glfw platform X11 is used!" );
+    tire::log::info()( "glfw platform X11 is used!" );
 
-            const auto display = glfwGetX11Display();
-            const auto window = glfwGetX11Window( window_ );
+    const auto display = glfwGetX11Display();
+    const auto window = glfwGetX11Window( window_ );
 
-            // Initialize Context sinleton.
-            tire::Context::init( width, height, display, window );
+    // Initialize Context sinleton.
+    tire::Context::init( width, height, display, window );
 
-            glfwSetWindowPos( window_, posx, posy );
+    glfwSetWindowPos( window_, posx, posy );
 #elifdef SURFACE_WAYLAND
-            tire::log::info()( "glfw platform WAYLAND is used!" );
+    tire::log::info()( "glfw platform WAYLAND is used!" );
 
-            const auto display = glfwGetWaylandDisplay();
-            const auto surface = glfwGetWaylandWindow( window_ );
+    const auto display = glfwGetWaylandDisplay();
+    const auto surface = glfwGetWaylandWindow( window_ );
 
-            // Initialize Context sinleton.
-            tire::Context::init( width, height, display, surface );
+    // Initialize Context sinleton.
+    tire::Context::init( width, height, display, surface );
 #endif
 
     // Initialize render object.
