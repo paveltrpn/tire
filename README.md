@@ -8,6 +8,11 @@ Editor built with:
 - **Qt 6.10** for the user interface
 
 ## Dependencies Installation
+  
+### GLFW3 and nlohmann-json
+```bash
+apt install nlohmann-json3-dev libglfw3 libglfw3-dev
+```
 
 ### Vulkan SDK
 

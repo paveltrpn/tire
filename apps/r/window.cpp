@@ -55,22 +55,7 @@ BareWindow::BareWindow() {
         tire::log::fatal()( "glfw window create faild!" );
     }
 
-    const auto platform = glfwGetPlatform();
 
-    switch ( platform ) {
-        case GLFW_PLATFORM_NULL: {
-            tire::log::fatal()( "glfw platform undefined!" );
-            break;
-        }
-        case GLFW_PLATFORM_WIN32: {
-            tire::log::fatal()( "glfw platform win32 not supported!" );
-            break;
-        }
-        case GLFW_PLATFORM_COCOA: {
-            tire::log::fatal()( "glfw platform cocoa not supported!" );
-            break;
-        }
-        case GLFW_PLATFORM_X11: {
 #ifdef SURFACE_X11
             tire::log::info()( "glfw platform X11 is used!" );
 
@@ -81,11 +66,7 @@ BareWindow::BareWindow() {
             tire::Context::init( width, height, display, window );
 
             glfwSetWindowPos( window_, posx, posy );
-#endif
-            break;
-        }
-        case GLFW_PLATFORM_WAYLAND: {
-#ifdef SURFACE_WAYLAND
+#elifdef SURFACE_WAYLAND
             tire::log::info()( "glfw platform WAYLAND is used!" );
 
             const auto display = glfwGetWaylandDisplay();
@@ -94,13 +75,6 @@ BareWindow::BareWindow() {
             // Initialize Context sinleton.
             tire::Context::init( width, height, display, surface );
 #endif
-            break;
-        }
-        default: {
-            tire::log::fatal()( "can`t determine target platform!" );
-            break;
-        }
-    }
 
     // Initialize render object.
     render_ = std::make_unique<tire::RenderVK>();

@@ -55,20 +55,8 @@ else()
     message(SEND_ERROR "glslang_DIR is not set")
 endif()
 
-if (DEFINED ENV{NLOHMANN_JSON_DIR} AND NOT "$ENV{NLOHMANN_JSON_DIR}" STREQUAL "")
-    message( "NLOHMANN_JSON_DIR is set to $ENV{NLOHMANN_JSON_DIR}")
-    include_directories($ENV{NLOHMANN_JSON_DIR}/include)
-else()
-    message(SEND_ERROR "NLOHMANN_JSON_DIR is not set")
-endif()
-
-if (DEFINED ENV{LOCAL_GLFW} AND NOT "$ENV{LOCAL_GLFW}" STREQUAL "")
-    message( "LOCAL_GLFW is set to $ENV{LOCAL_GLFW}")
-    include_directories($ENV{LOCAL_GLFW}/include)
-    link_directories($ENV{LOCAL_GLFW}/lib)
-else()
-    message(SEND_ERROR "LOCAL_GLFW is not set")
-endif()
+find_package(glfw3 3.3 REQUIRED)
+find_package(nlohmann_json 3.0 REQUIRED)
 
 include_directories("src")
 
@@ -319,7 +307,7 @@ target_link_libraries(${TIRE_EXE}
     algebra
     config
     render
-    glfw3
+    glfw
     Vulkan::Vulkan
     GenericCodeGen
     glslang
