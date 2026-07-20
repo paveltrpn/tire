@@ -14,6 +14,10 @@ namespace tire {
 struct VKInstance;
 struct VKDevice;
 
+// ============================================================================
+// ============== VKSurface ===================================================
+// ============================================================================
+
 struct VKSurface {
     VKSurface( const VKInstance *instance, const VKDevice *device );
 
@@ -47,25 +51,26 @@ protected:
     VkExtent2D currentExtent_{};
 };
 
+// ============================================================================
+// ============== VKSurfaceXLib ===============================================
+// ============================================================================
+
 struct VKSurfaceXLib final : public VKSurface {
     VKSurfaceXLib( const VKInstance *instance, const VKDevice *device, uint32_t width, uint32_t height,
                    Display *display, Window window );
 };
 
+// ============================================================================
+// ============== VKSurfaceWayland ============================================
+// ============================================================================
+
 /*
 #include <wayland-client.h>
 
 struct VKSurfaceWayland final {
-    VKSurfaceWayland( wl_display *display, wl_surface *surface );
-
-    VKSurfaceWayland( const VKSurfaceWayland &other ) = delete;
-    VKSurfaceWayland( VKSurfaceWayland &&other ) = delete;
-
-    auto operator=( const VKSurfaceWayland &other ) -> VKSurfaceWayland & = delete;
-    auto operator=( VKSurfaceWayland &&other ) -> VKSurfaceWayland & = delete;
-
-    ~VKSurfaceWayland() = default;
+    VKSurfaceWayland( const VKInstance *instance, const VKDevice *device, wl_display *display, wl_surface *surface );
 };
+
 */
 
 }  // namespace tire

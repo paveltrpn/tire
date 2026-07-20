@@ -18,6 +18,10 @@
 
 namespace tire {
 
+// ============================================================================
+// ============== VKSurface ===================================================
+// ============================================================================
+
 VKSurface::VKSurface( const VKInstance *instance, const VKDevice *device )
     : instance_{ instance }
     , device_{ device } {
@@ -172,6 +176,10 @@ auto VKSurface::physicalDeviceSurfaceCapabilities() -> void {
     log::debug()( "present mode is {}", string_VkPresentModeKHR( presentMode_ ) );
 }
 
+// ============================================================================
+// ============== VKSurfaceXLib ===============================================
+// ============================================================================
+
 VKSurfaceXLib::VKSurfaceXLib( const VKInstance *instance, const VKDevice *device, uint32_t width, uint32_t height,
                               Display *display, Window window )
     : VKSurface{ instance, device } {
@@ -191,8 +199,12 @@ VKSurfaceXLib::VKSurfaceXLib( const VKInstance *instance, const VKDevice *device
     physicalDeviceSurfaceCapabilities();
 }
 
+// ============================================================================
+// ============== VKSurfaceWayland ============================================
+// ============================================================================
+
 /*
-VKSurfaceWayland::VKSurfaceWayland( wl_display *display, wl_surface *surface ) {
+VKSurfaceWayland::VKSurfaceWayland( const VKInstance *instance, const VKDevice *device, wl_display *display, wl_surface *surface ) {
     VkWaylandSurfaceCreateInfoKHR wlSurfInfo{};
     wlSurfInfo.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
     wlSurfInfo.display = display;
