@@ -7,17 +7,26 @@
 #define VK_USE_PLATFORM_XLIB_KHR
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "context.h"
+#include "vkinstance.h"
+#include "device.h"
+#include "surface.h"
 #include "log/log.h"
 #include "config/config.h"
 
 namespace tire {
 
-void Context::collectPhysicalDevices() {
+VKDevice::VKDevice( const VKInstance *instance, const VKSurface *surface )
+    : instance_{ instance }
+    , surface_{ surface } {
+    collectPhysicalDevices();
+    makeDevice();
+}
+
+void VKDevice::collectPhysicalDevices() {
     uint32_t devCount{};
 
     // Enumerate physical devices
-    if ( const auto err = vkEnumeratePhysicalDevices( vkInstance(), &devCount, nullptr ); err != VK_SUCCESS ) {
+    if ( const auto err = vkEnumeratePhysicalDevices( instance_->get(), &devCount, nullptr ); err != VK_SUCCESS ) {
         log::fatal()( "can't enumerate physical devices with code: {}", string_VkResult( err ) );
     } else {
         log::debug()( "physical devices enumerate success, count: {}", devCount );
@@ -32,7 +41,7 @@ void Context::collectPhysicalDevices() {
 
     // Get physical devices
     {
-        const auto err = vkEnumeratePhysicalDevices( vkInstance(), &devCount, physicalDevices.data() );
+        const auto err = vkEnumeratePhysicalDevices( instance_->get(), &devCount, physicalDevices.data() );
         if ( err != VK_SUCCESS ) {
             log::fatal()( "can't acquire physical devices with code: {}", string_VkResult( err ) );
         } else {
@@ -104,7 +113,7 @@ void Context::collectPhysicalDevices() {
     }
 }
 
-auto Context::pickDevice( const std::vector<PhysicalDevice> &physDevList ) -> std::optional<int> {
+auto VKDevice::pickDevice( const std::vector<PhysicalDevice> &physDevList ) -> std::optional<int> {
     // Check which devices available on machine.
     int discreetGpuId{ -1 };
     int integratedGpuId{ -1 };
@@ -153,7 +162,7 @@ auto Context::pickDevice( const std::vector<PhysicalDevice> &physDevList ) -> st
     return std::nullopt;
 }
 
-void Context::makeDevice() {
+auto VKDevice::makeDevice() -> void {
     {
         const auto d = pickDevice( physicalDevices_ );
         if ( !d ) {
@@ -164,7 +173,7 @@ void Context::makeDevice() {
     }
 
     // Base class member.
-    physDevice_ = physicalDevices_[pickedPhysicalDeviceId_].device;
+    physicalDevice_ = physicalDevices_[pickedPhysicalDeviceId_].device;
 
     log::info()( "pick {}", physicalDevices_[pickedPhysicalDeviceId_].properties.deviceName );
 
@@ -191,8 +200,9 @@ void Context::makeDevice() {
     // present and we can use it to present, but now we just check "can present" property
     // on coosed one and if not we terminate.
     VkBool32 presentSupport = false;
-    if ( const auto err = vkGetPhysicalDeviceSurfaceSupportKHR( physicalDevices_[pickedPhysicalDeviceId_].device,
-                                                                graphicsFamilyQueueId_, surface_, &presentSupport );
+    if ( const auto err =
+             vkGetPhysicalDeviceSurfaceSupportKHR( physicalDevices_[pickedPhysicalDeviceId_].device,
+                                                   graphicsFamilyQueueId_, surface_->get(), &presentSupport );
          err != VK_SUCCESS ) {
         log::fatal()(
             "failed to get device surface support for "
@@ -263,15 +273,15 @@ void Context::makeDevice() {
 
     // Force use validation layers
     if ( Config::instance().get<bool>( "enable_validation_layers" ) ) {
-        deviceCreateInfo.enabledLayerCount = static_cast<uint32_t>( vkInstance_->desiredValidationLayerList().size() );
-        deviceCreateInfo.ppEnabledLayerNames = vkInstance_->desiredValidationLayerList().data();
+        deviceCreateInfo.enabledLayerCount = static_cast<uint32_t>( instance_->desiredValidationLayerList().size() );
+        deviceCreateInfo.ppEnabledLayerNames = instance_->desiredValidationLayerList().data();
     } else {
         deviceCreateInfo.enabledLayerCount = 0;
         deviceCreateInfo.ppEnabledLayerNames = nullptr;
     }
 
     // Create a logical device
-    if ( const auto err = vkCreateDevice( physDevice_, &deviceCreateInfo, nullptr, &device_ ); err != VK_SUCCESS ) {
+    if ( const auto err = vkCreateDevice( physicalDevice_, &deviceCreateInfo, nullptr, &device_ ); err != VK_SUCCESS ) {
         log::fatal()( "failed to create logical device with code {}!\n", string_VkResult( err ) );
     } else {
         log::info()( "logical device create success!" );
@@ -282,7 +292,8 @@ void Context::makeDevice() {
     vkGetDeviceQueue( device_, presentSupportQueueId_, 0, &presentQueue_ );
 
     // Physical device surface capabilities
-    if ( const auto err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR( physDevice_, surface_, &surfaceCapabilities_ );
+    if ( const auto err =
+             vkGetPhysicalDeviceSurfaceCapabilitiesKHR( physicalDevice_, surface_->get(), &surfaceCapabilities_ );
          err != VK_SUCCESS ) {
         log::fatal()( "failed to obtain surface capabilities with code {}!\n", string_VkResult( err ) );
     } else {
@@ -298,7 +309,8 @@ void Context::makeDevice() {
 
     // Physical device surface formats
     uint32_t formatCount{};
-    if ( const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR( physDevice_, surface_, &formatCount, nullptr );
+    if ( const auto err =
+             vkGetPhysicalDeviceSurfaceFormatsKHR( physicalDevice_, surface_->get(), &formatCount, nullptr );
          err != VK_SUCCESS ) {
         log::fatal()(
             "failed to obtain physical device surface formats "
@@ -315,8 +327,8 @@ void Context::makeDevice() {
 
     surfaceFormats_.resize( formatCount );
 
-    if ( const auto err =
-             vkGetPhysicalDeviceSurfaceFormatsKHR( physDevice_, surface_, &formatCount, surfaceFormats_.data() );
+    if ( const auto err = vkGetPhysicalDeviceSurfaceFormatsKHR( physicalDevice_, surface_->get(), &formatCount,
+                                                                surfaceFormats_.data() );
          err != VK_SUCCESS ) {
         log::fatal()(
             "failed to acquire physical device surface formats "
@@ -335,7 +347,7 @@ void Context::makeDevice() {
     // Physical device present modes
     uint32_t presentModeCount{};
     if ( const auto err =
-             vkGetPhysicalDeviceSurfacePresentModesKHR( physDevice_, surface_, &presentModeCount, nullptr );
+             vkGetPhysicalDeviceSurfacePresentModesKHR( physicalDevice_, surface_->get(), &presentModeCount, nullptr );
          err != VK_SUCCESS ) {
         log::fatal()(
             "failed to obtain physical device present modes "
@@ -352,8 +364,8 @@ void Context::makeDevice() {
 
     presentModes_.resize( presentModeCount );
 
-    if ( const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR( physDevice_, surface_, &presentModeCount,
-                                                                     presentModes_.data() );
+    if ( const auto err = vkGetPhysicalDeviceSurfacePresentModesKHR( physicalDevice_, surface_->get(),
+                                                                     &presentModeCount, presentModes_.data() );
          err != VK_SUCCESS ) {
         log::fatal()(
             "failed to acquire physical device present modes "

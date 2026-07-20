@@ -31,6 +31,8 @@
 #endif
 
 #include "vkinstance.h"
+#include "surface.h"
+#include "device.h"
 #include "config/config.h"
 #include "image/color.h"
 
@@ -50,12 +52,6 @@ struct Context final {
     static void init( uint32_t width, uint32_t height, Display *display, Window window );
     [[nodiscard]] static Context &instance();
 
-#ifdef SURFACE_X11
-    auto makeXlibSurface( Display *display, Window window ) -> void;
-#elifdef SURFACE_WAYLAND
-    auto makeWaylandSurface( wl_display *display, wl_surface *surface ) -> void;
-#endif
-
     [[nodiscard]] auto vkInstance() const -> VkInstance {
         //
         return vkInstance_->get();
@@ -63,12 +59,12 @@ struct Context final {
 
     [[nodiscard]] auto surface() const -> VkSurfaceKHR {
         //
-        return surface_;
+        return vkSurface_->get();
     }
 
     [[nodiscard]] auto device() const -> VkDevice {
         //
-        return device_;
+        return vkDevice_->get();
     }
 
     [[nodiscard]] auto swapchain() const -> VkSwapchainKHR {
@@ -78,7 +74,7 @@ struct Context final {
 
     [[nodiscard]] auto surfaceFormat() const -> const VkSurfaceFormatKHR & {
         //
-        return surfaceFormat_;
+        return vkSurface_->surfaceFormat();
     };
 
     [[nodiscard]] auto graphicsQueue() const -> const VkQueue & {
@@ -93,7 +89,7 @@ struct Context final {
 
     [[nodiscard]] auto physicalDevice() const -> VkPhysicalDevice {
         //
-        return physDevice_;
+        return vkDevice_->physicalDevice();
     }
 
     [[nodiscard]] auto currentExtent() const -> const VkExtent2D & {
@@ -132,7 +128,7 @@ struct Context final {
 
     [[nodiscard]] auto presentQueue() const -> VkQueue {
         //
-        return presentQueue_;
+        return vkDevice_->presentQueue();
     };
 
     auto renderCommandBegin( uint32_t frameId ) -> void;
@@ -198,9 +194,6 @@ private:
 
 private:
     // Init all context
-    auto makeInstance( const std::string &platformSurfaceExtension ) -> void;
-    auto collectPhysicalDevices() -> void;
-    auto makeDevice() -> void;
     auto makeCommandPool() -> void;
     auto makeSwapchain() -> void;
     auto initRenderPass() -> void;
@@ -210,8 +203,6 @@ private:
     auto initCopyCommandBuffer() -> void;
 
     auto initRest() -> void {
-        collectPhysicalDevices();
-        makeDevice();
         createAllocator();
         makeCommandPool();
         makeSwapchain();
@@ -232,23 +223,8 @@ private:
 
 protected:
     std::unique_ptr<VKInstance> vkInstance_{};
-
-    // Surface
-    VkSurfaceKHR surface_{ VK_NULL_HANDLE };
-    VkSurfaceFormatKHR surfaceFormat_{};
-
-    // Physical and logical devices
-    std::vector<PhysicalDevice> physicalDevices_{};
-    int pickedPhysicalDeviceId_{ -1 };
-    uint32_t presentSupportQueueId_{ UINT32_MAX };
-    VkQueue presentQueue_{ VK_NULL_HANDLE };
-    VkSurfaceCapabilitiesKHR surfaceCapabilities_{};
-    std::vector<VkSurfaceFormatKHR> surfaceFormats_{};
-    std::vector<VkPresentModeKHR> presentModes_{};
-    VkPresentModeKHR presentMode_{};
-    VkPhysicalDevice physDevice_{};
-    // The logical device itself.
-    VkDevice device_{ VK_NULL_HANDLE };
+    std::unique_ptr<VKSurface> vkSurface_{};
+    std::unique_ptr<VKDevice> vkDevice_{};
 
     // Swapchain
     VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };

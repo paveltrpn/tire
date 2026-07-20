@@ -2,21 +2,29 @@
 #pragma once
 
 #include <vector>
+#include <optional>
 
 #include <vulkan/vulkan.h>
 
 namespace tire {
 
-struct VKDvice final {
-    VKDvice( const VKDvice &other ) = delete;
-    VKDvice( VKDvice &&other ) = delete;
+struct VKInstance;
+struct VKSurface;
 
-    auto operator=( const VKDvice &other ) -> VKDvice & = delete;
-    auto operator=( VKDvice &&other ) -> VKDvice & = delete;
+struct VKDevice final {
+    VKDevice( const VKInstance *instance, const VKSurface *surface );
 
-    ~VKDvice() = default;
+    VKDevice( const VKDevice &other ) = delete;
+    VKDevice( VKDevice &&other ) = delete;
 
-    [[nodiscard]] auto get() -> VkDevice;
+    auto operator=( const VKDevice &other ) -> VKDevice & = delete;
+    auto operator=( VKDevice &&other ) -> VKDevice & = delete;
+
+    ~VKDevice() = default;
+
+    [[nodiscard]] auto get() const -> VkDevice;
+    [[nodiscard]] auto presentQueue() const -> VkQueue;
+    [[nodiscard]] auto physicalDevice() const -> VkPhysicalDevice;
 
 private:
     struct PhysicalDevice final {
@@ -28,6 +36,13 @@ private:
     };
 
 private:
+    auto collectPhysicalDevices() -> void;
+    auto pickDevice( const std::vector<PhysicalDevice> &physDevList ) -> std::optional<int>;
+    auto makeDevice() -> void;
+
+private:
+    const VKInstance *instance_{};
+    const VKSurface *surface_{};
 
     std::vector<PhysicalDevice> physicalDevices_{};
     int pickedPhysicalDeviceId_{ -1 };
@@ -37,9 +52,12 @@ private:
     std::vector<VkSurfaceFormatKHR> surfaceFormats_{};
     std::vector<VkPresentModeKHR> presentModes_{};
     VkPresentModeKHR presentMode_{};
-    VkPhysicalDevice physDevice_{};
+    VkPhysicalDevice physicalDevice_{};
     // The logical device itself.
     VkDevice device_{ VK_NULL_HANDLE };
+
+    VkQueue graphicsQueue_{ VK_NULL_HANDLE };
+    uint32_t graphicsFamilyQueueId_{ UINT32_MAX };
 };
 
-}
+}  // namespace tire

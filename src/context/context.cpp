@@ -47,8 +47,9 @@ Context::Context( uint32_t width, uint32_t height, Display *display, Window wind
     , height_{ height } {
     //
     vkInstance_ = std::make_unique<VKInstance>( "VK_KHR_xlib_surface" );
+    vkSurface_ = std::make_unique<VKSurfaceXLib>( vkInstance_.get(), width, height, display, window );
+    vkDevice_ = std::make_unique<VKDevice>( vkInstance_.get(), vkSurface_.get() );
 
-    makeXlibSurface( display, window );
     initRest();
 }
 #elifdef SURFACE_WAYLAND
@@ -64,55 +65,24 @@ Context::Context( uint32_t width, uint32_t height, wl_display *display, wl_surfa
 
 // Destroy all Vulkan context here.
 Context::~Context() {
-    vkDestroyFence( device_, copyCommandFence_, nullptr );
-    vkDestroyDescriptorPool( device_, descriptorPool_, nullptr );
+    vkDestroyFence( device(), copyCommandFence_, nullptr );
+    vkDestroyDescriptorPool( device(), descriptorPool_, nullptr );
 
     for ( auto i = 0; i < framesCount_; i++ ) {
-        vkDestroySemaphore( device_, frames_[i].imageAvailableSemaphore_, nullptr );
-        vkDestroySemaphore( device_, frames_[i].renderFinishedSemaphore_, nullptr );
-        vkDestroyFence( device_, frames_[i].inFlightFence_, nullptr );
-        vkDestroyFramebuffer( device_, frames_[i].framebuffer_, nullptr );
-        vkDestroyImageView( device_, frames_[i].view_, nullptr );
+        vkDestroySemaphore( device(), frames_[i].imageAvailableSemaphore_, nullptr );
+        vkDestroySemaphore( device(), frames_[i].renderFinishedSemaphore_, nullptr );
+        vkDestroyFence( device(), frames_[i].inFlightFence_, nullptr );
+        vkDestroyFramebuffer( device(), frames_[i].framebuffer_, nullptr );
+        vkDestroyImageView( device(), frames_[i].view_, nullptr );
     }
 
-    vkDestroyCommandPool( device_, commandPool_, nullptr );
+    vkDestroyCommandPool( device(), commandPool_, nullptr );
     vkDestroySurfaceKHR( vkInstance_->get(), surface_, nullptr );
 
     vmaDestroyAllocator( allocator_ );
 
-    vkDestroySwapchainKHR( device_, swapchain_, nullptr );
-    vkDestroyDevice( device_, nullptr );
+    vkDestroySwapchainKHR( device(), swapchain_, nullptr );
+    vkDestroyDevice( device(), nullptr );
 }
-
-#ifdef SURFACE_X11
-auto Context::makeXlibSurface( Display *display, Window window ) -> void {
-    VkXlibSurfaceCreateInfoKHR xlibSurfInfo{};
-    xlibSurfInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    xlibSurfInfo.dpy = display;
-    xlibSurfInfo.window = window;
-
-    if ( const auto err = vkCreateXlibSurfaceKHR( vkInstance_->get(), &xlibSurfInfo, nullptr, &surface_ );
-         err != VK_SUCCESS ) {
-        throw std::runtime_error(
-            std::format( "failed to create xlib surface with code {}\n!", string_VkResult( err ) ) );
-    } else {
-        log::info()( "xlib surface created!" );
-    }
-}
-#elifdef SURFACE_WAYLAND
-auto Context::makeWaylandSurface( wl_display *display, wl_surface *surface ) -> void {
-    VkWaylandSurfaceCreateInfoKHR wlSurfInfo{};
-    wlSurfInfo.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
-    wlSurfInfo.display = display;
-    wlSurfInfo.surface = surface;
-
-    if ( const auto err = vkCreateWaylandSurfaceKHR( instance_, &wlSurfInfo, nullptr, &surface_ ); err != VK_SUCCESS ) {
-        throw std::runtime_error(
-            std::format( "failed to create wayland surface with code {}\n!", string_VkResult( err ) ) );
-    } else {
-        log::info()( "wayland surface created!" );
-    }
-}
-#endif
 
 }  // namespace tire
