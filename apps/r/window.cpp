@@ -48,7 +48,8 @@ BareWindow::BareWindow() {
     const auto posx = tire::Config::instance().get<int>( "window_pos_x" );
     const auto posy = tire::Config::instance().get<int>( "window_pos_y" );
 
-    window_ = glfwCreateWindow( width, height, "glfw", nullptr, nullptr );
+    const auto windowTitle = tire::Config::instance().get<std::string>( "application_name" );
+    window_ = glfwCreateWindow( width, height, windowTitle.c_str(), nullptr, nullptr );
 
     if ( !window_ ) {
         tire::log::fatal()( "glfw window create faild!" );
