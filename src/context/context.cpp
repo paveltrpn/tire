@@ -6,9 +6,6 @@
 
 #include "config/config.h"
 #include "log/log.h"
-#include "image/image.h"
-
-#include "command_routine.h"
 
 namespace tire {
 
