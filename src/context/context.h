@@ -209,23 +209,6 @@ private:
     auto createDescriptorPool() -> void;
     auto initCopyCommandBuffer() -> void;
 
-    auto initRest() -> void {
-        createAllocator();
-        makeCommandPool();
-        makeSwapchain();
-        initRenderPass();
-        makeFrames();
-        createDescriptorPool();
-        initCopyCommandBuffer();
-
-        // Note that the order of clearValues should be identical to the order of your
-        // attachments
-        const auto colorString = tire::Config::instance().get<std::string>( "background_color" );
-        const auto backgroundColor = Colorf( colorString );
-        clearValues_[0].color = { { backgroundColor.r(), backgroundColor.g(), backgroundColor.b(), 1.0f } };
-        clearValues_[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
-    };
-
 protected:
     std::unique_ptr<VKInstance> vkInstance_{};
     std::unique_ptr<VKSurface> vkSurface_{};

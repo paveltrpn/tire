@@ -50,7 +50,20 @@ Context::Context( uint32_t width, uint32_t height, Display *display, Window wind
     vkDevice_ = std::make_unique<VKDevice>( vkInstance_.get() );
     vkSurface_ = std::make_unique<VKSurfaceXLib>( vkInstance_.get(), vkDevice_.get(), width, height, display, window );
 
-    initRest();
+    createAllocator();
+    makeCommandPool();
+    makeSwapchain();
+    initRenderPass();
+    makeFrames();
+    createDescriptorPool();
+    initCopyCommandBuffer();
+
+    // Note that the order of clearValues should be identical to the order of your
+    // attachments
+    const auto colorString = tire::Config::instance().get<std::string>( "background_color" );
+    const auto backgroundColor = Colorf( colorString );
+    clearValues_[0].color = { { backgroundColor.r(), backgroundColor.g(), backgroundColor.b(), 1.0f } };
+    clearValues_[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
 }
 #elifdef SURFACE_WAYLAND
 Context::Context( uint32_t width, uint32_t height, wl_display *display, wl_surface *surface )
