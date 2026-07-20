@@ -30,6 +30,7 @@
 #include <wayland-client.h>
 #endif
 
+#include "vkinstance.h"
 #include "config/config.h"
 #include "image/color.h"
 
@@ -57,7 +58,7 @@ struct Context final {
 
     [[nodiscard]] auto vkInstance() const -> VkInstance {
         //
-        return vkInstance_;
+        return vkInstance_->get();
     }
 
     [[nodiscard]] auto surface() const -> VkSurfaceKHR {
@@ -230,12 +231,7 @@ private:
     auto pickDevice( const std::vector<PhysicalDevice> &physDevList ) -> std::optional<int>;
 
 protected:
-    // Instance
-    VkInstance vkInstance_{ VK_NULL_HANDLE };
-    VkDebugUtilsMessengerEXT debugMessenger_{ VK_NULL_HANDLE };
-    std::vector<const char *> desiredValidationLayerList_{};
-    std::vector<VkExtensionProperties> extensionProperties_{};
-    std::vector<VkLayerProperties> layerProperties_{};
+    std::unique_ptr<VKInstance> vkInstance_{};
 
     // Surface
     VkSurfaceKHR surface_{ VK_NULL_HANDLE };

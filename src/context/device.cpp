@@ -17,7 +17,7 @@ void Context::collectPhysicalDevices() {
     uint32_t devCount{};
 
     // Enumerate physical devices
-    if ( const auto err = vkEnumeratePhysicalDevices( vkInstance_, &devCount, nullptr ); err != VK_SUCCESS ) {
+    if ( const auto err = vkEnumeratePhysicalDevices( vkInstance(), &devCount, nullptr ); err != VK_SUCCESS ) {
         log::fatal()( "can't enumerate physical devices with code: {}", string_VkResult( err ) );
     } else {
         log::debug()( "physical devices enumerate success, count: {}", devCount );
@@ -32,7 +32,7 @@ void Context::collectPhysicalDevices() {
 
     // Get physical devices
     {
-        const auto err = vkEnumeratePhysicalDevices( vkInstance_, &devCount, physicalDevices.data() );
+        const auto err = vkEnumeratePhysicalDevices( vkInstance(), &devCount, physicalDevices.data() );
         if ( err != VK_SUCCESS ) {
             log::fatal()( "can't acquire physical devices with code: {}", string_VkResult( err ) );
         } else {
@@ -263,8 +263,8 @@ void Context::makeDevice() {
 
     // Force use validation layers
     if ( Config::instance().get<bool>( "enable_validation_layers" ) ) {
-        deviceCreateInfo.enabledLayerCount = static_cast<uint32_t>( desiredValidationLayerList_.size() );
-        deviceCreateInfo.ppEnabledLayerNames = desiredValidationLayerList_.data();
+        deviceCreateInfo.enabledLayerCount = static_cast<uint32_t>( vkInstance_->desiredValidationLayerList().size() );
+        deviceCreateInfo.ppEnabledLayerNames = vkInstance_->desiredValidationLayerList().data();
     } else {
         deviceCreateInfo.enabledLayerCount = 0;
         deviceCreateInfo.ppEnabledLayerNames = nullptr;

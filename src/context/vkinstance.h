@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <string>
 #include <vector>
 
 #include <vulkan/vulkan.h>
@@ -8,7 +9,7 @@
 namespace tire {
 
 struct VKInstance final {
-    VKInstance();
+    VKInstance( const std::string &platformSurfaceExtension );
 
     VKInstance( const VKInstance &other ) = delete;
     VKInstance( VKInstance &&other ) = delete;
@@ -16,9 +17,10 @@ struct VKInstance final {
     auto operator=( const VKInstance &other ) -> VKInstance & = delete;
     auto operator=( VKInstance &&other ) -> VKInstance & = delete;
 
-    ~VKInstance() = default;
+    ~VKInstance();
 
-    [[nodiscard]] auto get() -> VkInstance;
+    [[nodiscard]] auto get() const -> VkInstance;
+    [[nodiscard]] auto desiredValidationLayerList() const -> const std::vector<const char *> &;
 
 private:
     VkInstance vkInstance_{ VK_NULL_HANDLE };
@@ -28,4 +30,4 @@ private:
     std::vector<VkLayerProperties> layerProperties_{};
 };
 
-}
+}  // namespace tire
