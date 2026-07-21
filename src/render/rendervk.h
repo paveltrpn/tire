@@ -30,7 +30,7 @@ struct RenderVK final {
             ui_ = std::make_shared<UiVK>();
 
             testBox_ = std::make_shared<TestBox>();
-            testBox_->setPosition( 1.0f, 0.0f, -3.0f );
+            testBox_->setPosition( 1.0f, 0.0f, -4.0f );
 
             // RUN!!!
             run_ = true;
@@ -68,12 +68,17 @@ struct RenderVK final {
 
 #define LABEL_POS_X -45.f
 #define LABEL_POS_Y 45.0f
+#define STRING_GAP 2.7f
 
-        ui_->label( LABEL_POS_X, LABEL_POS_Y, "\"g\" - toggle grub cursor" );
-        ui_->label( LABEL_POS_X, LABEL_POS_Y - 2.0f, "\"q\" - next camera" );
-        const auto frameDuration = std::format( "frame duration = {}", duration );
-        ui_->label( LABEL_POS_X, LABEL_POS_Y - 4.0f, frameDuration );
-        ui_->billboard( LABEL_POS_X - 1.0f, LABEL_POS_Y + 1.0f, 19.0f, 8.0f, 0.0f );
+        const auto frameDuration = std::format( "Frame duration: {}", duration );
+
+        ui_->label( LABEL_POS_X, LABEL_POS_Y - STRING_GAP * 0.0f, "Test vulkan." );
+        ui_->label( LABEL_POS_X, LABEL_POS_Y - STRING_GAP * 1.0f, "If you see this message" );
+        ui_->label( LABEL_POS_X, LABEL_POS_Y - STRING_GAP * 2.0f, "then texture image is" );
+        ui_->label( LABEL_POS_X, LABEL_POS_Y - STRING_GAP * 3.0f, "properly loaded. " );
+        ui_->label( LABEL_POS_X, LABEL_POS_Y - STRING_GAP * 4.0f, frameDuration );
+
+        ui_->billboard( LABEL_POS_X - 1.0f, LABEL_POS_Y + 1.0f, 32.0f, STRING_GAP * 6.0f, 0.0f );
 
         {
             auto cb = Context::instance().copyBufferCommand();

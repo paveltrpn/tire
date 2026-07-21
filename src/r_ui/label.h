@@ -11,47 +11,45 @@
 
 namespace tire {
 
-
-
 using namespace algebra;
 
- struct Label final {
+struct Label final {
     using value_type = float;
     using vector2_type = vector2<value_type>;
     using vector3_type = vector3<value_type>;
     using vector4_type = vector4<value_type>;
 
-    auto setGlyphWidth( float value ) -> void ;
+    auto setGlyphWidth( float value ) -> void;
 
-    auto setGlyphHeight( float value ) -> void ;
+    auto setGlyphHeight( float value ) -> void;
 
     auto setGlyphScale( float value ) -> void;
 
-    auto setGlyphGap( float value ) -> void ;
+    auto setGlyphGap( float value ) -> void;
 
-    auto setTextPosition( float x, float y ) -> void ;
+    auto setTextPosition( float x, float y ) -> void;
 
-    auto setColor( const Colorf &value ) -> void ;
+    auto setColor( const Colorf &value ) -> void;
 
-    auto resetStringParameters() -> void ;
+    auto resetStringParameters() -> void;
 
-    auto setPos( float x, float y ) -> void ;
+    auto setPos( float x, float y ) -> void;
 
-    auto draw( const std::string &string ) -> void ;
+    auto draw( const std::string &string ) -> void;
 
-    [[nodiscard]] auto lettersCount() const -> size_t ;
+    [[nodiscard]] auto lettersCount() const -> size_t;
 
-    [[nodiscard]] auto bufferVerticesSize() const -> size_t ;
+    [[nodiscard]] auto bufferVerticesSize() const -> size_t;
 
-    [[nodiscard]] auto bufferTexcrdsSize() const -> size_t ;
+    [[nodiscard]] auto bufferTexcrdsSize() const -> size_t;
 
-    [[nodiscard]] auto bufferVertclrsSize() const -> size_t ;
+    [[nodiscard]] auto bufferVertclrsSize() const -> size_t;
 
     [[nodiscard]] auto verteciesData() const -> const vector3<value_type> *;
 
-    [[nodiscard]] auto texcrdsData() const -> const vector2<value_type> * ;
+    [[nodiscard]] auto texcrdsData() const -> const vector2<value_type> *;
 
-    [[nodiscard]] auto clrsData() const -> const vector4<value_type> * ;
+    [[nodiscard]] auto clrsData() const -> const vector4<value_type> *;
 
 private:
 // Size of "Letters buffer" - this is the number of all characters
@@ -62,9 +60,9 @@ private:
     std::array<vector2_type, MAX_LETTERS_COUNT * VERTICIES_PER_QUAD> letterQuadsTexcrds_{};
     std::array<vector4_type, MAX_LETTERS_COUNT * VERTICIES_PER_QUAD> letterQuadsColors_{};
 
-    float glyphScale_{ 1.3f };
-#define GLYPH_WIDTH 0.4f
-#define GLYPH_HEIGHT 1.55f
+    float glyphScale_{ 2.0f };
+#define GLYPH_WIDTH 0.5f
+#define GLYPH_HEIGHT 1.6f
     float glyphQuadWdt_{ GLYPH_WIDTH * glyphScale_ };
     float glyphQuadHgt_{ GLYPH_HEIGHT * glyphScale_ };
 #define GLYPH_GAP 0.0f
