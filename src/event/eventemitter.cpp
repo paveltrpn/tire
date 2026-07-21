@@ -46,10 +46,10 @@ void GlobalEventEmitter::detach( std::weak_ptr<EventObserver> observer ) {
     // }
 }
 
-void GlobalEventEmitter::notify( std::unique_ptr<EventBase> event ) {
+void GlobalEventEmitter::notify( std::shared_ptr<EventBase> event ) {
     for ( auto weakRefObserver : _observers ) {
         auto observer = weakRefObserver.lock();
-        observer->handleEvent( std::move( event ) );
+        observer->handleEvent( event );
     }
 }
 

@@ -88,7 +88,7 @@ BareWindow::BareWindow() {
     glfwSetKeyCallback( window_, []( GLFWwindow *window, int key, int scancode, int action, int mods ) -> void {
         const auto rndrHandle = static_cast<tire::RenderVK *>( glfwGetWindowUserPointer( window ) );
 
-        auto keyPressEvent = std::make_unique<tire::EventKeyPress>();
+        auto keyPressEvent = std::make_shared<tire::EventKeyPress>();
         tire::GlobalEventEmitter::instance().notify( std::move( keyPressEvent ) );
 
         if ( key == GLFW_KEY_G ) {

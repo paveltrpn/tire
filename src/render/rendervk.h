@@ -33,7 +33,7 @@ struct RenderVK final : public EventObserver {
     auto frame() -> void;
     auto postLoop() -> void;
 
-    auto handleEvent( std::unique_ptr<EventBase> event ) -> void override;
+    auto handleEvent( std::shared_ptr<EventBase> event ) -> void override;
 
 public:
     auto holdMouse() -> bool;

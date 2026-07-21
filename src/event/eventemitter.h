@@ -18,7 +18,7 @@ struct EventBase;
 struct EventEmitter {
     virtual void attach( std::weak_ptr<EventObserver> observer ) = 0;
     virtual void detach( std::weak_ptr<EventObserver> observer ) = 0;
-    virtual void notify( std::unique_ptr<EventBase> event ) = 0;
+    virtual void notify( std::shared_ptr<EventBase> event ) = 0;
     virtual ~EventEmitter() = default;
 };
 
@@ -37,7 +37,7 @@ struct GlobalEventEmitter : public EventEmitter {
 
     void attach( std::weak_ptr<EventObserver> observer ) override;
     void detach( std::weak_ptr<EventObserver> observer ) override;
-    void notify( std::unique_ptr<EventBase> event ) override;
+    void notify( std::shared_ptr<EventBase> event ) override;
 
 private:
     GlobalEventEmitter();

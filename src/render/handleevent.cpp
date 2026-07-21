@@ -5,7 +5,7 @@
 
 namespace tire {
 
-auto RenderVK::handleEvent( std::unique_ptr<EventBase> event ) -> void {
+auto RenderVK::handleEvent( std::shared_ptr<EventBase> event ) -> void {
     auto keyPress = dynamic_cast<EventKeyPress*>( event.get() );
     if ( keyPress ) {
         log::notice()( "render catch a key press event" );
