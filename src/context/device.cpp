@@ -18,7 +18,7 @@ namespace tire {
 VKDevice::VKDevice( const VKInstance *instance )
     : instance_{ instance } {
     collectPhysicalDevices();
-    makeDevice();
+    createDevice();
 }
 
 VKDevice::~VKDevice() {
@@ -165,7 +165,7 @@ auto VKDevice::pickDevice( const std::vector<PhysicalDevice> &physDevList ) -> s
     return std::nullopt;
 }
 
-auto VKDevice::makeDevice() -> void {
+auto VKDevice::createDevice() -> void {
     {
         const auto d = pickDevice( physicalDevices_ );
         if ( !d ) {

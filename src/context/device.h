@@ -40,7 +40,7 @@ private:
 private:
     auto collectPhysicalDevices() -> void;
     auto pickDevice( const std::vector<PhysicalDevice> &physDevList ) -> std::optional<int>;
-    auto makeDevice() -> void;
+    auto createDevice() -> void;
 
 private:
     const VKInstance *instance_{};
