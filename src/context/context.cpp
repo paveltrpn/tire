@@ -92,10 +92,10 @@ auto Context::releaseContext() -> void {
 
     vkDestroySwapchainKHR( device(), swapchain_, nullptr );
 
-    allocator_.release();
-    vkSurface_.release();
-    vkDevice_.release();
-    vkInstance_.release();
+    allocator_.reset();
+    vkSurface_.reset();
+    vkDevice_.reset();
+    vkInstance_.reset();
 };
 
 }  // namespace tire
