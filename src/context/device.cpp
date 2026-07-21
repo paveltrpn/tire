@@ -21,6 +21,10 @@ VKDevice::VKDevice( const VKInstance *instance )
     makeDevice();
 }
 
+VKDevice::~VKDevice() {
+    vkDestroyDevice( device_, nullptr );
+}
+
 void VKDevice::collectPhysicalDevices() {
     uint32_t devCount{};
 

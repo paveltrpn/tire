@@ -19,7 +19,7 @@ struct VKDevice final {
     auto operator=( const VKDevice &other ) -> VKDevice & = delete;
     auto operator=( VKDevice &&other ) -> VKDevice & = delete;
 
-    ~VKDevice() = default;
+    ~VKDevice();
 
     [[nodiscard]] auto get() const -> VkDevice;
     [[nodiscard]] auto presentQueue() const -> VkQueue;

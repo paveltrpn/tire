@@ -168,6 +168,9 @@ struct Context final {
     [[nodiscard]] auto copyBufferCommand() const -> CommandRoutine;
     [[nodiscard]] auto immediateCommand() const -> CommandRoutine;
 
+    // Destroy all Vulkan context here.
+    auto releaseContext() -> void;
+
 private:
 #ifdef SURFACE_X11
     Context( uint32_t width, uint32_t height, Display *display, Window window );
@@ -175,8 +178,7 @@ private:
     Context( uint32_t width, uint32_t height, wl_display *display, wl_surface *surface );
 #endif
 
-    // Destroy all Vulkan context here.
-    ~Context();
+    ~Context() = default;
 
     inline static std::atomic<Context *> _instance{ nullptr };
     inline static std::once_flag _initFlag;
@@ -205,8 +207,8 @@ private:
 
 protected:
     std::unique_ptr<VKInstance> vkInstance_{};
-    std::unique_ptr<VKSurface> vkSurface_{};
     std::unique_ptr<VKDevice> vkDevice_{};
+    std::unique_ptr<VKSurface> vkSurface_{};
     std::unique_ptr<VMAllocator> allocator_{};
 
     // Swapchain

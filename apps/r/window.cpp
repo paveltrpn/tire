@@ -129,6 +129,8 @@ BareWindow::BareWindow() {
 }
 
 BareWindow::~BareWindow() {
+    tire::Context::instance().releaseContext();
+
     glfwDestroyWindow( window_ );
     glfwTerminate();
 }

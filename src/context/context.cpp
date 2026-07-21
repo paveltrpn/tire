@@ -74,8 +74,9 @@ Context::Context( uint32_t width, uint32_t height, wl_display *display, wl_surfa
 }
 #endif
 
-// Destroy all Vulkan context here.
-Context::~Context() {
+auto Context::releaseContext() -> void {
+    log::info()( "Release vulkan context..." );
+
     vkDestroyFence( device(), copyCommandFence_, nullptr );
     vkDestroyDescriptorPool( device(), descriptorPool_, nullptr );
 
@@ -90,7 +91,11 @@ Context::~Context() {
     vkDestroyCommandPool( device(), commandPool_, nullptr );
 
     vkDestroySwapchainKHR( device(), swapchain_, nullptr );
-    vkDestroyDevice( device(), nullptr );
-}
+
+    allocator_.release();
+    vkSurface_.release();
+    vkDevice_.release();
+    vkInstance_.release();
+};
 
 }  // namespace tire
