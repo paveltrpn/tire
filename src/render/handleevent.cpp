@@ -1,14 +1,27 @@
 
 #include "rendervk.h"
 
-#include "log/log.h"
-
 namespace tire {
 
 auto RenderVK::handleEvent( std::shared_ptr<EventBase> event ) -> void {
-    auto keyPress = dynamic_cast<EventKeyPress*>( event.get() );
-    if ( keyPress ) {
-        log::notice()( "render catch a key press event" );
+    auto keyEvent = dynamic_cast<EventKey*>( event.get() );
+    if ( keyEvent ) {
+        switch ( keyEvent->_action ) {
+            case tire::KeyAction::PRESS: {
+                if ( keyEvent->_key == 71 ) {
+                    holdMouse_ = !holdMouse_;
+                    return;
+                }
+                if ( keyEvent->_key == 256 ) {
+                    run_ = false;
+                    return;
+                }
+                break;
+            }
+            case tire::KeyAction::RELEASE: {
+                break;
+            }
+        }
     }
 };
 

@@ -35,21 +35,6 @@ struct RenderVK final : public EventObserver {
 
     auto handleEvent( std::shared_ptr<EventBase> event ) -> void override;
 
-public:
-    auto holdMouse() -> bool;
-    auto keyPressEvent( unsigned int key ) -> void;
-    auto keyReleaseEvent( unsigned int key ) -> void;
-    auto mouseButtonPressEvent( unsigned int key ) -> void;
-    auto mouseButtonReleaseEvent( unsigned int key ) -> void;
-
-    // Call when mouse moves free upon window. "x" and "y"
-    // represent current cursor position in window coordinates
-    auto mouseMoveEvent( double x, double y ) -> void;
-
-    // Call when mouse holds in defined position. "x" and "y"
-    // represent current cursor ofssets.
-    auto mouseOffsetEvent( double x, double y, double holdX, double holdY ) -> void;
-
 private:
     bool run_{};
 
