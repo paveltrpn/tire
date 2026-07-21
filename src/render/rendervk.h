@@ -11,8 +11,6 @@
 #include "test_box/test_box.h"
 #include "ui/ui.h"
 
-// using namespace std::chrono_literals;
-
 namespace tire {
 
 struct RenderVK final : public EventObserver {

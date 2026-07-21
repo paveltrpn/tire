@@ -3,7 +3,7 @@
 
 namespace tire {
 
-auto RenderVK::handleEvent( Event *event ) -> void {
+auto RenderVK::handleEvent( Event *event ) -> void{
 
 };
 
