@@ -29,9 +29,9 @@
 #include "log/log.h"
 
 BareWindow::BareWindow() {
-    // Initialize GlobalEventEmitter sinleton.
+    // Initialize GlobalEventEmitter singleton.
     tire::GlobalEventEmitter::init();
-    // Initialize Config sinleton.
+    // Initialize Config singleton.
     tire::Config::init( "assets/config.json" );
 
     if ( glfwInit() != GLFW_TRUE ) {
