@@ -48,6 +48,7 @@ Context::Context( uint32_t width, uint32_t height, Display *display, Window wind
     vkDevice_ = std::make_unique<VKDevice>( vkInstance_.get() );
     vkSurface_ = std::make_unique<VKSurfaceXLib>( vkInstance_.get(), vkDevice_.get(), width, height, display, window );
     allocator_ = std::make_unique<VMAllocator>( vkInstance_.get(), vkDevice_.get() );
+    presentation_ = std::make_unique<Presentation>( vkInstance_.get(), vkDevice_.get() );
 
     makeCommandPool();
     makeSwapchain();
@@ -92,6 +93,7 @@ auto Context::releaseContext() -> void {
 
     vkDestroySwapchainKHR( device(), swapchain_, nullptr );
 
+    presentation_.reset();
     allocator_.reset();
     vkSurface_.reset();
     vkDevice_.reset();

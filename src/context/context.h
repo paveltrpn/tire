@@ -30,6 +30,7 @@
 #include "surface.h"
 #include "device.h"
 #include "allocator.h"
+#include "presentation.h"
 
 #include "command_routine.h"
 
@@ -210,6 +211,7 @@ protected:
     std::unique_ptr<VKDevice> vkDevice_{};
     std::unique_ptr<VKSurface> vkSurface_{};
     std::unique_ptr<VMAllocator> allocator_{};
+    std::unique_ptr<Presentation> presentation_{};
 
     // Swapchain
     VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
