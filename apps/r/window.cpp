@@ -136,7 +136,7 @@ BareWindow::~BareWindow() {
 auto BareWindow::loop() -> void {
     render_->preLoop();
 
-    while ( render_->run() ) {
+    while ( render_->isRun() ) {
         if ( render_->holdMouse() ) {
             glfwSetCursorPos( window_, WINDOW_HOLD_X, WINDOW_HOLD_Y );
         }
