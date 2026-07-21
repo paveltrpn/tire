@@ -169,7 +169,7 @@ auto VKDevice::createDevice() -> void {
     {
         const auto d = pickDevice( physicalDevices_ );
         if ( !d ) {
-            log::fatal()( "vk::Device === no suitable vulkan devices found!" );
+            log::fatal()( "no suitable vulkan devices found!" );
         } else {
             pickedPhysicalDeviceId_ = d.value();
         }
