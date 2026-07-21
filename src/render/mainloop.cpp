@@ -60,7 +60,7 @@ auto RenderVK::frame() -> void {
 #define CUBEPARAM_LABEL_POS_X 12.f
 #define CUBEPARAM_LABEL_POS_Y 38.0f
 
-    ui_->label( CUBEPARAM_LABEL_POS_X, CUBEPARAM_LABEL_POS_Y - STRING_GAP * 0.0f, "To adjust cube" );
+    ui_->label( CUBEPARAM_LABEL_POS_X, CUBEPARAM_LABEL_POS_Y - STRING_GAP * 0.0f, "(TODO) To adjust cube" );
     ui_->label( CUBEPARAM_LABEL_POS_X, CUBEPARAM_LABEL_POS_Y - STRING_GAP * 1.0f, "appearence press:" );
     ui_->label( CUBEPARAM_LABEL_POS_X, CUBEPARAM_LABEL_POS_Y - STRING_GAP * 2.0f, "\"n\" - next appearence" );
     ui_->label( CUBEPARAM_LABEL_POS_X, CUBEPARAM_LABEL_POS_Y - STRING_GAP * 3.0f, "\"p\" - previous appearence" );
