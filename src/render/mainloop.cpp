@@ -43,7 +43,7 @@ auto RenderVK::frame() -> void {
 
 #define LABEL_POS_X -45.f
 #define LABEL_POS_Y 45.0f
-#define STRING_GAP 2.7f
+#define STRING_GAP 3.2f
 
     const auto duration = timer_.frameDuration<float>();
     const auto frameDuration = std::format( "Frame duration: {}", duration );
@@ -54,7 +54,7 @@ auto RenderVK::frame() -> void {
     ui_->label( LABEL_POS_X, LABEL_POS_Y - STRING_GAP * 3.0f, "properly loaded. " );
     ui_->label( LABEL_POS_X, LABEL_POS_Y - STRING_GAP * 4.0f, frameDuration );
 
-    ui_->billboard( LABEL_POS_X - 1.0f, LABEL_POS_Y + 1.0f, 32.0f, STRING_GAP * 6.0f, 0.0f );
+    ui_->billboard( LABEL_POS_X - 1.0f, LABEL_POS_Y + 1.5f, 32.0f, STRING_GAP * 6.0f, 0.0f );
 
     {
         auto cb = Context::instance().copyBufferCommand();
