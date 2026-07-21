@@ -5,6 +5,8 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
+#include "event/eventobserver.h"
+
 #include "timer.h"
 #include "test_box/test_box.h"
 #include "ui/ui.h"
@@ -13,7 +15,7 @@
 
 namespace tire {
 
-struct RenderVK final {
+struct RenderVK final : public EventObserver {
     explicit RenderVK();
 
     RenderVK( const RenderVK &other ) = delete;
@@ -31,6 +33,8 @@ struct RenderVK final {
     auto preLoop() -> void;
     auto frame() -> void;
     auto postLoop() -> void;
+
+    auto handleEvent( Event *event ) -> void override;
 
 public:
     auto holdMouse() -> bool;
