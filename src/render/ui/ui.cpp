@@ -3,7 +3,6 @@
 #include <memory>
 #include <filesystem>
 #include <variant>
-#include <iostream>
 
 #include <vulkan/vulkan.h>
 #include "vulkan/vulkan_core.h"
@@ -15,10 +14,7 @@
 #include "context/program.h"
 #include "config/config.h"
 #include "log/log.h"
-#include "image/image.h"
-#include "algebra/vector3.h"
 
-#include "r_ui/ui.h"
 #include "r_ui/billboard.h"
 #include "r_ui/label.h"
 
@@ -28,9 +24,6 @@
 namespace tire {
 
 using namespace algebra;
-
-#define VERTICIES_PER_QUAD 6
-#define OUTPUT_QUADS_COUNT 128
 
 QuadDrawBuffer::QuadDrawBuffer( size_t quadsCount )
     : vBuf_{ VertexBuffer{ quadsCount * VERTICIES_PER_QUAD * 3 * sizeof( float ) } }

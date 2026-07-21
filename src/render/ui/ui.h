@@ -33,7 +33,7 @@ namespace tire {
 using namespace algebra;
 
 #define VERTICIES_PER_QUAD 6
-#define OUTPUT_QUADS_COUNT 128
+#define OUTPUT_QUADS_COUNT 128 * 2
 
 struct QuadDrawBuffer final {
     QuadDrawBuffer( size_t quadsCount );
