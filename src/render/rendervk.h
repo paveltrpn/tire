@@ -5,6 +5,7 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
+#include "event/event.h"
 #include "event/eventobserver.h"
 
 #include "timer.h"
@@ -32,7 +33,7 @@ struct RenderVK final : public EventObserver {
     auto frame() -> void;
     auto postLoop() -> void;
 
-    auto handleEvent( Event *event ) -> void override;
+    auto handleEvent( std::unique_ptr<EventBase> event ) -> void override;
 
 public:
     auto holdMouse() -> bool;

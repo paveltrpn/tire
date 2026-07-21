@@ -29,6 +29,5 @@ private:
     int width_{ 1024 };
     int height_{ 1024 };
 
-    // Render related
-    std::unique_ptr<tire::RenderVK> render_;
+    std::shared_ptr<tire::RenderVK> render_;
 };

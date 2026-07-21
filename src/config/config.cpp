@@ -1,4 +1,6 @@
 
+#include <fstream>
+
 #include "config.h"
 
 namespace tire {

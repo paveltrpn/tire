@@ -21,6 +21,7 @@
 
 #include "window.h"
 
+#include "event/eventemitter.h"
 #include "config/config.h"
 #include "context/context.h"
 #include "render/rendervk.h"
@@ -28,6 +29,8 @@
 #include "log/log.h"
 
 BareWindow::BareWindow() {
+    // Initialize GlobalEventEmitter sinleton.
+    tire::GlobalEventEmitter::init();
     // Initialize Config sinleton.
     tire::Config::init( "assets/config.json" );
 
@@ -76,12 +79,17 @@ BareWindow::BareWindow() {
 #endif
 
     // Initialize render object.
-    render_ = std::make_unique<tire::RenderVK>();
+    render_ = std::make_shared<tire::RenderVK>();
+    // Subscribe.
+    tire::GlobalEventEmitter::instance().attach( render_ );
 
     glfwSetWindowUserPointer( window_, render_.get() );
 
     glfwSetKeyCallback( window_, []( GLFWwindow *window, int key, int scancode, int action, int mods ) -> void {
         const auto rndrHandle = static_cast<tire::RenderVK *>( glfwGetWindowUserPointer( window ) );
+
+        auto keyPressEvent = std::make_unique<tire::EventKeyPress>();
+        tire::GlobalEventEmitter::instance().notify( std::move( keyPressEvent ) );
 
         if ( key == GLFW_KEY_G ) {
             if ( rndrHandle->holdMouse() ) {
