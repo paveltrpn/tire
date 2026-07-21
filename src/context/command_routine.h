@@ -7,8 +7,6 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "log/log.h"
-
 namespace tire {
 
 struct CommandRoutine {
@@ -44,7 +42,7 @@ struct CommandRoutine {
             return {};
         }
 
-        auto return_void() -> void{
+        auto return_void() -> void {
             //
         }
 
