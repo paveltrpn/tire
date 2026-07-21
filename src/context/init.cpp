@@ -12,11 +12,11 @@
 
 #include "context.h"
 #include "log/log.h"
-#include "image/image.h"
 
 namespace tire {
 
-auto Context::memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags properties ) const -> uint32_t {
+auto Context::memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags properties ) const
+    -> std::optional<uint32_t> {
     VkPhysicalDeviceMemoryProperties memProperties{};
     vkGetPhysicalDeviceMemoryProperties( vkDevice_->physicalDevice(), &memProperties );
 
@@ -29,12 +29,11 @@ auto Context::memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags pro
 
     log::fatal()( "failed to find suitable memory type!" );
 
-    // Silence warning
-    return {};
+    return std::nullopt;
 }
 
 auto Context::findSupportedFormat( const std::vector<VkFormat> &candidates, VkImageTiling tiling,
-                                   VkFormatFeatureFlags features ) const -> VkFormat {
+                                   VkFormatFeatureFlags features ) const -> std::optional<VkFormat> {
     for ( VkFormat format : candidates ) {
         VkFormatProperties props;
         vkGetPhysicalDeviceFormatProperties( vkDevice_->physicalDevice(), format, &props );
@@ -46,10 +45,7 @@ auto Context::findSupportedFormat( const std::vector<VkFormat> &candidates, VkIm
         }
     }
 
-    log::fatal()( "failed to find supported format!" );
-
-    // Silence warning
-    return {};
+    return std::nullopt;
 }
 
 auto Context::initRenderPass() -> void {
@@ -70,8 +66,12 @@ auto Context::initRenderPass() -> void {
                              VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT );
     // const auto depthFormat = VK_FORMAT_D32_SFLOAT;
 
+    if ( !depthFormat.has_value() ) {
+        log::fatal()( "failed to find suitable depth format!" );
+    }
+
     VkAttachmentDescription depthAttachment{};
-    depthAttachment.format = depthFormat;
+    depthAttachment.format = depthFormat.value();
     depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
     depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;

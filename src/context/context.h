@@ -119,9 +119,10 @@ struct Context final {
         return vkSurface_->surfaceCapabilities();
     }
 
-    [[nodiscard]] auto memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags properties ) const -> uint32_t;
+    [[nodiscard]] auto memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags properties ) const
+        -> std::optional<uint32_t>;
     [[nodiscard]] auto findSupportedFormat( const std::vector<VkFormat> &candidates, VkImageTiling tiling,
-                                            VkFormatFeatureFlags features ) const -> VkFormat;
+                                            VkFormatFeatureFlags features ) const -> std::optional<VkFormat>;
 
     [[nodiscard]] auto renderPass() const -> VkRenderPass {
         //
