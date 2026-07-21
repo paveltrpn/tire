@@ -30,7 +30,7 @@ struct RenderVK final {
             ui_ = std::make_shared<UiVK>();
 
             testBox_ = std::make_shared<TestBox>();
-            testBox_->setPosition( 8.4f, 4.3f, -15.0f );
+            testBox_->setPosition( 1.0f, 0.0f, -3.0f );
 
             // RUN!!!
             run_ = true;

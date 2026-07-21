@@ -29,7 +29,7 @@
 
 BareWindow::BareWindow() {
     // Initialize Config sinleton.
-    tire::Config::init( "config.json" );
+    tire::Config::init( "assets/config.json" );
 
     if ( glfwInit() != GLFW_TRUE ) {
         tire::log::fatal()( "glfw init faild!" );

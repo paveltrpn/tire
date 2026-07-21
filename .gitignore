@@ -15,4 +15,3 @@ settings.ini
 
 /shaders/spirv
 !/shaders/.gitkeep
-assets
