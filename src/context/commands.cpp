@@ -15,7 +15,7 @@ auto Context::immediateCommand() const -> CommandRoutine {
     const auto allocInfo = VkCommandBufferAllocateInfo{
         //
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-        .commandPool = commandPool_,
+        .commandPool = commandPool(),
         .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
         .commandBufferCount = 1,
     };
@@ -70,7 +70,7 @@ auto Context::immediateCommand() const -> CommandRoutine {
 
     vkQueueWaitIdle( graphicsQueue() );
 
-    vkFreeCommandBuffers( device(), commandPool_, 1, &cb );
+    vkFreeCommandBuffers( device(), commandPool(), 1, &cb );
 }
 
 auto Context::copyBufferCommand() const -> CommandRoutine {

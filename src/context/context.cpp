@@ -49,12 +49,11 @@ Context::Context( uint32_t width, uint32_t height, Display *display, Window wind
     vkSurface_ = std::make_unique<VKSurfaceXLib>( vkInstance_.get(), vkDevice_.get(), width, height, display, window );
     allocator_ = std::make_unique<VMAllocator>( vkInstance_.get(), vkDevice_.get() );
     presentation_ = std::make_unique<Presentation>( vkInstance_.get(), vkDevice_.get() );
+    contextPools_ = std::make_unique<ContextPools>( vkInstance_.get(), vkDevice_.get() );
 
-    makeCommandPool();
     makeSwapchain();
     initRenderPass();
     makeFrames();
-    createDescriptorPool();
     initCopyCommandBuffer();
 
     // Note that the order of clearValues should be identical to the order of your
@@ -79,7 +78,6 @@ auto Context::releaseContext() -> void {
     log::info()( "Release vulkan context..." );
 
     vkDestroyFence( device(), copyCommandFence_, nullptr );
-    vkDestroyDescriptorPool( device(), descriptorPool_, nullptr );
 
     for ( auto i = 0; i < framesCount_; i++ ) {
         vkDestroySemaphore( device(), frames_[i].imageAvailableSemaphore_, nullptr );
@@ -88,8 +86,6 @@ auto Context::releaseContext() -> void {
         vkDestroyFramebuffer( device(), frames_[i].framebuffer_, nullptr );
         vkDestroyImageView( device(), frames_[i].view_, nullptr );
     }
-
-    vkDestroyCommandPool( device(), commandPool_, nullptr );
 
     vkDestroySwapchainKHR( device(), swapchain_, nullptr );
 

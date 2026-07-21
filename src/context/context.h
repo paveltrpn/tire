@@ -31,6 +31,7 @@
 #include "device.h"
 #include "allocator.h"
 #include "presentation.h"
+#include "contextpools.h"
 
 #include "command_routine.h"
 
@@ -157,12 +158,12 @@ struct Context final {
 
     [[nodiscard]] auto commandPool() const -> VkCommandPool {
         //
-        return commandPool_;
+        return contextPools_->commandPool();
     };
 
     [[nodiscard]] auto descriptorPool() const -> VkDescriptorPool {
         //
-        return descriptorPool_;
+        return contextPools_->descriptorPool();
     };
 
     [[nodiscard]] auto renderCommand( uint32_t frameId ) -> CommandRoutine;
@@ -198,12 +199,9 @@ private:
     };
 
 private:
-    // Init all context
-    auto makeCommandPool() -> void;
     auto makeSwapchain() -> void;
     auto initRenderPass() -> void;
     auto makeFrames() -> void;
-    auto createDescriptorPool() -> void;
     auto initCopyCommandBuffer() -> void;
 
 protected:
@@ -212,6 +210,7 @@ protected:
     std::unique_ptr<VKSurface> vkSurface_{};
     std::unique_ptr<VMAllocator> allocator_{};
     std::unique_ptr<Presentation> presentation_{};
+    std::unique_ptr<ContextPools> contextPools_{};
 
     // Swapchain
     VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
@@ -225,14 +224,8 @@ protected:
     uint32_t width_{};
     uint32_t height_{};
 
-    // Command pool
-    VkCommandPool commandPool_{ VK_NULL_HANDLE };
-
     // Background color value
     std::array<VkClearValue, 2> clearValues_{};
-
-    //
-    VkDescriptorPool descriptorPool_{};
 
     // Reusable command buffer with fence.
     VkFence copyCommandFence_{};
