@@ -46,7 +46,7 @@ private:
     const VKInstance *instance_{};
 
     std::vector<PhysicalDevice> physicalDevices_{};
-    int pickedPhysicalDeviceId_{ -1 };
+    uint32_t pickedPhysicalDeviceId_{ UINT32_MAX };
     uint32_t presentSupportQueueId_{ UINT32_MAX };
     VkQueue presentQueue_{ VK_NULL_HANDLE };
     VkPhysicalDevice physicalDevice_{};
