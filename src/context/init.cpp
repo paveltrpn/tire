@@ -135,29 +135,6 @@ auto Context::initRenderPass() -> void {
     }
 }
 
-auto Context::createAllocator() -> void {
-    VmaVulkanFunctions vulkanFunctions{};
-    vulkanFunctions.vkGetInstanceProcAddr = &vkGetInstanceProcAddr;
-    vulkanFunctions.vkGetDeviceProcAddr = &vkGetDeviceProcAddr;
-
-    VmaAllocatorCreateInfo allocatorCreateInfo{};
-    allocatorCreateInfo.flags = VMA_ALLOCATOR_CREATE_EXT_MEMORY_BUDGET_BIT;
-    allocatorCreateInfo.vulkanApiVersion = VK_API_VERSION_1_3;
-    allocatorCreateInfo.physicalDevice = vkDevice_->physicalDevice();
-    allocatorCreateInfo.device = device();
-    allocatorCreateInfo.instance = vkInstance();
-    allocatorCreateInfo.pVulkanFunctions = &vulkanFunctions;
-
-    {
-        const auto res = vmaCreateAllocator( &allocatorCreateInfo, &allocator_ );
-        if ( res != VK_SUCCESS ) {
-            log::fatal()( "failed to create allocator with code {}!", string_VkResult( res ) );
-        } else {
-            log::info()( "allocator created!" );
-        }
-    }
-}
-
 auto Context::createDescriptorPool() -> void {
     std::vector<VkDescriptorPoolSize> sizes = {
         //

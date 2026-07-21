@@ -6,6 +6,7 @@
 
 #include "config/config.h"
 #include "log/log.h"
+#include "image/color.h"
 
 namespace tire {
 
@@ -46,8 +47,8 @@ Context::Context( uint32_t width, uint32_t height, Display *display, Window wind
     vkInstance_ = std::make_unique<VKInstance>( "VK_KHR_xlib_surface" );
     vkDevice_ = std::make_unique<VKDevice>( vkInstance_.get() );
     vkSurface_ = std::make_unique<VKSurfaceXLib>( vkInstance_.get(), vkDevice_.get(), width, height, display, window );
+    allocator_ = std::make_unique<VMAllocator>( vkInstance_.get(), vkDevice_.get() );
 
-    createAllocator();
     makeCommandPool();
     makeSwapchain();
     initRenderPass();
@@ -87,8 +88,6 @@ Context::~Context() {
     }
 
     vkDestroyCommandPool( device(), commandPool_, nullptr );
-
-    vmaDestroyAllocator( allocator_ );
 
     vkDestroySwapchainKHR( device(), swapchain_, nullptr );
     vkDestroyDevice( device(), nullptr );

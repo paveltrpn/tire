@@ -19,10 +19,6 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-#define VMA_STATIC_VULKAN_FUNCTIONS 0
-#define VMA_DYNAMIC_VULKAN_FUNCTIONS 1
-#include "vma/vk_mem_alloc.h"
-
 #ifdef SURFACE_X11
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -33,8 +29,7 @@
 #include "vkinstance.h"
 #include "surface.h"
 #include "device.h"
-#include "config/config.h"
-#include "image/color.h"
+#include "allocator.h"
 
 #include "command_routine.h"
 
@@ -133,7 +128,7 @@ struct Context final {
 
     [[nodiscard]] auto allocator() const -> VmaAllocator {
         //
-        return allocator_;
+        return allocator_->get();
     }
 
     [[nodiscard]] auto getFrameSyncSet( size_t id ) -> std::tuple<VkSemaphore, VkSemaphore, VkFence, VkCommandBuffer> {
@@ -205,7 +200,6 @@ private:
     auto makeSwapchain() -> void;
     auto initRenderPass() -> void;
     auto makeFrames() -> void;
-    auto createAllocator() -> void;
     auto createDescriptorPool() -> void;
     auto initCopyCommandBuffer() -> void;
 
@@ -213,6 +207,7 @@ protected:
     std::unique_ptr<VKInstance> vkInstance_{};
     std::unique_ptr<VKSurface> vkSurface_{};
     std::unique_ptr<VKDevice> vkDevice_{};
+    std::unique_ptr<VMAllocator> allocator_{};
 
     // Swapchain
     VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
@@ -231,9 +226,6 @@ protected:
 
     // Background color value
     std::array<VkClearValue, 2> clearValues_{};
-
-    // Momory
-    VmaAllocator allocator_{};
 
     //
     VkDescriptorPool descriptorPool_{};
