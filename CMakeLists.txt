@@ -56,7 +56,7 @@ else()
 endif()
 
 find_package(glfw3 3.3 REQUIRED)
-find_package(nlohmann_json 3.0 REQUIRED)
+find_package(nlohmann_json 3.11 REQUIRED)
 
 include_directories("src")
 
@@ -164,6 +164,17 @@ target_link_libraries(image
 )
 
 # ================================
+# Module event
+# ================================
+file(GLOB_RECURSE MOD_EVENT_SRC "src/event/*.cpp" "src/event/*.h")
+add_library(event ${MOD_EVENT_SRC})
+set_target_properties(event PROPERTIES AUTOMOC TRUE)
+target_compile_options(event PRIVATE -freflection -std=c++26)
+target_link_libraries(event
+    log
+)
+
+# ================================
 # Module tired
 # ================================
 file(GLOB_RECURSE MOD_TIRED_SRC "src/tired/*.cpp" "src/tired/*.h")
@@ -197,6 +208,7 @@ target_link_libraries(tired
     log
     image
     fast_obj
+    event
 )
 
 # ================================
@@ -285,6 +297,7 @@ target_sources(${TIRE_EXE} PRIVATE ${EXE_R_SRC})
 set_target_properties(${TIRE_EXE} PROPERTIES AUTOMOC TRUE)
 target_compile_options(${TIRE_EXE} PRIVATE -freflection)
 target_link_libraries(${TIRE_EXE}
+    event
     context
     log
     algebra
