@@ -84,28 +84,11 @@ target_compile_features(config PUBLIC cxx_std_26)
 target_compile_options(config PRIVATE -freflection)
 
 # ================================
-# Module vma_usage
-# ================================
-file(
-    GLOB_RECURSE
-    MOD_VMA_USAGE_SRC
-    "src/vma_usage/*.cpp" "src/vma_usage/*.h"
-)
-add_library(vma_usage)
-target_sources(
-    vma_usage
-    PRIVATE
-    ${MOD_VMA_USAGE_SRC}
-)
-target_compile_features(vma_usage PUBLIC cxx_std_26)
-target_compile_options(vma_usage PRIVATE -freflection)
-
-# ================================
 # Module context
 # ================================
 file(GLOB_RECURSE MOD_CONTEXT_SRC "src/context/*.cpp" "src/context/*.h")
 add_library(context ${MOD_CONTEXT_SRC})
-target_link_libraries(context vulkan config image vma_usage)
+target_link_libraries(context vulkan config image)
 target_compile_features(context PUBLIC cxx_std_26)
 target_compile_options(context PRIVATE -freflection)
 
@@ -123,7 +106,7 @@ target_compile_options(r_ui PRIVATE -freflection )
 # ================================
 file(GLOB_RECURSE MOD_RENDER_SRC "src/render/*.cpp" "src/render/*.h")
 add_library(render ${MOD_RENDER_SRC})
-target_link_libraries(render vulkan context r_ui config algebra vma_usage)
+target_link_libraries(render vulkan context r_ui config algebra)
 target_compile_features(render PUBLIC cxx_std_26)
 target_compile_options(render PRIVATE -freflection)
 
