@@ -6,6 +6,7 @@ module;
 export module graph : scene;
 
 import : locale;
+import : visitor;
 
 namespace tire {
 
@@ -13,7 +14,14 @@ namespace tire {
 // =================== Scene ==================================================
 // ============================================================================
 
+struct DrawVisitor final : public Visitor {};
+
+// ============================================================================
+// =================== Scene ==================================================
+// ============================================================================
+
 export struct Scene final {
+public:
     Scene( const Scene& other ) = delete;
     Scene( Scene&& other ) = delete;
 
@@ -23,7 +31,11 @@ export struct Scene final {
     ~Scene() = default;
 
     auto walk() -> void {
-        //
+        auto dv = DrawVisitor{};
+
+        for ( auto&& locale : _locales ) {
+            locale->accept( dv );
+        }
     }
 
     auto attachLocale( std::shared_ptr<Locale> child ) {
