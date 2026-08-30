@@ -1,11 +1,17 @@
 module;
 
+#include <memory>
+
 export module graph : node;
 
 namespace tire {
 
+// ============================================================================
+// =================== Node ===================================================
+// ============================================================================
+
 // NOLINTNEXTLINE(cppcoreguidelines-virtual-class-destructor)
-export struct Node {
+export struct Node : public std::enable_shared_from_this<Node> {
     Node( const Node& other ) = delete;
     Node( Node&& other ) = delete;
 

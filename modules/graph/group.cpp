@@ -1,5 +1,7 @@
 module;
 
+#include <memory>
+
 export module graph : group;
 
 import : node;
