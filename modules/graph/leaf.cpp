@@ -13,8 +13,8 @@ export struct Leaf : public Node {
     auto operator=( const Leaf& other ) -> Leaf& = delete;
     auto operator=( Leaf&& other ) -> Leaf& = delete;
 
-private:
-    ~Leaf() = default;
+protected:
+    ~Leaf() override = default;
 };
 
 }  // namespace tire

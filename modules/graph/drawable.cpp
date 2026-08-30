@@ -2,12 +2,12 @@ module;
 
 export module graph : drawable;
 
-import : node;
+import : leaf;
 
 namespace tire {
 
 // NOLINTNEXTLINE(cppcoreguidelines-virtual-class-destructor)
-export struct Drawable : public Node {
+export struct Drawable : public Leaf {
     Drawable( const Drawable& other ) = delete;
     Drawable( Drawable&& other ) = delete;
 
@@ -15,7 +15,7 @@ export struct Drawable : public Node {
     auto operator=( Drawable&& other ) -> Drawable& = delete;
 
 private:
-    ~Drawable() = default;
+    ~Drawable() override = default;
 };
 
 }  // namespace tire

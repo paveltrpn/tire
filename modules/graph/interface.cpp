@@ -2,6 +2,7 @@
 module;
 
 export module graph;
+export import : scene;
 export import : node;
 export import : visitor;
 export import : leaf;
@@ -10,5 +11,4 @@ export import : group;
 export import : stategroup;
 export import : transformgroup;
 export import : switchgroup;
-export import : node;
 export import : visitor;

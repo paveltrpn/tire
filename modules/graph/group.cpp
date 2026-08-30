@@ -14,7 +14,7 @@ export struct Group : public Node {
     auto operator=( Group&& other ) -> Group& = delete;
 
 protected:
-    ~Group() = default;
+    ~Group() override = default;
 };
 
 }  // namespace tire
