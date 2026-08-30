@@ -21,9 +21,9 @@
 
 #include "window.h"
 
-#include "r/event/eventemitter.h"
-#include "r/render/rendervk.h"
-#include "r/context/context.h"
+#include "event/eventemitter.h"
+#include "render/rendervk.h"
+#include "context/context.h"
 
 #include "config/config.h"
 #include "config/config.h"
@@ -39,7 +39,7 @@ BareWindow::BareWindow() {
         tire::log::fatal()( "glfw init faild!" );
     }
 
-    glfwSetErrorCallback( []( int, const char *err_str ) -> void {
+    glfwSetErrorCallback( []( int, const char* err_str ) -> void {
         //
         tire::log::error()( "GLFW Error: {}", err_str );
     } );
@@ -86,8 +86,8 @@ BareWindow::BareWindow() {
 
     glfwSetWindowUserPointer( window_, render_.get() );
 
-    glfwSetKeyCallback( window_, []( GLFWwindow *window, int key, int scancode, int action, int mods ) -> void {
-        const auto rndrHandle = static_cast<tire::RenderVK *>( glfwGetWindowUserPointer( window ) );
+    glfwSetKeyCallback( window_, []( GLFWwindow* window, int key, int scancode, int action, int mods ) -> void {
+        const auto rndrHandle = static_cast<tire::RenderVK*>( glfwGetWindowUserPointer( window ) );
 
         if ( action == GLFW_PRESS ) {
             auto keyPressEvent = std::make_shared<tire::EventKey>( tire::KeyAction::PRESS, key );
@@ -100,8 +100,8 @@ BareWindow::BareWindow() {
         }
     } );
 
-    glfwSetMouseButtonCallback( window_, []( GLFWwindow *window, int button, int action, int mods ) -> void {
-        const auto rndrHandle = static_cast<tire::RenderVK *>( glfwGetWindowUserPointer( window ) );
+    glfwSetMouseButtonCallback( window_, []( GLFWwindow* window, int button, int action, int mods ) -> void {
+        const auto rndrHandle = static_cast<tire::RenderVK*>( glfwGetWindowUserPointer( window ) );
 
         if ( action == GLFW_PRESS ) {
         }
@@ -113,15 +113,15 @@ BareWindow::BareWindow() {
 #define WINDOW_HOLD_X 500.0
 #define WINDOW_HOLD_Y 500.0
 
-    glfwSetCursorPosCallback( window_, []( GLFWwindow *window, double posX, double posY ) -> void {
-        const auto rndrHandle = static_cast<tire::RenderVK *>( glfwGetWindowUserPointer( window ) );
+    glfwSetCursorPosCallback( window_, []( GLFWwindow* window, double posX, double posY ) -> void {
+        const auto rndrHandle = static_cast<tire::RenderVK*>( glfwGetWindowUserPointer( window ) );
 
         // if ( rndrHandle->holdMouse() ) {
         //     rndrHandle->mouseOffsetEvent( posX, posY, WINDOW_HOLD_X, WINDOW_HOLD_Y );
         // }
     } );
 
-    glfwSetCursorEnterCallback( window_, []( GLFWwindow *window, int entered ) -> void {
+    glfwSetCursorEnterCallback( window_, []( GLFWwindow* window, int entered ) -> void {
 
     } );
 }

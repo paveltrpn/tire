@@ -12,8 +12,8 @@
 
 #include "vma/vk_mem_alloc.h"
 
-#include "r/context/context.h"
-#include "r/context/program.h"
+#include "context/context.h"
+#include "context/program.h"
 #include "config/config.h"
 #include "log/log.h"
 #include "image/image.h"
@@ -24,9 +24,9 @@
 #include "../vertex_buffer.h"
 #include "../texture_image.h"
 
-#include "r/ui/ui.h"
-#include "r/ui/billboard.h"
-#include "r/ui/label.h"
+#include "ui/ui.h"
+#include "ui/billboard.h"
+#include "ui/label.h"
 
 namespace tire {
 
@@ -46,25 +46,25 @@ struct QuadDrawBuffer final {
 };
 
 struct UiComponentVisitor final {
-    UiComponentVisitor( VkCommandBuffer cb, QuadDrawBuffer &labelBuffer, QuadDrawBuffer &billboardBuffer );
+    UiComponentVisitor( VkCommandBuffer cb, QuadDrawBuffer& labelBuffer, QuadDrawBuffer& billboardBuffer );
 
-    auto operator()( const tire::Label &item ) -> void;
+    auto operator()( const tire::Label& item ) -> void;
 
-    auto operator()( const tire::Billboard &item ) -> void;
+    auto operator()( const tire::Billboard& item ) -> void;
 
     template <typename T>
-    auto dispath( const T &item, QuadDrawBuffer &buffer ) -> void {
+    auto dispath( const T& item, QuadDrawBuffer& buffer ) -> void {
         const auto vOffset = buffer.primitievsCount_ * 3 * sizeof( float );
         const auto tOffset = buffer.primitievsCount_ * 2 * sizeof( float );
         const auto cOffset = buffer.primitievsCount_ * 4 * sizeof( float );
 
-        const auto vDataPtr = reinterpret_cast<const void *>( item.verteciesData() );
+        const auto vDataPtr = reinterpret_cast<const void*>( item.verteciesData() );
         buffer.vBuf_.memcpy( vDataPtr, item.bufferVerticesSize(), vOffset );
 
-        const auto tDataPtr = reinterpret_cast<const void *>( item.texcrdsData() );
+        const auto tDataPtr = reinterpret_cast<const void*>( item.texcrdsData() );
         buffer.tBuf_.memcpy( tDataPtr, item.bufferTexcrdsSize(), tOffset );
 
-        const auto cDataPtr = reinterpret_cast<const void *>( item.clrsData() );
+        const auto cDataPtr = reinterpret_cast<const void*>( item.clrsData() );
         buffer.cBuf_.memcpy( cDataPtr, item.bufferVertclrsSize(), cOffset );
 
         VkBufferCopy copyVrt{
@@ -99,8 +99,8 @@ struct UiComponentVisitor final {
 
     VkCommandBuffer cb_;
 
-    QuadDrawBuffer &labelBuffer_;
-    QuadDrawBuffer &billboardBuffer_;
+    QuadDrawBuffer& labelBuffer_;
+    QuadDrawBuffer& billboardBuffer_;
 };
 
 struct UiVK final : tire::Ui {

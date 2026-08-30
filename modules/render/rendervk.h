@@ -5,8 +5,8 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "r/event/event.h"
-#include "r/event/eventobserver.h"
+#include "event/event.h"
+#include "event/eventobserver.h"
 
 #include "timer.h"
 #include "test_box/test_box.h"
@@ -17,11 +17,11 @@ namespace tire {
 struct RenderVK final : public EventObserver {
     explicit RenderVK();
 
-    RenderVK( const RenderVK &other ) = delete;
-    RenderVK( RenderVK &&other ) = delete;
+    RenderVK( const RenderVK& other ) = delete;
+    RenderVK( RenderVK&& other ) = delete;
 
-    auto operator=( const RenderVK &other ) -> RenderVK & = delete;
-    auto operator=( RenderVK &&other ) -> RenderVK & = delete;
+    auto operator=( const RenderVK& other ) -> RenderVK& = delete;
+    auto operator=( RenderVK&& other ) -> RenderVK& = delete;
 
     ~RenderVK() = default;
 

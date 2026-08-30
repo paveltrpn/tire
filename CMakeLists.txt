@@ -95,7 +95,6 @@ add_library(image ${MOD_IMAGE_SRC})
 target_compile_options(image PRIVATE "${CXX_STANDART}")
 target_link_libraries(image
     log
-    libtga
 )
 
 # ================================
@@ -125,7 +124,6 @@ target_link_libraries(${TIRE_EXE}
     render
     glfw
     vulkan
-    vma
     GenericCodeGen
     glslang
     glslang-default-resource-limits

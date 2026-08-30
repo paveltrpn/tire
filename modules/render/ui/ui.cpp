@@ -10,13 +10,13 @@
 
 #include "vma/vk_mem_alloc.h"
 
-#include "r/context/context.h"
-#include "r/context/program.h"
+#include "context/context.h"
+#include "context/program.h"
 #include "config/config.h"
 #include "log/log.h"
 
-#include "r/ui/billboard.h"
-#include "r/ui/label.h"
+#include "ui/billboard.h"
+#include "ui/label.h"
 
 #include "ui.h"
 #include "pipeline_ui.h"
@@ -33,19 +33,19 @@ QuadDrawBuffer::QuadDrawBuffer( size_t quadsCount )
 
 // =====================================================================
 
-UiComponentVisitor::UiComponentVisitor( VkCommandBuffer cb, QuadDrawBuffer &labelBuffer,
-                                        QuadDrawBuffer &billboardBuffer )
+UiComponentVisitor::UiComponentVisitor( VkCommandBuffer cb, QuadDrawBuffer& labelBuffer,
+                                        QuadDrawBuffer& billboardBuffer )
     : cb_{ cb }
     , labelBuffer_{ labelBuffer }
     , billboardBuffer_{ billboardBuffer } {
 }
 
-auto UiComponentVisitor::operator()( const tire::Label &item ) -> void {
+auto UiComponentVisitor::operator()( const tire::Label& item ) -> void {
     //
     dispath( item, labelBuffer_ );
 }
 
-auto UiComponentVisitor::operator()( const tire::Billboard &item ) -> void {
+auto UiComponentVisitor::operator()( const tire::Billboard& item ) -> void {
     //
     dispath( item, billboardBuffer_ );
 }
@@ -58,8 +58,8 @@ UiVK::UiVK() {
     const auto fontFile = Config::instance().get<std::string>( "ui_font" );
 
     try {
-        testImage_ = std::make_shared<TextureImage>( basePath + "/img_fonts/" + fontFile );
-    } catch ( std::exception &e ) {
+        testImage_ = std::make_shared<TextureImage>( basePath + "/assets/img_fonts/" + fontFile );
+    } catch ( std::exception& e ) {
         log::fatal()( "font image {}", e.what() );
     }
 
@@ -80,7 +80,7 @@ UiVK::UiVK() {
 
 auto UiVK::upload( const VkCommandBuffer cb ) -> void {
     //
-    for ( auto &&item : componentsList_ ) {
+    for ( auto&& item : componentsList_ ) {
         std::visit( UiComponentVisitor{ cb, labelBuffer_, billboardBuffer_ }, item );
     }
 }

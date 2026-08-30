@@ -3,7 +3,7 @@
 
 #include "texture_image.h"
 
-#include "r/context/context.h"
+#include "context/context.h"
 #include "log/log.h"
 #include "image/image.h"
 #include "image/tga.h"
@@ -11,7 +11,7 @@
 
 namespace tire {
 
-TextureImage::TextureImage( const std::string &fname )
+TextureImage::TextureImage( const std::string& fname )
     : imageFormat_{ VK_FORMAT_R8G8B8A8_SRGB } {
     //
     tire::Tga textureData{ fname };
@@ -73,8 +73,8 @@ auto TextureImage::initStagingBuffer( VkDeviceSize size ) -> void {
     }
 }
 
-auto TextureImage::uploadToStaging( const void *data, VkDeviceSize size ) -> void {
-    void *mappedPtr{};
+auto TextureImage::uploadToStaging( const void* data, VkDeviceSize size ) -> void {
+    void* mappedPtr{};
     vmaMapMemory( Context::instance().allocator(), stagingAllocation_, &mappedPtr );
     memcpy( mappedPtr, data, size );
     vmaUnmapMemory( Context::instance().allocator(), stagingAllocation_ );

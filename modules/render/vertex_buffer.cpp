@@ -11,12 +11,12 @@
 #include "vma/vk_mem_alloc.h"
 
 #include "vertex_buffer.h"
-#include "r/context/context.h"
+#include "context/context.h"
 #include "log/log.h"
 
 namespace tire {
 
-VertexBuffer::VertexBuffer( VertexBuffer &&other ) noexcept {
+VertexBuffer::VertexBuffer( VertexBuffer&& other ) noexcept {
     size_ = std::exchange( other.size_, 0 );
 
     deviceBuffer_ = std::exchange( other.deviceBuffer_, VK_NULL_HANDLE );
@@ -32,7 +32,7 @@ VertexBuffer::VertexBuffer( size_t size )
     initDeviceBuffer( size );
 }
 
-auto VertexBuffer::operator=( VertexBuffer &&other ) noexcept -> VertexBuffer & {
+auto VertexBuffer::operator=( VertexBuffer&& other ) noexcept -> VertexBuffer& {
     size_ = std::exchange( other.size_, 0 );
 
     deviceBuffer_ = std::exchange( other.deviceBuffer_, VK_NULL_HANDLE );
@@ -59,15 +59,15 @@ auto VertexBuffer::stagingBuffer() const -> VkBuffer {
     return stagingBuffer_;
 }
 
-auto VertexBuffer::memcpy( const void *data, size_t size, size_t offset ) const -> void {
+auto VertexBuffer::memcpy( const void* data, size_t size, size_t offset ) const -> void {
     if ( size > size_ ) {
         log::warning()( "target memory chunk larger than allocated!" );
     }
 
-    void *mappedPtr{};
+    void* mappedPtr{};
     vmaMapMemory( Context::instance().allocator(), stagingAllocation_, &mappedPtr );
 
-    char *offsettedPtr = static_cast<char *>( mappedPtr ) + offset;
+    char* offsettedPtr = static_cast<char*>( mappedPtr ) + offset;
 
     std::memcpy( offsettedPtr, data, size );
 

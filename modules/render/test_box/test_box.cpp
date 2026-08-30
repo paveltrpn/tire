@@ -8,8 +8,8 @@
 
 #include "test_box.h"
 
-#include "r/context/context.h"
-#include "r/context/pipeline.h"
+#include "context/context.h"
+#include "context/pipeline.h"
 
 #include "algebra/vector3.h"
 #include "algebra/matrix4.h"
@@ -62,7 +62,7 @@ auto TestBox::setPosition( algebra::vector3f p ) -> void {
     position_ = p;
 }
 
-auto clean() -> void{
+auto clean() -> void {
     //
 };
 

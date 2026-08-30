@@ -11,7 +11,7 @@
 
 #include "vma/vk_mem_alloc.h"
 
-#include "r/context/context.h"
+#include "context/context.h"
 #include "log/log.h"
 
 namespace tire {
@@ -20,15 +20,15 @@ struct VertexBuffer final {
     using value_type = float;
 
     VertexBuffer() = delete;
-    VertexBuffer( const VertexBuffer &other ) = delete;
+    VertexBuffer( const VertexBuffer& other ) = delete;
 
-    VertexBuffer( VertexBuffer &&other ) noexcept;
+    VertexBuffer( VertexBuffer&& other ) noexcept;
 
     VertexBuffer( size_t size );
 
-    auto operator=( const VertexBuffer &other ) -> VertexBuffer & = delete;
+    auto operator=( const VertexBuffer& other ) -> VertexBuffer& = delete;
 
-    auto operator=( VertexBuffer &&other ) noexcept -> VertexBuffer &;
+    auto operator=( VertexBuffer&& other ) noexcept -> VertexBuffer&;
 
     ~VertexBuffer();
 
@@ -36,7 +36,7 @@ struct VertexBuffer final {
 
     [[nodiscard]] auto stagingBuffer() const -> VkBuffer;
 
-    auto memcpy( const void *data, size_t size, size_t offset = 0 ) const -> void;
+    auto memcpy( const void* data, size_t size, size_t offset = 0 ) const -> void;
 
     [[nodiscard]] auto size() const -> size_t;
 
