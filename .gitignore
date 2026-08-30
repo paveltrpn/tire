@@ -1,0 +1,17 @@
+build/
+.vscode/
+.qtcreator/
+.kilo/
+
+CMakeLists.txt.user
+
+assets/shaders/spirv/*.spv
+
+*.cap
+*.foz
+tmp/*
+
+settings.ini
+
+/shaders/spirv
+!/shaders/.gitkeep
