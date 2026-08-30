@@ -1,7 +1,6 @@
 module;
 
 #include <memory>
-#include <vector>
 
 #include "algebra/vector3.h"
 
@@ -35,12 +34,16 @@ public:
         return _origin;
     }
 
+    auto attachStateGroup( std::shared_ptr<StateGroup> child ) -> void {
+        //
+        _root->attach( std::move( child ) );
+    }
+
 private:
     ~Locale() = default;
 
 private:
     algebra::vector3f _origin{};
-
     std::shared_ptr<Group> _root{};
 };
 
