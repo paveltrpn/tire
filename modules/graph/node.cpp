@@ -4,8 +4,17 @@ export module graph : node;
 
 namespace tire {
 
+// NOLINTNEXTLINE(cppcoreguidelines-virtual-class-destructor)
 export struct Node {
-private:
+    Node( const Node& other ) = delete;
+    Node( Node&& other ) = delete;
+
+    auto operator=( const Node& other ) -> Node& = delete;
+    auto operator=( Node&& other ) -> Node& = delete;
+
+protected:
+    // Protected virtual - intentional for heap-only
+    virtual ~Node() = default;
 };
 
 }  // namespace tire
