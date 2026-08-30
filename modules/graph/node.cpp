@@ -13,6 +13,8 @@ namespace tire {
 // NOLINTNEXTLINE(cppcoreguidelines-virtual-class-destructor)
 export struct Node : public std::enable_shared_from_this<Node> {
 public:
+    Node() = default;
+
     Node( const Node& other ) = delete;
     Node( Node&& other ) = delete;
 
