@@ -111,6 +111,19 @@ target_link_libraries(event
 )
 
 # ================================
+# Module graph
+# ================================
+file(GLOB MOD_GRAPH_SRC  modules/graph/*.cpp )
+add_library(graph)
+target_sources(graph
+  PUBLIC
+    FILE_SET CXX_MODULES FILES
+    ${MOD_GRAPH_SRC}
+)
+target_compile_features(graph PUBLIC cxx_std_26)
+target_link_libraries(graph)
+
+# ================================
 # tire executable
 # ================================
 set(TIRE_EXE tire)
