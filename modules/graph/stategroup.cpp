@@ -13,6 +13,11 @@ export struct StateGroup final : public Group {
     auto operator=( const StateGroup& other ) -> StateGroup& = delete;
     auto operator=( StateGroup&& other ) -> StateGroup& = delete;
 
+    auto accept( Visitor& visitor ) -> void override {
+        //
+        visitor.apply( *this );
+    }
+
 private:
     ~StateGroup() = default;
 };

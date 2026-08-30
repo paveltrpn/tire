@@ -24,8 +24,15 @@ public:
     auto operator=( const Group& other ) -> Group& = delete;
     auto operator=( Group&& other ) -> Group& = delete;
 
-    auto accept( Visitor& visitor ) -> void override{
+    auto accept( Visitor& visitor ) -> void override {
         //
+        visitor.apply( *this );
+    }
+
+    auto traverse( Visitor& visitor ) -> void {
+        for ( auto&& child : _children ) {
+            child->accept( visitor );
+        }
     }
 
     auto attach( std::shared_ptr<Node> child ) -> void {

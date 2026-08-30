@@ -2,17 +2,13 @@ module;
 
 export module graph : visitor;
 
-// import : node;
-// import : group;
-// import : transformgroup;
-// import : stategroup;
-
 namespace tire {
 
 export struct Node;
 export struct Group;
 export struct StateGroup;
 export struct TransformGroup;
+export struct Switch;
 
 // ============================================================================
 // =================== Visitor ================================================
@@ -34,6 +30,7 @@ public:
     virtual auto apply( Group& node ) -> void {}
     virtual auto apply( StateGroup& node ) -> void {}
     virtual auto apply( TransformGroup& node ) -> void {}
+    virtual auto apply( Switch& node ) -> void {}
 };
 
 }  // namespace tire

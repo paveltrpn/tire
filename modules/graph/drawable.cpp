@@ -15,8 +15,9 @@ export struct Drawable : public Leaf {
     auto operator=( const Drawable& other ) -> Drawable& = delete;
     auto operator=( Drawable&& other ) -> Drawable& = delete;
 
-    auto accept( Visitor& visitor ) -> void override{
+    auto accept( Visitor& visitor ) -> void override {
         //
+        visitor.apply( *this );
     }
 
 private:

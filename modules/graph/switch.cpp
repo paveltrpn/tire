@@ -1,5 +1,8 @@
 module;
 
+#include <memory>
+#include <vector>
+
 export module graph : switchgroup;
 
 import : node;
@@ -16,10 +19,21 @@ export struct Switch final : public Node {
 
     auto accept( Visitor& visitor ) -> void override {
         //
+        visitor.apply( *this );
+    }
+
+    auto traverse( Visitor& visitor ) -> void {
+        for ( auto&& child : _children ) {
+            child->accept( visitor );
+        }
     }
 
 private:
     ~Switch() = default;
+
+private:
+    // TODO: add visibility flag.
+    std::vector<std::shared_ptr<Node>> _children{};
 };
 
 }  // namespace tire
