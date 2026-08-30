@@ -11,6 +11,8 @@ set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 set(CXX_STANDART -std=c++26)
 
+add_compile_options(-Wno-nullability-completeness)
+
 if (DEFINED ENV{VULKAN_SDK} AND NOT "$ENV{VULKAN_SDK}" STREQUAL "")
     message( "VULKAN_SDK is set to $ENV{VULKAN_SDK}")
     include_directories($ENV{VULKAN_SDK}/include)
