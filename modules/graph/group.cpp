@@ -6,6 +6,7 @@ module;
 export module graph : group;
 
 import : node;
+import : visitor;
 
 namespace tire {
 
@@ -22,6 +23,10 @@ public:
 
     auto operator=( const Group& other ) -> Group& = delete;
     auto operator=( Group&& other ) -> Group& = delete;
+
+    auto accept( Visitor& visitor ) -> void override{
+        //
+    }
 
     auto attach( std::shared_ptr<Node> child ) -> void {
         //

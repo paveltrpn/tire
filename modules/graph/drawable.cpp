@@ -3,6 +3,7 @@ module;
 export module graph : drawable;
 
 import : leaf;
+import : visitor;
 
 namespace tire {
 
@@ -13,6 +14,10 @@ export struct Drawable : public Leaf {
 
     auto operator=( const Drawable& other ) -> Drawable& = delete;
     auto operator=( Drawable&& other ) -> Drawable& = delete;
+
+    auto accept( Visitor& visitor ) -> void override{
+        //
+    }
 
 private:
     ~Drawable() override = default;

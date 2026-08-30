@@ -3,6 +3,7 @@ module;
 export module graph : leaf;
 
 import : node;
+import : visitor;
 
 namespace tire {
 

@@ -4,6 +4,8 @@ module;
 
 export module graph : node;
 
+import : visitor;
+
 namespace tire {
 
 // ============================================================================
@@ -21,8 +23,10 @@ public:
     auto operator=( const Node& other ) -> Node& = delete;
     auto operator=( Node&& other ) -> Node& = delete;
 
+    virtual auto accept( Visitor& visitor ) -> void = 0;
+
 protected:
-    // Protected virtual - intentional for heap-only
+    // Protected virtual - intentional for heap-only.
     virtual ~Node() = default;
 };
 

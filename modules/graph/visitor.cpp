@@ -2,12 +2,21 @@ module;
 
 export module graph : visitor;
 
-import : node;
-import : group;
-import : transformgroup;
-import : stategroup;
+// import : node;
+// import : group;
+// import : transformgroup;
+// import : stategroup;
 
 namespace tire {
+
+export struct Node;
+export struct Group;
+export struct StateGroup;
+export struct TransformGroup;
+
+// ============================================================================
+// =================== Visitor ================================================
+// ============================================================================
 
 export struct Visitor {
 public:
