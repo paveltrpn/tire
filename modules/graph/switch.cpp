@@ -10,6 +10,12 @@ import : visitor;
 
 namespace tire {
 
+// ============================================================================
+// =================== Switch =================================================
+// ============================================================================
+
+/**
+ */
 export struct Switch final : public Node {
     Switch( const Switch& other ) = delete;
     Switch( Switch&& other ) = delete;

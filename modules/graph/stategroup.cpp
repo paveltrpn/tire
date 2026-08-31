@@ -7,6 +7,8 @@ import : group;
 namespace tire {
 
 export struct StateGroup final : public Group {
+    StateGroup() = default;
+
     StateGroup( const StateGroup& other ) = delete;
     StateGroup( StateGroup&& other ) = delete;
 

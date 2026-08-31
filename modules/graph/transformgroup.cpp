@@ -7,6 +7,8 @@ import : group;
 namespace tire {
 
 export struct TransformGroup final : public Group {
+    TransformGroup() = default;
+
     TransformGroup( const TransformGroup& other ) = delete;
     TransformGroup( TransformGroup&& other ) = delete;
 
