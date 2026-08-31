@@ -17,6 +17,8 @@ namespace tire {
 /**
  */
 export struct Switch final : public Node {
+    Switch() = default;
+
     Switch( const Switch& other ) = delete;
     Switch( Switch&& other ) = delete;
 
