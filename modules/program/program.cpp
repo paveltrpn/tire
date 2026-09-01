@@ -99,7 +99,7 @@ export struct Program final {
     auto operator=( Program&& other ) -> Program& = delete;
 
     ~Program() {
-        for ( const auto& module : modules_ ) {
+        for ( const auto& module : _modules ) {
             vkDestroyShaderModule( Context::instance().device(), std::get<1>( module ), nullptr );
         }
     }
@@ -140,7 +140,7 @@ export struct Program final {
         }
 
         // Check if shader module with name exist in modules map
-        if ( modules_.contains( name ) ) {
+        if ( _modules.contains( name ) ) {
             log::warning()(
                 "vk::ShaderStorage == shader module with name \"{}\" exist, no "
                 "need "
@@ -226,7 +226,7 @@ export struct Program final {
     [[nodiscard]] auto get( const std::string& name ) -> VkShaderModule {
         VkShaderModule module{};
         try {
-            module = modules_.at( name );
+            module = _modules.at( name );
         } catch ( std::out_of_range& e ) {
             log::warning()( "module {} not exist!", name );
             return VK_NULL_HANDLE;
@@ -241,7 +241,7 @@ export struct Program final {
         // of concept keep invariant
         const std::string suffix = StagesSuffixMap.at( Stage );
 
-        for ( const auto& item : modules_ ) {
+        for ( const auto& item : _modules ) {
             const auto [name, module] = item;
             if ( name.ends_with( suffix ) ) {
                 return module;
@@ -256,17 +256,17 @@ export struct Program final {
     auto destroy( const std::string& name ) -> void {
         VkShaderModule module;
         try {
-            module = modules_.at( name );
+            module = _modules.at( name );
         } catch ( std::out_of_range& e ) {
             log::warning()( "module {} not exist!", name );
             return;
         }
         vkDestroyShaderModule( Context::instance().device(), module, nullptr );
-        modules_.erase( name );
+        _modules.erase( name );
     }
 
     auto list() -> void {
-        for ( const auto& key : modules_ ) {
+        for ( const auto& key : _modules ) {
             log::debug()( "available shader module: \"{}\"", std::get<0>( key ) );
         }
     }
@@ -288,14 +288,14 @@ private:
             log::debug()( "shader module {} created!", name );
         }
 
-        modules_[name] = module;
+        _modules[name] = module;
     }
 
     auto checkStageExist( const std::string& stageSuffix ) -> bool {
         // Find shader stage module name in modules_ which have certain suffix
-        const auto end = modules_.cend();
+        const auto end = _modules.cend();
         const auto it =
-            std::find_if( modules_.cbegin(), end, [id = stageSuffix]( std::pair<std::string, VkShaderModule> item ) {
+            std::find_if( _modules.cbegin(), end, [id = stageSuffix]( std::pair<std::string, VkShaderModule> item ) {
                 return std::get<0>( item ).ends_with( id );
             } );
 
@@ -316,8 +316,8 @@ private:
 
 private:
     // Contains shader stages vulkan shader mudules. One module per stage.
-    std::unordered_map<std::string, VkShaderModule> modules_{};
-    std::unordered_map<ShaderStageType, bool> check_{};
+    std::unordered_map<std::string, VkShaderModule> _modules{};
+    std::unordered_map<ShaderStageType, bool> _check{};
 };
 
 }  // namespace tire
