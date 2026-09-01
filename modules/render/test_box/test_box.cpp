@@ -10,6 +10,8 @@
 
 #include "context/context.h"
 #include "../pipeline.h"
+#include "pipeline_test_box.h"
+#include "test_box_shader.h"
 
 #include "algebra/vector3.h"
 #include "algebra/matrix4.h"

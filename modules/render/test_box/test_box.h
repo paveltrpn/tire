@@ -8,11 +8,8 @@
 
 #include "vma/vk_mem_alloc.h"
 
+#include "../pipeline.h"
 #include "algebra/vector3.h"
-#include "algebra/matrix4.h"
-
-#include "test_box_shader.h"
-#include "pipeline_test_box.h"
 
 namespace tire {
 
