@@ -113,6 +113,19 @@ target_link_libraries(event
 )
 
 # ================================
+# Module program
+# ================================
+file(GLOB MOD_PROGRAM_SRC  modules/program/*.cpp )
+add_library(program)
+target_sources(program
+  PUBLIC
+    FILE_SET CXX_MODULES FILES
+    ${MOD_PROGRAM_SRC}
+)
+target_compile_features(program PUBLIC cxx_std_26)
+target_link_libraries(program)
+
+# ================================
 # Module graph
 # ================================
 file(GLOB MOD_GRAPH_SRC  modules/graph/*.cpp )

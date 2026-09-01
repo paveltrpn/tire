@@ -71,7 +71,7 @@ VKInstance::VKInstance( const std::string& platformSurfaceExtension ) {
                                      .apiVersion = VK_API_VERSION_1_3 };
 
     // Enumerate instance layers
-    uint32_t layersCount;
+    uint32_t layersCount{};
     if ( const auto err = vkEnumerateInstanceLayerProperties( &layersCount, nullptr ); err != VK_SUCCESS ) {
         log::fatal()( "can't enumerate instance layer properties with code: {}\n", string_VkResult( err ) );
     } else {
