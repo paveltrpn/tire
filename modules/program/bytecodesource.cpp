@@ -2,4 +2,12 @@ module;
 
 export module program : bytecodesource;
 
-namespace tire {}  // namespace tire
+import : programsource;
+
+namespace tire {
+
+export struct BytecodeProgramSource final : ProgramSource {
+private:
+};
+
+}  // namespace tire

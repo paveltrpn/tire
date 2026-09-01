@@ -2,4 +2,12 @@ module;
 
 export module program : textsource;
 
-namespace tire {}  // namespace tire
+import : programsource;
+
+namespace tire {
+
+export struct TextProgramSource final : ProgramSource {
+private:
+};
+
+}  // namespace tire
