@@ -18,73 +18,9 @@ module;
 
 export module program : program;
 
+import : definitions;
+
 namespace tire {
-
-export enum class ShaderStageType {
-    VERTEX,
-    FRAGMENT,
-    TESSELATION_EVAL,
-    TESSELATION_CTRL,
-    COMPUTE,
-    GEOMETRY,
-    RAYGEN,
-    ANYHIT,
-    CLOSESTHIT,
-    MISS,
-    INTERSECTION,
-    CALLABLE,
-    TASK,
-    MESH,
-    SUBPASSSHADING,
-    CLUSTERCULLING,
-};
-
-export constexpr std::string vertex_stage_suffix{ "VERTEX" };
-export constexpr std::string tessctrl_stage_suffix{ "TESSCTRL" };
-export constexpr std::string tesseval_stage_suffix{ "TESSEVAL" };
-export constexpr std::string geometry_stage_suffix{ "GEOMETRY" };
-export constexpr std::string fragment_stage_suffix{ "FRAGMENT" };
-export constexpr std::string compute_stage_suffix{ "COMPUTE" };
-export constexpr std::string raygen_stage_suffix{ "RAYGEN" };
-export constexpr std::string anyhit_stage_suffix{ "ANYHIT" };
-export constexpr std::string closeshit_stage_suffix{ "CLOSESTHIT" };
-export constexpr std::string miss_stage_suffix{ "MISS" };
-export constexpr std::string intersection_stage_suffix{ "INTERSECTION" };
-export constexpr std::string callable_stage_suffix{ "CALLABLE" };
-export constexpr std::string task_stage_suffix{ "TASK" };
-export constexpr std::string mesh_stage_suffix{ "MESH" };
-export constexpr std::string subpassshading_stage_suffix{ "SUBPASSSHADING" };
-export constexpr std::string clusterculling_stage_suffix{ "CLUSTERCULLING" };
-
-export template <ShaderStageType Stage>
-concept ShaderStage =
-    ( Stage == ShaderStageType::VERTEX ) || ( Stage == ShaderStageType::FRAGMENT ) ||
-    ( Stage == ShaderStageType::TESSELATION_EVAL ) || ( Stage == ShaderStageType::TESSELATION_CTRL ) ||
-    ( Stage == ShaderStageType::GEOMETRY ) || ( Stage == ShaderStageType::COMPUTE ) ||
-    ( Stage == ShaderStageType::RAYGEN ) || ( Stage == ShaderStageType::ANYHIT ) ||
-    ( Stage == ShaderStageType::CLOSESTHIT ) || ( Stage == ShaderStageType::MISS ) ||
-    ( Stage == ShaderStageType::INTERSECTION ) || ( Stage == ShaderStageType::CALLABLE ) ||
-    ( Stage == ShaderStageType::TASK ) || ( Stage == ShaderStageType::MESH ) ||
-    ( Stage == ShaderStageType::SUBPASSSHADING ) || ( Stage == ShaderStageType::CLUSTERCULLING );
-
-const std::unordered_map<ShaderStageType, std::string> StagesSuffixMap = {
-    { ShaderStageType::VERTEX, vertex_stage_suffix },
-    { ShaderStageType::FRAGMENT, fragment_stage_suffix },
-    { ShaderStageType::TESSELATION_EVAL, tesseval_stage_suffix },
-    { ShaderStageType::TESSELATION_CTRL, tessctrl_stage_suffix },
-    { ShaderStageType::GEOMETRY, geometry_stage_suffix },
-    { ShaderStageType::COMPUTE, compute_stage_suffix },
-    { ShaderStageType::RAYGEN, raygen_stage_suffix },
-    { ShaderStageType::ANYHIT, anyhit_stage_suffix },
-    { ShaderStageType::CLOSESTHIT, closeshit_stage_suffix },
-    { ShaderStageType::MISS, miss_stage_suffix },
-    { ShaderStageType::INTERSECTION, intersection_stage_suffix },
-    { ShaderStageType::CALLABLE, callable_stage_suffix },
-    { ShaderStageType::TASK, task_stage_suffix },
-    { ShaderStageType::MESH, mesh_stage_suffix },
-    { ShaderStageType::SUBPASSSHADING, subpassshading_stage_suffix },
-    { ShaderStageType::CLUSTERCULLING, clusterculling_stage_suffix },
-};
 
 // Program is a set of vulkan shader modules loaded from spirv bytecode.
 // Each program must contain at least two shader stages - VERTEX and FRAGMENT (despite
