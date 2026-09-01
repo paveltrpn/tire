@@ -4,13 +4,13 @@
 #include <vulkan/vk_enum_string_helper.h>
 
 #include "pipeline.h"
-#include "context.h"
-#include "program.h"
+#include "context/context.h"
+
+import program;
 
 namespace tire {
 
-Pipeline::Pipeline() {
-}
+Pipeline::Pipeline() = default;
 
 Pipeline::~Pipeline() {
     vkDestroyRenderPass( Context::instance().device(), renderPass_, nullptr );

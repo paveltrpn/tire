@@ -6,16 +6,17 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "pipeline_ui.h"
-
 #include "context/context.h"
-#include "context/pipeline.h"
+#include "../pipeline.h"
+#include "pipeline_ui.h"
 
 #include "log/log.h"
 
 #include "algebra/vector2.h"
 #include "algebra/vector3.h"
 #include "algebra/vector4.h"
+
+import program;
 
 namespace tire {
 

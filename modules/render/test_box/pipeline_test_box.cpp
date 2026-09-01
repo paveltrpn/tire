@@ -5,6 +5,8 @@
 
 #include "log/log.h"
 
+import program;
+
 namespace tire {
 
 PiplineTestBox::PiplineTestBox() {

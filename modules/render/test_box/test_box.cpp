@@ -9,10 +9,12 @@
 #include "test_box.h"
 
 #include "context/context.h"
-#include "context/pipeline.h"
+#include "../pipeline.h"
 
 #include "algebra/vector3.h"
 #include "algebra/matrix4.h"
+
+import program;
 
 namespace tire {
 

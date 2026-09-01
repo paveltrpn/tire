@@ -4,8 +4,9 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "context/context.h"
-#include "context/pipeline.h"
+#include "../pipeline.h"
+
+import program;
 
 namespace tire {
 

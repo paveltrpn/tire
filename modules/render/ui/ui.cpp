@@ -11,7 +11,6 @@
 #include "vma/vk_mem_alloc.h"
 
 #include "context/context.h"
-#include "context/program.h"
 #include "config/config.h"
 #include "log/log.h"
 
@@ -20,6 +19,8 @@
 
 #include "ui.h"
 #include "pipeline_ui.h"
+
+import program;
 
 namespace tire {
 

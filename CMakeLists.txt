@@ -10,6 +10,7 @@ include_directories("modules")
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 set(CXX_STANDART -std=c++26)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_compile_options(-Wno-nullability-completeness)
 
@@ -36,10 +37,10 @@ find_package(nlohmann_json 3.11 REQUIRED)
 # ================================
 file(GLOB MOD_MESH_SRC "modules/mesh/*.cpp" "modules/mesh/*.h")
 add_library(mesh ${MOD_MESH_SRC})
-target_link_libraries(mesh log)
 target_compile_options(mesh PRIVATE "${CXX_STANDART}")
 target_link_libraries(mesh
    algebra
+   log
 )
 
 # ================================
@@ -47,32 +48,43 @@ target_link_libraries(mesh
 # ================================
 file(GLOB MOD_CONFIG_SRC "modules/config/*.cpp" "modules/config/*.h")
 add_library(config ${MOD_CONFIG_SRC})
-target_link_libraries(config log)
 target_compile_options(config PRIVATE "${CXX_STANDART}")
+target_link_libraries(config log)
 
 # ================================
 # Module context
 # ================================
 file(GLOB_RECURSE MOD_CONTEXT_SRC "modules/context/*.cpp" "src/context/*.h")
 add_library(context ${MOD_CONTEXT_SRC})
-target_link_libraries(context vulkan config image)
 target_compile_options(context PRIVATE "${CXX_STANDART}")
+target_link_libraries(context 
+    vulkan 
+    config 
+    image
+)
 
 # ================================
 # Module r_ui
 # ================================
 file(GLOB MOD_R_UI_SRC "modules/ui/*.cpp" "modules/ui/*.h")
 add_library(r_ui ${MOD_R_UI_SRC})
-target_link_libraries(r_ui log algebra image)
 target_compile_options(r_ui PRIVATE "${CXX_STANDART}")
+target_link_libraries(r_ui log algebra image)
 
 # ================================
 # Module render
 # ================================
 file(GLOB_RECURSE MOD_RENDER_SRC "modules/render/*.cpp" "modules/render/*.h")
 add_library(render ${MOD_RENDER_SRC})
-target_link_libraries(render vulkan context r_ui config algebra)
 target_compile_options(render PRIVATE "${CXX_STANDART}")
+target_link_libraries(render 
+    vulkan 
+    context 
+    program 
+    r_ui 
+    config 
+    algebra
+)
 
 # ================================
 # Module algebra
@@ -123,7 +135,10 @@ target_sources(program
     ${MOD_PROGRAM_SRC}
 )
 target_compile_features(program PUBLIC cxx_std_26)
-target_link_libraries(program)
+target_link_libraries(program 
+    context 
+    log
+)
 
 # ================================
 # Module graph
@@ -149,6 +164,7 @@ target_compile_options(${TIRE_EXE} PRIVATE "${CXX_STANDART}")
 target_link_libraries(${TIRE_EXE}
     event
     context
+    program
     log
     algebra
     config

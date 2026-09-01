@@ -13,7 +13,6 @@
 #include "vma/vk_mem_alloc.h"
 
 #include "context/context.h"
-#include "context/program.h"
 #include "config/config.h"
 #include "log/log.h"
 #include "image/image.h"
@@ -27,6 +26,8 @@
 #include "ui/ui.h"
 #include "ui/billboard.h"
 #include "ui/label.h"
+
+import program;
 
 namespace tire {
 

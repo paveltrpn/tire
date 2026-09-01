@@ -2,8 +2,6 @@
 #include <variant>
 #include <forward_list>
 
-#include "log/log.h"
-
 #include "ui.h"
 #include "billboard.h"
 #include "label.h"
@@ -12,12 +10,12 @@ namespace tire {
 
 using UiComponent = std::variant<tire::Label, tire::Billboard>;
 
-Ui::Ui(){
+Ui::Ui() {
     // Preallocate.
     // componentsList_.resize( 32 );
 };
 
-auto Ui::label( float px, float py, const std::string &msg ) -> void {
+auto Ui::label( float px, float py, const std::string& msg ) -> void {
     auto l = tire::Label{};
 
     l.setColor( { "white" } );

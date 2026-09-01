@@ -5,9 +5,11 @@
 #include <vulkan/vk_enum_string_helper.h>
 
 #include "context/context.h"
-#include "context/pipeline.h"
+#include "../pipeline.h"
 
 namespace tire {
+
+struct Program;
 
 struct PiplineTestBox final : Pipeline {
     PiplineTestBox();
