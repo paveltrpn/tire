@@ -9,11 +9,11 @@ auto RenderVK::handleEvent( std::shared_ptr<EventBase> event ) -> void {
         switch ( keyEvent->_action ) {
             case tire::KeyAction::PRESS: {
                 if ( keyEvent->_key == 71 ) {
-                    holdMouse_ = !holdMouse_;
+                    _holdMouse = !_holdMouse;
                     return;
                 }
                 if ( keyEvent->_key == 256 ) {
-                    run_ = false;
+                    _run = false;
                     return;
                 }
                 break;

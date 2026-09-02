@@ -36,19 +36,19 @@ struct RenderVK final : public EventObserver {
     auto handleEvent( std::shared_ptr<EventBase> event ) -> void override;
 
 private:
-    bool run_{};
+    bool _run{};
 
-    uint32_t currentFrame_{ 0 };
+    uint32_t _currentFrame{ 0 };
 
     // Ui.
-    std::shared_ptr<UiVK> ui_{};
+    std::shared_ptr<UiVK> _ui{};
 
     // Test box.
-    std::shared_ptr<TestBox> testBox_{};
+    std::shared_ptr<TestBox> _testBox{};
 
-    Timer timer_{};
+    Timer _timer{};
 
-    bool holdMouse_{ false };
+    bool _holdMouse{ false };
 };
 
 }  // namespace tire

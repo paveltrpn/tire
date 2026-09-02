@@ -1,6 +1,5 @@
 module;
 
-#include <cstring>
 #include <optional>
 #include <print>
 #include <memory>
