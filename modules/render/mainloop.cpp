@@ -19,6 +19,8 @@ RenderVK::RenderVK() {
 
         // RUN!!!
         run_ = true;
+
+        const auto foo = BytecodeProgramSource{ "" };
     } catch ( const std::runtime_error& e ) {
         log::fatal()( "error white creating render {}", e.what() );
     }
@@ -37,7 +39,6 @@ auto RenderVK::displayRenderInfo() -> void {
 auto RenderVK::preLoop() -> void {
     //
     log::notice()( "render loop starts here..." );
-    const auto foo = BytecodeProgramSource{ "" };
 }
 
 auto RenderVK::frame() -> void {

@@ -37,6 +37,7 @@ public:
                 const auto msg = std::format( "Unknown shader stage for file: {}", item );
                 throw std::runtime_error( msg );
             }
+
             auto file = std::ifstream{ item, std::ios::binary | std::ios::ate };
 
             if ( !file.is_open() ) {
