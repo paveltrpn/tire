@@ -5,6 +5,7 @@ module;
 #include <vector>
 #include <unordered_map>
 #include <filesystem>
+#include <fstream>
 
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
@@ -26,9 +27,31 @@ public:
         : ProgramSource{ programName } {
         const auto basePath = Config::instance().basePath();
         const auto spirvPath = basePath / "shaders" / "spirv";
-        const auto shadersList = listDirectory( spirvPath );
 
-        for ( auto&& item : shadersList ) {
+        const auto spvShadersList = listDirectory( spirvPath );
+
+        for ( auto&& item : spvShadersList ) {
+            std::ifstream file( item, std::ios::binary | std::ios::ate );
+
+            if ( !file.is_open() ) {
+                throw std::runtime_error( "Failed to open file: " + item );
+            }
+
+            // Get file size
+            std::streamsize size = file.tellg();
+            if ( size <= 0 ) {
+                throw std::runtime_error( "File is empty or invalid: " + filename );
+            }
+
+            // Seek back to beginning
+            file.seekg( 0, std::ios::beg );
+
+            // Allocate vector and read
+            std::vector<uint8_t> buffer( static_cast<size_t>( size ) );
+            if ( !file.read( reinterpret_cast<char*>( buffer.data() ), size ) ) {
+                throw std::runtime_error( "Failed to read file: " + filename );
+            }
+
             std::println( "{}", item );
         }
     };

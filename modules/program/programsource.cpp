@@ -13,7 +13,9 @@ public:
     ProgramSource() = delete;
 
     ProgramSource( std::string programName )
-        : _programName{ std::move( programName ) } {};
+        : _programName{ std::move( programName ) } {
+            //
+        };
 
     ProgramSource( const ProgramSource& other ) = default;
     ProgramSource( ProgramSource&& other ) = default;
