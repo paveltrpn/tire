@@ -55,7 +55,7 @@ auto UiComponentVisitor::operator()( const tire::Billboard& item ) -> void {
 
 UiVK::UiVK() {
     //
-    const auto basePath = Config::instance().getBasePath().string();
+    const auto basePath = Config::instance().basePath().string();
     const auto fontFile = Config::instance().get<std::string>( "ui_font" );
 
     try {

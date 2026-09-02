@@ -2,6 +2,7 @@ module;
 
 #include <string>
 #include <vector>
+#include <filesystem>
 
 #include "log/log.h"
 
@@ -15,6 +16,12 @@ export struct TextProgramSource final : ProgramSource {
 public:
     TextProgramSource( std::string programName )
         : ProgramSource{ programName } {};
+
+private:
+    auto listDirectory( std::filesystem::path path ) -> std::vector<std::string> override {
+        std::vector<std::string> results{};
+        return results;
+    }
 
 private:
 };

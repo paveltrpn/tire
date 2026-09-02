@@ -62,5 +62,6 @@ Diagnostics:
       - "cppcoreguidelines-pro-bounds-pointer-arithmetic"
       - "misc-use-internal-linkage"
       - "performance-unnecessary-value-param"
+      - "modernize-use-ranges"
     CheckOptions:
       readability-identifier-naming.VariableCase: CamelCase

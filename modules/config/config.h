@@ -29,7 +29,7 @@ public:
     static void init( const std::filesystem::path& fname );
     [[nodiscard]] static auto instance() -> Config&;
 
-    [[nodiscard]] auto getBasePath() const -> const std::filesystem::path&;
+    [[nodiscard]] auto basePath() const -> const std::filesystem::path&;
     [[nodiscard]] auto getString( std::string_view param ) const -> std::string;
     [[nodiscard]] auto getBool( std::string_view param ) const -> bool;
     [[nodiscard]] auto getNumber( std::string_view param ) const -> double;

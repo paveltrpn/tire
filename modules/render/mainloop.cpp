@@ -2,14 +2,15 @@
 #include <format>
 
 #include "rendervk.h"
-
 #include "log/log.h"
+
+import program;
 
 namespace tire {
 
 RenderVK::RenderVK() {
     try {
-        const auto basePath = Config::instance().getBasePath();
+        const auto basePath = Config::instance().basePath();
 
         ui_ = std::make_shared<UiVK>();
 
@@ -18,7 +19,7 @@ RenderVK::RenderVK() {
 
         // RUN!!!
         run_ = true;
-    } catch ( const std::runtime_error &e ) {
+    } catch ( const std::runtime_error& e ) {
         log::fatal()( "error white creating render {}", e.what() );
     }
 }
@@ -28,13 +29,15 @@ auto RenderVK::isRun() -> bool {
     return run_;
 }
 
-auto RenderVK::displayRenderInfo() -> void{
+auto RenderVK::displayRenderInfo() -> void {
     //
+
 };
 
 auto RenderVK::preLoop() -> void {
     //
     log::notice()( "render loop starts here..." );
+    const auto foo = BytecodeProgramSource{ "" };
 }
 
 auto RenderVK::frame() -> void {
