@@ -79,7 +79,7 @@ auto Context::releaseContext() -> void {
 
     vkDestroyFence( device(), _copyCommandFence, nullptr );
 
-    for ( auto i = 0; i < _framesCount; i++ ) {
+    for ( auto i = uint32_t{ 0 }; i < _framesCount; i++ ) {
         vkDestroySemaphore( device(), _frames[i]._imageAvailableSemaphore, nullptr );
         vkDestroySemaphore( device(), _frames[i]._renderFinishedSemaphore, nullptr );
         vkDestroyFence( device(), _frames[i]._inFlightFence, nullptr );
