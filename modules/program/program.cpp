@@ -22,7 +22,6 @@ import : textsource;
 
 namespace tire {
 
-// Program is a set of vulkan shader modules loaded from spirv bytecode.
 // Each program must contain at least two shader stages - VERTEX and FRAGMENT (despite
 // of the vulkan specification demands at least one shader stage - VERTEX for graphics
 // pipeline or it can be COMPUTE shader for compute pipeline).
@@ -40,25 +39,19 @@ export struct Program final {
 
     Program( std::shared_ptr<ProgramSource> sources )
         : _sources{ std::move( sources ) } {
-        auto bytecodeSrc = dynamic_cast<BytecodeProgramSource*>( _sources.get() );
-        if ( bytecodeSrc ) {
-            const auto srcList = bytecodeSrc->sources();
-
-            for ( auto&& shader : srcList ) {
+        if ( const auto bytecodeSrc = dynamic_cast<BytecodeProgramSource*>( _sources.get() ) ) {
+            for ( auto&& shader : bytecodeSrc->sources() ) {
                 auto [stage, bytecode] = shader;
                 push( stage, bytecode );
             }
-
-            return;
-        }
-
-        auto textSrc = dynamic_cast<TextProgramSource*>( _sources.get() );
-        if ( textSrc ) {
-            const auto srcList = textSrc->sources();
-
-            log::fatal()( "NOT IMPLEMENTED!" );
-
-            return;
+        } else if ( const auto textSrc = dynamic_cast<TextProgramSource*>( _sources.get() ) ) {
+            for ( auto&& shader : textSrc->sources() ) {
+                auto [stage, text] = shader;
+                const auto bytecode = compile( text );
+                push( stage, bytecode );
+            }
+        } else {
+            log::fatal()( "Unknown program source type!" );
         }
     };
 
@@ -70,7 +63,6 @@ export struct Program final {
         }
     }
 
-    // Return shader vulkan module
     template <ShaderStageType stage>
     requires ShaderStage<stage> [[nodiscard]] auto get() const -> VkShaderModule {
         try {
@@ -80,21 +72,20 @@ export struct Program final {
         }
     }
 
-    // auto destroy( const std::string& name ) -> void {
-    //     VkShaderModule module;
-    //     try {
-    //         module = _modules.at( name );
-    //     } catch ( std::out_of_range& e ) {
-    //         log::warning()( "module {} not exist!", name );
-    //         return;
-    //     }
-    //     vkDestroyShaderModule( Context::instance().device(), module, nullptr );
-    //     _modules.erase( name );
-    // }
+    auto destroy( ShaderStageType stage ) -> void {
+        try {
+            auto module = _modules.at( stage );
+            vkDestroyShaderModule( Context::instance().device(), module, nullptr );
+            _modules.erase( stage );
+        } catch ( std::out_of_range& e ) {
+            log::warning()( "Unable to destroy! Module \"{}\" not exist!", StagesSuffixMap.at( stage ) );
+            return;
+        }
+    }
 
 private:
     // Create vulkan shader module.
-    auto push( ShaderStageType stage, std::span<uint8_t> bytecode ) -> void {
+    auto push( ShaderStageType stage, const std::span<uint8_t> bytecode ) -> void {
         VkShaderModuleCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
         createInfo.codeSize = bytecode.size();
@@ -103,13 +94,19 @@ private:
         VkShaderModule module{};
         if ( const auto err = vkCreateShaderModule( Context::instance().device(), &createInfo, nullptr, &module );
              err != VK_SUCCESS ) {
-            throw std::runtime_error( std::format( "failed to create shader module {} with code {}!",
+            throw std::runtime_error( std::format( "Failed to create shader module \"{}\" with code {}!",
                                                    StagesSuffixMap.at( stage ), string_VkResult( err ) ) );
         } else {
-            log::debug()( "shader module {} created!", StagesSuffixMap.at( stage ) );
+            log::debug()( "Shader module \"{}\" created!", StagesSuffixMap.at( stage ) );
         }
 
         _modules[stage] = module;
+    }
+
+    auto compile( const std::string& text ) -> std::span<uint8_t> {
+        // TODO
+        log::fatal()( "TODO" );
+        return {};
     }
 
 private:

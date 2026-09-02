@@ -9,8 +9,7 @@ import program;
 
 namespace tire {
 
-PiplineTestBox::PiplineTestBox() {
-}
+PiplineTestBox::PiplineTestBox() = default;
 
 auto PiplineTestBox::buildPipeline( const Program& program ) -> void {
     // Add VERTEX stage
