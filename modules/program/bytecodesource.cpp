@@ -62,11 +62,12 @@ public:
                 throw std::runtime_error( "Failed to read file: " + item );
             }
 
-            _sources[stage] = bytecode;
+            _sources.emplace_back( stage, bytecode );
         }
     };
 
-    auto sources() const -> const std::unordered_map<ShaderStageType, std::vector<uint8_t>>& {
+    [[nodiscard]]
+    auto sources() const -> const std::vector<std::pair<ShaderStageType, std::vector<uint8_t>>>& {
         //
         return _sources;
     }
@@ -97,7 +98,7 @@ private:
     }
 
 private:
-    std::unordered_map<ShaderStageType, std::vector<uint8_t>> _sources{};
+    std::vector<std::pair<ShaderStageType, std::vector<uint8_t>>> _sources{};
 };
 
 }  // namespace tire

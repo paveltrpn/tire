@@ -70,8 +70,6 @@ protected:
 
         const auto& suffix = shaderNameParts.back();
 
-        std::println( " === {}", suffix );
-
         try {
             return ShaderStageMap.at( suffix );
         } catch ( const std::out_of_range& e ) {
