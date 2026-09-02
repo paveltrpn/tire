@@ -73,4 +73,23 @@ const std::unordered_map<ShaderStageType, std::string> StagesSuffixMap = {
     { ShaderStageType::CLUSTERCULLING, clusterculling_stage_suffix },
 };
 
+const std::unordered_map<std::string, ShaderStageType> ShaderStageMap = {
+    { vertex_stage_suffix, ShaderStageType::VERTEX },
+    { fragment_stage_suffix, ShaderStageType::FRAGMENT },
+    { tesseval_stage_suffix, ShaderStageType::TESSELATION_EVAL },
+    { tessctrl_stage_suffix, ShaderStageType::TESSELATION_CTRL },
+    { geometry_stage_suffix, ShaderStageType::GEOMETRY },
+    { compute_stage_suffix, ShaderStageType::COMPUTE },
+    { raygen_stage_suffix, ShaderStageType::RAYGEN },
+    { anyhit_stage_suffix, ShaderStageType::ANYHIT },
+    { closeshit_stage_suffix, ShaderStageType::CLOSESTHIT },
+    { miss_stage_suffix, ShaderStageType::MISS },
+    { intersection_stage_suffix, ShaderStageType::INTERSECTION },
+    { callable_stage_suffix, ShaderStageType::CALLABLE },
+    { task_stage_suffix, ShaderStageType::TASK },
+    { mesh_stage_suffix, ShaderStageType::MESH },
+    { subpassshading_stage_suffix, ShaderStageType::SUBPASSSHADING },
+    { clusterculling_stage_suffix, ShaderStageType::CLUSTERCULLING },
+};
+
 }  // namespace tire

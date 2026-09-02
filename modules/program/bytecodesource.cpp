@@ -31,25 +31,27 @@ public:
         const auto spvShadersList = listDirectory( spirvPath );
 
         for ( auto&& item : spvShadersList ) {
-            std::ifstream file( item, std::ios::binary | std::ios::ate );
+            auto file = std::ifstream{ item, std::ios::binary | std::ios::ate };
 
             if ( !file.is_open() ) {
-                throw std::runtime_error( "Failed to open file: " + item );
+                const auto msg = std::format( "Failed to open file: {}", item );
+                throw std::runtime_error( msg );
             }
 
-            // Get file size
-            std::streamsize size = file.tellg();
+            // Get file size.
+            const auto size = file.tellg();
             if ( size <= 0 ) {
-                throw std::runtime_error( "File is empty or invalid: " + filename );
+                const auto msg = std::format( "File is empty or invalid: {}", item );
+                throw std::runtime_error( msg );
             }
 
-            // Seek back to beginning
+            // Seek back to beginning.
             file.seekg( 0, std::ios::beg );
 
             // Allocate vector and read
             std::vector<uint8_t> buffer( static_cast<size_t>( size ) );
             if ( !file.read( reinterpret_cast<char*>( buffer.data() ), size ) ) {
-                throw std::runtime_error( "Failed to read file: " + filename );
+                throw std::runtime_error( "Failed to read file: " + item );
             }
 
             std::println( "{}", item );

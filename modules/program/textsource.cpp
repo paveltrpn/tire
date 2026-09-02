@@ -24,7 +24,7 @@ public:
         const auto glslShadersList = listDirectory( spirvPath );
     };
 
-    auto sources() const -> const std::unordered_map<ShaderStageType, std::vector<uint8_t>>& {
+    auto sources() const -> const std::unordered_map<ShaderStageType, std::string>& {
         //
         return _sources;
     }
