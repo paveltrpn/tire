@@ -64,7 +64,7 @@ public:
             file.seekg( 0, std::ios::beg );
 
             // Allocate vector and read.
-            std::vector<uint8_t> bytecode( static_cast<size_t>( size ) );
+            std::vector<uint32_t> bytecode( static_cast<size_t>( size / 4 ) );
             if ( !file.read( reinterpret_cast<char*>( bytecode.data() ), size ) ) {
                 throw std::runtime_error( "Failed to read file: " + item );
             }
@@ -74,13 +74,13 @@ public:
     };
 
     [[nodiscard]]
-    auto sources() const -> const std::vector<std::pair<ShaderStageType, std::vector<uint8_t>>>& {
+    auto sources() const -> const std::vector<std::pair<ShaderStageType, std::vector<uint32_t>>>& {
         //
         return _sources;
     }
 
 private:
-    std::vector<std::pair<ShaderStageType, std::vector<uint8_t>>> _sources{};
+    std::vector<std::pair<ShaderStageType, std::vector<uint32_t>>> _sources{};
 };
 
 }  // namespace tire

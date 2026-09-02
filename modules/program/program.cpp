@@ -40,11 +40,12 @@ export struct Program final {
 
     ~Program() {
         for ( const auto& module : _modules ) {
-            vkDestroyShaderModule( Context::instance().device(), std::get<1>( module ), nullptr );
+            auto [_, m] = module;
+            vkDestroyShaderModule( Context::instance().device(), m, nullptr );
         }
     }
 
-    Program( std::shared_ptr<ProgramSource> sources )
+    explicit Program( std::shared_ptr<ProgramSource> sources )
         : _sources{ std::move( sources ) } {
         if ( const auto bytecodeSrc = dynamic_cast<BytecodeProgramSource*>( _sources.get() ) ) {
             for ( auto&& shader : bytecodeSrc->sources() ) {
@@ -75,7 +76,8 @@ export struct Program final {
         }
     };
 
-    [[nodiscard]] auto get( ShaderStageType stage ) const -> VkShaderModule const {
+    [[nodiscard]]
+    auto get( ShaderStageType stage ) const -> VkShaderModule const {
         try {
             return _modules.at( stage );
         } catch ( std::out_of_range& e ) {
@@ -105,24 +107,6 @@ export struct Program final {
 
 private:
     // Create vulkan shader module.
-    auto push( ShaderStageType stage, const std::span<uint8_t> bytecode ) -> void {
-        VkShaderModuleCreateInfo createInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-        createInfo.codeSize = bytecode.size();
-        createInfo.pCode = reinterpret_cast<const uint32_t*>( bytecode.data() );
-
-        VkShaderModule module{};
-        if ( const auto err = vkCreateShaderModule( Context::instance().device(), &createInfo, nullptr, &module );
-             err != VK_SUCCESS ) {
-            throw std::runtime_error( std::format( "Failed to create shader module \"{}\" with code {}!",
-                                                   StageTypeToSuffixMap.at( stage ), string_VkResult( err ) ) );
-        } else {
-            log::debug()( "Shader module \"{}\" created!", StageTypeToSuffixMap.at( stage ) );
-        }
-
-        _modules[stage] = module;
-    }
-
     auto push( ShaderStageType stage, const std::vector<uint32_t> bytecode ) -> void {
         VkShaderModuleCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
