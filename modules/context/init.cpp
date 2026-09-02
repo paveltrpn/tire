@@ -13,7 +13,7 @@ namespace tire {
 auto Context::memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags properties ) const
     -> std::optional<uint32_t> {
     VkPhysicalDeviceMemoryProperties memProperties{};
-    vkGetPhysicalDeviceMemoryProperties( vkDevice_->physicalDevice(), &memProperties );
+    vkGetPhysicalDeviceMemoryProperties( _vkDevice->physicalDevice(), &memProperties );
 
     for ( uint32_t i = 0; i < memProperties.memoryTypeCount; i++ ) {
         if ( ( typeFilter & ( 1 << i ) ) &&
@@ -27,11 +27,11 @@ auto Context::memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags pro
     return std::nullopt;
 }
 
-auto Context::findSupportedFormat( const std::vector<VkFormat> &candidates, VkImageTiling tiling,
+auto Context::findSupportedFormat( const std::vector<VkFormat>& candidates, VkImageTiling tiling,
                                    VkFormatFeatureFlags features ) const -> std::optional<VkFormat> {
     for ( VkFormat format : candidates ) {
         VkFormatProperties props;
-        vkGetPhysicalDeviceFormatProperties( vkDevice_->physicalDevice(), format, &props );
+        vkGetPhysicalDeviceFormatProperties( _vkDevice->physicalDevice(), format, &props );
 
         if ( tiling == VK_IMAGE_TILING_LINEAR && ( props.linearTilingFeatures & features ) == features ) {
             return format;
@@ -109,7 +109,7 @@ auto Context::initRenderPass() -> void {
     renderPassInfo.dependencyCount = 1;
     renderPassInfo.pDependencies = &dependency;
 
-    if ( const auto err = vkCreateRenderPass( device(), &renderPassInfo, nullptr, &renderPass_ ); err != VK_SUCCESS ) {
+    if ( const auto err = vkCreateRenderPass( device(), &renderPassInfo, nullptr, &_renderPass ); err != VK_SUCCESS ) {
         log::fatal()( "failed to create render pass with code {}!", string_VkResult( err ) );
     } else {
         log::info()( "render pass created!" );
@@ -124,7 +124,7 @@ auto Context::initCopyCommandBuffer() -> void {
         .flags = 0,
     };
 
-    vkCreateFence( device(), &fenceInfo, nullptr, &copyCommandFence_ );
+    vkCreateFence( device(), &fenceInfo, nullptr, &_copyCommandFence );
 
     const VkCommandBufferAllocateInfo allocInfo{
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -133,7 +133,7 @@ auto Context::initCopyCommandBuffer() -> void {
         .commandBufferCount = 1,
     };
 
-    vkAllocateCommandBuffers( device(), &allocInfo, &copyCommandBuffer_ );
+    vkAllocateCommandBuffers( device(), &allocInfo, &_copyCommandBuffer );
 }
 
 }  // namespace tire

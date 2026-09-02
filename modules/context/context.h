@@ -41,108 +41,111 @@ namespace tire {
 struct DepthImage;
 
 struct Context final {
-    Context( const Context &other ) = delete;
-    Context( Context &&other ) = delete;
+    Context( const Context& other ) = delete;
+    Context( Context&& other ) = delete;
 
-    auto operator=( const Context &other ) -> Context & = delete;
-    auto operator=( Context &&other ) -> Context & = delete;
+    auto operator=( const Context& other ) -> Context& = delete;
+    auto operator=( Context&& other ) -> Context& = delete;
 
-    static void init( uint32_t width, uint32_t height, Display *display, Window window );
-    [[nodiscard]] static Context &instance();
+    static void init( uint32_t width, uint32_t height, Display* display, Window window );
+    [[nodiscard]]
+    static auto instance() -> Context&;
 
-    [[nodiscard]] auto vkInstance() const -> VkInstance {
+    [[nodiscard]]
+    auto vkInstance() const -> VkInstance {
         //
-        return vkInstance_->get();
+        return _vkInstance->get();
     }
 
-    [[nodiscard]] auto surface() const -> VkSurfaceKHR {
+    [[nodiscard]]
+    auto surface() const -> VkSurfaceKHR {
         //
-        return vkSurface_->get();
+        return _vkSurface->get();
     }
 
     [[nodiscard]] auto device() const -> VkDevice {
         //
-        return vkDevice_->get();
+        return _vkDevice->get();
     }
 
     [[nodiscard]] auto swapchain() const -> VkSwapchainKHR {
         //
-        return swapchain_;
+        return _swapchain;
     }
 
-    [[nodiscard]] auto surfaceFormat() const -> const VkSurfaceFormatKHR & {
+    [[nodiscard]] auto surfaceFormat() const -> const VkSurfaceFormatKHR& {
         //
-        return vkSurface_->surfaceFormat();
+        return _vkSurface->surfaceFormat();
     };
 
     [[nodiscard]] auto graphicsQueue() const -> VkQueue {
         //
-        return vkDevice_->graphicsQueue();
+        return _vkDevice->graphicsQueue();
     }
 
     [[nodiscard]] auto presentQueue() const -> VkQueue {
         //
-        return vkDevice_->presentQueue();
+        return _vkDevice->presentQueue();
     }
 
     [[nodiscard]] auto graphicsFamilyQueueId() const -> uint32_t {
         //
-        return vkDevice_->graphicsFamilyQueueId();
+        return _vkDevice->graphicsFamilyQueueId();
     }
 
     [[nodiscard]] auto presentSupportQueueId() const -> uint32_t {
         //
-        return vkDevice_->presentSupportQueueId();
+        return _vkDevice->presentSupportQueueId();
     }
 
     [[nodiscard]] auto physicalDevice() const -> VkPhysicalDevice {
         //
-        return vkDevice_->physicalDevice();
+        return _vkDevice->physicalDevice();
     }
 
-    [[nodiscard]] auto currentExtent() const -> const VkExtent2D & {
+    [[nodiscard]] auto currentExtent() const -> const VkExtent2D& {
         //
-        return vkSurface_->currentExtent();
+        return _vkSurface->currentExtent();
     };
 
     [[nodiscard]] auto viewportSize() -> std::tuple<uint32_t, uint32_t> const {
         //
-        return { width_, height_ };
+        return { _width, _height };
     }
 
     [[nodiscard]] auto presentMode() const -> VkPresentModeKHR {
         //
-        return vkSurface_->presentMode();
+        return _vkSurface->presentMode();
     }
 
-    auto surfaceCapabilities() const -> const VkSurfaceCapabilitiesKHR & {
+    auto surfaceCapabilities() const -> const VkSurfaceCapabilitiesKHR& {
         //
-        return vkSurface_->surfaceCapabilities();
+        return _vkSurface->surfaceCapabilities();
     }
 
     [[nodiscard]] auto memoryRequirements( uint32_t typeFilter, VkMemoryPropertyFlags properties ) const
         -> std::optional<uint32_t>;
-    [[nodiscard]] auto findSupportedFormat( const std::vector<VkFormat> &candidates, VkImageTiling tiling,
+    [[nodiscard]] auto findSupportedFormat( const std::vector<VkFormat>& candidates, VkImageTiling tiling,
                                             VkFormatFeatureFlags features ) const -> std::optional<VkFormat>;
 
     [[nodiscard]] auto renderPass() const -> VkRenderPass {
         //
-        return renderPass_;
+        return _renderPass;
     };
 
     [[nodiscard]] auto allocator() const -> VmaAllocator {
         //
-        return allocator_->get();
+        return _allocator->get();
     }
 
     [[nodiscard]] auto getFrameSyncSet( size_t id ) -> std::tuple<VkSemaphore, VkSemaphore, VkFence, VkCommandBuffer> {
-        return { frames_[id].imageAvailableSemaphore_, frames_[id].renderFinishedSemaphore_, frames_[id].inFlightFence_,
-                 frames_[id].cbPrimary_ };
+        return { _frames[id]._imageAvailableSemaphore, _frames[id]._renderFinishedSemaphore, _frames[id]._inFlightFence,
+                 _frames[id]._cbPrimary };
     }
 
     [[nodiscard]] auto framebuffer( size_t id ) const -> VkFramebuffer {
         //
-        return frames_[id].framebuffer_;
+        return _frames[id]._framebuffer;
     };
 
     auto renderCommandBegin( uint32_t frameId ) -> void;
@@ -150,22 +153,22 @@ struct Context final {
 
     [[nodiscard]] auto getDrawCommandBuffer( size_t id ) const -> VkCommandBuffer {
         //
-        return frames_[id].cbPrimary_;
+        return _frames[id]._cbPrimary;
     }
 
     [[nodiscard]] auto framesCount() const -> uint32_t {
         //
-        return framesCount_;
+        return _framesCount;
     };
 
     [[nodiscard]] auto commandPool() const -> VkCommandPool {
         //
-        return contextPools_->commandPool();
+        return _contextPools->commandPool();
     };
 
     [[nodiscard]] auto descriptorPool() const -> VkDescriptorPool {
         //
-        return contextPools_->descriptorPool();
+        return _contextPools->descriptorPool();
     };
 
     [[nodiscard]] auto renderCommand( uint32_t frameId ) -> CommandRoutine;
@@ -177,27 +180,27 @@ struct Context final {
 
 private:
 #ifdef SURFACE_X11
-    Context( uint32_t width, uint32_t height, Display *display, Window window );
+    Context( uint32_t width, uint32_t height, Display* display, Window window );
 #elifdef SURFACE_WAYLAND
-    Context( uint32_t width, uint32_t height, wl_display *display, wl_surface *surface );
+    Context( uint32_t width, uint32_t height, wl_display* display, wl_surface* surface );
 #endif
 
     ~Context() = default;
 
-    inline static std::atomic<Context *> _instance{ nullptr };
+    inline static std::atomic<Context*> _instance{ nullptr };
     inline static std::once_flag _initFlag;
     inline static bool _initSuccess{ false };
 
 private:
     struct Frame final {
-        VkImage image_{};
-        VkImageView view_{};
-        VkFramebuffer framebuffer_{};
-        VkSemaphore imageAvailableSemaphore_{};
-        VkSemaphore renderFinishedSemaphore_{};
-        VkFence inFlightFence_{};
-        VkCommandBuffer cbPrimary_{ VK_NULL_HANDLE };
-        VkCommandBuffer cbSecondary_{ VK_NULL_HANDLE };
+        VkImage _image{};
+        VkImageView _view{};
+        VkFramebuffer _framebuffer{};
+        VkSemaphore _imageAvailableSemaphore{};
+        VkSemaphore _renderFinishedSemaphore{};
+        VkFence _inFlightFence{};
+        VkCommandBuffer _cbPrimary{ VK_NULL_HANDLE };
+        VkCommandBuffer _cbSecondary{ VK_NULL_HANDLE };
     };
 
 private:
@@ -207,31 +210,31 @@ private:
     auto initCopyCommandBuffer() -> void;
 
 protected:
-    std::unique_ptr<VKInstance> vkInstance_{};
-    std::unique_ptr<VKDevice> vkDevice_{};
-    std::unique_ptr<VKSurface> vkSurface_{};
-    std::unique_ptr<VMAllocator> allocator_{};
-    std::unique_ptr<Presentation> presentation_{};
-    std::unique_ptr<ContextPools> contextPools_{};
+    std::unique_ptr<VKInstance> _vkInstance{};
+    std::unique_ptr<VKDevice> _vkDevice{};
+    std::unique_ptr<VKSurface> _vkSurface{};
+    std::unique_ptr<VMAllocator> _allocator{};
+    std::unique_ptr<Presentation> _presentation{};
+    std::unique_ptr<ContextPools> _contextPools{};
 
     // Swapchain
-    VkSwapchainKHR swapchain_{ VK_NULL_HANDLE };
-    uint32_t framesCount_{};
-    uint32_t swapchainImageCount_{};
-    std::vector<Frame> frames_{};
-    std::shared_ptr<DepthImage> depthImage_;
+    VkSwapchainKHR _swapchain{ VK_NULL_HANDLE };
+    uint32_t _framesCount{};
+    uint32_t _swapchainImageCount{};
+    std::vector<Frame> _frames{};
+    std::shared_ptr<DepthImage> _depthImage;
 
-    VkRenderPass renderPass_{ VK_NULL_HANDLE };
+    VkRenderPass _renderPass{ VK_NULL_HANDLE };
 
-    uint32_t width_{};
-    uint32_t height_{};
+    uint32_t _width{};
+    uint32_t _height{};
 
     // Background color value
-    std::array<VkClearValue, 2> clearValues_{};
+    std::array<VkClearValue, 2> _clearValues{};
 
     // Reusable command buffer with fence.
-    VkFence copyCommandFence_{};
-    VkCommandBuffer copyCommandBuffer_{};
+    VkFence _copyCommandFence{};
+    VkCommandBuffer _copyCommandBuffer{};
 };
 
 }  // namespace tire

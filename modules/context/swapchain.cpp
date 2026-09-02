@@ -24,7 +24,7 @@ auto Context::makeSwapchain() -> void {
     // rendering is slower than vsync. Consider setting minImageCount to 3 to use
     // triple buffering to maximize performance in such cases.
     // Skip all logic above, just use value from config
-    framesCount_ = Config::instance().get<int>( "frame_count" );
+    _framesCount = Config::instance().get<int>( "frame_count" );
 
     //if ( ( framesCount_ < surfaceCapabilities_.minImageCount ) ||
     //    ( framesCount_ > surfaceCapabilities_.maxImageCount ) ) {
@@ -37,7 +37,7 @@ auto Context::makeSwapchain() -> void {
         "vulkan swapchain surface capabilities image count "
         "set to "
         "{}",
-        framesCount_ );
+        _framesCount );
 
     // Use instead of extent acuired from surface data.
     const auto [viewportWidth, viewportHeight] = viewportSize();
@@ -48,7 +48,7 @@ auto Context::makeSwapchain() -> void {
         .surface = surface(),
         // The implementation will either create the swapchain with at least
         // that many images, or it will fail to create the swapchain.
-        .minImageCount = framesCount_,
+        .minImageCount = _framesCount,
         .imageFormat = surfaceFormat().format,
         .imageColorSpace = surfaceFormat().colorSpace,
         .imageExtent = { viewportWidth, viewportHeight },  //currentExtent_,
@@ -75,7 +75,7 @@ auto Context::makeSwapchain() -> void {
     }
 
     {
-        const auto err = vkCreateSwapchainKHR( device(), &createInfo, nullptr, &swapchain_ );
+        const auto err = vkCreateSwapchainKHR( device(), &createInfo, nullptr, &_swapchain );
         if ( err != VK_SUCCESS ) {
             log::fatal()( "failed to create swapchain code {}\n!", string_VkResult( err ) );
         } else {
@@ -87,26 +87,26 @@ auto Context::makeSwapchain() -> void {
     // equal to previously defined in VkSwapchainCreateInfoKHR.minImageCount (== framesCount_).
     // But we still try to get image count that way.
     {
-        const auto err = vkGetSwapchainImagesKHR( device(), swapchain_, &swapchainImageCount_, nullptr );
+        const auto err = vkGetSwapchainImagesKHR( device(), _swapchain, &_swapchainImageCount, nullptr );
         if ( err != VK_SUCCESS ) {
             log::fatal()( "failed to get swapchain images count with code {}\n!", string_VkResult( err ) );
         } else {
-            log::debug()( "swapchain images count: {}", swapchainImageCount_ );
+            log::debug()( "swapchain images count: {}", _swapchainImageCount );
         }
     }
 
     // Depth image
-    depthImage_ = std::make_shared<DepthImage>( this, viewportWidth, viewportHeight );
+    _depthImage = std::make_shared<DepthImage>( this, viewportWidth, viewportHeight );
 }
 
 auto Context::makeFrames() -> void {
     // Reserve space for frames images render into
-    frames_.resize( framesCount_ );
+    _frames.resize( _framesCount );
 
     // Acquire all swapchain images at one call
     std::vector<VkImage> swapChainImages;
-    swapChainImages.resize( framesCount_ );
-    if ( const auto err = vkGetSwapchainImagesKHR( device(), swapchain_, &framesCount_, swapChainImages.data() );
+    swapChainImages.resize( _framesCount );
+    if ( const auto err = vkGetSwapchainImagesKHR( device(), _swapchain, &_framesCount, swapChainImages.data() );
          err != VK_SUCCESS ) {
         log::fatal()( "failed to get swapchain images with code {}\n!", string_VkResult( err ) );
     } else {
@@ -114,9 +114,9 @@ auto Context::makeFrames() -> void {
     }
 
     // Create frame related vulkan entities - images, image views, framebuffers and sync primitieves.
-    for ( size_t i{ 0 }; i < framesCount_; ++i ) {
+    for ( size_t i{ 0 }; i < _framesCount; ++i ) {
         // Frame image
-        frames_[i].image_ = swapChainImages[i];
+        _frames[i]._image = swapChainImages[i];
 
         // Frame image view
         const auto subResRange = VkImageSubresourceRange{
@@ -139,7 +139,7 @@ auto Context::makeFrames() -> void {
             .subresourceRange = subResRange,
         };
 
-        if ( const auto err = vkCreateImageView( device(), &createInfo, nullptr, &frames_[i].view_ );
+        if ( const auto err = vkCreateImageView( device(), &createInfo, nullptr, &_frames[i]._view );
              err != VK_SUCCESS ) {
             log::fatal()( "failed to create swapchain image views with code {}\n!", string_VkResult( err ) );
         } else {
@@ -147,7 +147,7 @@ auto Context::makeFrames() -> void {
         }
 
         // Frame framebuffer
-        std::array<VkImageView, 2> attachments = { frames_[i].view_, depthImage_->view() };
+        std::array<VkImageView, 2> attachments = { _frames[i]._view, _depthImage->view() };
         const auto [viewportWidth, viewportHeight] = viewportSize();
         const VkFramebufferCreateInfo framebufferInfo{
             .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
@@ -159,7 +159,7 @@ auto Context::makeFrames() -> void {
             .layers = 1,
         };
 
-        if ( const auto err = vkCreateFramebuffer( device(), &framebufferInfo, nullptr, &frames_[i].framebuffer_ );
+        if ( const auto err = vkCreateFramebuffer( device(), &framebufferInfo, nullptr, &_frames[i]._framebuffer );
              err != VK_SUCCESS ) {
             log::fatal()( "failed to create framebuffer at {} with code {}!", i, string_VkResult( err ) );
         } else {
@@ -177,11 +177,11 @@ auto Context::makeFrames() -> void {
         VkFenceCreateInfo fenceInfo{
             .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, .pNext = nullptr, .flags = VK_FENCE_CREATE_SIGNALED_BIT };
 
-        if ( vkCreateSemaphore( device(), &semaphoreInfo, nullptr, &frames_[i].imageAvailableSemaphore_ ) !=
+        if ( vkCreateSemaphore( device(), &semaphoreInfo, nullptr, &_frames[i]._imageAvailableSemaphore ) !=
                  VK_SUCCESS ||
-             vkCreateSemaphore( device(), &semaphoreInfo, nullptr, &frames_[i].renderFinishedSemaphore_ ) !=
+             vkCreateSemaphore( device(), &semaphoreInfo, nullptr, &_frames[i]._renderFinishedSemaphore ) !=
                  VK_SUCCESS ||
-             vkCreateFence( device(), &fenceInfo, nullptr, &frames_[i].inFlightFence_ ) != VK_SUCCESS ) {
+             vkCreateFence( device(), &fenceInfo, nullptr, &_frames[i]._inFlightFence ) != VK_SUCCESS ) {
             log::fatal()( "failed to create semaphores!" );
         }
 
@@ -192,7 +192,7 @@ auto Context::makeFrames() -> void {
             .commandBufferCount = 1,
         };
 
-        const auto err = vkAllocateCommandBuffers( device(), &allocInfo, &frames_[i].cbPrimary_ );
+        const auto err = vkAllocateCommandBuffers( device(), &allocInfo, &_frames[i]._cbPrimary );
         if ( err != VK_SUCCESS ) {
             log::fatal()( "failed to allocate command buffers with code {}!", string_VkResult( err ) );
         } else {

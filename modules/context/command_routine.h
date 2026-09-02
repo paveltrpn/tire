@@ -54,18 +54,22 @@ struct CommandRoutine {
     CommandRoutine( handle_type h )
         : h_( h ) {}
 
-    CommandRoutine( const CommandRoutine &other ) = delete;
-    CommandRoutine( CommandRoutine &&other ) = delete;
+    CommandRoutine( const CommandRoutine& other ) = delete;
+    CommandRoutine( CommandRoutine&& other ) = delete;
 
-    auto operator=( const CommandRoutine &other ) = delete;
-    auto operator=( CommandRoutine &&other ) = delete;
+    auto operator=( const CommandRoutine& other ) = delete;
+    auto operator=( CommandRoutine&& other ) = delete;
 
     ~CommandRoutine() {
         //
         post();
     }
 
-    [[nodiscard]] auto buf() const -> VkCommandBuffer { return h_.promise().value_; }
+    [[nodiscard]]
+    auto buf() const -> VkCommandBuffer {
+        //
+        return h_.promise().value_;
+    }
 
 private:
     void post() {

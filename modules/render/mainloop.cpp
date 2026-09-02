@@ -37,6 +37,8 @@ auto RenderVK::preLoop() -> void {
 }
 
 auto RenderVK::frame() -> void {
+    auto& ctxHandle = Context::instance();
+
     // Update global timer
     _timer.update();
 
@@ -67,19 +69,25 @@ auto RenderVK::frame() -> void {
     _ui->billboard( CUBEPARAM_LABEL_POS_X - 1.5f, CUBEPARAM_LABEL_POS_Y + 1.5f, 30.0f, STRING_GAP * 5.0f, 0.0f );
 
     {
-        auto cb = Context::instance().copyBufferCommand();
+        auto cb = ctxHandle.copyBufferCommand();
+
         _ui->upload( cb.buf() );
     }
 
     {
-        auto cb = Context::instance().renderCommand( _currentFrame );
+        // Begin record render command buffer...
+
+        auto cb = ctxHandle.renderCommand( _currentFrame );
+
         _testBox->draw( cb.buf(), _timer.floatFrameDuration() );
         _ui->draw( cb.buf() );
+
+        // ... end record render command buffer and submit.
     }
 
     _ui->flush();
 
-    _currentFrame = ( _currentFrame + 1 ) % Context::instance().framesCount();
+    _currentFrame = ( _currentFrame + 1 ) % ctxHandle.framesCount();
 };
 
 auto RenderVK::postLoop() -> void {

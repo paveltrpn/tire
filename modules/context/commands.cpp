@@ -38,7 +38,11 @@ auto Context::immediateCommand() const -> CommandRoutine {
 
     // ==============================================
     // Suspend and record commands from other places.
+    // ==============================================
+
     co_yield cb;
+
+    // ==============================================
     // Resume, finish record command and submit.
     // ==============================================
 
@@ -87,20 +91,24 @@ auto Context::copyBufferCommand() const -> CommandRoutine {
     };
 
     std::array<VkFence, 1> fences = {
-        copyCommandFence_,
+        _copyCommandFence,
     };
 
-    vkResetCommandBuffer( copyCommandBuffer_, 0 );
+    vkResetCommandBuffer( _copyCommandBuffer, 0 );
 
-    vkBeginCommandBuffer( copyCommandBuffer_, &beginInfo );
+    vkBeginCommandBuffer( _copyCommandBuffer, &beginInfo );
 
     // ==============================================
     // Suspend and record commands from other places.
-    co_yield copyCommandBuffer_;
+    // ==============================================
+
+    co_yield _copyCommandBuffer;
+
+    // ==============================================
     // Resume, finish record command and submit.
     // ==============================================
 
-    vkEndCommandBuffer( copyCommandBuffer_ );
+    vkEndCommandBuffer( _copyCommandBuffer );
 
     std::array<VkPipelineStageFlags, 1> waitStages{
         //
@@ -111,7 +119,7 @@ auto Context::copyBufferCommand() const -> CommandRoutine {
     std::array<VkSemaphore, 0> sgnlsems{};
     std::array<VkCommandBuffer, 1> commands{
         //
-        copyCommandBuffer_,
+        _copyCommandBuffer,
     };
 
     const VkSubmitInfo submitInfo{
@@ -125,7 +133,7 @@ auto Context::copyBufferCommand() const -> CommandRoutine {
         .pSignalSemaphores = sgnlsems.data(),
     };
 
-    vkQueueSubmit( graphicsQueue(), 1, &submitInfo, copyCommandFence_ );
+    vkQueueSubmit( graphicsQueue(), 1, &submitInfo, _copyCommandFence );
 
     vkWaitForFences( device(), fences.size(), fences.data(), VK_TRUE, UINT64_MAX );
     vkResetFences( device(), fences.size(), fences.data() );
@@ -167,8 +175,8 @@ auto Context::renderCommand( uint32_t frameId ) -> CommandRoutine {
         .renderPass = renderPass(),
         .framebuffer = currentFramebuffer,
         .renderArea = { .offset = { .x = 0, .y = 0 }, .extent = { viewportWidth, viewportHeight } },
-        .clearValueCount = static_cast<uint32_t>( clearValues_.size() ),
-        .pClearValues = clearValues_.data() };
+        .clearValueCount = static_cast<uint32_t>( _clearValues.size() ),
+        .pClearValues = _clearValues.data() };
 
     vkCmdBeginRenderPass( cb, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE );
 
@@ -199,7 +207,11 @@ auto Context::renderCommand( uint32_t frameId ) -> CommandRoutine {
 
     // ==============================================
     // Suspend and record commands from other places.
+    // ==============================================
+
     co_yield cb;
+
+    // ==============================================
     // Resume, finish record command and submit.
     // ==============================================
 
@@ -227,7 +239,7 @@ auto Context::renderCommand( uint32_t frameId ) -> CommandRoutine {
     // NOTE: omit return code check
     vkQueueSubmit( graphicsQueue(), static_cast<uint32_t>( commands.size() ), &submitInfo, ifFnc );
 
-    std::array<VkSwapchainKHR, 1> swapChains = { swapchain_ };
+    std::array<VkSwapchainKHR, 1> swapChains = { _swapchain };
     std::array<VkSemaphore, 1> signalSemaphores = { rfSem };
     std::array<uint32_t, 1> imageIds = { frameId };
 
