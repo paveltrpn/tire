@@ -66,13 +66,8 @@ UiVK::UiVK() {
 
     pipeline_ = std::make_shared<PipelineUi>();
 
-    auto program = Program{};
-    program.fill( {
-        //
-        basePath + "/shaders/spirv/vk_ui_VERTEX.spv",
-        basePath + "/shaders/spirv/vk_ui_FRAGMENT.spv",
-    } );
-
+    auto uiProgramSources = std::make_shared<BytecodeProgramSource>( "ui" );
+    auto program = Program{ uiProgramSources };
     pipeline_->buildPipeline( program );
 
     initTextureSmpler();

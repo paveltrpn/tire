@@ -17,10 +17,7 @@ RenderVK::RenderVK() {
         testBox_ = std::make_shared<TestBox>();
         testBox_->setPosition( 0.0f, 0.0f, -2.5f );
 
-        // RUN!!!
         run_ = true;
-
-        const auto foo = BytecodeProgramSource{ "ui" };
     } catch ( const std::runtime_error& e ) {
         log::fatal()( "error white creating render {}", e.what() );
     }

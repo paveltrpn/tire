@@ -50,8 +50,7 @@ public:
 
             if ( !file.is_open() ) {
                 const auto msg = std::format( "Failed to open file: {}", item );
-                std::println( "=== {} ", msg );
-                //throw std::runtime_error( msg );
+                throw std::runtime_error( msg );
             }
 
             // Get file size.

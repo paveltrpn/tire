@@ -29,7 +29,7 @@ PipelineUi::PipelineUi() {
 
 auto PipelineUi::buildPipeline( const Program& program ) -> void {
     // Add VERTEX stage
-    if ( const auto module = program.get<ShaderStageType::VERTEX>(); module != VK_NULL_HANDLE ) {
+    if ( const auto module = program.get( ShaderStageType::VERTEX ); module != VK_NULL_HANDLE ) {
         const VkPipelineShaderStageCreateInfo stage{ .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
                                                      .pNext = nullptr,
                                                      .flags = 0,

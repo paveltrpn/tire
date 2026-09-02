@@ -1,13 +1,10 @@
 module;
 
-#include <vector>
+#include <memory>
 #include <unordered_map>
-#include <filesystem>
 #include <span>
 #include <vulkan/vulkan.h>
-#include <fstream>
 #include <format>
-#include <algorithm>
 
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
@@ -19,6 +16,9 @@ module;
 export module program : program;
 
 import : definitions;
+import : programsource;
+import : bytecodesource;
+import : textsource;
 
 namespace tire {
 
@@ -27,8 +27,6 @@ namespace tire {
 // of the vulkan specification demands at least one shader stage - VERTEX for graphics
 // pipeline or it can be COMPUTE shader for compute pipeline).
 export struct Program final {
-    Program() = default;
-
     Program( const Program& other ) = delete;
     Program( Program&& other ) = delete;
     auto operator=( const Program& other ) -> Program& = delete;
@@ -40,176 +38,63 @@ export struct Program final {
         }
     }
 
-    // Add single shader stage from precompiled spirv file.
-    // Preconditions:
-    // 1) File must be compiled SPIRV bytecode with ".spv" extension.
-    // 2) Filename must contains "_STAGESUFFIX" suffix ("_VERTEX", "_FRAGMENT" etc.)
-    // 3) Shader mudules map contains one shader module per stage, i.e.
-    // there is only one mudule for each stage and modules count
-    // equal to vulkan shader stages types.
-    auto add( const std::filesystem::path& path ) -> void {
-        const auto device = Context::instance().device();
-        if ( device == VK_NULL_HANDLE ) {
-            throw std::runtime_error(
-                std::format( "can't use shaders before valid logical device is "
-                             "acquired!" ) );
-        }
+    Program( std::shared_ptr<ProgramSource> sources )
+        : _sources{ std::move( sources ) } {
+        auto bytecodeSrc = dynamic_cast<BytecodeProgramSource*>( _sources.get() );
+        if ( bytecodeSrc ) {
+            const auto srcList = bytecodeSrc->sources();
 
-        std::ifstream file( path, std::ios::ate | std::ios::binary );
-        if ( !file.is_open() ) {
-            throw std::runtime_error( std::format( "failed to open file {}!", path.string() ) );
-        }
+            for ( auto&& shader : srcList ) {
+                auto [stage, bytecode] = shader;
+                push( stage, bytecode );
+            }
 
-        // Future shader name, comes from filename. Have format:
-        // "vk_{someNname}_STAGETYPE, where _STAGETYPE suffix is
-        // something from well defined set.
-        const auto name = path.stem().string();
-
-        // Shader file name must contain "vulkan shader stageprivate:
-        // suffix - i.e. something from set "VERTEX", "FRAGMENT" etc.
-        if ( !isValidName( name ) ) {
-            throw std::runtime_error(
-                std::format( "vk::ShaderStorage == shader file name \"{}\" not "
-                             "satisfies naming "
-                             "convention",
-                             name ) );
-        }
-
-        // Check if shader module with name exist in modules map
-        if ( _modules.contains( name ) ) {
-            log::warning()(
-                "vk::ShaderStorage == shader module with name \"{}\" exist, no "
-                "need "
-                "to "
-                "replace it",
-                name );
             return;
         }
 
-        // Split given string by seperator
-        auto split = []( const std::string& string, const char* sep ) {
-            std::vector<std::string> list;
-            std::string::size_type start{ 0 };
-            std::string::size_type end;
+        auto textSrc = dynamic_cast<TextProgramSource*>( _sources.get() );
+        if ( textSrc ) {
+            const auto srcList = textSrc->sources();
 
-            while ( ( end = string.find( sep, start ) ) != std::string::npos ) {
-                if ( start != end ) list.push_back( string.substr( start, end - start ) );
-                start = end + 1;
-            }
+            log::fatal()( "NOT IMPLEMENTED!" );
 
-            if ( start != string.size() ) list.push_back( string.substr( start ) );
-
-            return list;
-        };
-
-        // Check if same shader stage already occupied
-        const auto suffix = split( name, "_" ).back();
-        if ( checkStageExist( suffix ) ) {
-            log::warning()(
-                "shader module for stage \"{}\" exist, no "
-                "need "
-                "to "
-                "replace it",
-                suffix );
+            return;
         }
+    };
 
-        // Read SPIRV file from disk
-        const long long fileSize = file.tellg();
-        std::vector<char> charBuf( fileSize );
-        file.seekg( 0 );
-        file.read( charBuf.data(), static_cast<int>( fileSize ) );
-        file.close();
-
-        // Cast file data readed as char to vulkan acceptable uint8_t
-        std::vector<uint8_t> uint8Buf( fileSize );
-        std::ranges::transform( charBuf.begin(), charBuf.end(), uint8Buf.begin(),
-                                []( char v ) { return static_cast<uint8_t>( v ); } );
-
-        push( uint8Buf, name );
-    }
-
-    // Add shader stage as bytecode array
-    auto add( std::span<uint8_t> bytecode, const std::string& name ) -> void {
-        //
-        push( bytecode, name );
-    }
-
-    auto fill( const std::vector<std::filesystem::path>& files ) -> void {
-        if ( files.size() < 2 ) {
-            throw std::runtime_error(
-                std::format( "vk::ShaderStorage == pipeline shader storage must "
-                             "contains at least vertex and fragment shader stages!" ) );
-        }
-
-        for ( const auto& item : files ) {
-            add( item );
-        }
-    }
-
-    auto fill( const std::vector<std::pair<std::span<uint8_t>, std::string>>& sources ) -> void {
-        if ( sources.size() < 2 ) {
-            throw std::runtime_error(
-                std::format( "vk::ShaderStorage == pipeline shader storage must "
-                             "contains at least vertex and fragment shader stages!" ) );
-        }
-
-        for ( const auto& item : sources ) {
-            auto [bytecode, name] = item;
-            add( bytecode, name );
-        }
-    }
-
-    [[nodiscard]] auto get( const std::string& name ) -> VkShaderModule {
-        VkShaderModule module{};
+    [[nodiscard]] auto get( ShaderStageType stage ) const -> VkShaderModule const {
         try {
-            module = _modules.at( name );
+            return _modules.at( stage );
         } catch ( std::out_of_range& e ) {
-            log::warning()( "module {} not exist!", name );
             return VK_NULL_HANDLE;
         }
-        return module;
     }
 
     // Return shader vulkan module
-    template <ShaderStageType Stage>
-    requires ShaderStage<Stage> [[nodiscard]] auto get() const -> VkShaderModule {
-        // We sure that "std::map<>::at() return proper value because
-        // of concept keep invariant
-        const std::string suffix = StagesSuffixMap.at( Stage );
-
-        for ( const auto& item : _modules ) {
-            const auto [name, module] = item;
-            if ( name.ends_with( suffix ) ) {
-                return module;
-            }
-        }
-
-        log::warning()( "shader module with suffix \"{}\" not found!", suffix );
-
-        return VK_NULL_HANDLE;
-    }
-
-    auto destroy( const std::string& name ) -> void {
-        VkShaderModule module;
+    template <ShaderStageType stage>
+    requires ShaderStage<stage> [[nodiscard]] auto get() const -> VkShaderModule {
         try {
-            module = _modules.at( name );
+            return _modules.at( stage );
         } catch ( std::out_of_range& e ) {
-            log::warning()( "module {} not exist!", name );
-            return;
+            return VK_NULL_HANDLE;
         }
-        vkDestroyShaderModule( Context::instance().device(), module, nullptr );
-        _modules.erase( name );
     }
 
-    auto list() -> void {
-        for ( const auto& key : _modules ) {
-            log::debug()( "available shader module: \"{}\"", std::get<0>( key ) );
-        }
-    }
+    // auto destroy( const std::string& name ) -> void {
+    //     VkShaderModule module;
+    //     try {
+    //         module = _modules.at( name );
+    //     } catch ( std::out_of_range& e ) {
+    //         log::warning()( "module {} not exist!", name );
+    //         return;
+    //     }
+    //     vkDestroyShaderModule( Context::instance().device(), module, nullptr );
+    //     _modules.erase( name );
+    // }
 
 private:
-    auto push( std::span<uint8_t> bytecode, const std::string& name ) -> void {
-        // Create vulkan shader module
+    // Create vulkan shader module.
+    auto push( ShaderStageType stage, std::span<uint8_t> bytecode ) -> void {
         VkShaderModuleCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
         createInfo.codeSize = bytecode.size();
@@ -218,42 +103,18 @@ private:
         VkShaderModule module{};
         if ( const auto err = vkCreateShaderModule( Context::instance().device(), &createInfo, nullptr, &module );
              err != VK_SUCCESS ) {
-            throw std::runtime_error(
-                std::format( "failed to create shader module {} with code {}!", name, string_VkResult( err ) ) );
+            throw std::runtime_error( std::format( "failed to create shader module {} with code {}!",
+                                                   StagesSuffixMap.at( stage ), string_VkResult( err ) ) );
         } else {
-            log::debug()( "shader module {} created!", name );
+            log::debug()( "shader module {} created!", StagesSuffixMap.at( stage ) );
         }
 
-        _modules[name] = module;
-    }
-
-    auto checkStageExist( const std::string& stageSuffix ) -> bool {
-        // Find shader stage module name in modules_ which have certain suffix
-        const auto end = _modules.cend();
-        const auto it =
-            std::find_if( _modules.cbegin(), end, [id = stageSuffix]( std::pair<std::string, VkShaderModule> item ) {
-                return std::get<0>( item ).ends_with( id );
-            } );
-
-        return it != end;
-    }
-
-    auto isValidName( const std::string& name ) -> bool {
-        // Finds out that given shader file name contains somthing from
-        // shader stage suffix set ("VERTEX", "FRAGMENT" etc.)
-        const auto end = StagesSuffixMap.cend();
-        const auto it =
-            std::find_if( StagesSuffixMap.cbegin(), end, [id = name]( std::pair<ShaderStageType, std::string> item ) {
-                return id.ends_with( std::get<1>( item ) );
-            } );
-
-        return it != end;
+        _modules[stage] = module;
     }
 
 private:
-    // Contains shader stages vulkan shader mudules. One module per stage.
-    std::unordered_map<std::string, VkShaderModule> _modules{};
-    std::unordered_map<ShaderStageType, bool> _check{};
+    std::shared_ptr<ProgramSource> _sources{};
+    std::unordered_map<ShaderStageType, VkShaderModule> _modules{};
 };
 
 }  // namespace tire

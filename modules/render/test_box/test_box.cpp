@@ -23,9 +23,9 @@ namespace tire {
 TestBox::TestBox() {
     //
     pipeline_ = std::make_unique<PiplineTestBox>();
-    auto testBoxProgram = Program{};
-    testBoxProgram.fill(
-        { { vk_simple_box_VERTEX, vertex_stage_suffix }, { vk_simple_box_FRAGMENT, fragment_stage_suffix } } );
+
+    auto testboxProgramSources = std::make_shared<BytecodeProgramSource>( "testbox" );
+    auto testBoxProgram = Program{ testboxProgramSources };
     pipeline_->buildPipeline( testBoxProgram );
 }
 
