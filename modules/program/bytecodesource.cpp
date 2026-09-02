@@ -30,7 +30,13 @@ public:
         const auto basePath = Config::instance().basePath();
         const auto spirvPath = basePath / "shaders" / "spirv";
 
+        // Obtain shader sources file names for given shader program with name "programName".
         const auto spvShadersList = listDirectory( spirvPath, programName, ".spv" );
+
+        if ( spvShadersList.size() < 2 ) {
+            const auto msg = std::format( "Not enough source files for program: {}", programName );
+            throw std::runtime_error( msg );
+        }
 
         for ( auto&& item : spvShadersList ) {
             const auto stage = stageType( item );

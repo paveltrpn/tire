@@ -20,7 +20,7 @@ RenderVK::RenderVK() {
         // RUN!!!
         run_ = true;
 
-        const auto foo = BytecodeProgramSource{ "" };
+        const auto foo = BytecodeProgramSource{ "ui" };
     } catch ( const std::runtime_error& e ) {
         log::fatal()( "error white creating render {}", e.what() );
     }
