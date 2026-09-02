@@ -171,11 +171,8 @@ target_link_libraries(${TIRE_EXE}
     render
     glfw
     vulkan
-    GenericCodeGen
     glslang
     glslang-default-resource-limits
-    MachineIndependent
-    OSDependent
     SPIRV-Tools-opt
     SPIRV-Tools
     SPIRV-Tools-diff

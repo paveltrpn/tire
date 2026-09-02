@@ -89,7 +89,7 @@ protected:
         const auto& suffix = shaderNameParts.back();
 
         try {
-            return ShaderStageMap.at( suffix );
+            return SuffixToStageTypeMap.at( suffix );
         } catch ( const std::out_of_range& e ) {
             return ShaderStageType::UNKNOWN;
         }
@@ -117,8 +117,8 @@ private:
     // Finds out that given shader file name contains somthing from
     // shader stage suffix set ("VERTEX", "FRAGMENT" etc.)
     auto isValidName( const std::string& name ) -> bool {
-        const auto end = StagesSuffixMap.cend();
-        const auto it = std::find_if( StagesSuffixMap.cbegin(), end,
+        const auto end = StageTypeToSuffixMap.cend();
+        const auto it = std::find_if( StageTypeToSuffixMap.cbegin(), end,
                                       [name]( std::pair<ShaderStageType, std::string> item ) -> bool {
                                           const auto [key, value] = item;
                                           return name.ends_with( value );

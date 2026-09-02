@@ -3,6 +3,9 @@ module;
 #include <string>
 #include <unordered_map>
 
+#include <glslang/Include/glslang_c_interface.h>
+#include <glslang/Public/resource_limits_c.h>
+
 export module program : definitions;
 
 namespace tire {
@@ -55,7 +58,7 @@ concept ShaderStage =
     ( Stage == ShaderStageType::TASK ) || ( Stage == ShaderStageType::MESH ) ||
     ( Stage == ShaderStageType::SUBPASSSHADING ) || ( Stage == ShaderStageType::CLUSTERCULLING );
 
-const std::unordered_map<ShaderStageType, std::string> StagesSuffixMap = {
+const std::unordered_map<ShaderStageType, std::string> StageTypeToSuffixMap = {
     { ShaderStageType::VERTEX, vertex_stage_suffix },
     { ShaderStageType::FRAGMENT, fragment_stage_suffix },
     { ShaderStageType::TESSELATION_EVAL, tesseval_stage_suffix },
@@ -74,7 +77,24 @@ const std::unordered_map<ShaderStageType, std::string> StagesSuffixMap = {
     { ShaderStageType::CLUSTERCULLING, clusterculling_stage_suffix },
 };
 
-const std::unordered_map<std::string, ShaderStageType> ShaderStageMap = {
+const std::unordered_map<ShaderStageType, glslang_stage_t> GLSLANGStageToStageTypeMap = {
+    { ShaderStageType::VERTEX, GLSLANG_STAGE_VERTEX },
+    { ShaderStageType::FRAGMENT, GLSLANG_STAGE_FRAGMENT },
+    { ShaderStageType::TESSELATION_EVAL, GLSLANG_STAGE_TESSEVALUATION },
+    { ShaderStageType::TESSELATION_CTRL, GLSLANG_STAGE_TESSCONTROL },
+    { ShaderStageType::GEOMETRY, GLSLANG_STAGE_GEOMETRY },
+    { ShaderStageType::COMPUTE, GLSLANG_STAGE_COMPUTE },
+    { ShaderStageType::RAYGEN, GLSLANG_STAGE_RAYGEN },
+    { ShaderStageType::ANYHIT, GLSLANG_STAGE_ANYHIT },
+    { ShaderStageType::CLOSESTHIT, GLSLANG_STAGE_CLOSESTHIT },
+    { ShaderStageType::MISS, GLSLANG_STAGE_MISS },
+    { ShaderStageType::INTERSECTION, GLSLANG_STAGE_INTERSECT },
+    { ShaderStageType::CALLABLE, GLSLANG_STAGE_CALLABLE },
+    { ShaderStageType::TASK, GLSLANG_STAGE_TASK },
+    { ShaderStageType::MESH, GLSLANG_STAGE_MESH },
+};
+
+const std::unordered_map<std::string, ShaderStageType> SuffixToStageTypeMap = {
     { vertex_stage_suffix, ShaderStageType::VERTEX },
     { fragment_stage_suffix, ShaderStageType::FRAGMENT },
     { tesseval_stage_suffix, ShaderStageType::TESSELATION_EVAL },
