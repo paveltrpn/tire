@@ -1,7 +1,9 @@
 module;
 
+#include <iterator>
 #include <print>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <unordered_map>
 #include <filesystem>
@@ -28,7 +30,7 @@ public:
         const auto basePath = Config::instance().basePath();
         const auto spirvPath = basePath / "shaders" / "spirv";
 
-        const auto spvShadersList = listDirectory( spirvPath );
+        const auto spvShadersList = listDirectory( spirvPath, programName, ".spv" );
 
         for ( auto&& item : spvShadersList ) {
             const auto stage = stageType( item );
@@ -70,31 +72,6 @@ public:
     auto sources() const -> const std::vector<std::pair<ShaderStageType, std::vector<uint8_t>>>& {
         //
         return _sources;
-    }
-
-private:
-    auto listDirectory( std::filesystem::path path ) -> std::vector<std::string> override {
-        std::vector<std::string> results{};
-
-        for ( const auto& entry : std::filesystem::directory_iterator( path ) ) {
-            if ( !entry.is_regular_file() ) {
-                continue;
-            }
-
-            auto ext = entry.path().extension().string();
-
-            // Convert to lowercase for comparison.
-            std::transform( ext.begin(), ext.end(), ext.begin(), []( auto c ) -> decltype( c ) {
-                //
-                return std::tolower( c );
-            } );
-
-            if ( ext == ".spv" ) {
-                results.push_back( entry.path().string() );
-            }
-        }
-
-        return results;
     }
 
 private:

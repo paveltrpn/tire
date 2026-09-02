@@ -21,37 +21,12 @@ public:
         const auto basePath = Config::instance().basePath();
         const auto spirvPath = basePath / "shaders";
 
-        const auto glslShadersList = listDirectory( spirvPath );
+        const auto glslShadersList = listDirectory( spirvPath, programName, ".glsl" );
     };
 
     auto sources() const -> const std::unordered_map<ShaderStageType, std::string>& {
         //
         return _sources;
-    }
-
-private:
-    auto listDirectory( std::filesystem::path path ) -> std::vector<std::string> override {
-        std::vector<std::string> results{};
-
-        for ( const auto& entry : std::filesystem::directory_iterator( path ) ) {
-            if ( !entry.is_regular_file() ) {
-                continue;
-            }
-
-            auto ext = entry.path().extension().string();
-
-            // Convert to lowercase for comparison.
-            std::transform( ext.begin(), ext.end(), ext.begin(), []( auto c ) -> decltype( c ) {
-                //
-                return std::tolower( c );
-            } );
-
-            if ( ext == ".glsl" ) {
-                results.push_back( entry.path().string() );
-            }
-        }
-
-        return results;
     }
 
 private:
