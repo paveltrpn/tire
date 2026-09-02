@@ -1,8 +1,11 @@
 module;
 
+#include <print>
 #include <string>
 #include <filesystem>
 #include <vector>
+
+#include "log/log.h"
 
 export module program : programsource;
 
@@ -36,7 +39,8 @@ protected:
 
         if ( !isValidName( filenameWithoutExt ) ) {
             const auto msg = std::format( "Shader file invalid name: {}", filenameWithoutExt );
-            throw std::runtime_error( msg );
+            log::error()( "{}", msg );
+            return ShaderStageType::UNKNOWN;
         }
 
         // Split given string by seperator
@@ -57,15 +61,22 @@ protected:
             return list;
         };
 
-        const auto shaderNameParts = split( shaderFileName, "_" );
-        if ( shaderNameParts.size() < 2 ) {
+        const auto shaderNameParts = split( filenameWithoutExt, "_" );
+        if ( shaderNameParts.size() < 3 ) {
             const auto msg = std::format( "Something wrong with shader name: {}", filenameWithoutExt );
-            throw std::runtime_error( msg );
+            log::error()( "{}", msg );
+            return ShaderStageType::UNKNOWN;
         }
 
-        const auto suffix = split( shaderFileName, "_" ).back();
+        const auto& suffix = shaderNameParts.back();
 
-        return ShaderStageMap.at( suffix );
+        std::println( " === {}", suffix );
+
+        try {
+            return ShaderStageMap.at( suffix );
+        } catch ( const std::out_of_range& e ) {
+            return ShaderStageType::UNKNOWN;
+        }
     }
 
 private:

@@ -31,11 +31,18 @@ public:
         const auto spvShadersList = listDirectory( spirvPath );
 
         for ( auto&& item : spvShadersList ) {
+            const auto stage = stageType( item );
+
+            if ( stage == ShaderStageType::UNKNOWN ) {
+                const auto msg = std::format( "Unknown shader stage for file: {}", item );
+                throw std::runtime_error( msg );
+            }
             auto file = std::ifstream{ item, std::ios::binary | std::ios::ate };
 
             if ( !file.is_open() ) {
                 const auto msg = std::format( "Failed to open file: {}", item );
-                throw std::runtime_error( msg );
+                std::println( "=== {} ", msg );
+                //throw std::runtime_error( msg );
             }
 
             // Get file size.
@@ -48,13 +55,13 @@ public:
             // Seek back to beginning.
             file.seekg( 0, std::ios::beg );
 
-            // Allocate vector and read
-            std::vector<uint8_t> buffer( static_cast<size_t>( size ) );
-            if ( !file.read( reinterpret_cast<char*>( buffer.data() ), size ) ) {
+            // Allocate vector and read.
+            std::vector<uint8_t> bytecode( static_cast<size_t>( size ) );
+            if ( !file.read( reinterpret_cast<char*>( bytecode.data() ), size ) ) {
                 throw std::runtime_error( "Failed to read file: " + item );
             }
 
-            std::println( "{}", item );
+            _sources[stage] = bytecode;
         }
     };
 

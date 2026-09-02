@@ -8,6 +8,7 @@ export module program : definitions;
 namespace tire {
 
 export enum class ShaderStageType {
+    UNKNOWN,
     VERTEX,
     FRAGMENT,
     TESSELATION_EVAL,
