@@ -24,7 +24,7 @@ TestBox::TestBox() {
     //
     pipeline_ = std::make_unique<PiplineTestBox>();
 
-    auto testboxProgramSources = std::make_shared<BytecodeProgramSource>( "testbox" );
+    auto testboxProgramSources = std::make_shared<TextProgramSource>( "testbox" );
     auto testBoxProgram = Program{ testboxProgramSources };
     pipeline_->buildPipeline( testBoxProgram );
 }
