@@ -44,7 +44,11 @@ BufferObject::BufferObject( size_t size )
             .usage = VMA_MEMORY_USAGE_CPU_ONLY,
         };
 
-        vmaCreateBuffer( allocator, &bufferCreateInfo, &vmaallocInfo, &_stagingBuffer, &_stagingAllocation, nullptr );
+        const auto err = vmaCreateBuffer( allocator, &bufferCreateInfo, &vmaallocInfo, &_stagingBuffer,
+                                          &_stagingAllocation, nullptr );
+        if ( err != VK_SUCCESS ) {
+            log::fatal()( "Error while allocating staging buffer: {}", string_VkResult( err ) );
+        }
     }
 
     // Create device buffer.
@@ -61,7 +65,11 @@ BufferObject::BufferObject( size_t size )
 
         };
 
-        vmaCreateBuffer( allocator, &bufferCreateInfo, &vmaallocInfo, &_deviceBuffer, &_deviceAllocation, nullptr );
+        const auto err =
+            vmaCreateBuffer( allocator, &bufferCreateInfo, &vmaallocInfo, &_deviceBuffer, &_deviceAllocation, nullptr );
+        if ( err != VK_SUCCESS ) {
+            log::fatal()( "Error while allocating device buffer: {}", string_VkResult( err ) );
+        }
     }
 }
 
