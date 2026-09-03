@@ -40,6 +40,15 @@ public:
         _children.push_back( std::move( child ) );
     }
 
+    auto detach( const Node* child ) -> void {
+        auto r = std::remove_if( _children.begin(), _children.end(), [child]( const auto& item ) -> bool {
+            //
+            return item.get() == child;
+        } );
+
+        _children.erase( r, _children.end() );
+    }
+
 protected:
     ~Group() override = default;
 

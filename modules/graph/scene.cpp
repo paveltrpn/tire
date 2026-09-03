@@ -2,6 +2,7 @@ module;
 
 #include <memory>
 #include <vector>
+#include <algorithm>
 
 export module graph : scene;
 
@@ -40,9 +41,18 @@ public:
         }
     }
 
-    auto attachLocale( std::shared_ptr<Locale> child ) {
+    auto attachLocale( std::shared_ptr<Locale> child ) -> void {
         //
         _locales.push_back( std::move( child ) );
+    }
+
+    auto detachLocale( const Locale* child ) -> void {
+        auto r = std::remove_if( _locales.begin(), _locales.end(), [child]( const auto& item ) -> bool {
+            //
+            return item.get() == child;
+        } );
+
+        _locales.erase( r, _locales.end() );
     }
 
 private:

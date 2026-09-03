@@ -1,5 +1,6 @@
 
 #include "rendervk.h"
+#include "log/log.h"
 
 import graph;
 
@@ -24,6 +25,10 @@ auto RenderVK::isRun() -> bool {
 }
 
 auto RenderVK::attachScene( std::shared_ptr<Scene> scene ) -> void {
+    if ( _scene.get() ) {
+        log::fatal()( "Can not attach scene twice!" );
+    }
+
     _scene = std::move( scene );
 }
 

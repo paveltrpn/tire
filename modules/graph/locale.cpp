@@ -18,6 +18,8 @@ namespace tire {
 
 export struct Locale final : public std::enable_shared_from_this<Locale> {
 public:
+    Locale() = default;
+
     Locale( const Locale& other ) = delete;
     Locale( Locale&& other ) = delete;
 
@@ -34,9 +36,14 @@ public:
         return _origin;
     }
 
-    auto attachStateGroup( std::shared_ptr<StateGroup> child ) -> void {
+    auto attachStateGroup( std::shared_ptr<StateGroup> sg ) -> void {
         //
-        _root->attach( std::move( child ) );
+        _root->attach( std::move( sg ) );
+    }
+
+    auto detachStateGroup( const StateGroup* sg ) -> void {
+        // /
+        _root->detach( sg );
     }
 
 private:
