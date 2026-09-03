@@ -84,6 +84,7 @@ target_link_libraries(render
     r_ui 
     config 
     algebra
+    graph
 )
 
 # ================================

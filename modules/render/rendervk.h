@@ -12,6 +12,8 @@
 #include "test_box/test_box.h"
 #include "ui/ui.h"
 
+import graph;
+
 namespace tire {
 
 struct RenderVK final : public EventObserver {
@@ -35,10 +37,15 @@ struct RenderVK final : public EventObserver {
 
     auto handleEvent( std::shared_ptr<EventBase> event ) -> void override;
 
+    auto attachScene( std::shared_ptr<Scene> scene ) -> void;
+
 private:
     bool _run{};
 
     uint32_t _currentFrame{ 0 };
+
+    // Scene.
+    std::shared_ptr<Scene> _scene{};
 
     // Ui.
     std::shared_ptr<UiVK> _ui{};
