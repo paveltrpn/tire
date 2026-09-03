@@ -9,7 +9,10 @@ import program;
 namespace tire {
 
 auto RenderVK::preLoop() -> void {
-    //
+    if ( !_scene.get() ) {
+        log::fatal()( "No scene attached!!!" );
+    }
+
     log::notice()( "render loop starts here..." );
 }
 
@@ -56,6 +59,7 @@ auto RenderVK::frame() -> void {
 
         auto cb = ctxHandle.renderCommand( _currentFrame );
 
+        _scene->walk();
         _testBox->draw( cb.buf(), _timer.floatFrameDuration() );
         _ui->draw( cb.buf() );
 

@@ -159,8 +159,14 @@ target_link_libraries(graph)
 # ================================
 set(TIRE_EXE tire)
 add_executable(${TIRE_EXE})
-file(GLOB_RECURSE EXE_R_SRC "tire/*.cpp" "tire/*.h")
-target_sources(${TIRE_EXE} PRIVATE ${EXE_R_SRC})
+target_sources(${TIRE_EXE} PUBLIC "tire/main.cpp")
+file(GLOB_RECURSE EXE_TIRE_MODULES_SRC "tire/src/*.cpp")
+target_sources(${TIRE_EXE}  
+    PUBLIC 
+    FILE_SET CXX_MODULES 
+    FILES ${EXE_TIRE_MODULES_SRC}  
+)
+target_compile_features(graph PUBLIC cxx_std_26)
 target_compile_options(${TIRE_EXE} PRIVATE "${CXX_STANDART}")
 target_link_libraries(${TIRE_EXE}
     event

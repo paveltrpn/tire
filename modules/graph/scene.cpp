@@ -22,6 +22,8 @@ struct DrawVisitor final : public Visitor {};
 
 export struct Scene final {
 public:
+    Scene() = default;
+
     Scene( const Scene& other ) = delete;
     Scene( Scene&& other ) = delete;
 

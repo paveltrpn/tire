@@ -1,6 +1,7 @@
 
 #include "log/log.h"
-#include "window.h"
+
+import barewindow;
 
 auto main( int argc, char** argv ) -> int {
     tire::log::info()( "start tire..." );

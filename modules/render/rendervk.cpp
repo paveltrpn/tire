@@ -23,11 +23,6 @@ auto RenderVK::isRun() -> bool {
     return _run;
 }
 
-auto RenderVK::displayRenderInfo() -> void {
-    //
-
-};
-
 auto RenderVK::attachScene( std::shared_ptr<Scene> scene ) -> void {
     _scene = std::move( scene );
 }

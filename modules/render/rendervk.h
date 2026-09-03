@@ -27,9 +27,8 @@ struct RenderVK final : public EventObserver {
 
     ~RenderVK() = default;
 
-    [[nodiscard]] auto isRun() -> bool;
-
-    auto displayRenderInfo() -> void;
+    [[nodiscard]]
+    auto isRun() -> bool;
 
     auto preLoop() -> void;
     auto frame() -> void;
