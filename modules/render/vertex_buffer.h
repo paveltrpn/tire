@@ -39,10 +39,6 @@ struct VertexBuffer final {
     auto clean() -> void;
 
 private:
-    auto initStagingBuffer( size_t size ) -> void;
-    auto initDeviceBuffer( size_t size ) -> void;
-
-private:
     size_t _size{};
 
     VkBuffer _deviceBuffer{ VK_NULL_HANDLE };

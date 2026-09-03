@@ -28,8 +28,41 @@ VertexBuffer::VertexBuffer( VertexBuffer&& other ) noexcept {
 
 VertexBuffer::VertexBuffer( size_t size )
     : _size{ size } {
-    initStagingBuffer( size );
-    initDeviceBuffer( size );
+    auto* allocator = Context::instance().allocator();
+
+    // Create staging buffer.
+    {
+        const auto bufferCreateInfo = VkBufferCreateInfo{
+            .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+            .pNext = nullptr,
+            .size = size,
+            .usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+
+        };
+
+        const auto vmaallocInfo = VmaAllocationCreateInfo{
+            .usage = VMA_MEMORY_USAGE_CPU_ONLY,
+        };
+
+        vmaCreateBuffer( allocator, &bufferCreateInfo, &vmaallocInfo, &_stagingBuffer, &_stagingAllocation, nullptr );
+    }
+
+    // Create device buffer.
+    {
+        const auto bufferCreateInfo = VkBufferCreateInfo{
+            .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+            .size = _size,
+            .usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+        };
+
+        const auto vmaallocInfo = VmaAllocationCreateInfo{
+            .flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT,
+            .usage = VMA_MEMORY_USAGE_GPU_ONLY,
+
+        };
+
+        vmaCreateBuffer( allocator, &bufferCreateInfo, &vmaallocInfo, &_deviceBuffer, &_deviceAllocation, nullptr );
+    }
 }
 
 auto VertexBuffer::operator=( VertexBuffer&& other ) noexcept -> VertexBuffer& {
@@ -64,14 +97,16 @@ auto VertexBuffer::memcpy( const void* data, size_t size, size_t offset ) const 
         log::warning()( "target memory chunk larger than allocated!" );
     }
 
+    auto* allocator = Context::instance().allocator();
+
     void* mappedPtr{};
-    vmaMapMemory( Context::instance().allocator(), _stagingAllocation, &mappedPtr );
+    vmaMapMemory( allocator, _stagingAllocation, &mappedPtr );
 
     char* offsettedPtr = static_cast<char*>( mappedPtr ) + offset;
 
     std::memcpy( offsettedPtr, data, size );
 
-    vmaUnmapMemory( Context::instance().allocator(), _stagingAllocation );
+    vmaUnmapMemory( allocator, _stagingAllocation );
 }
 
 auto VertexBuffer::size() const -> size_t {
@@ -80,46 +115,10 @@ auto VertexBuffer::size() const -> size_t {
 }
 
 auto VertexBuffer::clean() -> void {
-    vmaDestroyBuffer( Context::instance().allocator(), _deviceBuffer, _deviceAllocation );
-    vmaDestroyBuffer( Context::instance().allocator(), _stagingBuffer, _stagingAllocation );
-}
+    auto* allocator = Context::instance().allocator();
 
-auto VertexBuffer::initStagingBuffer( size_t size ) -> void {
-    const auto stagingBufferInfo = VkBufferCreateInfo{
-        //
-        .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-        .pNext = nullptr,
-        .size = size,
-        .usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-
-    };
-
-    const auto vmaallocInfo = VmaAllocationCreateInfo{
-        //
-        .usage = VMA_MEMORY_USAGE_CPU_ONLY,
-    };
-
-    vmaCreateBuffer( Context::instance().allocator(), &stagingBufferInfo, &vmaallocInfo, &_stagingBuffer,
-                     &_stagingAllocation, nullptr );
-}
-
-auto VertexBuffer::initDeviceBuffer( size_t size ) -> void {
-    const auto bufCreateInfo = VkBufferCreateInfo{
-        //
-        .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-        .size = _size,
-        .usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-    };
-
-    const auto allocCreateInfo = VmaAllocationCreateInfo{
-        //
-        .flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT,
-        .usage = VMA_MEMORY_USAGE_GPU_ONLY,
-
-    };
-
-    vmaCreateBuffer( Context::instance().allocator(), &bufCreateInfo, &allocCreateInfo, &_deviceBuffer,
-                     &_deviceAllocation, nullptr );
+    vmaDestroyBuffer( allocator, _deviceBuffer, _deviceAllocation );
+    vmaDestroyBuffer( allocator, _stagingBuffer, _stagingAllocation );
 }
 
 }  // namespace tire
