@@ -23,13 +23,13 @@ export struct TextureImage final {
     TextureImage( TextureImage&& other ) = delete;
 
     TextureImage( const std::string& fname )
-        : imageFormat_{ VK_FORMAT_R8G8B8A8_SRGB } {
+        : _imageFormat{ VK_FORMAT_R8G8B8A8_SRGB } {
         //
         tire::Tga textureData{ fname };
 
         VkDeviceSize imageSize = textureData.width() * textureData.height() * textureData.components();
 
-        imageExtent_ = VkExtent3D{
+        _imageExtent = VkExtent3D{
             //
             .width = static_cast<uint32_t>( textureData.width() ),
             .height = static_cast<uint32_t>( textureData.height() ),
@@ -40,7 +40,7 @@ export struct TextureImage final {
         initDeviceImage( imageSize );
         uploadToStaging( textureData.data(), imageSize );
         uploadCmd();
-        generateMipmaps( deviceImage_, imageExtent_.width, imageExtent_.height );
+        generateMipmaps( _deviceImage, _imageExtent.width, _imageExtent.height );
         initImageView();
     }
 
@@ -50,7 +50,7 @@ export struct TextureImage final {
     [[nodiscard]]
     auto view() const -> VkImageView {
         //
-        return imageView_;
+        return _imageView;
     }
 
     ~TextureImage() {
@@ -60,9 +60,9 @@ export struct TextureImage final {
 
     auto clean() -> void {
         //
-        vmaDestroyImage( Context::instance().allocator(), deviceImage_, deviceAllocation_ );
-        vmaDestroyBuffer( Context::instance().allocator(), stagingBuffer_, stagingAllocation_ );
-        vkDestroyImageView( Context::instance().device(), imageView_, nullptr );
+        vmaDestroyImage( Context::instance().allocator(), _deviceImage, _deviceAllocation );
+        vmaDestroyBuffer( Context::instance().allocator(), _stagingBuffer, _stagingAllocation );
+        vkDestroyImageView( Context::instance().device(), _imageView, nullptr );
     }
 
 private:
@@ -82,7 +82,7 @@ private:
 
         {
             const auto err = vmaCreateBuffer( Context::instance().allocator(), &stagingBufferInfo, &vmaallocInfo,
-                                              &stagingBuffer_, &stagingAllocation_, nullptr );
+                                              &_stagingBuffer, &_stagingAllocation, nullptr );
             if ( err != VK_SUCCESS ) {
                 log::fatal()( "error while creating staging buffer {}", string_VkResult( err ) );
             }
@@ -91,9 +91,9 @@ private:
 
     auto uploadToStaging( const void* data, VkDeviceSize size ) -> void {
         void* mappedPtr{};
-        vmaMapMemory( Context::instance().allocator(), stagingAllocation_, &mappedPtr );
+        vmaMapMemory( Context::instance().allocator(), _stagingAllocation, &mappedPtr );
         std::memcpy( mappedPtr, data, size );
-        vmaUnmapMemory( Context::instance().allocator(), stagingAllocation_ );
+        vmaUnmapMemory( Context::instance().allocator(), _stagingAllocation );
     }
 
     auto initDeviceImage( VkDeviceSize size ) -> void {
@@ -102,9 +102,9 @@ private:
             .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
             .flags = 0,  // Optional
             .imageType = VK_IMAGE_TYPE_2D,
-            .format = imageFormat_,
-            .extent = imageExtent_,
-            .mipLevels = mipLevels_,
+            .format = _imageFormat,
+            .extent = _imageExtent,
+            .mipLevels = _mipLevels,
             .arrayLayers = 1,
             .samples = VK_SAMPLE_COUNT_1_BIT,
             .tiling = VK_IMAGE_TILING_OPTIMAL,
@@ -121,7 +121,7 @@ private:
 
         {
             const auto err = vmaCreateImage( Context::instance().allocator(), &imgCreateInfo, &allocCreateInfo,
-                                             &deviceImage_, &deviceAllocation_, nullptr );
+                                             &_deviceImage, &_deviceAllocation, nullptr );
             if ( err != VK_SUCCESS ) {
                 log::fatal()( "error while creating device image {}", string_VkResult( err ) );
             }
@@ -147,7 +147,7 @@ private:
             .dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT,
             .oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
             .newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-            .image = deviceImage_,
+            .image = _deviceImage,
             .subresourceRange = range,
         };
 
@@ -167,11 +167,11 @@ private:
             //
             .bufferOffset = 0,           .bufferRowLength = 0,
             .bufferImageHeight = 0,      .imageSubresource = imageSubresource,
-            .imageExtent = imageExtent_,
+            .imageExtent = _imageExtent,
         };
 
         // Copy the buffer into the image.
-        vkCmdCopyBufferToImage( c.buf(), stagingBuffer_, deviceImage_, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1,
+        vkCmdCopyBufferToImage( c.buf(), _stagingBuffer, _deviceImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1,
                                 &copyRegion );
 
         VkImageMemoryBarrier imageReadableBarrier = imageTransferBarrier;
@@ -190,7 +190,7 @@ private:
         const auto subResRange = VkImageSubresourceRange{
             .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
             .baseMipLevel = 0,
-            .levelCount = mipLevels_,
+            .levelCount = _mipLevels,
             .baseArrayLayer = 0,
             .layerCount = 1,
 
@@ -198,7 +198,7 @@ private:
 
         VkImageViewCreateInfo imageinfo = {
             .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-            .image = deviceImage_,
+            .image = _deviceImage,
             .viewType = VK_IMAGE_VIEW_TYPE_2D,
             .format = VK_FORMAT_R8G8B8A8_SRGB,
             .components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B,
@@ -207,7 +207,7 @@ private:
         };
 
         {
-            const auto err = vkCreateImageView( Context::instance().device(), &imageinfo, nullptr, &imageView_ );
+            const auto err = vkCreateImageView( Context::instance().device(), &imageinfo, nullptr, &_imageView );
             if ( err != VK_SUCCESS ) {
                 log::fatal()( "error while create image view {}", string_VkResult( err ) );
             }
@@ -238,7 +238,7 @@ private:
         auto mipWidth = static_cast<int32_t>( texWidth );
         auto mipHeight = static_cast<int32_t>( texHeight );
 
-        for ( uint32_t i = 1; i < mipLevels_; i++ ) {
+        for ( uint32_t i = 1; i < _mipLevels; i++ ) {
             barrier.subresourceRange.baseMipLevel = i - 1;
             barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
             barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
@@ -277,7 +277,7 @@ private:
             if ( mipHeight > 1 ) mipHeight /= 2;
         }
 
-        barrier.subresourceRange.baseMipLevel = mipLevels_ - 1;
+        barrier.subresourceRange.baseMipLevel = _mipLevels - 1;
         barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
         barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
@@ -290,21 +290,21 @@ private:
     [[nodiscard]]
     auto mipLevels() const -> uint32_t {
         //
-        return mipLevels_;
+        return _mipLevels;
     }
 
 private:
-    uint32_t mipLevels_{ 8 };
-    VkFormat imageFormat_{};
-    VkExtent3D imageExtent_{};
+    uint32_t _mipLevels{ 8 };
+    VkFormat _imageFormat{};
+    VkExtent3D _imageExtent{};
 
-    VkImage deviceImage_{ VK_NULL_HANDLE };
-    VmaAllocation deviceAllocation_{ VK_NULL_HANDLE };
+    VkImage _deviceImage{ VK_NULL_HANDLE };
+    VmaAllocation _deviceAllocation{ VK_NULL_HANDLE };
 
-    VkBuffer stagingBuffer_{ VK_NULL_HANDLE };
-    VmaAllocation stagingAllocation_{ VK_NULL_HANDLE };
+    VkBuffer _stagingBuffer{ VK_NULL_HANDLE };
+    VmaAllocation _stagingAllocation{ VK_NULL_HANDLE };
 
-    VkImageView imageView_{};
+    VkImageView _imageView{};
 };  // namespace tire
 
 }  // namespace tire
