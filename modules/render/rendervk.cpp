@@ -15,7 +15,7 @@ RenderVK::RenderVK() {
 
         _run = true;
     } catch ( const std::runtime_error& e ) {
-        log::fatal()( "error white creating render {}", e.what() );
+        log::fatal()( "Exception thrown while creating render:\n{}", e.what() );
     }
 }
 

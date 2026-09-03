@@ -36,6 +36,11 @@ public:
         return _origin;
     }
 
+    auto setOrigin( algebra::vector3f value ) -> void {
+        //
+        _origin = value;
+    }
+
     auto attachStateGroup( std::shared_ptr<StateGroup> sg ) -> void {
         //
         _root->attach( std::move( sg ) );
