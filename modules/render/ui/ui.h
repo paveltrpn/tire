@@ -15,14 +15,12 @@
 #include "config/config.h"
 #include "pipeline_ui.h"
 
-#include "../bufferobject.h"
-#include "../texture_image.h"
-
 #include "ui/ui.h"
 #include "ui/billboard.h"
 #include "ui/label.h"
 
 import program;
+import vkresources;
 
 namespace tire {
 

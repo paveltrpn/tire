@@ -84,6 +84,7 @@ target_link_libraries(render
     r_ui 
     config 
     algebra
+    vkresources
     graph
 )
 
@@ -142,6 +143,22 @@ target_link_libraries(program
 )
 
 # ================================
+# Module vkresources
+# ================================
+file(GLOB MOD_VKRESOURCES_SRC  modules/vkresources/*.cpp )
+add_library(vkresources)
+target_sources(vkresources
+  PUBLIC
+    FILE_SET CXX_MODULES FILES
+    ${MOD_VKRESOURCES_SRC}
+)
+target_compile_features(vkresources PUBLIC cxx_std_26)
+target_link_libraries(vkresources 
+    context 
+    log
+)
+
+# ================================
 # Module graph
 # ================================
 file(GLOB MOD_GRAPH_SRC  modules/graph/*.cpp )
@@ -152,7 +169,9 @@ target_sources(graph
     ${MOD_GRAPH_SRC}
 )
 target_compile_features(graph PUBLIC cxx_std_26)
-target_link_libraries(graph)
+target_link_libraries(graph
+    vkresources
+)
 
 # ================================
 # tire executable
@@ -169,6 +188,7 @@ target_sources(${TIRE_EXE}
 target_compile_features(graph PUBLIC cxx_std_26)
 target_compile_options(${TIRE_EXE} PRIVATE "${CXX_STANDART}")
 target_link_libraries(${TIRE_EXE}
+    graph
     event
     context
     program

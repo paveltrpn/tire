@@ -21,6 +21,7 @@
 #include "pipeline_ui.h"
 
 import program;
+import vkresources;
 
 namespace tire {
 
