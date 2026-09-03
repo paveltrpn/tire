@@ -27,28 +27,28 @@ namespace tire {
 using namespace algebra;
 
 QuadDrawBuffer::QuadDrawBuffer( size_t quadsCount )
-    : vBuf_{ VertexBuffer{ quadsCount * VERTICIES_PER_QUAD * 3 * sizeof( float ) } }
-    , tBuf_{ VertexBuffer{ quadsCount * VERTICIES_PER_QUAD * 2 * sizeof( float ) } }
-    , cBuf_{ VertexBuffer{ quadsCount * VERTICIES_PER_QUAD * 4 * sizeof( float ) } } {
+    : vBuf_{ BufferObject{ quadsCount * VERTICIES_PER_QUAD * 3 * sizeof( float ) } }
+    , tBuf_{ BufferObject{ quadsCount * VERTICIES_PER_QUAD * 2 * sizeof( float ) } }
+    , cBuf_{ BufferObject{ quadsCount * VERTICIES_PER_QUAD * 4 * sizeof( float ) } } {
 }
 
 // =====================================================================
 
 UiComponentVisitor::UiComponentVisitor( VkCommandBuffer cb, QuadDrawBuffer& labelBuffer,
                                         QuadDrawBuffer& billboardBuffer )
-    : cb_{ cb }
-    , labelBuffer_{ labelBuffer }
-    , billboardBuffer_{ billboardBuffer } {
+    : _cb{ cb }
+    , _labelBuffer{ labelBuffer }
+    , _billboardBuffer{ billboardBuffer } {
 }
 
 auto UiComponentVisitor::operator()( const tire::Label& item ) -> void {
     //
-    dispath( item, labelBuffer_ );
+    dispath( item, _labelBuffer );
 }
 
 auto UiComponentVisitor::operator()( const tire::Billboard& item ) -> void {
     //
-    dispath( item, billboardBuffer_ );
+    dispath( item, _billboardBuffer );
 }
 
 // =====================================================================
@@ -59,16 +59,16 @@ UiVK::UiVK() {
     const auto fontFile = Config::instance().get<std::string>( "ui_font" );
 
     try {
-        testImage_ = std::make_shared<TextureImage>( basePath + "/assets/img_fonts/" + fontFile );
+        _testImage = std::make_shared<TextureImage>( basePath + "/assets/img_fonts/" + fontFile );
     } catch ( std::exception& e ) {
         log::fatal()( "font image {}", e.what() );
     }
 
-    pipeline_ = std::make_shared<PipelineUi>();
+    _pipeline = std::make_shared<PipelineUi>();
 
     auto uiProgramSources = std::make_shared<TextProgramSource>( "ui" );
     auto program = Program{ uiProgramSources };
-    pipeline_->buildPipeline( program );
+    _pipeline->buildPipeline( program );
 
     initTextureSmpler();
     initDescriptorSets();
@@ -77,71 +77,71 @@ UiVK::UiVK() {
 auto UiVK::upload( const VkCommandBuffer cb ) -> void {
     //
     for ( auto&& item : componentsList_ ) {
-        std::visit( UiComponentVisitor{ cb, labelBuffer_, billboardBuffer_ }, item );
+        std::visit( UiComponentVisitor{ cb, _labelBuffer, _billboardBuffer }, item );
     }
 }
 
 auto UiVK::draw( const VkCommandBuffer cb ) -> void {
-    vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_->pipeline() );
+    vkCmdBindPipeline( cb, VK_PIPELINE_BIND_POINT_GRAPHICS, _pipeline->pipeline() );
 
     // =================================================================================
 
-    std::array<VkDescriptorSet, 1> setsToBind{ fontDescSet_ };
-    vkCmdBindDescriptorSets( cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_->layout(), 0, 1, setsToBind.data(), 0,
+    std::array<VkDescriptorSet, 1> setsToBind{ _fontDescSet };
+    vkCmdBindDescriptorSets( cb, VK_PIPELINE_BIND_POINT_GRAPHICS, _pipeline->layout(), 0, 1, setsToBind.data(), 0,
                              nullptr );
 
     // =================================================================================
 
     // Pass viewport size.
     const auto v = std::array<float, 4>{ 48, 48, 48, 48 };
-    vkCmdPushConstants( cb, pipeline_->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( float ) * 4, &v );
+    vkCmdPushConstants( cb, _pipeline->layout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( float ) * 4, &v );
 
     {
         // Pass disable texture flag.
         const auto f = std::array<uint32_t, 4>{ 0, 0, 0, 0 };
-        vkCmdPushConstants( cb, pipeline_->layout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof( float ) * 4,
+        vkCmdPushConstants( cb, _pipeline->layout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof( float ) * 4,
                             sizeof( uint32_t ) * 4, &f );
 
-        auto vbo = billboardBuffer_.vBuf_.deviceBuffer();
-        auto tbo = billboardBuffer_.tBuf_.deviceBuffer();
-        auto cbo = billboardBuffer_.cBuf_.deviceBuffer();
+        auto vbo = _billboardBuffer.vBuf_.deviceBuffer();
+        auto tbo = _billboardBuffer.tBuf_.deviceBuffer();
+        auto cbo = _billboardBuffer.cBuf_.deviceBuffer();
 
         std::array<VkBuffer, 3> vertexBuffers = { vbo, tbo, cbo };
         std::array<VkDeviceSize, 3> offsets = { 0, 0, 0 };
 
         vkCmdBindVertexBuffers( cb, 0, vertexBuffers.size(), vertexBuffers.data(), offsets.data() );
 
-        vkCmdDraw( cb, billboardBuffer_.primitievsCount_, 3, 0, 0 );
+        vkCmdDraw( cb, _billboardBuffer.primitievsCount_, 3, 0, 0 );
     }
 
     {
         // Pass enable texture flag.
         const auto f = std::array<uint32_t, 4>{ 1, 0, 0, 0 };
-        vkCmdPushConstants( cb, pipeline_->layout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof( float ) * 4,
+        vkCmdPushConstants( cb, _pipeline->layout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof( float ) * 4,
                             sizeof( uint32_t ) * 4, &f );
 
-        auto vbo = labelBuffer_.vBuf_.deviceBuffer();
-        auto tbo = labelBuffer_.tBuf_.deviceBuffer();
-        auto cbo = labelBuffer_.cBuf_.deviceBuffer();
+        auto vbo = _labelBuffer.vBuf_.deviceBuffer();
+        auto tbo = _labelBuffer.tBuf_.deviceBuffer();
+        auto cbo = _labelBuffer.cBuf_.deviceBuffer();
 
         std::array<VkBuffer, 3> vertexBuffers = { vbo, tbo, cbo };
         std::array<VkDeviceSize, 3> offsets = { 0, 0, 0 };
 
         vkCmdBindVertexBuffers( cb, 0, vertexBuffers.size(), vertexBuffers.data(), offsets.data() );
 
-        vkCmdDraw( cb, labelBuffer_.primitievsCount_, 3, 0, 0 );
+        vkCmdDraw( cb, _labelBuffer.primitievsCount_, 3, 0, 0 );
     }
 }
 
 auto UiVK::flush() -> void {
     //
-    labelBuffer_.primitievsCount_ = 0;
-    billboardBuffer_.primitievsCount_ = 0;
+    _labelBuffer.primitievsCount_ = 0;
+    _billboardBuffer.primitievsCount_ = 0;
     componentsList_.clear();
 }
 
-void UiVK::initDescriptorSets() {
-    auto pipelineDescSetLayouts = pipeline_->pipelineSescSetsLayout();
+auto UiVK::initDescriptorSets() -> void {
+    auto pipelineDescSetLayouts = _pipeline->pipelineSescSetsLayout();
 
     // Write to the texture descriptor set.
     auto texDescSetLayout = pipelineDescSetLayouts[0];
@@ -155,7 +155,7 @@ void UiVK::initDescriptorSets() {
     };
 
     {
-        const auto err = vkAllocateDescriptorSets( Context::instance().device(), &texallocInfo, &fontDescSet_ );
+        const auto err = vkAllocateDescriptorSets( Context::instance().device(), &texallocInfo, &_fontDescSet );
         if ( err != VK_SUCCESS ) {
             log::fatal()( "error while allocating descriptorSets {}", string_VkResult( err ) );
         }
@@ -163,8 +163,8 @@ void UiVK::initDescriptorSets() {
 
     const auto textureImageDescInfo = VkDescriptorImageInfo{
         //
-        .sampler = fontSampler_,
-        .imageView = testImage_->view(),
+        .sampler = _fontSampler,
+        .imageView = _testImage->view(),
         .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
     };
 
@@ -172,7 +172,7 @@ void UiVK::initDescriptorSets() {
         //
         .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
         .pNext = nullptr,
-        .dstSet = fontDescSet_,
+        .dstSet = _fontDescSet,
         .dstBinding = 0,
         .descriptorCount = 1,
         .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -199,7 +199,7 @@ auto UiVK::initTextureSmpler() -> void {
         .maxLod = VK_LOD_CLAMP_NONE,
     };
 
-    vkCreateSampler( Context::instance().device(), &info, nullptr, &fontSampler_ );
+    vkCreateSampler( Context::instance().device(), &info, nullptr, &_fontSampler );
 }
 
 }  // namespace tire

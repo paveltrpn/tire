@@ -15,7 +15,7 @@
 #include "config/config.h"
 #include "pipeline_ui.h"
 
-#include "../vertex_buffer.h"
+#include "../bufferobject.h"
 #include "../texture_image.h"
 
 #include "ui/ui.h"
@@ -31,15 +31,23 @@ using namespace algebra;
 #define VERTICIES_PER_QUAD 6
 #define OUTPUT_QUADS_COUNT 128 * 2
 
+// ============================================================================
+// =================== QuadDrawBuffer =========================================
+// ============================================================================
+
 struct QuadDrawBuffer final {
     QuadDrawBuffer( size_t quadsCount );
 
-    VertexBuffer vBuf_;
-    VertexBuffer tBuf_;
-    VertexBuffer cBuf_;
+    BufferObject vBuf_;
+    BufferObject tBuf_;
+    BufferObject cBuf_;
 
     uint32_t primitievsCount_{};
 };
+
+// ============================================================================
+// =================== UiComponentVisitor =====================================
+// ============================================================================
 
 struct UiComponentVisitor final {
     UiComponentVisitor( VkCommandBuffer cb, QuadDrawBuffer& labelBuffer, QuadDrawBuffer& billboardBuffer );
@@ -70,7 +78,7 @@ struct UiComponentVisitor final {
             .size = item.bufferVerticesSize(),
         };
 
-        vkCmdCopyBuffer( cb_, buffer.vBuf_.stagingBuffer(), buffer.vBuf_.deviceBuffer(), 1, &copyVrt );
+        vkCmdCopyBuffer( _cb, buffer.vBuf_.stagingBuffer(), buffer.vBuf_.deviceBuffer(), 1, &copyVrt );
 
         VkBufferCopy copyTxc{
             //
@@ -79,7 +87,7 @@ struct UiComponentVisitor final {
             .size = item.bufferTexcrdsSize(),
         };
 
-        vkCmdCopyBuffer( cb_, buffer.tBuf_.stagingBuffer(), buffer.tBuf_.deviceBuffer(), 1, &copyTxc );
+        vkCmdCopyBuffer( _cb, buffer.tBuf_.stagingBuffer(), buffer.tBuf_.deviceBuffer(), 1, &copyTxc );
 
         VkBufferCopy copyClrs{
             //
@@ -88,39 +96,41 @@ struct UiComponentVisitor final {
             .size = item.bufferVertclrsSize(),
         };
 
-        vkCmdCopyBuffer( cb_, buffer.cBuf_.stagingBuffer(), buffer.cBuf_.deviceBuffer(), 1, &copyClrs );
+        vkCmdCopyBuffer( _cb, buffer.cBuf_.stagingBuffer(), buffer.cBuf_.deviceBuffer(), 1, &copyClrs );
 
         buffer.primitievsCount_ += item.lettersCount() * VERTICIES_PER_QUAD;
     }
 
-    VkCommandBuffer cb_;
+    VkCommandBuffer _cb;
 
-    QuadDrawBuffer& labelBuffer_;
-    QuadDrawBuffer& billboardBuffer_;
+    QuadDrawBuffer& _labelBuffer;
+    QuadDrawBuffer& _billboardBuffer;
 };
+
+// ============================================================================
+// =================== UiVK ===================================================
+// ============================================================================
 
 struct UiVK final : tire::Ui {
     UiVK();
 
     auto upload( const VkCommandBuffer cb ) -> void;
-
     auto draw( const VkCommandBuffer cb ) -> void;
-
     auto flush() -> void override;
 
 private:
-    void initDescriptorSets();
+    auto initDescriptorSets() -> void;
     auto initTextureSmpler() -> void;
 
 private:
-    std::shared_ptr<PipelineUi> pipeline_{};
+    std::shared_ptr<PipelineUi> _pipeline{};
 
-    QuadDrawBuffer labelBuffer_{ OUTPUT_QUADS_COUNT };
-    QuadDrawBuffer billboardBuffer_{ OUTPUT_QUADS_COUNT };
+    QuadDrawBuffer _labelBuffer{ OUTPUT_QUADS_COUNT };
+    QuadDrawBuffer _billboardBuffer{ OUTPUT_QUADS_COUNT };
 
-    std::shared_ptr<tire::TextureImage> testImage_;
-    VkSampler fontSampler_{};
-    VkDescriptorSet fontDescSet_{};
+    std::shared_ptr<tire::TextureImage> _testImage;
+    VkSampler _fontSampler{};
+    VkDescriptorSet _fontDescSet{};
 };
 
 }  // namespace tire

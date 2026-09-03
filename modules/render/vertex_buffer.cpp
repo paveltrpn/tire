@@ -10,13 +10,13 @@
 
 #include "vma/vk_mem_alloc.h"
 
-#include "vertex_buffer.h"
+#include "bufferobject.h"
 #include "context/context.h"
 #include "log/log.h"
 
 namespace tire {
 
-VertexBuffer::VertexBuffer( VertexBuffer&& other ) noexcept {
+BufferObject::BufferObject( BufferObject&& other ) noexcept {
     _size = std::exchange( other._size, 0 );
 
     _deviceBuffer = std::exchange( other._deviceBuffer, VK_NULL_HANDLE );
@@ -26,7 +26,7 @@ VertexBuffer::VertexBuffer( VertexBuffer&& other ) noexcept {
     _stagingAllocation = std::exchange( other._stagingAllocation, VK_NULL_HANDLE );
 }
 
-VertexBuffer::VertexBuffer( size_t size )
+BufferObject::BufferObject( size_t size )
     : _size{ size } {
     auto* allocator = Context::instance().allocator();
 
@@ -65,7 +65,7 @@ VertexBuffer::VertexBuffer( size_t size )
     }
 }
 
-auto VertexBuffer::operator=( VertexBuffer&& other ) noexcept -> VertexBuffer& {
+auto BufferObject::operator=( BufferObject&& other ) noexcept -> BufferObject& {
     _size = std::exchange( other._size, 0 );
 
     _deviceBuffer = std::exchange( other._deviceBuffer, VK_NULL_HANDLE );
@@ -77,22 +77,22 @@ auto VertexBuffer::operator=( VertexBuffer&& other ) noexcept -> VertexBuffer& {
     return *this;
 }
 
-VertexBuffer::~VertexBuffer() {
+BufferObject::~BufferObject() {
     //
     clean();
 };
 
-auto VertexBuffer::deviceBuffer() const -> VkBuffer {
+auto BufferObject::deviceBuffer() const -> VkBuffer {
     //
     return _deviceBuffer;
 }
 
-auto VertexBuffer::stagingBuffer() const -> VkBuffer {
+auto BufferObject::stagingBuffer() const -> VkBuffer {
     //
     return _stagingBuffer;
 }
 
-auto VertexBuffer::memcpy( const void* data, size_t size, size_t offset ) const -> void {
+auto BufferObject::memcpy( const void* data, size_t size, size_t offset ) const -> void {
     if ( size > _size ) {
         log::warning()( "target memory chunk larger than allocated!" );
     }
@@ -109,12 +109,12 @@ auto VertexBuffer::memcpy( const void* data, size_t size, size_t offset ) const 
     vmaUnmapMemory( allocator, _stagingAllocation );
 }
 
-auto VertexBuffer::size() const -> size_t {
+auto BufferObject::size() const -> size_t {
     //
     return _size;
 }
 
-auto VertexBuffer::clean() -> void {
+auto BufferObject::clean() -> void {
     auto* allocator = Context::instance().allocator();
 
     vmaDestroyBuffer( allocator, _deviceBuffer, _deviceAllocation );
