@@ -27,9 +27,9 @@ namespace tire {
 using namespace algebra;
 
 QuadDrawBuffer::QuadDrawBuffer( size_t quadsCount )
-    : vBuf_{ BufferObject{ quadsCount * VERTICIES_PER_QUAD * 3 * sizeof( float ) } }
-    , tBuf_{ BufferObject{ quadsCount * VERTICIES_PER_QUAD * 2 * sizeof( float ) } }
-    , cBuf_{ BufferObject{ quadsCount * VERTICIES_PER_QUAD * 4 * sizeof( float ) } } {
+    : _vBuf{ BufferObject{ quadsCount * VERTICIES_PER_QUAD * 3 * sizeof( float ) } }
+    , _tBuf{ BufferObject{ quadsCount * VERTICIES_PER_QUAD * 2 * sizeof( float ) } }
+    , _cBuf{ BufferObject{ quadsCount * VERTICIES_PER_QUAD * 4 * sizeof( float ) } } {
 }
 
 // =====================================================================
@@ -102,16 +102,16 @@ auto UiVK::draw( const VkCommandBuffer cb ) -> void {
         vkCmdPushConstants( cb, _pipeline->layout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof( float ) * 4,
                             sizeof( uint32_t ) * 4, &f );
 
-        auto vbo = _billboardBuffer.vBuf_.deviceBuffer();
-        auto tbo = _billboardBuffer.tBuf_.deviceBuffer();
-        auto cbo = _billboardBuffer.cBuf_.deviceBuffer();
+        auto vbo = _billboardBuffer._vBuf.deviceBuffer();
+        auto tbo = _billboardBuffer._tBuf.deviceBuffer();
+        auto cbo = _billboardBuffer._cBuf.deviceBuffer();
 
         std::array<VkBuffer, 3> vertexBuffers = { vbo, tbo, cbo };
         std::array<VkDeviceSize, 3> offsets = { 0, 0, 0 };
 
         vkCmdBindVertexBuffers( cb, 0, vertexBuffers.size(), vertexBuffers.data(), offsets.data() );
 
-        vkCmdDraw( cb, _billboardBuffer.primitievsCount_, 3, 0, 0 );
+        vkCmdDraw( cb, _billboardBuffer._primitievsCount, 3, 0, 0 );
     }
 
     {
@@ -120,23 +120,23 @@ auto UiVK::draw( const VkCommandBuffer cb ) -> void {
         vkCmdPushConstants( cb, _pipeline->layout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof( float ) * 4,
                             sizeof( uint32_t ) * 4, &f );
 
-        auto vbo = _labelBuffer.vBuf_.deviceBuffer();
-        auto tbo = _labelBuffer.tBuf_.deviceBuffer();
-        auto cbo = _labelBuffer.cBuf_.deviceBuffer();
+        auto vbo = _labelBuffer._vBuf.deviceBuffer();
+        auto tbo = _labelBuffer._tBuf.deviceBuffer();
+        auto cbo = _labelBuffer._cBuf.deviceBuffer();
 
         std::array<VkBuffer, 3> vertexBuffers = { vbo, tbo, cbo };
         std::array<VkDeviceSize, 3> offsets = { 0, 0, 0 };
 
         vkCmdBindVertexBuffers( cb, 0, vertexBuffers.size(), vertexBuffers.data(), offsets.data() );
 
-        vkCmdDraw( cb, _labelBuffer.primitievsCount_, 3, 0, 0 );
+        vkCmdDraw( cb, _labelBuffer._primitievsCount, 3, 0, 0 );
     }
 }
 
 auto UiVK::flush() -> void {
     //
-    _labelBuffer.primitievsCount_ = 0;
-    _billboardBuffer.primitievsCount_ = 0;
+    _labelBuffer._primitievsCount = 0;
+    _billboardBuffer._primitievsCount = 0;
     componentsList_.clear();
 }
 

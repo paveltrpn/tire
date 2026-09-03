@@ -38,11 +38,11 @@ using namespace algebra;
 struct QuadDrawBuffer final {
     QuadDrawBuffer( size_t quadsCount );
 
-    BufferObject vBuf_;
-    BufferObject tBuf_;
-    BufferObject cBuf_;
+    BufferObject _vBuf;
+    BufferObject _tBuf;
+    BufferObject _cBuf;
 
-    uint32_t primitievsCount_{};
+    uint32_t _primitievsCount{};
 };
 
 // ============================================================================
@@ -58,18 +58,18 @@ struct UiComponentVisitor final {
 
     template <typename T>
     auto dispath( const T& item, QuadDrawBuffer& buffer ) -> void {
-        const auto vOffset = buffer.primitievsCount_ * 3 * sizeof( float );
-        const auto tOffset = buffer.primitievsCount_ * 2 * sizeof( float );
-        const auto cOffset = buffer.primitievsCount_ * 4 * sizeof( float );
+        const auto vOffset = buffer._primitievsCount * 3 * sizeof( float );
+        const auto tOffset = buffer._primitievsCount * 2 * sizeof( float );
+        const auto cOffset = buffer._primitievsCount * 4 * sizeof( float );
 
         const auto vDataPtr = reinterpret_cast<const void*>( item.verteciesData() );
-        buffer.vBuf_.memcpy( vDataPtr, item.bufferVerticesSize(), vOffset );
+        buffer._vBuf.memcpy( vDataPtr, item.bufferVerticesSize(), vOffset );
 
         const auto tDataPtr = reinterpret_cast<const void*>( item.texcrdsData() );
-        buffer.tBuf_.memcpy( tDataPtr, item.bufferTexcrdsSize(), tOffset );
+        buffer._tBuf.memcpy( tDataPtr, item.bufferTexcrdsSize(), tOffset );
 
         const auto cDataPtr = reinterpret_cast<const void*>( item.clrsData() );
-        buffer.cBuf_.memcpy( cDataPtr, item.bufferVertclrsSize(), cOffset );
+        buffer._cBuf.memcpy( cDataPtr, item.bufferVertclrsSize(), cOffset );
 
         VkBufferCopy copyVrt{
             //
@@ -78,7 +78,7 @@ struct UiComponentVisitor final {
             .size = item.bufferVerticesSize(),
         };
 
-        vkCmdCopyBuffer( _cb, buffer.vBuf_.stagingBuffer(), buffer.vBuf_.deviceBuffer(), 1, &copyVrt );
+        vkCmdCopyBuffer( _cb, buffer._vBuf.stagingBuffer(), buffer._vBuf.deviceBuffer(), 1, &copyVrt );
 
         VkBufferCopy copyTxc{
             //
@@ -87,7 +87,7 @@ struct UiComponentVisitor final {
             .size = item.bufferTexcrdsSize(),
         };
 
-        vkCmdCopyBuffer( _cb, buffer.tBuf_.stagingBuffer(), buffer.tBuf_.deviceBuffer(), 1, &copyTxc );
+        vkCmdCopyBuffer( _cb, buffer._tBuf.stagingBuffer(), buffer._tBuf.deviceBuffer(), 1, &copyTxc );
 
         VkBufferCopy copyClrs{
             //
@@ -96,9 +96,9 @@ struct UiComponentVisitor final {
             .size = item.bufferVertclrsSize(),
         };
 
-        vkCmdCopyBuffer( _cb, buffer.cBuf_.stagingBuffer(), buffer.cBuf_.deviceBuffer(), 1, &copyClrs );
+        vkCmdCopyBuffer( _cb, buffer._cBuf.stagingBuffer(), buffer._cBuf.deviceBuffer(), 1, &copyClrs );
 
-        buffer.primitievsCount_ += item.lettersCount() * VERTICIES_PER_QUAD;
+        buffer._primitievsCount += item.lettersCount() * VERTICIES_PER_QUAD;
     }
 
     VkCommandBuffer _cb;
