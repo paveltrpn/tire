@@ -67,7 +67,7 @@ UiVK::UiVK() {
 
     _pipeline = std::make_shared<PipelineUi>();
 
-    auto uiProgramSources = std::make_shared<TextProgramSource>( "ui" );
+    auto uiProgramSources = TextProgramSource( "ui" );
     auto program = Program{ uiProgramSources };
     _pipeline->buildPipeline( program );
 

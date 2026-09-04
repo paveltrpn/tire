@@ -2,9 +2,8 @@ module;
 
 #include <optional>
 #include <print>
-#include <memory>
+#include <variant>
 #include <unordered_map>
-#include <span>
 #include <vulkan/vulkan.h>
 #include <format>
 
@@ -33,10 +32,13 @@ namespace tire {
 // of the vulkan specification demands at least one shader stage - VERTEX for graphics
 // pipeline or it can be COMPUTE shader for compute pipeline).
 export struct Program final {
+    Program() = delete;
+
     Program( const Program& other ) = delete;
-    Program( Program&& other ) = delete;
     auto operator=( const Program& other ) -> Program& = delete;
-    auto operator=( Program&& other ) -> Program& = delete;
+
+    Program( Program&& other ) = default;
+    auto operator=( Program&& other ) -> Program& = default;
 
     ~Program() {
         for ( const auto& module : _modules ) {
@@ -45,17 +47,21 @@ export struct Program final {
         }
     }
 
-    explicit Program( std::shared_ptr<ProgramSource> sources )
+    template <typename ProgramSourceType>
+    requires std::derived_from<ProgramSourceType, ProgramSource> explicit Program( ProgramSourceType sources )
         : _sources{ std::move( sources ) } {
-        if ( const auto bytecodeSrc = dynamic_cast<BytecodeProgramSource*>( _sources.get() ) ) {
-            for ( auto&& shader : bytecodeSrc->sources() ) {
+        if constexpr ( std::is_same_v<ProgramSourceType, BytecodeProgramSource> ) {
+            const auto src = std::get<BytecodeProgramSource>( _sources );
+            for ( auto&& shader : src.sources() ) {
                 auto [stage, bytecode] = shader;
                 push( stage, bytecode );
             }
-        } else if ( const auto textSrc = dynamic_cast<TextProgramSource*>( _sources.get() ) ) {
+        } else if constexpr ( std::is_same_v<ProgramSourceType, TextProgramSource> ) {
+            const auto src = std::get<TextProgramSource>( _sources );
+
             beginCompile();
 
-            for ( auto&& shader : textSrc->sources() ) {
+            for ( auto&& shader : src.sources() ) {
                 auto [stage, text] = shader;
 
                 // TODO: Make more robust!
@@ -227,7 +233,7 @@ private:
     }
 
 private:
-    std::shared_ptr<ProgramSource> _sources{};
+    std::variant<BytecodeProgramSource, TextProgramSource> _sources;
     std::unordered_map<ShaderStageType, VkShaderModule> _modules{};
 };
 
