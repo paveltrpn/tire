@@ -67,8 +67,7 @@ UiVK::UiVK() {
 
     _pipeline = std::make_shared<PipelineUi>();
 
-    auto uiProgramSources = TextProgramSource( "ui" );
-    auto program = Program{ uiProgramSources };
+    auto program = Program{ TextProgramSource( "ui" ) };
     _pipeline->buildPipeline( program );
 
     initTextureSmpler();

@@ -50,12 +50,16 @@ export struct Program final {
     template <typename ProgramSourceType>
     requires std::derived_from<ProgramSourceType, ProgramSource> explicit Program( ProgramSourceType sources )
         : _sources{ std::move( sources ) } {
+        // If ProgramSourceType is already bytecode simply initialize shader modules from
+        // that bytecode...
         if constexpr ( std::is_same_v<ProgramSourceType, BytecodeProgramSource> ) {
             const auto src = std::get<BytecodeProgramSource>( _sources );
             for ( auto&& shader : src.sources() ) {
                 auto [stage, bytecode] = shader;
                 push( stage, bytecode );
             }
+            // ... and if ProgramSourceType is plain text glsl code we need compile it
+            // at first.
         } else if constexpr ( std::is_same_v<ProgramSourceType, TextProgramSource> ) {
             const auto src = std::get<TextProgramSource>( _sources );
 

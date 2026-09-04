@@ -11,7 +11,6 @@
 #include "context/context.h"
 #include "../pipeline.h"
 #include "pipeline_test_box.h"
-#include "test_box_shader.h"
 
 #include "algebra/vector3.h"
 #include "algebra/matrix4.h"
@@ -24,8 +23,7 @@ TestBox::TestBox() {
     //
     pipeline_ = std::make_unique<PiplineTestBox>();
 
-    auto testboxProgramSources = TextProgramSource( "testbox" );
-    auto testBoxProgram = Program{ testboxProgramSources };
+    auto testBoxProgram = Program{ TextProgramSource( "testbox" ) };
     pipeline_->buildPipeline( testBoxProgram );
 }
 
