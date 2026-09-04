@@ -8,13 +8,12 @@
 
 #include "vma/vk_mem_alloc.h"
 
-#include "pipeline_ui.h"
-
 #include "ui/ui.h"
 #include "ui/billboard.h"
 #include "ui/label.h"
 
 import program;
+import pipeline;
 import vkresources;
 
 namespace tire {

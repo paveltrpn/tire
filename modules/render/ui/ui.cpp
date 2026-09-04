@@ -1,8 +1,6 @@
 
 #include <array>
-#include <memory>
 #include <filesystem>
-#include <variant>
 
 #include <vulkan/vulkan.h>
 #include "vulkan/vulkan_core.h"
@@ -18,9 +16,9 @@
 #include "ui/label.h"
 
 #include "ui.h"
-#include "pipeline_ui.h"
 
 import program;
+import pipeline;
 import vkresources;
 
 namespace tire {

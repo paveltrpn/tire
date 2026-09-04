@@ -9,8 +9,8 @@
 #include "event/eventobserver.h"
 
 #include "timer.h"
-#include "test_box/test_box.h"
 #include "ui/ui.h"
+#include "test_box/test_box.h"
 
 import graph;
 

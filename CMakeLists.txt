@@ -86,6 +86,7 @@ target_link_libraries(render
     algebra
     vkresources
     graph
+    pipeline
 )
 
 # ================================
@@ -155,6 +156,23 @@ target_sources(vkresources
 target_compile_features(vkresources PUBLIC cxx_std_26)
 target_link_libraries(vkresources 
     context 
+    log
+)
+
+# ================================
+# Module pipeline
+# ================================
+file(GLOB MOD_PIPELINE_SRC  modules/pipeline/*.cpp )
+add_library(pipeline)
+target_sources(pipeline
+  PUBLIC
+    FILE_SET CXX_MODULES FILES
+    ${MOD_PIPELINE_SRC}
+)
+target_compile_features(pipeline PUBLIC cxx_std_26)
+target_link_libraries(pipeline 
+    context 
+    program
     log
 )
 
