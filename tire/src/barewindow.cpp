@@ -25,11 +25,11 @@ module;
 #include "context/context.h"
 
 #include "config/config.h"
-#include "config/config.h"
 #include "log/log.h"
 
-export module barewindow;
-export import : testscene;
+export module barewindow : barewindow;
+
+import : testscene;
 
 export struct BareWindow final {
     BareWindow() {

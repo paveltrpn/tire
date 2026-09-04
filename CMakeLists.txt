@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.2)
+cmake_minimum_required(VERSION 4.4)
 
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_COMPILER clang++)
@@ -141,6 +141,16 @@ target_compile_features(program PUBLIC cxx_std_26)
 target_link_libraries(program 
     context 
     log
+    vulkan
+    glslang
+    glslang-default-resource-limits
+    SPIRV-Tools-opt
+    SPIRV-Tools
+    SPIRV-Tools-diff
+    SPIRV-Tools-link
+    SPIRV-Tools-lint
+    SPIRV-Tools-reduce
+    SPIRV
 )
 
 # ================================
@@ -192,38 +202,37 @@ target_link_libraries(graph
 )
 
 # ================================
-# tire executable
+# Module barewindow
 # ================================
-set(TIRE_EXE tire)
-add_executable(${TIRE_EXE})
-target_sources(${TIRE_EXE} PUBLIC "tire/main.cpp")
-file(GLOB_RECURSE EXE_TIRE_MODULES_SRC "tire/src/*.cpp")
-target_sources(${TIRE_EXE}  
+file(GLOB_RECURSE EXE_BAREWINDOW_SRC "tire/src/*.cpp")
+add_library(barewindow)
+target_sources(barewindow 
     PUBLIC 
     FILE_SET CXX_MODULES 
-    FILES ${EXE_TIRE_MODULES_SRC}  
+    FILES ${EXE_BAREWINDOW_SRC}  
 )
-target_compile_features(graph PUBLIC cxx_std_26)
-target_compile_options(${TIRE_EXE} PRIVATE "${CXX_STANDART}")
-target_link_libraries(${TIRE_EXE}
+target_compile_features(barewindow PUBLIC cxx_std_26)
+target_link_libraries(barewindow
     graph
     event
     context
-    program
     log
     algebra
     config
     render
     glfw
     vulkan
-    glslang
-    glslang-default-resource-limits
-    SPIRV-Tools-opt
-    SPIRV-Tools
-    SPIRV-Tools-diff
-    SPIRV-Tools-link
-    SPIRV-Tools-lint
-    SPIRV-Tools-reduce
-    SPIRV
+)
+
+# ================================
+# tire executable
+# ================================
+set(TIRE_EXE tire)
+add_executable(${TIRE_EXE})
+target_sources(${TIRE_EXE} PUBLIC "tire/main.cpp")
+target_compile_features(graph PUBLIC cxx_std_26)
+target_compile_options(${TIRE_EXE} PRIVATE "${CXX_STANDART}")
+target_link_libraries(${TIRE_EXE}
+    barewindow
 )
     
