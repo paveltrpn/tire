@@ -30,7 +30,7 @@ export struct PiplineTestBox final : Pipeline {
                                                          .stage = VK_SHADER_STAGE_VERTEX_BIT,
                                                          .module = module,
                                                          .pName = "main" };
-            shaderStages_.push_back( stage );
+            _shaderStages.push_back( stage );
         }
 
         // Add FRAGMENT stage
@@ -41,7 +41,7 @@ export struct PiplineTestBox final : Pipeline {
                                                          .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
                                                          .module = module,
                                                          .pName = "main" };
-            shaderStages_.push_back( stage );
+            _shaderStages.push_back( stage );
         }
 
         // Add TESSEALTION_EVALUATION stage
@@ -52,7 +52,7 @@ export struct PiplineTestBox final : Pipeline {
                                                          .stage = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT,
                                                          .module = module,
                                                          .pName = "main" };
-            shaderStages_.push_back( stage );
+            _shaderStages.push_back( stage );
         }
 
         // Add TESSELATION CONTROL stage
@@ -63,7 +63,7 @@ export struct PiplineTestBox final : Pipeline {
                                                          .stage = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT,
                                                          .module = module,
                                                          .pName = "main" };
-            shaderStages_.push_back( stage );
+            _shaderStages.push_back( stage );
         }
 
         // Add GEOMETRY stage
@@ -74,7 +74,7 @@ export struct PiplineTestBox final : Pipeline {
                                                          .stage = VK_SHADER_STAGE_GEOMETRY_BIT,
                                                          .module = module,
                                                          .pName = "main" };
-            shaderStages_.push_back( stage );
+            _shaderStages.push_back( stage );
         }
 
         // Add MESH stage
@@ -85,7 +85,7 @@ export struct PiplineTestBox final : Pipeline {
                                                          .stage = VK_SHADER_STAGE_MESH_BIT_EXT,
                                                          .module = module,
                                                          .pName = "main" };
-            shaderStages_.push_back( stage );
+            _shaderStages.push_back( stage );
         }
 
         // Init fixed stages
@@ -175,7 +175,7 @@ export struct PiplineTestBox final : Pipeline {
                                                              .pPushConstantRanges = constants.data() };
 
         if ( const auto err =
-                 vkCreatePipelineLayout( Context::instance().device(), &pipelineLayoutInfo, nullptr, &layout_ );
+                 vkCreatePipelineLayout( Context::instance().device(), &pipelineLayoutInfo, nullptr, &_layout );
              err != VK_SUCCESS ) {
             throw std::runtime_error(
                 std::format( "failed to create pipeline layout with code {}!", string_VkResult( err ) ) );
@@ -208,8 +208,8 @@ export struct PiplineTestBox final : Pipeline {
 
         // Create pipeline
         const VkGraphicsPipelineCreateInfo pipelineInfo{ .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-                                                         .stageCount = static_cast<uint32_t>( shaderStages_.size() ),
-                                                         .pStages = shaderStages_.data(),
+                                                         .stageCount = static_cast<uint32_t>( _shaderStages.size() ),
+                                                         .pStages = _shaderStages.data(),
                                                          .pVertexInputState = &vertexInput,
                                                          .pInputAssemblyState = &inputAssembly,
                                                          .pViewportState = &viewportState,
@@ -218,14 +218,14 @@ export struct PiplineTestBox final : Pipeline {
                                                          .pDepthStencilState = &depthStencil,
                                                          .pColorBlendState = &colorBlending,
                                                          .pDynamicState = &dynamicState,
-                                                         .layout = layout_,
+                                                         .layout = _layout,
                                                          .renderPass = Context::instance().renderPass(),
                                                          .subpass = 0,
                                                          .basePipelineHandle = VK_NULL_HANDLE,
                                                          .basePipelineIndex = -1 };
 
         if ( const auto err = vkCreateGraphicsPipelines( Context::instance().device(), _pipelineCache, 1, &pipelineInfo,
-                                                         nullptr, &pipeline_ );
+                                                         nullptr, &_pipeline );
              err != VK_SUCCESS ) {
             throw std::runtime_error(
                 std::format( "failed to create graphics pipeline with code {}!", string_VkResult( err ) ) );

@@ -23,35 +23,35 @@ export struct Pipeline {
     auto operator=( Pipeline&& other ) -> Pipeline& = delete;
 
     virtual ~Pipeline() {
-        vkDestroyRenderPass( Context::instance().device(), renderPass_, nullptr );
-        vkDestroyPipelineLayout( Context::instance().device(), layout_, nullptr );
-        vkDestroyPipeline( Context::instance().device(), pipeline_, nullptr );
+        vkDestroyRenderPass( Context::instance().device(), _renderPass, nullptr );
+        vkDestroyPipelineLayout( Context::instance().device(), _layout, nullptr );
+        vkDestroyPipeline( Context::instance().device(), _pipeline, nullptr );
     }
 
     [[nodiscard]]
     auto pipeline() const -> VkPipeline {
         //
-        return pipeline_;
+        return _pipeline;
     }
 
     [[nodiscard]] auto layout() const -> VkPipelineLayout {
         //
-        return layout_;
+        return _layout;
     };
 
     [[nodiscard]] auto renderpass() const -> VkRenderPass {
         //
-        return renderPass_;
+        return _renderPass;
     }
 
     virtual auto buildPipeline( const Program& program ) -> void = 0;
 
 protected:
-    VkPipeline pipeline_{ VK_NULL_HANDLE };
-    VkPipelineLayout layout_{ VK_NULL_HANDLE };
-    VkRenderPass renderPass_{ VK_NULL_HANDLE };
+    VkPipeline _pipeline{ VK_NULL_HANDLE };
+    VkPipelineLayout _layout{ VK_NULL_HANDLE };
+    VkRenderPass _renderPass{ VK_NULL_HANDLE };
 
-    std::vector<VkPipelineShaderStageCreateInfo> shaderStages_{};
+    std::vector<VkPipelineShaderStageCreateInfo> _shaderStages{};
 };
 
 }  // namespace tire

@@ -31,7 +31,7 @@ export struct PipelineUi final : Pipeline {
                                                          .stage = VK_SHADER_STAGE_VERTEX_BIT,
                                                          .module = module,
                                                          .pName = "main" };
-            shaderStages_.push_back( stage );
+            _shaderStages.push_back( stage );
         }
 
         // Add FRAGMENT stage
@@ -42,7 +42,7 @@ export struct PipelineUi final : Pipeline {
                                                          .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
                                                          .module = module,
                                                          .pName = "main" };
-            shaderStages_.push_back( stage );
+            _shaderStages.push_back( stage );
         }
 
         // Add TESSEALTION_EVALUATION stage
@@ -53,7 +53,7 @@ export struct PipelineUi final : Pipeline {
                                                          .stage = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT,
                                                          .module = module,
                                                          .pName = "main" };
-            shaderStages_.push_back( stage );
+            _shaderStages.push_back( stage );
         }
 
         // Add TESSELATION CONTROL stage
@@ -64,7 +64,7 @@ export struct PipelineUi final : Pipeline {
                                                          .stage = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT,
                                                          .module = module,
                                                          .pName = "main" };
-            shaderStages_.push_back( stage );
+            _shaderStages.push_back( stage );
         }
 
         // Add GEOMETRY stage
@@ -75,7 +75,7 @@ export struct PipelineUi final : Pipeline {
                                                          .stage = VK_SHADER_STAGE_GEOMETRY_BIT,
                                                          .module = module,
                                                          .pName = "main" };
-            shaderStages_.push_back( stage );
+            _shaderStages.push_back( stage );
         }
 
         // Add MESH stage
@@ -86,7 +86,7 @@ export struct PipelineUi final : Pipeline {
                                                          .stage = VK_SHADER_STAGE_MESH_BIT_EXT,
                                                          .module = module,
                                                          .pName = "main" };
-            shaderStages_.push_back( stage );
+            _shaderStages.push_back( stage );
         }
 
         // ===========================================================================
@@ -294,20 +294,20 @@ export struct PipelineUi final : Pipeline {
         };
 
         if ( const auto err =
-                 vkCreatePipelineLayout( Context::instance().device(), &pipelineLayoutInfo, nullptr, &layout_ );
+                 vkCreatePipelineLayout( Context::instance().device(), &pipelineLayoutInfo, nullptr, &_layout );
              err != VK_SUCCESS ) {
             log::fatal()( "failed to create pipeline layout with code {}!", string_VkResult( err ) );
         }
 
         // Init render pass.
-        renderPass_ = Context::instance().renderPass();
+        _renderPass = Context::instance().renderPass();
 
         // Create pipeline
         const auto pipelineInfo = VkGraphicsPipelineCreateInfo{
             //
             .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-            .stageCount = static_cast<uint32_t>( shaderStages_.size() ),
-            .pStages = shaderStages_.data(),
+            .stageCount = static_cast<uint32_t>( _shaderStages.size() ),
+            .pStages = _shaderStages.data(),
             .pVertexInputState = &vertexInput,
             .pInputAssemblyState = &inputAssembly,
             .pViewportState = &viewportState,
@@ -316,15 +316,15 @@ export struct PipelineUi final : Pipeline {
             .pDepthStencilState = &depthStencil,
             .pColorBlendState = &colorBlending,
             .pDynamicState = &dynamicState,
-            .layout = layout_,
-            .renderPass = renderPass_,
+            .layout = _layout,
+            .renderPass = _renderPass,
             .subpass = 0,
             .basePipelineHandle = VK_NULL_HANDLE,
             .basePipelineIndex = -1,
         };
 
         if ( const auto err = vkCreateGraphicsPipelines( Context::instance().device(), VK_NULL_HANDLE, 1, &pipelineInfo,
-                                                         nullptr, &pipeline_ );
+                                                         nullptr, &_pipeline );
              err != VK_SUCCESS ) {
             log::fatal()( "failed to create graphics pipeline with code {}!", string_VkResult( err ) );
         }
