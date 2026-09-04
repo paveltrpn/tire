@@ -29,6 +29,7 @@ module;
 
 export module barewindow : barewindow;
 
+import program;
 import : testscene;
 
 export struct BareWindow final {
