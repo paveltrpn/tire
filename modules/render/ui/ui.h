@@ -1,10 +1,6 @@
 #pragma once
 
-#include <array>
 #include <memory>
-#include <filesystem>
-#include <variant>
-#include <iostream>
 
 #include <vulkan/vulkan.h>
 #include "vulkan/vulkan_core.h"
@@ -12,7 +8,6 @@
 
 #include "vma/vk_mem_alloc.h"
 
-#include "config/config.h"
 #include "pipeline_ui.h"
 
 #include "ui/ui.h"
