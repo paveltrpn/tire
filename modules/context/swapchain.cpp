@@ -7,7 +7,8 @@
 #include "context.h"
 #include "depth_image.h"
 #include "log/log.h"
-#include "config/config.h"
+
+import config;
 
 namespace tire {
 

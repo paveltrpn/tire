@@ -1,12 +1,12 @@
-
 #include <format>
 #include <memory>
 
 #include "context.h"
 
-#include "config/config.h"
 #include "log/log.h"
 #include "image/color.h"
+
+import config;
 
 namespace tire {
 

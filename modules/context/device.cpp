@@ -11,11 +11,12 @@
 #include "device.h"
 #include "surface.h"
 #include "log/log.h"
-#include "config/config.h"
+
+import config;
 
 namespace tire {
 
-VKDevice::VKDevice( const VKInstance *instance )
+VKDevice::VKDevice( const VKInstance* instance )
     : instance_{ instance } {
     collectPhysicalDevices();
     createDevice();
@@ -116,15 +117,15 @@ void VKDevice::collectPhysicalDevices() {
     }
 }
 
-auto VKDevice::pickDevice( const std::vector<PhysicalDevice> &physDevList ) -> std::optional<int> {
+auto VKDevice::pickDevice( const std::vector<PhysicalDevice>& physDevList ) -> std::optional<int> {
     // Check which devices available on machine.
     int discreetGpuId{ -1 };
     int integratedGpuId{ -1 };
     int otherGpuId{ -1 };
     int virtualGpuId{ -1 };
     int cpuGpuId{ -1 };
-    for ( auto i{ 0 }; const auto &physicalDevice : physicalDevices_ ) {
-        const auto &deviceProps = physicalDevice.properties;
+    for ( auto i{ 0 }; const auto& physicalDevice : physicalDevices_ ) {
+        const auto& deviceProps = physicalDevice.properties;
         switch ( physicalDevice.properties.deviceType ) {
             case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU: {
                 discreetGpuId = i;
@@ -184,7 +185,7 @@ auto VKDevice::createDevice() -> void {
     // The good news is that
     // any queue family with VK_QUEUE_GRAPHICS_BIT or VK_QUEUE_COMPUTE_BIT ca-
     // pabilities already implicitly support VK_QUEUE_TRANSFER_BIT operations.
-    for ( auto i{ 0 }; const auto &queueFamily : physicalDevices_[pickedPhysicalDeviceId_].queueFamilyProperties ) {
+    for ( auto i{ 0 }; const auto& queueFamily : physicalDevices_[pickedPhysicalDeviceId_].queueFamilyProperties ) {
         if ( queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT ) {
             graphicsFamilyQueueId_ = i;
             break;
@@ -216,11 +217,11 @@ auto VKDevice::createDevice() -> void {
         queueCreateInfos.push_back( queueCreateInfo );
     }
 
-    std::vector<const char *> desiredExtensionsList{};
+    std::vector<const char*> desiredExtensionsList{};
 
     auto loadBaseExt = [&desiredExtensionsList]( bool use ) -> void {
         if ( use ) {
-            auto ext = std::vector<const char *>{ "VK_KHR_swapchain", "VK_KHR_spirv_1_4" };
+            auto ext = std::vector<const char*>{ "VK_KHR_swapchain", "VK_KHR_spirv_1_4" };
             std::ranges::for_each(
                 ext, [&desiredExtensionsList]( auto e ) -> void { desiredExtensionsList.emplace_back( e ); } );
         }
@@ -228,15 +229,15 @@ auto VKDevice::createDevice() -> void {
 
     auto loadRTExt = [&desiredExtensionsList]( bool use ) -> void {
         if ( use ) {
-            auto ext = std::vector<const char *>{ "VK_KHR_ray_query",
-                                                  "VK_KHR_ray_tracing_pipeline",
-                                                  "VK_KHR_ray_tracing_position_fetch",
-                                                  "VK_KHR_ray_tracing_maintenance1",
-                                                  "VK_KHR_acceleration_structure",
-                                                  "VK_EXT_descriptor_indexing",
-                                                  "VK_KHR_buffer_device_address",
-                                                  "VK_KHR_deferred_host_operations",
-                                                  "VK_KHR_shader_float_controls" };
+            auto ext = std::vector<const char*>{ "VK_KHR_ray_query",
+                                                 "VK_KHR_ray_tracing_pipeline",
+                                                 "VK_KHR_ray_tracing_position_fetch",
+                                                 "VK_KHR_ray_tracing_maintenance1",
+                                                 "VK_KHR_acceleration_structure",
+                                                 "VK_EXT_descriptor_indexing",
+                                                 "VK_KHR_buffer_device_address",
+                                                 "VK_KHR_deferred_host_operations",
+                                                 "VK_KHR_shader_float_controls" };
             std::ranges::for_each(
                 ext, [&desiredExtensionsList]( auto e ) -> void { desiredExtensionsList.emplace_back( e ); } );
         }

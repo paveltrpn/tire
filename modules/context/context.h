@@ -33,7 +33,6 @@
 #include "allocator.h"
 #include "presentation.h"
 #include "contextpools.h"
-
 #include "command_routine.h"
 
 namespace tire {

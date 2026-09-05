@@ -9,7 +9,6 @@
 #include "vma/vk_mem_alloc.h"
 
 #include "context/context.h"
-#include "config/config.h"
 #include "log/log.h"
 
 #include "ui/billboard.h"
@@ -17,6 +16,7 @@
 
 #include "ui.h"
 
+import config;
 import program;
 import pipeline;
 import vkresources;

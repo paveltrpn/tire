@@ -24,11 +24,11 @@ module;
 #include "render/rendervk.h"
 #include "context/context.h"
 
-#include "config/config.h"
 #include "log/log.h"
 
 export module barewindow : barewindow;
 
+import config;
 import program;
 import : testscene;
 

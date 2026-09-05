@@ -33,7 +33,7 @@ find_package(glfw3 3.3 REQUIRED)
 find_package(nlohmann_json 3.11 REQUIRED)
 
 # ================================
-# Module config
+# Module mesh
 # ================================
 file(GLOB MOD_MESH_SRC "modules/mesh/*.cpp" "modules/mesh/*.h")
 add_library(mesh ${MOD_MESH_SRC})
@@ -46,8 +46,14 @@ target_link_libraries(mesh
 # ================================
 # Module config
 # ================================
-file(GLOB MOD_CONFIG_SRC "modules/config/*.cpp" "modules/config/*.h")
-add_library(config ${MOD_CONFIG_SRC})
+file(GLOB MOD_CONFIG_SRC modules/config/*.cpp)
+add_library(config)
+target_sources(config
+  PUBLIC
+    FILE_SET CXX_MODULES FILES
+    ${MOD_CONFIG_SRC}
+)
+target_compile_features(config PUBLIC cxx_std_26)
 target_compile_options(config PRIVATE "${CXX_STANDART}")
 target_link_libraries(config log)
 
@@ -213,6 +219,7 @@ target_sources(barewindow
 )
 target_compile_features(barewindow PUBLIC cxx_std_26)
 target_link_libraries(barewindow
+    config;
     graph
     event
     context

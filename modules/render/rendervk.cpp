@@ -2,6 +2,8 @@
 #include "rendervk.h"
 #include "log/log.h"
 
+import graph;
+
 namespace tire {
 
 RenderVK::RenderVK() {

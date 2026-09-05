@@ -4,8 +4,9 @@
 
 #include "vkinstance.h"
 
-#include "config/config.h"
 #include "log/log.h"
+
+import config;
 
 namespace tire {
 
