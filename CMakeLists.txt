@@ -145,6 +145,7 @@ target_sources(program
 )
 target_compile_features(program PUBLIC cxx_std_26)
 target_link_libraries(program 
+    config
     context 
     log
     vulkan
@@ -223,7 +224,6 @@ target_link_libraries(barewindow
     graph
     event
     context
-    log
     algebra
     config
     render
